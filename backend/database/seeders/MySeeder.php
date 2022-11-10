@@ -69,14 +69,14 @@ class MySeeder extends Seeder
             [
                 'room_type_id' => '1',
                 'room_no' => '101',
-                'check_in_status' => '0',
+                'check_in_status' => '1',
                 'check_out_status' => '0',
                 'deleteStatus' => '0',
             ],
             [
                 'room_type_id' => '2',
                 'room_no' => '102',
-                'check_in_status' => '0',
+                'check_in_status' => '1',
                 'check_out_status' => '0',
                 'deleteStatus' => '0',
             ],
