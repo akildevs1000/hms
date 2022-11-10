@@ -36,14 +36,14 @@ class CountController extends Controller
                 "title" => "Booked Room",
                 "value" => rand(10,50),
                 "icon" => "fas fa-bookmark",
-                "color" => "l-bg-green-dark ",
+                "color" => "l-bg-orange-dark",
                 "link"  => "/"
             ],
             [
                 "title" => "Available Room",
                 "value" => rand(10,50),
                 "icon" => "fas fa-check",
-                "color" => "l-bg-orange-dark",
+                "color" => "l-bg-green-dark",
                 "link"  => "/"
 
             ],

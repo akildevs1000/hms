@@ -17,10 +17,31 @@
       <v-col xs="12" sm="12" md="3" cols="12">
         <v-select
           class="form-control"
-          @change="getDataFromApi(`reservation`)"
+          @change="getDataFromApi(`room`)"
           v-model="pagination.per_page"
           :items="[10, 25, 50, 100]"
           placeholder="Per Page Records"
+          solo
+          hide-details
+          flat
+        ></v-select>
+      </v-col>
+      <v-col xs="12" sm="12" md="3" cols="12">
+        <v-select
+          class="form-control"
+          @change="getDataFromApi(`room`)"
+          v-model="pagination.status"
+          :items="[
+            { id: '-1', name: 'Select All' },
+            { id: '0', name: 'Available Room' },
+            { id: '1', name: 'Booked Room' },
+            { id: '2', name: 'Checked In Room' },
+            { id: '3', name: 'Checked Out Room' },
+            { id: '4', name: 'DirtyRoom' }
+          ]"
+          item-text="name"
+          item-value="id"
+          placeholder="Status"
           solo
           hide-details
           flat
@@ -56,45 +77,45 @@
           color="primary"
         ></v-progress-linear>
         <tr v-for="(item, index) in data" :key="index">
-          <td class="ps-3">
-            <b>{{ ++index }}</b>
-          </td>
           <td>{{ caps(item.room_no) }}</td>
           <td>{{ caps(item.room_type_id) }}</td>
           <td>
             <v-btn
+              style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
               small
               elevation="0"
               dark
-              color="#5ACE52"
+              class="l-bg-green-dark"
               v-if="item.status == 0"
             >
               Available Room
             </v-btn>
-              <v-btn
+            <v-btn
+              style="background: linear-gradient(135deg, #f48665 0%, #fda23f 100%) !important;"
               small
               elevation="0"
               dark
-              color="error"
+              color="l-bg-purple-dark"
               v-else-if="item.status == 1"
             >
               Booked
             </v-btn>
-            <v-btn v-else-if="item.status == 2" small elevation="0" dark color="warning"
+            <v-btn
+              v-else-if="item.status == 2"
+              small
+              elevation="0"
+              dark
+              color="warning"
               >Checked In</v-btn
             >
 
-             <v-btn v-else-if="item.status == 3" small elevation="0" dark 
+            <v-btn v-else-if="item.status == 3" small elevation="0" dark
               >Checked Out</v-btn
             >
 
-              <v-btn v-else small elevation="0" dark  color="grey"
-              >Dirty</v-btn
-            >
-
-
+            <v-btn v-else small elevation="0" dark color="grey">Dirty</v-btn>
           </td>
-          <td>
+          <!-- <td>
             <v-menu bottom left>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn dark-2 icon v-bind="attrs" v-on="on">
@@ -120,7 +141,7 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-          </td>
+          </td> -->
         </tr>
       </table>
     </v-card>
@@ -141,11 +162,12 @@
 <script>
 export default {
   data: () => ({
-    Model: "Reservation",
+    Model: "Room",
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
+      status: "-1"
     },
     options: {},
     endpoint: "room",
@@ -184,13 +206,7 @@ export default {
     ],
     loading: false,
     total: 0,
-    headers: [
-      { text: "&nbsp #" },
-      { text: "Room" },
-      { text: "Room Type" },
-      { text: "Status" },
-      { text: "Action" }
-    ],
+    headers: [{ text: "Room" }, { text: "Room Type" }, { text: "Status" }],
     editedIndex: -1,
     response: "",
     errors: []
@@ -235,6 +251,7 @@ export default {
       let page = this.pagination.current;
       let options = {
         params: {
+          status: this.pagination.status,
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id
         }
@@ -250,7 +267,7 @@ export default {
 
     searchIt(e) {
       if (e.length == 0) {
-        this.getDataFromApi();
+        this.getDataFromApi(this.endpoint);
       } else if (e.length > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${e}`);
       }
