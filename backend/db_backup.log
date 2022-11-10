@@ -1,0 +1,22 @@
+Backup completed!Backup completed!Backup completed!Backup completed!Backup completed!Backup completed!Backup completed!Backup completed!Backup completed!
+   TypeError 
+
+  Symfony\Component\Mime\Email::attachFromPath(): Argument #1 ($path) must be of type string, null given, called in C:\akil\ideahrms\backend\vendor\laravel\framework\src\Illuminate\Mail\Message.php on line 310
+
+  at C:\akil\ideahrms\backend\vendor\symfony\mime\Email.php:342
+    338▕ 
+    339▕     /**
+    340▕      * @return $this
+    341▕      */
+  ➜ 342▕     public function attachFromPath(string $path, string $name = null, string $contentType = null): static
+    343▕     {
+    344▕         $this->cachedBody = null;
+    345▕         $this->attachments[] = ['path' => $path, 'name' => $name, 'content-type' => $contentType, 'inline' => false];
+    346▕
+
+  1   C:\akil\ideahrms\backend\vendor\laravel\framework\src\Illuminate\Mail\Message.php:310
+      Symfony\Component\Mime\Email::attachFromPath()
+
+  2   C:\akil\ideahrms\backend\vendor\laravel\framework\src\Illuminate\Mail\Mailable.php:433
+      Illuminate\Mail\Message::attach([])
+Backup completed!Backup completed!Backup completed!Backup completed!Backup completed!Backup completed!
