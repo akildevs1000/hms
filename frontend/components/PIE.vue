@@ -11,7 +11,7 @@ export default {
     return {
       options: {
         title: {
-          text: "DAILY ATTENDANCE REPORT",
+          text: "DAILY STATS",
           align: "left",
           margin: 50
         },

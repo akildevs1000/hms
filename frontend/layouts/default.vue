@@ -315,9 +315,35 @@ export default {
       order_count: "",
       menus: [
         {
-          icon: "mdi-door",
-          title: "Reservation",
-          to: "/reservation",
+          icon: "mdi-bed",
+          title: `Reservation`,
+          open_menu: false,
+          menu: "reservation_access",
+          hasChildren: [
+            {
+              icon: "mdi-bookmark ",
+              title: "Add Reservation",
+              to: "/designation",
+              menu: "reservation_access"
+            },
+            {
+              icon: "mdi-bed",
+              title: "Reservation List",
+              to: "/reservation",
+              menu: "reservation_access"
+            }
+          ]
+        },
+        {
+          icon: "mdi-bed",
+          title: "Manage Room",
+          to: "/room",
+          menu: "room_access"
+        },
+        {
+          icon: "mdi-account",
+          title: "Customers",
+          to: "/customer/list",
           menu: "reservation_access"
         }
       ],

@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('check_in_status')->nullable();
             $table->string('check_out_status')->nullable();
             $table->integer('deleteStatus')->nullable();
-
-
+            $table->integer('company_id')->default(0);
             $table->timestamps();
         });
     }

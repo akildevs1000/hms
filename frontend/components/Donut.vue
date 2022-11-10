@@ -10,7 +10,7 @@ export default {
     return {
       options: {
         title: {
-          text: "DAILY ATTENDANCE REPORT",
+          text: "DAILY STATS",
           align: "left"
         },
         colors: ["#A24FDD", "#6DFCCA", "#E78956", "#3A95D9"],

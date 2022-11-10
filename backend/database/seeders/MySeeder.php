@@ -434,6 +434,24 @@ class MySeeder extends Seeder
             ],
         ];
 
+        $customers = [];
+
+        foreach (range(1, 50) as $row) {
+            $customers[] = [
+                'name' => 'Customer' . $row,
+                'contact_no' => rand(1,11111111111),
+                'email' => 'customer@example.com',
+                'id_card_type_id' => '1',
+                'id_card_no' => rand(1,5),
+                'car_no' => rand(1000,9999),
+                'no_of_adult' => rand(1,5),
+                'no_of_child' => rand(1,5),
+                'no_of_baby' => rand(1,5),
+                'address' => 'test address',
+                'company_id' => 2,
+            ];
+        }
+
         $users = [
             [
                 'name' => 'admin',
@@ -448,5 +466,6 @@ class MySeeder extends Seeder
         DB::table('id_card_types')->insert($ids);
         DB::table('bookings')->insert($bookings);
         DB::table('users')->insert($users);
+        DB::table('customers')->insert($customers);
     }
 }

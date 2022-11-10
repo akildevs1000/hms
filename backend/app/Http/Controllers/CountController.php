@@ -25,36 +25,37 @@ class CountController extends Controller
 
         return [
             [
-                "title" => "Today Summary",
-                "value" => $model->count(),
-                "icon" => "fas fa-clock",
+                "title" => "Reservations",
+                "value" => rand(10,50),
+                "icon" => "fas fa-bed",
                 "color" => "l-bg-purple-dark",
-                "link"  => env("BASE_URL") . "/api/daily?company_id=$id&status=SA&daily_date=" . date("Y-m-d") . "&department_id=-1&report_type=Daily",
+                "link"  => "/",
 
             ],
             [
-                "title" => "Today Presents",
-                "value" => $model->where('status', 'P')->count(),
-                "icon" => "fas fa-calendar-check",
+                "title" => "Booked Room",
+                "value" => rand(10,50),
+                "icon" => "fas fa-bookmark",
                 "color" => "l-bg-green-dark ",
-                "link"  => env("BASE_URL") . "/api/daily?page=1&per_page=1000&company_id=$id&status=P&daily_date=" . date("Y-m-d") . "&department_id=-1&report_type=Daily"
+                "link"  => "/"
             ],
             [
-                "title" => "Today Absent",
-                "value" => $model->where('status', 'A')->count(),
-                "icon" => "fas fa-calendar-times",
+                "title" => "Available Room",
+                "value" => rand(10,50),
+                "icon" => "fas fa-check",
                 "color" => "l-bg-orange-dark",
-                "link"  => env("BASE_URL") . "/api/daily?page=1&per_page=1000&company_id=$id&status=A&daily_date=" . date("Y-m-d") . "&department_id=-1&report_type=Daily"
+                "link"  => "/"
 
             ],
             [
-                "title" => "Today Missing",
-                "value" => $model->where('status', '---')->count(),
-                "icon" => "	fas fa-clock",
+                "title" => "Total Customer",
+                "value" => rand(10,50),
+                "icon" => "	fas fa-user",
                 "color" => "l-bg-cyan-dark",
-                "link"  => env("BASE_URL") . "/api/daily?page=1&per_page=1000&company_id=$id&status=---&daily_date=" . date("Y-m-d") . "&department_id=-1&report_type=Daily"
+                "link"  => "/"
 
             ],
+            
 
         ];
     }

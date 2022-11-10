@@ -26,6 +26,8 @@ return new class extends Migration
 
             $table->string('source')->nullable();
             $table->string('agent_name')->nullable();
+
+            $table->integer('company_id')->default(0);
             $table->timestamps();
         });
     }

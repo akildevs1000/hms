@@ -37,41 +37,52 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        $customer_info = [
-            'name' => $request->name,
-            'contact_no' => $request->contact_no,
-            'email' => $request->email,
-            'id_card_type_id' => $request->id_card_type_id,
-            'id_card_no' => $request->id_card_no,
-            'address' => $request->address,
-        ];
+        DB::beginTransaction();
 
-        $customer_id = $request->customer_id;
+        try {
+            $customer_id = $request->customer_id;
 
-        if (!$customer_id) {
-            $customer = Customer::create($customer_info);
-            $customer_id = $customer->id;
-        }
+            if (!$customer_id) {
+                $customer = new CustomerController();
+                $customer = $customer->store($request);
+                $customer_id = $customer->id;
+            }
 
-        $booking_info = [
-            'source' => $request->source,
-            'agent_name' => $request->agent_name,
-            'customer_id' => $customer_id,
-            'room_id' => $request->room_id,
-            'check_in' => $request->check_in,
-            'check_out' => $request->check_out,
-            'total_price' => $request->total_price,
-            'remaining_price' => $request->total_price,
-        ];
+            $booking_info = [
+                'source' => $request->source,
+                'agent_name' => $request->agent_name,
+                'customer_id' => $customer_id,
+                'room_id' => $request->room_id,
+                'check_in' => $request->check_in,
+                'check_out' => $request->check_out,
+                'total_price' => $request->total_price,
+                'remaining_price' => $request->remaining_price,
+                "booking_date" => now(),
+                "payment_status" => $request->total_price == $request->remaining_price ? '0' : '1',
+                'company_id' => $request->company_id,
+            ];
 
-        $booked = Booking::create($booking_info);
+            $booked = Booking::create($booking_info);
 
-        if ($booked) {
+            if ($booked) {
 
-            $updated = Room::where('id', $booking_info["room_id"])->update(["status" => '1']);
+                $room = new RoomController();
+                $updated = $room->update($request->room_id, '1'); //1 = booked
 
-            return $updated ? ["done" => true, "data" => 'Successfully Booking'] : ["done" => false, "data" => "DataBase Error in status change"];
-        } else {
+                if ($updated) {
+                    DB::commit();
+                    return ["done" => true, "data" => 'Room Booked Successfully'];
+                } else {
+                    DB::rollBack();
+                    return ["done" => false, "data" => "DataBase Error in status change"];
+                }
+            } else {
+                DB::rollBack();
+                return ["done" => false, "data" => "DataBase Error booking"];
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            
             return ["done" => false, "data" => "DataBase Error booking"];
         }
     }

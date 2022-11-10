@@ -37,7 +37,7 @@ export default {
           curve: "straight"
         },
         title: {
-          text: "DAILY ATTENDANCE REPORT",
+          text: "DAILY STATS",
           align: "left"
         },
         grid: {

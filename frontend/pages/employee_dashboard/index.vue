@@ -47,7 +47,7 @@
           <v-col cols="12">
             <v-card>
               <div class="heading display-3 overline text-center">
-                <b>Daily Attendance Report</b>
+                <b>DAILY STATS</b>
               </div>
               <GChart type="ColumnChart" :data="chartData" />
             </v-card>
