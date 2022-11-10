@@ -496,7 +496,7 @@ export default {
       clipped: true,
 
       miniVariant: false,
-      title: "ideaHRMS",
+      title: "Hyder Park",
       logout_btn: {
         icon: "mdi-logout",
         label: "Logout"

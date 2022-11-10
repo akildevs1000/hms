@@ -92,7 +92,7 @@
 
               <v-col cols="4" class="text-right" style="margin: -8px">
                 <v-icon
-                  v-if="can(`company_edit`)"
+                  v-if="can(`master`)"
                   @click="editItem(`/master/companies/${$route.params.id}`)"
                   small
                   class="grey"
@@ -179,16 +179,16 @@
       </v-card>
 
       <v-tabs class="mt-5 mb-5">
-        <v-tab v-if="can(`branch_access`)">
+        <v-tab v-if="can(`master`)">
           <v-icon left> mdi-sitemap </v-icon>
           Branches
         </v-tab>
-        <v-tab v-if="can(`device_access`)">
+        <v-tab v-if="can(`master`)">
           <v-icon left> mdi-laptop </v-icon>
           Devices
         </v-tab>
 
-        <v-tab-item v-if="can(`branch_access`)">
+        <v-tab-item v-if="can(`master`)">
           <v-row class="mt-5 mb-5">
             <v-col cols="6">
               <h3>Branch</h3>
@@ -198,7 +198,7 @@
             <v-col cols="6">
               <div class="text-right">
                 <v-btn
-                  v-if="can(`branch_create`)"
+                  v-if="can(`master`)"
                   small
                   color="primary"
                   class="mb-2"
@@ -209,7 +209,7 @@
             </v-col>
           </v-row>
 
-          <v-row v-if="can(`branch_view`)" class="mt-5 mb-5">
+          <v-row v-if="can(`master`)" class="mt-5 mb-5">
             <v-col cols="3" v-for="(item, index) in data" :key="index">
               <v-card>
                 <v-toolbar flat dense small class="primary" dark>{{
@@ -219,7 +219,7 @@
                 <v-card-title>
                   <v-spacer></v-spacer>
                   <v-icon
-                    v-if="can(`branch_edit`)"
+                    v-if="can(`master`)"
                     @click="editItem(`/branch/edit/${item.id}`)"
                     color="secondary"
                     small
@@ -227,7 +227,7 @@
                   >
 
                   <v-icon
-                    v-if="can(`branch_delete`)"
+                    v-if="can(`master`)"
                     @click="deleteItem(item)"
                     color="red"
                     small
@@ -256,7 +256,7 @@
             </v-col>
           </v-row>
         </v-tab-item>
-        <v-tab-item v-if="can(`device_access`)">
+        <v-tab-item v-if="can(`master`)">
           <v-row class="mt-5 mb-5">
             <v-col cols="6">
               <h3>Device</h3>
@@ -266,7 +266,7 @@
             <v-col cols="6">
               <div class="text-right">
                 <v-btn
-                  v-if="can(`device_create`)"
+                  v-if="can(`master`)"
                   small
                   color="primary"
                   class="mb-2"
@@ -277,7 +277,7 @@
             </v-col>
           </v-row>
 
-          <v-row v-if="can(`device_view`)" class="mt-5 mb-5">
+          <v-row v-if="can(`master`)" class="mt-5 mb-5">
             <v-col cols="3" v-for="(item, index) in devices" :key="index">
               <v-card>
                 <v-toolbar flat dense small class="primary" dark>{{
@@ -295,7 +295,7 @@
                   </span>
                   <v-spacer></v-spacer>
                   <v-icon
-                    v-if="can(`device_edit`)"
+                    v-if="can(`master`)"
                     @click="editItem(`/master/device/${item.id}`)"
                     color="secondary"
                     small
@@ -303,7 +303,7 @@
                   >
 
                   <v-icon
-                    v-if="can(`device_delete`)"
+                    v-if="can(`master`)"
                     @click="deleteDeviceItem(item)"
                     color="red"
                     small

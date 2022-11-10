@@ -59,19 +59,79 @@
           <td class="ps-3">
             <b>{{ ++index }}</b>
           </td>
-          <td>{{ caps(item.name) }}</td>
-          <td>{{ caps(item.short_name) }}</td>
-          <td>{{ caps(item.location) }}</td>
-          <td>{{ caps(item.reservation_id) }}</td>
-          <td>{{ caps(item.reservation_type) }}</td>
+          <td>{{ caps(item.room_no) }}</td>
+          <td>{{ caps(item.room_type) }}</td>
           <td>
-            <v-chip
+            <v-btn
               small
-              class="p-2 mx-1"
-              :color="item.status.name == 'active' ? 'primary' : 'error'"
+              elevation="0"
+              dark
+              color="error"
+              v-if="item.booking_status"
             >
-              {{ item.status.name == "active" ? "online" : "offline" }}
-            </v-chip>
+              Booked
+            </v-btn>
+            <v-btn small elevation="0" dark color="#5ACE52" v-else
+              >Available Room</v-btn
+            >
+          </td>
+          <td>
+            <v-btn
+              small
+              elevation="0"
+              dark
+              color="warning"
+              v-if="item.booking_status && !item.check_in"
+            >
+              Check In
+            </v-btn>
+            <span v-else-if="!item.booking_status">
+              ---
+            </span>
+            <v-btn small elevation="0" dark color="warning" class="abc" v-else>
+              Check In
+            </v-btn>
+          </td>
+          <td>
+            <v-btn
+              small
+              elevation="0"
+              dark
+              color="blue"
+              v-if="item.booking_status && item.check_in"
+            >
+              Check Out
+            </v-btn>
+            <span v-else-if="!item.booking_status">
+              ---
+            </span>
+          </td>
+          <td>
+            <v-menu bottom left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list width="120" dense>
+                <v-list-item>
+                  <v-list-item-title style="cursor:pointer">
+                    <v-icon color="secondary" small>
+                      mdi-pencil
+                    </v-icon>
+                    Edit
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title style="cursor:pointer">
+                    <v-icon color="error" small>
+                      mdi-delete
+                    </v-icon>
+                    Delete
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </td>
         </tr>
       </table>
@@ -104,16 +164,46 @@ export default {
     search: "",
     snackbar: false,
     dialog: false,
-    data: [],
+    data: [
+      {
+        room_no: "101",
+        room_type: "delux",
+        booking_status: true,
+        check_in: false,
+        check_out: true
+      },
+      {
+        room_no: "201",
+        room_type: "delux",
+        booking_status: false,
+        check_in: false,
+        check_out: false
+      },
+      {
+        room_no: "302",
+        room_type: "delux",
+        booking_status: true,
+        check_in: false,
+        check_out: false
+      },
+      {
+        room_no: "504",
+        room_type: "delux",
+        booking_status: true,
+        check_in: true,
+        check_out: false
+      }
+    ],
     loading: false,
     total: 0,
     headers: [
       { text: "&nbsp #" },
       { text: "Room" },
       { text: "Room Type" },
-      { text: "Customer Name" },
-      { text: "Customer Number" },
-      { text: "Status" }
+      { text: "Status" },
+      { text: "Check In" },
+      { text: "Check Out" },
+      { text: "Action" }
     ],
     editedIndex: -1,
     response: "",
@@ -123,15 +213,15 @@ export default {
   computed: {},
 
   watch: {
-    dialog(val) {
-      val || this.close();
-      this.errors = [];
-      this.search = "";
-    }
+    // dialog(val) {
+    //   val || this.close();
+    //   this.errors = [];
+    //   this.search = "";
+    // }
   },
   created() {
-    this.loading = true;
-    this.getDataFromApi();
+    // this.loading = true;
+    // this.getDataFromApi();
   },
 
   methods: {

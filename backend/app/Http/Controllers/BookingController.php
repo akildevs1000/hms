@@ -37,6 +37,8 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+
+
         DB::beginTransaction();
 
         try {
@@ -48,11 +50,12 @@ class BookingController extends Controller
                 $customer_id = $customer->id;
             }
 
+
             $booking_info = [
                 'source' => $request->source,
                 'agent_name' => $request->agent_name,
                 'customer_id' => $customer_id,
-                'room_id' => $request->room_id,
+                'room_id' => $request->room_no,
                 'check_in' => $request->check_in,
                 'check_out' => $request->check_out,
                 'total_price' => $request->total_price,
@@ -64,14 +67,15 @@ class BookingController extends Controller
 
             $booked = Booking::create($booking_info);
 
+
             if ($booked) {
 
                 $room = new RoomController();
-                $updated = $room->update($request->room_id, '1'); //1 = booked
+                $updated = $room->update($request->room_no, '1'); //1 = booked
 
                 if ($updated) {
                     DB::commit();
-                    return ["done" => true, "data" => 'Room Booked Successfully'];
+                    return response()->json(['status' => true, 'message' => 'Room Booked Successfully']);
                 } else {
                     DB::rollBack();
                     return ["done" => false, "data" => "DataBase Error in status change"];
@@ -82,7 +86,7 @@ class BookingController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            
+
             return ["done" => false, "data" => "DataBase Error booking"];
         }
     }

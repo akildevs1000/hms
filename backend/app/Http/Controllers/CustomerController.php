@@ -15,7 +15,7 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $customer_info = [
-            'name' => $request->name,
+            'name' => $request->first_name . ' ' . $request->last_name,
             'contact_no' => $request->contact_no,
             'email' => $request->email,
             'id_card_type_id' => $request->id_card_type_id,
@@ -23,9 +23,9 @@ class CustomerController extends Controller
             'car_no' => $request->car_no,
             'no_of_adult' => $request->no_of_adult,
             'no_of_child' => $request->no_of_child,
-            'no_of_baby' => $request->no_of_child,
+            'no_of_baby' => $request->no_of_baby,
             'address' => $request->address,
-            'company_id' => $request->company_id,
+            'company_id' => $request->company_id ?? 1,
         ];
 
         return Customer::create($customer_info);
@@ -47,6 +47,6 @@ class CustomerController extends Controller
             "address",
         ];
         $model = $this->process_search($model, $key, $fields);
-        return $model->where("company_id",$request->company_id)->paginate($request->perPage);
+        return $model->where("company_id", $request->company_id)->paginate($request->perPage);
     }
 }

@@ -377,17 +377,6 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label">Country</label>
-                <!-- <v-text-field
-                  dense
-                  outlined
-                  type="text"
-                  v-model="contact.country"
-                  :hide-details="!errors.country"
-                  :error="errors.country"
-                  :error-messages="
-                    errors && errors.country ? errors.country[0] : ''
-                  "
-                ></v-text-field> -->
                 <v-text-field
                   dense
                   outlined

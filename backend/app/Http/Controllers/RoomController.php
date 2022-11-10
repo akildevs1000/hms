@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
@@ -38,5 +39,15 @@ class RoomController extends Controller
     public function update($room_id, $status)
     {
         return Room::where('id', $room_id)->update(["status" => $status]);
+    }
+
+    public function getRoom($id)
+    {
+        return Room::where('room_type_id', $id)->get(['id', 'room_no']);
+    }
+
+    public function get_id_cards()
+    {
+        return DB::table('id_card_types')->get(['id', 'name']);
     }
 }
