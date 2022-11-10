@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->integer('room_type_id')->nullable();
             $table->string('room_no')->nullable();
-            $table->string('status')->nullable();
+            $table->string('status')->default(0);
             $table->string('check_in_status')->nullable();
             $table->string('check_out_status')->nullable();
             $table->integer('deleteStatus')->nullable();
