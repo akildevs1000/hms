@@ -15,17 +15,17 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $customer_info = [
-            'name' => $request->first_name . ' ' . $request->last_name,
-            'contact_no' => $request->contact_no,
-            'email' => $request->email,
+            'name'            => $request->first_name . ' ' . $request->last_name,
+            'contact_no'      => $request->contact_no,
+            'email'           => $request->email,
             'id_card_type_id' => $request->id_card_type_id,
-            'id_card_no' => $request->id_card_no,
-            'car_no' => $request->car_no,
-            'no_of_adult' => $request->no_of_adult,
-            'no_of_child' => $request->no_of_child,
-            'no_of_baby' => $request->no_of_baby,
-            'address' => $request->address,
-            'company_id' => $request->company_id ?? 1,
+            'id_card_no'      => $request->id_card_no,
+            'car_no'          => $request->car_no,
+            'no_of_adult'     => $request->no_of_adult,
+            'no_of_child'     => $request->no_of_child,
+            'no_of_baby'      => $request->no_of_baby,
+            'address'         => $request->address,
+            'company_id'      => $request->company_id ?? 1,
         ];
 
         return Customer::create($customer_info);
@@ -33,7 +33,7 @@ class CustomerController extends Controller
 
     public function search(Request $request, $key)
     {
-        $model = Customer::query();
+        $model  = Customer::query();
         $fields = [
             'name',
             'contact_no',
@@ -48,5 +48,11 @@ class CustomerController extends Controller
         ];
         $model = $this->process_search($model, $key, $fields);
         return $model->where("company_id", $request->company_id)->paginate($request->perPage);
+    }
+
+    public function getCustomer($id)
+    {
+        return Customer::where('contact_no', $id)->first();
+
     }
 }

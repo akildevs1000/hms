@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
+use App\Http\Requests\Booking\StoreRequest;
 use App\Models\Booking;
-use App\Models\Customer;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,9 +35,8 @@ class BookingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-
 
         DB::beginTransaction();
 
@@ -45,33 +44,33 @@ class BookingController extends Controller
             $customer_id = $request->customer_id;
 
             if (!$customer_id) {
-                $customer = new CustomerController();
-                $customer = $customer->store($request);
+                $customer    = new CustomerController();
+                $customer    = $customer->store($request);
                 $customer_id = $customer->id;
             }
 
-
             $booking_info = [
-                'source' => $request->source,
-                'agent_name' => $request->agent_name,
-                'customer_id' => $customer_id,
-                'room_id' => $request->room_no,
-                'check_in' => $request->check_in,
-                'check_out' => $request->check_out,
-                'total_price' => $request->total_price,
-                'remaining_price' => $request->remaining_price,
-                "booking_date" => now(),
-                "payment_status" => $request->total_price == $request->remaining_price ? '0' : '1',
-                'company_id' => $request->company_id,
+                'source'          => $request->source,
+                'agent_name'      => $request->agent_name,
+                'customer_id'     => $customer_id,
+                'room_id'         => $request->room_id,
+                'check_in'        => $request->check_in,
+                'check_out'       => $request->check_out,
+                'total_price'     => $request->total_price,
+                'remaining_price' => $request->total_price,
+                "booking_date"    => now(),
+                "payment_status"  => $request->total_price == $request->remaining_price ? '0' : '1',
+                'company_id'      => $request->company_id,
+                'type'            => $request->type,
+                'request'         => $request->input('request'),
             ];
 
             $booked = Booking::create($booking_info);
 
-
             if ($booked) {
 
-                $room = new RoomController();
-                $updated = $room->update($request->room_no, '1'); //1 = booked
+                $room    = new RoomController();
+                $updated = $room->update($request->room_id, '1'); //1 = booked
 
                 if ($updated) {
                     DB::commit();
@@ -84,7 +83,7 @@ class BookingController extends Controller
                 DB::rollBack();
                 return ["done" => false, "data" => "DataBase Error booking"];
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             DB::rollBack();
 
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -93,24 +92,24 @@ class BookingController extends Controller
 
     public function check_in_room(Request $request)
     {
-        $booking_id = $request->booking_id;
+        $booking_id      = $request->booking_id;
         $advance_payment = $request->advance_payment;
 
         if ($booking_id == "") {
-            return  [
+            return [
                 'done' => false,
                 'data' => "Error With Booking",
             ];
         }
 
         $booking_details = Booking::where('booking_id', $booking_id)->first();
-        $room_id = $booking_details->room_id;
+        $room_id         = $booking_details->room_id;
         $remaining_price = $booking_details->total_price - $advance_payment;
 
         $updated = Booking::where('booking_id', $booking_id)->update(["remaining_price" => $remaining_price]);
 
         if (!$updated) {
-            return  [
+            return [
                 'done' => false,
                 'data' => "Problem in payment",
             ];
@@ -124,25 +123,23 @@ class BookingController extends Controller
     public function check_out_room(Request $request)
     {
 
-        $booking_id = $request->booking_id;
+        $booking_id       = $request->booking_id;
         $remaining_amount = $request->remaining_amount;
 
         if ($booking_id == "") {
-            return  [
+            return [
                 'done' => false,
                 'data' => "Error With Booking",
             ];
         }
 
-
         $booking_details = Booking::where('booking_id', $booking_id)->first();
-        $room_id = $booking_details->room_id;
+        $room_id         = $booking_details->room_id;
         $remaining_price = $booking_details->remaining_price;
-
 
         if ($remaining_price !== $remaining_amount) {
 
-            return  [
+            return [
                 'done' => false,
                 'data' => "Please Enter Full Payment",
             ];
@@ -150,13 +147,13 @@ class BookingController extends Controller
         $updateBooking = Booking::where('booking_id', $booking_id)->update(["remaining_price" => '0', 'payment_status' => '1']);
 
         if (!$updateBooking) {
-            return  [
+            return [
                 'done' => false,
                 'data' => "Problem in payment",
             ];
         }
 
-        $updateRoom = Room::where('room_id', $room_id)->update(["check_in_status" => '0', 'check_out_status' => '1', 'status' => NULL]);
+        $updateRoom = Room::where('room_id', $room_id)->update(["check_in_status" => '0', 'check_out_status' => '1', 'status' => null]);
 
         return $updateRoom ? ['done' => true, 'data' => ''] : ['done' => false, 'data' => "Problem in Update Room Check in status"];
     }
@@ -169,7 +166,7 @@ class BookingController extends Controller
      */
     public function booked_room($room_id)
     {
-        $data =  DB::table('rooms')
+        $data = DB::table('rooms')
             ->join('room_types', 'room_types.id', '=', 'rooms.room_type_id')
             ->join('bookings', 'bookings.room_id', '=', 'rooms.id')
             ->join('customers', 'customer.id', '=', 'bookings.customer_id')
@@ -178,7 +175,7 @@ class BookingController extends Controller
             ->get(['booking_id', 'customer_name as name', 'room_no', 'room_type', 'check_in', 'check_in', 'total_price', 'remaining_price']);
 
         if (!$data) {
-            return  [
+            return [
                 'done' => false,
                 'data' => "DataBase Error",
             ];
@@ -186,11 +183,10 @@ class BookingController extends Controller
 
         $data["done"] = true;
 
-        $data['check_in'] = date('M j, Y', strtotime($data['check_in']));
+        $data['check_in']  = date('M j, Y', strtotime($data['check_in']));
         $data['check_out'] = date('M j, Y', strtotime($data['check_in']));
 
         return $data;
-
 
         // $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id' AND payment_status = '0'";
         // $result = mysqli_query($connection, $sql);
@@ -213,18 +209,17 @@ class BookingController extends Controller
         // echo json_encode($response);
     }
 
-
     public function customer_details($room_id)
     {
 
         if ($room_id == '') {
-            return  [
+            return [
                 'done' => false,
                 'data' => "DataBase Error",
             ];
         }
 
-        $data =  DB::table('rooms')
+        $data = DB::table('rooms')
             ->join('room_types', 'room_types.id', '=', 'rooms.room_type_id')
             ->join('bookings', 'bookings.room_id', '=', 'rooms.id')
             ->join('customers', 'customer.id', '=', 'bookings.customer_id')
@@ -232,15 +227,14 @@ class BookingController extends Controller
             ->where('bookings.payment_status', '0')
             ->first();
 
-
         if (!$data) {
-            return  [
+            return [
                 'done' => false,
                 'data' => "DataBase Error",
             ];
         }
 
-        $id_type_name =  DB::table('id_card_types')->where('id', $data->id_card_type_id)->first('id');
+        $id_type_name = DB::table('id_card_types')->where('id', $data->id_card_type_id)->first('id');
 
         $data['id_card_type_id'] = $id_type_name['id_card_type'];
 

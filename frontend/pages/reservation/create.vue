@@ -14,9 +14,7 @@
     </v-row>
 
     <v-card elevation="0">
-      <v-card-title primary-title>
-        Room Information
-      </v-card-title>
+      <v-card-title primary-title> Room Information </v-card-title>
       <v-divider></v-divider>
       <v-container grid-list-xs>
         <v-row dense>
@@ -30,7 +28,9 @@
               dense
               outlined
               @change="getType(room.type)"
-              :hide-details="true"
+              :hide-details="!errors.type"
+              :error="errors.type"
+              :error-messages="errors && errors.type ? errors.type[0] : ''"
             ></v-select>
           </v-col>
           <v-col md="6" cols="12" sm="12" v-if="isAgent">
@@ -40,6 +40,11 @@
               outlined
               type="text"
               v-model="room.agent_name"
+              :hide-details="!errors.agent_name"
+              :error="errors.agent_name"
+              :error-messages="
+                errors && errors.agent_name ? errors.agent_name[0] : ''
+              "
             ></v-text-field>
           </v-col>
           <v-col md="6" sm="12" cols="12" dense v-if="isOnline">
@@ -47,14 +52,15 @@
             <v-select
               v-model="room.source"
               :items="sources"
-              :hide-details="true"
               dense
               outlined
+              :hide-details="!errors.source"
+              :error="errors.source"
+              :error-messages="errors && errors.source ? errors.source[0] : ''"
             ></v-select>
           </v-col>
 
           <v-col md="6" sm="12" cols="12" dense>
-            <input type="hidden" v-model="room.price" />
             <label class="col-form-label"
               >Room Type <span class="text-danger">*</span></label
             >
@@ -66,22 +72,28 @@
               dense
               outlined
               @change="get_room(room.room_type)"
+              :hide-details="!errors.room_type"
+              :error="errors.room_type"
+              :error-messages="
+                errors && errors.room_type ? errors.room_type[0] : ''
+              "
             ></v-select>
-            <span v-if="errors && errors.room_type" class="error--text">{{
-              errors.room_type[0]
-            }}</span>
           </v-col>
 
           <v-col md="6" sm="12" cols="12" dense>
             <label class="col-form-label">Room No </label>
             <v-select
-              v-model="room.room_no"
+              v-model="room.room_id"
               :items="rooms"
               item-text="room_no"
-              :hide-details="true"
               item-value="id"
               dense
               outlined
+              :hide-details="!errors.room_id"
+              :error="errors.room_id"
+              :error-messages="
+                errors && errors.room_id ? errors.room_id[0] : ''
+              "
             ></v-select>
           </v-col>
 
@@ -164,30 +176,42 @@
     </v-card>
 
     <v-card elevation="0" class="mt-3">
-      <v-card-title primary-title>
-        Customer Information
-      </v-card-title>
+      <v-card-title primary-title> Customer Information </v-card-title>
       <v-divider></v-divider>
       <v-container grid-list-xs>
         <v-row dense>
-          <v-col md="6" cols="12" sm="12">
+          <v-col md="4" cols="12" sm="12">
             <label class="col-form-label">Contact No</label>
             <v-text-field
               dense
               outlined
-              type="text"
+              type="number"
               v-model="customer.contact_no"
-              :hide-details="true"
+              :hide-details="!errors.contact_no"
+              :error="errors.contact_no"
+              :error-messages="
+                errors && errors.contact_no ? errors.contact_no[0] : ''
+              "
             ></v-text-field>
+          </v-col>
+          <v-col md="2" class="mt-10" cols="12" sm="12">
+            <label class="col-form-label"></label>
+            <v-btn color="primary" @click="get_customer()"
+              >Check Customer</v-btn
+            >
           </v-col>
           <v-col md="6" cols="12" sm="12">
             <label class="col-form-label">First Name</label>
             <v-text-field
               dense
               outlined
-              :hide-details="true"
               type="text"
               v-model="customer.first_name"
+              :hide-details="!errors.first_name"
+              :error="errors.first_name"
+              :error-messages="
+                errors && errors.first_name ? errors.first_name[0] : ''
+              "
             ></v-text-field>
           </v-col>
           <v-col md="6" cols="12" sm="12">
@@ -219,10 +243,16 @@
               v-model="customer.id_card_type_id"
               :items="idCards"
               dense
-              :hide-details="true"
               outlined
               item-text="name"
               item-value="id"
+              :hide-details="!errors.id_card_type_id"
+              :error="errors.id_card_type_id"
+              :error-messages="
+                errors && errors.id_card_type_id
+                  ? errors.id_card_type_id[0]
+                  : ''
+              "
             ></v-select>
           </v-col>
 
@@ -251,10 +281,15 @@
             <v-select
               v-model="customer.no_of_adult"
               :items="member_numbers"
-              :hide-details="true"
               dense
               outlined
-            ></v-select>
+              :hide-details="!errors.no_of_adult"
+              :error="errors.no_of_adult"
+              :error-messages="
+                errors && errors.no_of_adult ? errors.no_of_adult[0] : ''
+              "
+            >
+            </v-select>
           </v-col>
           <v-col md="1" sm="12" cols="12" dense>
             <label class="col-form-label">Child </label>
@@ -264,7 +299,8 @@
               :hide-details="true"
               dense
               outlined
-            ></v-select>
+            >
+            </v-select>
           </v-col>
           <v-col md="1" sm="12" cols="12" dense>
             <label class="col-form-label">Baby </label>
@@ -274,7 +310,8 @@
               dense
               :hide-details="true"
               outlined
-            ></v-select>
+            >
+            </v-select>
           </v-col>
         </v-row>
         <v-row>
@@ -342,7 +379,7 @@ export default {
       "Cleartrip",
       "in.hotels.com",
       "Booking.com",
-      "TripAdvisor.in"
+      "TripAdvisor.in",
     ],
     idCards: [],
 
@@ -355,7 +392,7 @@ export default {
     check_out_menu: false,
 
     upload: {
-      name: ""
+      name: "",
     },
 
     member_numbers: [1, 2, 3, 4],
@@ -363,45 +400,27 @@ export default {
     isOnline: false,
     isAgent: false,
 
-    payload: {
-      first_name: "",
-      last_name: "",
-      display_name: "",
-      user_name: "",
-      email: "",
-      password: "",
-      role_id: "",
-      password_confirmation: "",
-      employee_id: "",
-      system_user_id: ""
-    },
     room: {
       amount: "",
+      total_price: "",
       source: "",
       price: "",
       type: "",
       agent_name: "",
       source: "",
       room_type: "",
-      room_no: "",
+      room_id: "",
       check_in: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
       check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
-        .substr(0, 10)
+        .substr(0, 10),
     },
     customer: {
-      company_id: 1
+      company_id: 1,
     },
-    previewImage: null,
-    e1: 1,
     errors: [],
-    departments: [],
-    designations: [],
-    subDepartments: [],
-    roles: [],
-    Rules: [v => !!v || "This field is required"]
   }),
   created() {
     this.preloader = false;
@@ -438,8 +457,8 @@ export default {
     get_room_types() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`room_type`, payload).then(({ data }) => {
         this.roomTypes = data;
@@ -449,8 +468,8 @@ export default {
     get_id_cards() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
@@ -458,36 +477,51 @@ export default {
     },
 
     get_room(val) {
-      let room_type = this.roomTypes.find(e => e.id == val);
+      let room_type = this.roomTypes.find((e) => e.id == val);
       this.room.price = room_type.price;
       this.$axios.get(`get_room/${val}`).then(({ data }) => {
         this.rooms = data;
       });
       this.calAmount();
     },
+    get_customer() {
+      let cn = this.customer.contact_no;
+      if (cn == undefined) {
+        alert("Enter contact number");
+        return;
+      }
+
+      this.$axios.get(`get_customer/${cn}`).then(({ data }) => {
+        this.customer = {
+          ...data,
+        };
+        let name = data.name;
+        this.customer.first_name = name.split(" ")[0] || "";
+        this.customer.last_name = name.split(" ")[1] || "";
+      });
+      this.calAmount();
+    },
 
     calAmount() {
-      return this.room.price * this.getDays();
+      this.room.total_price = this.room.price * this.getDays();
+      return this.room.total_price;
     },
 
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
 
     store() {
-      // this.loading = true;
-
       let payload = {
         ...this.customer,
-        ...this.room
+        ...this.room,
       };
 
       this.errors = payload;
-      console.log(this.errors);
       this.$axios
         .post("/booking", payload)
         .then(({ data }) => {
@@ -496,13 +530,14 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
           } else {
+            this.errors = [];
             this.snackbar = data.message;
             this.response = data.message;
           }
         })
-        .catch(e => console.log(e));
-    }
-  }
+        .catch((e) => console.log(e));
+    },
+  },
 };
 </script>
 

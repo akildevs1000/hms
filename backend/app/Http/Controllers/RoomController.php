@@ -12,7 +12,7 @@ class RoomController extends Controller
     {
         $model = Room::query();
 
-        if($request->status != "-1") {
+        if ($request->status != "-1") {
             $model->where('status', $request->status);
         }
         return $model->where('company_id', $request->company_id)->orderByDesc("id")->paginate($request->per_page);
@@ -21,19 +21,19 @@ class RoomController extends Controller
     public function search(Request $request, $key)
     {
 
-        $model = Room::query();
+        $model  = Room::query();
         $fields = [
             'room_no',
             'room_type_id',
         ];
         $model = $this->process_search($model, $key, $fields);
-        return $model->where("company_id", $request->company_id)->where("status",$request->status)->paginate($request->per_page);
+        return $model->where("company_id", $request->company_id)->where("status", $request->status)->paginate($request->per_page);
     }
 
     public function filter(Request $request)
     {
         $model = Room::query();
-        return $model->where("company_id", $request->company_id)->where("status",$request->status)->paginate($request->per_page);
+        return $model->where("company_id", $request->company_id)->where("status", $request->status)->paginate($request->per_page);
     }
 
     public function update($room_id, $status)
