@@ -243,4 +243,9 @@ class BookingController extends Controller
 
         return $data;
     }
+
+    public function events_list(Request $request)
+    {
+        return Booking::where('company_id', $request->company_id)->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
+    }
 }

@@ -50,4 +50,33 @@ class RoomController extends Controller
     {
         return DB::table('id_card_types')->get(['id', 'name']);
     }
+
+    public function roomList()
+    {
+        $arr = [];
+        $data =    Room::with('roomType')->get();
+        foreach ($data as   $d) {
+            $color =  $this->get_color($d->roomType->name);
+            $arr[] = [
+                'id' => $d->room_no, 'room_no' => $d->room_no,
+                'room_type' => $d->roomType->name,
+                'eventColor' => $color
+            ];
+        }
+
+        return $arr;
+    }
+
+    public function get_color($val)
+    {
+        return match ($val) {
+            'Single' => 'red',
+            'Double' => 'green',
+            'Triple' => 'Pink',
+            'Family' => '#000',
+            'King' => 'blue',
+            'Sized' => 'gray',
+            'Single' => 'black',
+        };
+    }
 }

@@ -18,8 +18,8 @@ return new class extends Migration
             $table->integer('customer_id')->nullable();
             $table->integer('room_id')->nullable();
             $table->date('booking_date')->nullable();
-            $table->date('check_in')->nullable();
-            $table->date('check_out')->nullable();
+            $table->dateTime('check_in')->nullable();
+            $table->dateTime('check_out')->nullable();
             $table->string('total_price')->nullable();
             $table->string('remaining_price')->nullable();
             $table->integer('payment_status')->nullable();

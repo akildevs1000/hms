@@ -12,3 +12,6 @@
 
     Route::get('room_type', [RoomTypeController::class, 'index']);
     Route::get('get_id_cards', [RoomController::class, 'get_id_cards']);
+
+
+    Route::get('room_list', [RoomController::class, 'roomList']);

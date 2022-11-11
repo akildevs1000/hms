@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Models\Employee;
 use App\Mail\DbBackupMail;
 use App\Models\Attendance;
@@ -16,14 +17,25 @@ use App\Http\Controllers\AttendanceController;
 Route::get('/test', function (Request $request) {
     // return "Awesome APIs";
 
-    $data = [
-        'file' => collect(glob(storage_path("app/ideaHrms/*.zip")))->last(),
-        'date' => date('Y-M-d'),
-        'body' => 'ideahrms Database Backup',
-    ];
+    // return  User::all();
 
-    Mail::to('fahathammex90@gmail.com')
-        ->queue(new DbBackupMail($data));
+    $food = 'cake';
+
+    return $return_value = match ($food) {
+        'apple' => 'This food is an apple',
+        'bar' => 'This food is a bar',
+        'cake' => 'This food is a cake',
+    };
+
+
+    // $data = [
+    //     'file' => collect(glob(storage_path("app/ideaHrms/*.zip")))->last(),
+    //     'date' => date('Y-M-d'),
+    //     'body' => 'ideahrms Database Backup',
+    // ];
+
+    // Mail::to('fahathammex90@gmail.com')
+    //     ->queue(new DbBackupMail($data));
 });
 
 

@@ -17,4 +17,14 @@ class Room extends Model
         "created_at",
         "updated_at"
     ];
+
+    /**
+     * Get all of the comments for the Room
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function roomType()
+    {
+        return $this->belongsTo(RoomType::class);
+    }
 }

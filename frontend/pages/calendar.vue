@@ -8,7 +8,6 @@
 <script>
 import FullCalendar from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 
@@ -20,10 +19,11 @@ export default {
     return {
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
-        now: "2020-09-07",
+        now: "2022-11-07",
         editable: true,
         aspectRatio: 1.8,
         scrollTime: "00:00",
+        displayEventTime: false,
 
         initialView: "resourceTimelineMonth",
 
@@ -33,7 +33,7 @@ export default {
         resourceAreaColumns: [
           {
             headerContent: "Room",
-            field: "room"
+            field: "room_no"
           },
           {
             headerContent: "Room Type",
@@ -41,71 +41,67 @@ export default {
           }
         ],
         resources: [
-          { id: "a", room: "102" },
-          { id: "b", room: "103", eventColor: "green" },
-          { id: "c", room: "104", eventColor: "orange" },
-          { id: "e", room: "105" },
-          { id: "f", room: "106", eventColor: "red" },
-          { id: "g", room: "102" },
-          { id: "h", room: "102" },
-          { id: "i", room: "102" },
-          { id: "j", room: "102" },
-          { id: "k", room: "102" },
-          { id: "l", room: "102" },
-          { id: "m", room: "102" },
-          { id: "n", room: "102" },
-          { id: "o", room: "102" },
-          { id: "p", room: "102" },
-          { id: "q", room: "102" },
-          { id: "r", room: "102" },
-          { id: "s", room: "102" },
-          { id: "t", room: "102" },
-          { id: "u", room: "102" },
-          { id: "v", room: "102" },
-          { id: "w", room: "102" },
-          { id: "x", room: "102" },
-          { id: "y", room: "102" },
-          { id: "z", room: "102" }
+          // { id: "103", room_no: "103", eventColor: "green" },
+          // { id: "104", room_no: "104", eventColor: "orange" }
         ],
         events: [
-          {
-            id: "1",
-            resourceId: "b",
-            start: "2020-09-07T02:00:00",
-            end: "2020-09-07T07:00:00",
-            title: "e"
-          },
-          {
-            id: "2",
-            resourceId: "c",
-            start: "2020-09-07T05:00:00",
-            end: "2020-09-07T22:00:00",
-            title: "event 2"
-          },
-          {
-            id: "3",
-            resourceId: "d",
-            start: "2020-09-06",
-            end: "2020-09-08",
-            title: "event 3"
-          },
-          {
-            id: "4",
-            resourceId: "e",
-            start: "2020-09-07T03:00:00",
-            end: "2020-09-07T08:00:00",
-            title: "event 4"
-          },
-          {
-            id: "5",
-            resourceId: "f",
-            start: "2020-09-07T00:30:00",
-            end: "2020-09-07T02:30:00",
-            title: "event 5"
+          // {
+          //   id: "1",
+          //   room_id: "1",
+          //   resourceId: "104",
+          //   start: "2022-11-09 00:00:00",
+          //   end: "2022-11-11 06:00:00",
+          //   title: "e"
+          // },
+          // {
+          //   id: "1",
+          //   room_id: "1",
+          //   resourceId: "103",
+          //   start: "2022-11-09 00:00:00",
+          //   end: "2022-11-11 06:00:00",
+          //   title: "e"
+          // }
+        ],
+        eventDidMount: function(info) {
+          if (info.event.extendedProps.background) {
+            info.el.style.background = info.event.extendedProps.background;
           }
-        ]
-      }
+        }
+      },
+      data: []
     };
+  },
+  created() {
+    console.log(this.$auth.user.company.id);
+  },
+
+  mounted() {
+    this.room_types();
+    this.get_events();
+  },
+
+  methods: {
+    room_types() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`room_list`, payload).then(({ data }) => {
+        this.calendarOptions.resources = data;
+      });
+    },
+
+    get_events() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`events_list`, payload).then(({ data }) => {
+        this.calendarOptions.events = data;
+      });
+    }
   }
 };
 </script>
