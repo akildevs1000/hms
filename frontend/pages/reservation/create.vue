@@ -196,7 +196,10 @@
           </v-col>
           <v-col md="2" class="mt-10" cols="12" sm="12">
             <label class="col-form-label"></label>
-            <v-btn color="primary" @click="get_customer()"
+            <v-btn
+              color="primary"
+              @click="get_customer()"
+              :loading="checkLoader"
               >Check Customer</v-btn
             >
           </v-col>
@@ -361,6 +364,7 @@ export default {
   data: () => ({
     Model: "Reservation",
     snackbar: false,
+    checkLoader: false,
     response: "",
     preloader: false,
     loading: false,
@@ -379,7 +383,7 @@ export default {
       "Cleartrip",
       "in.hotels.com",
       "Booking.com",
-      "TripAdvisor.in",
+      "TripAdvisor.in"
     ],
     idCards: [],
 
@@ -392,7 +396,7 @@ export default {
     check_out_menu: false,
 
     upload: {
-      name: "",
+      name: ""
     },
 
     member_numbers: [1, 2, 3, 4],
@@ -415,12 +419,10 @@ export default {
         .substr(0, 10),
       check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
-        .substr(0, 10),
+        .substr(0, 10)
     },
-    customer: {
-      company_id: 1,
-    },
-    errors: [],
+    customer: {},
+    errors: []
   }),
   created() {
     this.preloader = false;
@@ -457,8 +459,8 @@ export default {
     get_room_types() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id,
-        },
+          company_id: this.$auth.user.company.id
+        }
       };
       this.$axios.get(`room_type`, payload).then(({ data }) => {
         this.roomTypes = data;
@@ -468,8 +470,8 @@ export default {
     get_id_cards() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id,
-        },
+          company_id: this.$auth.user.company.id
+        }
       };
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
@@ -477,7 +479,7 @@ export default {
     },
 
     get_room(val) {
-      let room_type = this.roomTypes.find((e) => e.id == val);
+      let room_type = this.roomTypes.find(e => e.id == val);
       this.room.price = room_type.price;
       this.$axios.get(`get_room/${val}`).then(({ data }) => {
         this.rooms = data;
@@ -485,21 +487,28 @@ export default {
       this.calAmount();
     },
     get_customer() {
-      let cn = this.customer.contact_no;
-      if (cn == undefined) {
+      this.checkLoader = true;
+      let contact_no = this.customer.contact_no;
+      console.log(contact_no);
+      if (contact_no == undefined) {
         alert("Enter contact number");
         return;
       }
 
-      this.$axios.get(`get_customer/${cn}`).then(({ data }) => {
+      this.$axios.get(`get_customer/${contact_no}`).then(({ data }) => {
+        console.log(data);
+        if (!data.status) {
+          alert("No exist customer");
+          this.customer = {};
+          this.customer.contact_no = contact_no;
+          return;
+        }
         this.customer = {
-          ...data,
+          ...data.data
         };
-        let name = data.name;
-        this.customer.first_name = name.split(" ")[0] || "";
-        this.customer.last_name = name.split(" ")[1] || "";
+
+        this.checkLoader = false;
       });
-      this.calAmount();
     },
 
     calAmount() {
@@ -510,7 +519,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
+        (u && u.permissions.some(e => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -518,7 +527,7 @@ export default {
     store() {
       let payload = {
         ...this.customer,
-        ...this.room,
+        ...this.room
       };
 
       this.errors = payload;
@@ -535,9 +544,9 @@ export default {
             this.response = data.message;
           }
         })
-        .catch((e) => console.log(e));
-    },
-  },
+        .catch(e => console.log(e));
+    }
+  }
 };
 </script>
 
