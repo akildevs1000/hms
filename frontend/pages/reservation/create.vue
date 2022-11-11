@@ -162,7 +162,7 @@
               :hide-details="true"
               outlined
               type="text"
-              v-model="room.edit_amount"
+              v-model="room.price"
             ></v-text-field>
           </v-col>
 
