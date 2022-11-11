@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('room_types', function (Blueprint $table) {
-            $table->integer('company_id')->nullable();
+            $table->integer('company_id')->default(0);
         });
     }
 
