@@ -527,9 +527,9 @@ export default {
     store() {
       let payload = {
         ...this.customer,
-        ...this.room
+        ...this.room,
+        company_id: this.$auth.user.company.id
       };
-
       this.errors = payload;
       this.$axios
         .post("/booking", payload)
