@@ -59,8 +59,11 @@
           <td class="ps-3">
             <b>{{ ++index }}</b>
           </td>
-          <td>{{ caps(item.room_no) }}</td>
-          <td>{{ caps(item.room_type) }}</td>
+          <td>{{ item.id }}</td>
+          <td>{{ item.room_id }}</td>
+          <td>{{ item.booking_date }}</td>
+          <td>{{ item.check_in }}</td>
+          <td>{{ item.check_out }}</td>
           <td>
             <v-btn
               small
@@ -106,33 +109,6 @@
               ---
             </span>
           </td>
-          <td>
-            <v-menu bottom left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list width="120" dense>
-                <v-list-item>
-                  <v-list-item-title style="cursor:pointer">
-                    <v-icon color="secondary" small>
-                      mdi-pencil
-                    </v-icon>
-                    Edit
-                  </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title style="cursor:pointer">
-                    <v-icon color="error" small>
-                      mdi-delete
-                    </v-icon>
-                    Delete
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </td>
         </tr>
       </table>
     </v-card>
@@ -160,50 +136,20 @@ export default {
       per_page: 10
     },
     options: {},
-    endpoint: "device",
+    endpoint: "booking",
     search: "",
     snackbar: false,
     dialog: false,
-    data: [
-      {
-        room_no: "101",
-        room_type: "delux",
-        booking_status: true,
-        check_in: false,
-        check_out: true
-      },
-      {
-        room_no: "201",
-        room_type: "delux",
-        booking_status: false,
-        check_in: false,
-        check_out: false
-      },
-      {
-        room_no: "302",
-        room_type: "delux",
-        booking_status: true,
-        check_in: false,
-        check_out: false
-      },
-      {
-        room_no: "504",
-        room_type: "delux",
-        booking_status: true,
-        check_in: true,
-        check_out: false
-      }
-    ],
+    data: [],
     loading: false,
     total: 0,
     headers: [
       { text: "&nbsp #" },
+      { text: "Reservation No" },
       { text: "Room" },
-      { text: "Room Type" },
       { text: "Status" },
       { text: "Check In" },
-      { text: "Check Out" },
-      { text: "Action" }
+      { text: "Check Out" }
     ],
     editedIndex: -1,
     response: "",
@@ -221,7 +167,7 @@ export default {
   },
   created() {
     // this.loading = true;
-    // this.getDataFromApi();
+    this.getDataFromApi();
   },
 
   methods: {

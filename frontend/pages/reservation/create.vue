@@ -177,6 +177,7 @@
 
     <v-card elevation="0" class="mt-3">
       <v-card-title primary-title> Customer Information </v-card-title>
+
       <v-divider></v-divider>
       <v-container grid-list-xs>
         <v-row dense>
@@ -421,7 +422,9 @@ export default {
         .toISOString()
         .substr(0, 10)
     },
-    customer: {},
+    customer: {
+      customer_id: ""
+    },
     errors: []
   }),
   created() {
@@ -487,26 +490,32 @@ export default {
       this.calAmount();
     },
     get_customer() {
-      this.checkLoader = true;
+      // this.checkLoader = true;
       let contact_no = this.customer.contact_no;
-      console.log(contact_no);
       if (contact_no == undefined) {
         alert("Enter contact number");
+        this.checkLoader = false;
         return;
       }
 
       this.$axios.get(`get_customer/${contact_no}`).then(({ data }) => {
-        console.log(data);
         if (!data.status) {
           alert("No exist customer");
+          this.checkLoader = false;
+
           this.customer = {};
           this.customer.contact_no = contact_no;
           return;
         }
+
         this.customer = {
-          ...data.data
+          ...data.data,
+          customer_id: data.data.id
         };
 
+        console.log(data.data);
+        return;
+        // customer_id
         this.checkLoader = false;
       });
     },
@@ -530,6 +539,7 @@ export default {
         ...this.room,
         company_id: this.$auth.user.company.id
       };
+
       this.errors = payload;
       this.$axios
         .post("/booking", payload)

@@ -32,7 +32,6 @@ class StoreRequest extends FormRequest
             'room_id'         => 'required',
             'check_in'        => 'required',
             'check_out'       => 'required',
-            'company_id'      => 'required',
 
             'first_name'      => 'required',
             'contact_no'      => 'required|max:15|min:8',

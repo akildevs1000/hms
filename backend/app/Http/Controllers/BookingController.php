@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log as Logger;
 
 class BookingController extends Controller
 {
@@ -15,9 +16,9 @@ class BookingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Booking::get();
+        return Booking::where('company_id', $request->company_id)->paginate($request->per_page ?? 10);
     }
 
     /**
@@ -83,9 +84,9 @@ class BookingController extends Controller
                 DB::rollBack();
                 return ["done" => false, "data" => "DataBase Error booking"];
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             DB::rollBack();
-
+            Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
         }
     }
