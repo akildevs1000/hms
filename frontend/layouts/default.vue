@@ -323,7 +323,7 @@ export default {
             {
               icon: "mdi-bookmark ",
               title: "Add Reservation",
-              to: "/designation",
+              to: "/reservation/create",
               menu: "reservation_access"
             },
             {
@@ -345,15 +345,149 @@ export default {
           title: "Customers",
           to: "/customer/list",
           menu: "reservation_access"
-        },
-        {
-          icon: "mdi-calendar",
-          title: "Room Calendar",
-          to: "/calendar",
-          menu: "reservation_access"
         }
       ],
 
+      // menus: [
+      //   {
+      //     icon: "mdi-briefcase-outline",
+      //     title: `Organization`,
+      //     open_menu: false,
+      //     menu: "company_access",
+      //     hasChildren: [
+      //       {
+      //         icon: "mdi-domain",
+      //         title: "Department",
+      //         to: "/department",
+      //         menu: "department_access"
+      //       },
+      //       {
+      //         icon: "mdi-lan",
+      //         title: "Sub Department",
+      //         to: "/sub-department",
+      //         menu: "sub_department_access"
+      //       },
+
+      //       {
+      //         icon: "mdi-treasure-chest ",
+      //         title: "Designation",
+      //         to: "/designation",
+      //         menu: "designation_access"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     icon: "mdi-door",
+      //     title: "Devices",
+      //     to: "/device",
+      //     menu: "device_access"
+      //   },
+      //   {
+      //     icon: "mdi-clipboard-edit-outline",
+      //     title: "Policy",
+      //     to: "/policy",
+      //     menu: "policy_access"
+      //   },
+      //   {
+      //     icon: "mdi-bullhorn-variant-outline",
+      //     title: "Announcement",
+      //     to: "/announcement",
+      //     menu: "announcement_access"
+      //   },
+      //   {
+      //     icon: "mdi-account",
+      //     title: "Employees",
+      //     to: "/employees",
+      //     menu: "employee_access"
+      //   },
+      //   {
+      //     icon: "mdi-clock",
+      //     title: "Shift",
+      //     to: "/shift",
+      //     menu: "shift_access"
+      //   },
+      //   {
+      //     icon: "mdi-account",
+      //     title: "Employee Schedule",
+      //     to: "/employee_schedule",
+      //     menu: "employee_schedule_access"
+      //   },
+
+      //   {
+      //     icon: "mdi-cash-multiple",
+      //     title: `Payroll`,
+      //     open_menu: false,
+      //     menu: "payroll_access",
+      //     hasChildren: [
+      //       // {
+      //       //   icon: "mdi-cash-multiple ",
+      //       //   title: "Generate Month",
+      //       //   to: "/payroll/month",
+      //       //   menu:("payroll_generate_month_access")
+      //       // },
+
+      //       // {
+      //       //   icon: "mdi-cash-multiple ",
+      //       //   title: "Generate Payroll",
+      //       //   to: "/employees",
+      //       //   menu:("employee_schedule_access")
+      //       // },
+      //       {
+      //         icon: "mdi-cash ",
+      //         title: "Salary",
+      //         to: "/payroll/salary",
+      //         menu: "payroll_generate_access"
+      //       }
+      //       // {
+      //       //   icon: "mdi-cash-multiple ",
+      //       //   title: "Salary Advance",
+      //       //   to: "/employee_schedule",
+      //       //   menu:("employee_schedule_access")
+      //       // }
+      //     ]
+      //   },
+
+      //   {
+      //     icon: "mdi-account",
+      //     title: `User Management`,
+      //     open_menu: false,
+      //     menu: "payroll_access",
+      //     hasChildren: [
+      //       {
+      //         icon: "mdi-account-plus",
+      //         title: "Roles",
+      //         to: "/role",
+      //         menu: "role_access"
+      //       },
+      //       {
+      //         icon: "mdi-lock",
+      //         title: "Assign Permissions",
+      //         to: "/assign_permission",
+      //         menu: "assign_permission_access"
+      //       }
+      //     ]
+      //   },
+
+      //   {
+      //     icon: "mdi-clipboard-text-clock",
+      //     title: "Reports",
+      //     to: "/attendance_report",
+      //     menu: "attendance_report_access"
+      //   },
+
+      //   {
+      //     icon: "mdi-email",
+      //     title: "Notification",
+      //     to: "/report_notifications",
+      //     menu: "notifications_access"
+      //   },
+      //   {
+      //     icon: "mdi-cog",
+      //     title: "Setting",
+      //     to: "/setting",
+      //     menu: "setting_access"
+      //   }
+      // ],
       items: [],
       modules: {
         module_ids: [],
