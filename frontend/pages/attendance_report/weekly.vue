@@ -41,7 +41,7 @@
             <v-col md="5">
               Departments
               <v-autocomplete
-                @change="getEmployeesByDepartment"
+                @change="getcustomersByDepartment"
                 class="mt-2"
                 outlined
                 dense
@@ -61,7 +61,7 @@
                 dense
                 v-model="payload.employee_id"
                 x-small
-                :items="scheduled_employees"
+                :items="scheduled_customers"
                 item-value="system_user_id"
                 item-text="name_with_user_id"
                 :hide-details="true"
@@ -481,7 +481,7 @@ export default {
     to_menu: false,
     ids: [],
     departments: [],
-    scheduled_employees: [],
+    scheduled_customers: [],
 
     loading: false,
     total: 0,
@@ -652,23 +652,23 @@ export default {
       });
     },
 
-    getEmployeesByDepartment() {
+    getcustomersByDepartment() {
       this.$axios
         .get(
-          `/employees_by_departments/${this.payload.department_id}`,
+          `/customers_by_departments/${this.payload.department_id}`,
           this.custom_options
         )
         .then(({ data }) => {
-          this.scheduled_employees = data;
+          this.scheduled_customers = data;
           this.loading = false;
         });
     },
 
-    getScheduledEmployees(options) {
+    getScheduledcustomers(options) {
       this.$axios
-        .get(`/scheduled_employees_with_type`, options)
+        .get(`/scheduled_customers_with_type`, options)
         .then(({ data }) => {
-          this.scheduled_employees = data;
+          this.scheduled_customers = data;
         });
     },
 

@@ -51,13 +51,13 @@
                   "
                 ></v-text-field>
               </v-col>
-              <!-- {{ employees_dialog }} -->
+              <!-- {{ customers_dialog }} -->
 
               <v-col cols="12">
                 <v-autocomplete
                   v-model="editedItem.department"
                   :items="departments"
-                  @change="employeesByDepartment"
+                  @change="customersByDepartment"
                   item-text="name"
                   item-value="id"
                   label="Departments"
@@ -71,7 +71,7 @@
               <v-col cols="12">
                 <v-autocomplete
                   v-model="editedItem.employee"
-                  :items="employees_dialog"
+                  :items="customers_dialog"
                   item-text="name_with_user_id"
                   item-value="id"
                   label="Employee"
@@ -424,7 +424,7 @@ export default {
     data: [],
     errors: [],
     options_dialog: {},
-    employees_dialog: []
+    customers_dialog: []
   }),
 
   computed: {
@@ -449,7 +449,7 @@ export default {
   created() {
     this.loading = true;
     this.getDepartments();
-    this.getEmployees();
+    this.getcustomers();
   },
 
   methods: {
@@ -475,7 +475,7 @@ export default {
       });
     },
 
-    employeesByDepartment() {
+    customersByDepartment() {
       this.loading_dialog = true;
       const { page, itemsPerPage } = this.options_dialog;
 
@@ -489,13 +489,13 @@ export default {
       };
 
       if (!this.editedItem.department.length) {
-        this.getEmployees();
+        this.getcustomers();
         return;
       }
 
-      this.$axios.get("employeesByDepartment", options).then(({ data }) => {
-        this.employees_dialog = data.data;
-        this.employees_dialog.unshift({
+      this.$axios.get("customersByDepartment", options).then(({ data }) => {
+        this.customers_dialog = data.data;
+        this.customers_dialog.unshift({
           id: "---",
           name_with_user_id: "Select All"
         });
@@ -592,7 +592,7 @@ export default {
       }, 300);
     },
 
-    getEmployees(url = "employee") {
+    getcustomers(url = "employee") {
       this.loading = true;
 
       const { page, itemsPerPage } = this.options;
@@ -605,8 +605,8 @@ export default {
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        this.employees_dialog = data.data;
-        this.employees_dialog.unshift({
+        this.customers_dialog = data.data;
+        this.customers_dialog.unshift({
           id: "---",
           name_with_user_id: "Select All"
         });

@@ -13,7 +13,7 @@
         </v-col>
         <v-col cols="2">
           <div class="text-right">
-            <v-btn small to="/employees" color="primary">
+            <v-btn small to="/customers" color="primary">
               <v-icon small>mdi-arrow-left</v-icon>&nbsp;Back
             </v-btn>
           </div>
@@ -1563,7 +1563,7 @@
               <v-col cols="3" class="text-right" style="margin: -8px">
                 <v-icon
                   v-if="can('employee_edit')"
-                  @click="editItem(`/employees/${$route.params.id}`)"
+                  @click="editItem(`/customers/${$route.params.id}`)"
                   small
                   class="grey"
                   style="border-radius: 50%; padding: 5px"

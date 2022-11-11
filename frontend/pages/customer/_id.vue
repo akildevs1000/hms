@@ -19,7 +19,7 @@
 
         <v-col cols="2">
           <div class="display-1 pa-2 text-right">
-            <v-btn small class="primary" :to="`/employees`">
+            <v-btn small class="primary" :to="`/customers`">
               <v-icon small>mdi-arrow-left</v-icon>&nbsp;Back
             </v-btn>
           </div>

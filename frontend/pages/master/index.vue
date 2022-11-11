@@ -61,7 +61,7 @@ export default {
         { text: "Contact Number", value: "contact.number" },
         { text: "Contact Name", value: "contact.name" },
         { text: "Max Devices", value: "max_devices" },
-        { text: "Max Employees", value: "max_employee" },
+        { text: "Max customers", value: "max_employee" },
         { text: "Location", value: "location" }
       ],
       data: [],
@@ -91,7 +91,7 @@ export default {
           icon: "mdi-apps"
         },
         {
-          title: "TOTAL EMPLOYEES",
+          title: "TOTAL customers",
           value: "267",
           icon: "mdi-account"
         },

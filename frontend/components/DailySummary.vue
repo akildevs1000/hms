@@ -80,7 +80,7 @@ export default {
     to_menu: false,
     ids: [],
     departments: [],
-    scheduled_employees: [],
+    scheduled_customers: [],
     DateRange: true,
     daily_menu: false,
     daily_date: null,
@@ -163,8 +163,8 @@ export default {
       }
     };
     this.getDepartments(this.custom_options);
-    // this.getScheduledEmployees();
-    this.getAttendanceEmployees();
+    // this.getScheduledcustomers();
+    this.getAttendancecustomers();
   },
   methods: {
     changeReportType(report_type) {
@@ -225,16 +225,16 @@ export default {
         this.time_table_dialog = true;
       });
     },
-    getEmployeesByDepartment() {
+    getcustomersByDepartment() {
       this.$axios
         .get(
-          `/employees_by_departments/${this.payload.department_id}`,
+          `/customers_by_departments/${this.payload.department_id}`,
           this.custom_options
         )
         .then(({ data }) => {
-          this.scheduled_employees = data;
-          if (this.scheduled_employees.length > 0) {
-            this.scheduled_employees.unshift({
+          this.scheduled_customers = data;
+          if (this.scheduled_customers.length > 0) {
+            this.scheduled_customers.unshift({
               system_user_id: "",
               name_with_user_id: "Select All"
             });
@@ -242,16 +242,16 @@ export default {
           this.loading = false;
         });
     },
-    getScheduledEmployees() {
-      this.$axios.get(`/scheduled_employees_with_type`).then(({ data }) => {
-        this.scheduled_employees = data;
+    getScheduledcustomers() {
+      this.$axios.get(`/scheduled_customers_with_type`).then(({ data }) => {
+        this.scheduled_customers = data;
       });
     },
-    getAttendanceEmployees() {
-      this.$axios.get(`/attendance_employees`).then(({ data }) => {
+    getAttendancecustomers() {
+      this.$axios.get(`/attendance_customers`).then(({ data }) => {
         let res = data.map(e => e.employee_attendance);
-        this.scheduled_employees = data.map(e => e.employee_attendance);
-        this.scheduled_employees.unshift({
+        this.scheduled_customers = data.map(e => e.employee_attendance);
+        this.scheduled_customers.unshift({
           system_user_id: "",
           name_with_user_id: "Select All"
         });

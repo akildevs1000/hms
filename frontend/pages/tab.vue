@@ -34,7 +34,7 @@
       </v-col>
       <v-col cols="2">
         <div class="text-right">
-          <v-btn small to="/employees" color="primary">
+          <v-btn small to="/customers" color="primary">
             <v-icon small>mdi-arrow-left</v-icon>&nbsp;Back
           </v-btn>
         </div>

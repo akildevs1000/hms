@@ -192,7 +192,7 @@
                       <div class="col-sm-4">
                         <div class="form-group">
                           <label class="col-form-label"
-                            >Max Employees
+                            >Max customers
                             <span class="text-danger">*</span></label
                           >
                           <input

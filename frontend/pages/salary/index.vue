@@ -1,370 +1,355 @@
 <template>
-  <div v-if="can('salary_access')">
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" small top="top" :color="color">
-        {{ response }}
-      </v-snackbar>
-    </div>
-
-    <div v-if="!loading">
-      <v-row class="mt-5">
-        <v-col cols="6">
-          <h3>{{ Model }}</h3>
-          <div>Dashboard / {{ Model }}</div>
-        </v-col>
-        <v-col cols="6">
-          <div class="text-right">
-            <v-dialog v-model="dialog" max-width="500px">
-              <v-card>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12">
-                        <span class="headline">Salary</span>
-                      </v-col>
-                      <v-col cols="12" class="mb-2">
-                        <v-autocomplete
-                          label="Select Employee"
-                          v-model="editedItem.employee_id"
-                          :items="employees"
-                          item-text="first_name"
-                          item-value="id"
-                        >
-                        </v-autocomplete>
-                        <span
-                          v-if="errors && errors.employee_id"
-                          class="error--text"
-                          >{{ errors.employee_id[0] }}</span
-                        >
-                        <v-autocomplete
-                          label="Select Salary Type"
-                          v-model="editedItem.salary_type_id"
-                          :items="salary_types"
-                          item-text="name"
-                          item-value="id"
-                        >
-                        </v-autocomplete>
-                        <span
-                          v-if="errors && errors.salary_type_id"
-                          class="error--text"
-                          >{{ errors.salary_type_id[0] }}</span
-                        >
-
-                        <v-text-field
-                          v-model="editedItem.amount"
-                          label="Amount"
-                        ></v-text-field>
-                        <span
-                          v-if="errors && errors.amount"
-                          class="error--text"
-                          >{{ errors.amount[0] }}</span
-                        >
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn class="error" small @click="close"> Cancel </v-btn>
-                  <v-btn class="primary" small @click="save">Save</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-
-            <v-btn
-              v-if="can('salary_create')"
-              small
-              dark
-              class="mb-2 primary"
-              @click="dialog = true"
-              >{{ Model }} +</v-btn
-            >
-          </div>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col xs="12" sm="12" md="3" cols="12">
-          <v-select
-            @change="getDataFromApi(`employee`)"
-            outlined
-            v-model="per_page"
-            :items="[50, 100, 500,1000]"
-            dense
-            placeholder="Per Page Records"
-          ></v-select>
-        </v-col>
-
-        <v-col xs="12" sm="12" md="3" offset-md="6" cols="12">
-          <v-text-field
-            outlined
-            @input="searchIt"
-            v-model="search"
-            dense
-            placeholder="Search..."
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row v-if="can('salary_view')">
-        <v-col
-          xs="12"
-          sm="12"
-          md="3"
-          cols="12"
-          v-for="(item, index) in data"
-          :key="index"
+  <div v-if="!loading">
+    <v-row>
+      <v-col md="12">
+        <!-- <v-alert
+          v-if="first_login && first_login_auth"
+          outlined
+          class="error lighten-1"
+          dark
+          dense
+          prominent
         >
-          <v-card style="min-height: 209px">
-            <v-card-title>
-              <v-spacer></v-spacer>
-              <v-icon
-                v-if="can(`salary_edit`)"
-                @click="editItem(item)"
-                color="secondary"
-                small
-                >mdi-pencil</v-icon
-              >
-
-              <v-icon
-                v-if="can(`salary_delete`)"
-                @click="deleteItem(item)"
-                color="red"
-                small
-                >mdi-delete</v-icon
-              >
-            </v-card-title>
-
-            <v-card-text class="text-center" @click="goDetails(item.id)">
-              <div>
-                <v-img
-                  style="
-                    border-radius: 50%;
-                    height: 125px;
-                    width: 50%;
-                    margin: 0 auto;
-                  "
-                  :src="item.employee.profile_picture || '/no-image.PNG'"
+          <v-icon style="margin-top: -3px" size="22">
+            mdi-alert-circle-outline</v-icon
+          >
+          <label class="text-white"
+            >For security reasons you need to change your password after first
+            login.</label
+          >
+          <nuxt-link class="white--text" to="/setting">
+            <u>click here</u>
+          </nuxt-link>
+        </v-alert> -->
+      </v-col>
+      <div
+        class="col-xl-3 col-lg-6 text-uppercase"
+        v-for="(i, index) in items"
+        :key="index"
+      >
+        <div class="card p-2" :class="i.color">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large ">
+              <i :class="i.icon"></i>
+            </div>
+            <div class="card-content">
+              <h4 class="card-title text-capitalize">{{ i.title }}</h4>
+              <span class="data-1"> {{ i.value }}</span>
+              <p class="mb-0 text-sm">
+                <span class="mr-2"
+                  ><v-icon dark small>mdi-arrow-right</v-icon></span
                 >
-                </v-img>
-              </div>
-
-              <div>
-                <b>{{ item.employee.first_name }}</b>
-              </div>
-
-              <div>{{ item.amount }} AED</div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col>
-          <div color="pt-2" class="text-center">
-            <v-btn
-              @click="getDataFromApi(prev_page_url)"
-              :disabled="prev_page_url ? false : true"
-              color="primary"
-              small
-              elevation="11"
-            >
-              <v-icon dark>mdi-chevron-double-left </v-icon>
-            </v-btn>
-            <v-btn
-              @click="getDataFromApi(next_page_url)"
-              :disabled="next_page_url ? false : true"
-              color="primary"
-              small
-              elevation="11"
-            >
-              <v-icon dark>mdi-chevron-double-right </v-icon>
-            </v-btn>
+                <a
+                  class="text-nowrap text-white"
+                  target="_blank"
+                  :href="i.link"
+                >
+                  <span class="text-nowrap">View Report</span>
+                </a>
+              </p>
+            </div>
           </div>
-        </v-col>
-      </v-row>
-    </div>
-    <Preloader v-else />
+        </div>
+      </div>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12" md="8" xl="8">
+        <v-card flat>
+          <DailyLogs />
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="4" xl="4">
+        <v-card flat>
+          <PIE :items="items" />
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row class="mt-4">
+      <v-col md="12" cols="12" sm="12">
+        <v-card elevation="0">
+          <ComboChart />
+        </v-card>
+      </v-col>
+    </v-row>
+    <!-- <v-row class="mt-5">
+      <v-col md="4" cols="12" sm="12">
+        <v-card elevation="0">
+          <v-list three-line>
+            <template v-for="(item, index) in devices">
+              <v-subheader v-if="item.header" :key="item.header">
+                <h5>{{ item.header }}</h5>
+              </v-subheader>
+
+              <v-divider
+                v-else-if="item.divider"
+                :key="index"
+                :inset="item.inset"
+              ></v-divider>
+
+              <v-list-item v-else :key="item.title">
+                <v-list-item-avatar>
+                  <v-img :src="item.avatar"></v-img>
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title v-html="item.title"></v-list-item-title>
+                  <v-list-item-subtitle
+                    v-html="item.subtitle"
+                  ></v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-card>
+      </v-col>
+      <v-col md="4" cols="12" sm="12">
+        <v-card elevation="0">
+          <v-list three-line>
+            <template v-for="(item, index) in polices">
+              <v-subheader v-if="item.header" :key="item.header">
+                <h5>{{ item.header }}</h5>
+              </v-subheader>
+
+              <v-divider
+                v-else-if="item.divider"
+                :key="index"
+                :inset="item.inset"
+              ></v-divider>
+
+              <v-list-item v-else :key="item.title">
+                <v-list-item-content>
+                  <v-list-item-title v-html="item.title"></v-list-item-title>
+                  <v-list-item-subtitle
+                    v-html="item.subtitle"
+                  ></v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-card>
+      </v-col>
+      <v-col md="4" cols="12" sm="12">
+        <v-card elevation="0">
+          <v-list three-line>
+            <template v-for="(item, index) in anc">
+              <v-subheader v-if="item.header" :key="item.header">
+                <h5>{{ item.header }}</h5>
+              </v-subheader>
+
+              <v-divider
+                v-else-if="item.divider"
+                :key="index"
+                :inset="item.inset"
+              ></v-divider>
+
+              <v-list-item v-else :key="item.title">
+                <v-list-item-content>
+                  <v-list-item-title v-html="item.title"></v-list-item-title>
+                  <v-list-item-subtitle
+                    v-html="item.subtitle"
+                  ></v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row> -->
   </div>
-
-  <NoAccess v-else />
+  <Preloader v-else />
 </template>
-
 <script>
 export default {
-  data: () => ({
-    color: "primary",
-    files: "",
-    dialog: false,
-    Model: "Salary",
-    endpoint: "salary",
-    search: "",
-    loading: false,
-    data: [],
-    employees: [],
-    salary_types: [],
-    editedItem: {
-      employee_id: "",
-      salary_type_id: "",
-      amount: "",
-    },
-    defaultItem: {
-      employee_id: "",
-      salary_type_id: "",
-      amount: "",
-    },
+  data() {
+    return {
+      first_login_auth: 1,
+      loading: true,
+      // devices: [
+      //   { header: "Devices" },
+      //   {
+      //     avatar:
+      //       "https://www.shopkees.com/images/1000/9242668587_1599380694.png",
+      //     title: "Main Door",
+      //     subtitle: `<span class="text--primary">X-566</span> &mdash; this device use for main entrance door`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     avatar:
+      //       "https://4.imimg.com/data4/FV/IJ/MY-9999211/face-recognition-devices-500x500.jpg",
+      //     title: "Hall Door",
+      //     subtitle: `<span class="text--primary">X-765</span> &mdash; this device use for main entrance door`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     avatar:
+      //       "https://lenvica.b-cdn.net/wp-content/uploads/2020/05/SpeedFace-V5LTD-Face-Palm-and-Body-Temperature-Terminal-1.jpg",
+      //     title: "Conference Area",
+      //     subtitle: `<span class="text--primary">X-685</span> &mdash; this device use for main entrance door`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     avatar:
+      //       "https://www.scanmaxai.com/data/watermark/20191217/5df889f53c35e.jpg",
+      //     title: "Out Door",
+      //     subtitle: `<span class="text--primary">X-896</span> &mdash; this device use for main entrance door`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     avatar:
+      //       "https://www.shopkees.com/images/1000/9242668587_1599380694.png",
+      //     title: "Main Door",
+      //     subtitle: `<span class="text--primary">X-606</span> &mdash; this device use for main entrance door`
+      //   }
+      // ],
+      // polices: [
+      //   { header: "Polices" },
+      //   {
+      //     title: "Computer Usage?",
+      //     subtitle: `<span class="text--primary">Make Your Own Printer Paper</span> &mdash;"" - customers will be provided with a block of wood to chew, a large hunk of metal for a press, and a sunlamp.`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title:
+      //       'Special Days <span class="grey--text text--lighten-1"></span>',
+      //     subtitle: `<span class="text--primary">Friday is Pajama Day</span> &mdash; Bring Your Dog to Work Day.`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title: "Cutting Expenses and Work Hour",
+      //     subtitle:
+      //       '<span class="text--primary">This Company</span> &mdash; The company is saving money by installing dehydrated water coolers.'
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title: "Security and Employee Testing",
+      //     subtitle:
+      //       '<span class="text--primary">Weekly body armor testing.</span> &mdash; Random breathalyzers at 2:00pm everyday.'
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title: "New customers",
+      //     subtitle:
+      //       '<span class="text--primary">Exam</span> &mdash; Prostate exams are required for all new hires.'
+      //   }
+      // ],
+      // anc: [
+      //   { header: "Announcement" },
+      //   {
+      //     title: "Annual Party",
+      //     subtitle: `<span class="text--primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title:
+      //       'Eid Holiday <span class="grey--text text--lighten-1">08-Jun-22</span>',
+      //     subtitle: `<span class="text--primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title:
+      //       'Summer Holiday <span class="grey--text text--lighten-1">08-Jun-22</span>',
+      //     subtitle:
+      //       '<span class="text--primary">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?'
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title:
+      //       'Independent Holiday <span class="grey--text text--lighten-1">08-Oct-22</span>',
+      //     subtitle:
+      //       '<span class="text--primary">Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?'
+      //   },
+      //   { divider: true, inset: true },
+      //   {
+      //     title:
+      //       'Eid Holiday <span class="grey--text text--lighten-1">08-Jun-22</span>',
+      //     subtitle:
+      //       '<span class="text--primary">Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.'
+      //   }
+      // ],
 
-    errors: [],
-    total: 0,
-    next_page_url: "",
-    prev_page_url: "",
-    current_page: 1,
-    per_page: 10,
-    response: "",
-    snackbar: false,
-    editedIndex: -1,
-  }),
-  async created() {
-    this.loading = false;
-    this.getDataFromApi();
-    this.getEmployees();
-    this.getSalaryTypes();
-  },
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    options: {
-      handler() {
-        this.getDataFromApi();
+      logs: [],
+
+      total_items: [],
+      items_by_cities: [],
+      test_headers: [
+        {
+          text: "Customer",
+          align: "left",
+          sortable: false,
+          value: "company_name"
+        },
+        {
+          text: "Order Total",
+          align: "left",
+          sortable: false,
+          value: "order_total"
+        }
+      ],
+      orders: "",
+      products: "",
+      customers: "",
+      daily_orders: "",
+      weekly_orders: "",
+      monthly_orders: "",
+      items: [],
+      chartData: [
+        ["Month", "On Time", "Absence", "Lates"],
+        ["Apr", 33, 4, 7],
+        ["Mar", 17, 6, 3],
+        ["Feb", 41, 9, 1]
+      ],
+      chartOptions: {
+        chart: {
+          title: "Company Performance",
+          subtitle: "Sales, Expenses, and Profit: 2014-2017"
+        }
       },
-      deep: true,
+      BublechartOptions: {
+        colorAxis: { colors: ["yellow", "red"] }
+      }
+    };
+  },
+  created() {
+    this.initialize();
+    this.first_login_auth = this.$auth.user.first_login;
+  },
+  computed: {
+    first_login() {
+      return this.$store.state.first_login;
+    }
+  },
+  filters: {
+    get_decimal_value: function(value) {
+      if (!value) return "";
+      return (Math.round(value * 100) / 100).toFixed(2);
     },
+    get_comma_seperator: function(x) {
+      if (!x) return "";
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   },
   methods: {
-    getEmployees() {
+    getColor(calories) {
+      if (calories > 400) return "red";
+      else if (calories > 200) return "orange";
+      else return "green";
+    },
+    initialize() {
       let options = {
-        params: {
-          per_page: 100,
-          company_id: this.$auth?.user?.company?.id,
-        },
+        company_id: this.$auth.user.company.id
       };
+      this.$axios.get(`count`, { params: options }).then(({ data }) => {
+        this.items = data;
 
-      this.$axios.get(`employee`, options).then(({ data }) => {
-        this.employees = data.data;
-        this.loading = false;
+        if (this.items.length > 0) {
+          this.loading = false;
+        }
       });
-    },
-    getSalaryTypes() {
-      let options = {
-        params: {
-          per_page: 100,
-          company_id: this.$auth?.user?.company?.id,
-        },
-      };
-
-      this.$axios.get(`salary_type`, options).then(({ data }) => {
-        this.salary_types = data.data;
-        this.loading = false;
-      });
-    },
-    close() {
-      this.dialog = false;
-      this.errors = [];
-      this.editedIndex = -1;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
-    },
-    save() {
-      if (this.editedIndex > -1) {
-        this.$axios
-          .put(`salary/` + this.editedItem.id, this.editedItem)
-          .then(({ data }) => {
-            if (!data.status) {
-              this.errors = data.errors;
-            } else {
-              this.getDataFromApi();
-              this.snackbar = data.status;
-              this.response = data.message;
-              this.close();
-            }
-          })
-          .catch((err) => console.log(err));
-      } else {
-        this.editedItem.company_id = this.$auth?.user?.company?.id;
-
-        this.$axios
-          .post(`/salary`, this.editedItem)
-          .then(({ data }) => {
-            if (!data.status) {
-              this.errors = data.errors;
-            } else {
-              this.getDataFromApi();
-              this.snackbar = data.status;
-              this.response = data.message;
-              this.close();
-              this.errors = [];
-              this.search = "";
-            }
-          })
-          .catch((res) => console.log(res));
-      }
-    },
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
-      );
-    },
-    goDetails(id) {
-      this.$router.push(`/salary/details/${id}`);
-    },
-
-    searchIt(e) {
-      if (e.length == 0) {
-        this.getDataFromApi();
-      } else if (e.length > 2) {
-        this.getDataFromApi(`${this.endpoint}/search/${e}`);
-      }
-    },
-    getDataFromApi(url = this.endpoint) {
-      // this.loading = true;
-      let options = {
-        params: {
-          per_page: this.per_page,
-          company_id: this.$auth?.user?.company?.id,
-        },
-      };
-
-      this.$axios.get(`${url}`, options).then(({ data }) => {
-        this.data = data.data;
-        this.total = data.data;
-        this.next_page_url = data.next_page_url;
-        this.prev_page_url = data.prev_page_url;
-        this.current_page = data.current_page;
-        this.loading = false;
-      });
-    },
-    editItem(item) {
-      this.editedIndex = this.data.indexOf(item);
-      let new_item = {
-        id: item.id,
-        employee_id: item.employee_id,
-        salary_type_id: item.salary_type_id,
-        amount: item.amount,
-      };
-      this.editedItem = new_item;
-      this.dialog = true;
-    },
-    deleteItem(item) {
-      confirm("Are you sure you want to delete this item?") &&
-        this.$axios.delete(this.endpoint + "/" + item.id).then((res) => {
-          const index = this.data.indexOf(item);
-          this.data.splice(index, 1);
-        });
-    },
-  },
+    }
+  }
 };
 </script>
+
+<style scoped src="@/assets/dashtem.css"></style>

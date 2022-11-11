@@ -14,7 +14,7 @@
                   <v-autocomplete
                     label="Report"
                     v-model="editedItem.to_report"
-                    :items="employees_list"
+                    :items="customers_list"
                     item-text="first_name"
                     item-value="id"
                     :multiple="
@@ -112,9 +112,9 @@ export default {
     snackbar: false,
     dialog: false,
     ids: [],
-    employees: [],
-    all_employees: [],
-    employees_list: [],
+    customers: [],
+    all_customers: [],
+    customers_list: [],
     employee: [],
     loading: false,
     total: 0,
@@ -164,7 +164,7 @@ export default {
     };
 
     this.getEmployeeDetails();
-    this.getEmployees();
+    this.getcustomers();
     this.getDataFromApi();
     this.changeEmployeeType();
     this.getReporters();
@@ -190,7 +190,7 @@ export default {
       });
     },
 
-    getEmployees() {
+    getcustomers() {
       let options = {
         params: {
           per_page: 100,
@@ -198,8 +198,8 @@ export default {
         }
       };
       this.$axios.get(`employee`, options).then(({ data }) => {
-        this.all_employees = data.data;
-        this.employees = data.data.filter(e =>
+        this.all_customers = data.data;
+        this.customers = data.data.filter(e =>
           e.report_to.length == 0 ? e : null
         );
       });
@@ -210,7 +210,7 @@ export default {
       let id = this.currentUser;
       this.$axios.get(`employee/${id}`).then(({ data }) => {
         this.employee_grade = data.grade;
-        this.employees_list = this.all_employees.filter(e =>
+        this.customers_list = this.all_customers.filter(e =>
           e.id != this.currentUser ? e : null
         );
       });
@@ -321,7 +321,7 @@ export default {
         .catch(res => console.log(res));
     },
     getReloadMethods() {
-      this.getEmployees();
+      this.getcustomers();
       this.getDataFromApi();
       this.changeEmployeeType();
       this.getReporters();

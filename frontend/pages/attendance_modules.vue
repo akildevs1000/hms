@@ -18,9 +18,9 @@ export default {
     sub_modules: [
       {
         id: 1,
-        heading: "Employees Schedule",
+        heading: "customers Schedule",
         subheading: "Attendance Management",
-        name: "Employees Schedule",
+        name: "customers Schedule",
         icon: "mdi-account",
         link: "employee_schedule",
       },

@@ -50,13 +50,13 @@ export default {
     },
     options: {
       handler() {
-        this.getEmployeesDataFromApi();
+        this.getcustomersDataFromApi();
       },
       deep: true
     }
   },
   methods: {
-    getEmployeesDataFromApi(url = this.endpoint) {
+    getcustomersDataFromApi(url = this.endpoint) {
       this.loading = true;
 
       const { page, itemsPerPage } = this.options;
@@ -79,9 +79,9 @@ export default {
 
     dialog_searchIt(e) {
       if (e.length == 0) {
-        this.getEmployeesDataFromApi();
+        this.getcustomersDataFromApi();
       } else if (e.length > 2) {
-        this.getEmployeesDataFromApi(`${this.endpoint}/dialog_search/${e}`);
+        this.getcustomersDataFromApi(`${this.endpoint}/dialog_search/${e}`);
       }
     },
 
@@ -104,7 +104,7 @@ export default {
             if (!res.data.status) {
               this.errors = res.data.errors;
             } else {
-              this.getEmployeesDataFromApi();
+              this.getcustomersDataFromApi();
               this.snackbar = res.data.status;
               this.ids = [];
               this.response = "Selected records has been deleted";
@@ -167,7 +167,7 @@ export default {
             if (!res.data.status) {
               this.errors = res.data.errors;
             } else {
-              this.getEmployeesDataFromApi();
+              this.getcustomersDataFromApi();
               this.snackbar = res.data.status;
               this.response = res.data.message;
               this.close();

@@ -13,26 +13,16 @@
         </v-col>
         <v-col cols="6">
           <div class="text-left">
-            <!-- <v-btn
-              small
-              class="primary--text pt-4 pb-4"
-              to="/employees/employee_list"
-            >
-              <v-icon class="pa-0">mdi-menu</v-icon>
-            </v-btn>
-            <v-btn x-small class="primary pt-4 pb-4" to="/employees">
-              <v-icon class="pa-0">mdi-grid</v-icon>
-            </v-btn> -->
+           
           </div>
           <div class="text-right mt-6">
             <v-btn
               small
               class="primary--text pt-4 pb-4"
-              to="/employees/employee_list"
             >
               <v-icon class="pa-0">mdi-menu</v-icon>
             </v-btn>
-            <v-btn x-small class="primary pt-4 pb-4" to="/employees">
+            <v-btn x-small class="primary pt-4 pb-4" to="/customers">
               <v-icon class="pa-0">mdi-grid</v-icon>
             </v-btn>
             <v-btn
@@ -78,7 +68,7 @@
                           </template>
                         </v-file-input>
                         <br />
-                        <a href="/employees.csv" download> Download Sample</a>
+                        <a href="/customers.csv" download> Download Sample</a>
                         <br />
                         <span
                           v-if="errors && errors.length > 0"
@@ -910,7 +900,7 @@ export default {
     },
     save() {
       let payload = new FormData();
-      payload.append("employees", this.files);
+      payload.append("customers", this.files);
       payload.append("company_id", this.$auth?.user?.company?.id);
       let options = {
         headers: {
@@ -924,11 +914,11 @@ export default {
           this.btnLoader = false;
           if (!data.status) {
             this.errors = data.errors;
-            payload.delete("employees");
+            payload.delete("customers");
           } else {
             this.errors = [];
             this.snackbar = true;
-            this.response = "Employees imported successfully";
+            this.response = "customers imported successfully";
             this.getDataFromApi();
             this.close();
           }
@@ -949,13 +939,13 @@ export default {
     },
     createEmployee() {
       if (this.total >= this.max_employee) {
-        alert(`You cannot add more than ${this.max_employee} employees`);
+        alert(`You cannot add more than ${this.max_employee} customers`);
         return;
       }
-      this.$router.push(`/employees/create`);
+      this.$router.push(`/customers/create`);
     },
     goDetails(id) {
-      this.$router.push(`/employees/details/${id}`);
+      this.$router.push(`/customers/details/${id}`);
     },
     searchIt(e) {
       if (e.length == 0) {
@@ -995,7 +985,7 @@ export default {
       });
     },
     editItem(item) {
-      this.$router.push(`/employees/${item.id}`);
+      this.$router.push(`/customers/${item.id}`);
     },
     deleteItem(item) {
       confirm("Are you sure you want to delete this item?") &&

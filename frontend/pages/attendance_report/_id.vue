@@ -84,7 +84,7 @@ export default {
     to_menu: false,
     ids: [],
     departments: [],
-    scheduled_employees: [],
+    scheduled_customers: [],
 
     loading: false,
     total: 0,

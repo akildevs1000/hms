@@ -812,7 +812,7 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
           } else {
-            this.$router.push("/employees");
+            this.$router.push("/customers");
           }
         })
         .catch(e => console.log(e));

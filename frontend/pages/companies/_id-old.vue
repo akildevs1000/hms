@@ -89,7 +89,7 @@
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Max Employees
+                          <label class="col-form-label">Max customers
                             <span class="text-danger">*</span></label>
                           <input readonly v-model="company_payload.max_employee" type="number" class="form-control" />
                           <span v-if="errors && errors.max_employee" class="text-danger mt-2">{{ errors.max_employee[0]

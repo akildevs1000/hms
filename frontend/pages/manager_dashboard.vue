@@ -179,7 +179,7 @@
             <v-col md="3">
               Departments
               <v-autocomplete
-                @change="getEmployeesByDepartment"
+                @change="getcustomersByDepartment"
                 class="mt-2"
                 outlined
                 dense
@@ -200,7 +200,7 @@
                 dense
                 v-model="payload.employee_id"
                 x-small
-                :items="scheduled_employees"
+                :items="scheduled_customers"
                 item-value="system_user_id"
                 item-text="name_with_user_id"
                 :hide-details="true"
@@ -561,7 +561,7 @@
       class="elevation-1"
     >
       <template v-slot:item.employee_id="{ item }">
-        <!-- <NuxtLink :to="`/employees/details/${item.employee.id}`"
+        <!-- <NuxtLink :to="`/customers/details/${item.employee.id}`"
           >{{ item.employee_id
           }}<v-icon small color="black">mdi-open-in-new</v-icon></NuxtLink
         > -->
@@ -685,7 +685,7 @@ export default {
     to_menu: false,
     ids: [],
     departments: [],
-    scheduled_employees: [],
+    scheduled_customers: [],
     DateRange: true,
     devices: [],
     valid: true,
@@ -842,7 +842,7 @@ export default {
       }
     };
     this.getDepartments(this.custom_options);
-    this.getEmployeesByDepartment();
+    this.getcustomersByDepartment();
     this.getDeviceList();
   },
 
@@ -890,18 +890,18 @@ export default {
       });
     },
 
-    getEmployeesByDepartment() {
+    getcustomersByDepartment() {
       this.fetch_logs();
       let u = this.$auth.user;
       this.$axios
         .get(
-          `/employees_by_departments/${u.employee.department.id}`,
+          `/customers_by_departments/${u.employee.department.id}`,
           this.custom_options
         )
         .then(({ data }) => {
-          this.scheduled_employees = data;
-          if (this.scheduled_employees.length > 0) {
-            this.scheduled_employees.unshift({
+          this.scheduled_customers = data;
+          if (this.scheduled_customers.length > 0) {
+            this.scheduled_customers.unshift({
               system_user_id: "",
               name_with_user_id: "Select All"
             });
@@ -965,9 +965,9 @@ export default {
       });
     },
 
-    getScheduledEmployees() {
-      this.$axios.get(`/scheduled_employees_with_type`).then(({ data }) => {
-        this.scheduled_employees = data;
+    getScheduledcustomers() {
+      this.$axios.get(`/scheduled_customers_with_type`).then(({ data }) => {
+        this.scheduled_customers = data;
       });
     },
 

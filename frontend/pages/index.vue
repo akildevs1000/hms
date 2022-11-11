@@ -207,7 +207,7 @@ export default {
       //   { header: "Polices" },
       //   {
       //     title: "Computer Usage?",
-      //     subtitle: `<span class="text--primary">Make Your Own Printer Paper</span> &mdash;"" - Employees will be provided with a block of wood to chew, a large hunk of metal for a press, and a sunlamp.`
+      //     subtitle: `<span class="text--primary">Make Your Own Printer Paper</span> &mdash;"" - customers will be provided with a block of wood to chew, a large hunk of metal for a press, and a sunlamp.`
       //   },
       //   { divider: true, inset: true },
       //   {
@@ -229,7 +229,7 @@ export default {
       //   },
       //   { divider: true, inset: true },
       //   {
-      //     title: "New Employees",
+      //     title: "New customers",
       //     subtitle:
       //       '<span class="text--primary">Exam</span> &mdash; Prostate exams are required for all new hires.'
       //   }

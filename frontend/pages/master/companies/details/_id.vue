@@ -60,7 +60,7 @@
 
                   <v-col cols="3">
                     <v-list-item-title class="text-h7 mb-1">
-                      Max Employees
+                      Max customers
                     </v-list-item-title>
                   </v-col>
                   <v-col cols="8">
