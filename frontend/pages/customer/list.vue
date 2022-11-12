@@ -66,16 +66,17 @@
             <td>
               <b>{{ ++index }}</b>
             </td>
-             <td>{{item.name}}</td>
-             <td>{{item.contact_no}}</td>
-             <td>{{item.email}}</td>
-             <td>{{item.id_card_type_id}}</td>
-             <td>{{item.id_card_no}}</td>
-             <td>{{item.car_no}}</td>
-             <td>{{item.no_of_adult}}</td>
-             <td>{{item.no_of_child}}</td>
-             <td>{{item.no_of_baby}}</td>
-             <td>{{item.address}}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.contact_no }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.id_card_type_id }}</td>
+            <td>{{ item.id_card_no }}</td>
+            <td>{{ item.car_no }}</td>
+            <td>{{ item.no_of_adult }}</td>
+            <td>{{ item.no_of_child }}</td>
+            <td>{{ item.no_of_baby }}</td>
+            <td>{{ item.request }}</td>
+            <td>{{ item.address }}</td>
           </tr>
         </table>
       </v-card>
@@ -148,15 +149,18 @@ export default {
         text: "Babies"
       },
       {
-        text: "Address"
+        text: "Others"
       },
+      {
+        text: "Address"
+      }
     ],
     editedIndex: -1,
     editedItem: { name: "" },
     defaultItem: { name: "" },
     response: "",
     data: [],
-    errors: [],
+    errors: []
   }),
 
   computed: {
@@ -183,14 +187,14 @@ export default {
         u.is_master
       );
     },
- 
+
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
       let options = {
         params: {
           per_page: this.pagination.per_page,
-          company_id: this.$auth.user.company.id,
+          company_id: this.$auth.user.company.id
         }
       };
 
@@ -210,7 +214,7 @@ export default {
       } else if (s > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${search}`);
       }
-    },
+    }
   }
 };
 </script>

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class RoomTypeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource.php
      *
      * @return \Illuminate\Http\Response
      */

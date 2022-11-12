@@ -27,17 +27,23 @@ class StoreRequest extends FormRequest
     {
 
         $arr = [
-            'room_type'       => 'required',
             'type'            => 'required',
             'room_id'         => 'required',
             'check_in'        => 'required',
             'check_out'       => 'required',
-
-            'first_name'      => 'required',
-            'contact_no'      => 'required|max:15|min:8',
-            'id_card_type_id' => 'required',
-            'id_card_no'      => 'required',
-            'no_of_adult'     => 'required',
+            'discount'        => 'required',
+            'advance_price'   => 'required',
+            'payment_mode_id' => 'required',
+            'total_days'      => 'required',
+            'sub_total'       => 'required',
+            
+            'after_discount' => 'required',
+            'sales_tax' => 'required',
+            'total_price' => 'required',
+            'remaining_price' => 'required',
+           
+            'request'     => 'nullable',
+            'company_id'     => 'required',
 
         ];
 

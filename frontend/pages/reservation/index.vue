@@ -59,56 +59,74 @@
           <td class="ps-3">
             <b>{{ ++index }}</b>
           </td>
-          <td>{{ item.id }}</td>
-          <td>{{ item.room_id }}</td>
-          <td>{{ item.booking_date }}</td>
-          <td>{{ item.check_in }}</td>
-          <td>{{ item.check_out }}</td>
+          <td>{{ item && item.customer.name }}</td>
+          <td>{{ item.room.room_no }}</td>
+          <td>{{ item && item.room.room_type.name }}</td>
           <td>
             <v-btn
+              style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
               small
               elevation="0"
               dark
-              color="error"
-              v-if="item.booking_status"
+              class="l-bg-green-dark"
+              v-if="item && item.room.status == 0"
+            >
+              Available Room
+            </v-btn>
+            <v-btn
+              style="background: linear-gradient(135deg, #f48665 0%, #fda23f 100%) !important;"
+              small
+              elevation="0"
+              dark
+              color="l-bg-purple-dark"
+              v-else-if="item && item.room.status == 1"
             >
               Booked
             </v-btn>
-            <v-btn small elevation="0" dark color="#5ACE52" v-else
-              >Available Room</v-btn
-            >
-          </td>
-          <td>
             <v-btn
+              v-else-if="item && item.room.status == 2"
               small
               elevation="0"
               dark
               color="warning"
-              v-if="item.booking_status && !item.check_in"
+              >Checked In</v-btn
             >
-              Check In
-            </v-btn>
-            <span v-else-if="!item.booking_status">
-              ---
-            </span>
-            <v-btn small elevation="0" dark color="warning" class="abc" v-else>
-              Check In
-            </v-btn>
+
+            <v-btn v-else-if="item && item.room.status == 3" small elevation="0" dark color="blue"
+              >Checked Out</v-btn
+            >
+
+            <v-btn v-else-if="item && item.room.status == 4" small elevation="0" dark>Dirty</v-btn>
+            <v-btn v-else-if="item && item.room.status == 5" small elevation="0" dark color="grey">Maintenance</v-btn>
           </td>
+          <td>{{ item.total_price }}</td>
+          <td>{{ item.advance_price }}</td>
+          <td>{{ item.remaining_price }}</td>
           <td>
             <v-btn
+              style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
               small
               elevation="0"
               dark
-              color="blue"
-              v-if="item.booking_status && item.check_in"
+              class="l-bg-green-dark"
+              v-if="item.payment_status == 0"
             >
-              Check Out
+              Paid
             </v-btn>
-            <span v-else-if="!item.booking_status">
-              ---
-            </span>
+
+            <v-btn
+              style="background: linear-gradient(135deg, rgb(243 100 57) 0px, rgb(122 70 67 / 94%) 100%) !important;"
+              v-else-if="item.payment_status == 1"
+              small
+              elevation="0"
+              dark
+              color="error"
+              >Pending</v-btn
+            >
           </td>
+          <td>{{ item.source }}</td>
+          <td>{{ item.agent_name }}</td>
+          <td>{{ item.booking_date }}</td>
         </tr>
       </table>
     </v-card>
@@ -145,11 +163,18 @@ export default {
     total: 0,
     headers: [
       { text: "&nbsp #" },
-      { text: "Reservation No" },
+
+      { text: "Customer" },
       { text: "Room" },
+      { text: "Room Type" },
       { text: "Status" },
-      { text: "Check In" },
-      { text: "Check Out" }
+      { text: "Total Price" },
+      { text: "Advance Price" },
+      { text: "Remaining Price" },
+      { text: "Payment Status" },
+      { text: "Source" },
+      { text: "Agent Name" },
+      { text: "Booking Date" }
     ],
     editedIndex: -1,
     response: "",

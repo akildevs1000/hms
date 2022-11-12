@@ -56,7 +56,7 @@
     <v-row>
       <v-col cols="12" md="8" xl="8">
         <v-card flat>
-          <DailyLogs />
+          <!-- <DailyLogs /> -->
         </v-card>
       </v-col>
       <v-col cols="12" md="4" xl="4">

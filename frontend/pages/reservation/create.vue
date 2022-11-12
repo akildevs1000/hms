@@ -1,358 +1,462 @@
 <template>
   <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
       </v-col>
-      <v-col cols="6"> </v-col>
     </v-row>
-
     <v-card elevation="0">
-      <v-card-title primary-title> Room Information </v-card-title>
-      <v-divider></v-divider>
-      <v-container grid-list-xs>
-        <v-row dense>
-          <v-col md="6" sm="12" cols="12" dense>
-            <label class="col-form-label"
-              >Type <span class="text-danger">*</span></label
-            >
-            <v-select
-              v-model="room.type"
-              :items="types"
-              dense
-              outlined
-              @change="getType(room.type)"
-              :hide-details="!errors.type"
-              :error="errors.type"
-              :error-messages="errors && errors.type ? errors.type[0] : ''"
-            ></v-select>
-          </v-col>
-          <v-col md="6" cols="12" sm="12" v-if="isAgent">
-            <label class="col-form-label">Agent Name</label>
-            <v-text-field
-              dense
-              outlined
-              type="text"
-              v-model="room.agent_name"
-              :hide-details="!errors.agent_name"
-              :error="errors.agent_name"
-              :error-messages="
-                errors && errors.agent_name ? errors.agent_name[0] : ''
-              "
-            ></v-text-field>
-          </v-col>
-          <v-col md="6" sm="12" cols="12" dense v-if="isOnline">
-            <label class="col-form-label">Source </label>
-            <v-select
-              v-model="room.source"
-              :items="sources"
-              dense
-              outlined
-              :hide-details="!errors.source"
-              :error="errors.source"
-              :error-messages="errors && errors.source ? errors.source[0] : ''"
-            ></v-select>
-          </v-col>
-
-          <v-col md="6" sm="12" cols="12" dense>
-            <label class="col-form-label"
-              >Room Type <span class="text-danger">*</span></label
-            >
-            <v-select
-              v-model="room.room_type"
-              :items="roomTypes"
-              item-text="name"
-              item-value="id"
-              dense
-              outlined
-              @change="get_room(room.room_type)"
-              :hide-details="!errors.room_type"
-              :error="errors.room_type"
-              :error-messages="
-                errors && errors.room_type ? errors.room_type[0] : ''
-              "
-            ></v-select>
-          </v-col>
-
-          <v-col md="6" sm="12" cols="12" dense>
-            <label class="col-form-label">Room No </label>
-            <v-select
-              v-model="room.room_id"
-              :items="rooms"
-              item-text="room_no"
-              item-value="id"
-              dense
-              outlined
-              :hide-details="!errors.room_id"
-              :error="errors.room_id"
-              :error-messages="
-                errors && errors.room_id ? errors.room_id[0] : ''
-              "
-            ></v-select>
-          </v-col>
-
-          <v-col cols="12" sm="6" md="6">
-            <label class="col-form-label">Check In </label>
-            <v-menu
-              v-model="check_in_menu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="room.check_in"
-                  readonly
-                  v-bind="attrs"
-                  :hide-details="true"
-                  v-on="on"
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <v-row>
+              <v-card-title primary-title> Room Information </v-card-title>
+              <v-col md="6" sm="12" cols="12" dense>
+                <label class="col-form-label"
+                  >Type <span class="text-danger">*</span></label
+                >
+                <v-select
+                  v-model="room.type"
+                  :items="types"
                   dense
                   outlined
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="room.check_in"
-                @input="check_in_menu = false"
-                @change="getDays"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-
-          <v-col cols="12" sm="6" md="6">
-            <label class="col-form-label">Check Out </label>
-            <v-menu
-              v-model="check_out_menu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
+                  @change="getType(room.type)"
+                  :hide-details="!errors.type"
+                  :error="errors.type"
+                  :error-messages="errors && errors.type ? errors.type[0] : ''"
+                ></v-select>
+              </v-col>
+              <v-col md="6" cols="12" sm="12" v-if="isAgent">
+                <label class="col-form-label">Agent Name</label>
                 <v-text-field
-                  v-model="room.check_out"
-                  readonly
-                  v-bind="attrs"
-                  :hide-details="true"
-                  v-on="on"
                   dense
                   outlined
+                  type="text"
+                  v-model="room.agent_name"
+                  :hide-details="!errors.agent_name"
+                  :error="errors.agent_name"
+                  :error-messages="
+                    errors && errors.agent_name ? errors.agent_name[0] : ''
+                  "
                 ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="room.check_out"
-                @input="check_out_menu = false"
-                @change="getDays"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
+              </v-col>
+              <v-col md="6" sm="12" cols="12" dense v-if="isOnline">
+                <label class="col-form-label">Source </label>
+                <v-select
+                  v-model="room.source"
+                  :items="sources"
+                  dense
+                  outlined
+                  :hide-details="!errors.source"
+                  :error="errors.source"
+                  :error-messages="
+                    errors && errors.source ? errors.source[0] : ''
+                  "
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col md="6" sm="12" cols="12" dense>
+                <label class="col-form-label"
+                  >Room Type <span class="text-danger">*</span></label
+                >
+                <v-select
+                  v-model="room.room_type"
+                  :items="roomTypes"
+                  item-text="name"
+                  item-value="id"
+                  dense
+                  outlined
+                  @change="
+                    () => {
+                      get_room(room.room_type);
+                    }
+                  "
+                  :hide-details="!errors.room_type"
+                  :error="errors.room_type"
+                  :error-messages="
+                    errors && errors.room_type ? errors.room_type[0] : ''
+                  "
+                ></v-select>
+              </v-col>
+              <v-col md="6" sm="12" cols="12" dense>
+                <label class="col-form-label">Room No </label>
+                <v-select
+                  v-model="room.room_id"
+                  :items="rooms"
+                  item-text="room_no"
+                  item-value="id"
+                  dense
+                  outlined
+                  :hide-details="!errors.room_id"
+                  :error="errors.room_id"
+                  :error-messages="
+                    errors && errors.room_id ? errors.room_id[0] : ''
+                  "
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" md="6">
+                <label class="col-form-label">Check In </label>
+                <v-menu
+                  v-model="check_in_menu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="room.check_in"
+                      readonly
+                      v-bind="attrs"
+                      :hide-details="true"
+                      v-on="on"
+                      dense
+                      outlined
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="room.check_in"
+                    @input="check_in_menu = false"
+                    @change="getDays"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
 
-          <v-col md="6" cols="12" sm="12">
-            <label class="col-form-label">Amount</label>
-            <v-text-field
-              dense
-              :hide-details="true"
-              outlined
-              type="text"
-              v-model="room.price"
-            ></v-text-field>
-          </v-col>
+              <v-col cols="12" sm="6" md="6">
+                <label class="col-form-label">Check Out </label>
+                <v-menu
+                  v-model="check_out_menu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="room.check_out"
+                      readonly
+                      v-bind="attrs"
+                      :hide-details="true"
+                      v-on="on"
+                      dense
+                      outlined
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="room.check_out"
+                    @input="check_out_menu = false"
+                    @change="runAllFunctions"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col md="4" cols="12" sm="12">
+                <label class="col-form-label">Discount</label>
+                <v-text-field
+                  @keyup="runAllFunctions"
+                  type="number"
+                  dense
+                  :hide-details="true"
+                  outlined
+                  v-model="room.discount"
+                ></v-text-field>
+              </v-col>
 
-          <v-col md="12" cols="12" class="mt-3" sm="12">
-            <h5>Total Days : {{ getDays() }}</h5>
-            <h5>Price : {{ room.price }}</h5>
-            <h5>Total Amount : {{ calAmount() }}</h5>
+              <v-col md="4" cols="12" sm="12">
+                <label class="col-form-label">Advance Price</label>
+                <v-text-field
+                  @keyup="runAllFunctions"
+                  dense
+                  :hide-details="true"
+                  outlined
+                  type="text"
+                  v-model="room.advance_price"
+                ></v-text-field>
+              </v-col>
+              <v-col md="4" cols="12" sm="12">
+                <label class="col-form-label">Payment Mode</label>
+                <v-select
+                  v-model="room.payment_mode_id"
+                  :items="[
+                    { id: 1, name: 'Cash' },
+                    { id: 2, name: 'Card' },
+                    { id: 3, name: 'Online' },
+                    { id: 4, name: 'Bank' },
+                    { id: 5, name: 'UPI' },
+                    { id: 6, name: 'Cheque' }
+                  ]"
+                  item-text="name"
+                  item-value="id"
+                  dense
+                  outlined
+                  @change="getType(room.type)"
+                  :hide-details="!errors.type"
+                  :error="errors.type"
+                  :error-messages="errors && errors.type ? errors.type[0] : ''"
+                ></v-select>
+              </v-col>
+            </v-row>
           </v-col>
-        </v-row>
-      </v-container>
-    </v-card>
-
-    <v-card elevation="0" class="mt-3">
-      <v-card-title primary-title> Customer Information </v-card-title>
-
-      <v-divider></v-divider>
-      <v-container grid-list-xs>
-        <v-row dense>
-          <v-col md="4" cols="12" sm="12">
-            <label class="col-form-label">Contact No</label>
-            <v-text-field
-              dense
-              outlined
-              type="number"
-              v-model="customer.contact_no"
-              :hide-details="!errors.contact_no"
-              :error="errors.contact_no"
-              :error-messages="
-                errors && errors.contact_no ? errors.contact_no[0] : ''
-              "
-            ></v-text-field>
-          </v-col>
-          <v-col md="2" class="mt-10" cols="12" sm="12">
-            <label class="col-form-label"></label>
-            <v-btn
-              color="primary"
-              @click="get_customer()"
-              :loading="checkLoader"
-              >Check Customer</v-btn
-            >
-          </v-col>
-          <v-col md="6" cols="12" sm="12">
-            <label class="col-form-label">First Name</label>
-            <v-text-field
-              dense
-              outlined
-              type="text"
-              v-model="customer.first_name"
-              :hide-details="!errors.first_name"
-              :error="errors.first_name"
-              :error-messages="
-                errors && errors.first_name ? errors.first_name[0] : ''
-              "
-            ></v-text-field>
-          </v-col>
-          <v-col md="6" cols="12" sm="12">
-            <label class="col-form-label">Last Name</label>
-            <v-text-field
-              dense
-              :hide-details="true"
-              outlined
-              type="text"
-              v-model="customer.last_name"
-            ></v-text-field>
-          </v-col>
-          <v-col md="6" cols="12" sm="12">
-            <label class="col-form-label">Email</label>
-            <v-text-field
-              dense
-              :hide-details="true"
-              outlined
-              type="text"
-              v-model="customer.email"
-            ></v-text-field>
-          </v-col>
-
-          <v-col md="6" sm="12" cols="12" dense>
-            <label class="col-form-label"
-              >ID Card Type <span class="text-danger">*</span></label
-            >
-            <v-select
-              v-model="customer.id_card_type_id"
-              :items="idCards"
-              dense
-              outlined
-              item-text="name"
-              item-value="id"
-              :hide-details="!errors.id_card_type_id"
-              :error="errors.id_card_type_id"
-              :error-messages="
-                errors && errors.id_card_type_id
-                  ? errors.id_card_type_id[0]
-                  : ''
-              "
-            ></v-select>
-          </v-col>
-
-          <v-col md="6" cols="12" sm="12">
-            <label class="col-form-label">Selected ID Card Number</label>
-            <v-text-field
-              dense
-              outlined
-              :hide-details="true"
-              type="text"
-              v-model="customer.id_card_no"
-            ></v-text-field>
-          </v-col>
-          <v-col md="6" cols="12" sm="12">
-            <label class="col-form-label">Car Number</label>
-            <v-text-field
-              dense
-              outlined
-              :hide-details="true"
-              type="text"
-              v-model="customer.car_no"
-            ></v-text-field>
-          </v-col>
-          <v-col md="1" sm="12" cols="12" dense>
-            <label class="col-form-label">Adult </label>
-            <v-select
-              v-model="customer.no_of_adult"
-              :items="member_numbers"
-              dense
-              outlined
-              :hide-details="!errors.no_of_adult"
-              :error="errors.no_of_adult"
-              :error-messages="
-                errors && errors.no_of_adult ? errors.no_of_adult[0] : ''
-              "
-            >
-            </v-select>
-          </v-col>
-          <v-col md="1" sm="12" cols="12" dense>
-            <label class="col-form-label">Child </label>
-            <v-select
-              v-model="customer.no_of_child"
-              :items="member_numbers"
-              :hide-details="true"
-              dense
-              outlined
-            >
-            </v-select>
-          </v-col>
-          <v-col md="1" sm="12" cols="12" dense>
-            <label class="col-form-label">Baby </label>
-            <v-select
-              v-model="customer.no_of_baby"
-              :items="member_numbers"
-              dense
-              :hide-details="true"
-              outlined
-            >
-            </v-select>
-          </v-col>
-        </v-row>
-        <v-row>
           <v-col cols="12">
-            <label class="col-form-label">Address </label>
-            <v-text-field
-              v-model="customer.address"
-              outlined
-              :hide-details="true"
-              textarea
-            ></v-text-field>
+            <v-divider></v-divider>
+            <v-row>
+              <v-card-title primary-title> Billing Information </v-card-title>
+
+              <v-col cols="12">
+                <table>
+                  <tr>
+                    <td>Total Days</td>
+                    <td>
+                      <div align="right">{{ getDays() }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Room Price</td>
+                    <td>
+                      <div align="right">{{ room.price }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Sub Total (Total Days x Room Price) ({{ getDays() }} x
+                      {{ room.price }})
+                    </td>
+                    <td>
+                      <div align="right">{{ room.sub_total }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Discount</td>
+                    <td>
+                      <div align="right">{{ room.discount }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>After Discount</td>
+                    <td>
+                      <div align="right">{{ room.after_discount }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Sales Tax</td>
+                    <td>
+                      <div align="right">{{ room.sales_tax }}</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <th>Total</th>
+                    <td>
+                      <div align="right">{{ room.total_price }}</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Advance Payment</td>
+                    <td>
+                      <div align="right">{{ room.advance_price }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Remaining Amount</td>
+                    <td>
+                      <div align="right">{{ room.remaining_price }}</div>
+                    </td>
+                  </tr>
+                </table>
+              </v-col>
+            </v-row>
           </v-col>
-        </v-row>
-        <v-row>
           <v-col cols="12">
-            <label class="col-form-label">Customer Request </label>
-            <v-text-field
-              v-model="customer.request"
-              :hide-details="true"
-              outlined
-              textarea
-            ></v-text-field>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <div class="text-right">
-              <v-btn
-                dark
-                small
-                :loading="loading"
-                color="primary"
-                @click="store()"
-              >
-                Submit
-              </v-btn>
-            </div>
+            <v-divider></v-divider>
+            <v-row>
+              <v-card-title primary-title> Customer Information </v-card-title>
+              <v-col md="8" cols="12" sm="12">
+                <label class="col-form-label">Contact No</label>
+                <v-text-field
+                  dense
+                  outlined
+                  type="number"
+                  v-model="customer.contact_no"
+                  :hide-details="!errors.contact_no"
+                  :error="errors.contact_no"
+                  :error-messages="
+                    errors && errors.contact_no ? errors.contact_no[0] : ''
+                  "
+                ></v-text-field>
+              </v-col>
+              <v-col md="4" class="mt-10" cols="12" sm="12">
+                <label class="col-form-label"></label>
+                <v-btn
+                  color="primary"
+                  @click="get_customer()"
+                  :loading="checkLoader"
+                  >Check Customer</v-btn
+                >
+              </v-col>
+              <v-col md="4" cols="12" sm="12">
+                <label class="col-form-label">First Name</label>
+                <v-text-field
+                  dense
+                  outlined
+                  type="text"
+                  v-model="customer.first_name"
+                  :hide-details="!errors.first_name"
+                  :error="errors.first_name"
+                  :error-messages="
+                    errors && errors.first_name ? errors.first_name[0] : ''
+                  "
+                ></v-text-field>
+              </v-col>
+              <v-col md="4" cols="12" sm="12">
+                <label class="col-form-label">Last Name</label>
+                <v-text-field
+                  dense
+                  :hide-details="true"
+                  outlined
+                  type="text"
+                  v-model="customer.last_name"
+                ></v-text-field>
+              </v-col>
+              <v-col md="4" cols="12" sm="12">
+                <label class="col-form-label">Email</label>
+                <v-text-field
+                  dense
+                  :hide-details="true"
+                  outlined
+                  type="text"
+                  v-model="customer.email"
+                ></v-text-field>
+              </v-col>
+              <v-col md="4" sm="12" cols="12" dense>
+                <label class="col-form-label">Adult </label>
+                <v-select
+                  v-model="customer.no_of_adult"
+                  :items="member_numbers"
+                  dense
+                  outlined
+                  :hide-details="!errors.no_of_adult"
+                  :error="errors.no_of_adult"
+                  :error-messages="
+                    errors && errors.no_of_adult ? errors.no_of_adult[0] : ''
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col md="4" sm="12" cols="12" dense>
+                <label class="col-form-label">Child </label>
+                <v-select
+                  v-model="customer.no_of_child"
+                  :items="member_numbers"
+                  :hide-details="true"
+                  dense
+                  outlined
+                >
+                </v-select>
+              </v-col>
+              <v-col md="4" sm="12" cols="12" dense>
+                <label class="col-form-label">Baby </label>
+                <v-select
+                  v-model="customer.no_of_baby"
+                  :items="member_numbers"
+                  dense
+                  :hide-details="true"
+                  outlined
+                >
+                </v-select>
+              </v-col>
+              <v-col md="3" sm="12" cols="12" dense>
+                <label class="col-form-label"
+                  >ID Card Type <span class="text-danger">*</span></label
+                >
+                <v-select
+                  v-model="customer.id_card_type_id"
+                  :items="idCards"
+                  dense
+                  outlined
+                  item-text="name"
+                  item-value="id"
+                  :hide-details="!errors.id_card_type_id"
+                  :error="errors.id_card_type_id"
+                  :error-messages="
+                    errors && errors.id_card_type_id
+                      ? errors.id_card_type_id[0]
+                      : ''
+                  "
+                ></v-select>
+              </v-col>
+              <v-col md="3" cols="12" sm="12">
+                <label class="col-form-label">Selected ID Card Number</label>
+                <v-text-field
+                  dense
+                  outlined
+                  :hide-details="true"
+                  type="text"
+                  v-model="customer.id_card_no"
+                ></v-text-field>
+              </v-col>
+              <v-col md="3" cols="12" sm="12">
+                <label class="col-form-label">GST</label>
+                <v-text-field
+                  dense
+                  outlined
+                  type="text"
+                  v-model="customer.gst_number"
+                  :hide-details="!errors.gst_number"
+                  :error="errors.gst_number"
+                  :error-messages="
+                    errors && errors.gst_number ? errors.gst_number[0] : ''
+                  "
+                ></v-text-field>
+              </v-col>
+              <v-col md="3" cols="12" sm="12">
+                <label class="col-form-label">Car Number</label>
+                <v-text-field
+                  dense
+                  outlined
+                  :hide-details="true"
+                  type="text"
+                  v-model="customer.car_no"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <label class="col-form-label">Address </label>
+                <v-textarea
+                  rows="3"
+                  v-model="customer.address"
+                  outlined
+                  :hide-details="true"
+                ></v-textarea>
+              </v-col>
+              <v-col cols="6">
+                <label class="col-form-label">Customer Request </label>
+                <v-textarea
+                  rows="3"
+                  v-model="customer.request"
+                  :hide-details="true"
+                  outlined
+                ></v-textarea>
+              </v-col>
+              <v-col cols="12">
+                <hr />
+                <div class="text-left">
+                  <v-btn
+                    dark
+                    small
+                    :loading="loading"
+                    color="primary"
+                    @click="store()"
+                  >
+                    Submit
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-container>
@@ -406,10 +510,19 @@ export default {
     isAgent: false,
 
     room: {
-      amount: "",
-      total_price: "",
+      total_days: 0,
+      sub_total: 0,
+      sales_tax: 0,
+      discount: 0,
+      payment_mode_id: 1,
+      discount: 0,
+      after_discount: 0,
+      amount: 0,
+      advance_price: 0,
+      remaining_price: 0,
+      total_price: 0,
       source: "",
-      price: "",
+      price: 0,
       type: "",
       agent_name: "",
       source: "",
@@ -431,18 +544,56 @@ export default {
     this.preloader = false;
     this.get_room_types();
     this.get_id_cards();
-
-    this.getDays();
+    this.runAllFunctions();
   },
   methods: {
+    runAllFunctions() {
+      this.getDays();
+      this.subTotal();
+      this.afterDiscount();
+      this.getAmountAfterSalesTax();
+      this.getTotal();
+      this.getRemainingAmount();
+    },
     getDays() {
       let ci = new Date(this.room.check_in);
       let co = new Date(this.room.check_out);
       let Difference_In_Time = co.getTime() - ci.getTime();
       let days = Difference_In_Time / (1000 * 3600 * 24) + 1;
       if (days > 0) {
-        return days;
+        return (this.room.total_days = days);
       }
+    },
+
+    getAmountAfterSalesTax() {
+      let amount = this.afterDiscount();
+      let per = amount < 3000 ? 12 : 18;
+      return (this.room.sales_tax = this.getPercentage(amount, per).toFixed(0));
+    },
+
+    afterDiscount() {
+      this.room.after_discount = this.subTotal() - this.room.discount;
+      return this.room.after_discount;
+    },
+
+    getTotal() {
+      return (this.room.total_price =
+        parseInt(this.getAmountAfterSalesTax()) +
+        this.subTotal() -
+        this.room.discount);
+    },
+
+    getRemainingAmount() {
+      return (this.room.remaining_price =
+        this.getTotal() - this.room.advance_price);
+    },
+
+    getPercentage(amount, clause) {
+      return (amount / 100) * clause;
+    },
+
+    subTotal() {
+      return (this.room.sub_total = this.room.price * this.getDays());
     },
 
     getType(val) {
@@ -487,7 +638,7 @@ export default {
       this.$axios.get(`get_room/${val}`).then(({ data }) => {
         this.rooms = data;
       });
-      this.calAmount();
+      this.runAllFunctions();
     },
     get_customer() {
       // this.checkLoader = true;
@@ -500,7 +651,6 @@ export default {
 
       this.$axios.get(`get_customer/${contact_no}`).then(({ data }) => {
         if (!data.status) {
-          alert("No exist customer");
           this.checkLoader = false;
 
           this.customer = {};
@@ -512,17 +662,7 @@ export default {
           ...data.data,
           customer_id: data.data.id
         };
-
-        console.log(data.data);
-        return;
-        // customer_id
-        this.checkLoader = false;
       });
-    },
-
-    calAmount() {
-      this.room.total_price = this.room.price * this.getDays();
-      return this.room.total_price;
     },
 
     can(per) {
@@ -534,6 +674,11 @@ export default {
     },
 
     store() {
+      console.log(
+        "🚀 ~ file: create.vue ~ line 672 ~ store ~ this.room",
+        this.room
+      );
+
       let payload = {
         ...this.customer,
         ...this.room,
@@ -565,5 +710,20 @@ export default {
   padding-top: 0px;
   margin-bottom: 8px;
   display: none;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 7px;
+}
+
+tr:nth-child(even) {
+  background-color: #e9e9e9;
 }
 </style>

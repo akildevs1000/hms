@@ -29,6 +29,14 @@ return new class extends Migration
 
             $table->integer('company_id')->default(0);
             $table->timestamps();
+
+            $table->integer('payment_mode_id')->default(1);
+            $table->string('total_days')->nullable();
+            $table->string('sub_total')->nullable();
+            $table->string('sales_tax')->nullable();
+            $table->string('discount')->nullable();
+            $table->string('after_discount')->nullable();
+            $table->string('advance_price')->nullable();
         });
     }
 

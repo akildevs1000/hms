@@ -36,6 +36,21 @@ class Booking extends Model
         return  Customer::find($this->customer_id)->name ?? '';
     }
 
+
+    protected $casts = ['booking_date' => 'datetime:d-M-y'];
+
+    /**
+     * Get the user that owns the Booking
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class)->withDefault([
+            "name" => "---"
+        ]);
+    }
+
     // public function GetBackgroundAttribute()
     // {
     //     $roomType =  Room::with('roomType')->find($this->room_id)->roomType->name ?? '';

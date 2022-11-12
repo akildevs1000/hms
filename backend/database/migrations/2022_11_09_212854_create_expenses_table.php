@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('item');
             $table->float('amount', 8, 2);
             $table->enum('payment_modes', ["CASH", "CHEQUE", "CREDIT"])->default("CASH");
+            $table->integer('company_id')->default(0);
             $table->timestamps();
         });
     }

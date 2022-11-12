@@ -345,6 +345,12 @@ export default {
           title: "Customers",
           to: "/customer/list",
           menu: "reservation_access"
+        },
+        {
+          icon: "mdi-calendar",
+          title: "calendar",
+          to: "/calendar",
+          menu: "reservation_access"
         }
       ],
 

@@ -18,7 +18,7 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        return Booking::where('company_id', $request->company_id)->paginate($request->per_page ?? 10);
+        return Booking::with(["customer:id,name", "room"])->where('company_id', $request->company_id)->orderByDesc("id")->paginate($request->per_page ?? 50);
     }
 
     /**
@@ -50,23 +50,15 @@ class BookingController extends Controller
                 $customer_id = $customer->id;
             }
 
-            $booking_info = [
-                'source'          => $request->source,
-                'agent_name'      => $request->agent_name,
-                'customer_id'     => $customer_id,
-                'room_id'         => $request->room_id,
-                'check_in'        => $request->check_in,
-                'check_out'       => $request->check_out,
-                'total_price'     => $request->total_price,
-                'remaining_price' => $request->total_price,
-                "booking_date"    => now(),
-                "payment_status"  => $request->total_price == $request->remaining_price ? '0' : '1',
-                'company_id'      => $request->company_id,
-                'type'            => $request->type,
-                'request'         => $request->input('request'),
-            ];
+            $data = $request->validated();
 
-            $booked = Booking::create($booking_info);
+            $data['customer_id'] = $customer_id;
+            $data['total_price'] = $request->total_price;
+            $data['remaining_price'] = $request->remaining_price;
+            $data['booking_date'] = now();
+            $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
+
+            $booked = Booking::create($data);
 
             if ($booked) {
 
