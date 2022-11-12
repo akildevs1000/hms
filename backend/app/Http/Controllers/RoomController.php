@@ -54,7 +54,7 @@ class RoomController extends Controller
 
     public function getRoom($id)
     {
-        return Room::where('room_type_id', $id)->get(['id', 'room_no']);
+        return Room::where('status', 0)->where('room_type_id', $id)->get(['id', 'room_no']);
     }
 
     public function get_id_cards()
@@ -81,13 +81,10 @@ class RoomController extends Controller
     public function get_color($val)
     {
         return match ($val) {
-            'Single' => 'red',
-            'Double' => 'green',
-            'Triple' => 'Pink',
-            'Family' => '#000',
-            'King' => 'blue',
-            'Sized' => 'gray',
-            'Single' => 'black',
+            'queen' => 'red',
+            'king' => 'green',
+            'castle' => '#9966CC',
+            'royal' => '#000',
         };
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\Room;
+use App\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Booking extends Model
@@ -33,7 +35,7 @@ class Booking extends Model
 
     public function GetTitleAttribute()
     {
-        return  Customer::find($this->customer_id)->name ?? '';
+        return  Customer::find($this->customer_id)->full_name ?? '';
     }
 
 

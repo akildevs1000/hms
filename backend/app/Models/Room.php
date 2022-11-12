@@ -13,7 +13,6 @@ class Room extends Model
 
     protected $with = ['room_type:id,name,price'];
 
-
     protected $hidden = [
         "check_in_status",
         "check_out_status",
@@ -30,7 +29,7 @@ class Room extends Model
     {
         return $this->belongsTo(RoomType::class);
     }
-    
+
     /**
      * Get the room_type that owns the Room
      *

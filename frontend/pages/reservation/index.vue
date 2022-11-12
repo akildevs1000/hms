@@ -59,7 +59,7 @@
           <td class="ps-3">
             <b>{{ ++index }}</b>
           </td>
-          <td>{{ item && item.customer.name }}</td>
+          <td>{{ item && item.customer.full_name }}</td>
           <td>{{ item.room.room_no }}</td>
           <td>{{ item && item.room.room_type.name }}</td>
           <td>
@@ -92,12 +92,30 @@
               >Checked In</v-btn
             >
 
-            <v-btn v-else-if="item && item.room.status == 3" small elevation="0" dark color="blue"
+            <v-btn
+              v-else-if="item && item.room.status == 3"
+              small
+              elevation="0"
+              dark
+              color="blue"
               >Checked Out</v-btn
             >
 
-            <v-btn v-else-if="item && item.room.status == 4" small elevation="0" dark>Dirty</v-btn>
-            <v-btn v-else-if="item && item.room.status == 5" small elevation="0" dark color="grey">Maintenance</v-btn>
+            <v-btn
+              v-else-if="item && item.room.status == 4"
+              small
+              elevation="0"
+              dark
+              >Dirty</v-btn
+            >
+            <v-btn
+              v-else-if="item && item.room.status == 5"
+              small
+              elevation="0"
+              dark
+              color="grey"
+              >Maintenance</v-btn
+            >
           </td>
           <td>{{ item.sub_total }}</td>
           <td>{{ item.discount }}</td>

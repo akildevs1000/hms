@@ -215,8 +215,6 @@ class RoomsTableSeeder extends Seeder
                 'deleteStatus'     => '0',
             ],
 
-            // 400
-
             [
                 'room_type_id'     => '1',
                 'room_no'          => '407',
@@ -227,7 +225,7 @@ class RoomsTableSeeder extends Seeder
 
             [
                 'room_type_id'     => '1',
-                'room_no'          => '',
+                'room_no'          => '408',
                 'check_in_status'  => '0',
                 'check_out_status' => '0',
                 'deleteStatus'     => '0',

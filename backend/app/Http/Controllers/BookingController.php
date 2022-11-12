@@ -20,7 +20,7 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        return Booking::with(["customer:id,name", "room"])->where('company_id', $request->company_id)->orderByDesc("id")->paginate($request->per_page ?? 50);
+        return Booking::with(["customer:id,first_name,last_name", "room"])->where('company_id', $request->company_id)->orderByDesc("id")->paginate($request->per_page ?? 50);
     }
 
     /**
@@ -32,7 +32,11 @@ class BookingController extends Controller
     {
         return $this->response('Booking validated.', null, true);
     }
-
+    public function updateByDrag(Request $request)
+    {
+        // return $request->only('check_in', 'check_out', 'id');
+        return Booking::where('id', $request->id)->update($request->only('check_in', 'check_out'));
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -44,7 +48,7 @@ class BookingController extends Controller
 
         try {
 
-            $data = $request->except(['room_type','amount','price']);
+            $data = $request->except(['room_type', 'amount', 'price']);
 
             $data["customer_id"] = $request->customer_id;
 
@@ -71,32 +75,22 @@ class BookingController extends Controller
 
     public function check_in_room(Request $request)
     {
-        $booking_id      = $request->booking_id;
-        $advance_payment = $request->advance_payment;
+        try {
+            $booking_id      = $request->booking_id;
+            $booking = Booking::find($booking_id);
+            $booking->remaining_price = $request->remaining_price;
+            $booking->payment_mode_id = $request->payment_mode_id;
+            $booking->advance_price = $request->advance_price;
+            $booking->save();
 
-        if ($booking_id == "") {
-            return [
-                'done' => false,
-                'data' => "Error With Booking",
-            ];
+            if ($booking->save()) {
+                Room::where('id', $booking->room_id)->update(["status" => '2']);
+                return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
+            }
+            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+        } catch (\Throwable $th) {
+            throw $th;
         }
-
-        $booking_details = Booking::where('booking_id', $booking_id)->first();
-        $room_id         = $booking_details->room_id;
-        $remaining_price = $booking_details->total_price - $advance_payment;
-
-        $updated = Booking::where('booking_id', $booking_id)->update(["remaining_price" => $remaining_price]);
-
-        if (!$updated) {
-            return [
-                'done' => false,
-                'data' => "Problem in payment",
-            ];
-        }
-
-        $updateRoom = Room::where('room_id', $room_id)->update(["check_in_status" => '1']);
-
-        return $updateRoom ? ['done' => true, 'data' => ''] : ['done' => false, 'data' => "Problem in Update Room Check in status"];
     }
 
     public function check_out_room(Request $request)
@@ -225,5 +219,21 @@ class BookingController extends Controller
     public function events_list(Request $request)
     {
         return Booking::where('company_id', $request->company_id)->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
+    }
+
+    public function get_booking_by_check_in(Request $request)
+    {
+        $columns = [
+            'id',
+            'customer_id',
+            'room_id',
+            'booking_date',
+            'check_in',
+            'check_out',
+            'total_price',
+        ];
+
+        return Booking::with('room')
+            ->find($request->id);
     }
 }

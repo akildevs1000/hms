@@ -77,8 +77,9 @@
           color="primary"
         ></v-progress-linear>
         <tr v-for="(item, index) in data" :key="index">
+          <td>{{ ++index }}</td>
           <td>{{ caps(item.room_no) }}</td>
-          <td>{{ caps(item.room_type_id) }}</td>
+          <td>{{ caps(item.room_type.name) }}</td>
           <td>
             <v-btn
               style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
@@ -206,7 +207,12 @@ export default {
     ],
     loading: false,
     total: 0,
-    headers: [{ text: "Room" }, { text: "Room Type" }, { text: "Status" }],
+    headers: [
+      { text: "#" },
+      { text: "Room" },
+      { text: "Room Type" },
+      { text: "Status" }
+    ],
     editedIndex: -1,
     response: "",
     errors: []

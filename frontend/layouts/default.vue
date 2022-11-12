@@ -539,7 +539,6 @@ export default {
     },
 
     getUser() {
-      console.log(this.$auth.user);
       return this.$auth.user && this.$auth.user.company.name;
     },
 
