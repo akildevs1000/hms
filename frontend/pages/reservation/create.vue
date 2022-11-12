@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div class="text-center ma-2">
+      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
+        {{ response }}
+      </v-snackbar>
+    </div>
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -68,11 +73,7 @@
                   item-value="id"
                   dense
                   outlined
-                  @change="
-                    () => {
-                      get_room(room.room_type);
-                    }
-                  "
+                  @change="get_room(room.room_type)"
                   :hide-details="!errors.room_type"
                   :error="errors.room_type"
                   :error-messages="
@@ -174,7 +175,7 @@
                   dense
                   :hide-details="true"
                   outlined
-                  type="text"
+                  type="number"
                   v-model="room.advance_price"
                 ></v-text-field>
               </v-col>
@@ -195,9 +196,13 @@
                   dense
                   outlined
                   @change="getType(room.type)"
-                  :hide-details="!errors.type"
-                  :error="errors.type"
-                  :error-messages="errors && errors.type ? errors.type[0] : ''"
+                  :hide-details="!errors.payment_mode_id"
+                  :error="errors.payment_mode_id"
+                  :error-messages="
+                    errors && errors.typpayment_mode_ide
+                      ? errors.payment_mode_id[0]
+                      : ''
+                  "
                 ></v-select>
               </v-col>
             </v-row>
@@ -277,7 +282,9 @@
             <v-row>
               <v-card-title primary-title> Customer Information </v-card-title>
               <v-col md="8" cols="12" sm="12">
-                <label class="col-form-label">Contact No</label>
+                <label class="col-form-label"
+                  >Contact No <span class="text-danger">*</span></label
+                >
                 <v-text-field
                   dense
                   outlined
@@ -300,7 +307,9 @@
                 >
               </v-col>
               <v-col md="4" cols="12" sm="12">
-                <label class="col-form-label">First Name</label>
+                <label class="col-form-label"
+                  >First Name <span class="text-danger">*</span></label
+                >
                 <v-text-field
                   dense
                   outlined
@@ -324,13 +333,19 @@
                 ></v-text-field>
               </v-col>
               <v-col md="4" cols="12" sm="12">
-                <label class="col-form-label">Email</label>
+                <label class="col-form-label"
+                  >Email <span class="text-danger">*</span></label
+                >
                 <v-text-field
                   dense
-                  :hide-details="true"
                   outlined
-                  type="text"
+                  type="email"
                   v-model="customer.email"
+                  :hide-details="!errors.email"
+                  :error="errors.email"
+                  :error-messages="
+                    errors && errors.email ? errors.email[0] : ''
+                  "
                 ></v-text-field>
               </v-col>
               <v-col md="4" sm="12" cols="12" dense>
@@ -391,13 +406,20 @@
                 ></v-select>
               </v-col>
               <v-col md="3" cols="12" sm="12">
-                <label class="col-form-label">Selected ID Card Number</label>
+                <label class="col-form-label"
+                  >Selected ID Card Number
+                  <span class="text-danger">*</span></label
+                >
                 <v-text-field
                   dense
                   outlined
-                  :hide-details="true"
                   type="text"
                   v-model="customer.id_card_no"
+                  :hide-details="!errors.id_card_no"
+                  :error="errors.id_card_no"
+                  :error-messages="
+                    errors && errors.id_card_no ? errors.id_card_no[0] : ''
+                  "
                 ></v-text-field>
               </v-col>
               <v-col md="3" cols="12" sm="12">
@@ -437,7 +459,7 @@
                 <label class="col-form-label">Customer Request </label>
                 <v-textarea
                   rows="3"
-                  v-model="customer.request"
+                  v-model="room.request"
                   :hide-details="true"
                   outlined
                 ></v-textarea>
@@ -450,7 +472,7 @@
                     small
                     :loading="loading"
                     color="primary"
-                    @click="store()"
+                    @click="store"
                   >
                     Submit
                   </v-btn>
@@ -510,22 +532,9 @@ export default {
     isAgent: false,
 
     room: {
-      total_days: 0,
-      sub_total: 0,
-      sales_tax: 0,
-      discount: 0,
-      payment_mode_id: 1,
-      discount: 0,
-      after_discount: 0,
-      amount: 0,
-      advance_price: 0,
-      remaining_price: 0,
-      total_price: 0,
-      source: "",
-      price: 0,
       type: "",
-      agent_name: "",
       source: "",
+      agent_name: "",
       room_type: "",
       room_id: "",
       check_in: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -533,10 +542,38 @@ export default {
         .substr(0, 10),
       check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
-        .substr(0, 10)
+        .substr(0, 10),
+      discount: 0,
+      advance_price: 0,
+      payment_mode_id: 1,
+
+      total_days: 0,
+      sub_total: 0,
+      after_discount: 0,
+      sales_tax: 0,
+      total_price: 0,
+      remaining_price: 0,
+
+      request: "",
+
+      amount: 0,
+      price: 0,
+
+      company_id: 0
     },
     customer: {
-      customer_id: ""
+      first_name: "",
+      last_name: "",
+      contact_no: "",
+      email: "",
+      id_card_type_id: "",
+      id_card_no: "",
+      car_no: "",
+      no_of_adult: "",
+      no_of_child: "",
+      no_of_baby: "",
+      address: "",
+      company_id: ""
     },
     errors: []
   }),
@@ -641,6 +678,7 @@ export default {
       this.runAllFunctions();
     },
     get_customer() {
+      this.errors = [];
       // this.checkLoader = true;
       let contact_no = this.customer.contact_no;
       if (contact_no == undefined) {
@@ -674,18 +712,52 @@ export default {
     },
 
     store() {
-      console.log(
-        "🚀 ~ file: create.vue ~ line 672 ~ store ~ this.room",
-        this.room
-      );
-
       let payload = {
-        ...this.customer,
         ...this.room,
         company_id: this.$auth.user.company.id
       };
 
-      this.errors = payload;
+      this.$axios
+        .post("/booking_validate", payload)
+        .then(({ data }) => {
+          this.loading = false;
+
+          if (!data.status) {
+            this.errors = data.errors;
+          } else {
+            this.errors = [];
+            this.store_customer();
+          }
+        })
+        .catch(e => console.log(e));
+    },
+    store_customer() {
+      let payload = {
+        ...this.customer,
+        company_id: this.$auth.user.company.id
+      };
+
+      this.$axios
+        .post("/customer", payload)
+        .then(({ data }) => {
+          this.loading = false;
+
+          if (!data.status) {
+            this.errors = data.errors;
+          } else {
+            this.errors = [];
+            this.store_booking(data.record.id);
+          }
+        })
+        .catch(e => console.log(e));
+    },
+    store_booking(id) {
+      let payload = {
+        ...this.room,
+        customer_id: id,
+        company_id: this.$auth.user.company.id
+      };
+
       this.$axios
         .post("/booking", payload)
         .then(({ data }) => {
@@ -695,7 +767,7 @@ export default {
             this.errors = data.errors;
           } else {
             this.errors = [];
-            this.snackbar = data.message;
+            this.snackbar = true;
             this.response = data.message;
           }
         })

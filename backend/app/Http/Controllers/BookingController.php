@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Booking\StoreRequest;
 use App\Models\Booking;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as Logger;
+
+use App\Http\Requests\Booking\StoreRequest;
+
 
 class BookingController extends Controller
 {
@@ -26,8 +28,9 @@ class BookingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function booking_validate(StoreRequest $request)
     {
+        return $this->response('Booking validated.', null, true);
     }
 
     /**
@@ -39,45 +42,28 @@ class BookingController extends Controller
     public function store(StoreRequest $request)
     {
 
-        DB::beginTransaction();
-
         try {
-            $customer_id = $request->customer_id;
 
-            if (!$customer_id) {
-                $customer    = new CustomerController();
-                $customer    = $customer->store($request);
-                $customer_id = $customer->id;
-            }
+            $data = $request->except(['room_type','amount','price']);
 
-            $data = $request->validated();
+            $data["customer_id"] = $request->customer_id;
 
-            $data['customer_id'] = $customer_id;
-            $data['total_price'] = $request->total_price;
-            $data['remaining_price'] = $request->remaining_price;
             $data['booking_date'] = now();
             $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
 
-            $booked = Booking::create($data);
+            Booking::create($data);
 
-            if ($booked) {
+            $room  = new RoomController();
 
-                $room    = new RoomController();
-                $updated = $room->update($request->room_id, '1'); //1 = booked
+            $updated = $room->update($request->room_id, 1); //1 = booked
 
-                if ($updated) {
-                    DB::commit();
-                    return response()->json(['status' => true, 'message' => 'Room Booked Successfully']);
-                } else {
-                    DB::rollBack();
-                    return ["done" => false, "data" => "DataBase Error in status change"];
-                }
+            if ($updated) {
+                return $this->response('Room Booked Successfully.', null, true);
             } else {
-                DB::rollBack();
-                return ["done" => false, "data" => "DataBase Error booking"];
+                return $this->response('DataBase Error in status change', null, true);
             }
         } catch (\Throwable $th) {
-            DB::rollBack();
+            return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
         }

@@ -28,6 +28,7 @@ class StoreRequest extends FormRequest
 
         $arr = [
             'type'            => 'required',
+            'room_type'       => 'required',
             'room_id'         => 'required',
             'check_in'        => 'required',
             'check_out'       => 'required',
@@ -44,6 +45,7 @@ class StoreRequest extends FormRequest
            
             'request'     => 'nullable',
             'company_id'     => 'required',
+            // 'customer_id'     => 'required', 
 
         ];
 

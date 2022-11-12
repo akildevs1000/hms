@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Customer\StoreRequest;
+
 use App\Models\Customer;
 use Illuminate\Http\Request;
 
@@ -12,24 +14,20 @@ class CustomerController extends Controller
         return $model->paginate($request->per_page);
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $customer_info = [
-            'name'            => $request->first_name . ' ' . $request->last_name,
-            'first_name'      => $request->first_name,
-            'last_name'       =>  $request->last_name,
-            'contact_no'      => $request->contact_no,
-            'email'           => $request->email,
-            'id_card_type_id' => $request->id_card_type_id,
-            'id_card_no'      => $request->id_card_no,
-            'car_no'          => $request->car_no,
-            'no_of_adult'     => $request->no_of_adult,
-            'no_of_child'     => $request->no_of_child,
-            'no_of_baby'      => $request->no_of_baby,
-            'address'         => $request->address,
-        ];
+        try {
 
-        return Customer::create($customer_info);
+            $record = Customer::create($request->validated());
+
+            if ($record) {
+                return $this->response('Customer successfully added.', $record, true);
+            } else {
+                return $this->response('Customer cannot add.', null, 'Database error');
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     public function search(Request $request, $key)

@@ -38,7 +38,18 @@ class RoomController extends Controller
 
     public function update($room_id, $status)
     {
-        return Room::where('id', $room_id)->update(["status" => $status]);
+        try {
+
+            $record = Room::where('id', $room_id)->update(["status" => $status]);
+
+            if ($record) {
+                return $this->response('Room successfully added.', $record, true);
+            } else {
+                return $this->response('Room cannot add.', null, 'Database error');
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     public function getRoom($id)

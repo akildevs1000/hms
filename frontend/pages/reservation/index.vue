@@ -99,6 +99,10 @@
             <v-btn v-else-if="item && item.room.status == 4" small elevation="0" dark>Dirty</v-btn>
             <v-btn v-else-if="item && item.room.status == 5" small elevation="0" dark color="grey">Maintenance</v-btn>
           </td>
+          <td>{{ item.sub_total }}</td>
+          <td>{{ item.discount }}</td>
+          <td>{{ item.after_discount }}</td>
+          <td>{{ item.sales_tax }}</td>
           <td>{{ item.total_price }}</td>
           <td>{{ item.advance_price }}</td>
           <td>{{ item.remaining_price }}</td>
@@ -167,10 +171,14 @@ export default {
       { text: "Customer" },
       { text: "Room" },
       { text: "Room Type" },
-      { text: "Status" },
-      { text: "Total Price" },
-      { text: "Advance Price" },
-      { text: "Remaining Price" },
+      { text: "Room Status" },
+      { text: "Sub Total" },
+      { text: "Discount" },
+      { text: "After Discount" },
+      { text: "Sales Tax" },
+      { text: "Total" },
+      { text: "Advance" },
+      { text: "Remaining" },
       { text: "Payment Status" },
       { text: "Source" },
       { text: "Agent Name" },
