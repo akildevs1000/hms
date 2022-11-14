@@ -71,7 +71,8 @@ class RoomController extends Controller
             $arr[] = [
                 'id' => $d->room_no, 'room_no' => $d->room_no,
                 'room_type' => $d->roomType->name,
-                'eventColor' => $color
+                'eventColor' => $color,
+                'status' => $d->status,
             ];
         }
 

@@ -56,14 +56,15 @@
     <v-row>
       <v-col cols="8" offset="2">
         <v-card class="pa-5 mt-1">
+          <h6>Rooms</h6>
           <v-row>
-            <v-col cols="2" v-for="(room, index) in rooms()" :key="index">
+            <v-col cols="2" v-for="(room, index) in rooms" :key="index">
               <v-card
                 :elevation="0"
                 class="ma-1 pa-5"
                 dark
                 :class="getRelaventColor(room.status)"
-                ><div class="text-center">Queen</div>
+                ><div class="text-center">{{ caps(room.room_type) }}</div>
                 <div class="text-center">
                   {{ room.room_no }} - {{ room.status }}
                 </div>
@@ -182,13 +183,9 @@
   <Preloader v-else />
 </template>
 <script>
-let custom_style = `background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;`;
 export default {
   data() {
     return {
-      styleObject: {
-        background: custom_style
-      },
       elevations: [6, 12, 18],
       first_login_auth: 1,
       loading: true,
@@ -319,6 +316,7 @@ export default {
       daily_orders: "",
       weekly_orders: "",
       monthly_orders: "",
+      rooms: [],
       items: [],
       chartData: [
         ["Month", "On Time", "Absence", "Lates"],
@@ -338,6 +336,7 @@ export default {
     };
   },
   created() {
+    this.room_list();
     this.initialize();
     this.first_login_auth = this.$auth.user.first_login;
     // this.classObject();
@@ -362,30 +361,21 @@ export default {
     }
   },
   methods: {
-    rooms() {
-      return [
-        {
-          room_no: "102",
-          status: 0
-        },
-        {
-          room_no: "101",
-          status: 1
+    room_list() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
         }
-      ];
+      };
+      this.$axios.get(`room_list`, payload).then(({ data }) => {
+        this.rooms = data;
+      });
     },
-    // //  classObject() {
-    // //   let num1 = Math.floor(Math.random() * 10000);
-    // //   let num2 = Math.floor(Math.random() * 10000);
-    // //   let style = `background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;`;
-    // //   this.styleObject.background = style
-
-    // // },
-    // getStyle (){
-    //   return `background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;`
-    // },
+    caps(str) {
+      return str.replace(/\b\w/g, c => c.toUpperCase());
+    },
     getRelaventColor(status) {
-      switch (status) {
+      switch (parseInt(status)) {
         case 1:
           return "booked";
         case 2:
@@ -393,9 +383,9 @@ export default {
         case 3:
           return "checkedOut";
         case 4:
-          return "dirty";
+          return "background";
         case 5:
-          return "maintenance";
+          return "grey";
         default:
           return "available";
       }
