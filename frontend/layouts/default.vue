@@ -315,6 +315,12 @@ export default {
       order_count: "",
       menus: [
         {
+          icon: "mdi-calendar",
+          title: "Calendar",
+          to: "/calendar",
+          menu: "reservation_access"
+        },
+        {
           icon: "mdi-bed",
           title: `Reservation`,
           open_menu: false,
@@ -347,10 +353,10 @@ export default {
           menu: "reservation_access"
         },
         {
-          icon: "mdi-calendar",
-          title: "calendar",
-          to: "/calendar",
-          menu: "reservation_access"
+          icon: "mdi-cash",
+          title: "Expense",
+          to: "/expense",
+          menu: "expense_access"
         }
       ],
 
@@ -661,5 +667,30 @@ export default {
 .stg-color-icon {
   width: 30px !important;
   height: 30px !important;
+}
+</style>
+
+<style>
+.available {
+  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
+}
+
+.booked {
+  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
+}
+
+.checkedIn {
+  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
+}
+.checkedOut {
+  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
+}
+
+.dirty {
+  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
+}
+
+.maintenance {
+  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
 }
 </style>
