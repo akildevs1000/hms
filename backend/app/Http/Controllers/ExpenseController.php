@@ -9,19 +9,39 @@ use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
-    protected $model = new Expense();
     protected $model_name = 'Expense';
-    
+    protected $model;
+
+    public function __construct()
+    {
+        $this->model = new Expense();
+        $this->name = class_basename($this->model);
+    }
+
     public function index(Request $request)
     {
         return $this->model->where('company_id', $request->company_id)->orderByDesc("id")->paginate($request->per_page);
+
+    }
+
+    public function search(Request $request, $key)
+    {
+
+        $model  = Expense::query();
+        $fields = [
+            'item',
+            'amount',
+            'payment_modes',
+        ];
+        $model = $this->process_search($model, $key, $fields);
+        return $model->where("company_id", $request->company_id)->paginate($request->per_page);
     }
 
 
-    public function store(Expense $model, StoreRequest $request)
+    public function store(StoreRequest $request)
     {
         try {
-            $record = Expense::create($request->validated());
+            $record = $this->model->create($request->validated());
 
             if ($record) {
                 return $this->response($this->name . ' Successfully created.', $record, true);
@@ -33,15 +53,10 @@ class ExpenseController extends Controller
         }
     }
 
-    public function show(Expense $expense)
-    {
-        //
-    }
-
     public function update(UpdateRequest $request, Expense $expense)
     {
         try {
-            $record = $expense->update($request->all());
+            $record = $expense->update($request->validated());
 
             if ($record) {
                 return $this->response($this->name . ' successfully updated.', $record, true);

@@ -145,7 +145,7 @@ export default {
     loading: false,
     snackbar: false,
     email: "fyrucas@mailinator.com",
-    password: "n@JZp5k@",
+    password: "%YgDerB8",
     show_password: false,
     msg: "",
     emailRules: [

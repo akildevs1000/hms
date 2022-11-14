@@ -23,17 +23,17 @@
         </v-alert> -->
       </v-col>
       <div
-        class="col-xl-3 col-lg-6 text-uppercase"
+        class="col-xl-2 col-lg-6 text-uppercase"
         v-for="(i, index) in items"
         :key="index"
       >
-        <div class="card p-2" :class="i.color">
+        <div v-if="index < 6" class="card p-2" :class="i.color">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large ">
               <i :class="i.icon"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">{{ i.title }}</h4>
+              <h4 class="card-title text-capitalize">{{ i.title }} {{index  }}</h4>
               <span class="data-1"> {{ i.value }}</span>
               <p class="mb-0 text-sm">
                 <span class="mr-2"
@@ -54,11 +54,11 @@
     </v-row>
 
     <v-row>
-      <v-col cols="8" offset="2">
+      <v-col md="9" sm="12" cols="12">
         <v-card class="pa-5 mt-1">
           <h6>Rooms</h6>
           <v-row>
-            <v-col cols="2" v-for="(room, index) in rooms" :key="index">
+            <v-col md="2" sm="12" cols="12" v-for="(room, index) in rooms" :key="index">
               <v-card
                 :elevation="0"
                 class="ma-1 pa-5"
@@ -66,12 +66,43 @@
                 :class="getRelaventColor(room.status)"
                 ><div class="text-center">{{ caps(room.room_type) }}</div>
                 <div class="text-center">
-                  {{ room.room_no }} - {{ room.status }}
+                  {{ room.room_no }}
                 </div>
               </v-card>
             </v-col>
           </v-row>
         </v-card>
+      </v-col>
+      <v-col md="3" sm="12" cols="12">
+         <div
+        class=" text-uppercase"
+        v-for="(i, index) in items"
+        :key="index"
+      >
+        <div v-if="index == 6" class="card p-2" :class="i.color">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large ">
+              <i :class="i.icon"></i>
+            </div>
+            <div class="card-content">
+              <h4 class="card-title text-capitalize">{{ i.title }} {{index  }}</h4>
+              <span class="data-1"> {{ i.value }}</span>
+              <p class="mb-0 text-sm">
+                <span class="mr-2"
+                  ><v-icon dark small>mdi-arrow-right</v-icon></span
+                >
+                <a
+                  class="text-nowrap text-white"
+                  target="_blank"
+                  :href="i.link"
+                >
+                  <span class="text-nowrap">View Report</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
       </v-col>
     </v-row>
 

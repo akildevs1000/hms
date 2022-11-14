@@ -10,4 +10,6 @@ class Expense extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $casts = ['created_at' => 'datetime:d-M-y'];
 }
