@@ -20,7 +20,11 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        return Booking::with(["customer:id,first_name,last_name", "room"])->where('company_id', $request->company_id)->orderByDesc("id")->paginate($request->per_page ?? 50);
+        return Booking::with(["customer:id,first_name,last_name", "room"])
+            ->where('company_id', $request->company_id)
+            ->whereIsCancel(0)
+            ->orderByDesc("id")
+            ->paginate($request->per_page ?? 50);
     }
 
     /**
@@ -45,20 +49,14 @@ class BookingController extends Controller
      */
     public function store(StoreRequest $request)
     {
-
         try {
-
             $data = $request->except(['room_type', 'amount', 'price']);
-
             $data["customer_id"] = $request->customer_id;
-
             $data['booking_date'] = now();
             $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
 
             Booking::create($data);
-
             $room  = new RoomController();
-
             $updated = $room->update($request->room_id, 1); //1 = booked
 
             if ($updated) {
@@ -218,22 +216,33 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-        return Booking::where('company_id', $request->company_id)->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
+        return Booking::where('company_id', $request->company_id)
+            ->where('booking_status', '!=', 0)
+            ->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
     }
 
     public function get_booking_by_check_in(Request $request)
     {
-        $columns = [
-            'id',
-            'customer_id',
-            'room_id',
-            'booking_date',
-            'check_in',
-            'check_out',
-            'total_price',
-        ];
-
         return Booking::with('room')
             ->find($request->id);
+    }
+
+    public function cancelReservation(Request $request, $id)
+    {
+        try {
+            $booking =  Booking::find($id);
+            $booking->update([
+                'booking_status' => 0,
+                'reason' => $request->reason,
+                'user_id' => $request->cancel_by,
+                'cancel_date' => now(),
+            ]);
+            if ($booking) {
+                Room::where('id', $booking->room_id)->update(["status" => '0']);
+                return $this->response('Room cancel Successfully.', null, true);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

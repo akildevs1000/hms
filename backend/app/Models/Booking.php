@@ -35,7 +35,7 @@ class Booking extends Model
 
     public function GetTitleAttribute()
     {
-        return  Customer::find($this->customer_id)->full_name ?? '';
+        return  Customer::find($this->customer_id)->name ?? '';
     }
 
 

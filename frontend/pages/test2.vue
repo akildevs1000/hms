@@ -1,144 +1,119 @@
- <template>
-  <div>
-    <p>{{ status }}</p>
-    <v-simple-table>
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-left font-weight-black" style="font-size: 15px">
-              Employee
-            </th>
-            <th
-              class="text-left font-weight-black"
-              style="font-size: 20px"
-              v-for="day in getDaysInCurrentMonth"
-              :key="day"
-            >
-              <label
-                :class="day == getDayInCurrentMonth ? 'primary--text' : ''"
-                >{{ day }}</label
-              >
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- <p>{{ status[Math.floor(Math.random() * 2)] }}</p> -->
-
-          <tr v-for="(item, index) in names" :key="index">
-            <td>{{ item }}</td>
-            <td
-              :style="
-                day == getDayInCurrentMonth ? 'background-color:#E0E0E0' : ''
-              "
-              v-for="day in getDaysInCurrentMonth"
-              :key="day"
-            >
-              <v-icon
-                v-if="status[randNo] == 'present'"
-                :color="'success'"
-                small
-              >
-                mdi-check-bold
-              </v-icon>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
-  </div>
+<template>
+  <v-row>
+    <v-col cols="12">
+      <FullCalendar :options="calendarOptions" style="background:#fff;" />
+    </v-col>
+  </v-row>
 </template>
 <script>
+import FullCalendar from "@fullcalendar/vue";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
+
 export default {
+  components: {
+    FullCalendar
+  },
   data() {
     return {
-      data: [],
-      currentDate: "",
-      count: 0,
-      vvv: [],
-      names: [
-        "Proteus",
-        "Babette",
-        "Radojka",
-        "Juro",
-        "Veerle",
-        "Bertram",
-        "Ilari",
-        "Straton",
-        "Diamanto",
-        "Lisa",
-      ],
+      calendarOptions: {
+        plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
+        now: "2022-11-07",
+        editable: true,
+        aspectRatio: 1.8,
+        scrollTime: "00:00",
+        displayEventTime: false,
 
-      status: ["present", "absent"],
+        initialView: "resourceTimelineMonth",
+
+        navLinks: true,
+        resourceAreaWidth: "15%",
+
+        resourceAreaColumns: [
+          {
+            headerContent: "Room",
+            field: "room_no"
+          },
+          {
+            headerContent: "Room Type",
+            field: "room_type"
+          }
+        ],
+        resources: [
+          { id: "103", room_no: "103", eventColor: "green" },
+          {
+            id: "104",
+            room_no: "104",
+            eventColor: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)"
+          }
+        ],
+        events: [
+          {
+            id: "1",
+            room_id: "1",
+            resourceId: "104",
+            start: "2022-11-09 00:00:00",
+            end: "2022-11-11 06:00:00",
+            title: "e"
+          },
+          {
+            id: "1",
+            room_id: "1",
+            resourceId: "103",
+            start: "2022-11-09 00:00:00",
+            end: "2022-11-11 06:00:00",
+            title: "e",
+            background: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)"
+          }
+        ],
+        eventDidMount: function(info) {
+          if (info.event.extendedProps.background) {
+            info.el.style.background = info.event.extendedProps.background;
+          }
+        }
+      },
+      data: []
     };
   },
-
   created() {
-    this.names = this.names.map(
-      (e, i, arr) => arr[Math.floor(Math.random() * arr.length)]
-    );
-
-    // this.status = this.status.map(
-    //   (e, i, arr) => arr[Math.floor(Math.random() * arr.length)]
-    // );
+    console.log(this.$auth.user.id);
   },
 
-  computed: {
-    getDaysInCurrentMonth() {
-      const date = new Date();
-      return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    },
-
-    getDayInCurrentMonth() {
-      const date = new Date();
-      return date.getDate();
-    },
-
-    randNo() {
-      return Math.floor(Math.random() * 2);
-    },
+  mounted() {
+    // this.room_types();
+    // this.get_events();
   },
 
-  methods: {},
+  methods: {
+    room_types() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`room_list`, payload).then(({ data }) => {
+        this.calendarOptions.resources = data;
+      });
+    },
+
+    get_events() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`events_list`, payload).then(({ data }) => {
+        this.calendarOptions.events = data;
+      });
+    }
+  }
 };
 </script>
 
 <style scoped>
-table,
-th,
-td,
-tbody {
-  border-width: thin;
-
-  border: 1px solid #e0e0e0;
+.app {
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
 }
-
-th,
-td {
-  padding: 1px;
-}
-table,
-th {
-  text-align: center;
-}
-
-/* table .v-table tbody td {
-  height: 40px;
-  border: none !important;
-  border-bottom: none !important;
-}
-.theme--light.v-table tbody tr:not(:last-child) {
-  border-bottom: none !important;
-}
-
-.v-data-table .theme--light {
-  border: none !important;
-  border-bottom: none !important;
-  border-bottom: none !important;
-}
-
-.v-data-table__wrapper {
-  border: none !important;
-  border-bottom: none !important;
-  border-bottom: none !important;
-} */
 </style>

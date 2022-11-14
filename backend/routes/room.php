@@ -15,3 +15,5 @@
 
 
     Route::get('room_list', [RoomController::class, 'roomList']);
+
+    Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);

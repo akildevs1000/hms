@@ -114,7 +114,21 @@
               >Checked Out</v-btn
             >
 
-            <v-btn v-else small elevation="0" dark color="grey">Dirty</v-btn>
+            <v-btn
+              v-else-if="item && item.room.status == 4"
+              small
+              elevation="0"
+              dark
+              >Dirty</v-btn
+            >
+            <v-btn
+              v-else-if="item && item.room.status == 5"
+              small
+              elevation="0"
+              dark
+              color="grey"
+              >Maintenance</v-btn
+            >
           </td>
           <!-- <td>
             <v-menu bottom left>
