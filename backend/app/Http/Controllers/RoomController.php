@@ -69,7 +69,8 @@ class RoomController extends Controller
         foreach ($data as   $d) {
             $color =  $this->get_color($d->roomType->name);
             $arr[] = [
-                'id' => $d->room_no, 'room_no' => $d->room_no,
+                'id' => $d->room_no,
+                'room_no' => $d->room_no,
                 'room_type' => $d->roomType->name,
                 'eventColor' => $color,
                 'status' => $d->status,
@@ -78,6 +79,25 @@ class RoomController extends Controller
 
         return $arr;
     }
+
+    public function roomListForGridView()
+    {
+        $arr = [];
+        $data =    Room::with('roomType')->orderBy('status', 'desc')->get();
+        foreach ($data as   $d) {
+            $color =  $this->get_color($d->roomType->name);
+            $arr[] = [
+                'id' => $d->id,
+                'room_no' => $d->room_no,
+                'room_type' => $d->roomType->name,
+                'eventColor' => $color,
+                'status' => $d->status,
+            ];
+        }
+
+        return $arr;
+    }
+
 
     public function get_color($val)
     {
