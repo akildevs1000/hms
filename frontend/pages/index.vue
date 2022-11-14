@@ -54,9 +54,30 @@
     </v-row>
 
     <v-row>
+      <v-col cols="8" offset="2">
+        <v-card class="pa-5 mt-1">
+          <v-row>
+            <v-col cols="2" v-for="(room, index) in rooms()" :key="index">
+              <v-card
+                :elevation="0"
+                class="ma-1 pa-5"
+                dark
+                :class="getRelaventColor(room.status)"
+                ><div class="text-center">Queen</div>
+                <div class="text-center">
+                  {{ room.room_no }} - {{ room.status }}
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- <v-row>
       <v-col cols="12" md="8" xl="8">
         <v-card flat>
-          <!-- <DailyLogs /> -->
+          <DailyLogs />
         </v-card>
       </v-col>
       <v-col cols="12" md="4" xl="4">
@@ -64,15 +85,15 @@
           <PIE :items="items" />
         </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
 
-    <v-row class="mt-4">
+    <!-- <v-row class="mt-4">
       <v-col md="12" cols="12" sm="12">
         <v-card elevation="0">
           <ComboChart />
         </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
     <!-- <v-row class="mt-5">
       <v-col md="4" cols="12" sm="12">
         <v-card elevation="0">
@@ -161,9 +182,14 @@
   <Preloader v-else />
 </template>
 <script>
+let custom_style = `background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;`;
 export default {
   data() {
     return {
+      styleObject: {
+        background: custom_style
+      },
+      elevations: [6, 12, 18],
       first_login_auth: 1,
       loading: true,
       // devices: [
@@ -314,10 +340,15 @@ export default {
   created() {
     this.initialize();
     this.first_login_auth = this.$auth.user.first_login;
+    // this.classObject();
   },
   computed: {
     first_login() {
       return this.$store.state.first_login;
+    },
+    color() {
+      // reservation booked available checkedIn checkedOut
+      return "reservation";
     }
   },
   filters: {
@@ -331,10 +362,43 @@ export default {
     }
   },
   methods: {
-    getColor(calories) {
-      if (calories > 400) return "red";
-      else if (calories > 200) return "orange";
-      else return "green";
+    rooms() {
+      return [
+        {
+          room_no: "102",
+          status: 0
+        },
+        {
+          room_no: "101",
+          status: 1
+        }
+      ];
+    },
+    // //  classObject() {
+    // //   let num1 = Math.floor(Math.random() * 10000);
+    // //   let num2 = Math.floor(Math.random() * 10000);
+    // //   let style = `background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;`;
+    // //   this.styleObject.background = style
+
+    // // },
+    // getStyle (){
+    //   return `background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;`
+    // },
+    getRelaventColor(status) {
+      switch (status) {
+        case 1:
+          return "booked";
+        case 2:
+          return "checkedIn";
+        case 3:
+          return "checkedOut";
+        case 4:
+          return "dirty";
+        case 5:
+          return "maintenance";
+        default:
+          return "available";
+      }
     },
     initialize() {
       let options = {
