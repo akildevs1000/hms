@@ -1,27 +1,7 @@
 <template>
   <div v-if="!loading">
     <v-row>
-      <v-col md="12">
-        <!-- <v-alert
-          v-if="first_login && first_login_auth"
-          outlined
-          class="error lighten-1"
-          dark
-          dense
-          prominent
-        >
-          <v-icon style="margin-top: -3px" size="22">
-            mdi-alert-circle-outline</v-icon
-          >
-          <label class="text-white"
-            >For security reasons you need to change your password after first
-            login.</label
-          >
-          <nuxt-link class="white--text" to="/setting">
-            <u>click here</u>
-          </nuxt-link>
-        </v-alert> -->
-      </v-col>
+      <v-col md="12"> </v-col>
       <div
         class="col-xl-2 col-lg-6 text-uppercase"
         v-for="(i, index) in items"
@@ -54,7 +34,6 @@
         </div>
       </div>
     </v-row>
-
     <v-row>
       <v-col md="9" sm="12" cols="12">
         <v-card class="pa-5 mt-1">

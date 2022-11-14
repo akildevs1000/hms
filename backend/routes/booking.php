@@ -16,6 +16,7 @@
     Route::get('get_booking_by_check_in', [BookingController::class, 'get_booking_by_check_in']);
 
     Route::post('check_in_room', [BookingController::class, 'check_in_room']);
+    Route::post('check_out_room', [BookingController::class, 'check_out_room']);
 
     Route::post('cancel_reservation/{id}', [BookingController::class, 'cancelReservation']);
 

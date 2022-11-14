@@ -14,7 +14,6 @@ class PostingController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**

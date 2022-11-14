@@ -124,6 +124,121 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="checkOutDialog" persistent max-width="700px">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>{{ formTitle }}</span>
+        </v-toolbar>
+        <v-card-text>
+          <v-container>
+            <table>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
+              <tr>
+                <th>Customer Name</th>
+                <td style="width:300px">
+                  {{ checkData && checkData.title }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room No</th>
+                <td>
+                  {{ checkData && checkData.room && checkData.room.room_no }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room Type</th>
+                <td>
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check In</th>
+                <td>
+                  {{ checkData && checkData.check_in }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check Out</th>
+                <td>
+                  {{ checkData && checkData.check_out }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Payment Mode
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-select
+                    v-model="checkData.payment_mode_id"
+                    :items="[
+                      { id: 1, name: 'Cash' },
+                      { id: 2, name: 'Card' },
+                      { id: 3, name: 'Online' },
+                      { id: 4, name: 'Bank' },
+                      { id: 5, name: 'UPI' },
+                      { id: 6, name: 'Cheque' }
+                    ]"
+                    item-text="name"
+                    item-value="id"
+                    dense
+                    outlined
+                    :hide-details="true"
+                    :height="1"
+                  ></v-select>
+                </td>
+              </tr>
+              <tr>
+                <th>Total Amount</th>
+                <td>
+                  {{ checkData && checkData.total_price }}
+                </td>
+              </tr>
+              <tr></tr>
+
+              <tr></tr>
+              <tr>
+                <th>Remaining Balance</th>
+                <td>
+                  {{ checkData.remaining_price }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Full Payment
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="checkData.full_payment"
+                    :hide-details="true"
+                  ></v-text-field>
+                </td>
+              </tr>
+              <tr></tr>
+            </table>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn class="primary" small @click="store_check_out">Save</v-btn>
+          <v-btn class="error" small @click="checkOutDialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="cancelDialog" persistent max-width="500">
       <v-card>
         <v-card-title class="text-h6">
@@ -299,6 +414,7 @@ export default {
       snackbar: false,
       response: "",
       checkInDialog: false,
+      checkOutDialog: false,
       postingDialog: false,
       cancelDialog: false,
       formTitle: "",
@@ -388,6 +504,11 @@ export default {
     postingDialog() {
       this.formTitle = "Posting";
       this.get_data();
+    },
+
+    checkOutDialog() {
+      this.formTitle = "Check Out";
+      this.get_data();
     }
   },
 
@@ -446,7 +567,7 @@ export default {
         this.checkData.advance_price == 0 ||
         this.checkData.advance_price == ""
       ) {
-        alert("enter advance_price amount");
+        alert("enter advance price ");
         return true;
       }
       if (this.checkData.payment_mode_id == "") {
@@ -456,6 +577,31 @@ export default {
       return false;
     },
 
+    store_check_out() {
+      if (this.checkData.full_payment == "") {
+        alert("enter full payment");
+        return true;
+      }
+
+      this.loading = true;
+      let payload = {
+        booking_id: this.evenIid,
+        full_payment: this.checkData.full_payment,
+        payment_mode_id: this.checkData.payment_mode_id
+      };
+      // console.log(payload);
+      // return;
+      this.$axios
+        .post("/check_out_room", payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.errors = data.errors;
+          } else {
+            this.succuss(data, false, false, true);
+          }
+        })
+        .catch(e => console.log(e));
+    },
     store_check_in(data) {
       if (this.validate_payment()) {
         return;
@@ -557,10 +703,14 @@ export default {
       this.checkInDialog = false;
     },
 
-    succuss(data, check_in = false, posting = false) {
+    succuss(data, check_in = false, posting = false, check_out = false) {
       if (check_in) {
         this.checkData = {};
         this.checkInDialog = false;
+      }
+      if (check_out) {
+        this.checkData = {};
+        this.checkOutDialog = false;
       }
       if (posting) {
         this.posting = {};

@@ -79,6 +79,8 @@ class BookingController extends Controller
             $booking->remaining_price = $request->remaining_price;
             $booking->payment_mode_id = $request->payment_mode_id;
             $booking->advance_price = $request->advance_price;
+            $booking->booking_status = 2;
+
             $booking->save();
 
             if ($booking->save()) {
@@ -93,40 +95,19 @@ class BookingController extends Controller
 
     public function check_out_room(Request $request)
     {
-
+        // return $request->all();
         $booking_id       = $request->booking_id;
-        $remaining_amount = $request->remaining_amount;
 
-        if ($booking_id == "") {
-            return [
-                'done' => false,
-                'data' => "Error With Booking",
-            ];
+        $booking = Booking::find($booking_id);
+        $booking->full_payment = $request->full_payment;
+        $booking->payment_mode_id = $request->payment_mode_id;
+        $booking->booking_status = 3;
+        $booking->save();
+        if ($booking->save()) {
+            Room::where('id', $booking->room_id)->update(["status" => '3']);
+            return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
         }
-
-        $booking_details = Booking::where('booking_id', $booking_id)->first();
-        $room_id         = $booking_details->room_id;
-        $remaining_price = $booking_details->remaining_price;
-
-        if ($remaining_price !== $remaining_amount) {
-
-            return [
-                'done' => false,
-                'data' => "Please Enter Full Payment",
-            ];
-        }
-        $updateBooking = Booking::where('booking_id', $booking_id)->update(["remaining_price" => '0', 'payment_status' => '1']);
-
-        if (!$updateBooking) {
-            return [
-                'done' => false,
-                'data' => "Problem in payment",
-            ];
-        }
-
-        $updateRoom = Room::where('room_id', $room_id)->update(["check_in_status" => '0', 'check_out_status' => '1', 'status' => null]);
-
-        return $updateRoom ? ['done' => true, 'data' => ''] : ['done' => false, 'data' => "Problem in Update Room Check in status"];
+        return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
     }
 
     /**
