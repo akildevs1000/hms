@@ -1,5 +1,64 @@
 <template>
   <div v-if="!loading">
+    <div>
+      <v-row class="flex" justify="center"> </v-row>
+      <v-menu
+        v-model="showMenu"
+        :position-x="x"
+        :position-y="y"
+        absolute
+        offset-y
+      >
+        <v-list>
+          <v-list-item-group v-model="selectedItem">
+            <v-list-item
+              v-if="eventStatus == 1"
+              link
+              @click="checkInDialog = true"
+            >
+              <v-list-item-title>Check In</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              v-else-if="eventStatus == 2"
+              link
+              @click="checkOutDialog = true"
+            >
+              <v-list-item-title>Check Out</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              v-else-if="eventStatus == 3"
+              link
+              @click="setAvailable"
+            >
+              <v-list-item-title>Make Available</v-list-item-title>
+            </v-list-item>
+
+            <div v-if="isDirty">
+              <v-list-item link @click="payingAdvance = true">
+                <v-list-item-title>Pay Advance</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item link @click="cancelDialog = true">
+                <v-list-item-title>Cancel Room</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item link @click="postingDialog = true">
+                <v-list-item-title>Posting</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item link @click="viewPostingDialog = true">
+                <v-list-item-title>View Posting</v-list-item-title>
+              </v-list-item>
+            </div>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
+    </div>
+
+    <div v-html="temp"></div>
+
     <v-row>
       <v-col md="12"> </v-col>
       <div
@@ -40,6 +99,7 @@
           <h6>Rooms</h6>
           <v-row>
             <v-col
+              :class="room.id"
               md="2"
               sm="12"
               cols="12"
@@ -47,6 +107,7 @@
               :key="index"
             >
               <v-card
+                @contextmenu="show"
                 :elevation="0"
                 class="ma-1 pa-5"
                 dark
@@ -90,111 +151,6 @@
         </div>
       </v-col>
     </v-row>
-
-    <!-- <v-row>
-      <v-col cols="12" md="8" xl="8">
-        <v-card flat>
-          <DailyLogs />
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="4" xl="4">
-        <v-card flat>
-          <PIE :items="items" />
-        </v-card>
-      </v-col>
-    </v-row> -->
-
-    <!-- <v-row class="mt-4">
-      <v-col md="12" cols="12" sm="12">
-        <v-card elevation="0">
-          <ComboChart />
-        </v-card>
-      </v-col>
-    </v-row> -->
-    <!-- <v-row class="mt-5">
-      <v-col md="4" cols="12" sm="12">
-        <v-card elevation="0">
-          <v-list three-line>
-            <template v-for="(item, index) in devices">
-              <v-subheader v-if="item.header" :key="item.header">
-                <h5>{{ item.header }}</h5>
-              </v-subheader>
-
-              <v-divider
-                v-else-if="item.divider"
-                :key="index"
-                :inset="item.inset"
-              ></v-divider>
-
-              <v-list-item v-else :key="item.title">
-                <v-list-item-avatar>
-                  <v-img :src="item.avatar"></v-img>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title v-html="item.title"></v-list-item-title>
-                  <v-list-item-subtitle
-                    v-html="item.subtitle"
-                  ></v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-          </v-list>
-        </v-card>
-      </v-col>
-      <v-col md="4" cols="12" sm="12">
-        <v-card elevation="0">
-          <v-list three-line>
-            <template v-for="(item, index) in polices">
-              <v-subheader v-if="item.header" :key="item.header">
-                <h5>{{ item.header }}</h5>
-              </v-subheader>
-
-              <v-divider
-                v-else-if="item.divider"
-                :key="index"
-                :inset="item.inset"
-              ></v-divider>
-
-              <v-list-item v-else :key="item.title">
-                <v-list-item-content>
-                  <v-list-item-title v-html="item.title"></v-list-item-title>
-                  <v-list-item-subtitle
-                    v-html="item.subtitle"
-                  ></v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-          </v-list>
-        </v-card>
-      </v-col>
-      <v-col md="4" cols="12" sm="12">
-        <v-card elevation="0">
-          <v-list three-line>
-            <template v-for="(item, index) in anc">
-              <v-subheader v-if="item.header" :key="item.header">
-                <h5>{{ item.header }}</h5>
-              </v-subheader>
-
-              <v-divider
-                v-else-if="item.divider"
-                :key="index"
-                :inset="item.inset"
-              ></v-divider>
-
-              <v-list-item v-else :key="item.title">
-                <v-list-item-content>
-                  <v-list-item-title v-html="item.title"></v-list-item-title>
-                  <v-list-item-subtitle
-                    v-html="item.subtitle"
-                  ></v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-          </v-list>
-        </v-card>
-      </v-col>
-    </v-row> -->
   </div>
   <Preloader v-else />
 </template>
@@ -202,111 +158,26 @@
 export default {
   data() {
     return {
+      temp: "",
+      loading: false,
+      snackbar: false,
+      response: "",
+      isDirty: true,
+      payingAdvance: false,
+      checkInDialog: false,
+      checkOutDialog: false,
+      postingDialog: false,
+      viewPostingDialog: false,
+      cancelDialog: false,
+      formTitle: "",
+      selectedItem: 0,
+      showMenu: false,
+      x: 0,
+      y: 0,
+
       elevations: [6, 12, 18],
       first_login_auth: 1,
       loading: true,
-      // devices: [
-      //   { header: "Devices" },
-      //   {
-      //     avatar:
-      //       "https://www.shopkees.com/images/1000/9242668587_1599380694.png",
-      //     title: "Main Door",
-      //     subtitle: `<span class="text--primary">X-566</span> &mdash; this device use for main entrance door`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     avatar:
-      //       "https://4.imimg.com/data4/FV/IJ/MY-9999211/face-recognition-devices-500x500.jpg",
-      //     title: "Hall Door",
-      //     subtitle: `<span class="text--primary">X-765</span> &mdash; this device use for main entrance door`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     avatar:
-      //       "https://lenvica.b-cdn.net/wp-content/uploads/2020/05/SpeedFace-V5LTD-Face-Palm-and-Body-Temperature-Terminal-1.jpg",
-      //     title: "Conference Area",
-      //     subtitle: `<span class="text--primary">X-685</span> &mdash; this device use for main entrance door`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     avatar:
-      //       "https://www.scanmaxai.com/data/watermark/20191217/5df889f53c35e.jpg",
-      //     title: "Out Door",
-      //     subtitle: `<span class="text--primary">X-896</span> &mdash; this device use for main entrance door`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     avatar:
-      //       "https://www.shopkees.com/images/1000/9242668587_1599380694.png",
-      //     title: "Main Door",
-      //     subtitle: `<span class="text--primary">X-606</span> &mdash; this device use for main entrance door`
-      //   }
-      // ],
-      // polices: [
-      //   { header: "Polices" },
-      //   {
-      //     title: "Computer Usage?",
-      //     subtitle: `<span class="text--primary">Make Your Own Printer Paper</span> &mdash;"" - customers will be provided with a block of wood to chew, a large hunk of metal for a press, and a sunlamp.`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title:
-      //       'Special Days <span class="grey--text text--lighten-1"></span>',
-      //     subtitle: `<span class="text--primary">Friday is Pajama Day</span> &mdash; Bring Your Dog to Work Day.`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title: "Cutting Expenses and Work Hour",
-      //     subtitle:
-      //       '<span class="text--primary">This Company</span> &mdash; The company is saving money by installing dehydrated water coolers.'
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title: "Security and Employee Testing",
-      //     subtitle:
-      //       '<span class="text--primary">Weekly body armor testing.</span> &mdash; Random breathalyzers at 2:00pm everyday.'
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title: "New customers",
-      //     subtitle:
-      //       '<span class="text--primary">Exam</span> &mdash; Prostate exams are required for all new hires.'
-      //   }
-      // ],
-      // anc: [
-      //   { header: "Announcement" },
-      //   {
-      //     title: "Annual Party",
-      //     subtitle: `<span class="text--primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title:
-      //       'Eid Holiday <span class="grey--text text--lighten-1">08-Jun-22</span>',
-      //     subtitle: `<span class="text--primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title:
-      //       'Summer Holiday <span class="grey--text text--lighten-1">08-Jun-22</span>',
-      //     subtitle:
-      //       '<span class="text--primary">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?'
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title:
-      //       'Independent Holiday <span class="grey--text text--lighten-1">08-Oct-22</span>',
-      //     subtitle:
-      //       '<span class="text--primary">Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?'
-      //   },
-      //   { divider: true, inset: true },
-      //   {
-      //     title:
-      //       'Eid Holiday <span class="grey--text text--lighten-1">08-Jun-22</span>',
-      //     subtitle:
-      //       '<span class="text--primary">Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.'
-      //   }
-      // ],
 
       logs: [],
 
@@ -332,6 +203,8 @@ export default {
       daily_orders: "",
       weekly_orders: "",
       monthly_orders: "",
+      evenIid: "",
+      eventStatus: "",
       rooms: [],
       items: [],
       chartData: [
@@ -377,6 +250,42 @@ export default {
     }
   },
   methods: {
+    caps(str) {
+      if (str == "" || str == null) {
+        return "---";
+      } else {
+        let res = str.toString();
+        return res.replace(/\b\w/g, c => c.toUpperCase());
+      }
+    },
+
+    show(e) {
+      let string = JSON.stringify(e.path[2]);
+      let obj = JSON.parse(string);
+      let str = obj._prevClass;
+      const room_no = str.split(" ").pop();
+
+      if (room_no == "row") {
+        return;
+      }
+
+      // this.evenIid = id;
+      // this.eventStatus = eventStatus;
+      // if (this.eventStatus == 3) {
+      //   this.isDirty = false;
+      // }
+
+      console.log(room_no);
+
+      e.preventDefault();
+
+      this.x = e.clientX;
+      this.y = e.clientY;
+      this.$nextTick(() => {
+        this.showMenu = true;
+      });
+    },
+
     room_list() {
       let payload = {
         params: {

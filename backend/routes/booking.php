@@ -19,5 +19,7 @@
     Route::post('check_out_room', [BookingController::class, 'check_out_room']);
 
     Route::post('cancel_reservation/{id}', [BookingController::class, 'cancelReservation']);
+    Route::post('set_available/{id}', [BookingController::class, 'setAvailable']);
+    Route::post('paying_advance', [BookingController::class, 'payingAdvance']);
 
     Route::resource('posting', PostingController::class);

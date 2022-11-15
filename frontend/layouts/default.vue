@@ -357,6 +357,12 @@ export default {
           title: "Expense",
           to: "/expense",
           menu: "expense_access"
+        },
+        {
+          icon: "mdi-cash",
+          title: "Posting",
+          to: "/posting",
+          menu: "posting_access"
         }
       ],
 

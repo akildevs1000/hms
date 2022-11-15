@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('postings', function (Blueprint $table) {
             $table->id();
             $table->integer('booking_id');
+            $table->integer('company_id');
             $table->string('item');
             $table->integer('qty');
             $table->decimal('amount', 8, 2);

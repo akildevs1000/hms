@@ -29,7 +29,7 @@ class CountController extends Controller
             [
                 "title" => "Available Room",
                 "value" => $model->clone()->where("status", 0)->count(),
-                "icon" => "fas fa-check",
+                "icon" => "fas fa-door-open",
                 "color" => "available",
                 "link"  => "/calendar"
 
@@ -37,7 +37,7 @@ class CountController extends Controller
             [
                 "title" => "Booked Room",
                 "value" => $model->clone()->where("status", 1)->count(),
-                "icon" => "fas fa-bookmark",
+                "icon" => "fas fa-door-closed",
                 "color" => "booked",
                 "link"  => "/calendar"
             ],
@@ -53,7 +53,7 @@ class CountController extends Controller
             [
                 "title" => "Checked Out",
                 "value" => $model->clone()->where("status", 3)->count(),
-                "icon" => "	fas fa-user",
+                "icon" => "fas fa-walking",
                 "color" => "checkedOut",
                 "link"  => "/customer/list"
 
@@ -61,7 +61,7 @@ class CountController extends Controller
             [
                 "title" => "Dirty",
                 "value" => $model->clone()->where("status", 4)->count(),
-                "icon" => "	fas fa-user",
+                "icon" => "	fas fa-prescription-bottle",
                 "color" => "dirty",
                 "link"  => "/customer/list"
 
@@ -69,7 +69,7 @@ class CountController extends Controller
             [
                 "title" => "Maintenance",
                 "value" => $model->clone()->where("status", 5)->count(),
-                "icon" => "	fas fa-user",
+                "icon" => "fas fa-tools",
                 "color" => "grey",
                 "link"  => "/customer/list"
 
@@ -86,7 +86,7 @@ class CountController extends Controller
             [
                 "title" => "Today Expense",
                 "value" => number_format(Expense::whereCompanyId($id)->whereDate('created_at', date('Y-m-d'))->sum("amount"), 2),
-                "icon" => "fa fa-bookmark",
+                "icon" => "fas fa-dolly-flatbed",
                 "color" => "l-bg-orange-dark",
                 "link"  => "/expense"
 

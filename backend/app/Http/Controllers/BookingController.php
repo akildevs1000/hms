@@ -22,7 +22,7 @@ class BookingController extends Controller
     {
         return Booking::with(["customer:id,first_name,last_name", "room"])
             ->where('company_id', $request->company_id)
-            ->whereIsCancel(0)
+            ->where('booking_status', '!=', 0)
             ->orderByDesc("id")
             ->paginate($request->per_page ?? 50);
     }
@@ -86,6 +86,24 @@ class BookingController extends Controller
             if ($booking->save()) {
                 Room::where('id', $booking->room_id)->update(["status" => '2']);
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
+            }
+            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function payingAdvance(Request $request)
+    {
+        try {
+            $booking_id      = $request->booking_id;
+            $booking = Booking::find($booking_id);
+            $booking->remaining_price = $request->remaining_price;
+            $booking->payment_mode_id = $request->payment_mode_id;
+            $booking->advance_price = $request->advance_price;
+
+            if ($booking->save()) {
+                return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
         } catch (\Throwable $th) {
@@ -221,6 +239,22 @@ class BookingController extends Controller
             if ($booking) {
                 Room::where('id', $booking->room_id)->update(["status" => '0']);
                 return $this->response('Room cancel Successfully.', null, true);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function setAvailable($id)
+    {
+        try {
+            $booking =  Booking::find($id);
+            $booking->update([
+                'booking_status' => 0,
+            ]);
+            if ($booking) {
+                Room::where('id', $booking->room_id)->update(["status" => '0']);
+                return $this->response('Now room available.', null, true);
             }
         } catch (\Throwable $th) {
             throw $th;

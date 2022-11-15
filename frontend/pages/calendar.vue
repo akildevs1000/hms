@@ -281,7 +281,13 @@
               <tr>
                 <th>Bill No</th>
                 <td style="width:300px">
-                  {{ evenIid || "---" }}
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="posting.bill_no"
+                    :hide-details="true"
+                  ></v-text-field>
                 </td>
               </tr>
               <tr>
@@ -364,6 +370,289 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="viewPostingDialog" persistent max-width="900px">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>{{ formTitle }}</span>
+        </v-toolbar>
+        <v-card-text>
+          <v-container>
+            <table>
+              <tr>
+                <th v-for="(item, index) in headers" :key="index">
+                  <span v-html="item.text"></span>
+                </th>
+              </tr>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
+              <tr v-for="(item, index) in postings" :key="index">
+                <td>{{ ++index }}</td>
+                <td>{{ caps(item.bill_no) }}</td>
+                <td>{{ caps(item.booking.room.room_no) }}</td>
+                <td>{{ caps(item.booking.room.room_type.name) }}</td>
+                <td>{{ caps(item.booking.customer.full_name) }}</td>
+
+                <td>{{ caps(item.item) }}</td>
+                <td>{{ caps(item.qty) }}</td>
+                <td>{{ caps(item.amount) }}</td>
+                <td>{{ caps(item.posting_date) }}</td>
+              </tr>
+            </table>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn class="error" small @click="viewPostingDialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="checkInDialog" persistent max-width="700px">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>{{ formTitle }}</span>
+        </v-toolbar>
+        <v-card-text>
+          <v-container>
+            <table>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
+              <tr>
+                <th>Customer Name</th>
+                <td style="width:300px">
+                  {{ checkData && checkData.title }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room No</th>
+                <td>
+                  {{ checkData && checkData.room && checkData.room.room_no }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room Type</th>
+                <td>
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check In</th>
+                <td>
+                  {{ checkData && checkData.check_in }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check Out</th>
+                <td>
+                  {{ checkData && checkData.check_out }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Payment Mode
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-select
+                    v-model="checkData.payment_mode_id"
+                    :items="[
+                      { id: 1, name: 'Cash' },
+                      { id: 2, name: 'Card' },
+                      { id: 3, name: 'Online' },
+                      { id: 4, name: 'Bank' },
+                      { id: 5, name: 'UPI' },
+                      { id: 6, name: 'Cheque' }
+                    ]"
+                    item-text="name"
+                    item-value="id"
+                    dense
+                    outlined
+                    :hide-details="true"
+                    :height="1"
+                  ></v-select>
+                </td>
+              </tr>
+              <tr>
+                <th>Total Amount</th>
+                <td>
+                  {{ checkData && checkData.total_price }}
+                </td>
+              </tr>
+              <tr></tr>
+              <tr>
+                <th>
+                  Advance Price
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="checkData.advance_price"
+                    :hide-details="true"
+                    @keyup="get_remaining(checkData.advance_price)"
+                  ></v-text-field>
+                </td>
+              </tr>
+              <tr></tr>
+              <tr>
+                <th>Remaining Balance</th>
+                <td>
+                  {{ checkData.remaining_price }}
+                </td>
+              </tr>
+              <tr></tr>
+            </table>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn
+            class="primary"
+            small
+            @click="store_check_in(checkData)"
+            :loading="loading"
+            >Save</v-btn
+          >
+          <v-btn class="error" small @click="close"> Cancel </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="payingAdvance" persistent max-width="700px">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>{{ formTitle }}</span>
+        </v-toolbar>
+        <v-card-text>
+          <v-container>
+            <table>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
+              <tr>
+                <th>Customer Name</th>
+                <td style="width:300px">
+                  {{ checkData && checkData.title }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room No</th>
+                <td>
+                  {{ checkData && checkData.room && checkData.room.room_no }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room Type</th>
+                <td>
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check In</th>
+                <td>
+                  {{ checkData && checkData.check_in }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check Out</th>
+                <td>
+                  {{ checkData && checkData.check_out }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Payment Mode
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-select
+                    v-model="checkData.payment_mode_id"
+                    :items="[
+                      { id: 1, name: 'Cash' },
+                      { id: 2, name: 'Card' },
+                      { id: 3, name: 'Online' },
+                      { id: 4, name: 'Bank' },
+                      { id: 5, name: 'UPI' },
+                      { id: 6, name: 'Cheque' }
+                    ]"
+                    item-text="name"
+                    item-value="id"
+                    dense
+                    outlined
+                    :hide-details="true"
+                    :height="1"
+                  ></v-select>
+                </td>
+              </tr>
+              <tr>
+                <th>Total Amount</th>
+                <td>
+                  {{ checkData && checkData.total_price }}
+                </td>
+              </tr>
+              <tr></tr>
+              <tr>
+                <th>
+                  Advance Price
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="checkData.advance_price"
+                    :hide-details="true"
+                    @keyup="get_remaining(checkData.advance_price)"
+                  ></v-text-field>
+                </td>
+              </tr>
+              <tr></tr>
+              <tr>
+                <th>Remaining Balance</th>
+                <td>
+                  {{ checkData.remaining_price }}
+                </td>
+              </tr>
+              <tr></tr>
+            </table>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn
+            class="primary"
+            small
+            @click="store_advance(checkData)"
+            :loading="loading"
+            >Save</v-btn
+          >
+          <v-btn class="error" small @click="payingAdvance = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <div>
       <v-row class="flex" justify="center"> </v-row>
       <v-menu
@@ -375,18 +664,47 @@
       >
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item link @click="checkInDialog = true">
+            <v-list-item
+              v-if="eventStatus == 1"
+              link
+              @click="checkInDialog = true"
+            >
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
-            <v-list-item link @click="checkOutDialog = true">
+
+            <v-list-item
+              v-else-if="eventStatus == 2"
+              link
+              @click="checkOutDialog = true"
+            >
               <v-list-item-title>Check Out</v-list-item-title>
             </v-list-item>
-            <v-list-item link @click="cancelDialog = true">
-              <v-list-item-title>Cancel Room</v-list-item-title>
+
+            <v-list-item
+              v-else-if="eventStatus == 3"
+              link
+              @click="setAvailable"
+            >
+              <v-list-item-title>Make Available</v-list-item-title>
             </v-list-item>
-            <v-list-item link @click="postingDialog = true">
-              <v-list-item-title>Posting</v-list-item-title>
-            </v-list-item>
+
+            <div v-if="isDirty">
+              <v-list-item link @click="payingAdvance = true">
+                <v-list-item-title>Pay Advance</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item link @click="cancelDialog = true">
+                <v-list-item-title>Cancel Room</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item link @click="postingDialog = true">
+                <v-list-item-title>Posting</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item link @click="viewPostingDialog = true">
+                <v-list-item-title>View Posting</v-list-item-title>
+              </v-list-item>
+            </div>
           </v-list-item-group>
         </v-list>
       </v-menu>
@@ -413,9 +731,12 @@ export default {
       loading: false,
       snackbar: false,
       response: "",
+      isDirty: true,
+      payingAdvance: false,
       checkInDialog: false,
       checkOutDialog: false,
       postingDialog: false,
+      viewPostingDialog: false,
       cancelDialog: false,
       formTitle: "",
       selectedItem: 0,
@@ -469,22 +790,48 @@ export default {
         ],
         eventDidMount: arg => {
           const eventId = arg.event.id;
+          const eventStatus = arg.event.extendedProps.status;
+          if (arg.event.extendedProps.background) {
+            arg.el.style.background = arg.event.extendedProps.background;
+          }
+
           arg.el.addEventListener("contextmenu", jsEvent => {
-            this.show(eventId, jsEvent);
+            // console.log(eventStatus);
+            // console.log(eventId);
+            this.show(eventId, eventStatus, jsEvent);
             jsEvent.preventDefault();
             // console.log("contextmenu", eventId);
           });
         }
+        // eventDidMount: function(info) {
+        //   if (info.event.extendedProps.background) {
+        //     info.el.style.background = info.event.extendedProps.background;
+        //   }
+        // }
       },
+      headers: [
+        { text: "#" },
+        { text: "Bill Number" },
+        { text: "Room No" },
+        { text: "Room Type" },
+        { text: "Customer" },
+        { text: "Item" },
+        { text: "QTY" },
+        { text: "Amount" },
+        { text: "Date" }
+      ],
       errors: [],
       data: [],
+      postings: [],
       checkData: {},
       evenIid: "",
+      eventStatus: "",
       reason: "",
       posting: {
         item: "",
         qty: "",
-        amount: ""
+        amount: "",
+        bill_no: ""
       }
     };
   },
@@ -509,13 +856,36 @@ export default {
     checkOutDialog() {
       this.formTitle = "Check Out";
       this.get_data();
+    },
+
+    viewPostingDialog() {
+      this.formTitle = "View Post";
+      this.get_posting();
+    },
+
+    payingAdvance() {
+      this.formTitle = "Advance Payment";
+      this.get_data();
     }
   },
 
   methods: {
-    show(id, jsEvent) {
+    caps(str) {
+      if (str == "" || str == null) {
+        return "---";
+      } else {
+        let res = str.toString();
+        return res.replace(/\b\w/g, c => c.toUpperCase());
+      }
+    },
+
+    show(id, eventStatus, jsEvent) {
       this.evenIid = id;
-      console.log(this.evenIid);
+      this.eventStatus = eventStatus;
+      if (this.eventStatus == 3) {
+        this.isDirty = false;
+      }
+      console.log(this.eventStatus);
       this.x = jsEvent.clientX;
       this.y = jsEvent.clientY;
       this.$nextTick(() => {
@@ -551,6 +921,18 @@ export default {
       });
     },
 
+    get_posting() {
+      let id = this.evenIid;
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
+        this.postings = data;
+      });
+    },
+
     get_data() {
       let payload = {
         params: {
@@ -559,6 +941,7 @@ export default {
       };
       this.$axios.get(`get_booking_by_check_in`, payload).then(({ data }) => {
         this.checkData = data;
+        this.checkData.full_payment = "";
       });
     },
 
@@ -602,6 +985,32 @@ export default {
         })
         .catch(e => console.log(e));
     },
+
+    store_advance(data) {
+      if (this.validate_payment()) {
+        return;
+      }
+      this.loading = true;
+      let payload = {
+        booking_id: this.evenIid,
+        advance_price: data.advance_price,
+        remaining_price: data.remaining_price,
+        payment_mode_id: data.payment_mode_id
+      };
+      // console.log(payload);
+      // return;
+      this.$axios
+        .post("/paying_advance", payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.errors = data.errors;
+          } else {
+            this.succuss(data, false, false, false, true);
+          }
+        })
+        .catch(e => console.log(e));
+    },
+
     store_check_in(data) {
       if (this.validate_payment()) {
         return;
@@ -625,11 +1034,33 @@ export default {
         .catch(e => console.log(e));
     },
 
+    setAvailable() {
+      let payload = {
+        reason: this.reason,
+        cancel_by: this.$auth.user.id
+      };
+      this.$axios
+        .post(`set_available/${this.evenIid}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.snackbar = data.status;
+            this.response = data.message;
+            return;
+          }
+          this.get_events();
+          this.cancelDialog = false;
+          this.snackbar = data.status;
+          this.response = data.message;
+        })
+        .catch(err => console.log(err));
+    },
+
     store_posting() {
       let rule =
         Object.keys(this.posting.item).length == 0 ||
         Object.keys(this.posting.amount).length == 0 ||
         Object.keys(this.posting.qty).length == 0;
+      Object.keys(this.posting.bill_no).length == 0;
 
       if (rule) {
         alert("Please enter required fields");
@@ -638,9 +1069,9 @@ export default {
       this.loading = true;
       let payload = {
         ...this.posting,
-        booking_id: this.evenIid
+        booking_id: this.evenIid,
+        company_id: this.$auth.user.company.id
       };
-      console.log(payload);
       this.$axios
         .post("/posting", payload)
         .then(({ data }) => {
@@ -703,7 +1134,13 @@ export default {
       this.checkInDialog = false;
     },
 
-    succuss(data, check_in = false, posting = false, check_out = false) {
+    succuss(
+      data,
+      check_in = false,
+      posting = false,
+      check_out = false,
+      advance_payment = false
+    ) {
       if (check_in) {
         this.checkData = {};
         this.checkInDialog = false;
@@ -716,6 +1153,13 @@ export default {
         this.posting = {};
         this.postingDialog = false;
       }
+
+      if (advance_payment) {
+        this.checkData = {};
+        this.payingAdvance = false;
+      }
+
+      this.get_events();
       this.errors = [];
       this.loading = false;
       this.snackbar = true;

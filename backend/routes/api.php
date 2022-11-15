@@ -10,4 +10,4 @@ include('customer.php');
 include('room.php');
 include('booking.php');
 include('expense.php');
-
+include('posting.php');

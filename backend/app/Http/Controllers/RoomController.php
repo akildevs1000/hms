@@ -67,17 +67,23 @@ class RoomController extends Controller
         $arr = [];
         $data =    Room::with('roomType')->get();
         foreach ($data as   $d) {
-            $color =  $this->get_color($d->roomType->name);
+            // $color =  $this->get_color($d->roomType->name);
             $arr[] = [
                 'id' => $d->room_no,
                 'room_no' => $d->room_no,
                 'room_type' => $d->roomType->name,
-                'eventColor' => $color,
+                // 'eventColor' => $color,
+                'eventBorderColor' => 'white',
                 'status' => $d->status,
             ];
         }
 
         return $arr;
+    }
+
+    public function roomListForMenu()
+    {
+        return  Room::with('roomType')->get();
     }
 
     public function roomListForGridView()
