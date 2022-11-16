@@ -1,5 +1,125 @@
 <template>
   <div v-if="!loading">
+    <v-dialog v-model="checkInDialog" persistent max-width="700px">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>{{ formTitle }}</span>
+        </v-toolbar>
+        <v-card-text>
+          <v-container>
+            <table>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
+              <tr>
+                <th>Customer Name</th>
+                <td style="width:300px">
+                  {{ checkData && checkData.title }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room No</th>
+                <td>
+                  {{ checkData && checkData.room && checkData.room.room_no }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room Type</th>
+                <td>
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check In</th>
+                <td>
+                  {{ checkData && checkData.check_in }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check Out</th>
+                <td>
+                  {{ checkData && checkData.check_out }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Payment Mode
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-select
+                    v-model="checkData.payment_mode_id"
+                    :items="[
+                      { id: 1, name: 'Cash' },
+                      { id: 2, name: 'Card' },
+                      { id: 3, name: 'Online' },
+                      { id: 4, name: 'Bank' },
+                      { id: 5, name: 'UPI' },
+                      { id: 6, name: 'Cheque' }
+                    ]"
+                    item-text="name"
+                    item-value="id"
+                    dense
+                    outlined
+                    :hide-details="true"
+                    :height="1"
+                  ></v-select>
+                </td>
+              </tr>
+              <tr>
+                <th>Total Amount</th>
+                <td>
+                  {{ checkData && checkData.total_price }}
+                </td>
+              </tr>
+              <tr></tr>
+              <tr>
+                <th>
+                  Advance Price
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="checkData.advance_price"
+                    :hide-details="true"
+                    @keyup="get_remaining(checkData.advance_price)"
+                  ></v-text-field>
+                </td>
+              </tr>
+              <tr></tr>
+              <tr>
+                <th>Remaining Balance</th>
+                <td>
+                  {{ checkData.remaining_price }}
+                </td>
+              </tr>
+              <tr></tr>
+            </table>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn
+            class="primary"
+            small
+            @click="store_check_in(checkData)"
+            :loading="loading"
+            >Save</v-btn
+          >
+          <v-btn class="error" small @click="close"> Cancel </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <div>
       <v-row class="flex" justify="center"> </v-row>
       <v-menu
@@ -57,16 +177,13 @@
       </v-menu>
     </div>
 
-    <div v-html="temp"></div>
-
     <v-row>
-      <v-col md="12"> </v-col>
       <div
         class="col-xl-2 col-lg-6 text-uppercase"
         v-for="(i, index) in items"
         :key="index"
       >
-        <div v-if="index < 6" class="card p-2" :class="i.color">
+        <div v-if="index < 6" class="card px-2" :class="i.color">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large ">
               <i :class="i.icon"></i>
@@ -77,9 +194,9 @@
               </h4>
               <span class="data-1"> {{ i.value }}</span>
               <p class="mb-0 text-sm">
-                <span class="mr-2"
-                  ><v-icon dark small>mdi-arrow-right</v-icon></span
-                >
+                <span class="mr-2">
+                  <v-icon dark small>mdi-arrow-right</v-icon>
+                </span>
                 <a
                   class="text-nowrap text-white"
                   target="_blank"
@@ -93,23 +210,26 @@
         </div>
       </div>
     </v-row>
-    <v-row>
-      <v-col md="9" sm="12" cols="12">
-        <v-card class="pa-5 mt-1">
+    <v-row class="mt-0">
+      <v-col md="10" sm="12" cols="12">
+        <v-card class="pa-5 mt-0">
           <h6>Rooms</h6>
           <v-row>
+            <!-- md="1" -->
             <v-col
               :class="room.id"
-              md="2"
+              lg="1"
+              md="4"
               sm="12"
               cols="12"
               v-for="(room, index) in rooms"
               :key="index"
             >
+              <!-- class="mx-3 px-1 py-2" -->
               <v-card
                 @contextmenu="show"
                 :elevation="0"
-                class="ma-1 pa-5"
+                class="ma-0 px-md-1 py-md-2"
                 dark
                 :class="getRelaventColor(room.status)"
                 ><div class="text-center">{{ caps(room.room_type) }}</div>
@@ -121,7 +241,7 @@
           </v-row>
         </v-card>
       </v-col>
-      <v-col md="3" sm="12" cols="12">
+      <v-col md="2" sm="12" cols="12">
         <div class=" text-uppercase" v-for="(i, index) in items" :key="index">
           <div v-if="index == 6" class="card p-2" :class="i.color">
             <div class="card-statistic-3">
@@ -207,6 +327,8 @@ export default {
       eventStatus: "",
       rooms: [],
       items: [],
+      checkData: {},
+
       chartData: [
         ["Month", "On Time", "Absence", "Lates"],
         ["Apr", 33, 4, 7],
@@ -223,6 +345,32 @@ export default {
         colorAxis: { colors: ["yellow", "red"] }
       }
     };
+  },
+  watch: {
+    checkInDialog() {
+      this.formTitle = "Check In";
+      this.get_data();
+    },
+
+    postingDialog() {
+      this.formTitle = "Posting";
+      this.get_data();
+    },
+
+    checkOutDialog() {
+      this.formTitle = "Check Out";
+      this.get_data();
+    },
+
+    viewPostingDialog() {
+      this.formTitle = "View Post";
+      this.get_posting();
+    },
+
+    payingAdvance() {
+      this.formTitle = "Advance Payment";
+      this.get_data();
+    }
   },
   created() {
     this.room_list();
@@ -249,6 +397,7 @@ export default {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
   },
+
   methods: {
     caps(str) {
       if (str == "" || str == null) {
@@ -315,6 +464,23 @@ export default {
           return "available";
       }
     },
+
+    get_data() {
+      let payload = {
+        params: {
+          id: this.evenIid
+        }
+      };
+      this.$axios.get(`get_booking_by_check_in`, payload).then(({ data }) => {
+        this.checkData = data;
+        // this.checkData.full_payment = "";
+      });
+    },
+
+    close() {
+      this.checkInDialog = false;
+    },
+
     initialize() {
       let options = {
         company_id: this.$auth.user.company.id

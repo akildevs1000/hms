@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as Logger;
 
 use App\Http\Requests\Booking\StoreRequest;
-
+use Ramsey\Uuid\Type\Integer;
 
 class BookingController extends Controller
 {
@@ -55,11 +55,15 @@ class BookingController extends Controller
             $data['booking_date'] = now();
             $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
 
-            Booking::create($data);
-            $room  = new RoomController();
-            $updated = $room->update($request->room_id, 1); //1 = booked
+            $booked =  Booking::create($data);
+            if (now() <= $booked->check_in) {
+                $room  = new RoomController();
+                $room->update($request->room_id, 1);
+            }
 
-            if ($updated) {
+            return $booked;
+
+            if ($booked) {
                 return $this->response('Room Booked Successfully.', null, true);
             } else {
                 return $this->response('DataBase Error in status change', null, true);
@@ -113,14 +117,19 @@ class BookingController extends Controller
 
     public function check_out_room(Request $request)
     {
-        // return $request->all();
-        $booking_id       = $request->booking_id;
-
+        $booking_id = $request->booking_id;
         $booking = Booking::find($booking_id);
-        $booking->full_payment = $request->full_payment;
+
+        if ($booking->remaining_price <=  $request->full_payment) {
+            $booking->remaining_price = 0;
+            $booking->full_payment = $booking->total_price;
+        } else {
+            $booking->remaining_price =  ((int)$booking->total_price - (int)$request->full_payment);
+        }
         $booking->payment_mode_id = $request->payment_mode_id;
         $booking->booking_status = 3;
         $booking->save();
+
         if ($booking->save()) {
             Room::where('id', $booking->room_id)->update(["status" => '3']);
             return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
@@ -220,7 +229,7 @@ class BookingController extends Controller
             ->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
     }
 
-    public function get_booking_by_check_in(Request $request)
+    public function get_booking(Request $request)
     {
         return Booking::with('room')
             ->find($request->id);
@@ -259,5 +268,32 @@ class BookingController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function setMaintenance($id)
+    {
+        try {
+            $booking =  Booking::find($id);
+            $booking->update([
+                'booking_status' => 5,
+            ]);
+            if ($booking) {
+                Room::where('id', $booking->room_id)->update(["status" => '5']);
+                return $this->response('Now room maintenance.', null, true);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function getEventsByRoom(Request $request)
+    {
+        $model = Booking::query();
+
+        return $model
+            ->where('room_id', Room::whereRoomId($request->room_no)->first())
+            ->where('company_id', $request->company_id)
+            ->where('booking_status', '!=', 0)
+            ->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
     }
 }

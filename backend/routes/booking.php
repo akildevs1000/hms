@@ -10,16 +10,16 @@
     Route::get('booking/search/{key}', [BookingController::class, 'search']);
 
     Route::get('events_list', [BookingController::class, 'events_list']);
+    Route::get('get_events_by_room', [BookingController::class, 'getEventsByRoom']);
 
     Route::post('update_by_drag', [BookingController::class, 'updateByDrag']);
 
-    Route::get('get_booking_by_check_in', [BookingController::class, 'get_booking_by_check_in']);
+    Route::get('get_booking', [BookingController::class, 'get_booking']);
 
     Route::post('check_in_room', [BookingController::class, 'check_in_room']);
     Route::post('check_out_room', [BookingController::class, 'check_out_room']);
 
     Route::post('cancel_reservation/{id}', [BookingController::class, 'cancelReservation']);
     Route::post('set_available/{id}', [BookingController::class, 'setAvailable']);
+    Route::post('set_maintenance/{id}', [BookingController::class, 'setMaintenance']);
     Route::post('paying_advance', [BookingController::class, 'payingAdvance']);
-
-    Route::resource('posting', PostingController::class);

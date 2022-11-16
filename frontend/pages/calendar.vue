@@ -5,6 +5,10 @@
         {{ response }}
       </v-snackbar>
     </div>
+
+    <v-dialog v-model="createReservationDialog" max-width="1200px">
+      <Reservation :reservation="rooms" />
+    </v-dialog>
     <v-dialog v-model="checkInDialog" persistent max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -226,11 +230,18 @@
                   ></v-text-field>
                 </td>
               </tr>
+              <tr style="background-color:white">
+                <th>
+                  Balance
+                </th>
+                <td>
+                  <span>{{ getBalance }}</span>
+                </td>
+              </tr>
               <tr></tr>
             </table>
           </v-container>
         </v-card-text>
-
         <v-card-actions>
           <v-btn class="primary" small @click="store_check_out">Save</v-btn>
           <v-btn class="error" small @click="checkOutDialog = false">
@@ -654,6 +665,61 @@
       </v-card>
     </v-dialog>
     <div>
+      <v-tooltip
+        bottom
+        color="background"
+        :position-x="tx"
+        :position-y="ty"
+        absolute
+        offset-y
+        v-model="showTooltip"
+      >
+        <table style=" border: none!important">
+          <tr class="bg-background">
+            <th>Customer Name</th>
+            <td style="width:300px">
+              {{ checkData && checkData.title }}
+            </td>
+          </tr>
+          <tr class="bg-background">
+            <th>Room No</th>
+            <td>
+              {{ checkData && checkData.room && checkData.room.room_no }}
+            </td>
+          </tr>
+          <tr class="bg-background">
+            <th>Room Type</th>
+            <td>
+              {{ checkData && checkData.room && checkData.room.room_type.name }}
+            </td>
+          </tr>
+          <tr class="bg-background">
+            <th>Check In</th>
+            <td>
+              {{ checkData && checkData.check_in }}
+            </td>
+          </tr>
+          <tr class="bg-background">
+            <th>Check Out</th>
+            <td>
+              {{ checkData && checkData.check_out }}
+            </td>
+          </tr>
+          <tr class="bg-background">
+            <th>Total Amount</th>
+            <td>
+              {{ checkData && checkData.total_price }}
+            </td>
+          </tr>
+          <tr class="bg-background">
+            <th>Remaining Balance</th>
+            <td>
+              {{ checkData.remaining_price }}
+            </td>
+          </tr>
+          <tr></tr>
+        </table>
+      </v-tooltip>
       <v-row class="flex" justify="center"> </v-row>
       <v-menu
         v-model="showMenu"
@@ -680,29 +746,36 @@
               <v-list-item-title>Check Out</v-list-item-title>
             </v-list-item>
 
-            <v-list-item
-              v-else-if="eventStatus == 3"
-              link
-              @click="setAvailable"
-            >
-              <v-list-item-title>Make Available</v-list-item-title>
-            </v-list-item>
+            <div v-else-if="eventStatus == 3">
+              <v-list-item link @click="setAvailable">
+                <v-list-item-title>Make Available</v-list-item-title>
+              </v-list-item>
+              <v-list-item link @click="setMaintenance">
+                <v-list-item-title>Make Maintenance</v-list-item-title>
+              </v-list-item>
+            </div>
+
+            <div v-else>
+              <v-list-item link @click="setAvailable">
+                <v-list-item-title>Make Available</v-list-item-title>
+              </v-list-item>
+            </div>
 
             <div v-if="isDirty">
               <v-list-item link @click="payingAdvance = true">
                 <v-list-item-title>Pay Advance</v-list-item-title>
               </v-list-item>
 
-              <v-list-item link @click="cancelDialog = true">
-                <v-list-item-title>Cancel Room</v-list-item-title>
-              </v-list-item>
-
               <v-list-item link @click="postingDialog = true">
                 <v-list-item-title>Posting</v-list-item-title>
               </v-list-item>
 
+              <v-list-item link @click="cancelDialog = true">
+                <v-list-item-title>Cancel Room</v-list-item-title>
+              </v-list-item>
+
               <v-list-item link @click="viewPostingDialog = true">
-                <v-list-item-title>View Posting</v-list-item-title>
+                <v-list-item-title>View Billing</v-list-item-title>
               </v-list-item>
             </div>
           </v-list-item-group>
@@ -732,6 +805,7 @@ export default {
       snackbar: false,
       response: "",
       isDirty: true,
+      createReservationDialog: false,
       payingAdvance: false,
       checkInDialog: false,
       checkOutDialog: false,
@@ -741,6 +815,9 @@ export default {
       formTitle: "",
       selectedItem: 0,
       showMenu: false,
+      showTooltip: false,
+      tx: 0,
+      ty: 0,
       x: 0,
       y: 0,
       calendarOptions: {
@@ -750,6 +827,7 @@ export default {
         aspectRatio: 1.8,
         scrollTime: "00:00",
         displayEventTime: false,
+        selectable: true,
 
         initialView: "resourceTimelineMonth",
 
@@ -791,18 +869,30 @@ export default {
         eventDidMount: arg => {
           const eventId = arg.event.id;
           const eventStatus = arg.event.extendedProps.status;
+
           if (arg.event.extendedProps.background) {
             arg.el.style.background = arg.event.extendedProps.background;
           }
 
           arg.el.addEventListener("contextmenu", jsEvent => {
-            // console.log(eventStatus);
-            // console.log(eventId);
+            this.showTooltip = false;
             this.show(eventId, eventStatus, jsEvent);
             jsEvent.preventDefault();
-            // console.log("contextmenu", eventId);
           });
+
+          arg.el.addEventListener("mouseover", jsEvent => {
+            this.get_event_mouse_hover(eventId, jsEvent);
+          });
+
+          arg.el.addEventListener("mouseleave", jsEvent => {
+            this.showTooltip = false;
+          });
+        },
+
+        select: (date, jsEvent, view, resourceObj) => {
+          this.create_reservation(date);
         }
+
         // eventDidMount: function(info) {
         //   if (info.event.extendedProps.background) {
         //     info.el.style.background = info.event.extendedProps.background;
@@ -827,14 +917,20 @@ export default {
       evenIid: "",
       eventStatus: "",
       reason: "",
+      reservation: {},
       posting: {
         item: "",
         qty: "",
         amount: "",
         bill_no: ""
+      },
+      rooms: {
+        check_in: null,
+        check_out: null
       }
     };
   },
+
   created() {},
 
   mounted() {
@@ -868,7 +964,16 @@ export default {
       this.get_data();
     }
   },
-
+  computed: {
+    getBalance() {
+      let full_pay = this.checkData.full_payment;
+      let remainingPrice = this.checkData.remaining_price;
+      let balance = full_pay - remainingPrice;
+      if (balance >= 0) {
+        return balance;
+      }
+    }
+  },
   methods: {
     caps(str) {
       if (str == "" || str == null) {
@@ -882,7 +987,7 @@ export default {
     show(id, eventStatus, jsEvent) {
       this.evenIid = id;
       this.eventStatus = eventStatus;
-      if (this.eventStatus == 3) {
+      if (this.eventStatus == 3 || this.eventStatus == 5) {
         this.isDirty = false;
       }
       console.log(this.eventStatus);
@@ -891,6 +996,29 @@ export default {
       this.$nextTick(() => {
         this.showMenu = true;
       });
+    },
+
+    get_event_mouse_hover(id, jsEvent) {
+      this.evenIid = id;
+      this.tx = jsEvent.clientX;
+      this.ty = jsEvent.clientY;
+      this.$nextTick(() => {
+        this.showTooltip = true;
+      });
+      this.get_data();
+      console.log(this.checkData);
+    },
+
+    create_reservation(e) {
+      this.reservation = {
+        ...e
+      };
+
+      this.rooms.check_in = e.startStr;
+      this.rooms.check_out = this.convert_checkout_date_format(e.endStr); //this.convert_date_format(e.end);
+
+      console.log(this.rooms);
+      this.createReservationDialog = true;
     },
 
     get_remaining(val) {
@@ -933,13 +1061,21 @@ export default {
       });
     },
 
+    convert_checkout_date_format(val) {
+      const date = new Date(val);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate() - 1).padStart(2, "0");
+      return [year, month, day].join("-");
+    },
+
     get_data() {
       let payload = {
         params: {
           id: this.evenIid
         }
       };
-      this.$axios.get(`get_booking_by_check_in`, payload).then(({ data }) => {
+      this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
         this.checkData.full_payment = "";
       });
@@ -1036,11 +1172,30 @@ export default {
 
     setAvailable() {
       let payload = {
-        reason: this.reason,
         cancel_by: this.$auth.user.id
       };
       this.$axios
         .post(`set_available/${this.evenIid}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.snackbar = data.status;
+            this.response = data.message;
+            return;
+          }
+          this.get_events();
+          this.cancelDialog = false;
+          this.snackbar = data.status;
+          this.response = data.message;
+        })
+        .catch(err => console.log(err));
+    },
+
+    setMaintenance() {
+      let payload = {
+        cancel_by: this.$auth.user.id
+      };
+      this.$axios
+        .post(`set_maintenance/${this.evenIid}`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.snackbar = data.status;
@@ -1195,5 +1350,18 @@ th {
 
 tr:nth-child(even) {
   background-color: #e9e9e9;
+}
+.fc-license-message {
+  display: none !important;
+}
+.bg-background {
+  background-color: #34444c !important;
+}
+
+.bg-background th,
+td {
+  border-top: none !important;
+  border-right: none !important;
+  border-left: none !important;
 }
 </style>
