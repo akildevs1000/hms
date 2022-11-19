@@ -55,13 +55,17 @@ class BookingController extends Controller
             $data['booking_date'] = now();
             $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
 
+            // $room  = new RoomController();
+            // $room->update($request->room_id, 1);
             $booked =  Booking::create($data);
+
             if (now() <= $booked->check_in) {
                 $room  = new RoomController();
                 $room->update($request->room_id, 1);
+            } else {
+                $room  = new RoomController();
+                $room->update($request->room_id, 0);
             }
-
-            return $booked;
 
             if ($booked) {
                 return $this->response('Room Booked Successfully.', null, true);
@@ -74,6 +78,39 @@ class BookingController extends Controller
             return ["done" => false, "data" => "DataBase Error booking"];
         }
     }
+
+    public function storeBulk(StoreRequest $request)
+    {
+        try {
+            $data = $request->except(['room_type', 'amount', 'price']);
+            $data["customer_id"] = $request->customer_id;
+            $data['booking_date'] = now();
+            $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
+
+            // $room  = new RoomController();
+            // $room->update($request->room_id, 1);
+            $booked =  Booking::create($data);
+
+            if (now() <= $booked->check_in) {
+                $room  = new RoomController();
+                $room->update($request->room_id, 1);
+            } else {
+                $room  = new RoomController();
+                $room->update($request->room_id, 0);
+            }
+
+            if ($booked) {
+                return $this->response('Room Booked Successfully.', null, true);
+            } else {
+                return $this->response('DataBase Error in status change', null, true);
+            }
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
 
     public function check_in_room(Request $request)
     {
@@ -295,5 +332,71 @@ class BookingController extends Controller
             ->where('company_id', $request->company_id)
             ->where('booking_status', '!=', 0)
             ->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
+    }
+
+    public function changeRoomByDrag(Request $request)
+    {
+
+        try {
+            return $booked = Booking::find($request->eventId);
+            $room   =  Room::whereRoomNo($request->roomId)->first();
+
+            $roomId = $room->id;
+
+            $booked =   $booked->update([
+                'check_in' => $request->start,
+                'check_out' => $request->end,
+                'room_id' => $roomId,
+            ]);
+
+            // $room  = new RoomController();
+            // $room->update($roomId, 1);
+
+            if (now() >= $request->start) {
+                $room  = new RoomController();
+                $room->update($roomId, 1);
+            } else {
+                $room  = new RoomController();
+                $room->update($roomId, 0);
+            }
+
+            if ($booked) {
+                return $this->response('Room changed Successfully.', null, true);
+            } else {
+                return $this->response('DataBase Error in status change', null, true);
+            }
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
+    public function changeDateByDrag(Request $request)
+    {
+        try {
+            $booked = Booking::find($request->eventId);
+            $roomId =  Room::whereRoomNo($request->roomId)->first()->id ?? '';
+            $booked =   $booked->update([
+                'check_in' => $request->start,
+                'check_out' => $request->end,
+                'room_id' => $roomId,
+            ]);
+
+            if (now() >= $request->start) {
+                $room  = new RoomController();
+                $room->update($roomId, 1);
+            }
+
+            if ($booked) {
+                return $this->response('Date changed Successfully.', null, true);
+            } else {
+                return $this->response('DataBase Error in status change', null, true);
+            }
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
     }
 }

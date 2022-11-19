@@ -2,9 +2,9 @@
 
     use Illuminate\Support\Facades\Route;
     use App\Http\Controllers\BookingController;
-    use App\Http\Controllers\PostingController;
 
     Route::get('booking', [BookingController::class, 'index']);
+    Route::post('store_bulk', [BookingController::class, 'storeBulk']);
     Route::post('booking_validate', [BookingController::class, 'booking_validate']);
     Route::post('booking', [BookingController::class, 'store']);
     Route::get('booking/search/{key}', [BookingController::class, 'search']);
@@ -18,6 +18,10 @@
 
     Route::post('check_in_room', [BookingController::class, 'check_in_room']);
     Route::post('check_out_room', [BookingController::class, 'check_out_room']);
+
+
+    Route::post('change_room_by_drag', [BookingController::class, 'changeRoomByDrag']);
+    Route::post('change_date_by_drag', [BookingController::class, 'changeDateByDrag']);
 
     Route::post('cancel_reservation/{id}', [BookingController::class, 'cancelReservation']);
     Route::post('set_available/{id}', [BookingController::class, 'setAvailable']);

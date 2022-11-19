@@ -44,7 +44,11 @@
       </v-toolbar>
       <table>
         <tr>
-          <th v-for="(item, index) in headers" :key="index">
+          <th
+            style="font-size:13px"
+            v-for="(item, index) in headers"
+            :key="index"
+          >
             <span v-html="item.text"></span>
           </th>
         </tr>
@@ -55,7 +59,7 @@
           absolute
           color="primary"
         ></v-progress-linear>
-        <tr v-for="(item, index) in data" :key="index">
+        <tr style="font-size:13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
             <b>{{ ++index }}</b>
           </td>
@@ -117,6 +121,8 @@
               >Maintenance</v-btn
             >
           </td>
+          <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
+          <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
           <td>{{ item.sub_total }}</td>
           <td>{{ item.discount }}</td>
           <td>{{ item.after_discount }}</td>
@@ -190,6 +196,8 @@ export default {
       { text: "Room" },
       { text: "Room Type" },
       { text: "Room Status" },
+      { text: "Check In" },
+      { text: "Check Out" },
       { text: "Sub Total" },
       { text: "Discount" },
       { text: "After Discount" },
@@ -229,6 +237,13 @@ export default {
         (user && user.permissions.some(e => e.permission == permission)) ||
         user.master
       );
+    },
+    convert_date_format(val) {
+      const date = new Date(val);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate() - 1).padStart(2, "0");
+      return [year, month, day].join("-");
     },
     caps(str) {
       if (str == "" || str == null) {

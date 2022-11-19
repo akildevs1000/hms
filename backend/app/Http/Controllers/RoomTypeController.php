@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 
@@ -81,5 +82,10 @@ class RoomTypeController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getDataBySelect(Request $request)
+    {
+        return Room::where('room_no', $request->room_no)->first();
     }
 }

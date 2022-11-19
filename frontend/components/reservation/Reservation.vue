@@ -5,6 +5,17 @@
         <v-row>
           <v-col cols="12">
             <v-row>
+              <div class="text-center ma-2">
+                <!-- <v-snackbar top="top" color="secondary" elevation="24"> -->
+                <v-snackbar
+                  top="top"
+                  v-model="snackbar"
+                  color="secondary"
+                  elevation="24"
+                >
+                  {{ response }}
+                </v-snackbar>
+              </div>
               <v-card-title primary-title> Room Information </v-card-title>
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
@@ -55,28 +66,23 @@
                 <label class="col-form-label"
                   >Room Type <span class="text-danger">*</span></label
                 >
-                <v-select
-                  v-model="room.room_type"
-                  :items="roomTypes"
-                  item-text="name"
-                  item-value="id"
+                <v-text-field
+                  v-model="reservation.room_type"
+                  readonly
                   dense
                   outlined
-                  @change="get_room(room.room_type)"
                   :hide-details="!errors.room_type"
                   :error="errors.room_type"
                   :error-messages="
                     errors && errors.room_type ? errors.room_type[0] : ''
                   "
-                ></v-select>
+                ></v-text-field>
               </v-col>
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label">Room No </label>
-                <v-select
-                  v-model="room.room_id"
-                  :items="rooms"
-                  item-text="room_no"
-                  item-value="id"
+                <v-text-field
+                  v-model="reservation.room_no"
+                  readonly
                   dense
                   outlined
                   :hide-details="!errors.room_id"
@@ -84,7 +90,7 @@
                   :error-messages="
                     errors && errors.room_id ? errors.room_id[0] : ''
                   "
-                ></v-select>
+                ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -188,14 +194,9 @@
                   item-value="id"
                   dense
                   outlined
-                  @change="getType(room.type)"
+                  @change="runAllFunctions"
                   :hide-details="!errors.payment_mode_id"
                   :error="errors.payment_mode_id"
-                  :error-messages="
-                    errors && errors.typpayment_mode_ide
-                      ? errors.payment_mode_id[0]
-                      : ''
-                  "
                 ></v-select>
               </v-col>
             </v-row>
@@ -204,7 +205,17 @@
             <v-divider></v-divider>
             <v-row>
               <v-card-title primary-title> Billing Information </v-card-title>
-
+              <v-btn
+                color="primary ml-4"
+                style="width:130px"
+                @click="
+                  () => {
+                    runAllFunctions();
+                    reservation.isCalculate = false;
+                  }
+                "
+                >Calculate</v-btn
+              >
               <v-col cols="12">
                 <table>
                   <tr>
@@ -216,13 +227,13 @@
                   <tr>
                     <td>Room Price</td>
                     <td>
-                      <div align="right">{{ room.price }}</div>
+                      <div align="right">{{ reservation.price }}</div>
                     </td>
                   </tr>
                   <tr>
                     <td>
                       Sub Total (Total Days x Room Price) ({{ getDays() }} x
-                      {{ room.price }})
+                      {{ reservation.price }})
                     </td>
                     <td>
                       <div align="right">{{ room.sub_total }}</div>
@@ -509,11 +520,8 @@ export default {
     idCards: [],
 
     //check in calender
-
     check_in_menu: false,
-
     //check out calender
-
     check_out_menu: false,
 
     upload: {
@@ -524,6 +532,7 @@ export default {
 
     isOnline: false,
     isAgent: false,
+    fahath: "",
 
     room: {
       type: "",
@@ -568,11 +577,11 @@ export default {
     errors: []
   }),
 
-  mounted() {},
-
   created() {
+    // this.room.discount = 0;
+    // this.room.advance_price = 0;
+    // this.room.sales_tax = 0;
     this.preloader = false;
-    this.get_room_types();
     this.get_id_cards();
     this.runAllFunctions();
   },
@@ -625,7 +634,7 @@ export default {
     },
 
     subTotal() {
-      return (this.room.sub_total = this.room.price * this.getDays());
+      return (this.room.sub_total = this.reservation.price * this.getDays());
     },
 
     getType(val) {
@@ -642,16 +651,6 @@ export default {
       this.isOnline = false;
       this.isAgent = false;
     },
-    get_room_types() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id
-        }
-      };
-      this.$axios.get(`room_type`, payload).then(({ data }) => {
-        this.roomTypes = data;
-      });
-    },
 
     get_id_cards() {
       let payload = {
@@ -664,17 +663,8 @@ export default {
       });
     },
 
-    get_room(val) {
-      let room_type = this.roomTypes.find(e => e.id == val);
-      this.room.price = room_type.price;
-      this.$axios.get(`get_room/${val}`).then(({ data }) => {
-        this.rooms = data;
-      });
-      this.runAllFunctions();
-    },
     get_customer() {
       this.errors = [];
-      // this.checkLoader = true;
       let contact_no = this.customer.contact_no;
       if (contact_no == undefined) {
         alert("Enter contact number");
@@ -705,15 +695,21 @@ export default {
         u.is_master
       );
     },
-
     store() {
+      if (this.reservation.isCalculate) {
+        alert("Please calculate amount");
+        return;
+      }
       this.room.check_in = this.reservation.check_in;
       this.room.check_out = this.reservation.check_out;
+      this.room.room_type = this.reservation.room_type;
+      this.room.room_id = this.reservation.room_id;
 
       let payload = {
         ...this.room,
         company_id: this.$auth.user.company.id
       };
+      // console.log(payload);
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {
@@ -765,6 +761,7 @@ export default {
             this.errors = [];
             this.snackbar = true;
             this.response = data.message;
+            location.reload();
           }
         })
         .catch(e => console.log(e));

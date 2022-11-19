@@ -11,11 +11,14 @@
 
 
     Route::get('room_type', [RoomTypeController::class, 'index']);
+    Route::get('get_data_by_select', [RoomTypeController::class, 'getDataBySelect']);
+
     Route::get('get_id_cards', [RoomController::class, 'get_id_cards']);
 
 
     Route::get('room_list', [RoomController::class, 'roomList']);
 
     Route::get('room_list_menu', [RoomController::class, 'roomListForMenu']);
+    Route::get('get_available_rooms_by_date', [RoomController::class, 'getAvailableRoomsByDate']);
 
     Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);

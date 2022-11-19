@@ -441,7 +441,7 @@ export default {
           company_id: this.$auth.user.company.id
         }
       };
-      this.$axios.get(`room_list`, payload).then(({ data }) => {
+      this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         this.rooms = data;
       });
     },

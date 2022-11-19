@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -100,7 +101,30 @@ class RoomController extends Controller
                 'status' => $d->status,
             ];
         }
+        return $arr;
+    }
 
+
+    public function getAvailableRoomsByDate(Request $request)
+    {
+
+
+        // return $request->all();
+
+        return   Booking::where('check_in', $request->check_in)->first();
+
+        $arr = [];
+        $data =    Room::with('roomType')->orderBy('status', 'desc')->get();
+        foreach ($data as   $d) {
+            $color =  $this->get_color($d->roomType->name);
+            $arr[] = [
+                'id' => $d->id,
+                'room_no' => $d->room_no,
+                'room_type' => $d->roomType->name,
+                'eventColor' => $color,
+                'status' => $d->status,
+            ];
+        }
         return $arr;
     }
 

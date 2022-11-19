@@ -1,8 +1,14 @@
 <template>
   <v-row>
+    <div class="wrapper">
+      <span class="minus" @click="dec">-</span>
+      <span class="num">{{ val }}</span>
+      <span class="plus" @click="inc">+</span>
+    </div>
+    <!--
     <v-col cols="12">
       <FullCalendar :options="calendarOptions" style="background:#fff;" />
-    </v-col>
+    </v-col> -->
   </v-row>
 </template>
 <script>
@@ -17,6 +23,7 @@ export default {
   },
   data() {
     return {
+      val: 0,
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
         now: "2022-11-07",
@@ -41,11 +48,11 @@ export default {
           }
         ],
         resources: [
-          { id: "103", room_no: "103", eventColor: "green" },
+          { id: "103", room_no: "103", eventBorderColor: "white" },
           {
             id: "104",
             room_no: "104",
-            eventColor: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)"
+            eventBorderColor: "white"
           }
         ],
         events: [
@@ -55,7 +62,9 @@ export default {
             resourceId: "104",
             start: "2022-11-09 00:00:00",
             end: "2022-11-11 06:00:00",
-            title: "e"
+            title: "e",
+            background: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)",
+            eventBorderColor: "red"
           },
           {
             id: "1",
@@ -64,7 +73,8 @@ export default {
             start: "2022-11-09 00:00:00",
             end: "2022-11-11 06:00:00",
             title: "e",
-            background: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)"
+            background: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)",
+            eventBorderColor: "red"
           }
         ],
         eventDidMount: function(info) {
@@ -86,6 +96,20 @@ export default {
   },
 
   methods: {
+    inc() {
+      this.val++;
+      this.val = this.val < 10 ? "0" + this.val : this.val;
+      this.val = this.val;
+    },
+
+    dec() {
+      if (this.val > 1) {
+        this.val--;
+        this.val = this.val < 10 ? "0" + this.val : this.val;
+        this.val = this.val;
+      }
+    },
+
     room_types() {
       let payload = {
         params: {
@@ -115,5 +139,44 @@ export default {
 .app {
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 14px;
+}
+/* Google fonts import link */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #343f4f;
+}
+.wrapper {
+  height: 120px;
+  min-width: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.wrapper span {
+  width: 100%;
+  text-align: center;
+  font-size: 55px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.wrapper span.num {
+  font-size: 50px;
+  border-right: 2px solid rgba(0, 0, 0, 0.2);
+  border-left: 2px solid rgba(0, 0, 0, 0.2);
+  pointer-events: none;
 }
 </style>

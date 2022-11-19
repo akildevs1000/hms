@@ -83,12 +83,15 @@
               </v-col>
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label">Room No </label>
+                <!-- {{ room.room_id.length }} -->
                 <v-select
+                  multiple
                   v-model="room.room_id"
                   :items="rooms"
                   item-text="room_no"
                   item-value="id"
                   dense
+                  @change="get_multi_room_price(room.room_id.length)"
                   outlined
                   :hide-details="!errors.room_id"
                   :error="errors.room_id"
@@ -559,7 +562,8 @@ export default {
       amount: 0,
       price: 0,
 
-      company_id: 0
+      company_id: 0,
+      single_room_price: 0
     },
     customer: {
       first_name: "",
@@ -672,10 +676,18 @@ export default {
     get_room(val) {
       let room_type = this.roomTypes.find(e => e.id == val);
       this.room.price = room_type.price;
+      this.single_room_price = room_type.price;
+      // console.log(this.room.price);
+      this.room.room_id = 0;
       this.$axios.get(`get_room/${val}`).then(({ data }) => {
         this.rooms = data;
       });
       this.runAllFunctions();
+    },
+    get_multi_room_price(val) {
+      this.room.price = this.single_room_price * val;
+      this.runAllFunctions();
+      console.log(this.room.price);
     },
     get_customer() {
       this.errors = [];
@@ -717,6 +729,7 @@ export default {
         company_id: this.$auth.user.company.id
       };
       console.log(payload);
+      return;
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {

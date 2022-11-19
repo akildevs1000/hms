@@ -328,14 +328,20 @@ export default {
           hasChildren: [
             {
               icon: "mdi-bookmark ",
+              title: "Bulk Reservation",
+              to: "/reservation/bulk",
+              menu: "reservation_access"
+            },
+            {
+              icon: "mdi-bookmark ",
               title: "Add Reservation",
               to: "/reservation/create",
               menu: "reservation_access"
             },
             {
               icon: "mdi-bed",
-              title: "Reservation List",
-              to: "/reservation",
+              title: "List Reservation",
+              to: "/reservation/list",
               menu: "reservation_access"
             }
           ]

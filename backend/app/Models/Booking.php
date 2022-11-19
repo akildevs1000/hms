@@ -72,6 +72,16 @@ class Booking extends Model
         ]);
     }
 
+    public function SetCheckInAttribute($value)
+    {
+        $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
+    }
+
+    public function SetCheckOutAttribute($value)
+    {
+        $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
+    }
+
     // public function GetBackgroundAttribute()
     // {
     //     $roomType =  Room::with('roomType')->find($this->room_id)->roomType->name ?? '';
