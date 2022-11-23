@@ -73,6 +73,7 @@
 " -->
 
     <v-app-bar
+      elevation="0"
       :color="changeColor"
       dark
       :clipped-left="clipped"
@@ -317,7 +318,7 @@ export default {
         {
           icon: "mdi-calendar",
           title: "Calendar",
-          to: "/calendar",
+          to: "/hotel/calendar1",
           menu: "reservation_access"
         },
         {

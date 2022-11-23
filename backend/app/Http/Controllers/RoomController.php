@@ -107,25 +107,15 @@ class RoomController extends Controller
 
     public function getAvailableRoomsByDate(Request $request)
     {
+        $model = Booking::query();
 
-
-        // return $request->all();
-
-        return   Booking::where('check_in', $request->check_in)->first();
-
-        $arr = [];
-        $data =    Room::with('roomType')->orderBy('status', 'desc')->get();
-        foreach ($data as   $d) {
-            $color =  $this->get_color($d->roomType->name);
-            $arr[] = [
-                'id' => $d->id,
-                'room_no' => $d->room_no,
-                'room_type' => $d->roomType->name,
-                'eventColor' => $color,
-                'status' => $d->status,
-            ];
-        }
-        return $arr;
+        $roomIds =   $model
+            ->whereDate('check_in', $request->check_in)
+            ->orWhereDate('check_out', $request->check_out)
+            ->where('booking_status', '!=', 0)
+            ->pluck('room_id');
+        return   Room::whereNotIn('id', $roomIds)
+            ->get();
     }
 
 

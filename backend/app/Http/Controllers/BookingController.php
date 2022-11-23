@@ -111,7 +111,6 @@ class BookingController extends Controller
         }
     }
 
-
     public function check_in_room(Request $request)
     {
         try {
@@ -390,6 +389,38 @@ class BookingController extends Controller
 
             if ($booked) {
                 return $this->response('Date changed Successfully.', null, true);
+            } else {
+                return $this->response('DataBase Error in status change', null, true);
+            }
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
+    public function store1(StoreRequest $request)
+    {
+        try {
+            $data = $request->except(['room_type', 'amount', 'price']);
+            $data["customer_id"] = $request->customer_id;
+            $data['booking_date'] = now();
+            $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
+
+            // $room  = new RoomController();
+            // $room->update($request->room_id, 1);
+            $booked =  Booking::create($data);
+
+            if (now() <= $booked->check_in) {
+                $room  = new RoomController();
+                $room->update($request->room_id, 1);
+            } else {
+                $room  = new RoomController();
+                $room->update($request->room_id, 0);
+            }
+
+            if ($booked) {
+                return $this->response('Room Booked Successfully.', null, true);
             } else {
                 return $this->response('DataBase Error in status change', null, true);
             }
