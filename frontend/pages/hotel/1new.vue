@@ -534,14 +534,14 @@
                           offset-y
                           min-width="auto"
                         >
-                          <template v-slot:activator="{ attrs }">
+                          <template v-slot:activator="{ on, attrs }">
                             <v-text-field
                               v-model="item.check_in"
                               v-bind="attrs"
                               :hide-details="true"
+                              v-on="on"
                               dense
                               outlined
-                              readonly
                             ></v-text-field>
                           </template>
                           <v-date-picker
@@ -562,14 +562,14 @@
                           offset-y
                           min-width="auto"
                         >
-                          <template v-slot:activator="{ attrs }">
+                          <template v-slot:activator="{ on, attrs }">
                             <v-text-field
                               v-model="item.check_out"
                               v-bind="attrs"
                               :hide-details="true"
+                              v-on="on"
                               dense
                               outlined
-                              readonly
                             ></v-text-field>
                           </template>
                           <v-date-picker
@@ -581,11 +581,12 @@
                       </v-col>
 
                       <v-col md="6" cols="12" sm="12">
-                        <label class="col-form-label">First Name </label>
+                        <label class="col-form-label"
+                          >First Name <span class="text-danger">*</span></label
+                        >
                         <v-text-field
                           dense
                           outlined
-                          readonly
                           type="text"
                           v-model="customer.first_name"
                           :hide-details="!errors.first_name"
@@ -602,24 +603,20 @@
                         <v-text-field
                           dense
                           :hide-details="true"
-                          readonly
                           outlined
                           type="text"
                           v-model="customer.last_name"
                         ></v-text-field>
                       </v-col>
 
-                      <v-col md="2" cols="12" sm="12">
+                      <v-col md="6" cols="12" sm="12">
                         <label class="col-form-label">Amount : </label>
                         {{ item.price }}
                       </v-col>
-                      <v-col md="2" cols="12" sm="12">
-                        <label class="col-form-label">Extra Bed : </label>
-                        {{ item.bed_amount }}
-                      </v-col>
-                      <v-col md="3" cols="12" sm="12">
-                        <label class="col-form-label">Meal : </label>
-                        {{ item.meal }}
+
+                      <v-col md="6" cols="12" sm="12">
+                        <label class="col-form-label">Amount : </label>
+                        {{ item.price }}
                       </v-col>
                     </v-row>
                   </div>
@@ -663,9 +660,9 @@
                             <v-text-field
                               v-model="temp.check_in"
                               readonly
-                              v-on="selectedRooms.length == 0 ? on : ''"
                               v-bind="attrs"
                               :hide-details="true"
+                              v-on="on"
                               dense
                               outlined
                             ></v-text-field>
@@ -692,9 +689,9 @@
                             <v-text-field
                               v-model="temp.check_out"
                               readonly
-                              v-on="selectedRooms.length == 0 ? on : ''"
                               v-bind="attrs"
                               :hide-details="true"
+                              v-on="on"
                               dense
                               outlined
                             ></v-text-field>
@@ -708,10 +705,11 @@
                       </v-col>
 
                       <v-col md="6" cols="12" sm="12">
-                        <label class="col-form-label">First Name </label>
+                        <label class="col-form-label"
+                          >First Name <span class="text-danger">*</span></label
+                        >
                         <v-text-field
                           dense
-                          readonly
                           outlined
                           type="text"
                           v-model="customer.first_name"
@@ -729,7 +727,6 @@
                         <v-text-field
                           dense
                           :hide-details="true"
-                          readonly
                           outlined
                           type="text"
                           v-model="customer.last_name"
@@ -824,11 +821,11 @@
                 <v-divider></v-divider>
               </v-col>
               <v-col md="6"><b class="#F9FAFD--text">Adult</b></v-col>
-              <v-col md="6" class="text-right">{{ customer.no_of_adult }}</v-col>
+              <v-col md="6" class="text-right">4</v-col>
               <v-col md="6"><b class="#F9FAFD--text">Child</b></v-col>
-              <v-col md="6" class="text-right">{{ customer.no_of_child }}</v-col>
+              <v-col md="6" class="text-right">2</v-col>
               <v-col md="6"><b class="#F9FAFD--text">Baby</b></v-col>
-              <v-col md="6" class="text-right">{{ customer.no_of_baby }}</v-col>
+              <v-col md="6" class="text-right">1</v-col>
               <v-col md="12" class="text-right"><v-divider></v-divider></v-col>
             </v-row>
             <v-row>
@@ -968,14 +965,13 @@
                   <tr>
                     <td>Room Price</td>
                     <td>
-                      <div align="right">{{ room.all_room_Total_amount }}</div>
+                      <div align="right">{{ room.price }}</div>
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <!-- Sub Total (Total Days x Room Price) ({{ getDays() }} x -->
-                      Sub Total ({{ getDays() }} x
-                      {{ room.all_room_Total_amount }})
+                      Sub Total ({{ getDays() }} x {{ room.price }})
                     </td>
                     <td>
                       <div align="right">{{ room.sub_total }}</div>
@@ -1089,19 +1085,23 @@ export default {
       idCards: [],
 
       temp: {
+        //check in calender
         check_in_menu: false,
-        check_out_menu: false,
-        room_no: "",
-        room_type: "",
-        price: "",
-        check_in: "",
-        check_out: "",
-        meal: "",
-        bed_amount: ""
+        //check out calender
+        check_out_menu: false
       },
 
+      //check in calender
       check_in_menu: false,
+      //check out calender
       check_out_menu: false,
+
+      // check_in: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      //   .toISOString()
+      //   .substr(0, 10),
+      // check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      //   .toISOString()
+      //   .substr(0, 10),
 
       upload: {
         name: ""
@@ -1188,8 +1188,8 @@ export default {
     },
 
     getDays() {
-      let ci = new Date(this.temp.check_in);
-      let co = new Date(this.temp.check_out);
+      let ci = new Date(this.room.check_in);
+      let co = new Date(this.room.check_out);
       let Difference_In_Time = co.getTime() - ci.getTime();
       let days = Difference_In_Time / (1000 * 3600 * 24) + 1;
       if (days > 0) {
@@ -1225,8 +1225,18 @@ export default {
     },
 
     subTotal() {
-      return (this.room.sub_total =
-        this.room.all_room_Total_amount * this.getDays());
+      return (this.room.sub_total = this.reservation.price * this.getDays());
+    },
+
+    get_all_room_Total_amount() {
+      let tot = this.selectedRooms.reduce(
+        (a, b) => parseInt(a.price) + parseInt(b.price)
+      );
+      typeof tot == "number"
+        ? (this.room.all_room_Total_amount = tot)
+        : (this.room.all_room_Total_amount = tot.price);
+
+      console.log(this.room.all_room_Total_amount);
     },
 
     getType(val) {
@@ -1287,10 +1297,6 @@ export default {
 
     remove_select_room(index) {
       this.selectedRooms.splice(index, 1);
-
-      if (this.selectedRooms.length == 0) {
-        this.room = {};
-      }
     },
 
     selectRoom(item) {
@@ -1313,25 +1319,10 @@ export default {
       }
     },
 
-    get_all_room_Total_amount() {
-      let sum = 0;
-      this.selectedRooms.map(e => (sum += parseInt(e.price)));
-      this.room.all_room_Total_amount = sum;
-    },
-
     add_room() {
       this.selectedRooms.push(this.temp);
-      this.clear_add_room();
-      this.get_all_room_Total_amount();
-      this.runAllFunctions();
-    },
-
-    clear_add_room() {
-      let check_in = this.temp.check_in;
-      let check_out = this.temp.check_out;
       this.temp = {};
-      this.temp.check_in = check_in;
-      this.temp.check_out = check_out;
+      this.get_all_room_Total_amount();
     },
 
     get_available_rooms() {
@@ -1350,6 +1341,7 @@ export default {
       this.$axios
         .get(`get_available_rooms_by_date`, payload)
         .then(({ data }) => {
+          // console.log(data);
           this.availableRooms = data;
         });
       this.runAllFunctions();
@@ -1359,6 +1351,7 @@ export default {
       this.errors = [];
       this.checkLoader = true;
       let contact_no = this.search.mobile;
+      console.log(contact_no);
       if (contact_no == undefined || contact_no == "") {
         alert("Enter contact number");
         this.checkLoader = false;
@@ -1396,6 +1389,7 @@ export default {
         ...this.room,
         company_id: this.$auth.user.company.id
       };
+      console.log(payload);
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {

@@ -709,7 +709,8 @@ export default {
         ...this.room,
         company_id: this.$auth.user.company.id
       };
-      // console.log(payload);
+      console.log(payload);
+      return;
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {

@@ -1059,8 +1059,12 @@ export default {
       this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
         this.reservation.room_id = data.id;
         this.reservation.price = data.room_type.price;
-        console.log(this.reservation);
-        this.createReservationDialog = true;
+
+        let commitObj = {
+          ...this.reservation
+        };
+        this.$store.commit("reservation", commitObj);
+        this.$router.push(`/hotel/new`);
       });
     },
 

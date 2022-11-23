@@ -13,10 +13,16 @@ class Room extends Model
 
     protected $with = ['room_type:id,name,price'];
 
+    protected $appends = [
+        'background',
+        // "room_type",
+        "price",
+    ];
+
     protected $hidden = [
         "check_in_status",
         "check_out_status",
-        "created_at",
+        "updated_at",
         "updated_at"
     ];
 
@@ -41,5 +47,28 @@ class Room extends Model
             "name" => "---",
             "price" => "---"
         ]);
+    }
+
+    public function GetBackgroundAttribute()
+    {
+        // return '#f48665';
+
+        $status =   $this->room_type_id ?? '';
+        return    match ($status) {
+            1 => '#f48665',
+            2 => '#8e4cf1',
+            3 => '#289cf5',
+            4 => '#23bdb8',
+        };
+    }
+
+    // public function GetRoomTypeAttribute()
+    // {
+    //     return RoomType::find($this->room_type_id)->first()->name ?? '';
+    // }
+
+    public function GetPriceAttribute()
+    {
+        return RoomType::find($this->room_type_id)->price ?? '';
     }
 }
