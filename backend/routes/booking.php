@@ -9,6 +9,11 @@
     Route::post('booking', [BookingController::class, 'store']);
     Route::get('booking/search/{key}', [BookingController::class, 'search']);
 
+
+    Route::post('booking1', [BookingController::class, 'store1']);
+    Route::post('store_booked_rooms', [BookingController::class, 'storeBookedRooms']);
+
+
     Route::get('events_list', [BookingController::class, 'events_list']);
     Route::get('get_events_by_room', [BookingController::class, 'getEventsByRoom']);
 

@@ -18,13 +18,16 @@ class CustomerController extends Controller
     {
         try {
 
-            $record = Customer::create($request->validated());
+            $customer =   Customer::whereContactNo($request->contact_no)->first();
+            $id = "";
 
-            if ($record) {
-                return $this->response('Customer successfully added.', $record, true);
+            if ($customer) {
+                $id = $customer->id;
             } else {
-                return $this->response('Customer cannot add.', null, 'Database error');
+                $record = Customer::create($request->validated());
+                $id = $record->id;
             }
+            return $this->response('Customer successfully added.', $id, true);
         } catch (\Throwable $th) {
             throw $th;
         }

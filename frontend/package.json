@@ -26,8 +26,10 @@
     "dotenv": "^16.0.2",
     "marked": "^4.0.19",
     "nuxt": "^2.15.7",
+    "nuxt-sweetalert2": "^1.0.0",
     "tiptap-vuetify": "^2.24.0",
     "vue-apexcharts": "^1.6.2",
+    "vue-session": "^1.0.0",
     "vuetify": "^2.5.5",
     "ws": "^8.8.1"
   },

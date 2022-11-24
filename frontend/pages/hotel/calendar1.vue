@@ -947,6 +947,7 @@ export default {
         amount: "",
         bill_no: ""
       },
+      RoomList: [],
       reservation: {
         check_in: null,
         check_out: null,
@@ -1035,7 +1036,6 @@ export default {
         this.showTooltip = true;
       });
       this.get_data();
-      console.log(this.checkData);
     },
 
     create_reservation(e, obj) {
@@ -1044,6 +1044,11 @@ export default {
 
     get_room_types(e, obj) {
       this.reservation.isCalculate = true;
+
+      this.reservation.room_id = this.RoomList.find(
+        e => e.room_no == obj.room_no
+      ).id;
+
       this.reservation.room_type = obj.room_type;
       this.reservation.room_no = obj.room_no;
       this.reservation.check_in = e.startStr;
@@ -1082,6 +1087,7 @@ export default {
       };
       this.$axios.get(`room_list`, payload).then(({ data }) => {
         this.calendarOptions.resources = data;
+        this.RoomList = data;
       });
     },
 

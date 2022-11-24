@@ -30,6 +30,11 @@ class Booking extends Model
         return $this->belongsTo(Room::class);
     }
 
+    public function bookedRooms()
+    {
+        return $this->hasMany(BookedRoom::class);
+    }
+
     public function GetResourceIdAttribute()
     {
         return  Room::find($this->room_id)->room_no ?? '';
@@ -42,7 +47,7 @@ class Booking extends Model
 
     public function GetBackgroundAttribute()
     {
-        $status =   Room::find($this->room_id)->status ?? '';
+        $status =   Room::find($this->room_id)->status ?? '0';
         return    match ($status) {
             '0' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
             '1' => 'linear-gradient(135deg, #f48665 0, #d68e41 100%)',

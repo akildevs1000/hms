@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
 use App\Models\Room;
+use App\Models\Booking;
+use App\Models\BookedRoom;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log as Logger;
-
-use App\Http\Requests\Booking\StoreRequest;
 use Ramsey\Uuid\Type\Integer;
+
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\Booking\StoreRequest;
+use App\Http\Requests\Booking\BookingRequest;
+use Illuminate\Support\Facades\Log as Logger;
 
 class BookingController extends Controller
 {
@@ -32,7 +34,7 @@ class BookingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function booking_validate(StoreRequest $request)
+    public function booking_validate(BookingRequest $request)
     {
         return $this->response('Booking validated.', null, true);
     }
@@ -260,10 +262,26 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
+
+        return BookedRoom::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0);
+        })->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
+
+        // return Booking::where('company_id', $request->company_id)
+        //     ->where('booking_status', '!=', 0)
+        //     ->with('bookedRooms')
+        //     ->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
+
+
+    }
+
+    public function events_list1(Request $request)
+    {
         return Booking::where('company_id', $request->company_id)
             ->where('booking_status', '!=', 0)
             ->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
     }
+
 
     public function get_booking(Request $request)
     {
@@ -399,9 +417,54 @@ class BookingController extends Controller
         }
     }
 
-    public function store1(StoreRequest $request)
+    public function store1(Request $request)
     {
+
         try {
+            $data = [];
+            $data =  $request->all();
+            $data["customer_id"] = $request->customer_id;
+            $data['booking_date'] = now();
+            $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
+
+            // $room  = new RoomController();
+            // $room->update($request->room_id, 1);
+
+            $booked =  Booking::create($data);
+            return $this->response('Room Booked Successfully.', $booked, true);
+
+
+            if (now() <= $booked->check_in) {
+                $room  = new RoomController();
+                $room->update($request->room_id, 1);
+            } else {
+                $room  = new RoomController();
+                $room->update($request->room_id, 0);
+            }
+
+            if ($booked) {
+                return $this->response('Room Booked Successfully.', null, true);
+            } else {
+                return $this->response('DataBase Error in status change', null, true);
+            }
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
+    public function storeBookedRooms(Request $request)
+    {
+
+        try {
+            $data = $request->all();
+            foreach ($data as $dada) {
+                BookedRoom::create($dada);
+            }
+            // return BookedRoom::insert($request->all());
+            return $this->response('Room Booked Successfully.', null, true);
+
             $data = $request->except(['room_type', 'amount', 'price']);
             $data["customer_id"] = $request->customer_id;
             $data['booking_date'] = now();
