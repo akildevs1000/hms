@@ -33,15 +33,13 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData && checkData.room && checkData.room.room_no }}
+                  {{ checkData.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{
-                    checkData && checkData.room && checkData.room.room_type.name
-                  }}
+                  {{ checkData.room_type }}
                 </td>
               </tr>
               <tr>
@@ -152,15 +150,13 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData && checkData.room && checkData.room.room_no }}
+                  {{ checkData.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{
-                    checkData && checkData.room && checkData.room.room_type.name
-                  }}
+                  {{ checkData.room_type }}
                 </td>
               </tr>
               <tr>
@@ -310,15 +306,13 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData && checkData.room && checkData.room.room_no }}
+                  {{ checkData.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{
-                    checkData && checkData.room && checkData.room.room_type.name
-                  }}
+                  {{ checkData.room_type }}
                 </td>
               </tr>
               <tr style="background-color:white">
@@ -448,15 +442,13 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData && checkData.room && checkData.room.room_no }}
+                  {{ checkData.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{
-                    checkData && checkData.room && checkData.room.room_type.name
-                  }}
+                  {{ checkData.room_type }}
                 </td>
               </tr>
               <tr>
@@ -567,15 +559,13 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData && checkData.room && checkData.room.room_no }}
+                  {{ checkData.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{
-                    checkData && checkData.room && checkData.room.room_type.name
-                  }}
+                  {{ checkData.room_type }}
                 </td>
               </tr>
               <tr>
@@ -684,13 +674,13 @@
           <tr class="bg-background">
             <th>Room No</th>
             <td>
-              {{ checkData && checkData.room && checkData.room.room_no }}
+              {{ checkData.room_no }}
             </td>
           </tr>
           <tr class="bg-background">
             <th>Room Type</th>
             <td>
-              {{ checkData && checkData.room && checkData.room.room_type.name }}
+              {{ checkData.room_type }}
             </td>
           </tr>
           <tr class="bg-background">
@@ -884,6 +874,8 @@ export default {
 
           arg.el.addEventListener("contextmenu", jsEvent => {
             this.showTooltip = false;
+            console.log(eventId);
+            // return;
             this.show(eventId, eventStatus, jsEvent);
             jsEvent.preventDefault();
           });
@@ -1028,6 +1020,18 @@ export default {
       });
     },
 
+    get_data() {
+      let payload = {
+        params: {
+          id: this.evenIid
+        }
+      };
+      this.$axios.get(`get_booking`, payload).then(({ data }) => {
+        this.checkData = data;
+        this.checkData.full_payment = "";
+      });
+    },
+
     get_event_by_mouse_hover(id, jsEvent) {
       this.evenIid = id;
       this.tx = jsEvent.clientX;
@@ -1128,33 +1132,6 @@ export default {
         .substr(0, 10);
     },
 
-    get_data() {
-      let payload = {
-        params: {
-          id: this.evenIid
-        }
-      };
-      this.$axios.get(`get_booking`, payload).then(({ data }) => {
-        this.checkData = data;
-        this.checkData.full_payment = "";
-      });
-    },
-
-    validate_payment() {
-      if (
-        this.checkData.advance_price == 0 ||
-        this.checkData.advance_price == ""
-      ) {
-        alert("enter advance price ");
-        return true;
-      }
-      if (this.checkData.payment_mode_id == "") {
-        alert("select payment mode");
-        return true;
-      }
-      return false;
-    },
-
     store_check_out() {
       if (this.checkData.full_payment == "") {
         alert("enter full payment");
@@ -1183,7 +1160,7 @@ export default {
       if (this.validate_payment()) {
         return;
       }
-      this.loading = true;
+      // this.loading = true;
       let payload = {
         booking_id: this.evenIid,
         advance_price: data.advance_price,
@@ -1359,7 +1336,20 @@ export default {
     close() {
       this.checkInDialog = false;
     },
-
+    validate_payment() {
+      if (
+        this.checkData.advance_price == 0 ||
+        this.checkData.advance_price == ""
+      ) {
+        alert("enter advance price ");
+        return true;
+      }
+      if (this.checkData.payment_mode_id == "") {
+        alert("select payment mode");
+        return true;
+      }
+      return false;
+    },
     succuss(
       data,
       check_in = false,

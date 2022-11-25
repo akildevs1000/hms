@@ -81,37 +81,37 @@ class BookingController extends Controller
         }
     }
 
-    public function storeBulk(StoreRequest $request)
-    {
-        try {
-            $data = $request->except(['room_type', 'amount', 'price']);
-            $data["customer_id"] = $request->customer_id;
-            $data['booking_date'] = now();
-            $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
+    // public function storeBulk(StoreRequest $request)
+    // {
+    //     try {
+    //         $data = $request->except(['room_type', 'amount', 'price']);
+    //         $data["customer_id"] = $request->customer_id;
+    //         $data['booking_date'] = now();
+    //         $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
 
-            // $room  = new RoomController();
-            // $room->update($request->room_id, 1);
-            $booked =  Booking::create($data);
+    //         // $room  = new RoomController();
+    //         // $room->update($request->room_id, 1);
+    //         $booked =  Booking::create($data);
 
-            if (now() <= $booked->check_in) {
-                $room  = new RoomController();
-                $room->update($request->room_id, 1);
-            } else {
-                $room  = new RoomController();
-                $room->update($request->room_id, 0);
-            }
+    //         if (now() <= $booked->check_in) {
+    //             $room  = new RoomController();
+    //             $room->update($request->room_id, 1);
+    //         } else {
+    //             $room  = new RoomController();
+    //             $room->update($request->room_id, 0);
+    //         }
 
-            if ($booked) {
-                return $this->response('Room Booked Successfully.', null, true);
-            } else {
-                return $this->response('DataBase Error in status change', null, true);
-            }
-        } catch (\Throwable $th) {
-            return $th;
-            Logger::channel("custom")->error("BookingController: " . $th);
-            return ["done" => false, "data" => "DataBase Error booking"];
-        }
-    }
+    //         if ($booked) {
+    //             return $this->response('Room Booked Successfully.', null, true);
+    //         } else {
+    //             return $this->response('DataBase Error in status change', null, true);
+    //         }
+    //     } catch (\Throwable $th) {
+    //         return $th;
+    //         Logger::channel("custom")->error("BookingController: " . $th);
+    //         return ["done" => false, "data" => "DataBase Error booking"];
+    //     }
+    // }
 
     public function check_in_room(Request $request)
     {
@@ -138,8 +138,13 @@ class BookingController extends Controller
     public function payingAdvance(Request $request)
     {
         try {
-            $booking_id      = $request->booking_id;
-            $booking = Booking::find($booking_id);
+            $bookingId = $this->roomDetails($request->booking_id)->booking_id;
+            $booking = Booking::whereHas('bookedRooms', function ($q) use ($bookingId) {
+                $q->where('booking_id', $bookingId);
+            })->first();
+
+
+            // $booking = BookedRoom::whereBookingId($booking_id);
             $booking->remaining_price = $request->remaining_price;
             $booking->payment_mode_id = $request->payment_mode_id;
             $booking->advance_price = $request->advance_price;
@@ -152,6 +157,12 @@ class BookingController extends Controller
             throw $th;
         }
     }
+
+    private function roomDetails($id)
+    {
+        return BookedRoom::find($id);
+    }
+
 
     public function check_out_room(Request $request)
     {
@@ -285,8 +296,15 @@ class BookingController extends Controller
 
     public function get_booking(Request $request)
     {
-        return Booking::with('room')
-            ->find($request->id);
+        $bookedRoom = BookedRoom::with('booking')->find($request->id);
+        $bookedRoom->booking->room_id = $bookedRoom->room_id;
+        $bookedRoom->booking->room_no = $bookedRoom->room_no;
+        $bookedRoom->booking->room_type = $bookedRoom->room_type;
+        return  $bookedRoom->booking;
+
+        //old code
+        // return Booking::with('room')
+        //     ->find($request->id);
     }
 
     public function cancelReservation(Request $request, $id)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BookedRoom;
 use App\Models\Room;
 use App\Models\Booking;
 use Illuminate\Http\Request;
@@ -107,12 +108,14 @@ class RoomController extends Controller
 
     public function getAvailableRoomsByDate(Request $request)
     {
-        $model = Booking::query();
-
-        $roomIds =   $model
-            ->whereDate('check_in', $request->check_in)
-            ->orWhereDate('check_out', $request->check_out)
-            ->where('booking_status', '!=', 0)
+        $model = BookedRoom::query();
+        $roomIds = $model
+            ->whereDate('check_in', '<=', $request->check_in)
+            ->WhereDate('check_out', '>=', $request->check_out)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+            })
+            // ->get();
             ->pluck('room_id');
         return   Room::whereNotIn('id', $roomIds)
             ->get();

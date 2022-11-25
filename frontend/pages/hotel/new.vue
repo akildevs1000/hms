@@ -17,11 +17,7 @@
                 outlined
                 type="text"
                 v-model="search.mobile"
-                :hide-details="!errors.mobile"
-                :error="errors.mobile"
-                :error-messages="
-                  errors && errors.mobile ? errors.mobile[0] : ''
-                "
+                :hide-details="true"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -141,10 +137,7 @@
                 >
                 <v-select
                   v-model="room.customer_type"
-                  :items="[
-                    { id: 1, name: 'Company' },
-                    { id: 2, name: 'Regular' }
-                  ]"
+                  :items="['Company', 'Regular']"
                   dense
                   item-text="name"
                   item-value="id"
@@ -158,11 +151,7 @@
                   >Status <span class="text-danger">*</span></label
                 >
                 <v-select
-                  :items="[
-                    { id: 1, name: 'Cancel' },
-                    { id: 2, name: 'Waiting' },
-                    { id: 3, name: 'Confirmed' }
-                  ]"
+                  :items="['Cancel', 'Waiting', 'Confirmed']"
                   dense
                   item-text="name"
                   item-value="id"
@@ -183,8 +172,8 @@
                   outlined
                   type="text"
                   v-model="customer.first_name"
-                  :hide-details="!errors.first_name"
-                  :error="errors.first_name"
+                  :hide-details="errors && !errors.first_name"
+                  :error="errors && errors.first_name"
                   :error-messages="
                     errors && errors.first_name ? errors.first_name[0] : ''
                   "
@@ -262,8 +251,8 @@
                   outlined
                   item-text="name"
                   item-value="id"
-                  :hide-details="!errors.id_card_type_id"
-                  :error="errors.id_card_type_id"
+                  :hide-details="errors && !errors.id_card_type_id"
+                  :error="errors && errors.id_card_type_id"
                   :error-messages="
                     errors && errors.id_card_type_id
                       ? errors.id_card_type_id[0]
@@ -281,8 +270,8 @@
                   outlined
                   type="text"
                   v-model="customer.id_card_no"
-                  :hide-details="!errors.id_card_no"
-                  :error="errors.id_card_no"
+                  :hide-details="errors && !errors.id_card_no"
+                  :error="errors && errors.id_card_no"
                   :error-messages="
                     errors && errors.id_card_no ? errors.id_card_no[0] : ''
                   "
@@ -295,8 +284,8 @@
                   outlined
                   type="text"
                   v-model="customer.gst_number"
-                  :hide-details="!errors.gst_number"
-                  :error="errors.gst_number"
+                  :hide-details="errors && !errors.gst_number"
+                  :error="errors && errors.gst_number"
                   :error-messages="
                     errors && errors.gst_number ? errors.gst_number[0] : ''
                   "
@@ -324,8 +313,8 @@
                   outlined
                   type="number"
                   v-model="customer.contact_no"
-                  :hide-details="!errors.contact_no"
-                  :error="errors.contact_no"
+                  :hide-details="errors && !errors.contact_no"
+                  :error="errors && errors.contact_no"
                   :error-messages="
                     errors && errors.contact_no ? errors.contact_no[0] : ''
                   "
@@ -340,8 +329,8 @@
                   outlined
                   type="email"
                   v-model="customer.email"
-                  :hide-details="!errors.email"
-                  :error="errors.email"
+                  :hide-details="errors && !errors.email"
+                  :error="errors && errors.email"
                   :error-messages="
                     errors && errors.email ? errors.email[0] : ''
                   "
@@ -378,8 +367,8 @@
                   dense
                   outlined
                   @change="getType(room.type)"
-                  :hide-details="!errors.type"
-                  :error="errors.type"
+                  :hide-details="errors && !errors.type"
+                  :error="errors && errors.type"
                   :error-messages="errors && errors.type ? errors.type[0] : ''"
                 ></v-select>
               </v-col>
@@ -390,8 +379,8 @@
                   outlined
                   type="text"
                   v-model="room.agent_name"
-                  :hide-details="!errors.agent_name"
-                  :error="errors.agent_name"
+                  :hide-details="errors && !errors.agent_name"
+                  :error="errors && errors.agent_name"
                   :error-messages="
                     errors && errors.agent_name ? errors.agent_name[0] : ''
                   "
@@ -404,8 +393,8 @@
                   :items="sources"
                   dense
                   outlined
-                  :hide-details="!errors.source"
-                  :error="errors.source"
+                  :hide-details="errors && !errors.source"
+                  :error="errors && errors.source"
                   :error-messages="
                     errors && errors.source ? errors.source[0] : ''
                   "
@@ -487,7 +476,6 @@
             </v-row>
             <v-row class="px-5">
               <v-col md="12" class="mb-2">
-                {{ selectedRooms.length }}
                 <v-alert
                   border="left"
                   colored-border
@@ -580,8 +568,8 @@
                           readonly
                           type="text"
                           v-model="customer.first_name"
-                          :hide-details="!errors.first_name"
-                          :error="errors.first_name"
+                          :hide-details="errors && !errors.first_name"
+                          :error="errors && errors.first_name"
                           :error-messages="
                             errors && errors.first_name
                               ? errors.first_name[0]
@@ -708,8 +696,8 @@
                           outlined
                           type="text"
                           v-model="customer.first_name"
-                          :hide-details="!errors.first_name"
-                          :error="errors.first_name"
+                          :hide-details="errors && !errors.first_name"
+                          :error="errors && errors.first_name"
                           :error-messages="
                             errors && errors.first_name
                               ? errors.first_name[0]
@@ -731,15 +719,14 @@
                       <v-col md="6" sm="12" cols="12" dense>
                         <label class="col-form-label">
                           Meals
-                          <span class="text-danger">*</span>
                         </label>
                         <v-select
                           v-model="temp.meal"
                           :items="meals"
                           dense
                           outlined
-                          :hide-details="!errors.meal"
-                          :error="errors.type"
+                          :hide-details="errors && !errors.meal"
+                          :error="errors && errors.meal"
                           :error-messages="
                             errors && errors.meal ? errors.meal[0] : ''
                           "
@@ -767,8 +754,8 @@
                           outlined
                           type="number"
                           v-model="temp.bed_amount"
-                          :hide-details="!errors.bed_amount"
-                          :error="errors.bed_amount"
+                          :hide-details="errors && !errors.bed_amount"
+                          :error="errors && errors.bed_amount"
                           :error-messages="
                             errors && errors.bed_amount
                               ? errors.bed_amount[0]
@@ -910,8 +897,8 @@
                   dense
                   outlined
                   @change="getType(room.type)"
-                  :hide-details="!errors.payment_mode_id"
-                  :error="errors.payment_mode_id"
+                  :hide-details="errors && !errors.payment_mode_id"
+                  :error="errors && errors.payment_mode_id"
                   :error-messages="
                     errors && errors.typpayment_mode_ide
                       ? errors.payment_mode_id[0]
@@ -1026,7 +1013,7 @@
       </v-col>
       <v-col md="1" style="width:300px">
         <pre>
-          {{ selectedRooms }}
+          <!-- {{ selectedRooms }} -->
         </pre>
       </v-col>
     </v-row>
@@ -1087,13 +1074,15 @@ export default {
         check_out_menu: false,
         room_no: "",
         room_type: "",
+        room_id: "",
         price: 0,
         check_in: "",
         check_out: "",
-        meal: "",
+        meal: "Room only",
         bed_amount: 0,
         room_tax: 0,
-        total_with_tax: 0
+        total_with_tax: 0,
+        company_id: this.$auth.user.company.id
       },
       check_in_menu: false,
       check_out_menu: false,
@@ -1112,14 +1101,8 @@ export default {
         type: "",
         source: "",
         agent_name: "",
-        room_type: "",
-        room_id: "",
-        check_in: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-          .toISOString()
-          .substr(0, 10),
-        check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-          .toISOString()
-          .substr(0, 10),
+        check_in: null,
+        check_out: null,
         discount: 0,
         advance_price: 0,
         payment_mode_id: 1,
@@ -1130,17 +1113,11 @@ export default {
         total_price: 0,
         remaining_price: 0,
         request: "",
-        amount: 0,
-        price: 0,
-        company_id: 0
+        company_id: this.$auth.user.company.id,
+        remark: ""
       },
       reservation: {},
       customer: {
-        remark: "",
-        meal: "",
-        customer_type: "",
-        type: "",
-        status: "",
         first_name: "",
         last_name: "",
         contact_no: "",
@@ -1152,7 +1129,7 @@ export default {
         no_of_child: 0,
         no_of_baby: 0,
         address: "",
-        company_id: ""
+        company_id: this.$auth.user.company.id
       },
       errors: []
     };
@@ -1243,32 +1220,33 @@ export default {
         this.idCards = data;
       });
     },
-    get_room(val) {
-      let room_type = this.roomTypes.find(e => e.id == val);
-      this.room.price = room_type.price;
-      this.$axios.get(`get_room/${val}`).then(({ data }) => {
-        this.rooms = data;
-      });
-      this.runAllFunctions();
-    },
+
     get_reservation() {
       this.reservation = this.$store.state.reservation;
+      this.temp.room_id = this.reservation.room_id;
       this.temp.room_no = this.reservation.room_no;
       this.temp.room_type = this.reservation.room_type;
       this.temp.price = this.reservation.price;
       this.temp.check_in = this.reservation.check_in;
       this.temp.check_out = this.reservation.check_out;
       this.temp.room_tax = this.get_room_tax(this.reservation.price);
+      this.room.check_in = this.reservation.check_in;
+      this.room.check_out = this.reservation.check_out;
     },
     remove_select_room(index) {
       this.selectedRooms.splice(index, 1);
+      this.total_extra();
+      this.get_all_room_Total_amount();
+      this.runAllFunctions();
       if (this.selectedRooms.length == 0) {
-        this.room = {};
+        console.log(this.room);
       }
     },
     selectRoom(item) {
       this.RoomDrawer = false;
+      this.temp.company_id = this.$auth.user.company.id;
       this.temp.room_no = item.room_no;
+      this.temp.room_id = item.id;
       this.temp.room_type = item.room_type.name;
       this.temp.price = item.price;
       this.temp.room_tax = this.get_room_tax(item.price);
@@ -1307,15 +1285,20 @@ export default {
     },
     add_room() {
       if (this.temp.room_no == undefined) {
-        alert("Select room");
+        this.alert("Missing!", "Select room", "error");
         return;
       }
+      this.room.check_in = this.temp.check_in;
+      this.room.check_out = this.temp.check_out;
+      delete this.temp.check_in_menu;
+      delete this.temp.check_out_menu;
       this.selectedRooms.push(this.temp);
       this.total_extra();
       this.get_all_room_Total_amount();
       this.runAllFunctions();
       this.clear_add_room();
-      console.log(this.temp);
+      this.alert("Success!", "success selected room", "success");
+      return;
     },
     clear_add_room() {
       let check_in = this.temp.check_in;
@@ -1324,6 +1307,7 @@ export default {
       this.temp.check_in = check_in;
       this.temp.bed_amount = 0;
       this.temp.check_out = check_out;
+      this.temp.meal = "Room only";
     },
     get_available_rooms() {
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
@@ -1377,24 +1361,30 @@ export default {
         u.is_master
       );
     },
+
     store() {
-      // let payload = {
-      //   ...this.room,
-      //   ...this.customer,
-      //   company_id: this.$auth.user.company.id
-      // };
+      this.alert("Waiting..!", "Loading...", "info");
+
+      if (this.selectedRooms.length == 0) {
+        this.alert("Missing!", "Atleast select one room", "error");
+        return;
+      }
+
       let payload = {
-        // ...this.selectedRooms,
-        ...this.customer,
-        company_id: this.$auth.user.company.id
+        ...this.room,
+        ...this.customer
       };
       console.log(payload);
-      // return;
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
+            this.alert(
+              "No reservation created!",
+              "Some fields are missing or invalid",
+              "error"
+            );
             this.errors = data.errors;
           } else {
             this.errors = [];
@@ -1413,33 +1403,70 @@ export default {
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
+            this.alert(
+              "No reservation created!",
+              "Some fields are missing or invalid",
+              "error"
+            );
             this.errors = data.errors;
           } else {
             this.errors = [];
-            this.store_booking(data.record.id);
+            this.store_booking(data.record);
           }
         })
         .catch(e => console.log(e));
     },
+
     store_booking(id) {
       let payload = {
         ...this.room,
-        customer_id: id,
-        company_id: this.$auth.user.company.id
+        customer_id: id
       };
+      console.log(payload);
       this.$axios
-        .post("/booking", payload)
+        .post("/booking1", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
             this.errors = data.errors;
           } else {
-            this.errors = [];
-            this.snackbar = true;
-            this.response = data.message;
+            this.store_booked_rooms(data.record.id, id);
           }
         })
         .catch(e => console.log(e));
+    },
+
+    store_booked_rooms(id, customer_id) {
+      this.selectedRooms.forEach(key => {
+        key.booking_id = id;
+        key.customer_id = customer_id;
+      });
+
+      let payload = {
+        ...this.selectedRooms
+      };
+      this.$axios
+        .post("/store_booked_rooms", payload)
+        .then(({ data }) => {
+          this.loading = false;
+          if (!data.status) {
+            this.alert(
+              "No reservation created!",
+              "Some fields are missing or invalid",
+              "error"
+            );
+            this.errors = data.errors;
+          } else {
+            this.errors = [];
+            this.alert("Success!", "Successfully room added", "success");
+            // window.location.href = "/hotel/calendar1";
+          }
+        })
+        .catch(e => console.log(e));
+    },
+
+    alert(title = "Success!", message = "hello", type = "error") {
+      this.$swal(title, message, type);
     }
   }
 };
