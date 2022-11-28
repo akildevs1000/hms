@@ -511,4 +511,21 @@ class BookingController extends Controller
             return ["done" => false, "data" => "DataBase Error booking"];
         }
     }
+
+
+    public function reservationList(Request $request)
+    {
+        $model = Booking::query()
+            ->latest()
+            ->filter(request('search'));
+
+        return $model
+            ->with([
+                'bookedRooms:booking_id,id,room_no,room_type',
+                'customer:id,first_name,last_name'
+            ])
+            ->where('company_id', $request->company_id)
+            ->where('booking_status', '!=', 0)
+            ->paginate($request->per_page ?? 20);
+    }
 }

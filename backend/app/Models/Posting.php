@@ -25,4 +25,14 @@ class Posting extends Model
     {
         return $this->belongsTo(Booking::class);
     }
+
+    /**
+     * Get all of the bookedRoom for the Posting
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function bookedRoom()
+    {
+        return $this->belongsTo(BookedRoom::class);
+    }
 }

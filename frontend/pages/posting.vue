@@ -72,13 +72,17 @@
         <tr v-for="(item, index) in data" :key="index">
           <td>{{ ++index }}</td>
           <td>{{ caps(item.bill_no) }}</td>
-          <td>{{ caps(item.booking.room.room_no) }}</td>
-          <td>{{ caps(item.booking.room.room_type.name) }}</td>
+          <td>{{ caps(item.booking && item.booking.id) }}</td>
+          <td>{{ caps(item.booked_room && item.booked_room.room_no) }}</td>
+          <td>{{ caps(item.booked_room && item.booked_room.room_type) }}</td>
           <td>{{ caps(item.booking.customer.full_name) }}</td>
 
           <td>{{ caps(item.item) }}</td>
           <td>{{ caps(item.qty) }}</td>
-          <td>{{ caps(item.amount) }}</td>
+          <td>{{ caps(item.amount_with_tax) }}</td>
+          <td>{{ caps(item.tax) }}</td>
+          <td>{{ caps(item.sgst) }}</td>
+          <td>{{ caps(item.cgst) }}</td>
           <td>{{ caps(item.posting_date) }}</td>
         </tr>
       </table>
@@ -118,12 +122,16 @@ export default {
     headers: [
       { text: "#" },
       { text: "Bill Number" },
+      { text: "Reservation Number" },
       { text: "Room No" },
       { text: "Room Type" },
       { text: "Customer" },
       { text: "Item" },
       { text: "QTY" },
       { text: "Amount" },
+      { text: "Tax" },
+      { text: "SGST" },
+      { text: "CGST" },
       { text: "Date" }
     ],
     editedIndex: -1,
@@ -197,7 +205,7 @@ export default {
     searchIt(e) {
       if (e.length == 0) {
         this.getDataFromApi(this.endpoint);
-      } else if (e.length > 2) {
+      } else if (e.length > 1) {
         this.getDataFromApi(`${this.endpoint}/search/${e}`);
       }
     }

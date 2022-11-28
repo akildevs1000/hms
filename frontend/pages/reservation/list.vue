@@ -61,12 +61,17 @@
         ></v-progress-linear>
         <tr style="font-size:13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
-            <b>{{ ++index }}</b>
+            <b>{{ item.id }}</b>
           </td>
           <td>{{ item && item.customer.full_name }}</td>
-          <td>{{ item.room.room_no }}</td>
-          <td>{{ item && item.room.room_type.name }}</td>
           <td>
+            <!-- {{ item.booked_rooms.room_no }} -->
+            <span v-for="(room, index) in item.booked_rooms" :key="index">
+              {{ room.room_no }}
+              {{ item.booked_rooms.length - 1 == index ? "" : "," }}
+            </span>
+          </td>
+          <!-- <td>
             <v-btn
               style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
               small
@@ -120,7 +125,7 @@
               color="grey"
               >Maintenance</v-btn
             >
-          </td>
+          </td> -->
           <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
           <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
           <td>{{ item.sub_total }}</td>
@@ -182,7 +187,7 @@ export default {
       per_page: 10
     },
     options: {},
-    endpoint: "booking",
+    endpoint: "reservation_list",
     search: "",
     snackbar: false,
     dialog: false,
@@ -190,14 +195,13 @@ export default {
     loading: false,
     total: 0,
     headers: [
-      { text: "&nbsp #" },
+      { text: "&nbsp RESERVATION NUMBER" },
 
       { text: "Customer" },
-      { text: "Room" },
-      { text: "Room Type" },
-      { text: "Room Status" },
-      { text: "Check In" },
-      { text: "Check Out" },
+      { text: "Rooms" },
+      // { text: "Room Status" },
+      { text: "Arrival  Date" },
+      { text: "Departure  Date" },
       { text: "Sub Total" },
       { text: "Discount" },
       { text: "After Discount" },
@@ -218,11 +222,10 @@ export default {
   computed: {},
 
   watch: {
-    // dialog(val) {
-    //   val || this.close();
-    //   this.errors = [];
-    //   this.search = "";
-    // }
+    search() {
+      this.getDataFromApi();
+      console.log("ff");
+    }
   },
   created() {
     // this.loading = true;
@@ -242,7 +245,10 @@ export default {
       const date = new Date(val);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate() - 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      console.log(day);
+      console.log([year, month, day].join("-"));
+
       return [year, month, day].join("-");
     },
     caps(str) {
@@ -259,26 +265,30 @@ export default {
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
+
       let options = {
         params: {
           per_page: this.pagination.per_page,
-          company_id: this.$auth.user.company.id
+          company_id: this.$auth.user.company.id,
+          search: this.search
         }
       };
 
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+      this.$axios.get(`${url}?  page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
+        console.log(this.data);
         this.loading = false;
       });
     },
 
-    searchIt(e) {
-      if (e.length == 0) {
+    searchIt() {
+      console.log(this.search.length);
+      if (this.search.length == 0) {
         this.getDataFromApi();
-      } else if (e.length > 2) {
-        this.getDataFromApi(`${this.endpoint}/search/${e}`);
+      } else if (this.search.length > 2) {
+        this.getDataFromApi();
       }
     }
   }

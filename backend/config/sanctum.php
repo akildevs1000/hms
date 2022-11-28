@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'expiration' => 43200,
+    'expiration' => 432000,
 
     // 60x24 = 1,440
     // 30x1,440 =

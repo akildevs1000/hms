@@ -8,16 +8,30 @@ export default {
     head: {
         titleTemplate: "",
         title: "Admin Panel",
-        meta: [
-            { charset: "utf-8" },
-            { name: "viewport", content: "width=device-width, initial-scale=1" },
-            { hid: "description", name: "description", content: "" },
-            { name: "format-detection", content: "telephone=no" }
+        meta: [{
+                charset: "utf-8"
+            },
+            {
+                name: "viewport",
+                content: "width=device-width, initial-scale=1"
+            },
+            {
+                hid: "description",
+                name: "description",
+                content: ""
+            },
+            {
+                name: "format-detection",
+                content: "telephone=no"
+            }
         ],
 
-        link: [
-            { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-          
+        link: [{
+                rel: "icon",
+                type: "image/x-icon",
+                href: "/favicon.ico"
+            },
+
             {
                 rel: "stylesheet",
                 href: "https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
@@ -41,10 +55,17 @@ export default {
     css: ["~/assets/styles"],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-    plugins: [
-        { src: "~/plugins/axios.js" },
-        { src: "~/plugins/TiptapVuetify", mode: "client" },
-        { src : '~/plugins/vue-apexchart.js', ssr : false },
+    plugins: [{
+            src: "~/plugins/axios.js"
+        },
+        {
+            src: "~/plugins/TiptapVuetify",
+            mode: "client"
+        },
+        {
+            src: '~/plugins/vue-apexchart.js',
+            ssr: false
+        },
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
@@ -63,7 +84,8 @@ export default {
         "@nuxtjs/axios",
         // https://go.nuxtjs.dev/pwa
         "@nuxtjs/pwa",
-        "@nuxtjs/auth-next"
+        "@nuxtjs/auth-next",
+        'nuxt-sweetalert2'
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -75,9 +97,17 @@ export default {
         strategies: {
             local: {
                 endpoints: {
-                    login: { url: "login", method: "post", propertyName: "token" },
+                    login: {
+                        url: "login",
+                        method: "post",
+                        propertyName: "token"
+                    },
                     logout: false,
-                    user: { url: "me", method: "get", propertyName: "user" }
+                    user: {
+                        url: "me",
+                        method: "get",
+                        propertyName: "user"
+                    }
                 },
                 maxAge: 86400 // 24 hours
             }
@@ -135,7 +165,7 @@ export default {
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
-        transpile: ["vuetify/lib", "tiptap-vuetify","vue-apexchart","@fullcalendar.*"]
+        transpile: ["vuetify/lib", "tiptap-vuetify", "vue-apexchart", "@fullcalendar.*"]
     },
 
     server: {

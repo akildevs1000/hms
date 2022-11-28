@@ -101,4 +101,21 @@ class Booking extends Model
     //         'Single' => 'black',
     //     };
     // }
+
+
+    public function scopeFilter($query,  $filter)
+    {
+        $query->when($filter ?? false, fn ($query, $search) =>
+        $query->where(
+            fn ($query) => $query
+                ->orWhere('id', 'Like', '%' . $search . '%')
+                ->orWhere('type', 'Like', '%' . $search . '%')
+                ->orWhereHas(
+                    'customer',
+                    fn ($query) =>
+                    $query->Where('first_name', 'Like', '%' . $search . '%')
+                        ->orWhere('last_name', 'Like', '%' . $search . '%')
+                )
+        ));
+    }
 }

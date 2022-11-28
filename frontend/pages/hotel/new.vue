@@ -1239,7 +1239,6 @@ export default {
       this.get_all_room_Total_amount();
       this.runAllFunctions();
       if (this.selectedRooms.length == 0) {
-        console.log(this.room);
       }
     },
     selectRoom(item) {
@@ -1274,7 +1273,9 @@ export default {
       this.selectedRooms.map(
         e => (sum += e.bed_amount == "" ? 0 : parseInt(e.bed_amount))
       );
-      this.room.total_extra = sum;
+
+      let tax = (sum / 100) * 12;
+      this.room.total_extra = tax + sum;
     },
     get_room_tax(amount) {
       let per = amount < 3000 ? 12 : 18;
@@ -1374,7 +1375,6 @@ export default {
         ...this.room,
         ...this.customer
       };
-      console.log(payload);
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {
@@ -1422,7 +1422,6 @@ export default {
         ...this.room,
         customer_id: id
       };
-      console.log(payload);
       this.$axios
         .post("/booking1", payload)
         .then(({ data }) => {

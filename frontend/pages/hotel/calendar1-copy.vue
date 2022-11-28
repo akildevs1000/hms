@@ -9,10 +9,10 @@
     <v-dialog v-model="createReservationDialog" max-width="1200px">
       <Reservation :reservation="reservation" />
     </v-dialog>
-    <!-- <v-dialog v-model="checkInDialog" persistenta max-width="700px">
+    <v-dialog v-model="checkInDialog" persistent max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>{{ formTitle }}ddd</span>
+          <span>{{ formTitle }}</span>
         </v-toolbar>
         <v-card-text>
           <v-container>
@@ -33,13 +33,15 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData.room_no }}
+                  {{ checkData && checkData.room && checkData.room.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{ checkData.room_type }}
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
                 </td>
               </tr>
               <tr>
@@ -125,7 +127,7 @@
           <v-btn class="error" small @click="close"> Cancel </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog> -->
+    </v-dialog>
     <v-dialog v-model="checkOutDialog" persistent max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -150,13 +152,15 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData.room_no }}
+                  {{ checkData && checkData.room && checkData.room.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{ checkData.room_type }}
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
                 </td>
               </tr>
               <tr>
@@ -306,13 +310,15 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData.room_no }}
+                  {{ checkData && checkData.room && checkData.room.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{ checkData.room_type }}
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
                 </td>
               </tr>
               <tr style="background-color:white">
@@ -358,38 +364,6 @@
                     v-model="posting.amount"
                     :hide-details="true"
                   ></v-text-field>
-                </td>
-              </tr>
-              <tr style="background-color:white">
-                <th>
-                  Type
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-select
-                    v-model="posting.tax_type"
-                    :items="[
-                      { id: -1, name: 'select..' },
-                      { id: 5, name: 'food' },
-                      { id: 12, name: 'mess' }
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                    @change="get_amount_with_tax(posting.tax_type)"
-                  ></v-select>
-                </td>
-              </tr>
-              <tr style="background-color:white">
-                <th>
-                  Amount With Tax
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  {{ posting.amount_with_tax }}
                 </td>
               </tr>
               <tr></tr>
@@ -474,13 +448,15 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData.room_no }}
+                  {{ checkData && checkData.room && checkData.room.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{ checkData.room_type }}
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
                 </td>
               </tr>
               <tr>
@@ -529,18 +505,18 @@
               <tr></tr>
               <tr>
                 <th>
-                  Advance Payed
+                  Advance Price
+                  <span class="text-danger">*</span>
                 </th>
                 <td>
-                  {{ checkData.advance_price }}
-                  <!-- <v-text-field
+                  <v-text-field
                     dense
                     outlined
                     type="number"
                     v-model="checkData.advance_price"
                     :hide-details="true"
                     @keyup="get_remaining(checkData.advance_price)"
-                  ></v-text-field> -->
+                  ></v-text-field>
                 </td>
               </tr>
               <tr></tr>
@@ -548,21 +524,6 @@
                 <th>Remaining Balance</th>
                 <td>
                   {{ checkData.remaining_price }}
-                </td>
-              </tr>
-              <tr style="background-color:white">
-                <th>
-                  New Payment
-                </th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="new_payment"
-                    :hide-details="true"
-                    @keyup="get_remaining(new_payment)"
-                  ></v-text-field>
                 </td>
               </tr>
               <tr></tr>
@@ -606,13 +567,15 @@
               <tr>
                 <th>Room No</th>
                 <td>
-                  {{ checkData.room_no }}
+                  {{ checkData && checkData.room && checkData.room.room_no }}
                 </td>
               </tr>
               <tr>
                 <th>Room Type</th>
                 <td>
-                  {{ checkData.room_type }}
+                  {{
+                    checkData && checkData.room && checkData.room.room_type.name
+                  }}
                 </td>
               </tr>
               <tr>
@@ -721,13 +684,13 @@
           <tr class="bg-background">
             <th>Room No</th>
             <td>
-              {{ checkData.room_no }}
+              {{ checkData && checkData.room && checkData.room.room_no }}
             </td>
           </tr>
           <tr class="bg-background">
             <th>Room Type</th>
             <td>
-              {{ checkData.room_type }}
+              {{ checkData && checkData.room && checkData.room.room_type.name }}
             </td>
           </tr>
           <tr class="bg-background">
@@ -819,19 +782,6 @@
         </v-list>
       </v-menu>
     </div>
-
-    <v-dialog v-model="LoadingDialog" hide-overlay persistent width="300">
-      <v-card color="primary" dark>
-        <v-card-text class="py-3">
-          Loading...
-          <v-progress-linear
-            indeterminate
-            color="white"
-            class="mb-0"
-          ></v-progress-linear>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
     <v-row>
       <v-col cols="12">
         <FullCalendar :options="calendarOptions" style="background:#fff;" />
@@ -851,7 +801,6 @@ export default {
   },
   data() {
     return {
-      LoadingDialog: false,
       loading: false,
       snackbar: false,
       response: "",
@@ -929,15 +878,13 @@ export default {
         eventDidMount: arg => {
           const eventId = arg.event.id;
           const eventStatus = arg.event.extendedProps.status;
-          console.log(arg.event.extendedProps);
           if (arg.event.extendedProps.background) {
             arg.el.style.background = arg.event.extendedProps.background;
           }
 
           arg.el.addEventListener("contextmenu", jsEvent => {
             this.showTooltip = false;
-            // return;
-            this.show(eventId, jsEvent);
+            this.show(eventId, eventStatus, jsEvent);
             jsEvent.preventDefault();
           });
 
@@ -993,18 +940,12 @@ export default {
       evenIid: "",
       eventStatus: "",
       reason: "",
-      new_payment: 0,
       reservation: {},
       posting: {
         item: "",
         qty: "",
-        amount: 0,
-        bill_no: "",
-        amount_with_tax: 0,
-        tax: 0,
-        sgst: 0,
-        cgst: 0,
-        tax_type: -1
+        amount: "",
+        bill_no: ""
       },
       RoomList: [],
       reservation: {
@@ -1074,52 +1015,16 @@ export default {
       }
     },
 
-    show(id, jsEvent) {
-      this.LoadingDialog = true;
+    show(id, eventStatus, jsEvent) {
       this.evenIid = id;
-      this.get_data(jsEvent);
-    },
-
-    show_context_menu(jsEvent) {
-      if (!jsEvent) {
-        return;
-      }
+      this.eventStatus = eventStatus;
       if (this.eventStatus == 3 || this.eventStatus == 5) {
         this.isDirty = false;
       }
-      this.LoadingDialog = false;
       this.x = jsEvent.clientX;
       this.y = jsEvent.clientY;
       this.$nextTick(() => {
         this.showMenu = true;
-      });
-    },
-
-    get_amount_with_tax(clause) {
-      let res = this.getPercentage(this.posting.amount, clause);
-      let gst = parseInt(res) / 2;
-      this.posting.sgst = gst;
-      this.posting.cgst = gst;
-      this.posting.tax = res;
-      this.posting.amount_with_tax =
-        parseInt(res) + parseInt(this.posting.amount);
-    },
-
-    getPercentage(amount, clause) {
-      return (amount / 100) * clause;
-    },
-
-    get_data(jsEvent = null) {
-      let payload = {
-        params: {
-          id: this.evenIid
-        }
-      };
-      this.$axios.get(`get_booking`, payload).then(({ data }) => {
-        this.checkData = data;
-        this.checkData.full_payment = "";
-        this.eventStatus = data.booking_status;
-        this.show_context_menu(jsEvent);
       });
     },
 
@@ -1169,10 +1074,7 @@ export default {
     },
 
     get_remaining(val) {
-      // let total = this.checkData.total_price;
-      let total = this.checkData.remaining_price;
-      console.log(total);
-      console.log(val);
+      let total = this.checkData.total_price;
       let advance_price = val;
       this.checkData.remaining_price = total - advance_price;
     },
@@ -1226,6 +1128,33 @@ export default {
         .substr(0, 10);
     },
 
+    get_data() {
+      let payload = {
+        params: {
+          id: this.evenIid
+        }
+      };
+      this.$axios.get(`get_booking`, payload).then(({ data }) => {
+        this.checkData = data;
+        this.checkData.full_payment = "";
+      });
+    },
+
+    validate_payment() {
+      if (
+        this.checkData.advance_price == 0 ||
+        this.checkData.advance_price == ""
+      ) {
+        alert("enter advance price ");
+        return true;
+      }
+      if (this.checkData.payment_mode_id == "") {
+        alert("select payment mode");
+        return true;
+      }
+      return false;
+    },
+
     store_check_out() {
       if (this.checkData.full_payment == "") {
         alert("enter full payment");
@@ -1254,7 +1183,7 @@ export default {
       if (this.validate_payment()) {
         return;
       }
-      // this.loading = true;
+      this.loading = true;
       let payload = {
         booking_id: this.evenIid,
         advance_price: data.advance_price,
@@ -1340,9 +1269,8 @@ export default {
       let rule =
         Object.keys(this.posting.item).length == 0 ||
         Object.keys(this.posting.amount).length == 0 ||
-        Object.keys(this.posting.qty).length == 0 ||
-        Object.keys(this.posting.bill_no).length == 0 ||
-        this.posting.tax_type == -1;
+        Object.keys(this.posting.qty).length == 0;
+      Object.keys(this.posting.bill_no).length == 0;
 
       if (rule) {
         alert("Please enter required fields");
@@ -1351,12 +1279,9 @@ export default {
       this.loading = true;
       let payload = {
         ...this.posting,
-        booked_room_id: this.evenIid,
-        company_id: this.$auth.user.company.id,
-        booking_id: this.checkData.id,
-        room_id: this.checkData.room_id
+        booking_id: this.evenIid,
+        company_id: this.$auth.user.company.id
       };
-
       this.$axios
         .post("/posting", payload)
         .then(({ data }) => {
@@ -1434,20 +1359,7 @@ export default {
     close() {
       this.checkInDialog = false;
     },
-    validate_payment() {
-      if (
-        this.checkData.advance_price == 0 ||
-        this.checkData.advance_price == ""
-      ) {
-        alert("enter advance price ");
-        return true;
-      }
-      if (this.checkData.payment_mode_id == "") {
-        alert("select payment mode");
-        return true;
-      }
-      return false;
-    },
+
     succuss(
       data,
       check_in = false,
