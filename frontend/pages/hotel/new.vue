@@ -1093,6 +1093,7 @@ export default {
         room_type: "",
         room_id: "",
         price: 0,
+        days: 0,
         sgst: 0,
         cgst: 0,
         check_in: "",
@@ -1315,7 +1316,7 @@ export default {
 
       this.temp.after_discount =
         parseInt(this.temp.price) - parseInt(this.temp.room_discount);
-
+      this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
 
       this.room.check_in = this.temp.check_in;
