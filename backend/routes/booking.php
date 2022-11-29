@@ -12,6 +12,7 @@
 
     Route::post('booking1', [BookingController::class, 'store1']);
     Route::post('store_booked_rooms', [BookingController::class, 'storeBookedRooms']);
+    Route::post('store_document', [BookingController::class, 'storeDocument']);
 
 
     Route::get('events_list', [BookingController::class, 'events_list']);

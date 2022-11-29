@@ -102,6 +102,13 @@ class Booking extends Model
     //     };
     // }
 
+    public function getDocumentAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('documents/booking/' . $value);
+    }
 
     public function scopeFilter($query,  $filter)
     {

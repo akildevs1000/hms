@@ -133,9 +133,9 @@
 <body>
     <table style="margin-top: -20px !important;background-color:bluse;padding-bottom:0px ">
         <tr>
-            <td style="text-align: left;width: 200px; border :none; padding:15px;   backgrozund-color: rded">
+            <td style="text-align: left;width: 200px; border :none; padding:15px; backgrozund-color: rded">
                 <div style=";">
-                    <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="70px" width="100">
+                    <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100">
                 </div>
             </td>
             <td style="text-align: left;width: 200px; border :none; padding:15px; backgrozusnd-color:dblue">

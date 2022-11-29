@@ -211,7 +211,7 @@
                   {{ checkData.remaining_price }}
                 </td>
               </tr>
-              <tr>
+              <tr style="background-color:white">
                 <th>
                   Full Payment
                   <span class="text-danger">*</span>
@@ -226,14 +226,14 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <!-- <tr style="background-color:white">
                 <th>
                   Balance
                 </th>
                 <td>
                   <span>{{ getBalance }}</span>
                 </td>
-              </tr>
+              </tr> -->
               <tr></tr>
             </table>
           </v-container>
@@ -565,6 +565,49 @@
                   ></v-text-field>
                 </td>
               </tr>
+              <tr style="background-color:white">
+                <th>
+                  Document
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <div v-if="checkData.document">
+                    <!-- {{ checkData.document }} -->
+                    <v-btn
+                      small
+                      dark
+                      class="primary pt-4 pb-4"
+                      @click="preview(checkData.document)"
+                    >
+                      Preview
+                      <v-icon right dark>mdi-file</v-icon>
+                    </v-btn>
+                  </div>
+                  <v-file-input
+                    v-else
+                    v-model="document"
+                    color="primary"
+                    counter
+                    placeholder="Select your files"
+                    prepend-icon="mdi-paperclip"
+                    outlined
+                    :show-size="1000"
+                  >
+                    <template v-slot:selection="{ index, text }">
+                      <v-chip v-if="index < 2" color="primary" dark label small>
+                        {{ text }}
+                      </v-chip>
+
+                      <span
+                        v-else-if="index === 2"
+                        class="text-overline grey--text text--darken-3 mx-2"
+                      >
+                        +{{ document.length - 2 }} File(s)
+                      </span>
+                    </template>
+                  </v-file-input>
+                </td>
+              </tr>
               <tr></tr>
             </table>
           </v-container>
@@ -658,10 +701,24 @@
                   {{ checkData && checkData.total_price }}
                 </td>
               </tr>
-              <tr></tr>
-              <tr>
+              <tr style="background-color:white">
                 <th>
                   Advance Price
+                </th>
+                <td>
+                  {{ checkData.advance_price }}
+                </td>
+              </tr>
+              <tr>
+                <th>Remaining Balance</th>
+                <td>
+                  {{ checkData.remaining_price }}
+                </td>
+              </tr>
+
+              <tr style="background-color:white">
+                <th>
+                  New Advance
                   <span class="text-danger">*</span>
                 </th>
                 <td>
@@ -669,17 +726,9 @@
                     dense
                     outlined
                     type="number"
-                    v-model="checkData.advance_price"
+                    v-model="new_advance"
                     :hide-details="true"
-                    @keyup="get_remaining(checkData.advance_price)"
                   ></v-text-field>
-                </td>
-              </tr>
-              <tr></tr>
-              <tr>
-                <th>Remaining Balance</th>
-                <td>
-                  {{ checkData.remaining_price }}
                 </td>
               </tr>
               <tr></tr>
@@ -929,7 +978,6 @@ export default {
         eventDidMount: arg => {
           const eventId = arg.event.id;
           const eventStatus = arg.event.extendedProps.status;
-          console.log(arg.event.extendedProps);
           if (arg.event.extendedProps.background) {
             arg.el.style.background = arg.event.extendedProps.background;
           }
@@ -993,7 +1041,10 @@ export default {
       evenIid: "",
       eventStatus: "",
       reason: "",
+
+      document: null,
       new_payment: 0,
+      new_advance: 0,
       reservation: {},
       posting: {
         item: "",
@@ -1031,6 +1082,7 @@ export default {
   watch: {
     checkInDialog() {
       this.formTitle = "Check In";
+      this.new_payment = 0;
       this.get_data();
     },
 
@@ -1051,6 +1103,7 @@ export default {
 
     payingAdvance() {
       this.formTitle = "Advance Payment";
+      this.new_advance = 0;
       this.get_data();
     }
   },
@@ -1084,9 +1137,9 @@ export default {
       if (!jsEvent) {
         return;
       }
-      if (this.eventStatus == 3 || this.eventStatus == 5) {
-        this.isDirty = false;
-      }
+      // if (this.eventStatus == 3 || this.eventStatus == 5) {
+      //   this.isDirty = false;
+      // }
       this.LoadingDialog = false;
       this.x = jsEvent.clientX;
       this.y = jsEvent.clientY;
@@ -1119,6 +1172,7 @@ export default {
         this.checkData = data;
         this.checkData.full_payment = "";
         this.eventStatus = data.booking_status;
+        console.log(this.checkData);
         this.show_context_menu(jsEvent);
       });
     },
@@ -1171,10 +1225,10 @@ export default {
     get_remaining(val) {
       // let total = this.checkData.total_price;
       let total = this.checkData.remaining_price;
-      console.log(total);
-      console.log(val);
+      // console.log(total);
+      // console.log(val);
       let advance_price = val;
-      this.checkData.remaining_price = total - advance_price;
+      // this.checkData.remaining_price = total - advance_price;
     },
 
     room_list() {
@@ -1234,10 +1288,13 @@ export default {
 
       this.loading = true;
       let payload = {
-        booking_id: this.evenIid,
+        booking_id: this.checkData.id,
+        remaining_price: this.checkData.remaining_price,
         full_payment: this.checkData.full_payment,
         payment_mode_id: this.checkData.payment_mode_id
       };
+      // console.log(payload);
+      // return;
       this.$axios
         .post("/check_out_room", payload)
         .then(({ data }) => {
@@ -1245,9 +1302,20 @@ export default {
             this.errors = data.errors;
           } else {
             this.succuss(data, false, false, true);
+            this.redirect_to_invoice(data.data);
           }
         })
         .catch(e => console.log(e));
+    },
+
+    redirect_to_invoice(id) {
+      console.log(id);
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `http://127.0.0.1:8000/api/invoice/${id}`);
+      document.body.appendChild(element);
+      console.log(element);
+      element.click();
     },
 
     store_advance(data) {
@@ -1256,8 +1324,8 @@ export default {
       }
       // this.loading = true;
       let payload = {
-        booking_id: this.evenIid,
-        advance_price: data.advance_price,
+        new_advance: this.new_advance,
+        booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id
       };
@@ -1274,13 +1342,19 @@ export default {
     },
 
     store_check_in(data) {
-      if (this.validate_payment()) {
+      if (
+        this.new_payment == "" ||
+        this.new_payment == 0 ||
+        (data.document ? "" : this.document == null)
+      ) {
+        alert("Enter required fields");
         return;
       }
       this.loading = true;
+      let bookingId = data.id;
       let payload = {
-        booking_id: this.evenIid,
-        advance_price: data.advance_price,
+        new_payment: this.new_payment,
+        booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id
       };
@@ -1291,9 +1365,36 @@ export default {
             this.errors = data.errors;
           } else {
             this.succuss(data, true, false);
+            data.document ? "" : this.store_document(bookingId);
           }
         })
         .catch(e => console.log(e));
+    },
+
+    store_document(id) {
+      let payload = new FormData();
+      payload.append("document", this.document);
+      payload.append("booking_id", id);
+      console.log(id);
+      console.log(this.document);
+      this.$axios
+        .post("/store_document", payload)
+        .then(({ data }) => {
+          this.loading = false;
+          if (!data.status) {
+            this.errors = data.errors;
+          }
+        })
+        .catch(e => console.log(e));
+    },
+
+    preview(file) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", file);
+      document.body.appendChild(element);
+      element.click();
+      // document.body.removeChild(element);
     },
 
     setAvailable() {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
@@ -9,7 +10,7 @@ use Dompdf\Dompdf;
 class InvoiceController extends Controller
 {
 
-    public function index(Request $request)
+    public function index($id)
     {
 
         // $dompdf = new Dompdf();
@@ -20,7 +21,7 @@ class InvoiceController extends Controller
 
         // return  $dompdf->stream();
 
-
+        return  Booking::with('bookedRooms')->find($id);
 
         return Pdf::loadView('invoice.invoice')
             // ->setPaper('a4', 'landscape')

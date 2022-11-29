@@ -33,6 +33,9 @@ return new class extends Migration
             $table->string('discount')->nullable();
             $table->string('after_discount')->nullable();
             $table->string('advance_price')->nullable();
+            $table->string('check_in_price')->nullable();
+            $table->string('check_out_price')->nullable();
+            $table->string('document')->nullable();
             $table->text('request')->nullable();
             $table->integer('company_id')->default(0);
             $table->timestamps();

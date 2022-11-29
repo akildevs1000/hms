@@ -9,4 +9,4 @@
 
 
 
-    Route::get('invoice', [InvoiceController::class, 'index']);
+    Route::get('invoice/{id}', [InvoiceController::class, 'index'])->name('pdf.invoice');

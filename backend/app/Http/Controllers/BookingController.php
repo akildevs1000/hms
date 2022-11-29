@@ -115,15 +115,18 @@ class BookingController extends Controller
 
     public function check_in_room(Request $request)
     {
+
         try {
-            $booking_id      = $request->booking_id;
+            $booking_id = $request->booking_id;
             $booking = Booking::find($booking_id);
-            $booking->remaining_price = $request->remaining_price;
+            $rem = (int)$request->remaining_price - (int)$request->new_payment;
+            $booking->remaining_price = $rem;
+            $booking->check_in_price = $request->new_payment;
             $booking->payment_mode_id = $request->payment_mode_id;
-            $booking->advance_price = $request->advance_price;
             $booking->booking_status = 2;
 
             $booking->save();
+            return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
 
             if ($booking->save()) {
                 Room::where('id', $booking->room_id)->update(["status" => '2']);
@@ -138,16 +141,12 @@ class BookingController extends Controller
     public function payingAdvance(Request $request)
     {
         try {
-            $bookingId = $this->roomDetails($request->booking_id)->booking_id;
-            $booking = Booking::whereHas('bookedRooms', function ($q) use ($bookingId) {
-                $q->where('booking_id', $bookingId);
-            })->first();
-
-
-            // $booking = BookedRoom::whereBookingId($booking_id);
-            $booking->remaining_price = $request->remaining_price;
+            $booking_id = $request->booking_id;
+            $booking = Booking::find($booking_id);
+            $rem = (int)$request->remaining_price - (int)$request->new_advance;
+            $booking->remaining_price = $rem;
+            $booking->advance_price = $request->new_advance;
             $booking->payment_mode_id = $request->payment_mode_id;
-            $booking->advance_price = $request->advance_price;
 
             if ($booking->save()) {
                 return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
@@ -166,6 +165,7 @@ class BookingController extends Controller
 
     public function check_out_room(Request $request)
     {
+
         $booking_id = $request->booking_id;
         $booking = Booking::find($booking_id);
 
@@ -176,8 +176,11 @@ class BookingController extends Controller
             $booking->remaining_price =  ((int)$booking->total_price - (int)$request->full_payment);
         }
         $booking->payment_mode_id = $request->payment_mode_id;
+        $booking->check_in_price = $request->full_payment;
         $booking->booking_status = 3;
         $booking->save();
+
+        return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
 
         if ($booking->save()) {
             Room::where('id', $booking->room_id)->update(["status" => '3']);
@@ -276,7 +279,7 @@ class BookingController extends Controller
 
         return BookedRoom::whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', 0);
-        })->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
+        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out as end']);
 
         // return Booking::where('company_id', $request->company_id)
         //     ->where('booking_status', '!=', 0)
@@ -440,13 +443,17 @@ class BookingController extends Controller
 
         try {
             $data = [];
-            $data =  $request->all();
+            // $data =  $request->all();
+            $data =  $request->except('document');
             $data["customer_id"] = $request->customer_id;
             $data['booking_date'] = now();
             $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
 
             // $room  = new RoomController();
             // $room->update($request->room_id, 1);
+
+
+
 
             $booked =  Booking::create($data);
             return $this->response('Room Booked Successfully.', $booked, true);
@@ -469,6 +476,23 @@ class BookingController extends Controller
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
+    public function storeDocument(Request $request)
+    {
+        $booking_id = $request->booking_id;
+        $booking = Booking::find($booking_id);
+
+        if ($request->hasFile('document')) {
+            $file = $request->file('document');
+            $ext = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $ext;
+            $request->document->move(public_path('documents/booking/'), $fileName);
+            // $data['document'] = $fileName;
+            $booking->document = $fileName;
+            $booking->save();
+            return $this->response('Room Booked Successfully.', null, true);
         }
     }
 

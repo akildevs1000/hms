@@ -301,6 +301,38 @@
                   v-model="customer.car_no"
                 ></v-text-field>
               </v-col>
+              <v-col md="12" cols="12" sm="12">
+                <label class="col-form-label">Document</label>
+                <!-- <v-text-field
+                  dense
+                  outlined
+                  type="number"
+                  v-model="customer.document"
+                  :hide-details="true"
+                ></v-text-field> -->
+                <v-file-input
+                  v-model="room.document"
+                  color="primary"
+                  counter
+                  placeholder="Select your files"
+                  prepend-icon="mdi-paperclip"
+                  outlined
+                  :show-size="1000"
+                >
+                  <template v-slot:selection="{ index, text }">
+                    <v-chip v-if="index < 2" color="primary" dark label small>
+                      {{ text }}
+                    </v-chip>
+
+                    <span
+                      v-else-if="index === 2"
+                      class="text-overline grey--text text--darken-3 mx-2"
+                    >
+                      +{{ room.document.length - 2 }} File(s)
+                    </span>
+                  </template>
+                </v-file-input>
+              </v-col>
               <v-col md="12" class="b-0 mt-2" style="padding-bottom:0px" dense>
                 <h6><b>Contact Number</b></h6>
               </v-col>
@@ -407,51 +439,6 @@
                 dense
                 v-if="!isOnline && !isAgent"
               ></v-col>
-              <!-- <v-col md="6" sm="12" cols="12" dense>
-                <label class="col-form-label">
-                  Meals
-                  <span class="text-danger">*</span>
-                </label>
-                <v-select
-                  v-model="room.meal"
-                  :items="meals"
-                  dense
-                  outlined
-                  :hide-details="!errors.meal"
-                  :error="errors.type"
-                  :error-messages="errors && errors.meal ? errors.meal[0] : ''"
-                ></v-select>
-              </v-col>
-              <v-col md="6" sm="12" cols="12" dense></v-col>
-              <v-col md="2" sm="12" cols="12" dense>
-                <label class="col-form-label">
-                  Extra Bed
-                </label>
-                <v-checkbox
-                  value="1"
-                  v-model="isBed"
-                  :hide-details="true"
-                  class="pt-0  py-1 chk-align"
-                >
-                </v-checkbox>
-              </v-col>
-              <v-col md="4" sm="12" cols="12" dense v-if="isBed">
-                <label class="col-form-label">
-                  Amount
-                  <span class="text-danger">*</span>
-                </label>
-                <v-text-field
-                  dense
-                  outlined
-                  type="number"
-                  v-model="room.bed_amount"
-                  :hide-details="!errors.bed_amount"
-                  :error="errors.bed_amount"
-                  :error-messages="
-                    errors && errors.bed_amount ? errors.bed_amount[0] : ''
-                  "
-                ></v-text-field>
-              </v-col>-->
               <v-col md="12">
                 <label class="col-form-label">Customer Request </label>
                 <v-textarea
@@ -603,6 +590,10 @@
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Tax : </label>
                         {{ item.room_tax }}
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">After Discount : </label>
+                        {{ item.after_discount }}
                       </v-col>
                     </v-row>
                   </div>
@@ -763,7 +754,32 @@
                           "
                         ></v-text-field>
                       </v-col>
-                      <v-col md="12"> Tax: {{ temp.room_tax }} </v-col>
+                      <v-col md="2" sm="12" cols="12" dense>
+                        <label class="col-form-label">
+                          Discount
+                        </label>
+                        <v-checkbox
+                          value="1"
+                          v-model="isDiscount"
+                          :hide-details="true"
+                          class="pt-0  py-1 chk-align"
+                        >
+                        </v-checkbox>
+                      </v-col>
+                      <v-col md="4" sm="12" cols="12" dense v-if="isDiscount">
+                        <label class="col-form-label">
+                          Amount
+                        </label>
+                        <v-text-field
+                          dense
+                          outlined
+                          type="number"
+                          v-model="temp.room_discount"
+                          :hide-details="true"
+                        ></v-text-field>
+                      </v-col>
+                      <!-- <v-col md="12"> Tax: {{ temp.room_tax }} </v-col> -->
+                      <!-- <v-col md="12"> Price: {{ temp.price }} </v-col> -->
                     </v-row>
                   </div>
                 </v-alert>
@@ -858,7 +874,7 @@
             style="background-color:#F9FAFD"
           >
             <v-row>
-              <v-col md="12" cols="12" sm="12">
+              <!-- <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label">Discount</label>
                 <v-text-field
                   @keyup="runAllFunctions"
@@ -868,7 +884,7 @@
                   outlined
                   v-model="room.discount"
                 ></v-text-field>
-              </v-col>
+              </v-col> -->
               <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label">Advance Price</label>
                 <v-text-field
@@ -968,24 +984,24 @@
                       <div align="right">{{ room.sub_total }}</div>
                     </td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <td>Discount</td>
                     <td>
                       <div align="right">{{ room.discount }}</div>
                     </td>
-                  </tr>
-                  <tr>
+                  </tr> -->
+                  <!-- <tr>
                     <td>After Discount</td>
                     <td>
                       <div align="right">{{ room.after_discount }}</div>
                     </td>
-                  </tr>
-                  <tr>
+                  </tr> -->
+                  <!-- <tr>
                     <td>Sales Tax</td>
                     <td>
                       <div align="right">{{ room.sales_tax }}</div>
                     </td>
-                  </tr>
+                  </tr> -->
                   <tr>
                     <th>Total</th>
                     <td>
@@ -1013,7 +1029,7 @@
       </v-col>
       <v-col md="1" style="width:300px">
         <pre>
-          <!-- {{ selectedRooms }} -->
+          {{ selectedRooms }}
         </pre>
       </v-col>
     </v-row>
@@ -1034,6 +1050,7 @@ export default {
       val: 1,
       Model: "Reservation",
       isBed: false,
+      isDiscount: false,
       snackbar: false,
       checkLoader: false,
       response: "",
@@ -1076,10 +1093,14 @@ export default {
         room_type: "",
         room_id: "",
         price: 0,
+        sgst: 0,
+        cgst: 0,
         check_in: "",
         check_out: "",
         meal: "Room only",
         bed_amount: 0,
+        room_discount: 0,
+        after_discount: 0,
         room_tax: 0,
         total_with_tax: 0,
         company_id: this.$auth.user.company.id
@@ -1146,8 +1167,8 @@ export default {
     runAllFunctions() {
       this.getDays();
       this.subTotal();
-      this.afterDiscount();
-      this.getAmountAfterSalesTax();
+      // this.afterDiscount();
+      // this.getAmountAfterSalesTax();
       this.getTotal();
       this.getRemainingAmount();
     },
@@ -1160,20 +1181,19 @@ export default {
         return (this.room.total_days = days);
       }
     },
-    getAmountAfterSalesTax() {
-      let amount = this.afterDiscount();
-      let per = amount < 3000 ? 12 : 18;
-      return (this.room.sales_tax = this.getPercentage(amount, per).toFixed(0));
-    },
-    afterDiscount() {
-      this.room.after_discount = this.subTotal() - this.room.discount;
-      return this.room.after_discount;
-    },
+    // getAmountAfterSalesTax() {
+    //   let amount = this.afterDiscount();
+    //   let per = amount < 3000 ? 12 : 18;
+    //   return (this.room.sales_tax = this.getPercentage(amount, per).toFixed(0));
+    // },
+    // afterDiscount() {
+    //   this.room.after_discount = this.subTotal() - this.room.discount;
+    //   return this.room.after_discount;
+    // },
     getTotal() {
-      return (this.room.total_price =
-        parseInt(this.getAmountAfterSalesTax()) +
-        this.subTotal() -
-        this.room.discount);
+      return (this.room.total_price = this.subTotal());
+      // parseInt(this.getAmountAfterSalesTax()) +
+      // this.subTotal() - this.room.discount);
     },
     getRemainingAmount() {
       return (this.room.remaining_price =
@@ -1248,7 +1268,6 @@ export default {
       this.temp.room_id = item.id;
       this.temp.room_type = item.room_type.name;
       this.temp.price = item.price;
-      this.temp.room_tax = this.get_room_tax(item.price);
     },
     searchAvailableRoom(val) {
       let arr = this.availableRooms;
@@ -1278,10 +1297,14 @@ export default {
       this.room.total_extra = tax + sum;
     },
     get_room_tax(amount) {
+      console.log(amount);
       let per = amount < 3000 ? 12 : 18;
       let tax = (amount / 100) * per;
       this.temp.room_tax = tax;
       this.temp.total_with_tax = parseInt(this.temp.price) + parseInt(tax);
+      let gst = parseInt(tax) / 2;
+      this.temp.cgst = gst;
+      this.temp.sgst = gst;
       return tax;
     },
     add_room() {
@@ -1289,6 +1312,12 @@ export default {
         this.alert("Missing!", "Select room", "error");
         return;
       }
+
+      this.temp.after_discount =
+        parseInt(this.temp.price) - parseInt(this.temp.room_discount);
+
+      this.get_room_tax(this.temp.after_discount);
+
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
       delete this.temp.check_in_menu;
@@ -1301,12 +1330,22 @@ export default {
       this.alert("Success!", "success selected room", "success");
       return;
     },
+
+    get_room_discount(val) {
+      console.log(val);
+      console.log(this.temp.room_discount);
+      this.temp.after_discount =
+        parseInt(this.temp.price) - parseInt(this.temp.room_discount);
+      this.temp.price = parseInt(this.temp.price) - parseInt(val);
+    },
+
     clear_add_room() {
       let check_in = this.temp.check_in;
       let check_out = this.temp.check_out;
       this.temp = {};
       this.temp.check_in = check_in;
       this.temp.bed_amount = 0;
+      this.temp.room_discount = 0;
       this.temp.check_out = check_out;
       this.temp.meal = "Room only";
     },
@@ -1430,6 +1469,22 @@ export default {
             this.errors = data.errors;
           } else {
             this.store_booked_rooms(data.record.id, id);
+            this.store_document(data.record.id);
+          }
+        })
+        .catch(e => console.log(e));
+    },
+
+    store_document(id) {
+      let payload = new FormData();
+      payload.append("document", this.room.document);
+      payload.append("booking_id", id);
+      this.$axios
+        .post("/store_document", payload)
+        .then(({ data }) => {
+          this.loading = false;
+          if (!data.status) {
+            this.errors = data.errors;
           }
         })
         .catch(e => console.log(e));
