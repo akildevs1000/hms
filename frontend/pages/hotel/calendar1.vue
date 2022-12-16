@@ -521,18 +521,16 @@
                 </td>
               </tr>
               <tr>
-                <th>Total Amount</th>
-                <td>
-                  {{ checkData && checkData.total_price }}
-                </td>
+                <th>Total Amount (Rs.)</th>
+                <td>{{ checkData && checkData.total_price }}.00</td>
               </tr>
               <tr></tr>
               <tr>
                 <th>
-                  Advance Payed
+                  Advance Payed (Rs.)
                 </th>
                 <td>
-                  {{ checkData.advance_price }}
+                  {{ checkData.advance_price }}.00
                   <!-- <v-text-field
                     dense
                     outlined
@@ -545,10 +543,8 @@
               </tr>
               <tr></tr>
               <tr>
-                <th>Remaining Balance</th>
-                <td>
-                  {{ checkData.remaining_price }}
-                </td>
+                <th>Remaining Balance (Rs.)</th>
+                <td>{{ checkData.remaining_price }}.00</td>
               </tr>
               <tr style="background-color:white">
                 <th>

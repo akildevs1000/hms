@@ -18,6 +18,8 @@ class BookedRoom extends Model
         // 'status',
     ];
 
+    protected $with = ['postings'];
+
     public function booking()
     {
         return $this->belongsTo(Booking::class);
@@ -26,6 +28,16 @@ class BookedRoom extends Model
     public function GetTitleAttribute()
     {
         return  Customer::find($this->customer_id)->full_name ?? '';
+    }
+
+    /**
+     * Get all of the posts for the BookedRoom
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function postings()
+    {
+        return $this->hasMany(Posting::class);
     }
 
     public function GetBackgroundAttribute()

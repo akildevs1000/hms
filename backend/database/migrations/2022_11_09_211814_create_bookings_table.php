@@ -25,7 +25,7 @@ return new class extends Migration
             $table->dateTime('check_out')->nullable();
             $table->string('total_price')->nullable();
             $table->string('remaining_price')->nullable();
-            $table->integer('payment_status')->nullable();
+            $table->integer('payment_status')->default(0);
             $table->integer('payment_mode_id')->default(1);
             $table->string('total_days')->nullable();
             $table->string('sub_total')->nullable();

@@ -13,17 +13,11 @@ class InvoiceController extends Controller
     public function index($id)
     {
 
-        // $dompdf = new Dompdf();
-        // $dompdf->loadHtml(view('invoice.invoice'));
-
-        // $dompdf->setPaper('A4', 'landscape');
+        $booking = Booking::with('bookedRooms', 'customer')->find($id);
+        $bookedRooms = $booking->bookedRooms;
 
 
-        // return  $dompdf->stream();
-
-        return  Booking::with('bookedRooms')->find($id);
-
-        return Pdf::loadView('invoice.invoice')
+        return Pdf::loadView('invoice.invoice', compact("booking", "bookedRooms"))
             // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
 

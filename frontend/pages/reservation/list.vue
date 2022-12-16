@@ -128,10 +128,6 @@
           </td> -->
           <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
           <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
-          <td>{{ item.sub_total }}</td>
-          <td>{{ item.discount }}</td>
-          <td>{{ item.after_discount }}</td>
-          <td>{{ item.sales_tax }}</td>
           <td>{{ item.total_price }}</td>
           <td>{{ item.advance_price }}</td>
           <td>{{ item.remaining_price }}</td>
@@ -142,14 +138,14 @@
               elevation="0"
               dark
               class="l-bg-green-dark"
-              v-if="item.payment_status == 0"
+              v-if="item.payment_status == 1"
             >
               Paid
             </v-btn>
 
             <v-btn
               style="background: linear-gradient(135deg, rgb(243 100 57) 0px, rgb(122 70 67 / 94%) 100%) !important;"
-              v-else-if="item.payment_status == 1"
+              v-else-if="item.payment_status == 0"
               small
               elevation="0"
               dark
@@ -160,6 +156,16 @@
           <td>{{ item.source }}</td>
           <td>{{ item.agent_name }}</td>
           <td>{{ item.booking_date }}</td>
+          <td>
+            <v-icon
+              @click="redirect_to_invoice(item.id)"
+              x-small
+              color="primary"
+              class="mr-2"
+            >
+              mdi-eye
+            </v-icon>
+          </td>
         </tr>
       </table>
     </v-card>
@@ -202,17 +208,14 @@ export default {
       // { text: "Room Status" },
       { text: "Arrival  Date" },
       { text: "Departure  Date" },
-      { text: "Sub Total" },
-      { text: "Discount" },
-      { text: "After Discount" },
-      { text: "Sales Tax" },
       { text: "Total" },
       { text: "Advance" },
       { text: "Remaining" },
       { text: "Payment Status" },
       { text: "Source" },
       { text: "Agent Name" },
-      { text: "Booking Date" }
+      { text: "Booking Date" },
+      { text: "Invoice" }
     ],
     editedIndex: -1,
     response: "",
@@ -241,6 +244,17 @@ export default {
         user.master
       );
     },
+
+    redirect_to_invoice(id) {
+      console.log(id);
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `http://127.0.0.1:8000/api/invoice/${id}`);
+      document.body.appendChild(element);
+      console.log(element);
+      element.click();
+    },
+
     convert_date_format(val) {
       const date = new Date(val);
       const year = date.getFullYear();

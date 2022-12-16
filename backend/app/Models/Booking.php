@@ -35,6 +35,7 @@ class Booking extends Model
         return $this->hasMany(BookedRoom::class);
     }
 
+
     public function GetResourceIdAttribute()
     {
         return  Room::find($this->room_id)->room_no ?? '';

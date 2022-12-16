@@ -21,10 +21,10 @@
             text-align: left;
         }
 
-        .inv-table tr:nth-child(even) {
+        /* .inv-table tr:nth-child(even) {
             background-color: #c1d4e2;
             border: 1px solid #eeeeee;
-        }
+        } */
 
         th {
             font-size: 9px;
@@ -89,7 +89,7 @@
 
         .txt-inv {
             text-align: center;
-            font-size: 11px;
+            font-size: 9px;
             padding: 5px 10px
         }
 
@@ -102,7 +102,8 @@
         .txt-inv-header {
             text-align: center;
             font-size: 11px;
-            padding: 5px 10px
+            /* padding: 5px 10px */
+            width: 20px !important
         }
 
         .fooder-thank-txt {
@@ -131,6 +132,7 @@
 </head>
 
 <body>
+    {{-- @dd($data) --}}
     <table style="margin-top: -20px !important;background-color:bluse;padding-bottom:0px ">
         <tr>
             <td style="text-align: left;width: 200px; border :none; padding:15px; backgrozund-color: rded">
@@ -152,7 +154,7 @@
                         <tr style="text-align: left; border :none;">
                             <td style="text-align: center; border :none">
                                 <span style="font-size: 9px">
-                                    <b> Booking ID</b> : 121112020 <br> <b>Meal Plan</b> : Room With BreakFast
+                                    <b> Booking ID</b> : {{ $booking->id }} <br> <b>Meal Plan</b> : Room With BreakFast
                                 </span>
                                 <hr style="width: 230px">
                             </td>
@@ -213,14 +215,15 @@
                         <tr style="text-align: left; border :none;background-color:bdlue">
                             <td style="text-align: left; border :none;font-size:10px;width: 70px">Guest Name &nbsp;:
                             </td>
-                            <th style="text-align: left; border :none;font-size:10px;">Fahath</th>
+                            <th style="text-align: left; border :none;font-size:10px;">
+                                {{ $booking->customer->full_name }}</th>
                         </tr>
                         <tr style="text-align: left; border :none;">
                             <td style="text-align: left; border :none;font-size:10px">Address &nbsp; &nbsp; &nbsp;
                                 &nbsp; :
                             </td>
                             <td style="text-align: left; border :none;font-size:10px;">
-                                1/41 ashok nagar, Guidy, Chennai. Tamil Naadu.India
+                                {{ $booking->customer->address }}
                             </td>
                         </tr>
                         <tr style="text-align: left; border :none;">
@@ -228,7 +231,8 @@
                                 Mobile
                                 <span style="margin-left: 29px">:</span>
                             </td>
-                            <th style="text-align: left; border :none;font-size:10px;">0752388923</th>
+                            <th style="text-align: left; border :none;font-size:10px;">
+                                {{ $booking->customer->contact_no }}</th>
                         </tr>
                     </table>
                 </div>
@@ -241,7 +245,8 @@
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> Bill No
                             </td>
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
-                            <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px">01454
+                            <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px">
+                                {{ $booking->id }}
                             </td>
                         </tr>
                         <tr style="text-align: right;border:none;">
@@ -256,22 +261,14 @@
                                 In </td>
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
                             <td style="width:20px; padding:0px 5px text-align:right;border:none;font-size:10px">
-                                {{ now() }}</td>
+                                {{ date('d/m/yy', strtotime($booking->check_in)) }}</td>
                         </tr>
                         <tr style="text-align: right;border:none;">
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> Check
                                 Out </td>
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
                             <td style="width:20px; padding:0px 5px text-align:right;border:none;font-size:10px">
-                                {{ now() }}</td>
-                        </tr>
-
-                        <tr style="text-align: right;border:none;">
-                            <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> Check
-                                Out </td>
-                            <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
-                            <td style="width:20px; padding:0px 5px text-align:right;border:none;font-size:10px">
-                                {{ now() }}</td>
+                                {{ date('d/m/yy', strtotime($booking->check_out)) }}</td>
                         </tr>
 
                         <tr style="text-align: right;border:none;">
@@ -279,14 +276,14 @@
                                 Days </td>
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
                             <td style="width:20px; padding:0px 5px text-align:right;border:none;font-size:10px">
-                                4</td>
+                                {{ $booking->total_days }}</td>
                         </tr>
                         <tr style="text-align: right;border:none;">
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> No of
                                 Pax </td>
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
                             <td style="width:20px; padding:0px 5px text-align:right;border:none;font-size:10px">
-                                2</td>
+                                {{ $booking->total_days }}</td>
                         </tr>
                     </table>
                 </div>
@@ -314,35 +311,76 @@
         <tr style="background-color: rgb(19, 19, 75);color:white">
             <th style="padding:10px">Date</th>
             <th class="txt-inv-header">Room No</th>
-            <th class="txt-inv-header">Description</th>
+            <th class="txt-inv-header" style="width: 100px">Description</th>
+            <th class="txt-inv-header" style="width: 100px">Days</th>
+            <th class="txt-inv-header">Extra Amount</th>
             <th class="txt-inv-header">Amount</th>
             <th class="txt-inv-header">After Discount</th>
             <th class="txt-inv-header">SGST</th>
             <th class="txt-inv-header">CGST</th>
             <th class="txt-inv-header">Total Rs</th>
+            <th class="txt-inv-header">Grand Total Rs</th>
         </tr>
-        <tbody>
-            @for ($i = 1; $i <= 10; $i++)
+        <tbody style="font-size: 5px">
+            @foreach ($bookedRooms as $room)
                 <tr>
-                    <td class="txt-inv">{{ $i }}/11/22</td>
-                    <td class="txt-inv" style="width:10px">{{ $i == 5 ? '3' : $i }}01</td>
-                    <td class="txt-inv" style="width:200px">Room tariff</td>
+                    <td class="txt-inv"style="width:5px">{{ date('d/m/yy', strtotime($booking->booking_date)) }}</td>
+                    <td class="txt-inv" style="width:10px">{{ $room->room_no }}</td>
+                    <td class="txt-inv" style="width:20px">{{ $room->room_type }}</td>
+                    <td class="txt-inv" style="width:20px">{{ $room->days }}</td>
+                    <td class="txt-inv" style="width:20px">{{ $room->bed_amount }}.00 <br> (Bed)</td>
                     <td class="txt-inv-amount">
-                        4500 <br>
-                        (-500)
+                        {{ $room->price }}.00 <br>
+                        ({{ $room->room_discount }}.00)
                     </td>
-                    <td class="txt-inv-amount">4000.00</td>
+                    <td class="txt-inv-amount">{{ $room->after_discount }}.00</td>
                     <td class="txt-inv-amount">
-                        4500 <br>
-                        (9.00%)
+                        {{ $room->cgst }}.00 <br>
+                        (6.00%)
                     </td>
                     <td class="txt-inv-amount">
-                        4500 <br>
-                        (9.00%)
+                        {{ $room->sgst }}.00 <br>
+                        (6.00%)
                     </td>
-                    <td class="txt-inv-amount">4720.00</td>
+                    <td class="txt-inv-amount">
+                        {{ $room->total }}.00
+                    </td>
+                    <td class="txt-inv-amount" style="width:50px">
+                        {{ $room->grand_total }} <br>
+                        <small style="font-size: 9px"> (Days x {{ $room->total }})</small>
+                    </td>
                 </tr>
-            @endfor
+                @foreach ($room->postings as $post)
+                    <tr style="background-color: #c1d4e2">
+                        <td class="txt-inv"style="width:5px">{{ date('d/m/yy', strtotime($post->posting_date)) }}
+                            <br>
+                            (Postings)
+                        </td>
+                        <td class="txt-inv" style="width:10px">{{ $post->booked_room_id }}</td>
+                        <td class="txt-inv" style="width:20px">{{ $post->item }}</td>
+                        <td class="txt-inv" style="width:20px"> - </td>
+                        <td class="txt-inv" style="width:20px">-</td>
+                        <td class="txt-inv-amount">
+                            {{ $post->amount }} <br>
+                        </td>
+                        <td class="txt-inv-amount">-</td>
+                        <td class="txt-inv-amount">
+                            {{ $post->sgst }}.00 <br>
+                            ({{ $post->tax_type / 2 }})
+                        </td>
+                        <td class="txt-inv-amount">
+                            {{ $post->cgst }}.00 <br>
+                            ({{ $post->tax_type / 2 }})
+                        </td>
+                        <td class="txt-inv-amount">
+                            {{ $post->amount_with_tax }}.00
+                        </td>
+                        <td class="txt-inv-amount" style="width:50px">
+                            {{ $post->amount_with_tax }} <br>
+                        </td>
+                    </tr>
+                @endforeach
+            @endforeach
         </tbody>
     </table>
     <table>

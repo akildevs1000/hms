@@ -27,6 +27,18 @@ return new class extends Migration
             $table->string('total_with_tax')->nullable();
             $table->dateTime('check_in')->nullable();
             $table->dateTime('check_out')->nullable();
+
+
+            $table->string('customer_id')->nullable();
+            $table->string('room_discount')->nullable();
+            $table->string('after_discount')->nullable();
+            $table->string('cgst')->nullable();
+            $table->string('sgst')->nullable();
+            $table->string('total')->nullable();
+            $table->string('days')->nullable();
+            $table->string('grand_total')->nullable();
+
+
             $table->timestamps();
         });
     }

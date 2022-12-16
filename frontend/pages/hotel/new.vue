@@ -577,11 +577,11 @@
                       </v-col>
                       <v-col md="2" cols="12" sm="12">
                         <label class="col-form-label">Amount : </label>
-                        {{ item.price }}
+                        {{ item.price }}.00
                       </v-col>
-                      <v-col md="2" cols="12" sm="12">
+                      <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Extra Bed : </label>
-                        {{ item.bed_amount }}
+                        {{ item.bed_amount }}.00
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Meal : </label>
@@ -589,11 +589,15 @@
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Tax : </label>
-                        {{ item.room_tax }}
+                        {{ item.room_tax }}.00
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">After Discount : </label>
-                        {{ item.after_discount }}
+                        {{ item.after_discount }}.00
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Tax with Amount : </label>
+                        {{ item.total_with_tax }}.00
                       </v-col>
                     </v-row>
                   </div>
@@ -935,7 +939,7 @@
                   <tr v-for="(item, index) in selectedRooms" :key="index">
                     <td>{{ item.room_no }}</td>
                     <td>
-                      <div align="right">{{ item.total_with_tax }}</div>
+                      <div align="right">{{ item.total }}</div>
                     </td>
                   </tr>
                   <tr>
@@ -943,16 +947,18 @@
                       <hr class="p-0 m-0" />
                     </td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <td>Total Extra</td>
                     <td>
-                      <div align="right">{{ room.total_extra }}</div>
+                      <div align="right">{{ room.total_extra }}.00</div>
                     </td>
-                  </tr>
+                  </tr> -->
                   <tr>
                     <td>Total</td>
                     <td>
-                      <div align="right">{{ room.all_room_Total_amount }}</div>
+                      <div align="right">
+                        {{ room.all_room_Total_amount }}.00
+                      </div>
                     </td>
                   </tr>
                 </table>
@@ -971,7 +977,9 @@
                   <tr>
                     <td>Room Price</td>
                     <td>
-                      <div align="right">{{ room.all_room_Total_amount }}</div>
+                      <div align="right">
+                        {{ room.all_room_Total_amount }}.00
+                      </div>
                     </td>
                   </tr>
                   <tr>
@@ -981,7 +989,7 @@
                       {{ room.all_room_Total_amount }})
                     </td>
                     <td>
-                      <div align="right">{{ room.sub_total }}</div>
+                      <div align="right">{{ room.sub_total }}.00</div>
                     </td>
                   </tr>
                   <!-- <tr>
@@ -1005,19 +1013,19 @@
                   <tr>
                     <th>Total</th>
                     <td>
-                      <div align="right">{{ room.total_price }}</div>
+                      <div align="right">{{ room.total_price }}.00</div>
                     </td>
                   </tr>
                   <tr>
                     <td>Advance Payment</td>
                     <td>
-                      <div align="right">{{ room.advance_price }}</div>
+                      <div align="right">{{ room.advance_price }}.00</div>
                     </td>
                   </tr>
                   <tr>
                     <td>Remaining Amount</td>
                     <td>
-                      <div align="right">{{ room.remaining_price }}</div>
+                      <div align="right">{{ room.remaining_price }}.00</div>
                     </td>
                   </tr>
                 </table>
@@ -1026,12 +1034,11 @@
             </v-row>
           </v-container>
         </v-card>
-      </v-col>
-      <v-col md="1" style="width:300px">
         <pre>
           {{ selectedRooms }}
         </pre>
       </v-col>
+      <v-col md="1" style="width:300px"> </v-col>
     </v-row>
   </div>
 </template>
@@ -1101,9 +1108,11 @@ export default {
         meal: "Room only",
         bed_amount: 0,
         room_discount: 0,
-        after_discount: 0,
+        after_discount: 0, //(price - room_discount)
         room_tax: 0,
-        total_with_tax: 0,
+        total_with_tax: 0, //(after_discount * room_tax)
+        total: 0, //(total_with_tax * bed_amount)
+        grand_total: 0, //(total * days)
         company_id: this.$auth.user.company.id
       },
       check_in_menu: false,
@@ -1118,7 +1127,7 @@ export default {
       room: {
         customer_type: "",
         customer_status: "",
-        all_room_Total_amount: 0,
+        all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
         type: "",
         source: "",
@@ -1205,7 +1214,7 @@ export default {
     },
     subTotal() {
       return (this.room.sub_total =
-        this.room.all_room_Total_amount * this.getDays());
+        parseInt(this.room.all_room_Total_amount) * parseInt(this.getDays()));
     },
     getType(val) {
       if (val == "Online") {
@@ -1256,7 +1265,7 @@ export default {
     },
     remove_select_room(index) {
       this.selectedRooms.splice(index, 1);
-      this.total_extra();
+      this.get_total_amounts();
       this.get_all_room_Total_amount();
       this.runAllFunctions();
       if (this.selectedRooms.length == 0) {
@@ -1288,21 +1297,13 @@ export default {
       res = parseInt(sum) + parseInt(this.room.total_extra);
       this.room.all_room_Total_amount = res;
     },
-    total_extra() {
-      let sum = 0;
-      this.selectedRooms.map(
-        e => (sum += e.bed_amount == "" ? 0 : parseInt(e.bed_amount))
-      );
 
-      let tax = (sum / 100) * 12;
-      this.room.total_extra = tax + sum;
-    },
     get_room_tax(amount) {
-      console.log(amount);
       let per = amount < 3000 ? 12 : 18;
       let tax = (amount / 100) * per;
       this.temp.room_tax = tax;
-      this.temp.total_with_tax = parseInt(this.temp.price) + parseInt(tax);
+      this.temp.total_with_tax =
+        parseInt(this.temp.after_discount) + parseInt(tax);
       let gst = parseInt(tax) / 2;
       this.temp.cgst = gst;
       this.temp.sgst = gst;
@@ -1315,28 +1316,62 @@ export default {
       }
 
       this.temp.after_discount =
-        parseInt(this.temp.price) - parseInt(this.temp.room_discount);
+        parseInt(this.temp.price) -
+        parseInt(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
       this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
+      this.get_bed_with_tax_amount();
+
+      this.temp.total =
+        parseInt(this.temp.total_with_tax) +
+        parseInt(this.temp.bed_amount || 0);
+
+      this.temp.grand_total =
+        parseInt(this.temp.days) * parseInt(this.temp.total);
 
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
+
+      this.temp.room_discount =
+        this.temp.room_discount == "" ? 0 : this.temp.room_discount;
+
+      this.temp.bed_amount =
+        this.temp.bed_amount == "" ? 0 : this.temp.bed_amount;
+
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
       this.selectedRooms.push(this.temp);
-      this.total_extra();
-      this.get_all_room_Total_amount();
+
+      this.get_total_amounts();
+      // this.get_all_room_Total_amount();
       this.runAllFunctions();
+
       this.clear_add_room();
       this.alert("Success!", "success selected room", "success");
       return;
     },
 
+    get_bed_with_tax_amount() {
+      let sum = this.temp.bed_amount || 0;
+      let tax = (sum / 100) * 12;
+      this.temp.bed_amount = parseInt(tax) + parseInt(sum);
+    },
+
+    get_total_amounts() {
+      let tot_bed_amount = 0;
+      let tot_total = 0;
+      this.selectedRooms.map(
+        e => (tot_bed_amount += e.bed_amount == "" ? 0 : parseInt(e.bed_amount))
+      );
+      this.room.total_extra = tot_bed_amount;
+
+      this.selectedRooms.map(
+        e => (tot_total += e.total == "" ? 0 : parseInt(e.total))
+      );
+      this.room.all_room_Total_amount = tot_total;
+    },
+
     get_room_discount(val) {
-      console.log(val);
-      console.log(this.temp.room_discount);
-      this.temp.after_discount =
-        parseInt(this.temp.price) - parseInt(this.temp.room_discount);
       this.temp.price = parseInt(this.temp.price) - parseInt(val);
     },
 
