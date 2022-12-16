@@ -579,10 +579,10 @@
                         <label class="col-form-label">Amount : </label>
                         {{ item.price }}.00
                       </v-col>
-                      <v-col md="3" cols="12" sm="12">
+                      <!-- <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Extra Bed : </label>
                         {{ item.bed_amount }}.00
-                      </v-col>
+                      </v-col> -->
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Meal : </label>
                         {{ item.meal }}
@@ -728,7 +728,7 @@
                         ></v-select>
                       </v-col>
                       <v-col md="6" sm="12" cols="12" dense></v-col>
-                      <v-col md="2" sm="12" cols="12" dense>
+                      <!-- <v-col md="2" sm="12" cols="12" dense>
                         <label class="col-form-label">
                           Extra Bed
                         </label>
@@ -739,8 +739,8 @@
                           class="pt-0  py-1 chk-align"
                         >
                         </v-checkbox>
-                      </v-col>
-                      <v-col md="4" sm="12" cols="12" dense v-if="isBed">
+                      </v-col> -->
+                      <!-- <v-col md="4" sm="12" cols="12" dense v-if="isBed">
                         <label class="col-form-label">
                           Amount
                         </label>
@@ -757,7 +757,7 @@
                               : ''
                           "
                         ></v-text-field>
-                      </v-col>
+                      </v-col> -->
                       <v-col md="2" sm="12" cols="12" dense>
                         <label class="col-form-label">
                           Discount
@@ -1320,11 +1320,10 @@ export default {
         parseInt(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
       this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
-      this.get_bed_with_tax_amount();
+      // this.get_bed_with_tax_amount();
 
-      this.temp.total =
-        parseInt(this.temp.total_with_tax) +
-        parseInt(this.temp.bed_amount || 0);
+      this.temp.total = parseInt(this.temp.total_with_tax);
+      // +        parseInt(this.temp.bed_amount || 0);
 
       this.temp.grand_total =
         parseInt(this.temp.days) * parseInt(this.temp.total);
@@ -1335,8 +1334,8 @@ export default {
       this.temp.room_discount =
         this.temp.room_discount == "" ? 0 : this.temp.room_discount;
 
-      this.temp.bed_amount =
-        this.temp.bed_amount == "" ? 0 : this.temp.bed_amount;
+      // this.temp.bed_amount =
+      //   this.temp.bed_amount == "" ? 0 : this.temp.bed_amount;
 
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
@@ -1351,18 +1350,20 @@ export default {
       return;
     },
 
-    get_bed_with_tax_amount() {
-      let sum = this.temp.bed_amount || 0;
-      let tax = (sum / 100) * 12;
-      this.temp.bed_amount = parseInt(tax) + parseInt(sum);
-    },
+    // get_bed_with_tax_amount() {
+    //   let sum = this.temp.bed_amount || 0;
+    //   let tax = (sum / 100) * 12;
+    //   this.temp.bed_amount = parseInt(tax) + parseInt(sum);
+    // },
 
     get_total_amounts() {
       let tot_bed_amount = 0;
+
       let tot_total = 0;
       this.selectedRooms.map(
         e => (tot_bed_amount += e.bed_amount == "" ? 0 : parseInt(e.bed_amount))
       );
+
       this.room.total_extra = tot_bed_amount;
 
       this.selectedRooms.map(
@@ -1380,7 +1381,7 @@ export default {
       let check_out = this.temp.check_out;
       this.temp = {};
       this.temp.check_in = check_in;
-      this.temp.bed_amount = 0;
+      // this.temp.bed_amount = 0;
       this.temp.room_discount = 0;
       this.temp.check_out = check_out;
       this.temp.meal = "Room only";

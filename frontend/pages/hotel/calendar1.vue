@@ -997,6 +997,10 @@ export default {
 
         select: (date, jsEvent, view, resourceObj, vv) => {
           let obj = date.resource.extendedProps;
+          if (date.startStr < this.currentDate) {
+            alert("please select current date or future date");
+            return;
+          }
           this.create_reservation(date, obj);
         },
 
@@ -1070,7 +1074,7 @@ export default {
   },
 
   created() {
-    this.calendarOptions.now = new Date().toJSON().slice(0, 10);
+    this.currentDate;
   },
 
   mounted() {
@@ -1114,6 +1118,10 @@ export default {
       if (balance >= 0) {
         return balance;
       }
+    },
+
+    currentDate() {
+      return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
     }
   },
   methods: {
