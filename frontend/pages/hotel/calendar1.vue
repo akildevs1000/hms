@@ -918,7 +918,8 @@ export default {
       y: 0,
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
-        now: "2022-11-07",
+        // now: "2022-11-07",
+        now: "",
         editable: true,
         aspectRatio: 1.8,
         scrollTime: "00:00",
@@ -1068,7 +1069,9 @@ export default {
     };
   },
 
-  created() {},
+  created() {
+    this.calendarOptions.now = new Date().toJSON().slice(0, 10);
+  },
 
   mounted() {
     this.room_list();
