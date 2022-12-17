@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Billing;
 use App\Models\Booking;
+use Carbon\CarbonPeriod;
 use App\Models\BookedRoom;
+
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Type\Integer;
-
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\BookingRequest;
+use App\Models\OrderRoom;
 use Illuminate\Support\Facades\Log as Logger;
 
 class BookingController extends Controller
@@ -304,7 +307,7 @@ class BookingController extends Controller
         $bookedRoom->booking->room_id = $bookedRoom->room_id;
         $bookedRoom->booking->room_no = $bookedRoom->room_no;
         $bookedRoom->booking->room_type = $bookedRoom->room_type;
-        return  $bookedRoom->booking;
+        return $bookedRoom->booking;
 
         //old code
         // return Booking::with('room')
@@ -453,12 +456,34 @@ class BookingController extends Controller
             // $room  = new RoomController();
             // $room->update($request->room_id, 1);
 
-
-
-
             $booked =  Booking::create($data);
-            return $this->response('Room Booked Successfully.', $booked, true);
 
+            // {
+            //     "customer_type": "Regular",
+            //     "customer_status": "Confirmed",
+            //     "all_room_Total_amount": 4484,
+            //     "total_extra": 0,
+            //     "type": "Walking",
+            //     "source": "",
+            //     "agent_name": "",
+            //     "check_in": "2022-12-19",
+            //     "check_out": "2022-12-21",
+            //     "discount": 0,
+            //     "advance_price": 0,
+            //     "payment_mode_id": 1,
+            //     "total_days": 3,
+            //     "sub_total": 13452,
+            //     "after_discount": 0,
+            //     "sales_tax": 0,
+            //     "total_price": 13452,
+            //     "remaining_price": 13452,
+            //     "request": "AC",
+            //     "company_id": 1,
+            //     "remark": "",
+            //     "customer_id": 116
+            // }
+
+            return $this->response('Room Booked Successfully.', $booked, true);
 
             if (now() <= $booked->check_in) {
                 $room  = new RoomController();
@@ -499,37 +524,41 @@ class BookingController extends Controller
 
     public function storeBookedRooms(Request $request)
     {
-
         try {
-            $data = $request->all();
-            foreach ($data as $dada) {
-                BookedRoom::create($dada);
+            $rooms = $request->all();
+            foreach ($rooms as $room) {
+                BookedRoom::create($room);
+                $period = CarbonPeriod::create($room['check_in'], $room['check_out']);
+                foreach ($period as $date) {
+                    $room['date'] = $date->format('Y-m-d');
+                    OrderRoom::create($room);
+                }
             }
-            // return BookedRoom::insert($request->all());
-            return $this->response('Room Booked Successfully.', null, true);
 
-            $data = $request->except(['room_type', 'amount', 'price']);
-            $data["customer_id"] = $request->customer_id;
-            $data['booking_date'] = now();
-            $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
+            return $this->response('Room Booked Successfully.', $rooms, true);
+
+            // $data = $request->except(['room_type', 'amount', 'price']);
+            // $data["customer_id"] = $request->customer_id;
+            // $data['booking_date'] = now();
+            // $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
 
             // $room  = new RoomController();
             // $room->update($request->room_id, 1);
-            $booked =  Booking::create($data);
+            // $booked =  Booking::create($data);
 
-            if (now() <= $booked->check_in) {
-                $room  = new RoomController();
-                $room->update($request->room_id, 1);
-            } else {
-                $room  = new RoomController();
-                $room->update($request->room_id, 0);
-            }
+            // if (now() <= $booked->check_in) {
+            //     $room  = new RoomController();
+            //     $room->update($request->room_id, 1);
+            // } else {
+            //     $room  = new RoomController();
+            //     $room->update($request->room_id, 0);
+            // }
 
-            if ($booked) {
-                return $this->response('Room Booked Successfully.', null, true);
-            } else {
-                return $this->response('DataBase Error in status change', null, true);
-            }
+            // if ($booked) {
+            //     return $this->response('Room Booked Successfully.', null, true);
+            // } else {
+            //     return $this->response('DataBase Error in status change', null, true);
+            // }
         } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
@@ -553,4 +582,10 @@ class BookingController extends Controller
             ->where('booking_status', '!=', 0)
             ->paginate($request->per_page ?? 20);
     }
+
+
+    // public function generateBill(Type $var = null)
+    // {
+    //     # code...
+    // }
 }

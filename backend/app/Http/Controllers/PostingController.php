@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Posting;
 use Illuminate\Http\Request;
@@ -117,17 +118,29 @@ class PostingController extends Controller
      */
     public function show(Request $request, $id)
     {
+
+
+        // $model = BookedRoom::where('company_id', $request->company_id)->find($id);
+        // $model->customer = $model->title;
+        // $model->makeHidden(['title', 'background']);
+        // return $model;
+
+
+
+
+
         $model = Posting::query();
         $model->where('company_id', $request->company_id);
 
         $model->with([
+            'bookedRoom',
             'booking:id,customer_id,room_id' => [
                 'customer:id,email,first_name,last_name',
                 'room:id,room_type_id,room_no',
             ]
         ]);
 
-        return $model->whereBookingId($id)->get();
+        return $model->whereBookedRoomId($id)->get();
     }
 
     /**

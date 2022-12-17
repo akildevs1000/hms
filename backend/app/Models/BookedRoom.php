@@ -18,6 +18,10 @@ class BookedRoom extends Model
         // 'status',
     ];
 
+    protected $casts = [
+        'posting_date' => 'datetime:',
+    ];
+
     protected $with = ['postings'];
 
     public function booking()

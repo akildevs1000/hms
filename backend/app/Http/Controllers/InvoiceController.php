@@ -13,14 +13,29 @@ class InvoiceController extends Controller
     public function index($id)
     {
 
-        $booking = Booking::with('bookedRooms', 'customer')->find($id);
-        $bookedRooms = $booking->bookedRooms;
+        $booking = Booking::with('orderRooms', 'customer')->find($id);
+        $orderRooms = $booking->orderRooms;
 
 
-        return Pdf::loadView('invoice.invoice', compact("booking", "bookedRooms"))
+        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms"))
             // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
 
             ->stream();
     }
+
+
+    // public function index($id)
+    // {
+
+    //     $booking = Booking::with('bookedRooms', 'customer')->find($id);
+    //     $bookedRooms = $booking->bookedRooms;
+
+
+    //     return Pdf::loadView('invoice.invoice', compact("booking", "bookedRooms"))
+    //         // ->setPaper('a4', 'landscape')
+    //         ->setPaper('a4', 'portrait')
+
+    //         ->stream();
+    // }
 }
