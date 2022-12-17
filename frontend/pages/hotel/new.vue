@@ -98,7 +98,14 @@
           </v-col>
           <v-col md="6">
             <div class="text-right">
-              <v-btn class="mx-2" dark small color="primary" @click="store">
+              <v-btn
+                class="mx-2"
+                dark
+                small
+                color="primary"
+                @click="store"
+                :loading="subLoad"
+              >
                 Submit
               </v-btn>
               <v-btn class="mx-2" fab dark small color="background">
@@ -1057,6 +1064,7 @@ export default {
       val: 1,
       Model: "Reservation",
       isBed: false,
+      subLoad: false,
       isDiscount: false,
       snackbar: false,
       checkLoader: false,
@@ -1075,7 +1083,7 @@ export default {
         "Room only"
       ],
       search: {
-        mobile: ""
+        mobile: "0752388923"
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1440,10 +1448,11 @@ export default {
     },
 
     store() {
-      this.alert("Waiting..!", "Loading...", "info");
-
+      // this.alert("Waiting..!", "Loading...", "info");
+      this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");
+        this.subLoad = false;
         return;
       }
 
@@ -1462,6 +1471,7 @@ export default {
               "error"
             );
             this.errors = data.errors;
+            this.subLoad = false;
           } else {
             this.errors = [];
             this.store_customer();
@@ -1484,6 +1494,7 @@ export default {
               "Some fields are missing or invalid",
               "error"
             );
+            this.subLoad = false;
             this.errors = data.errors;
           } else {
             this.errors = [];
@@ -1504,6 +1515,7 @@ export default {
           this.loading = false;
           if (!data.status) {
             this.errors = data.errors;
+            this.subLoad = false;
           } else {
             this.store_booked_rooms(data.record.id, id);
             this.store_document(data.record.id);
@@ -1522,6 +1534,7 @@ export default {
           this.loading = false;
           if (!data.status) {
             this.errors = data.errors;
+            this.subLoad = false;
           }
         })
         .catch(e => console.log(e));
@@ -1547,10 +1560,12 @@ export default {
               "error"
             );
             this.errors = data.errors;
+            this.subLoad = false;
           } else {
             this.errors = [];
             this.alert("Success!", "Successfully room added", "success");
             // window.location.href = "/hotel/calendar1";
+            this.subLoad = false;
           }
         })
         .catch(e => console.log(e));

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('company_id');
             $table->date('date');
             $table->integer('booking_id');
+            $table->integer('booked_room_id');
             $table->integer('room_id')->nullable();
             $table->string('room_no')->nullable();
             $table->string('room_type')->nullable();

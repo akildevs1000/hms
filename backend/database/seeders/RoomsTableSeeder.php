@@ -32,11 +32,11 @@ class RoomsTableSeeder extends Seeder
             [
                 'name'       => 'castle',
                 'price'      => '2500',
-                'max_person' => '2500',
+                'max_person' => '2',
             ],
             [
                 'name'       => 'royal',
-                'price'      => '600',
+                'price'      => '6000',
                 'max_person' => '3',
             ],
         ];

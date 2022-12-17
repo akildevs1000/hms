@@ -22,9 +22,9 @@
         }
 
         /* .inv-table tr:nth-child(even) {
-                background-color: #c1d4e2;
-                border: 1px solid #eeeeee;
-            } */
+            background-color: #c1d4e2;
+            border: 1px solid #eeeeee;
+        } */
 
         th {
             font-size: 9px;
@@ -42,8 +42,8 @@
         }
 
         /* .page-break {
-                    page-break-after: always;
-                } */
+                page-break-after: always;
+            } */
 
         .main-table {
             padding-bottom: 20px;
@@ -312,129 +312,79 @@
             <th style="padding:10px">Date</th>
             <th class="txt-inv-header">Room No</th>
             <th class="txt-inv-header" style="width: 100px">Description</th>
+            <th class="txt-inv-header" style="width: 100px">Days</th>
+            <th class="txt-inv-header">Extra Amount</th>
             <th class="txt-inv-header">Amount</th>
             <th class="txt-inv-header">After Discount</th>
             <th class="txt-inv-header">SGST</th>
             <th class="txt-inv-header">CGST</th>
             <th class="txt-inv-header">Total Rs</th>
-            {{-- <th class="txt-inv-header">Grand Total Rs</th> --}}
+            <th class="txt-inv-header">Grand Total Rs</th>
         </tr>
         <tbody style="font-size: 5px">
-            @php
-
-                $totalWithoutDiscounts = 0;
-                $totalWithDiscounts = 0;
-                $totalcgst = 0;
-                $totalsgst = 0;
-                $grandTotal = 0;
-
-            @endphp
-            @foreach ($orderRooms as $room)
+            @foreach ($bookedRooms as $room)
                 <tr>
-                    <td class="txt-inv"style="width:5px">{{ date('d/m/yy', strtotime($room->date)) }}</td>
+                    <td class="txt-inv"style="width:5px">{{ date('d/m/yy', strtotime($booking->booking_date)) }}</td>
                     <td class="txt-inv" style="width:10px">{{ $room->room_no }}</td>
                     <td class="txt-inv" style="width:20px">{{ $room->room_type }}</td>
+                    <td class="txt-inv" style="width:20px">{{ $room->days }}</td>
+                    <td class="txt-inv" style="width:20px">{{ $room->bed_amount }}.00 <br> (Bed)</td>
                     <td class="txt-inv-amount">
                         {{ $room->price }}.00 <br>
-                        (-{{ $room->room_discount }}.00)
+                        ({{ $room->room_discount }}.00)
                     </td>
                     <td class="txt-inv-amount">{{ $room->after_discount }}.00</td>
                     <td class="txt-inv-amount">
                         {{ $room->cgst }}.00 <br>
-                        (6%)
+                        (6.00%)
                     </td>
                     <td class="txt-inv-amount">
                         {{ $room->sgst }}.00 <br>
-                        (6%)
+                        (6.00%)
                     </td>
                     <td class="txt-inv-amount">
                         {{ $room->total }}.00
                     </td>
-                    {{-- <td class="txt-inv-amount" style="width:50px">
+                    <td class="txt-inv-amount" style="width:50px">
                         {{ $room->grand_total }} <br>
-                    </td> --}}
-                    @php
-                        $totalWithoutDiscounts += $room->total;
-                        $totalcgst += $room->cgst;
-                        $totalsgst += $room->sgst;
-                    @endphp
+                        <small style="font-size: 9px"> (Days x {{ $room->total }})</small>
+                    </td>
                 </tr>
-
-                @php
-                    $postings = App\Models\Posting::where('booked_room_id', $room->booked_room_id)
-                        ->whereDate('posting_date', $room->date)
-                        ->get();
-                @endphp
-
-                @foreach ($postings as $post)
+                @foreach ($room->postings as $post)
                     <tr style="background-color: #c1d4e2">
                         <td class="txt-inv"style="width:5px">{{ date('d/m/yy', strtotime($post->posting_date)) }}
+                            <br>
+                            (Postings)
                         </td>
-                        <td class="txt-inv" style="width:10px">{{ $room->room_no }}</td>
+                        <td class="txt-inv" style="width:10px">{{ $post->booked_room_id }}</td>
                         <td class="txt-inv" style="width:20px">{{ $post->item }}</td>
+                        <td class="txt-inv" style="width:20px"> - </td>
+                        <td class="txt-inv" style="width:20px">-</td>
                         <td class="txt-inv-amount">
                             {{ $post->amount }} <br>
                         </td>
-                        <td class="txt-inv-amount">
-                            {{ $post->amount }} <br>
-                        </td>
+                        <td class="txt-inv-amount">-</td>
                         <td class="txt-inv-amount">
                             {{ $post->sgst }}.00 <br>
-                            ({{ (int) $post->tax_type / 2 }}%)
+                            ({{ $post->tax_type / 2 }})
                         </td>
                         <td class="txt-inv-amount">
                             {{ $post->cgst }}.00 <br>
-                            ({{ (int) $post->tax_type / 2 }} %)
+                            ({{ $post->tax_type / 2 }})
                         </td>
                         <td class="txt-inv-amount">
-                            {{ $post->amount_with_tax }}
+                            {{ $post->amount_with_tax }}.00
                         </td>
-                        {{-- @php
-                            $totalPosting += $post->amount_with_tax;
-                            $totalPostingcgst += $post->cgst;
-                            $totalPostingsgst += $post->sgst;
-                        @endphp --}}
+                        <td class="txt-inv-amount" style="width:50px">
+                            {{ $post->amount_with_tax }} <br>
+                        </td>
                     </tr>
                 @endforeach
             @endforeach
         </tbody>
     </table>
     <table>
-        {{-- <tr colspan="11">
-            <td colspan="11" style="text-align: right">dsdf</td>
-            <td>dsdf</td>
-        </tr> --}}
         <tr>
-            <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
-
-            </td>
-            <td style="width:200px;border :none;text-align: left">
-                <table style="background-color: rgb(19, 19, 75);color:white">
-                    <tr>
-                        <td class="tot-txt">Total IRS (excl GST)</td>
-                        <td class="tot-txt-amount">{{ $totalWithoutDiscounts ?? '----' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="tot-txt">SGST</td>
-                        <td class="tot-txt-amount">{{ $totalsgst ?? '----' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="tot-txt">CGST</td>
-                        <td class="tot-txt-amount">{{ $totalcgst ?? '----' }}</td>
-                    </tr>
-                    <tr>
-                        <th class="tot-txt">Total Amount Incl.GST IRS</th>
-                        <td class="tot-txt-amount">
-                            {{ $totalWithoutDiscounts + $totalsgst + $totalcgst ?? '----' }}
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-
-
-
-        {{-- <tr>
             <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
                 <p>Payment Mode : <b>CASH</b></p>
                 <p>Total Rs : Twelve Thousand Eigth Hundred Fourty Eidgh Only</p>
@@ -443,25 +393,23 @@
                 <table style="background-color: rgb(19, 19, 75);color:white">
                     <tr>
                         <td class="tot-txt">Total IRS (excl GST)</td>
-                        <td class="tot-txt-amount">{{ $totalWithoutDiscounts ?? '----' }}</td>
+                        <td class="tot-txt-amount">522</td>
                     </tr>
                     <tr>
                         <td class="tot-txt">SGST</td>
-                        <td class="tot-txt-amount">{{ $totalsgst ?? '----' }}</td>
+                        <td class="tot-txt-amount">522</td>
                     </tr>
                     <tr>
                         <td class="tot-txt">CGST</td>
-                        <td class="tot-txt-amount">{{ $totalcgst ?? '----' }}</td>
+                        <td class="tot-txt-amount">522</td>
                     </tr>
                     <tr>
                         <th class="tot-txt">Total Amount Incl.GST IRS</th>
-                        <td class="tot-txt-amount">
-                            {{ $totalWithoutDiscounts + $totalsgst + $totalcgst ?? '----' }}
-                        </td>
+                        <td class="tot-txt-amount">12848.00</td>
                     </tr>
                 </table>
             </td>
-        </tr> --}}
+        </tr>
     </table>
     <h4 class="fooder-thank-txt">
         THANK YOU !! VISIT AGAIN !!

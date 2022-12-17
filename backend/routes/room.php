@@ -1,5 +1,6 @@
  <?php
 
+    use App\Http\Controllers\BookingController;
     use Illuminate\Support\Facades\Route;
     use App\Http\Controllers\RoomController;
     use App\Http\Controllers\RoomTypeController;
@@ -22,3 +23,6 @@
     Route::get('get_available_rooms_by_date', [RoomController::class, 'getAvailableRoomsByDate']);
 
     Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);
+
+
+    Route::post('generate_bill', [BookingController::class, 'generateBill']);

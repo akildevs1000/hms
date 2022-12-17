@@ -527,10 +527,11 @@ class BookingController extends Controller
         try {
             $rooms = $request->all();
             foreach ($rooms as $room) {
-                BookedRoom::create($room);
+                $bookedRoomId =  BookedRoom::create($room);
                 $period = CarbonPeriod::create($room['check_in'], $room['check_out']);
                 foreach ($period as $date) {
                     $room['date'] = $date->format('Y-m-d');
+                    $room['booked_room_id'] = $bookedRoomId->id;
                     OrderRoom::create($room);
                 }
             }

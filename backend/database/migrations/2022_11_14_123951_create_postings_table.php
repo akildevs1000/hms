@@ -28,8 +28,8 @@ return new class extends Migration
             $table->decimal('after_discount', 8, 2)->nullable();
             $table->dateTime('posting_date');
 
-            $table->string('bill_no')->nullable();
             $table->string('tax')->nullable();
+            $table->string('tax_rate')->nullable();
             $table->string('sgst')->nullable();
             $table->string('cgst')->nullable();
             $table->string('tax_type')->nullable();

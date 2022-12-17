@@ -13,7 +13,9 @@ class InvoiceController extends Controller
     public function index($id)
     {
 
+        // return $booking = Booking::with('orderRooms.postings', 'customer')->find($id);
         $booking = Booking::with('orderRooms', 'customer')->find($id);
+
         $orderRooms = $booking->orderRooms;
 
 

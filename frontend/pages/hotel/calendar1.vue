@@ -6,6 +6,32 @@
       </v-snackbar>
     </div>
 
+    <!-- <v-dialog v-model="dateConfirmationDialog" persistent max-width="290">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn color="primary" dark v-bind="attrs" v-on="on">
+          Open Dialog
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title class="text-h5">
+          Use Google's location service?
+        </v-card-title>
+        <v-card-text
+          >Let Google help apps determine location. This means sending anonymous
+          location data to Google, even when no apps are running.</v-card-text
+        >
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog = false">
+            Disagree
+          </v-btn>
+          <v-btn color="green darken-1" text @click="dialog = false">
+            Agree
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog> -->
+
     <v-dialog v-model="createReservationDialog" max-width="1200px">
       <Reservation :reservation="reservation" />
     </v-dialog>
@@ -370,8 +396,9 @@
                     v-model="posting.tax_type"
                     :items="[
                       { id: -1, name: 'select..' },
-                      { id: 5, name: 'food' },
-                      { id: 12, name: 'mess' }
+                      { name: 'Food' },
+                      { name: 'Mess' },
+                      { name: 'Bed' }
                     ]"
                     item-text="name"
                     item-value="id"
@@ -430,10 +457,9 @@
               <tr v-for="(item, index) in postings" :key="index">
                 <td>{{ ++index }}</td>
                 <td>{{ caps(item.bill_no) }}</td>
-                <td>{{ caps(item.booking.room.room_no) }}</td>
-                <td>{{ caps(item.booking.room.room_type.name) }}</td>
-                <td>{{ caps(item.booking.customer.full_name) }}</td>
-
+                <td>{{ caps(item && item.booked_room.room_no) }}</td>
+                <td>{{ caps(item && item.booked_room.room_type) }}</td>
+                <td>{{ caps(item && item.booked_room.title) }}</td>
                 <td>{{ caps(item.item) }}</td>
                 <td>{{ caps(item.qty) }}</td>
                 <td>{{ caps(item.amount) }}</td>
@@ -857,8 +883,16 @@
               </v-list-item>
 
               <v-list-item link @click="viewPostingDialog = true">
+                <v-list-item-title>View Posting</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item link @click="viewBillingDialog = true">
                 <v-list-item-title>View Billing</v-list-item-title>
               </v-list-item>
+
+              <!-- <v-list-item link @click="generatingBill">
+                <v-list-item-title>Generate Bill</v-list-item-title>
+              </v-list-item> -->
             </div>
           </v-list-item-group>
         </v-list>
@@ -896,6 +930,8 @@ export default {
   },
   data() {
     return {
+      viewBillingDialog: false,
+      dateConfirmationDialog: false,
       LoadingDialog: false,
       loading: false,
       snackbar: false,
@@ -928,22 +964,25 @@ export default {
         initialView: "resourceTimelineMonth",
 
         navLinks: true,
-        resourceAreaWidth: "15%",
+        resourceAreaWidth: "12%",
 
         resourceAreaColumns: [
           {
             headerContent: "Room",
-            field: "room_no"
+            field: "room_no",
+            width: "3%"
           },
           {
             headerContent: "Room Type",
-            field: "room_type"
+            field: "room_type",
+            width: "5%"
           }
         ],
         resources: [
           // { id: "103", room_no: "103", room_type: "king", eventColor: "green" },
           // { id: "104", room_no: "104", eventColor: "orange" }
         ],
+
         events: [
           // {
           //   id: "1",
@@ -972,6 +1011,7 @@ export default {
           //   title: "e"
           // }
         ],
+
         eventDidMount: arg => {
           const eventId = arg.event.id;
           const eventStatus = arg.event.extendedProps.status;
@@ -1156,7 +1196,9 @@ export default {
     },
 
     get_amount_with_tax(clause) {
-      let res = this.getPercentage(this.posting.amount, clause);
+      let per = clause == "Food" ? 5 : 12;
+      console.log(clause);
+      let res = this.getPercentage(this.posting.amount, per);
       let gst = parseInt(res) / 2;
       this.posting.sgst = gst;
       this.posting.cgst = gst;
@@ -1270,6 +1312,7 @@ export default {
       };
       this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
         this.postings = data;
+        console.log(data);
       });
     },
 
@@ -1347,6 +1390,27 @@ export default {
         })
         .catch(e => console.log(e));
     },
+
+    // generatingBill() {
+    //   let id = this.evenIid;
+    //   // this.loading = true;
+    //   let payload = {
+    //     id:id,
+    //     booking_id: data.id,
+    //     remaining_price: data.remaining_price,
+    //     payment_mode_id: data.payment_mode_id
+    //   };
+    //   this.$axios
+    //     .post("/paying_advance", payload)
+    //     .then(({ data }) => {
+    //       if (!data.status) {
+    //         this.errors = data.errors;
+    //       } else {
+    //         this.succuss(data, false, false, false, true);
+    //       }
+    //     })
+    //     .catch(e => console.log(e));
+    // },
 
     store_check_in(data) {
       if (
@@ -1457,12 +1521,15 @@ export default {
         return;
       }
       this.loading = true;
+      let per = this.posting.tax_type == "Food" ? 5 : 12;
+      console.log(per);
       let payload = {
         ...this.posting,
         booked_room_id: this.evenIid,
         company_id: this.$auth.user.company.id,
         booking_id: this.checkData.id,
-        room_id: this.checkData.room_id
+        room_id: this.checkData.room_id,
+        tax_type: per
       };
 
       this.$axios
