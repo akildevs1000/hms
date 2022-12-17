@@ -15,14 +15,10 @@ class InvoiceController extends Controller
 
         // return $booking = Booking::with('orderRooms.postings', 'customer')->find($id);
         $booking = Booking::with('orderRooms', 'customer')->find($id);
-
         $orderRooms = $booking->orderRooms;
-
-
         return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms"))
             // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
-
             ->stream();
     }
 
