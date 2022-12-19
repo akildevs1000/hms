@@ -444,44 +444,25 @@ class BookingController extends Controller
 
     public function store1(Request $request)
     {
-
         try {
             $data = [];
-            // $data =  $request->all();
             $data =  $request->except('document');
             $data["customer_id"] = $request->customer_id;
             $data['booking_date'] = now();
             $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
 
-            // $room  = new RoomController();
-            // $room->update($request->room_id, 1);
+            $booked = Booking::create($data);
 
-            $booked =  Booking::create($data);
-
-            // {
-            //     "customer_type": "Regular",
-            //     "customer_status": "Confirmed",
-            //     "all_room_Total_amount": 4484,
-            //     "total_extra": 0,
-            //     "type": "Walking",
-            //     "source": "",
-            //     "agent_name": "",
-            //     "check_in": "2022-12-19",
-            //     "check_out": "2022-12-21",
-            //     "discount": 0,
-            //     "advance_price": 0,
-            //     "payment_mode_id": 1,
-            //     "total_days": 3,
-            //     "sub_total": 13452,
-            //     "after_discount": 0,
-            //     "sales_tax": 0,
-            //     "total_price": 13452,
-            //     "remaining_price": 13452,
-            //     "request": "AC",
-            //     "company_id": 1,
-            //     "remark": "",
-            //     "customer_id": 116
-            // }
+            if ($booked) {
+                $paymentsData = [
+                    'booking_id' => $booked->id,
+                    'payment_mode' => $booked->payment_mode_id,
+                    'description' => 'advance payment',
+                    'amount' => $booked->advance_price,
+                ];
+                $payment = new PaymentController();
+                $payment->store($paymentsData);
+            }
 
             return $this->response('Room Booked Successfully.', $booked, true);
 
@@ -526,14 +507,21 @@ class BookingController extends Controller
     {
         try {
             $rooms = $request->all();
+            $totSgst = 0;
+            $totCgst = 0;
             foreach ($rooms as $room) {
                 $bookedRoomId =  BookedRoom::create($room);
                 $period = CarbonPeriod::create($room['check_in'], $room['check_out']);
                 foreach ($period as $date) {
                     $room['date'] = $date->format('Y-m-d');
                     $room['booked_room_id'] = $bookedRoomId->id;
+                    // $totSgst += $room['sgst'];
+                    // $totCgst += $room['cgst'];
                     OrderRoom::create($room);
                 }
+                // $bookedRoomId->sgst = $totSgst;
+                $bookedRoomId->cgst = $totCgst;
+                // $bookedRoomId->save();
             }
 
             return $this->response('Room Booked Successfully.', $rooms, true);
@@ -585,8 +573,14 @@ class BookingController extends Controller
     }
 
 
-    // public function generateBill(Type $var = null)
-    // {
-    //     # code...
-    // }
+    public function getBookedRooms(Request $request)
+    {
+        return BookedRoom::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0)
+                ->where('booking_status', 1);
+        })
+            ->with('roomType')
+            ->withOut('postings')
+            ->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out as end']);
+    }
 }

@@ -305,7 +305,7 @@
 
     <hr style="margin:0px;padding:0">
     @php
-
+        
     @endphp
     <table class="inv-table">
         <tr style="background-color: rgb(19, 19, 75);color:white">
@@ -321,13 +321,13 @@
         </tr>
         <tbody style="font-size: 5px">
             @php
-
+                
                 $totalWithoutDiscounts = 0;
                 $totalWithDiscounts = 0;
                 $totalcgst = 0;
                 $totalsgst = 0;
                 $grandTotal = 0;
-
+                
             @endphp
             @foreach ($orderRooms as $room)
                 <tr>
@@ -354,7 +354,7 @@
                         {{ $room->grand_total }} <br>
                     </td> --}}
                     @php
-                        $totalWithoutDiscounts += $room->total;
+                        $totalWithoutDiscounts += $room->after_discount;
                         $totalcgst += $room->cgst;
                         $totalsgst += $room->sgst;
                     @endphp

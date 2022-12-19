@@ -15,7 +15,6 @@ class BookedRoom extends Model
         'resourceId',
         'title',
         'background',
-        // 'status',
     ];
 
     protected $casts = [
@@ -34,6 +33,7 @@ class BookedRoom extends Model
         return  Customer::find($this->customer_id)->full_name ?? '';
     }
 
+
     /**
      * Get all of the posts for the BookedRoom
      *
@@ -43,7 +43,15 @@ class BookedRoom extends Model
     {
         return $this->hasMany(Posting::class);
     }
-
+    /**
+     * Get all of the comments for the BookedRoom
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function roomType()
+    {
+        return $this->hasOneThrough(RoomType::class, BookedRoom::class, 'room_id', 'id', 'room_id', 'room_id');
+    }
     public function GetBackgroundAttribute()
     {
         // $status =   Room::find($this->room_id)->status ?? '1';

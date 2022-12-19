@@ -356,7 +356,7 @@ export default {
         {
           icon: "mdi-account",
           title: "Customers",
-          to: "/customer/list",
+          to: "/customer/bill",
           menu: "reservation_access"
         },
         {

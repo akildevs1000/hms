@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Room;
+use App\Models\Payment;
 use App\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,8 @@ class Booking extends Model
         'title',
         'background',
         'status',
+        'check_in_date',
+        'check_out_date',
     ];
 
     /**
@@ -27,6 +30,7 @@ class Booking extends Model
      */
     public function room()
     {
+
         return $this->belongsTo(Room::class);
     }
 
@@ -40,10 +44,19 @@ class Booking extends Model
         return $this->hasMany(OrderRoom::class);
     }
 
-
     public function GetResourceIdAttribute()
     {
         return  Room::find($this->room_id)->room_no ?? '';
+    }
+
+    public function getCheckInDateAttribute()
+    {
+        return  date('Y-m-d', strtotime($this->check_in));
+    }
+
+    public function getCheckOutDateAttribute()
+    {
+        return  date('Y-m-d', strtotime($this->check_out));
     }
 
     public function GetTitleAttribute()
@@ -130,5 +143,15 @@ class Booking extends Model
                         ->orWhere('last_name', 'Like', '%' . $search . '%')
                 )
         ));
+    }
+
+    /**
+     * Get all of the payments for the Booking
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

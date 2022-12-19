@@ -16,6 +16,7 @@
 
 
     Route::get('events_list', [BookingController::class, 'events_list']);
+    Route::get('get_booked_rooms', [BookingController::class, 'getBookedRooms']);
     Route::get('get_events_by_room', [BookingController::class, 'getEventsByRoom']);
 
     Route::post('update_by_drag', [BookingController::class, 'updateByDrag']);

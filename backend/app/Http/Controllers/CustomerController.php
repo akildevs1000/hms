@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Customer\StoreRequest;
+use App\Models\Booking;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use App\Http\Requests\Customer\StoreRequest;
 
 class CustomerController extends Controller
 {
@@ -68,5 +69,30 @@ class CustomerController extends Controller
         } else {
             return response()->json(['data' => [], 'status' => false]);
         }
+    }
+
+
+    public function bookingCustomers(Request $request)
+    {
+        return Customer::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0)
+                ->where('booking_status', '<=', 3);
+        })
+            ->with('booking.payments')
+            ->paginate($request->per_page ?? 20);
+    }
+
+    public function viewBookingCustomerBill($id)
+    {
+        return Customer::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0)
+                ->where('booking_status', '<=', 3);
+        })->with(
+            ['booking' => [
+                'bookedRooms',
+                'payments',
+            ]]
+        )
+            ->find($id);
     }
 }
