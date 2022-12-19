@@ -103,8 +103,19 @@ class PostingController extends Controller
         try {
             $data = $request->all();
             $data['posting_date'] = now();
-            $data = Posting::create($data);
-            return $this->response('Posting Successfully submitted.', $data, true);
+            $posting = Posting::create($data);
+
+            $paymentsData = [
+                'booking_id' => $posting->booking_id,
+                'payment_mode' => 'cash',
+                'description' => $posting->item,
+                'amount' => $posting->amount_with_tax,
+            ];
+            $payment = new PaymentController();
+            $payment->store($paymentsData);
+
+
+            return $this->response('Posting Successfully submitted.', $posting, true);
         } catch (\Throwable $th) {
             throw $th;
         }
