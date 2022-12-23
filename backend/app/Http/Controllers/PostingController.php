@@ -101,15 +101,18 @@ class PostingController extends Controller
     public function store(Request $request)
     {
         try {
-            $data = $request->all();
+            $data = $request->except('room');
             $data['posting_date'] = now();
             $posting = Posting::create($data);
 
             $paymentsData = [
                 'booking_id' => $posting->booking_id,
-                'payment_mode' => 'cash',
+                'payment_mode' => $posting->payment_mode_id,
                 'description' => $posting->item,
                 'amount' => $posting->amount_with_tax,
+                'type' => 'posting',
+                'room' => $request->room,
+                'company_id' => $request->company_id,
             ];
             $payment = new PaymentController();
             $payment->store($paymentsData);
@@ -129,23 +132,12 @@ class PostingController extends Controller
      */
     public function show(Request $request, $id)
     {
-
-
-        // $model = BookedRoom::where('company_id', $request->company_id)->find($id);
-        // $model->customer = $model->title;
-        // $model->makeHidden(['title', 'background']);
-        // return $model;
-
-
-
-
-
         $model = Posting::query();
         $model->where('company_id', $request->company_id);
 
         $model->with([
             'bookedRoom',
-            'booking:id,customer_id,room_id' => [
+            'booking:id,customer_id,rooms' => [
                 'customer:id,email,first_name,last_name',
                 'room:id,room_type_id,room_no',
             ]

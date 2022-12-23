@@ -82,7 +82,7 @@
               <th>#</th>
               <th>Date</th>
               <th>Payment Mode</th>
-              <th>Payment Type</th>
+              <th>Description</th>
               <th>Amount</th>
             </tr>
             <v-progress-linear
@@ -97,7 +97,7 @@
                 <b>{{ ++index }}</b>
               </td>
               <td>{{ item.created_at }}</td>
-              <td>{{ item.payment_mode }}</td>
+              <td>{{ item && item.payment_mode.name }}</td>
               <td>{{ item.description }}</td>
               <td>{{ item.amount }}</td>
               <td>

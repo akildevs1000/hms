@@ -16,9 +16,15 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
 
+            $table->string('title')->nullable();
             $table->string('name')->nullable();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('contact_no')->nullable();
+            $table->string('whatsapp')->nullable();
             $table->string('email')->nullable();
+            $table->string('nationality')->nullable();
+            $table->string('image')->nullable();
             $table->string('id_card_type_id')->nullable();
             $table->string('id_card_no')->nullable();
             $table->string('car_no')->nullable();
@@ -27,6 +33,9 @@ return new class extends Migration
             $table->string('no_of_baby')->nullable();
             $table->string('address')->nullable();
             $table->integer('company_id')->default(0);
+
+
+
 
             $table->timestamps();
         });

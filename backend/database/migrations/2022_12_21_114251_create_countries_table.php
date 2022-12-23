@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
+        Schema::create('countries', function (Blueprint $table) {
+            $table->id();
+            $table->string('phone')->nullable();
+            $table->string('code')->nullable();
+            $table->string('name')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -26,9 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->dropColumn('first_name');
-            $table->dropColumn('last_name');
-        });
+        Schema::dropIfExists('countries');
     }
 };

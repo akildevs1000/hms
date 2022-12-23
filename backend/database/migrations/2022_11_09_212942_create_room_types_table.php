@@ -17,7 +17,26 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('price')->nullable();
+
+
+            $table->string('room_only_price')->nullable();
+            $table->string('Break_fast_price')->nullable();
+            $table->string('Break_fast_with_dinner_price')->nullable();
+            $table->string('Break_fast_with_lunch_price')->nullable();
+            $table->string('lunch_with_dinner_price')->nullable();
+            $table->string('full_board_price')->nullable();
+
+
             $table->string('max_person')->nullable();
+
+
+            // "Breakfast",
+            // "Breakfast and Dinner",
+            // "Breakfast and Lunch",
+            // "Full Board",
+            // "Room only"
+
+
             $table->timestamps();
         });
     }

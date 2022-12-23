@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->string('source')->nullable();
             $table->string('agent_name')->nullable();
-            $table->integer('room_id')->nullable();
+            $table->integer('rooms')->nullable();
             $table->date('booking_date')->nullable();
             $table->dateTime('check_in')->nullable();
             $table->dateTime('check_out')->nullable();

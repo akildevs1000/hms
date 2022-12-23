@@ -39,6 +39,10 @@ class StoreRequest extends FormRequest
             'no_of_baby'      => 'nullable',
             'address'         => 'nullable',
             'company_id'      => 'required',
+
+            'title'      => 'required',
+            'whatsapp'      => 'required',
+            'nationality'      => 'required',
         ];
 
         return $arr;

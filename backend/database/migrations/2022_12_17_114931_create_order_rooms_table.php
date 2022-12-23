@@ -39,6 +39,13 @@ return new class extends Migration
             $table->string('total')->nullable();
             $table->string('days')->nullable();
             $table->string('grand_total')->nullable();
+
+
+            $table->string('no_of_adult')->nullable();
+            $table->string('no_of_child')->nullable();
+            $table->string('no_of_baby')->nullable();
+
+
             $table->timestamps();
         });
     }

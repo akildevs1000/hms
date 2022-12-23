@@ -170,7 +170,25 @@
               <v-col md="12" class="b-0 mt-2" style="padding-bottom:0px" dense>
                 <h6><b>Personal Details</b></h6>
               </v-col>
-              <v-col md="6" cols="12" sm="12">
+              <v-col md="2" cols="12" sm="12">
+                <label class="col-form-label"
+                  >Tittle <span class="text-danger">*</span></label
+                >
+                <v-select
+                  v-model="customer.title"
+                  :items="titleItems"
+                  dense
+                  item-text="name"
+                  item-value="name"
+                  :hide-details="errors && !errors.title"
+                  :error="errors && errors.title"
+                  :error-messages="
+                    errors && errors.title ? errors.title[0] : ''
+                  "
+                  outlined
+                ></v-select>
+              </v-col>
+              <v-col md="5" cols="12" sm="12">
                 <label class="col-form-label"
                   >First Name <span class="text-danger">*</span></label
                 >
@@ -186,7 +204,7 @@
                   "
                 ></v-text-field>
               </v-col>
-              <v-col md="6" cols="12" sm="12">
+              <v-col md="5" cols="12" sm="12">
                 <label class="col-form-label">Last Name</label>
                 <v-text-field
                   dense
@@ -209,7 +227,7 @@
                   <span class="num">{{ customer.no_of_adult }}</span>
                   <span
                     class="plus"
-                    @click="customer.no_of_adult > 8 || customer.no_of_adult++"
+                    @click="customer.no_of_adult > 2 || customer.no_of_adult++"
                     >+</span
                   >
                 </div>
@@ -225,7 +243,7 @@
                   <span class="num">{{ customer.no_of_child }}</span>
                   <span
                     class="plus"
-                    @click="customer.no_of_child > 8 || customer.no_of_child++"
+                    @click="customer.no_of_child > 1 || customer.no_of_child++"
                     >+</span
                   >
                 </div>
@@ -241,7 +259,7 @@
                   <span class="num">{{ customer.no_of_baby }}</span>
                   <span
                     class="plus"
-                    @click="customer.no_of_baby > 8 || customer.no_of_baby++"
+                    @click="customer.no_of_baby > 1 || customer.no_of_baby++"
                     >+</span
                   >
                 </div>
@@ -343,7 +361,7 @@
               <v-col md="12" class="b-0 mt-2" style="padding-bottom:0px" dense>
                 <h6><b>Contact Number</b></h6>
               </v-col>
-              <v-col md="12" cols="12" sm="12">
+              <v-col md="6" cols="12" sm="12">
                 <label class="col-form-label"
                   >Contact No <span class="text-danger">*</span></label
                 >
@@ -357,7 +375,54 @@
                   :error-messages="
                     errors && errors.contact_no ? errors.contact_no[0] : ''
                   "
+                  @keyup="mergeContact"
                 ></v-text-field>
+              </v-col>
+              <v-col md="5" cols="12" sm="12">
+                <label class="col-form-label"
+                  >Whatsapp No <span class="text-danger">*</span></label
+                >
+                <v-text-field
+                  dense
+                  outlined
+                  type="number"
+                  v-model="customer.whatsapp"
+                  :hide-details="errors && !errors.whatsapp"
+                  :error="errors && errors.whatsapp"
+                  :error-messages="
+                    errors && errors.whatsapp ? errors.whatsapp[0] : ''
+                  "
+                ></v-text-field>
+              </v-col>
+              <v-col md="1" sm="12" cols="12" dense>
+                <label class="col-form-label">
+                  Different
+                </label>
+                <v-checkbox
+                  v-model="isDiff"
+                  :hide-details="true"
+                  class="pt-0  py-1 chk-align"
+                  @click="newWhatsapp"
+                >
+                </v-checkbox>
+              </v-col>
+              <v-col md="6" cols="12" sm="12">
+                <label class="col-form-label"
+                  >Nationality <span class="text-danger">*</span></label
+                >
+                <v-select
+                  v-model="customer.nationality"
+                  :items="countryList"
+                  item-text="name"
+                  item-value="name"
+                  :hide-details="errors && !errors.nationality"
+                  :error="errors && errors.nationality"
+                  :error-messages="
+                    errors && errors.nationality ? errors.nationality[0] : ''
+                  "
+                  dense
+                  outlined
+                ></v-select>
               </v-col>
               <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label"
@@ -586,13 +651,10 @@
                         <label class="col-form-label">Amount : </label>
                         {{ item.price }}.00
                       </v-col>
-                      <!-- <v-col md="3" cols="12" sm="12">
-                        <label class="col-form-label">Extra Bed : </label>
-                        {{ item.bed_amount }}.00
-                      </v-col> -->
+
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Meal : </label>
-                        {{ item.meal }}
+                        {{ capsTitle(item.meal) }}
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Tax : </label>
@@ -718,6 +780,56 @@
                           v-model="customer.last_name"
                         ></v-text-field>
                       </v-col>
+                      <v-col md="3" sm="12" cols="12" dense>
+                        <label class="col-form-label"
+                          >Adult <span class="text-danger">*</span>
+                        </label>
+                        <div class="wrapper">
+                          <span
+                            class="minus"
+                            @click="temp.no_of_adult < 1 || temp.no_of_adult--"
+                            >-</span
+                          >
+                          <span class="num">{{ temp.no_of_adult }}</span>
+                          <span
+                            class="plus"
+                            @click="temp.no_of_adult > 2 || temp.no_of_adult++"
+                            >+</span
+                          >
+                        </div>
+                      </v-col>
+                      <v-col md="3" sm="12" cols="12" dense>
+                        <label class="col-form-label">Child </label>
+                        <div class="wrapper">
+                          <span
+                            class="minus"
+                            @click="temp.no_of_child < 1 || temp.no_of_child--"
+                            >-</span
+                          >
+                          <span class="num">{{ temp.no_of_child }}</span>
+                          <span
+                            class="plus"
+                            @click="temp.no_of_child > 1 || temp.no_of_child++"
+                            >+</span
+                          >
+                        </div>
+                      </v-col>
+                      <v-col md="3" sm="12" cols="12" dense>
+                        <label class="col-form-label">Baby </label>
+                        <div class="wrapper">
+                          <span
+                            class="minus"
+                            @click="temp.no_of_baby < 1 || temp.no_of_baby--"
+                            >-</span
+                          >
+                          <span class="num">{{ temp.no_of_baby }}</span>
+                          <span
+                            class="plus"
+                            @click="temp.no_of_baby > 1 || temp.no_of_baby++"
+                            >+</span
+                          >
+                        </div>
+                      </v-col>
                       <v-col md="6" sm="12" cols="12" dense>
                         <label class="col-form-label">
                           Meals
@@ -726,12 +838,15 @@
                           v-model="temp.meal"
                           :items="meals"
                           dense
+                          item-text="name"
+                          item-value="slug"
                           outlined
                           :hide-details="errors && !errors.meal"
                           :error="errors && errors.meal"
                           :error-messages="
                             errors && errors.meal ? errors.meal[0] : ''
                           "
+                          @change="changeMealPlan(temp.meal)"
                         ></v-select>
                       </v-col>
                       <v-col md="6" sm="12" cols="12" dense></v-col>
@@ -1075,13 +1190,7 @@ export default {
       show_password_confirm: false,
       roomTypes: [],
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
-      meals: [
-        "Breakfast",
-        "Breakfast and Dinner",
-        "Breakfast and Lunch",
-        "Full Board",
-        "Room only"
-      ],
+
       search: {
         mobile: "0752388923"
       },
@@ -1113,7 +1222,7 @@ export default {
         cgst: 0,
         check_in: "",
         check_out: "",
-        meal: "Room only",
+        meal: "room_only_price",
         bed_amount: 0,
         room_discount: 0,
         after_discount: 0, //(price - room_discount)
@@ -1121,8 +1230,13 @@ export default {
         total_with_tax: 0, //(after_discount * room_tax)
         total: 0, //(total_with_tax * bed_amount)
         grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
+
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0
       },
+
       check_in_menu: false,
       check_out_menu: false,
       upload: {
@@ -1131,6 +1245,7 @@ export default {
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
       isAgent: false,
+      isDiff: false,
       search_available_room: "",
       room: {
         customer_type: "",
@@ -1153,10 +1268,33 @@ export default {
         remaining_price: 0,
         request: "",
         company_id: this.$auth.user.company.id,
-        remark: ""
+        remark: "",
+        rooms: ""
       },
       reservation: {},
+      countryList: [],
+
+      titleItems: [
+        { id: 1, name: "Mr" },
+        { id: 2, name: "Mrs" },
+        { id: 3, name: "Miss" },
+        { id: 4, name: "Ms" },
+        { id: 5, name: "Dr" }
+      ],
+
+      meals: [
+        { name: "Room only", slug: "room_only_price" },
+        { name: "Breakfast", slug: "Break_fast_price" },
+        { name: "Breakfast and Dinner", slug: "Break_fast_with_dinner_price" },
+        { name: "Breakfast and Lunch", slug: "Break_fast_with_lunch_price" },
+        { name: "Full Board", slug: "full_board_price" }
+        // { name: 5, slug: "lunch_with_dinner_price" },
+      ],
+
       customer: {
+        title: "",
+        whatsapp: "",
+        nationality: "India",
         first_name: "",
         last_name: "",
         contact_no: "",
@@ -1164,7 +1302,7 @@ export default {
         id_card_type_id: "",
         id_card_no: "",
         car_no: "",
-        no_of_adult: 0,
+        no_of_adult: 1,
         no_of_child: 0,
         no_of_baby: 0,
         address: "",
@@ -1180,6 +1318,7 @@ export default {
     this.get_id_cards();
     this.get_id_cards();
     this.runAllFunctions();
+    this.get_countries();
   },
   methods: {
     runAllFunctions() {
@@ -1208,6 +1347,27 @@ export default {
     //   this.room.after_discount = this.subTotal() - this.room.discount;
     //   return this.room.after_discount;
     // },
+
+    mergeContact() {
+      if (!this.isDiff) {
+        this.customer.whatsapp = this.customer.contact_no;
+      }
+    },
+
+    newWhatsapp() {
+      if (!this.isDiff) {
+        this.customer.whatsapp = this.customer.contact_no;
+      } else {
+        this.customer.whatsapp = "";
+      }
+    },
+
+    get_countries() {
+      this.$axios.get(`get_countries`).then(({ data }) => {
+        this.countryList = data;
+      });
+    },
+
     getTotal() {
       return (this.room.total_price = this.subTotal());
       // parseInt(this.getAmountAfterSalesTax()) +
@@ -1279,14 +1439,7 @@ export default {
       if (this.selectedRooms.length == 0) {
       }
     },
-    selectRoom(item) {
-      this.RoomDrawer = false;
-      this.temp.company_id = this.$auth.user.company.id;
-      this.temp.room_no = item.room_no;
-      this.temp.room_id = item.id;
-      this.temp.room_type = item.room_type.name;
-      this.temp.price = item.price;
-    },
+
     searchAvailableRoom(val) {
       let arr = this.availableRooms;
       let res = arr.filter(e => e.room_no == val);
@@ -1317,21 +1470,62 @@ export default {
       this.temp.sgst = gst;
       return tax;
     },
+
+    selectRoom(item) {
+      this.RoomDrawer = false;
+      this.temp.company_id = this.$auth.user.company.id;
+      this.temp.room_no = item.room_no;
+      this.temp.room_id = item.id;
+      this.temp.room_type = item.room_type.name;
+      this.temp.price = item.price;
+    },
+
+    capsTitle(val) {
+      if (!val) return "---";
+      let res = val;
+      let upper = res.toUpperCase();
+      let title = upper.replace(/[^A-Z]/g, " ");
+      return title;
+    },
+
+    changeMealPlan(mealType) {
+      if (!this.temp.room_type) {
+        alert("Select room");
+        return;
+      }
+
+      console.log(this.temp.room_type);
+      console.log(mealType);
+      let payload = {
+        params: {
+          room_type: this.temp.room_type,
+          slug: mealType,
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios
+        .get(`get_room_price_by_meal_plan`, payload)
+        .then(({ data }) => {
+          this.temp.price = data;
+          console.log(data);
+        });
+    },
+
     add_room() {
-      if (this.temp.room_no == undefined) {
+      if (this.temp.room_no == "") {
         this.alert("Missing!", "Select room", "error");
         return;
       }
+      console.log(this.temp);
+      // return;
 
       this.temp.after_discount =
         parseInt(this.temp.price) -
         parseInt(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
       this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
-      // this.get_bed_with_tax_amount();
 
       this.temp.total = parseInt(this.temp.total_with_tax);
-      // +        parseInt(this.temp.bed_amount || 0);
 
       this.temp.grand_total =
         parseInt(this.temp.days) * parseInt(this.temp.total);
@@ -1342,15 +1536,12 @@ export default {
       this.temp.room_discount =
         this.temp.room_discount == "" ? 0 : this.temp.room_discount;
 
-      // this.temp.bed_amount =
-      //   this.temp.bed_amount == "" ? 0 : this.temp.bed_amount;
-
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
+
       this.selectedRooms.push(this.temp);
 
       this.get_total_amounts();
-      // this.get_all_room_Total_amount();
       this.runAllFunctions();
 
       this.clear_add_room();
@@ -1385,14 +1576,52 @@ export default {
     },
 
     clear_add_room() {
+      let check_in_old = this.temp.check_in;
+      let check_out_old = this.temp.check_out;
+
+      this.temp = {
+        check_in_menu: false,
+        check_out_menu: false,
+        room_no: "",
+        room_type: "",
+        room_id: "",
+        price: 0,
+        days: 0,
+        sgst: 0,
+        cgst: 0,
+        check_in: check_in_old,
+        check_out: check_out_old,
+        meal: "room_only_price",
+        bed_amount: 0,
+        room_discount: 0,
+        after_discount: 0, //(price - room_discount)
+        room_tax: 0,
+        total_with_tax: 0, //(after_discount * room_tax)
+        total: 0, //(total_with_tax * bed_amount)
+        grand_total: 0, //(total * days)
+        company_id: this.$auth.user.company.id,
+
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0
+      };
+
+      return;
+
       let check_in = this.temp.check_in;
       let check_out = this.temp.check_out;
+
       this.temp = {};
+
       this.temp.check_in = check_in;
       // this.temp.bed_amount = 0;
       this.temp.room_discount = 0;
       this.temp.check_out = check_out;
       this.temp.meal = "Room only";
+
+      this.temp.no_of_adult = 1;
+      this.temp.no_of_child = 0;
+      this.temp.no_of_baby = 0;
     },
     get_available_rooms() {
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
@@ -1414,6 +1643,7 @@ export default {
         });
       this.runAllFunctions();
     },
+
     get_customer() {
       this.errors = [];
       this.checkLoader = true;
@@ -1426,11 +1656,12 @@ export default {
       this.$axios.get(`get_customer/${contact_no}`).then(({ data }) => {
         if (!data.status) {
           this.checkLoader = false;
-          this.customer = {};
+          // this.customer = {};
           this.customer.contact_no = contact_no;
           alert("Customer not found");
           return;
         }
+
         this.customer = {
           ...data.data,
           customer_id: data.data.id
@@ -1456,10 +1687,13 @@ export default {
         return;
       }
 
+      let rooms = this.selectedRooms.map(e => e.room_no);
+      this.room.rooms = rooms.toString();
       let payload = {
         ...this.room,
         ...this.customer
       };
+
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {

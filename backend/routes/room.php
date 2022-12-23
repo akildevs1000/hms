@@ -25,4 +25,7 @@
     Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);
 
 
+    Route::get('get_room_price_by_meal_plan', [RoomController::class, 'get_room_price_by_meal_plan']);
+
+
     Route::post('generate_bill', [BookingController::class, 'generateBill']);

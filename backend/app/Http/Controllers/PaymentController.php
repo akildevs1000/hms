@@ -12,4 +12,21 @@ class PaymentController extends Controller
         $model = Payment::query();
         return  $model->create($data);
     }
+
+    public function index(Request $request)
+    {
+        $model = Payment::query();
+
+        $model->where('company_id', $request->company_id);
+        $model->orderByDesc("id");
+
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $from = $request->from_date;
+            $to = $request->to_date;
+            $model->whereDate('created_at', '>=', $from);
+            $model->whereDate('created_at', '<=', $to);
+        }
+
+        return $model->paginate($request->per_page);
+    }
 }

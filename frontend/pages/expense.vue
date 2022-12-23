@@ -51,6 +51,17 @@
               <v-row class="mt-2">
                 <v-col cols="12">
                   <v-text-field
+                    v-model="editedItem.voucher"
+                    placeholder="Voucher"
+                    outlined
+                    dense
+                  ></v-text-field>
+                  <span v-if="errors && errors.voucher" class="error--text">{{
+                    errors.voucher[0]
+                  }}</span>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
                     v-model="editedItem.item"
                     placeholder="Item"
                     outlined
@@ -66,18 +77,38 @@
                     placeholder="Amount"
                     outlined
                     dense
+                    type="number"
                   ></v-text-field>
                   <span v-if="errors && errors.amount" class="error--text">{{
                     errors.amount[0]
                   }}</span>
                 </v-col>
                 <v-col cols="12">
+                  <v-text-field
+                    v-model="editedItem.qty"
+                    placeholder="QTY"
+                    outlined
+                    dense
+                    type="number"
+                  ></v-text-field>
+                  <span v-if="errors && errors.qty" class="error--text">{{
+                    errors.qty[0]
+                  }}</span>
+                </v-col>
+                <v-col cols="12">
                   <v-autocomplete
                     v-model="editedItem.payment_modes"
-                    :items="['CASH', 'CHEQUE', 'CREDIT']"
+                    :items="[
+                      { id: 1, name: 'Cash' },
+                      { id: 2, name: 'Card' },
+                      { id: 3, name: 'Online' },
+                      { id: 4, name: 'Bank' },
+                      { id: 5, name: 'UPI' },
+                      { id: 6, name: 'Cheque' }
+                    ]"
                     item-text="name"
                     item-value="id"
-                    placeholder="Select Departments"
+                    placeholder="Select Payment Mode"
                     outlined
                     dense
                   >
@@ -116,9 +147,11 @@
             ></v-progress-linear>
             <tr v-for="(item, index) in data" :key="index">
               <td>{{ ++index }}</td>
+              <td>{{ item.voucher }}</td>
               <td>{{ item.item }}</td>
+              <td>{{ item.qty }}</td>
               <td>{{ item.amount }}</td>
-              <td>{{ item.payment_modes }}</td>
+              <td>{{ item && item.payment_mode.name }}</td>
               <td>{{ item.created_at }}</td>
             </tr>
           </table>
@@ -160,7 +193,9 @@ export default {
     total: 0,
     headers: [
       { text: "#" },
+      { text: "Voucher" },
       { text: "Item" },
+      { text: "QTY" },
       { text: "Amount" },
       { text: "Mode" },
       { text: "Date" }
@@ -171,19 +206,12 @@ export default {
     editedItem: {
       item: null,
       amount: null,
-      payment_modes: "CASH"
+      qty: "",
+      payment_modes: "",
+      voucher: ""
     }
   }),
 
-  computed: {},
-
-  watch: {
-    // dialog(val) {
-    //   val || this.close();
-    //   this.errors = [];
-    //   this.search = "";
-    // }
-  },
   created() {
     this.loading = true;
     this.getDataFromApi();
@@ -241,18 +269,19 @@ export default {
     save() {
       let payload = {
         ...this.editedItem,
-        company_id: this.$auth.user.company.id,
+        company_id: this.$auth.user.company.id
       };
 
       this.$axios
         .post(this.endpoint, payload)
         .then(({ data }) => {
+          console.log(data);
           if (!data.status) {
             this.errors = data.errors;
           } else {
             this.getDataFromApi();
-            this.snackbar = data.status;
-            this.response = data.message;
+            this.snackbar = true;
+            this.response = "Expenses successfully added";
             this.close();
             this.errors = [];
             this.search = "";

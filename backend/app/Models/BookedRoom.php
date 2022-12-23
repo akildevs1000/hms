@@ -54,16 +54,23 @@ class BookedRoom extends Model
     }
     public function GetBackgroundAttribute()
     {
-        // $status =   Room::find($this->room_id)->status ?? '1';
-        (int)$status =   Booking::find($this->booking_id)->booking_status ?? 0;
-        // dd($status);
+        $model = Booking::find($this->booking_id);
+
+        if ($model->booking_status == 1 && $model->advance_price == 0) {
+            (int)$status = 6;
+        } else {
+            (int)$status = $model->booking_status ?? 0;
+        }
+
         return    match ($status) {
+
+            1 => 'linear-gradient(135deg, #56ab2f  0, #a8e063 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-            1 => 'linear-gradient(135deg, #f48665 0, #d68e41 100%)',
             2 => 'linear-gradient(135deg, #8e4cf1 0, #c554bc 100%)',
             3 => 'linear-gradient(135deg, #289cf5, #4f8bb7)',
             4 => 'linear-gradient(135deg, #34444c 0, #657177 100%)',
             5 => 'green',
+            6 => 'linear-gradient(135deg, #f48665 0, #d68e41 100%)', //only booking
         };
     }
 

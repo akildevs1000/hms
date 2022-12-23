@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Room extends Model
 {
@@ -34,6 +35,16 @@ class Room extends Model
     public function roomType()
     {
         return $this->belongsTo(RoomType::class);
+    }
+
+    /**
+     * Get the bookedRoom associated with the Room
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function bookedRoom(): HasOne
+    {
+        return $this->hasOne(BookedRoom::class);
     }
 
     /**

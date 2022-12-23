@@ -13,17 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('expenses', function (Blueprint $table) {
+        Schema::create('payment_modes', function (Blueprint $table) {
             $table->id();
-            $table->string('voucher')->nullable();
-            $table->string('item');
-            $table->decimal('amount', 8, 2);
-            $table->integer('qty')->nullable();
-            $table->integer('payment_modes')->nullable();
-            $table->integer('company_id')->default(0);
-
-
-
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -35,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('expenses');
+        Schema::dropIfExists('payment_modes');
     }
 };

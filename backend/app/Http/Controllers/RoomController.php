@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BookedRoom;
 use App\Models\Room;
 use App\Models\Booking;
+use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -88,8 +89,45 @@ class RoomController extends Controller
         return  Room::with('roomType')->get();
     }
 
-    public function roomListForGridView()
+    public function roomListForGridView(Request $request)
     {
+
+        $confirmedBooking = BookedRoom::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0);
+            $q->where('booking_status', 1);
+            $q->where('advance_price', '!=', 0);
+        })->count();
+
+        $waitingBooking = BookedRoom::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0);
+            $q->where('booking_status', 1);
+            $q->where('advance_price', '=', 0);
+        })->count();
+
+        // where('booking_status', '!=', 0)
+        //     ->where('booking_status', 1);
+
+
+        $model = BookedRoom::query();
+        $roomIds = $model
+            ->whereDate('check_in', '<=', $request->check_in)
+            // ->WhereDate('check_out', '>=', $request->check_out)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '<=', 3);
+            })
+            ->with('booking')
+            ->pluck('room_id');
+
+
+        return [
+            'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(),
+            'availableRooms' => Room::whereNotIn('id', $roomIds)->get(),
+            'confirmedBooking' =>  $confirmedBooking,
+            'waitingBooking' =>  $waitingBooking,
+        ];
+
+
         $arr = [];
         $data =    Room::with('roomType')->orderBy('status', 'desc')->get();
         foreach ($data as   $d) {
@@ -104,7 +142,6 @@ class RoomController extends Controller
         }
         return $arr;
     }
-
 
     public function getAvailableRoomsByDate(Request $request)
     {
@@ -121,7 +158,6 @@ class RoomController extends Controller
             ->get();
     }
 
-
     public function get_color($val)
     {
         return match ($val) {
@@ -130,5 +166,12 @@ class RoomController extends Controller
             'castle' => '#9966CC',
             'royal' => '#000',
         };
+    }
+
+    public function get_room_price_by_meal_plan(Request $request)
+    {
+        return   RoomType::where('company_id', $request->company_id)
+            ->where('name', $request->room_type)
+            ->pluck($request->slug)[0];
     }
 }

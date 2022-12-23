@@ -32,7 +32,7 @@
     Route::post('change_room_by_drag', [BookingController::class, 'changeRoomByDrag']);
     Route::post('change_date_by_drag', [BookingController::class, 'changeDateByDrag']);
 
-    Route::post('cancel_reservation/{id}', [BookingController::class, 'cancelReservation']);
+    Route::post('cancel_room/{id}', [BookingController::class, 'cancelRoom']);
     Route::post('set_available/{id}', [BookingController::class, 'setAvailable']);
     Route::post('set_maintenance/{id}', [BookingController::class, 'setMaintenance']);
     Route::post('paying_advance', [BookingController::class, 'payingAdvance']);

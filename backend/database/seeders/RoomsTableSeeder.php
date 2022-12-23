@@ -20,24 +20,53 @@ class RoomsTableSeeder extends Seeder
 
         $types = [
             [
-                'name'       => 'queen',
-                'price'      => '2800',
+                'name' => 'queen',
+                'price' => '2800',
                 'max_person' => '3',
+
+                'room_only_price'   => '2800',
+                'Break_fast_price' => '2900',
+                'Break_fast_with_dinner_price' => '3000',
+                'Break_fast_with_lunch_price'  => '3100',
+                'lunch_with_dinner_price' => '2900',
+                'full_board_price' => '3200',
+
             ],
             [
-                'name'       => 'king',
-                'price'      => '3800',
+                'name' => 'king',
+                'price' => '3800',
                 'max_person' => '4',
+
+                'room_only_price' => '2800',
+                'Break_fast_price' => '2900',
+                'Break_fast_with_dinner_price' => '3000',
+                'Break_fast_with_lunch_price' => '3100',
+                'lunch_with_dinner_price'  => '2900',
+                'full_board_price' => '3200',
             ],
             [
                 'name'       => 'castle',
                 'price'      => '2500',
                 'max_person' => '2',
+
+                'room_only_price' => '2800',
+                'Break_fast_price' => '2900',
+                'Break_fast_with_dinner_price' => '3000',
+                'Break_fast_with_lunch_price' => '3100',
+                'lunch_with_dinner_price' => '2900',
+                'full_board_price' => '3200',
             ],
             [
-                'name'       => 'royal',
-                'price'      => '6000',
+                'name' => 'royal',
+                'price' => '6000',
                 'max_person' => '3',
+
+                'room_only_price' => '2800',
+                'Break_fast_price' => '2900',
+                'Break_fast_with_dinner_price' => '3000',
+                'Break_fast_with_lunch_price' => '3100',
+                'lunch_with_dinner_price' => '2900',
+                'full_board_price' => '3200',
             ],
         ];
 

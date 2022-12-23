@@ -6,14 +6,15 @@ use App\Models\Room;
 use App\Models\Billing;
 use App\Models\Booking;
 use Carbon\CarbonPeriod;
-use App\Models\BookedRoom;
+use App\Models\OrderRoom;
 
+use App\Models\BookedRoom;
+use App\Models\CancelRoom;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Type\Integer;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\BookingRequest;
-use App\Models\OrderRoom;
 use Illuminate\Support\Facades\Log as Logger;
 
 class BookingController extends Controller
@@ -128,8 +129,26 @@ class BookingController extends Controller
             $booking->payment_mode_id = $request->payment_mode_id;
             $booking->booking_status = 2;
 
-            $booking->save();
-            return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
+            $checkedIn =  $booking->save();
+
+            if ($checkedIn) {
+                $paymentsData = [
+                    'booking_id' => $booking_id,
+                    'payment_mode' => $request->payment_mode_id,
+                    'description' => 'check in payment',
+                    'amount' => $request->new_payment,
+                    'company_id' => $booking->company_id,
+                    'type' => 'room',
+                    'room' => $booking->rooms,
+                ];
+                $payment = new PaymentController();
+                $payment->store($paymentsData);
+                return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
+            }
+
+            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+
+
 
             if ($booking->save()) {
                 Room::where('id', $booking->room_id)->update(["status" => '2']);
@@ -152,6 +171,19 @@ class BookingController extends Controller
             $booking->payment_mode_id = $request->payment_mode_id;
 
             if ($booking->save()) {
+
+                $paymentsData = [
+                    'booking_id' => $booking_id,
+                    'payment_mode' => $request->payment_mode_id,
+                    'description' => 'advance payment',
+                    'amount' => $request->new_advance,
+                    'type' => 'room',
+                    'room' => $booking->rooms,
+                    'company_id' => $request->company_id,
+                ];
+                $payment = new PaymentController();
+                $payment->store($paymentsData);
+
                 return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
@@ -314,20 +346,27 @@ class BookingController extends Controller
         //     ->find($request->id);
     }
 
-    public function cancelReservation(Request $request, $id)
+    public function cancelRoom(Request $request, $id)
     {
+
         try {
-            $booking =  Booking::find($id);
-            $booking->update([
-                'booking_status' => 0,
-                'reason' => $request->reason,
-                'user_id' => $request->cancel_by,
-                'cancel_date' => now(),
-            ]);
-            if ($booking) {
-                Room::where('id', $booking->room_id)->update(["status" => '0']);
-                return $this->response('Room cancel Successfully.', null, true);
+            $model =  BookedRoom::find($id)->makeHidden(['id', 'postings', 'resourceId', 'title', 'background', 'created_at', 'updated_at']);
+
+            $numberOfRooms = BookedRoom::where('booking_id', $model->booking_id)->count();
+
+            $bookedRoom = $model;
+            if ($bookedRoom) {
+                $bookedRoom['reason'] = $request->reason;
+                $bookedRoom['cancel_by'] = $request->cancel_by;
+                $cancel = CancelRoom::create($bookedRoom->toArray());
+                // return $model->booking_id;
+                if ($cancel) {
+                    $numberOfRooms == 1 ? Booking::where('id', $model->booking_id)->update(['booking_status' => 0]) : null;
+                    $model->delete();
+                }
             }
+
+            return response()->json(['data' => '', 'message' => 'Successfully canceled', 'status' => true]);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -459,6 +498,9 @@ class BookingController extends Controller
                     'payment_mode' => $booked->payment_mode_id,
                     'description' => 'advance payment',
                     'amount' => $booked->advance_price,
+                    'type' => 'room',
+                    'room' => $booked->rooms,
+                    'company_id' => $request->company_id,
                 ];
                 $payment = new PaymentController();
                 $payment->store($paymentsData);
@@ -577,7 +619,7 @@ class BookingController extends Controller
     {
         return BookedRoom::whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', 0)
-                ->where('booking_status', 1);
+                ->where('booking_status', '<=', 2);
         })
             ->with('roomType')
             ->withOut('postings')

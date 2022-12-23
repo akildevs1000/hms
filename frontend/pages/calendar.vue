@@ -1295,7 +1295,7 @@ export default {
         cancel_by: this.$auth.user.id
       };
       this.$axios
-        .post(`cancel_reservation/${this.evenIid}`, payload)
+        .post(`cancel_room/${this.evenIid}`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.snackbar = data.status;

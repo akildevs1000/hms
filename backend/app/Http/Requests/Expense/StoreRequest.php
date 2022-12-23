@@ -27,12 +27,12 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            
             'item' => 'required',
             'amount' => 'required',
             'payment_modes' => 'required',
+            'qty' => 'required',
             'company_id' => 'required',
+            'voucher' => 'required',
         ];
-
     }
 }

@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
         $this->call([ShiftTypeTableSeeder::class]);
         $this->call([DeviceStatusSeeder::class]);
         $this->call([RoomsTableSeeder::class]);
+        $this->call([PaymentSeeder::class]);
+        $this->call([CountriesTableSeeder::class]);
 
         // local
         if (env('APP_ENV') == 'local') {

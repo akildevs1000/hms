@@ -356,20 +356,42 @@ export default {
         {
           icon: "mdi-account",
           title: "Customers",
-          to: "/customer/bill",
+          to: "/customer/list",
           menu: "reservation_access"
         },
-        {
-          icon: "mdi-cash",
-          title: "Expense",
-          to: "/expense",
-          menu: "expense_access"
-        },
+
         {
           icon: "mdi-cash",
           title: "Posting",
           to: "/posting",
           menu: "posting_access"
+        },
+
+        {
+          icon: "mdi-currency-usd",
+          title: `Accounts`,
+          open_menu: false,
+          menu: "accounts_access",
+          hasChildren: [
+            {
+              icon: "mdi-account",
+              title: "Customers Bill  ",
+              to: "/customer/bill",
+              menu: "customer_bill_access"
+            },
+            {
+              icon: "mdi-cash-multiple ",
+              title: "Income",
+              to: "/account",
+              menu: "income_access"
+            },
+            {
+              icon: "mdi-cash",
+              title: "Expense",
+              to: "/expense",
+              menu: "expense_access"
+            }
+          ]
         }
       ],
 

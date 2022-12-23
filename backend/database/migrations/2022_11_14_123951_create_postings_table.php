@@ -34,6 +34,8 @@ return new class extends Migration
             $table->string('cgst')->nullable();
             $table->string('tax_type')->nullable();
 
+            $table->integer('payment_mode_id')->nullable();
+
             $table->timestamps();
         });
     }

@@ -152,10 +152,10 @@ class MySeeder extends Seeder
             ],
         ];
 
-        DB::table('expenses')->insert($Expenses);
+        // DB::table('expenses')->insert($Expenses);
         DB::table('id_card_types')->insert($ids);
-        DB::table('bookings')->insert($bookings);
+        // DB::table('bookings')->insert($bookings);
         DB::table('users')->insert($users);
-        DB::table('customers')->insert($customers);
+        // DB::table('customers')->insert($customers);
     }
 }

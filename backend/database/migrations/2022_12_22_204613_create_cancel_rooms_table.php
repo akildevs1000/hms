@@ -13,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('booked_rooms', function (Blueprint $table) {
+        Schema::create('cancel_rooms', function (Blueprint $table) {
             $table->id();
+
             $table->integer('company_id');
             $table->integer('booking_id');
             $table->integer('room_id')->nullable();
@@ -39,6 +40,9 @@ return new class extends Migration
             $table->string('grand_total')->nullable();
 
 
+            $table->text('reason')->nullable();
+            $table->string('cancel_by')->nullable();
+
             $table->string('no_of_adult')->nullable();
             $table->string('no_of_child')->nullable();
             $table->string('no_of_baby')->nullable();
@@ -55,6 +59,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('booked_rooms');
+        Schema::dropIfExists('cancel_rooms');
     }
 };
