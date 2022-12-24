@@ -1044,8 +1044,14 @@ export default {
             jsEvent.preventDefault();
           });
 
-          arg.el.addEventListener("mouseover", jsEvent => {
-            // this.get_event_by_mouse_hover(eventId, jsEvent);
+          // arg.el.addEventListener("mouseover", jsEvent => {
+          //   this.get_event_by_mouse_hover(eventId, jsEvent);
+          // });
+
+          arg.el.addEventListener("dblclick", jsEvent => {
+            this.evenIid = eventId;
+            this.isDbCLick = true;
+            this.get_data();
           });
 
           arg.el.addEventListener("mouseleave", jsEvent => {
@@ -1128,7 +1134,8 @@ export default {
         origin_price: "",
         room_id: "",
         isCalculate: false
-      }
+      },
+      isDbCLick: false
     };
   },
 
@@ -1196,7 +1203,6 @@ export default {
     show(id, jsEvent) {
       this.LoadingDialog = true;
       this.evenIid = id;
-      console.log(this.evenIid);
       this.get_data(jsEvent);
     },
 
@@ -1240,10 +1246,15 @@ export default {
         this.customerId = data.customer_id;
         console.log(this.checkData);
         this.show_context_menu(jsEvent);
+
+        if (this.isDbCLick) {
+          this.get_event_by_db_click();
+        }
       });
     },
 
     get_event_by_mouse_hover(id, jsEvent) {
+      console.log(id);
       this.evenIid = id;
       this.tx = jsEvent.clientX;
       this.ty = jsEvent.clientY;
@@ -1251,6 +1262,10 @@ export default {
         this.showTooltip = true;
       });
       this.get_data();
+    },
+
+    get_event_by_db_click() {
+      this.$router.push(`/customer/details/${this.customerId}`);
     },
 
     create_reservation(e, obj) {
@@ -1350,10 +1365,10 @@ export default {
     },
 
     store_check_out() {
-      if (this.checkData.full_payment == "") {
-        alert("enter full payment");
-        return true;
-      }
+      // if (this.checkData.full_payment == "") {
+      //   alert("enter full payment");
+      //   return true;
+      // }
 
       this.loading = true;
       let payload = {
@@ -1411,9 +1426,9 @@ export default {
 
     store_check_in(data) {
       if (
-        this.new_payment == "" ||
-        this.new_payment == 0 ||
-        (data.document ? "" : this.document == null)
+        // this.new_payment == "" ||
+        // this.new_payment == 0 ||
+        data.document ? "" : this.document == null
       ) {
         alert("Enter required fields");
         return;

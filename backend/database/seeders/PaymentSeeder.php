@@ -23,7 +23,8 @@ class PaymentSeeder extends Seeder
             ['id' => 3, 'name' => 'Online'],
             ['id' => 4, 'name' => 'Bank'],
             ['id' => 5, 'name' => 'UPI'],
-            ['id' => 6, 'name' => 'Cheque']
+            ['id' => 6, 'name' => 'Cheque'],
+            ['id' => 7, 'name' => 'City Ledger']
         ];
 
 

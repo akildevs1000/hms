@@ -53,7 +53,7 @@ class BookingRequest extends FormRequest
             $arr['source'] = 'required';
         }
         if ($this->type == 'Travel Agency') {
-            $arr['agent_name'] = 'required';
+            $arr['source'] = 'required';
         }
 
         return $arr;

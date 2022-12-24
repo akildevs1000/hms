@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->string('source')->nullable();
             $table->string('agent_name')->nullable();
-            $table->integer('rooms')->nullable();
+            $table->string('rooms')->nullable();
             $table->date('booking_date')->nullable();
             $table->dateTime('check_in')->nullable();
             $table->dateTime('check_out')->nullable();
@@ -38,6 +38,12 @@ return new class extends Migration
             $table->string('document')->nullable();
             $table->text('request')->nullable();
             $table->integer('company_id')->default(0);
+
+
+            $table->string('reference_no')->nullable();
+            $table->string('paid_by')->nullable(); //1 paid by hotel => 2,  paid by agent => 2,
+
+
             $table->timestamps();
         });
     }

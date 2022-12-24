@@ -92,6 +92,7 @@ class RoomController extends Controller
     public function roomListForGridView(Request $request)
     {
 
+
         $confirmedBooking = BookedRoom::whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', 0);
             $q->where('booking_status', 1);
@@ -104,9 +105,15 @@ class RoomController extends Controller
             $q->where('advance_price', '=', 0);
         })->count();
 
-        // where('booking_status', '!=', 0)
-        //     ->where('booking_status', 1);
-
+        $checkInRooms = BookedRoom::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0);
+            $q->where('booking_status', 2);
+        })->get(["booking_id", "no_of_adult", "no_of_child", "no_of_baby"])->toArray();
+        [
+            $no_of_adult = array_column($checkInRooms, 'no_of_adult'),
+            $no_of_child = array_column($checkInRooms, 'no_of_child'),
+            $no_of_baby = array_column($checkInRooms, 'no_of_baby'),
+        ];
 
         $model = BookedRoom::query();
         $roomIds = $model
@@ -125,6 +132,12 @@ class RoomController extends Controller
             'availableRooms' => Room::whereNotIn('id', $roomIds)->get(),
             'confirmedBooking' =>  $confirmedBooking,
             'waitingBooking' =>  $waitingBooking,
+
+            'members' => [
+                'adult' =>  array_sum($no_of_adult),
+                'child' =>  array_sum($no_of_child),
+                'baby' =>  array_sum($no_of_baby),
+            ],
         ];
 
 

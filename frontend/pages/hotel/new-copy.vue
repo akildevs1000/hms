@@ -478,7 +478,7 @@
               </v-col>
               <v-col md="6" cols="12" sm="12" v-if="isAgent">
                 <label class="col-form-label">Agent Name</label>
-                <!-- <v-text-field
+                <v-text-field
                   dense
                   outlined
                   type="text"
@@ -488,19 +488,7 @@
                   :error-messages="
                     errors && errors.agent_name ? errors.agent_name[0] : ''
                   "
-                ></v-text-field> -->
-                <v-select
-                  dense
-                  outlined
-                  :items="agentList"
-                  type="text"
-                  v-model="room.source"
-                  :hide-details="errors && !errors.source"
-                  :error="errors && errors.source"
-                  :error-messages="
-                    errors && errors.source ? errors.source[0] : ''
-                  "
-                ></v-select>
+                ></v-text-field>
               </v-col>
               <v-col md="6" sm="12" cols="12" dense v-if="isOnline">
                 <label class="col-form-label">Source </label>
@@ -516,35 +504,6 @@
                   "
                 ></v-select>
               </v-col>
-              <v-col md="6" cols="12" sm="12" v-if="isAgent || isOnline">
-                <label class="col-form-label">Reference Number</label>
-                <v-text-field
-                  dense
-                  outlined
-                  type="text"
-                  v-model="room.reference_no"
-                  :hide-details="errors && !errors.reference_no"
-                  :error="errors && errors.reference_no"
-                  :error-messages="
-                    errors && errors.reference_no ? errors.reference_no[0] : ''
-                  "
-                ></v-text-field>
-              </v-col>
-              <v-col
-                md="6"
-                cols="12"
-                sm="12"
-                v-if="isAgent || isOnline"
-                class="mt-2"
-              >
-                <v-container fluid>
-                  <v-radio-group v-model="room.paid_by" row>
-                    <v-radio label="Paid at Hotel" value="1"></v-radio>
-                    <v-radio label="Paid by Agents" value="2"></v-radio>
-                  </v-radio-group>
-                </v-container>
-              </v-col>
-
               <v-col
                 md="6"
                 sm="12"
@@ -692,10 +651,13 @@
                         <label class="col-form-label">Amount : </label>
                         {{ item.price }}.00
                       </v-col>
-
+                      <!-- <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Extra Bed : </label>
+                        {{ item.bed_amount }}.00
+                      </v-col> -->
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Meal : </label>
-                        {{ capsTitle(item.meal) }}
+                        {{ item.meal }}
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Tax : </label>
@@ -821,56 +783,6 @@
                           v-model="customer.last_name"
                         ></v-text-field>
                       </v-col>
-                      <v-col md="3" sm="12" cols="12" dense>
-                        <label class="col-form-label"
-                          >Adult <span class="text-danger">*</span>
-                        </label>
-                        <div class="wrapper">
-                          <span
-                            class="minus"
-                            @click="temp.no_of_adult < 1 || temp.no_of_adult--"
-                            >-</span
-                          >
-                          <span class="num">{{ temp.no_of_adult }}</span>
-                          <span
-                            class="plus"
-                            @click="temp.no_of_adult > 2 || temp.no_of_adult++"
-                            >+</span
-                          >
-                        </div>
-                      </v-col>
-                      <v-col md="3" sm="12" cols="12" dense>
-                        <label class="col-form-label">Child </label>
-                        <div class="wrapper">
-                          <span
-                            class="minus"
-                            @click="temp.no_of_child < 1 || temp.no_of_child--"
-                            >-</span
-                          >
-                          <span class="num">{{ temp.no_of_child }}</span>
-                          <span
-                            class="plus"
-                            @click="temp.no_of_child > 1 || temp.no_of_child++"
-                            >+</span
-                          >
-                        </div>
-                      </v-col>
-                      <v-col md="3" sm="12" cols="12" dense>
-                        <label class="col-form-label">Baby </label>
-                        <div class="wrapper">
-                          <span
-                            class="minus"
-                            @click="temp.no_of_baby < 1 || temp.no_of_baby--"
-                            >-</span
-                          >
-                          <span class="num">{{ temp.no_of_baby }}</span>
-                          <span
-                            class="plus"
-                            @click="temp.no_of_baby > 1 || temp.no_of_baby++"
-                            >+</span
-                          >
-                        </div>
-                      </v-col>
                       <v-col md="6" sm="12" cols="12" dense>
                         <label class="col-form-label">
                           Meals
@@ -879,15 +791,12 @@
                           v-model="temp.meal"
                           :items="meals"
                           dense
-                          item-text="name"
-                          item-value="slug"
                           outlined
                           :hide-details="errors && !errors.meal"
                           :error="errors && errors.meal"
                           :error-messages="
                             errors && errors.meal ? errors.meal[0] : ''
                           "
-                          @change="changeMealPlan(temp.meal)"
                         ></v-select>
                       </v-col>
                       <v-col md="6" sm="12" cols="12" dense></v-col>
@@ -1073,8 +982,7 @@
                     { id: 3, name: 'Online' },
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                    { id: 7, name: 'City Ledger' }
+                    { id: 6, name: 'Cheque' }
                   ]"
                   item-text="name"
                   item-value="id"
@@ -1210,7 +1118,6 @@
 export default {
   data() {
     return {
-      row: null,
       calIn: {},
       calOut: {},
       searchDialog: false,
@@ -1233,7 +1140,13 @@ export default {
       show_password_confirm: false,
       roomTypes: [],
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
-
+      meals: [
+        "Breakfast",
+        "Breakfast and Dinner",
+        "Breakfast and Lunch",
+        "Full Board",
+        "Room only"
+      ],
       search: {
         mobile: "0752388923"
       },
@@ -1252,9 +1165,6 @@ export default {
         "Booking.com",
         "TripAdvisor.in"
       ],
-
-      agentList: ["agent1", "agent2", "agent3", "agent4", "agent5"],
-
       idCards: [],
       temp: {
         check_in_menu: false,
@@ -1268,7 +1178,7 @@ export default {
         cgst: 0,
         check_in: "",
         check_out: "",
-        meal: "room_only_price",
+        meal: "Room only",
         bed_amount: 0,
         room_discount: 0,
         after_discount: 0, //(price - room_discount)
@@ -1276,13 +1186,8 @@ export default {
         total_with_tax: 0, //(after_discount * room_tax)
         total: 0, //(total_with_tax * bed_amount)
         grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
-
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0
+        company_id: this.$auth.user.company.id
       },
-
       check_in_menu: false,
       check_out_menu: false,
       upload: {
@@ -1315,9 +1220,7 @@ export default {
         request: "",
         company_id: this.$auth.user.company.id,
         remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: ""
+        rooms: ""
       },
       reservation: {},
       countryList: [],
@@ -1328,15 +1231,6 @@ export default {
         { id: 3, name: "Miss" },
         { id: 4, name: "Ms" },
         { id: 5, name: "Dr" }
-      ],
-
-      meals: [
-        { name: "Room only", slug: "room_only_price" },
-        { name: "Breakfast", slug: "Break_fast_price" },
-        { name: "Breakfast and Dinner", slug: "Break_fast_with_dinner_price" },
-        { name: "Breakfast and Lunch", slug: "Break_fast_with_lunch_price" },
-        { name: "Full Board", slug: "full_board_price" }
-        // { name: 5, slug: "lunch_with_dinner_price" },
       ],
 
       customer: {
@@ -1443,15 +1337,6 @@ export default {
         this.isAgent = true;
         return;
       }
-
-      if (val == "Walking") {
-        this.room.source = "walking";
-      }
-
-      if (val == "Complimentary") {
-        this.room.source = "complimentary";
-      }
-
       this.isOnline = false;
       this.isAgent = false;
     },
@@ -1496,7 +1381,14 @@ export default {
       if (this.selectedRooms.length == 0) {
       }
     },
-
+    selectRoom(item) {
+      this.RoomDrawer = false;
+      this.temp.company_id = this.$auth.user.company.id;
+      this.temp.room_no = item.room_no;
+      this.temp.room_id = item.id;
+      this.temp.room_type = item.room_type.name;
+      this.temp.price = item.price;
+    },
     searchAvailableRoom(val) {
       let arr = this.availableRooms;
       let res = arr.filter(e => e.room_no == val);
@@ -1527,62 +1419,21 @@ export default {
       this.temp.sgst = gst;
       return tax;
     },
-
-    selectRoom(item) {
-      this.RoomDrawer = false;
-      this.temp.company_id = this.$auth.user.company.id;
-      this.temp.room_no = item.room_no;
-      this.temp.room_id = item.id;
-      this.temp.room_type = item.room_type.name;
-      this.temp.price = item.price;
-    },
-
-    capsTitle(val) {
-      if (!val) return "---";
-      let res = val;
-      let upper = res.toUpperCase();
-      let title = upper.replace(/[^A-Z]/g, " ");
-      return title;
-    },
-
-    changeMealPlan(mealType) {
-      if (!this.temp.room_type) {
-        alert("Select room");
-        return;
-      }
-
-      console.log(this.temp.room_type);
-      console.log(mealType);
-      let payload = {
-        params: {
-          room_type: this.temp.room_type,
-          slug: mealType,
-          company_id: this.$auth.user.company.id
-        }
-      };
-      this.$axios
-        .get(`get_room_price_by_meal_plan`, payload)
-        .then(({ data }) => {
-          this.temp.price = data;
-          console.log(data);
-        });
-    },
-
     add_room() {
-      if (this.temp.room_no == "") {
+      if (this.temp.room_no == undefined) {
         this.alert("Missing!", "Select room", "error");
         return;
       }
-      console.log(this.temp);
-      // return;
 
       this.temp.after_discount =
         parseInt(this.temp.price) -
         parseInt(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
       this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
+      // this.get_bed_with_tax_amount();
 
       this.temp.total = parseInt(this.temp.total_with_tax);
+      // +        parseInt(this.temp.bed_amount || 0);
 
       this.temp.grand_total =
         parseInt(this.temp.days) * parseInt(this.temp.total);
@@ -1593,12 +1444,15 @@ export default {
       this.temp.room_discount =
         this.temp.room_discount == "" ? 0 : this.temp.room_discount;
 
+      // this.temp.bed_amount =
+      //   this.temp.bed_amount == "" ? 0 : this.temp.bed_amount;
+
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
-
       this.selectedRooms.push(this.temp);
 
       this.get_total_amounts();
+      // this.get_all_room_Total_amount();
       this.runAllFunctions();
 
       this.clear_add_room();
@@ -1633,52 +1487,14 @@ export default {
     },
 
     clear_add_room() {
-      let check_in_old = this.temp.check_in;
-      let check_out_old = this.temp.check_out;
-
-      this.temp = {
-        check_in_menu: false,
-        check_out_menu: false,
-        room_no: "",
-        room_type: "",
-        room_id: "",
-        price: 0,
-        days: 0,
-        sgst: 0,
-        cgst: 0,
-        check_in: check_in_old,
-        check_out: check_out_old,
-        meal: "room_only_price",
-        bed_amount: 0,
-        room_discount: 0,
-        after_discount: 0, //(price - room_discount)
-        room_tax: 0,
-        total_with_tax: 0, //(after_discount * room_tax)
-        total: 0, //(total_with_tax * bed_amount)
-        grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
-
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0
-      };
-
-      return;
-
       let check_in = this.temp.check_in;
       let check_out = this.temp.check_out;
-
       this.temp = {};
-
       this.temp.check_in = check_in;
       // this.temp.bed_amount = 0;
       this.temp.room_discount = 0;
       this.temp.check_out = check_out;
       this.temp.meal = "Room only";
-
-      this.temp.no_of_adult = 1;
-      this.temp.no_of_child = 0;
-      this.temp.no_of_baby = 0;
     },
     get_available_rooms() {
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
@@ -1713,7 +1529,7 @@ export default {
       this.$axios.get(`get_customer/${contact_no}`).then(({ data }) => {
         if (!data.status) {
           this.checkLoader = false;
-          // this.customer = {};
+          this.customer = {};
           this.customer.contact_no = contact_no;
           alert("Customer not found");
           return;
@@ -1800,7 +1616,6 @@ export default {
         ...this.room,
         customer_id: id
       };
-      console.log(payload);
       this.$axios
         .post("/booking1", payload)
         .then(({ data }) => {

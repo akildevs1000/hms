@@ -3,13 +3,86 @@
     <v-row>
       <v-col md="5">
         <v-card class="pa-5 mt-0" elevation="0">
-          <h5>{{ customer.full_name }}</h5>
+          <h5>Customer</h5>
           <hr />
-          <span class="text-center">
-            <b>Mobile : </b>{{ customer.contact_no }} | <b>Mobile : </b
-            >{{ customer.email }}
-          </span>
-          <br />
+          <table>
+            <tbody>
+              <tr>
+                <th class="no-bg">Name</th>
+                <td class="no-bg">
+                  {{ customer.title || "---" }}
+                  {{ customer.full_name || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Mobile</th>
+                <td class="no-bg">
+                  {{ customer.contact_no || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Whatsapp</th>
+                <td class="no-bg">
+                  {{ customer.whatsapp || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Email</th>
+                <td class="no-bg">
+                  {{ customer.email || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">address</th>
+                <td class="no-bg">
+                  {{ customer.address || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Whatsapp</th>
+                <td class="no-bg">
+                  {{ customer.whatsapp || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Nationality</th>
+                <td class="no-bg">
+                  {{ customer.nationality || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Id Card No</th>
+                <td class="no-bg">
+                  {{ customer.id_card_no || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Car No</th>
+                <td class="no-bg">
+                  {{ customer.car_no || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Adults</th>
+                <td class="no-bg">
+                  {{ customer.no_of_adult || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Childs</th>
+                <td class="no-bg">
+                  {{ customer.no_of_child || "---" }}
+                </td>
+              </tr>
+              <tr>
+                <th class="no-bg">Babies</th>
+                <td class="no-bg">
+                  {{ customer.no_of_baby || "---" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
           <br />
           <br />
           <h5>Reservation</h5>
@@ -175,6 +248,10 @@ export default {
 </script>
 
 <style scoped>
+.no-bg {
+  background-color: white !important;
+}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;

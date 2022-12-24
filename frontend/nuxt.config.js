@@ -63,9 +63,9 @@ export default {
             mode: "client"
         },
         {
-            src: '~/plugins/vue-apexchart.js',
+            src: "~/plugins/vue-apexchart.js",
             ssr: false
-        },
+        }
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
@@ -75,7 +75,7 @@ export default {
     buildModules: [
         // https://go.nuxtjs.dev/vuetify
         "@nuxtjs/vuetify",
-        '@nuxtjs/dotenv',
+        "@nuxtjs/dotenv"
     ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
@@ -85,12 +85,13 @@ export default {
         // https://go.nuxtjs.dev/pwa
         "@nuxtjs/pwa",
         "@nuxtjs/auth-next",
-        'nuxt-sweetalert2'
+        "nuxt-sweetalert2"
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
-        baseURL: process.env.BACKEND_URL,
+        // baseURL: "http://localhost:8001/api"
+        baseURL: process.env.BACKEND_URL
     },
 
     auth: {
@@ -147,7 +148,7 @@ export default {
                     error: colors.deepOrange.accent4,
                     success: colors.green.accent3,
                     main_bg: "#ECF0F4"
-                },
+                }
                 // dark: {
                 //     // primary: "#fffff",
                 //     // accent: "#d8363a",
@@ -165,11 +166,16 @@ export default {
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
-        transpile: ["vuetify/lib", "tiptap-vuetify", "vue-apexchart", "@fullcalendar.*"]
+        transpile: [
+            "vuetify/lib",
+            "tiptap-vuetify",
+            "vue-apexchart",
+            "@fullcalendar.*"
+        ]
     },
 
     server: {
         host: process.env.LOCAL_IP,
-        port: process.env.LOCAL_PORT,
+        port: process.env.LOCAL_PORT
     }
 };

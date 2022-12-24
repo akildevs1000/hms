@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\ReportNotification;
 use Illuminate\Support\Facades\DB;
 use App\Mail\ReportNotificationMail;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -184,6 +185,16 @@ Route::get('/test_attachment', function () {
     return "done";
 });
 Route::get('/my_test', function () {
+
+    // All countries
+    // length 252
+
+    $booked = " ";
+    if ($booked) {
+        return '1';
+    }
+    return 'done';
+
 
     $rooms =    [
         [

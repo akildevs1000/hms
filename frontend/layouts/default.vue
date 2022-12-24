@@ -368,6 +368,13 @@ export default {
         },
 
         {
+          icon: "mdi-account",
+          title: "Agents",
+          to: "/agents",
+          menu: "agent_access"
+        },
+
+        {
           icon: "mdi-currency-usd",
           title: `Accounts`,
           open_menu: false,

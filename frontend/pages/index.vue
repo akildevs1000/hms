@@ -664,7 +664,7 @@
                 Available Rooms
               </h4>
               <span class="data-1">
-                {{ (notAvailableRooms && availableRooms.length) || 0 }}
+                {{ (notAvailableRooms && notAvailableRooms.length) || 0 }}
               </span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -958,9 +958,11 @@
                   Checked In
                 </h4>
                 <span class="data-1">
-                  <small>Adults : 12</small><br />
-                  <small>Child : 4</small><br />
-                  <small>Baby : 1</small>
+                  <small>Adults : {{ members.adult }}</small
+                  ><br />
+                  <small>Child : {{ members.child }}</small
+                  ><br />
+                  <small>Babies : {{ members.baby }}</small>
                 </span>
                 <p class="mb-0 text-sm">
                   <span class="mr-2">
@@ -1056,6 +1058,12 @@ export default {
         sgst: 0,
         cgst: 0,
         tax_type: -1
+      },
+
+      members: {
+        adult: 0,
+        child: 0,
+        baby: 0
       },
 
       headers: [
@@ -1173,6 +1181,9 @@ export default {
         this.availableRooms = data.availableRooms;
         this.confirmedBooking = data.confirmedBooking;
         this.waitingBooking = data.waitingBooking;
+        this.members = {
+          ...data.members
+        };
 
         console.log(this.notAvailableRooms.length);
       });
@@ -1218,9 +1229,9 @@ export default {
 
     store_check_in(data) {
       if (
-        this.new_payment == "" ||
-        this.new_payment == 0 ||
-        (data.document ? "" : this.document == null)
+        // this.new_payment == "" ||
+        // this.new_payment == 0 ||
+        data.document ? "" : this.document == null
       ) {
         alert("Enter required fields");
         return;
@@ -1374,10 +1385,10 @@ export default {
     },
 
     store_check_out() {
-      if (this.checkData.full_payment == "") {
-        alert("enter full payment");
-        return true;
-      }
+      // if (this.checkData.full_payment == "") {
+      //   alert("enter full payment");
+      //   return true;
+      // }
 
       this.loading = true;
       let payload = {

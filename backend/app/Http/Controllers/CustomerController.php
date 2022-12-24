@@ -12,7 +12,9 @@ class CustomerController extends Controller
 {
     public function index(Request $request, Customer $model)
     {
-        return $model->paginate($request->per_page);
+        return $model
+            ->where('company_id', $request->company_id)
+            ->paginate($request->per_page);
     }
 
     public function store(StoreRequest $request)

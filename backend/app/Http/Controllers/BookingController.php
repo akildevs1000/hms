@@ -489,10 +489,40 @@ class BookingController extends Controller
             $data["customer_id"] = $request->customer_id;
             $data['booking_date'] = now();
             $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
-
             $booked = Booking::create($data);
 
             if ($booked) {
+                if ($booked->paid_by && $booked->paid_by == 2) {
+                    $agentsData = [
+                        'booking_id' => $booked->id,
+                        'customer_id' => $booked->customer_id ?? '',
+                        'type' => $booked->type ?? '',
+                        'source' => $booked->source,
+                        'reference_no' => $booked->reference_no ?? '',
+                        'amount' => $booked->total_price ?? '',
+                        'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
+                        'company_id' => $request->company_id ?? '',
+                        'booking_type' => 'customer',
+                    ];
+                    $payment = new AgentsController();
+                    $payment->store($agentsData);
+                }
+
+                if ($booked->payment_mode_id && $booked->payment_mode_id == 7) {
+                    $agentsData = [
+                        'booking_id' => $booked->id,
+                        'customer_id' => $booked->customer_id ?? '',
+                        'type' => 'Customer' ?? '',
+                        'source' => $booked->source,
+                        'reference_no' => $booked->reference_no ?? '',
+                        'amount' => $booked->total_price ?? '',
+                        'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
+                        'company_id' => $request->company_id ?? '',
+                    ];
+                    $payment = new AgentsController();
+                    $payment->store($agentsData);
+                }
+
                 $paymentsData = [
                     'booking_id' => $booked->id,
                     'payment_mode' => $booked->payment_mode_id,
@@ -597,7 +627,6 @@ class BookingController extends Controller
         }
     }
 
-
     public function reservationList(Request $request)
     {
         $model = Booking::query()
@@ -613,7 +642,6 @@ class BookingController extends Controller
             ->where('booking_status', '!=', 0)
             ->paginate($request->per_page ?? 20);
     }
-
 
     public function getBookedRooms(Request $request)
     {
