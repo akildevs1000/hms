@@ -37,7 +37,7 @@
       right
       :fixed="true"
       :clipped="true"
-      style="z-index:1000"
+      style="z-index: 1000"
     >
       <v-list-item>
         <v-list-item-content>
@@ -56,7 +56,7 @@
       </v-list-item>
       <!-- :color="item.background" -->
       <v-alert
-        style="border-bottom:1px solid rgba(0, 0, 0, 0.2);"
+        style="border-bottom: 1px solid rgba(0, 0, 0, 0.2)"
         :style="index == 1 ? 'border-top:1px solid rgba(0, 0, 0, 0.2);' : ''"
         border="left"
         colored-border
@@ -84,7 +84,7 @@
     <!-- color="#ECF0F4" -->
     <v-app-bar
       elevation="0"
-      style="position:fixed;z-index:1;left:315px;width:70%;top:64px"
+      style="position: fixed; z-index: 1; left: 315px; width: 70%; top: 64px"
       width="1000"
       scroll-threshold
       tile
@@ -121,16 +121,16 @@
         <v-card class="mb-8">
           <h6 class="p-3">Details</h6>
           <v-divider class="p-0 m-0" dense></v-divider>
-          <v-container style="background-color:#F9FAFD">
+          <v-container style="background-color: #f9fafd">
             <v-row>
               <div class="d-flex mt-4 primary--text">
                 <v-icon color="primary" large>mdi-account</v-icon>
-                <span style="font-size:25px" class="ml-2 mt-1 ">
+                <span style="font-size: 25px" class="ml-2 mt-1">
                   Customer
                 </span>
                 <v-divider
                   class="ml-3 mt-6 mr-3"
-                  style="padding-top:1px"
+                  style="padding-top: 1px"
                 ></v-divider>
                 <v-icon @click="searchDialog = true" color="primary" medium
                   >mdi-account-search-outline
@@ -167,7 +167,7 @@
                   v-model="room.customer_status"
                 ></v-select>
               </v-col>
-              <v-col md="12" class="b-0 mt-2" style="padding-bottom:0px" dense>
+              <v-col md="12" class="b-0 mt-2" style="padding-bottom: 0px" dense>
                 <h6><b>Personal Details</b></h6>
               </v-col>
               <v-col md="2" cols="12" sm="12">
@@ -358,7 +358,7 @@
                   </template>
                 </v-file-input>
               </v-col>
-              <v-col md="12" class="b-0 mt-2" style="padding-bottom:0px" dense>
+              <v-col md="12" class="b-0 mt-2" style="padding-bottom: 0px" dense>
                 <h6><b>Contact Number</b></h6>
               </v-col>
               <v-col md="6" cols="12" sm="12">
@@ -395,13 +395,11 @@
                 ></v-text-field>
               </v-col>
               <v-col md="1" sm="12" cols="12" dense>
-                <label class="col-form-label">
-                  Different
-                </label>
+                <label class="col-form-label"> Different </label>
                 <v-checkbox
                   v-model="isDiff"
                   :hide-details="true"
-                  class="pt-0  py-1 chk-align"
+                  class="pt-0 py-1 chk-align"
                   @click="newWhatsapp"
                 >
                 </v-checkbox>
@@ -451,12 +449,12 @@
             <v-row>
               <div class="d-flex mt-4 primary--text">
                 <v-icon color="primary" large>mdi-room-service</v-icon>
-                <span style="font-size:25px" class="ml-2 mt-1 ">
+                <span style="font-size: 25px" class="ml-2 mt-1">
                   More Details
                 </span>
                 <v-divider
                   class="ml-3 mt-6"
-                  style="padding-top:1px"
+                  style="padding-top: 1px"
                 ></v-divider>
               </div>
             </v-row>
@@ -565,12 +563,10 @@
             <v-row>
               <div class="d-flex mt-4 primary--text">
                 <v-icon color="primary" large>mdi-bed</v-icon>
-                <span style="font-size:25px" class="ml-2 mt-1 ">
-                  Rooms
-                </span>
+                <span style="font-size: 25px" class="ml-2 mt-1"> Rooms </span>
                 <v-divider
                   class="ml-3 mt-6"
-                  style="padding-top:1px"
+                  style="padding-top: 1px"
                 ></v-divider>
               </div>
             </v-row>
@@ -872,9 +868,7 @@
                         </div>
                       </v-col>
                       <v-col md="6" sm="12" cols="12" dense>
-                        <label class="col-form-label">
-                          Meals
-                        </label>
+                        <label class="col-form-label"> Meals </label>
                         <v-select
                           v-model="temp.meal"
                           :items="meals"
@@ -922,21 +916,17 @@
                         ></v-text-field>
                       </v-col> -->
                       <v-col md="2" sm="12" cols="12" dense>
-                        <label class="col-form-label">
-                          Discount
-                        </label>
+                        <label class="col-form-label"> Discount </label>
                         <v-checkbox
                           value="1"
                           v-model="isDiscount"
                           :hide-details="true"
-                          class="pt-0  py-1 chk-align"
+                          class="pt-0 py-1 chk-align"
                         >
                         </v-checkbox>
                       </v-col>
                       <v-col md="4" sm="12" cols="12" dense v-if="isDiscount">
-                        <label class="col-form-label">
-                          Amount
-                        </label>
+                        <label class="col-form-label"> Amount </label>
                         <v-text-field
                           dense
                           outlined
@@ -968,9 +958,9 @@
           <v-container
             class="px-10"
             grid-list-xs
-            style="background-color:#F9FAFD"
+            style="background-color: #f9fafd"
           >
-            <v-row style="font-size:15px" dense>
+            <v-row style="font-size: 15px" dense>
               <v-col md="6"><b class="#F9FAFD--text">Customer</b></v-col>
               <v-col md="6" class="text-right">{{ customer.first_name }}</v-col>
               <v-col md="6"><b class="#F9FAFD--text">Check In</b></v-col>
@@ -1038,7 +1028,7 @@
           <v-container
             class="px-10"
             grid-list-xs
-            style="background-color:#F9FAFD"
+            style="background-color: #f9fafd"
           >
             <v-row>
               <!-- <v-col md="12" cols="12" sm="12">
@@ -1074,7 +1064,7 @@
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
                     { id: 6, name: 'Cheque' },
-                    { id: 7, name: 'City Ledger' }
+                    { id: 7, name: 'City Ledger' },
                   ]"
                   item-text="name"
                   item-value="id"
@@ -1094,7 +1084,7 @@
                 <v-divider></v-divider>
               </v-col>
             </v-row>
-            <v-row style="font-size:15px" dense>
+            <v-row style="font-size: 15px" dense>
               <v-col cols="12" class="payment-table">
                 <table>
                   <tr colspan="2">
@@ -1129,12 +1119,12 @@
               </v-col>
               <v-col md="12" class="text-right"><v-divider></v-divider></v-col>
             </v-row>
-            <v-row style="font-size:15px" dense>
+            <v-row style="font-size: 15px" dense>
               <v-col cols="12" class="payment-table">
                 <table>
                   <tr>
-                    <td style="width:250px">Total Days</td>
-                    <td style="width:250px">
+                    <td style="width: 250px">Total Days</td>
+                    <td style="width: 250px">
                       <div align="right">{{ getDays() }}</div>
                     </td>
                   </tr>
@@ -1202,7 +1192,7 @@
           {{ selectedRooms }}
         </pre>
       </v-col>
-      <v-col md="1" style="width:300px"> </v-col>
+      <v-col md="1" style="width: 300px"> </v-col>
     </v-row>
   </div>
 </template>
@@ -1217,7 +1207,7 @@ export default {
       RoomDrawer: null,
       items: [
         { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" }
+        { title: "About", icon: "mdi-forum" },
       ],
       val: 1,
       Model: "Reservation",
@@ -1235,7 +1225,7 @@ export default {
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
 
       search: {
-        mobile: "0752388923"
+        mobile: "0752388923",
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1250,7 +1240,7 @@ export default {
         "Cleartrip",
         "in.hotels.com",
         "Booking.com",
-        "TripAdvisor.in"
+        "TripAdvisor.in",
       ],
 
       agentList: ["agent1", "agent2", "agent3", "agent4", "agent5"],
@@ -1280,13 +1270,13 @@ export default {
 
         no_of_adult: 1,
         no_of_child: 0,
-        no_of_baby: 0
+        no_of_baby: 0,
       },
 
       check_in_menu: false,
       check_out_menu: false,
       upload: {
-        name: ""
+        name: "",
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
@@ -1317,7 +1307,7 @@ export default {
         remark: "",
         rooms: "",
         reference_no: "",
-        paid_by: ""
+        paid_by: "",
       },
       reservation: {},
       countryList: [],
@@ -1327,7 +1317,7 @@ export default {
         { id: 2, name: "Mrs" },
         { id: 3, name: "Miss" },
         { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" }
+        { id: 5, name: "Dr" },
       ],
 
       meals: [
@@ -1335,7 +1325,7 @@ export default {
         { name: "Breakfast", slug: "Break_fast_price" },
         { name: "Breakfast and Dinner", slug: "Break_fast_with_dinner_price" },
         { name: "Breakfast and Lunch", slug: "Break_fast_with_lunch_price" },
-        { name: "Full Board", slug: "full_board_price" }
+        { name: "Full Board", slug: "full_board_price" },
         // { name: 5, slug: "lunch_with_dinner_price" },
       ],
 
@@ -1354,9 +1344,9 @@ export default {
         no_of_child: 0,
         no_of_baby: 0,
         address: "",
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       },
-      errors: []
+      errors: [],
     };
   },
   created() {
@@ -1458,8 +1448,8 @@ export default {
     get_room_types() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`room_type`, payload).then(({ data }) => {
         this.roomTypes = data;
@@ -1468,8 +1458,8 @@ export default {
     get_id_cards() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
@@ -1499,7 +1489,7 @@ export default {
 
     searchAvailableRoom(val) {
       let arr = this.availableRooms;
-      let res = arr.filter(e => e.room_no == val);
+      let res = arr.filter((e) => e.room_no == val);
       if (val.length == 0) {
         this.get_available_rooms();
         return;
@@ -1511,7 +1501,7 @@ export default {
     get_all_room_Total_amount() {
       let sum = 0;
       let res = 0;
-      this.selectedRooms.map(e => (sum += parseInt(e.total_with_tax)));
+      this.selectedRooms.map((e) => (sum += parseInt(e.total_with_tax)));
       res = parseInt(sum) + parseInt(this.room.total_extra);
       this.room.all_room_Total_amount = res;
     },
@@ -1557,8 +1547,8 @@ export default {
         params: {
           room_type: this.temp.room_type,
           slug: mealType,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios
         .get(`get_room_price_by_meal_plan`, payload)
@@ -1617,13 +1607,14 @@ export default {
 
       let tot_total = 0;
       this.selectedRooms.map(
-        e => (tot_bed_amount += e.bed_amount == "" ? 0 : parseInt(e.bed_amount))
+        (e) =>
+          (tot_bed_amount += e.bed_amount == "" ? 0 : parseInt(e.bed_amount))
       );
 
       this.room.total_extra = tot_bed_amount;
 
       this.selectedRooms.map(
-        e => (tot_total += e.total == "" ? 0 : parseInt(e.total))
+        (e) => (tot_total += e.total == "" ? 0 : parseInt(e.total))
       );
       this.room.all_room_Total_amount = tot_total;
     },
@@ -1660,7 +1651,7 @@ export default {
 
         no_of_adult: 1,
         no_of_child: 0,
-        no_of_baby: 0
+        no_of_baby: 0,
       };
 
       return;
@@ -1689,8 +1680,8 @@ export default {
       let payload = {
         params: {
           check_in: this.temp.check_in,
-          check_out: this.temp.check_out
-        }
+          check_out: this.temp.check_out,
+        },
       };
       this.RoomDrawer = true;
       this.$axios
@@ -1721,7 +1712,7 @@ export default {
 
         this.customer = {
           ...data.data,
-          customer_id: data.data.id
+          customer_id: data.data.id,
         };
         this.searchDialog = false;
         this.checkLoader = false;
@@ -1730,7 +1721,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -1744,11 +1735,11 @@ export default {
         return;
       }
 
-      let rooms = this.selectedRooms.map(e => e.room_no);
+      let rooms = this.selectedRooms.map((e) => e.room_no);
       this.room.rooms = rooms.toString();
       let payload = {
         ...this.room,
-        ...this.customer
+        ...this.customer,
       };
 
       this.$axios
@@ -1768,12 +1759,12 @@ export default {
             this.store_customer();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
     store_customer() {
       let payload = {
         ...this.customer,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       this.$axios
         .post("/customer", payload)
@@ -1792,13 +1783,13 @@ export default {
             this.store_booking(data.record);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_booking(id) {
       let payload = {
         ...this.room,
-        customer_id: id
+        customer_id: id,
       };
       console.log(payload);
       this.$axios
@@ -1813,7 +1804,7 @@ export default {
             this.store_document(data.record.id);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_document(id) {
@@ -1829,17 +1820,17 @@ export default {
             this.subLoad = false;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_booked_rooms(id, customer_id) {
-      this.selectedRooms.forEach(key => {
+      this.selectedRooms.forEach((key) => {
         key.booking_id = id;
         key.customer_id = customer_id;
       });
 
       let payload = {
-        ...this.selectedRooms
+        ...this.selectedRooms,
       };
       this.$axios
         .post("/store_booked_rooms", payload)
@@ -1860,13 +1851,13 @@ export default {
             this.subLoad = false;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

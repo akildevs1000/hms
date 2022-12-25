@@ -169,7 +169,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -211,7 +211,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -233,7 +233,7 @@
                 <th>Remaining Balance</th>
                 <td>{{ checkData.remaining_price }}.00</td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Full Payment
                   <span class="text-danger">*</span>
@@ -309,7 +309,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Bill No</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   <v-text-field
                     dense
                     outlined
@@ -321,7 +321,7 @@
               </tr>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -337,7 +337,7 @@
                   {{ checkData.room_type }}
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Item
                   <span class="text-danger">*</span>
@@ -352,7 +352,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   QTY
                   <span class="text-danger">*</span>
@@ -367,7 +367,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Amount
                   <span class="text-danger">*</span>
@@ -382,7 +382,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Type
                   <span class="text-danger">*</span>
@@ -394,7 +394,7 @@
                       { id: -1, name: 'select..' },
                       { name: 'Food' },
                       { name: 'Mess' },
-                      { name: 'Bed' }
+                      { name: 'Bed' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -420,7 +420,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -431,7 +431,7 @@
                   ></v-select>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Amount With Tax
                   <span class="text-danger">*</span>
@@ -514,7 +514,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -556,7 +556,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -573,9 +573,7 @@
               </tr>
               <tr></tr>
               <tr>
-                <th>
-                  Advance Payed (Rs.)
-                </th>
+                <th>Advance Payed (Rs.)</th>
                 <td>
                   {{ checkData.advance_price }}.00
                   <!-- <v-text-field
@@ -593,10 +591,8 @@
                 <th>Remaining Balance (Rs.)</th>
                 <td>{{ checkData.remaining_price }}.00</td>
               </tr>
-              <tr style="background-color:white">
-                <th>
-                  New Payment
-                </th>
+              <tr style="background-color: white">
+                <th>New Payment</th>
                 <td>
                   <v-text-field
                     dense
@@ -608,7 +604,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Document
                   <span class="text-danger">*</span>
@@ -685,7 +681,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -727,7 +723,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -755,7 +751,7 @@
                 <td>{{ checkData.remaining_price }}.00</td>
               </tr>
 
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   New Advance
                   <span class="text-danger">*</span>
@@ -799,10 +795,10 @@
         offset-y
         v-model="showTooltip"
       >
-        <table style=" border: none!important">
+        <table style="border: none !important">
           <tr class="bg-background">
             <th>Customer Name</th>
-            <td style="width:300px">
+            <td style="width: 300px">
               {{ checkData && checkData.title }}
             </td>
           </tr>
@@ -933,7 +929,7 @@
     </v-dialog>
     <v-row>
       <v-col cols="12">
-        <FullCalendar :options="calendarOptions" style="background:#fff;" />
+        <FullCalendar :options="calendarOptions" style="background: #fff" />
       </v-col>
     </v-row>
   </div>
@@ -946,7 +942,7 @@ import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 
 export default {
   components: {
-    FullCalendar
+    FullCalendar,
   },
   data() {
     return {
@@ -989,13 +985,13 @@ export default {
           {
             headerContent: "Room",
             field: "room_no",
-            width: "3%"
+            width: "3%",
           },
           {
             headerContent: "Room Type",
             field: "room_type",
-            width: "5%"
-          }
+            width: "5%",
+          },
         ],
         resources: [
           // { id: "103", room_no: "103", room_type: "king", eventColor: "green" },
@@ -1031,14 +1027,14 @@ export default {
           // }
         ],
 
-        eventDidMount: arg => {
+        eventDidMount: (arg) => {
           const eventId = arg.event.id;
           const bookingStatus = arg.event.extendedProps.status;
           if (arg.event.extendedProps.background) {
             arg.el.style.background = arg.event.extendedProps.background;
           }
 
-          arg.el.addEventListener("contextmenu", jsEvent => {
+          arg.el.addEventListener("contextmenu", (jsEvent) => {
             this.showTooltip = false;
             this.show(eventId, jsEvent);
             jsEvent.preventDefault();
@@ -1048,13 +1044,13 @@ export default {
           //   this.get_event_by_mouse_hover(eventId, jsEvent);
           // });
 
-          arg.el.addEventListener("dblclick", jsEvent => {
+          arg.el.addEventListener("dblclick", (jsEvent) => {
             this.evenIid = eventId;
             this.isDbCLick = true;
             this.get_data();
           });
 
-          arg.el.addEventListener("mouseleave", jsEvent => {
+          arg.el.addEventListener("mouseleave", (jsEvent) => {
             this.showTooltip = false;
           });
         },
@@ -1073,7 +1069,7 @@ export default {
             eventId: arg.event.id,
             start: this.convert_date_format(arg.event.start),
             end: this.convert_date_format(arg.event.end),
-            roomId: arg.event._def.resourceIds[0]
+            roomId: arg.event._def.resourceIds[0],
           };
 
           this.change_date_by_drag(obj);
@@ -1083,10 +1079,10 @@ export default {
             eventId: arg.event.id,
             start: this.convert_date_format(arg.event.start),
             end: this.convert_date_format(arg.event.end),
-            roomId: arg.event._def.resourceIds[0]
+            roomId: arg.event._def.resourceIds[0],
           };
           this.change_room_by_drag(obj);
-        }
+        },
       },
       headers: [
         { text: "#" },
@@ -1097,7 +1093,7 @@ export default {
         { text: "Item" },
         { text: "QTY" },
         { text: "Amount" },
-        { text: "Date" }
+        { text: "Date" },
       ],
       errors: [],
       data: [],
@@ -1121,7 +1117,7 @@ export default {
         tax: 0,
         sgst: 0,
         cgst: 0,
-        tax_type: -1
+        tax_type: -1,
       },
       RoomList: [],
       reservation: {
@@ -1133,9 +1129,9 @@ export default {
         price: "",
         origin_price: "",
         room_id: "",
-        isCalculate: false
+        isCalculate: false,
       },
-      isDbCLick: false
+      isDbCLick: false,
     };
   },
 
@@ -1174,7 +1170,7 @@ export default {
       this.formTitle = "Advance Payment";
       this.new_advance = 0;
       this.get_data();
-    }
+    },
   },
   computed: {
     getBalance() {
@@ -1188,7 +1184,7 @@ export default {
 
     currentDate() {
       return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
-    }
+    },
   },
   methods: {
     caps(str) {
@@ -1196,7 +1192,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
 
@@ -1236,8 +1232,8 @@ export default {
     get_data(jsEvent = null) {
       let payload = {
         params: {
-          id: this.evenIid
-        }
+          id: this.evenIid,
+        },
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
@@ -1276,7 +1272,7 @@ export default {
       this.reservation.isCalculate = true;
 
       this.reservation.room_id = this.RoomList.find(
-        e => e.room_no == obj.room_no
+        (e) => e.room_no == obj.room_no
       ).id;
 
       this.reservation.room_type = obj.room_type;
@@ -1288,15 +1284,15 @@ export default {
         params: {
           company_id: this.$auth.user.company.id,
           roomType: obj.room_type,
-          room_no: obj.room_no
-        }
+          room_no: obj.room_no,
+        },
       };
       this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
         this.reservation.room_id = data.id;
         this.reservation.price = data.room_type.price;
 
         let commitObj = {
-          ...this.reservation
+          ...this.reservation,
         };
         this.$store.commit("reservation", commitObj);
         this.$router.push(`/hotel/new`);
@@ -1318,8 +1314,8 @@ export default {
     room_list() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`room_list`, payload).then(({ data }) => {
         this.calendarOptions.resources = data;
@@ -1330,8 +1326,8 @@ export default {
     get_events() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`events_list`, payload).then(({ data }) => {
         this.calendarOptions.events = data;
@@ -1342,8 +1338,8 @@ export default {
       let id = this.evenIid;
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
         this.postings = data;
@@ -1375,7 +1371,7 @@ export default {
         booking_id: this.checkData.id,
         remaining_price: this.checkData.remaining_price,
         full_payment: this.checkData.full_payment,
-        payment_mode_id: this.checkData.payment_mode_id
+        payment_mode_id: this.checkData.payment_mode_id,
       };
       // return;
       this.$axios
@@ -1388,7 +1384,7 @@ export default {
             this.redirect_to_invoice(data.data);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     redirect_to_invoice(id) {
@@ -1410,7 +1406,7 @@ export default {
         booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       this.$axios
         .post("/paying_advance", payload)
@@ -1421,7 +1417,7 @@ export default {
             this.succuss(data, false, false, false, true);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_check_in(data) {
@@ -1439,7 +1435,7 @@ export default {
         new_payment: this.new_payment,
         booking_id: data.id,
         remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id
+        payment_mode_id: data.payment_mode_id,
       };
       this.$axios
         .post("/check_in_room", payload)
@@ -1451,7 +1447,7 @@ export default {
             data.document ? "" : this.store_document(bookingId);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_document(id) {
@@ -1466,7 +1462,7 @@ export default {
             this.errors = data.errors;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     preview(file) {
@@ -1480,8 +1476,9 @@ export default {
 
     setAvailable() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        // cancel_by: this.$auth.user.id,
       };
+
       this.$axios
         .post(`set_available/${this.evenIid}`, payload)
         .then(({ data }) => {
@@ -1495,12 +1492,12 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     setMaintenance() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`set_maintenance/${this.evenIid}`, payload)
@@ -1515,7 +1512,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     store_posting() {
@@ -1539,7 +1536,7 @@ export default {
         booking_id: this.checkData.id,
         room_id: this.checkData.room_id,
         room: this.checkData.room_no,
-        tax_type: per
+        tax_type: per,
       };
 
       this.$axios
@@ -1551,7 +1548,7 @@ export default {
             this.succuss(data, false, true);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     cancelItem() {
@@ -1562,7 +1559,7 @@ export default {
 
       let payload = {
         reason: this.reason,
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`cancel_room/${this.evenIid}`, payload)
@@ -1577,7 +1574,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     change_room_by_drag(obj) {
@@ -1595,7 +1592,7 @@ export default {
             this.get_events();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     change_date_by_drag(obj) {
@@ -1613,7 +1610,7 @@ export default {
             this.get_events();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     close() {
@@ -1663,8 +1660,8 @@ export default {
       this.loading = false;
       this.snackbar = true;
       this.response = data.message;
-    }
-  }
+    },
+  },
 };
 </script>
 

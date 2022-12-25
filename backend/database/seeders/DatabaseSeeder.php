@@ -2,10 +2,6 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\CompSeederTable;
-use Database\Seeders\DepartmentTableSeeder;
-use Database\Seeders\DesignationsTableSeeder;
-use Database\Seeders\EmployeeSeederTable;
 use Database\Seeders\MasterSeeder;
 use Database\Seeders\ModuleSeeder;
 use Database\Seeders\PermissionSeeder;
@@ -37,9 +33,6 @@ class DatabaseSeeder extends Seeder
         if (env('APP_ENV') == 'local') {
             $this->call([MySeeder::class]);
             $this->call([RoleSeeder::class]);
-            $this->call([DepartmentTableSeeder::class]);
-            $this->call([DesignationsTableSeeder::class]);
-            $this->call([EmployeeSeederTable::class]);
             // $this->call([CompSeederTable::class]);
         }
     }

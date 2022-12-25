@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\BookedRoom;
 use App\Models\Room;
-use App\Models\Booking;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +49,7 @@ class RoomController extends Controller
             } else {
                 return $this->response('Room cannot add.', null, 'Database error');
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -67,17 +66,17 @@ class RoomController extends Controller
 
     public function roomList()
     {
-        $arr = [];
-        $data =    Room::with('roomType')->get();
-        foreach ($data as   $d) {
+        $arr  = [];
+        $data = Room::with('roomType')->get();
+        foreach ($data as $d) {
             // $color =  $this->get_color($d->roomType->name);
             $arr[] = [
-                'id' => $d->room_no,
-                'room_no' => $d->room_no,
-                'room_type' => $d->roomType->name,
+                'id'               => $d->room_no,
+                'room_no'          => $d->room_no,
+                'room_type'        => $d->roomType->name,
                 // 'eventColor' => $color,
                 'eventBorderColor' => 'white',
-                'status' => $d->status,
+                'status'           => $d->status,
             ];
         }
 
@@ -86,12 +85,25 @@ class RoomController extends Controller
 
     public function roomListForMenu()
     {
-        return  Room::with('roomType')->get();
+        return Room::with('roomType')->get();
     }
 
     public function roomListForGridView(Request $request)
     {
 
+        $expectCheckInModel = BookedRoom::query();
+        $expectCheckIn      = $expectCheckInModel->whereDate('check_in', $request->check_in)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 1);
+            })->get();
+
+        $expectCheckOutModel = BookedRoom::query();
+        $expectCheckOut      = $expectCheckOutModel->clone()->whereDate('check_out', $request->check_in)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+            })->get();
 
         $confirmedBooking = BookedRoom::whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', 0);
@@ -115,42 +127,52 @@ class RoomController extends Controller
             $no_of_baby = array_column($checkInRooms, 'no_of_baby'),
         ];
 
-        $model = BookedRoom::query();
+        $model   = BookedRoom::query();
         $roomIds = $model
             ->whereDate('check_in', '<=', $request->check_in)
             // ->WhereDate('check_out', '>=', $request->check_out)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '<=', 3);
+                $q->where('booking_status', '<=', 4);
             })
             ->with('booking')
+            // ->get();
             ->pluck('room_id');
 
+        $notAvailableRooms = Room::whereIn('id', $roomIds)
+            ->with('bookedRoom', function ($q) use ($request) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '<=', 4);
+            })->get();
+
+        // return Room::whereIn('id', $roomIds)->with('bookedRoom.booking:id')->get();
 
         return [
-            'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(),
-            'availableRooms' => Room::whereNotIn('id', $roomIds)->get(),
-            'confirmedBooking' =>  $confirmedBooking,
-            'waitingBooking' =>  $waitingBooking,
+            'notAvailableRooms' => $notAvailableRooms,
+            // 'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(), //$notAvailableRooms,
+            'availableRooms'    => Room::whereNotIn('id', $roomIds)->get(),
+            'confirmedBooking'  => $confirmedBooking,
+            'waitingBooking'    => $waitingBooking,
+            'expectCheckIn'     => $expectCheckIn,
+            'expectCheckOut'    => $expectCheckOut,
 
-            'members' => [
-                'adult' =>  array_sum($no_of_adult),
-                'child' =>  array_sum($no_of_child),
-                'baby' =>  array_sum($no_of_baby),
+            'members'           => [
+                'adult' => array_sum($no_of_adult),
+                'child' => array_sum($no_of_child),
+                'baby'  => array_sum($no_of_baby),
             ],
         ];
 
-
-        $arr = [];
-        $data =    Room::with('roomType')->orderBy('status', 'desc')->get();
-        foreach ($data as   $d) {
-            $color =  $this->get_color($d->roomType->name);
+        $arr  = [];
+        $data = Room::with('roomType')->orderBy('status', 'desc')->get();
+        foreach ($data as $d) {
+            $color = $this->get_color($d->roomType->name);
             $arr[] = [
-                'id' => $d->id,
-                'room_no' => $d->room_no,
-                'room_type' => $d->roomType->name,
+                'id'         => $d->id,
+                'room_no'    => $d->room_no,
+                'room_type'  => $d->roomType->name,
                 'eventColor' => $color,
-                'status' => $d->status,
+                'status'     => $d->status,
             ];
         }
         return $arr;
@@ -158,7 +180,7 @@ class RoomController extends Controller
 
     public function getAvailableRoomsByDate(Request $request)
     {
-        $model = BookedRoom::query();
+        $model   = BookedRoom::query();
         $roomIds = $model
             ->whereDate('check_in', '<=', $request->check_in)
             ->WhereDate('check_out', '>=', $request->check_out)
@@ -167,13 +189,13 @@ class RoomController extends Controller
             })
             // ->get();
             ->pluck('room_id');
-        return   Room::whereNotIn('id', $roomIds)
+        return Room::whereNotIn('id', $roomIds)
             ->get();
     }
 
     public function get_color($val)
     {
-        return match ($val) {
+        return match($val) {
             'queen' => 'red',
             'king' => 'green',
             'castle' => '#9966CC',
@@ -183,7 +205,7 @@ class RoomController extends Controller
 
     public function get_room_price_by_meal_plan(Request $request)
     {
-        return   RoomType::where('company_id', $request->company_id)
+        return RoomType::where('company_id', $request->company_id)
             ->where('name', $request->room_type)
             ->pluck($request->slug)[0];
     }

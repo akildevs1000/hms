@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Room extends Model
 {
@@ -24,7 +24,7 @@ class Room extends Model
         "check_in_status",
         "check_out_status",
         "updated_at",
-        "updated_at"
+        "updated_at",
     ];
 
     /**
@@ -55,8 +55,8 @@ class Room extends Model
     public function room_type()
     {
         return $this->belongsTo(RoomType::class)->withDefault([
-            "name" => "---",
-            "price" => "---"
+            "name"  => "---",
+            "price" => "---",
         ]);
     }
 
@@ -64,8 +64,8 @@ class Room extends Model
     {
         // return '#f48665';
 
-        $status =   $this->room_type_id ?? '';
-        return    match ($status) {
+        $status = $this->room_type_id ?? '';
+        return match($status) {
             1 => '#f48665',
             2 => '#8e4cf1',
             3 => '#289cf5',

@@ -32,7 +32,7 @@
                 ></v-progress-linear>
                 <tr>
                   <th>Customer Name</th>
-                  <td style="width:300px">
+                  <td style="width: 300px">
                     {{ checkData && checkData.title }}
                   </td>
                 </tr>
@@ -74,7 +74,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
+                        { id: 6, name: 'Cheque' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -91,9 +91,7 @@
                 </tr>
                 <tr></tr>
                 <tr>
-                  <th>
-                    Advance Payed (Rs.)
-                  </th>
+                  <th>Advance Payed (Rs.)</th>
                   <td>{{ checkData.advance_price }}.00</td>
                 </tr>
                 <tr></tr>
@@ -101,10 +99,8 @@
                   <th>Remaining Balance (Rs.)</th>
                   <td>{{ checkData.remaining_price }}.00</td>
                 </tr>
-                <tr style="background-color:white">
-                  <th>
-                    New Payment
-                  </th>
+                <tr style="background-color: white">
+                  <th>New Payment</th>
                   <td>
                     <v-text-field
                       dense
@@ -116,7 +112,7 @@
                     ></v-text-field>
                   </td>
                 </tr>
-                <tr style="background-color:white">
+                <tr style="background-color: white">
                   <th>
                     Document
                     <span class="text-danger">*</span>
@@ -286,7 +282,7 @@
                         { id: -1, name: 'select..' },
                         { name: 'Food' },
                         { name: 'Mess' },
-                        { name: 'Bed' }
+                        { name: 'Bed' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -312,7 +308,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
+                        { id: 6, name: 'Cheque' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -412,7 +408,7 @@
                 ></v-progress-linear>
                 <tr>
                   <th>Customer Name</th>
-                  <td style="width:300px">
+                  <td style="width: 300px">
                     {{ checkData && checkData.title }}
                   </td>
                 </tr>
@@ -454,7 +450,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
+                        { id: 6, name: 'Cheque' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -474,7 +470,7 @@
                   <td>{{ checkData.remaining_price }}.00</td>
                 </tr>
 
-                <tr style="background-color:white">
+                <tr style="background-color: white">
                   <th>
                     New Advance
                     <span class="text-danger">*</span>
@@ -528,7 +524,7 @@
                 ></v-progress-linear>
                 <tr>
                   <th>Customer Name</th>
-                  <td style="width:300px">
+                  <td style="width: 300px">
                     {{ checkData && checkData.title }}
                   </td>
                 </tr>
@@ -570,7 +566,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
+                        { id: 6, name: 'Cheque' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -592,7 +588,7 @@
                   <th>Remaining Balance</th>
                   <td>{{ checkData.remaining_price }}.00</td>
                 </tr>
-                <tr style="background-color:white">
+                <tr style="background-color: white">
                   <th>
                     Full Payment
                     <span class="text-danger">*</span>
@@ -656,13 +652,11 @@
       <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Available Rooms
-              </h4>
+              <h4 class="card-title text-capitalize">Available Rooms</h4>
               <span class="data-1">
                 {{ (notAvailableRooms && notAvailableRooms.length) || 0 }}
               </span>
@@ -681,13 +675,11 @@
       <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 booked">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-closed"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Booked Room
-              </h4>
+              <h4 class="card-title text-capitalize">Booked Room</h4>
               <span class="data-1">
                 {{ (notAvailableRooms && notAvailableRooms.length) || 0 }}
               </span>
@@ -707,13 +699,11 @@
       <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Advance Paid Booking
-              </h4>
+              <h4 class="card-title text-capitalize">Advance Paid Booking</h4>
               <span class="data-1">
                 {{ confirmedBooking || "---" }}
               </span>
@@ -733,13 +723,11 @@
       <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Only Booking
-              </h4>
+              <h4 class="card-title text-capitalize">Only Booking</h4>
               <span class="data-1">
                 {{ waitingBooking || "---" }}
               </span>
@@ -759,15 +747,13 @@
       <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 checkedIn">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-closed"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Checked In
-              </h4>
+              <h4 class="card-title text-capitalize">Expect Check In</h4>
               <span class="data-1">
-                <!-- {{ rooms.notAvailableRooms.length || 0 }} -->
+                {{ expectCheckIn.length || 0 }}
               </span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -784,15 +770,13 @@
       <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 checkedOut">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-walking"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Checked Out
-              </h4>
+              <h4 class="card-title text-capitalize">Expect Checked Out</h4>
               <span class="data-1">
-                <!-- {{ rooms.notAvailableRooms.length || 0 }} -->
+                {{ expectCheckOut.length || 0 }}
               </span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -907,11 +891,10 @@
                     noAvailableRoom.booked_room.booking.booking_status
                   )
                 "
+                @dblclick="dblclick"
                 class="ma-0 px-md-1 py-md-2"
                 dark
-                :style="
-                  `background-image:${noAvailableRoom.booked_room.background}`
-                "
+                :style="`background-image:${noAvailableRoom.booked_room.background}`"
                 ><div class="text-center">
                   {{ caps(noAvailableRoom.room_type.name) }}
                 </div>
@@ -950,13 +933,11 @@
         <div class="col-xl-12 col-lg-12 text-uppercase">
           <div class="card px-2 available">
             <div class="card-statistic-3">
-              <div class="card-icon card-icon-large ">
-                <i style="font-size:78px" class="fas fa-users"></i>
+              <div class="card-icon card-icon-large">
+                <i style="font-size: 78px" class="fas fa-users"></i>
               </div>
               <div class="card-content">
-                <h4 class="card-title text-capitalize">
-                  Checked In
-                </h4>
+                <h4 class="card-title text-capitalize">Checked In</h4>
                 <span class="data-1">
                   <small>Adults : {{ members.adult }}</small
                   ><br />
@@ -1018,14 +999,14 @@ export default {
           text: "Customer",
           align: "left",
           sortable: false,
-          value: "company_name"
+          value: "company_name",
         },
         {
           text: "Order Total",
           align: "left",
           sortable: false,
-          value: "order_total"
-        }
+          value: "order_total",
+        },
       ],
       orders: "",
       products: "",
@@ -1057,15 +1038,16 @@ export default {
         tax: 0,
         sgst: 0,
         cgst: 0,
-        tax_type: -1
+        tax_type: -1,
       },
-
+      isDbCLick: false,
       members: {
         adult: 0,
         child: 0,
-        baby: 0
+        baby: 0,
       },
-
+      expectCheckIn: "",
+      expectCheckOut: "",
       headers: [
         { text: "#" },
         { text: "Bill Number" },
@@ -1075,8 +1057,8 @@ export default {
         { text: "Item" },
         { text: "QTY" },
         { text: "Amount" },
-        { text: "Date" }
-      ]
+        { text: "Date" },
+      ],
     };
   },
   watch: {
@@ -1103,7 +1085,7 @@ export default {
     payingAdvance() {
       this.formTitle = "Advance Payment";
       this.get_data();
-    }
+    },
   },
   created() {
     this.room_list();
@@ -1116,13 +1098,14 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
 
     mouseOver(bookedRoomId, bookingStatus) {
       this.evenIid = bookedRoomId;
       this.bookingStatus = bookingStatus;
+      console.log(this.evenIid);
     },
 
     show(e) {
@@ -1144,8 +1127,8 @@ export default {
       let id = this.evenIid;
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
         this.postings = data;
@@ -1171,8 +1154,8 @@ export default {
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          check_in: new Date().toJSON().slice(0, 10)
-        }
+          check_in: new Date().toJSON().slice(0, 10),
+        },
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         this.rooms = data;
@@ -1181,12 +1164,21 @@ export default {
         this.availableRooms = data.availableRooms;
         this.confirmedBooking = data.confirmedBooking;
         this.waitingBooking = data.waitingBooking;
+
+        this.expectCheckIn = data.expectCheckIn;
+        this.expectCheckOut = data.expectCheckOut;
+
         this.members = {
-          ...data.members
+          ...data.members,
         };
 
         console.log(this.notAvailableRooms.length);
       });
+    },
+
+    dblclick() {
+      this.isDbCLick = true;
+      this.get_data();
     },
 
     getRelaventColor(status) {
@@ -1214,17 +1206,23 @@ export default {
     get_data(jsEvent = null) {
       let payload = {
         params: {
-          id: this.evenIid
-        }
+          id: this.evenIid,
+        },
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
         this.checkData.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
-        // console.log(this.checkData);
-        // this.show_context_menu(jsEvent);
+        console.log(this.checkData);
+        if (this.isDbCLick) {
+          this.get_event_by_db_click();
+        }
       });
+    },
+
+    get_event_by_db_click() {
+      this.$router.push(`/customer/details/${this.customerId}`);
     },
 
     store_check_in(data) {
@@ -1242,7 +1240,7 @@ export default {
         new_payment: this.new_payment,
         booking_id: data.id,
         remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id
+        payment_mode_id: data.payment_mode_id,
       };
       this.$axios
         .post("/check_in_room", payload)
@@ -1254,7 +1252,7 @@ export default {
             data.document ? "" : this.store_document(bookingId);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_posting() {
@@ -1278,7 +1276,7 @@ export default {
         booking_id: this.checkData.id,
         room_id: this.checkData.room_id,
         room: this.checkData.room_no,
-        tax_type: per
+        tax_type: per,
       };
 
       this.$axios
@@ -1290,7 +1288,7 @@ export default {
             this.succuss(data, false, true);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_advance(data) {
@@ -1304,7 +1302,7 @@ export default {
         booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       this.$axios
         .post("/paying_advance", payload)
@@ -1315,12 +1313,12 @@ export default {
             this.succuss(data, false, false, false, true);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     setAvailable() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`set_available/${this.evenIid}`, payload)
@@ -1335,12 +1333,12 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     setMaintenance() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`set_maintenance/${this.evenIid}`, payload)
@@ -1355,7 +1353,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     cancelItem() {
@@ -1366,7 +1364,7 @@ export default {
 
       let payload = {
         reason: this.reason,
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`cancel_room/${this.evenIid}`, payload)
@@ -1381,7 +1379,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     store_check_out() {
@@ -1395,7 +1393,7 @@ export default {
         booking_id: this.checkData.id,
         remaining_price: this.checkData.remaining_price,
         full_payment: this.checkData.full_payment,
-        payment_mode_id: this.checkData.payment_mode_id
+        payment_mode_id: this.checkData.payment_mode_id,
       };
       // return;
       this.$axios
@@ -1408,11 +1406,11 @@ export default {
             this.redirect_to_invoice(data.data);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
     setAvailable() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`set_available/${this.evenIid}`, payload)
@@ -1427,7 +1425,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
     preview(file) {
       let element = document.createElement("a");
@@ -1474,8 +1472,8 @@ export default {
 
     close() {
       this.checkInDialog = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

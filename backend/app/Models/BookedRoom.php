@@ -21,7 +21,8 @@ class BookedRoom extends Model
         'posting_date' => 'datetime:',
     ];
 
-    protected $with = ['postings'];
+    protected $with = ['postings', 'booking'];
+    // protected $with = ['postings'];
 
     public function booking()
     {
@@ -30,9 +31,8 @@ class BookedRoom extends Model
 
     public function GetTitleAttribute()
     {
-        return  Customer::find($this->customer_id)->full_name ?? '';
+        return Customer::find($this->customer_id)->full_name ?? '';
     }
-
 
     /**
      * Get all of the posts for the BookedRoom
@@ -57,12 +57,12 @@ class BookedRoom extends Model
         $model = Booking::find($this->booking_id);
 
         if ($model->booking_status == 1 && $model->advance_price == 0) {
-            (int)$status = 6;
+            (int) $status = 6;
         } else {
-            (int)$status = $model->booking_status ?? 0;
+            (int) $status = $model->booking_status ?? 0;
         }
 
-        return    match ($status) {
+        return match($status) {
 
             1 => 'linear-gradient(135deg, #56ab2f  0, #a8e063 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
@@ -84,9 +84,8 @@ class BookedRoom extends Model
         $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
     }
 
-
     public function GetResourceIdAttribute()
     {
-        return  Room::find($this->room_id)->room_no ?? '';
+        return Room::find($this->room_id)->room_no ?? '';
     }
 }
