@@ -13,6 +13,11 @@ class PaymentController extends Controller
         return  $model->create($data);
     }
 
+    public function update($data, $found)
+    {
+        return   $found->update(['amount' => $data['amount']]);
+    }
+
     public function index(Request $request)
     {
         $model = Payment::query();

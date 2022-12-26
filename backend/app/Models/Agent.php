@@ -36,4 +36,9 @@ class Agent extends Model
     {
         return $this->belongsTo(Booking::class);
     }
+
+    // public function paymentMode()
+    // {
+    //     return $this->belongsTo(paymentMode::class, 'payment_mode', 'id');
+    // }
 }

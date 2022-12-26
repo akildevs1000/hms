@@ -30,6 +30,7 @@ return new class extends Migration
 
             $table->integer('is_paid')->default(0);
             $table->date('paid_date')->nullable();
+            $table->integer('payment_mode')->nullable();
 
             $table->timestamps();
         });

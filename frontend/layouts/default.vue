@@ -394,7 +394,7 @@ export default {
               menu: "customer_bill_access"
             },
             {
-              icon: "mdi-cash-multiple ",
+              icon: "mdi-cash-multiple",
               title: "Income",
               to: "/account",
               menu: "income_access"

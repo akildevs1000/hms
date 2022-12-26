@@ -181,6 +181,9 @@
               absolute
               color="primary"
             ></v-progress-linear>
+            <!-- {{
+              incomeData
+            }} -->
             <tr v-for="(item, index) in incomeData" :key="index">
               <td>{{ ++index }}</td>
               <td>{{ item.created_at }}</td>
@@ -189,7 +192,7 @@
               <td>{{ item.room }}</td>
               <td>{{ item.description }}</td>
 
-              <td v-for="i in 6" :key="i" class="text-right">
+              <td v-for="i in 7" :key="i" class="text-right">
                 <span
                   v-if="(item && item.payment_mode.name) == 'Cash' && i == 1"
                 >
@@ -224,6 +227,14 @@
                   {{ item.amount }}
                 </span>
 
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'City Ledger' && i == 7
+                  "
+                >
+                  {{ item.amount }}
+                </span>
+
                 <span v-else>
                   ---
                 </span>
@@ -237,6 +248,7 @@
               <th>{{ totalIncomes.Bank }}</th>
               <th>{{ totalIncomes.UPI }}</th>
               <th>{{ totalIncomes.Cheque }}</th>
+              <th>{{ totalIncomes.City_ledger }}</th>
             </tr>
           </table>
         </v-card>
@@ -374,7 +386,8 @@ export default {
       { text: "Online" },
       { text: "Bank" },
       { text: "UPI" },
-      { text: "Cheque" }
+      { text: "Cheque" },
+      { text: "City Ledger" }
     ],
     editedIndex: -1,
     response: "",

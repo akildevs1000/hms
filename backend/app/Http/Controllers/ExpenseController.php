@@ -97,8 +97,10 @@ class ExpenseController extends Controller
         // ['id' => 4, 'name' => 'Bank'],
         // ['id' => 5, 'name' => 'UPI'],
         // ['id' => 6, 'name' => 'Cheque']
+        // ['id' => 7, 'name' => 'City Ledger']
 
 
+        // return Payment::get();
 
         $expense = $this->model
             ->where('company_id', $request->company_id)
@@ -138,6 +140,7 @@ class ExpenseController extends Controller
                 'Bank' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 4))->sum('amount'),
                 'UPI' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 5))->sum('amount'),
                 'Cheque' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 6))->sum('amount'),
+                'City_ledger' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 7))->sum('amount'),
                 'OverallTotal' => $income->clone()->sum('amount'),
             ],
 

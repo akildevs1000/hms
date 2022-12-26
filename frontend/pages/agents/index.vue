@@ -1,6 +1,126 @@
 <template>
   <div v-if="can(`agents_access`)">
     <div class="text-center ma-2">
+      <v-snackbar
+        v-model="snackbar"
+        top
+        absolute
+        color="secondary"
+        elevation="24"
+      >
+        {{ response }}
+      </v-snackbar>
+    </div>
+    <v-dialog v-model="agentPaymentDialog" persistent max-width="700px">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Agent Payment</span>
+        </v-toolbar>
+        <v-card-text>
+          <v-container>
+            <table>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
+              <tr>
+                <th>Customer Name</th>
+                <td style="width: 300px">
+                  {{ booking && booking.title }}
+                </td>
+              </tr>
+              <!-- <tr>
+                <th>Room No</th>
+                <td>
+                  {{ booking.room_no }}
+                </td>
+              </tr>
+              <tr>
+                <th>Room Type</th>
+                <td>
+                  {{ booking.room_type }}
+                </td>
+              </tr> -->
+              <tr>
+                <th>Check In</th>
+                <td>
+                  {{ booking && booking.check_in }}
+                </td>
+              </tr>
+              <tr>
+                <th>Check Out</th>
+                <td>
+                  {{ booking && booking.check_out }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Payment Mode
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-select
+                    v-model="booking.payment_mode_id"
+                    :items="[
+                      { id: 1, name: 'Cash' },
+                      { id: 2, name: 'Card' },
+                      { id: 3, name: 'Online' },
+                      { id: 4, name: 'Bank' },
+                      { id: 5, name: 'UPI' },
+                      { id: 6, name: 'Cheque' }
+                    ]"
+                    item-text="name"
+                    item-value="id"
+                    dense
+                    outlined
+                    :hide-details="true"
+                    :height="1"
+                  ></v-select>
+                </td>
+              </tr>
+              <tr>
+                <th>Total Amount</th>
+                <td>{{ booking && booking.total_price }}.00</td>
+              </tr>
+              <tr></tr>
+
+              <tr></tr>
+              <tr>
+                <th>Remaining Balance</th>
+                <td>{{ booking.remaining_price }}.00</td>
+              </tr>
+              <tr style="background-color: white">
+                <th>
+                  Full Payment
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="booking.full_payment"
+                    :hide-details="true"
+                  ></v-text-field>
+                </td>
+              </tr>
+              <tr></tr>
+            </table>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn class="primary" small @click="store_agent_payment">Save</v-btn>
+          <v-btn class="error" small @click="agentPaymentDialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
       </v-snackbar>
@@ -154,6 +274,26 @@
                 {{ item.is_paid == 1 ? "Paid" : "Pending" }}
               </v-chip>
             </td>
+            <td>{{ item.paid_date || "---" }}</td>
+            <td>
+              <v-icon
+                x-small
+                color="primary"
+                @click="viewAgentsBilling(item)"
+                class="mr-2"
+              >
+                mdi-eye
+              </v-icon>
+              <v-icon
+                v-if="!item.is_paid"
+                x-small
+                color="primary"
+                @click="paidAmount(item)"
+                class="mr-2"
+              >
+                mdi-cash-multiple
+              </v-icon>
+            </td>
           </tr>
         </table>
       </v-card>
@@ -179,6 +319,10 @@
 <script>
 export default {
   data: () => ({
+    agentPaymentDialog: false,
+    snackbar: false,
+    response: "",
+
     from_date: "",
     from_menu: false,
 
@@ -252,7 +396,13 @@ export default {
         text: "Booking Date"
       },
       {
-        text: "Status"
+        text: "Payment Status"
+      },
+      {
+        text: "Paid Date"
+      },
+      {
+        text: "Action"
       }
     ],
     editedIndex: -1,
@@ -260,6 +410,8 @@ export default {
     defaultItem: { name: "" },
     response: "",
     data: [],
+    booking: [],
+    agentData: [],
     errors: []
   }),
 
@@ -287,12 +439,31 @@ export default {
         u.is_master
       );
     },
-    viewAgentsBilling(id) {
-      this.$router.push(`/agents/details/${id}`);
+
+    paidAmount(agentData) {
+      this.agentData = agentData;
+      let payload = {
+        params: {
+          id: agentData.booking_id,
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
+        if (data.status) {
+          this.booking = data.data;
+          this.booking.full_payment = "";
+          this.bookingStatus = data.booking_status;
+          this.customerId = data.customer_id;
+          this.agentPaymentDialog = true;
+        }
+      });
+    },
+
+    viewAgentsBilling(item) {
+      this.$router.push(`/agents/details/${item.source}`);
     },
 
     commonMethod() {
-      console.log("ff");
       this.getDataFromApi();
     },
 
@@ -309,13 +480,38 @@ export default {
           source: newSource
         }
       };
-      console.log(options);
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
         this.loading = false;
       });
+    },
+
+    store_agent_payment() {
+      if (this.booking.full_payment == "") {
+        alert("enter full payment");
+        return true;
+      }
+      let payload = {
+        agentData: this.agentData,
+        booking_id: this.booking.id,
+        remaining_price: this.booking.remaining_price,
+        full_payment: this.booking.full_payment,
+        payment_mode_id: this.booking.payment_mode_id
+      };
+      // return;
+      this.$axios
+        .post("/payment_by_agent", payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.errors = data.errors;
+          } else {
+            this.snackbar = true;
+            this.response = "Payment successfully paid";
+          }
+        })
+        .catch(e => console.log(e));
     },
 
     searchIt() {

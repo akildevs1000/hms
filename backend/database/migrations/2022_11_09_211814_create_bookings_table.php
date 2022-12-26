@@ -41,7 +41,7 @@ return new class extends Migration
 
 
             $table->string('reference_no')->nullable();
-            $table->string('paid_by')->nullable(); //1 paid by hotel => 2,  paid by agent => 2,
+            $table->string('paid_by')->nullable(); // paid by hotel => 1,  paid by agent => 2,
 
 
             $table->timestamps();
