@@ -75,7 +75,7 @@ class BookingController extends Controller
             } else {
                 return $this->response('DataBase Error in status change', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -121,7 +121,7 @@ class BookingController extends Controller
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -153,7 +153,7 @@ class BookingController extends Controller
                 return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -331,7 +331,7 @@ class BookingController extends Controller
             }
 
             return response()->json(['data' => '', 'message' => 'Successfully canceled', 'status' => true]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -347,7 +347,7 @@ class BookingController extends Controller
                 BookedRoom::whereBookingId($booking->id)->update(['booking_status' => 0]);
                 return $this->response('Now room available.', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -363,7 +363,7 @@ class BookingController extends Controller
                 BookedRoom::whereBookingId($booking->id)->update(['booking_status' => 4]);
                 return $this->response('Now room maintenance.', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -410,7 +410,7 @@ class BookingController extends Controller
             } else {
                 return $this->response('DataBase Error in status change', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -438,7 +438,7 @@ class BookingController extends Controller
             } else {
                 return $this->response('DataBase Error in status change', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -466,7 +466,6 @@ class BookingController extends Controller
                         'amount'       => $booked->total_price ?? '',
                         'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
                         'company_id'   => $request->company_id ?? '',
-                        'booking_type' => 'customer',
                     ];
                     $payment = new AgentsController();
                     $payment->store($agentsData);
@@ -515,7 +514,7 @@ class BookingController extends Controller
             } else {
                 return $this->response('DataBase Error in status change', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -584,7 +583,7 @@ class BookingController extends Controller
             // } else {
             //     return $this->response('DataBase Error in status change', null, true);
             // }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];

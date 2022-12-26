@@ -12,21 +12,56 @@ class AgentsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Agent $model)
+    public function index(Request $request)
     {
-        return $model
-            ->where('company_id', $request->company_id)
-            ->with('customer', 'booking:id,check_in,check_out,rooms')
-            ->paginate($request->per_page);
+        $model = Agent::query();
+
+        $model->where('company_id', $request->company_id);
+        $model->where('type', '!=', 'Customer');
+        $model->with('customer', 'booking:id,check_in,check_out,rooms');
+
+        if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
+            $model->where('source', $request->source);
+        }
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->whereDate('check_in', '<=', $request->to);
+                $q->WhereDate('check_out', '>=', $request->from);
+            });
+        }
+
+        return  $model->paginate($request->per_page);
     }
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getCityLedger(Request $request)
     {
-        //
+        $model = Agent::query();
+        $model->where('company_id', $request->company_id);
+        $model->where('type', 'Customer');
+        $model->with('customer', 'booking:id,check_in,check_out,rooms');
+
+        if ($request->filled('search') && $request->search != "") {
+
+            $model->whereHas('customer', function ($q) use ($request) {
+                $q->where('first_name', 'LIKE', "%$request->search%");
+                $q->orWhere('last_name', 'LIKE', "%$request->search%");
+            });
+
+            if (is_numeric($request->search)) {
+                $model->orWhereHas('booking', function ($q) use ($request) {
+                    $q->where('id', $request->search);
+                });
+            }
+        }
+
+
+
+        return  $model->paginate($request->per_page ?? 20);
     }
 
     /**

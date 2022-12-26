@@ -28,6 +28,9 @@ return new class extends Migration
             $table->date('booking_date')->nullable();
             $table->integer('company_id')->nullable();
 
+            $table->integer('is_paid')->default(0);
+            $table->date('paid_date')->nullable();
+
             $table->timestamps();
         });
     }

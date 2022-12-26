@@ -131,7 +131,7 @@
         </v-col>
       </v-col>
       <v-col md="3">
-        <div class="ml-4">From</div>
+        <div class="ml-4">To</div>
         <v-col cols="12" sm="12" md="12">
           <v-menu
             v-model="to_menu"

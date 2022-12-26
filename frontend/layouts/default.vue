@@ -375,6 +375,13 @@ export default {
         },
 
         {
+          icon: "mdi-account",
+          title: "City Ledger",
+          to: "/city_ledger",
+          menu: "city_ledger_access"
+        },
+
+        {
           icon: "mdi-currency-usd",
           title: `Accounts`,
           open_menu: false,

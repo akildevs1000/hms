@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`agents_access`)">
+  <div v-if="can(`city_ledger_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -12,7 +12,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <!-- <v-col xs="12" sm="12" md="3" cols="12">
+      <v-col xs="12" sm="12" md="3" cols="12">
         <v-select
           class="custom-text-box shadow-none"
           @change="getDataFromApi(`booking_agents`)"
@@ -20,100 +20,22 @@
           :items="[50, 100, 500, 1000]"
           placeholder="Per Page Records"
           solo
-          dense
           flat
           :hide-details="true"
         ></v-select>
-      </v-col> -->
+      </v-col>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="type"
-          :items="types"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-        ></v-select>
-      </v-col>
-
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="source"
-          :items="type == 'Online' ? sources : agentList"
-          dense
-          placeholder="Sources"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
-      </v-col>
-      <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col md="3">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
+        <input
+          class="form-control py-3 custom-text-box floating shadow-none"
+          placeholder="Search..."
+          @keyup="getDataFromApi('city_ledger', search)"
+          v-model="search"
+          type="text"
+        />
       </v-col>
     </v-row>
 
-    <div v-if="can(`agents_view`)">
+    <div v-if="can(`city_ledger_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List</span>
@@ -136,24 +58,22 @@
               <b>{{ ++index }}</b>
             </td>
             <td>{{ item.booking_id || "---" }}</td>
-            <td>{{ item.reference_no || "---" }}</td>
             <td>{{ (item && item.customer.full_name) || "---" }}</td>
             <td>{{ item.type || "---" }}</td>
-            <td>{{ (item && item.booking.rooms) || "---" }}</td>
+            <td>{{ (item && item.booking && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.amount || "---" }}</td>
-            <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
-            <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
-            <td>{{ item.booking_date || "---" }}</td>
             <td>
-              <v-chip
-                class="ma-2"
-                :color="item.is_paid == 1 ? 'green' : 'red'"
-                text-color="white"
-              >
-                {{ item.is_paid == 1 ? "Paid" : "Pending" }}
-              </v-chip>
+              {{
+                (item && item.booking && item.booking.check_in_date) || "---"
+              }}
             </td>
+            <td>
+              {{
+                (item && item.booking && item.booking.check_out_date) || "---"
+              }}
+            </td>
+            <td>{{ item.booking_date || "---" }}</td>
           </tr>
         </table>
       </v-card>
@@ -179,12 +99,6 @@
 <script>
 export default {
   data: () => ({
-    from_date: "",
-    from_menu: false,
-
-    to_date: "",
-    to_menu: false,
-
     pagination: {
       current: 1,
       total: 0,
@@ -192,31 +106,13 @@ export default {
     },
     options: {},
     Model: "Agents",
-    endpoint: "agents",
+    endpoint: "city_ledger",
     search: "",
     snackbar: false,
     dialog: false,
     ids: [],
     loading: false,
     total: 0,
-    type: "",
-    source: "",
-    agentList: ["Select All", "agent1", "agent2", "agent3", "agent4", "agent5"],
-    types: ["Online", "Travel Agency"],
-    sources: [
-      "Select All",
-      "MakeMyTrip",
-      "OYO Rooms",
-      "Airbnb.co.in",
-      "Expedia.co.in",
-      "Trivago.in",
-      "Yatra",
-      "Cleartrip",
-      "in.hotels.com",
-      "Booking.com",
-      "TripAdvisor.in"
-    ],
-
     headers: [
       {
         text: "#"
@@ -224,9 +120,7 @@ export default {
       {
         text: "Booking Number"
       },
-      {
-        text: "Reference Number"
-      },
+
       {
         text: "Customer"
       },
@@ -248,11 +142,9 @@ export default {
       {
         text: "Check Out"
       },
+
       {
         text: "Booking Date"
-      },
-      {
-        text: "Status"
       }
     ],
     editedIndex: -1,
@@ -287,29 +179,23 @@ export default {
         u.is_master
       );
     },
+
     viewAgentsBilling(id) {
       this.$router.push(`/agents/details/${id}`);
     },
 
-    commonMethod() {
-      console.log("ff");
-      this.getDataFromApi();
-    },
-
-    getDataFromApi(url = this.endpoint) {
-      let newSource = this.source;
+    getDataFromApi(url = this.endpoint, search = "") {
       this.loading = true;
+      let newSearch = search;
       let page = this.pagination.current;
       let options = {
         params: {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
-          from: this.from_date,
-          to: this.to_date,
-          source: newSource
+          search: newSearch
         }
       };
-      console.log(options);
+
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;

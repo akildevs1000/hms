@@ -16,10 +16,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\AttendanceController;
-
+use Illuminate\Support\Facades\Hash;
 
 Route::post('/test', function (Request $request) {
 
+    return is_numeric(111);
     try {
         $curl = curl_init();
 

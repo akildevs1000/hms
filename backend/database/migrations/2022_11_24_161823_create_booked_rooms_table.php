@@ -43,6 +43,8 @@ return new class extends Migration
             $table->string('no_of_child')->nullable();
             $table->string('no_of_baby')->nullable();
 
+            $table->string('booking_status')->default(1);
+
 
             $table->timestamps();
         });
