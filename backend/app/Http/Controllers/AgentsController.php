@@ -43,6 +43,13 @@ class AgentsController extends Controller
         return  $model->create($data);
     }
 
+
+    public function update($data, $foundAgent)
+    {
+        return   $foundAgent->update(['amount' => $data['amount']]);
+    }
+
+
     public function getAgentBookings(Request $request)
     {
 

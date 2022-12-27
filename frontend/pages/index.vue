@@ -516,7 +516,7 @@
             <v-container>
               <table>
                 <v-progress-linear
-                  v-if="loading"
+                  v-if="false"
                   :active="loading"
                   :indeterminate="loading"
                   absolute
@@ -543,13 +543,13 @@
                 <tr>
                   <th>Check In</th>
                   <td>
-                    {{ checkData && checkData.check_in }}
+                    {{ checkData && checkData.check_in_date }}
                   </td>
                 </tr>
                 <tr>
                   <th>Check Out</th>
                   <td>
-                    {{ checkData && checkData.check_out }}
+                    {{ checkData && checkData.check_out_date }}
                   </td>
                 </tr>
                 <tr>
@@ -566,7 +566,8 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
+                        { id: 6, name: 'Cheque' },
+                        { id: 7, name: 'City Ledger' }
                       ]"
                       item-text="name"
                       item-value="id"

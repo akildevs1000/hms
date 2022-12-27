@@ -188,13 +188,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ checkData && checkData.check_in }}
+                  {{ checkData && checkData.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ checkData && checkData.check_out }}
+                  {{ checkData && checkData.check_out_date }}
                 </td>
               </tr>
               <tr>
@@ -534,13 +534,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ checkData && checkData.check_in }}
+                  {{ checkData && checkData.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ checkData && checkData.check_out }}
+                  {{ checkData && checkData.check_out_date }}
                 </td>
               </tr>
               <tr>
@@ -701,13 +701,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ checkData && checkData.check_in }}
+                  {{ checkData && checkData.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ checkData && checkData.check_out }}
+                  {{ checkData && checkData.check_out_date }}
                 </td>
               </tr>
               <tr>

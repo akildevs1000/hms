@@ -120,11 +120,6 @@
       </v-card>
     </v-dialog>
 
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -509,6 +504,8 @@ export default {
           } else {
             this.snackbar = true;
             this.response = "Payment successfully paid";
+            this.agentPaymentDialog = false;
+            this.getDataFromApi();
           }
         })
         .catch(e => console.log(e));
