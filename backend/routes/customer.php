@@ -15,6 +15,8 @@
 
     Route::get('/get_customer/{contact}', [CustomerController::class, 'getCustomer']);
 
+    Route::get('/get_customer_history/{id}', [CustomerController::class, 'getCustomerHistory']);
+
     Route::get('/get_countries', function () {
         $countries = DB::table('countries')->get();
         return $countries;

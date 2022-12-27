@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Customer extends Model
 {
@@ -31,5 +32,15 @@ class Customer extends Model
     public function booking()
     {
         return $this->hasOne(Booking::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function idCardType(): BelongsTo
+    {
+        return $this->belongsTo(IdCardType::class);
     }
 }

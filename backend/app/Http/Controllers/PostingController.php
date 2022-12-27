@@ -20,21 +20,22 @@ class PostingController extends Controller
         $model = Posting::query();
         $model->where('company_id', $request->company_id);
 
+
         $model->with([
-            'booking:id,customer_id,room_id' => [
+            'booking:id,customer_id,booking_status' => [
                 'customer:id,email,first_name,last_name',
             ],
-            'bookedRoom:id,room_no,room_type',
+            'bookedRoom',
         ]);
 
         // filter base booking id (Reservation Number)
-        $model->when($request->filled('booking_id'), function ($model) use ($request) {
-            $model->whereHas('booking', function (Builder $query) use ($request) {
-                $query->where('id', $request->booking_id);
-            });
-        });
+        // $model->when($request->filled('booking_id'), function ($model) use ($request) {
+        //     $model->whereHas('booking', function (Builder $query) use ($request) {
+        //         $query->where('id', $request->booking_id);
+        //     });
+        // });
 
-        //filter base room id
+        // filter base room id
         $model->when($request->filled('room_id'), function ($model) use ($request) {
             $model->whereHas('bookedRoom', function (Builder $query) use ($request) {
                 $query->where('room_id', $request->room_id);
@@ -42,11 +43,11 @@ class PostingController extends Controller
         });
 
         //filter base customer id
-        // $model->when($request->filled('customer_id'), function ($model) use ($request) {
-        //     $model->whereHas('booking', function (Builder $query) use ($request) {
-        //         $query->where('customer_id', $request->customer_id);
-        //     });
-        // });
+        $model->when($request->filled('customer_id'), function ($model) use ($request) {
+            $model->whereHas('booking', function (Builder $query) use ($request) {
+                $query->where('customer_id', $request->customer_id);
+            });
+        });
 
         return $model->paginate($request->per_page ?? 50);
     }

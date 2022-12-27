@@ -1,20 +1,7 @@
 <template>
   <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
-    <v-row class="mt-5 mb-5">
-      <v-col cols="6">
-        <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
-      </v-col>
-      <v-col cols="6"> </v-col>
-    </v-row>
-
     <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
+      <!-- <v-col xs="12" sm="12" md="3" cols="12">
         <v-select
           class="form-control"
           @change="getDataFromApi(`reservation`)"
@@ -25,17 +12,22 @@
           hide-details
           flat
         ></v-select>
-      </v-col>
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-text-field
-          class="form-control py-0 custom-text-box floating shadow-none"
-          placeholder="Search..."
+      </v-col> -->
+
+      <v-col xs="12" sm="12" md="3" cols="12" class="mt-4">
+        <v-select
+          class="form-control"
+          @change="getDataFromApi(`reservation_list_dash`)"
+          v-model="status"
+          :items="reservationStatusList"
+          item-text="name"
+          item-value="id"
+          placeholder="Display List"
           solo
-          flat
-          @input="searchIt"
-          v-model="search"
           hide-details
-        ></v-text-field>
+          flat
+          dense
+        ></v-select>
       </v-col>
     </v-row>
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
@@ -65,106 +57,20 @@
           </td>
           <td>{{ item && item.customer.full_name }}</td>
           <td>
-            <!-- {{ item.booked_rooms.room_no }} -->
             <span v-for="(room, index) in item.booked_rooms" :key="index">
               {{ room.room_no }}
               {{ item.booked_rooms.length - 1 == index ? "" : "," }}
             </span>
           </td>
-          <!-- <td>
-            <v-btn
-              style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
-              small
-              elevation="0"
-              dark
-              class="l-bg-green-dark"
-              v-if="item && item.room.status == 0"
-            >
-              Available Room
-            </v-btn>
-            <v-btn
-              style="background: linear-gradient(135deg, #f48665 0%, #fda23f 100%) !important;"
-              small
-              elevation="0"
-              dark
-              color="l-bg-purple-dark"
-              v-else-if="item && item.room.status == 1"
-            >
-              Booked
-            </v-btn>
-            <v-btn
-              v-else-if="item && item.room.status == 2"
-              small
-              elevation="0"
-              dark
-              color="warning"
-              >Checked In</v-btn
-            >
 
-            <v-btn
-              v-else-if="item && item.room.status == 3"
-              small
-              elevation="0"
-              dark
-              color="blue"
-              >Checked Out</v-btn
-            >
-
-            <v-btn
-              v-else-if="item && item.room.status == 4"
-              small
-              elevation="0"
-              dark
-              >Dirty</v-btn
-            >
-            <v-btn
-              v-else-if="item && item.room.status == 5"
-              small
-              elevation="0"
-              dark
-              color="grey"
-              >Maintenance</v-btn
-            >
-          </td> -->
           <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
           <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
-          <td>{{ item.total_price }}</td>
-          <td>{{ item.advance_price }}</td>
-          <td>{{ item.remaining_price }}</td>
-          <!-- <td>
-            <v-btn
-              style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
-              small
-              elevation="0"
-              dark
-              class="l-bg-green-dark"
-              v-if="item.payment_status == 1"
-            >
-              Paid
-            </v-btn>
+          <td>{{ item.total_price }}.00</td>
+          <td>{{ item.advance_price }}.00</td>
+          <td>{{ item.remaining_price }}.00</td>
 
-            <v-btn
-              style="background: linear-gradient(135deg, rgb(243 100 57) 0px, rgb(122 70 67 / 94%) 100%) !important;"
-              v-else-if="item.payment_status == 0"
-              small
-              elevation="0"
-              dark
-              color="error"
-              >Pending</v-btn
-            >
-          </td> -->
           <td>{{ item.source }}</td>
-          <td>{{ item.booking_date }}</td>
-          <td>
-            <v-icon
-              @click="redirect_to_invoice(item.id)"
-              x-small
-              color="primary"
-              class="mr-2"
-            >
-              mdi-eye
-            </v-icon>
-          </td>
+          <td>{{ convert_date_format(item.booking_date) }}</td>
         </tr>
       </table>
     </v-card>
@@ -192,31 +98,34 @@ export default {
       per_page: 10
     },
     options: {},
-    endpoint: "reservation_list",
+    endpoint: "reservation_list_dash",
     search: "",
     snackbar: false,
     dialog: false,
     data: [],
     loading: false,
     total: 0,
+    reservationStatusList: [
+      { id: "", name: "Summary" },
+      { id: 1, name: "Arrival For Today" },
+      { id: 2, name: "Occupancy" },
+      { id: 3, name: "Departure For Today" }
+    ],
     headers: [
       { text: "&nbsp RESERVATION NUMBER" },
-
       { text: "Customer" },
       { text: "Rooms" },
-      // { text: "Room Status" },
       { text: "Arrival  Date" },
       { text: "Departure  Date" },
       { text: "Total" },
       { text: "Advance" },
       { text: "Remaining" },
-      // { text: "Payment Status" },
       { text: "Source" },
-      { text: "Booking Date" },
-      { text: "Invoice" }
+      { text: "Booking Date" }
     ],
     editedIndex: -1,
     response: "",
+    status: "",
     errors: []
   }),
 
@@ -243,6 +152,10 @@ export default {
       );
     },
 
+    viewCustomerBilling(item) {
+      this.$router.push(`/customer/details/${item.id}`);
+    },
+
     redirect_to_invoice(id) {
       console.log(id);
       let element = document.createElement("a");
@@ -258,9 +171,6 @@ export default {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
-      console.log(day);
-      console.log([year, month, day].join("-"));
-
       return [year, month, day].join("-");
     },
     caps(str) {
@@ -274,6 +184,7 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
+
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
@@ -282,15 +193,15 @@ export default {
         params: {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
-          search: this.search
+          status: this.status,
+          date: new Date().toJSON().slice(0, 10)
         }
       };
-
-      this.$axios.get(`${url}?  page=${page}`, options).then(({ data }) => {
+      console.log(options);
+      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
-        console.log(this.data);
         this.loading = false;
       });
     },

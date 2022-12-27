@@ -74,7 +74,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' },
+                        { id: 6, name: 'Cheque' }
                       ]"
                       item-text="name"
                       item-value="id"
@@ -282,7 +282,7 @@
                         { id: -1, name: 'select..' },
                         { name: 'Food' },
                         { name: 'Mess' },
-                        { name: 'Bed' },
+                        { name: 'Bed' }
                       ]"
                       item-text="name"
                       item-value="id"
@@ -308,7 +308,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' },
+                        { id: 6, name: 'Cheque' }
                       ]"
                       item-text="name"
                       item-value="id"
@@ -450,7 +450,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' },
+                        { id: 6, name: 'Cheque' }
                       ]"
                       item-text="name"
                       item-value="id"
@@ -566,7 +566,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' },
+                        { id: 6, name: 'Cheque' }
                       ]"
                       item-text="name"
                       item-value="id"
@@ -894,7 +894,9 @@
                 @dblclick="dblclick"
                 class="ma-0 px-md-1 py-md-2"
                 dark
-                :style="`background-image:${noAvailableRoom.booked_room.background}`"
+                :style="
+                  `background-image:${noAvailableRoom.booked_room.background}`
+                "
                 ><div class="text-center">
                   {{ caps(noAvailableRoom.room_type.name) }}
                 </div>
@@ -915,7 +917,6 @@
               :key="index"
             >
               <v-card
-                @contextmenu="show"
                 :elevation="0"
                 class="ma-0 px-md-1 py-md-2"
                 :class="getRelaventColor(room.status)"
@@ -959,10 +960,13 @@
         </div>
       </v-col>
     </v-row>
+    <ReservationList />
   </div>
 </template>
 <script>
+import ReservationList from "../components/reservation/ReservationList.vue";
 export default {
+  components: { ReservationList },
   data() {
     return {
       temp: "",
@@ -999,14 +1003,14 @@ export default {
           text: "Customer",
           align: "left",
           sortable: false,
-          value: "company_name",
+          value: "company_name"
         },
         {
           text: "Order Total",
           align: "left",
           sortable: false,
-          value: "order_total",
-        },
+          value: "order_total"
+        }
       ],
       orders: "",
       products: "",
@@ -1028,6 +1032,7 @@ export default {
       items: [],
       checkData: {},
       customerId: "",
+      bookingId: "",
       document: null,
       posting: {
         item: "",
@@ -1038,13 +1043,13 @@ export default {
         tax: 0,
         sgst: 0,
         cgst: 0,
-        tax_type: -1,
+        tax_type: -1
       },
       isDbCLick: false,
       members: {
         adult: 0,
         child: 0,
-        baby: 0,
+        baby: 0
       },
       expectCheckIn: "",
       expectCheckOut: "",
@@ -1057,8 +1062,8 @@ export default {
         { text: "Item" },
         { text: "QTY" },
         { text: "Amount" },
-        { text: "Date" },
-      ],
+        { text: "Date" }
+      ]
     };
   },
   watch: {
@@ -1085,7 +1090,7 @@ export default {
     payingAdvance() {
       this.formTitle = "Advance Payment";
       this.get_data();
-    },
+    }
   },
   created() {
     this.room_list();
@@ -1098,7 +1103,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, (c) => c.toUpperCase());
+        return res.replace(/\b\w/g, c => c.toUpperCase());
       }
     },
 
@@ -1127,8 +1132,8 @@ export default {
       let id = this.evenIid;
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id,
-        },
+          company_id: this.$auth.user.company.id
+        }
       };
       this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
         this.postings = data;
@@ -1154,8 +1159,8 @@ export default {
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          check_in: new Date().toJSON().slice(0, 10),
-        },
+          check_in: new Date().toJSON().slice(0, 10)
+        }
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         this.rooms = data;
@@ -1169,7 +1174,7 @@ export default {
         this.expectCheckOut = data.expectCheckOut;
 
         this.members = {
-          ...data.members,
+          ...data.members
         };
 
         console.log(this.notAvailableRooms.length);
@@ -1206,11 +1211,12 @@ export default {
     get_data(jsEvent = null) {
       let payload = {
         params: {
-          id: this.evenIid,
-        },
+          id: this.evenIid
+        }
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
+        this.bookingId = data.id;
         this.checkData.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
@@ -1222,7 +1228,7 @@ export default {
     },
 
     get_event_by_db_click() {
-      this.$router.push(`/customer/details/${this.customerId}`);
+      this.$router.push(`/customer/details/${this.bookingId}`);
     },
 
     store_check_in(data) {
@@ -1240,7 +1246,7 @@ export default {
         new_payment: this.new_payment,
         booking_id: data.id,
         remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id,
+        payment_mode_id: data.payment_mode_id
       };
       this.$axios
         .post("/check_in_room", payload)
@@ -1252,7 +1258,7 @@ export default {
             data.document ? "" : this.store_document(bookingId);
           }
         })
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
     },
 
     store_posting() {
@@ -1276,7 +1282,7 @@ export default {
         booking_id: this.checkData.id,
         room_id: this.checkData.room_id,
         room: this.checkData.room_no,
-        tax_type: per,
+        tax_type: per
       };
 
       this.$axios
@@ -1288,7 +1294,7 @@ export default {
             this.succuss(data, false, true);
           }
         })
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
     },
 
     store_advance(data) {
@@ -1302,7 +1308,7 @@ export default {
         booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id,
-        company_id: this.$auth.user.company.id,
+        company_id: this.$auth.user.company.id
       };
       this.$axios
         .post("/paying_advance", payload)
@@ -1313,12 +1319,12 @@ export default {
             this.succuss(data, false, false, false, true);
           }
         })
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
     },
 
     setAvailable() {
       let payload = {
-        cancel_by: this.$auth.user.id,
+        cancel_by: this.$auth.user.id
       };
       this.$axios
         .post(`set_available/${this.evenIid}`, payload)
@@ -1333,12 +1339,12 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch((err) => console.log(err));
+        .catch(err => console.log(err));
     },
 
     setMaintenance() {
       let payload = {
-        cancel_by: this.$auth.user.id,
+        cancel_by: this.$auth.user.id
       };
       this.$axios
         .post(`set_maintenance/${this.evenIid}`, payload)
@@ -1353,7 +1359,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch((err) => console.log(err));
+        .catch(err => console.log(err));
     },
 
     cancelItem() {
@@ -1364,7 +1370,7 @@ export default {
 
       let payload = {
         reason: this.reason,
-        cancel_by: this.$auth.user.id,
+        cancel_by: this.$auth.user.id
       };
       this.$axios
         .post(`cancel_room/${this.evenIid}`, payload)
@@ -1379,7 +1385,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch((err) => console.log(err));
+        .catch(err => console.log(err));
     },
 
     store_check_out() {
@@ -1393,7 +1399,7 @@ export default {
         booking_id: this.checkData.id,
         remaining_price: this.checkData.remaining_price,
         full_payment: this.checkData.full_payment,
-        payment_mode_id: this.checkData.payment_mode_id,
+        payment_mode_id: this.checkData.payment_mode_id
       };
       // return;
       this.$axios
@@ -1406,11 +1412,11 @@ export default {
             this.redirect_to_invoice(data.data);
           }
         })
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
     },
     setAvailable() {
       let payload = {
-        cancel_by: this.$auth.user.id,
+        cancel_by: this.$auth.user.id
       };
       this.$axios
         .post(`set_available/${this.evenIid}`, payload)
@@ -1425,7 +1431,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch((err) => console.log(err));
+        .catch(err => console.log(err));
     },
     preview(file) {
       let element = document.createElement("a");
@@ -1472,8 +1478,8 @@ export default {
 
     close() {
       this.checkInDialog = false;
-    },
-  },
+    }
+  }
 };
 </script>
 

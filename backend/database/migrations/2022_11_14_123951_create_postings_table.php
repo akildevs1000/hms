@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('booked_room_id')->nullable();
             $table->integer('room_id')->nullable();
 
-            $table->integer('company_id');
+            $table->string('bill_no')->nullable();
             $table->string('item');
             $table->integer('qty');
             $table->decimal('amount', 8, 2);
@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('tax_type')->nullable();
 
             $table->integer('payment_mode_id')->nullable();
+            $table->integer('company_id');
 
             $table->timestamps();
         });

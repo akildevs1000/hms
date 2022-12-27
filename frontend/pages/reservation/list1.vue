@@ -65,96 +65,44 @@
           </td>
           <td>{{ item && item.customer.full_name }}</td>
           <td>
-            <!-- {{ item.booked_rooms.room_no }} -->
             <span v-for="(room, index) in item.booked_rooms" :key="index">
               {{ room.room_no }}
               {{ item.booked_rooms.length - 1 == index ? "" : "," }}
             </span>
           </td>
-          <!-- <td>
-            <v-btn
-              style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
-              small
-              elevation="0"
-              dark
-              class="l-bg-green-dark"
-              v-if="item && item.room.status == 0"
-            >
-              Available Room
-            </v-btn>
-            <v-btn
-              style="background: linear-gradient(135deg, #f48665 0%, #fda23f 100%) !important;"
-              small
-              elevation="0"
-              dark
-              color="l-bg-purple-dark"
-              v-else-if="item && item.room.status == 1"
-            >
-              Booked
-            </v-btn>
-            <v-btn
-              v-else-if="item && item.room.status == 2"
-              small
-              elevation="0"
-              dark
-              color="warning"
-              >Checked In</v-btn
-            >
 
-            <v-btn
-              v-else-if="item && item.room.status == 3"
-              small
-              elevation="0"
-              dark
-              color="blue"
-              >Checked Out</v-btn
-            >
-
-            <v-btn
-              v-else-if="item && item.room.status == 4"
-              small
-              elevation="0"
-              dark
-              >Dirty</v-btn
-            >
-            <v-btn
-              v-else-if="item && item.room.status == 5"
-              small
-              elevation="0"
-              dark
-              color="grey"
-              >Maintenance</v-btn
-            >
-          </td> -->
           <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
           <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
-          <td>{{ item.total_price }}</td>
-          <td>{{ item.advance_price }}</td>
-          <td>{{ item.remaining_price }}</td>
-          <!-- <td>
+          <td>{{ item.total_price }}.00</td>
+          <td>{{ item.advance_price }}.00</td>
+          <td>{{ item.remaining_price }}.00</td>
+
+          <td>{{ item.source }}</td>
+          <td>{{ item.booking_date }}</td>
+
+          <td>
             <v-btn
-              style="background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;"
               small
               elevation="0"
               dark
               class="l-bg-green-dark"
+              :class="getRelaventColor(item.booking_status)"
               v-if="item.payment_status == 1"
             >
-              Paid
+              {{ getRelaventStatus(item.booking_status) }}
             </v-btn>
+          </td>
 
-            <v-btn
-              style="background: linear-gradient(135deg, rgb(243 100 57) 0px, rgb(122 70 67 / 94%) 100%) !important;"
-              v-else-if="item.payment_status == 0"
-              small
-              elevation="0"
-              dark
-              color="error"
-              >Pending</v-btn
+          <td>
+            <v-icon
+              @click="viewCustomerBilling(item)"
+              x-small
+              color="primary"
+              class="mr-2"
             >
-          </td> -->
-          <td>{{ item.source }}</td>
-          <td>{{ item.booking_date }}</td>
+              mdi-eye
+            </v-icon>
+          </td>
           <td>
             <v-icon
               @click="redirect_to_invoice(item.id)"
@@ -213,6 +161,8 @@ export default {
       // { text: "Payment Status" },
       { text: "Source" },
       { text: "Booking Date" },
+      { text: "Reservation Status" },
+      { text: "View" },
       { text: "Invoice" }
     ],
     editedIndex: -1,
@@ -241,6 +191,10 @@ export default {
         (user && user.permissions.some(e => e.permission == permission)) ||
         user.master
       );
+    },
+
+    viewCustomerBilling(item) {
+      this.$router.push(`/customer/details/${item.id}`);
     },
 
     redirect_to_invoice(id) {
@@ -274,6 +228,41 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
+
+    getRelaventColor(status) {
+      switch (parseInt(status)) {
+        case 1:
+          return "booked";
+        case 2:
+          return "checkedIn";
+        // case 3:
+        //   return "checkedOut";
+        // case 4:
+        //   return "background";
+        // case 5:
+        //   return "grey";
+        default:
+          return "checkedOut";
+      }
+    },
+
+    getRelaventStatus(status) {
+      switch (parseInt(status)) {
+        case 1:
+          return "booked";
+        case 2:
+          return "checkedIn";
+        case 3:
+          return "checkedOut";
+        // case 4:
+        //   return "background";
+        // case 5:
+        //   return "grey";
+        default:
+          return "checkedOut";
+      }
+    },
+
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
@@ -286,7 +275,7 @@ export default {
         }
       };
 
-      this.$axios.get(`${url}?  page=${page}`, options).then(({ data }) => {
+      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;

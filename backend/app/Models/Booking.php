@@ -154,4 +154,10 @@ class Booking extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    /**
+     * Get the idCardType that owns the Booking
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 }

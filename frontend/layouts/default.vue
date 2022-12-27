@@ -342,7 +342,7 @@ export default {
             {
               icon: "mdi-bed",
               title: "List Reservation",
-              to: "/reservation/list",
+              to: "/reservation/list1",
               menu: "reservation_access"
             }
           ]
@@ -387,12 +387,12 @@ export default {
           open_menu: false,
           menu: "accounts_access",
           hasChildren: [
-            {
-              icon: "mdi-account",
-              title: "Customers Bill  ",
-              to: "/customer/bill",
-              menu: "customer_bill_access"
-            },
+            // {
+            //   icon: "mdi-account",
+            //   title: "Customers Bill  ",
+            //   to: "/customer/bill",
+            //   menu: "customer_bill_access"
+            // },
             {
               icon: "mdi-cash-multiple",
               title: "Income",

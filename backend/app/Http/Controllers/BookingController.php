@@ -173,7 +173,7 @@ class BookingController extends Controller
             $booking->remaining_price = 0;
             $booking->payment_status  = 1;
             $booking->full_payment    = $booking->total_price;
-        } else {
+        } else if ($request->payment_mode_id != 7) {
             $booking->remaining_price = ((int) $booking->total_price - (int) $request->full_payment);
         }
         $booking->payment_mode_id = $request->payment_mode_id;
@@ -189,6 +189,8 @@ class BookingController extends Controller
                 'type'         => 'room',
                 'room'         => $booking->rooms,
                 'company_id'   => $booking->company_id,
+                'is_city_ledger'   => $booking->payment_mode_id == 7 ?  1 : 0,
+
             ];
 
             $found = Payment::where('booking_id', $booking_id)->where('is_city_ledger', 1)->first();
@@ -487,6 +489,8 @@ class BookingController extends Controller
             $data["customer_id"]    = $request->customer_id;
             $data['booking_date']   = now();
             $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
+            $data['remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
+
             $booked                 = Booking::create($data);
 
             if ($booked) {
@@ -652,6 +656,36 @@ class BookingController extends Controller
             ->where('booking_status', '!=', 0)
             ->paginate($request->per_page ?? 20);
     }
+
+
+    public function reservationListForDash(Request $request)
+    {
+        $model = Booking::query()
+            ->latest();
+        $model
+            ->with([
+                'bookedRooms:booking_id,id,room_no,room_type',
+                'customer:id,first_name,last_name',
+            ]);
+
+        $model->where('company_id', $request->company_id);
+
+        if ($request->filled('status') && $request->status == 1) {
+            $model->where('booking_status', $request->status);
+        } else if ($request->filled('status') && $request->status == 2) {
+            $model->where('booking_status', $request->status);
+            $model->whereDate('check_in', '<=',  $request->date);
+        } else if ($request->filled('status') && $request->status == 3) {
+            $model->where('booking_status', $request->status);
+            $model->WhereDate('check_out',  $request->date);
+        }
+
+        $model->where('booking_status', '!=', 0);
+        return   $model->paginate($request->per_page ?? 20);
+    }
+
+
+
 
     public function getBookedRooms(Request $request)
     {

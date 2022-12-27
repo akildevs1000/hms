@@ -77,6 +77,16 @@
             <td>{{ item.no_of_baby }}</td>
             <td>{{ item.request }}</td>
             <td>{{ item.address }}</td>
+            <td>
+              <v-icon
+                x-small
+                color="primary"
+                @click="viewCustomerBilling(item)"
+                class="mr-2"
+              >
+                mdi-eye
+              </v-icon>
+            </td>
           </tr>
         </table>
       </v-card>
@@ -153,6 +163,9 @@ export default {
       },
       {
         text: "Address"
+      },
+      {
+        text: "Action"
       }
     ],
     editedIndex: -1,
@@ -186,6 +199,10 @@ export default {
         (u && u.permissions.some(e => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    viewCustomerBilling(item) {
+      this.$router.push(`/customer/history/${item.id}`);
     },
 
     getDataFromApi(url = this.endpoint) {

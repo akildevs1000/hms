@@ -57,7 +57,7 @@
             <td>
               <b>{{ ++index }}</b>
             </td>
-            <td>{{ item.name }}</td>
+            <td>{{ item.full_name }}</td>
             <td>{{ item.contact_no }}</td>
             <td>{{ item.email }}</td>
             <td>{{ item.id_card_type_id }}</td>
@@ -66,7 +66,6 @@
             <td>{{ item.no_of_adult }}</td>
             <td>{{ item.no_of_child }}</td>
             <td>{{ item.no_of_baby }}</td>
-            <td>{{ item.request }}</td>
             <td>{{ item.address }}</td>
             <td>
               <v-icon
@@ -149,9 +148,7 @@ export default {
       {
         text: "Babies"
       },
-      {
-        text: "Others"
-      },
+
       {
         text: "Address"
       },

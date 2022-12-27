@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 
+use App\Models\Payment;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Http\Requests\Customer\StoreRequest;
@@ -86,15 +87,39 @@ class CustomerController extends Controller
 
     public function viewBookingCustomerBill($id)
     {
-        return Customer::whereHas('booking', function ($q) {
-            $q->where('booking_status', '!=', 0)
-                ->where('booking_status', '<=', 3);
-        })->with(
-            ['booking' => [
+
+        return  Booking::where('id', $id)
+            // ->where('booking_status', '!=', 0)
+            // ->where('booking_status', '<=', 3)
+
+            ->with(
                 'bookedRooms',
                 'payments',
-            ]]
-        )
-            ->find($id);
+                'customer',
+            )
+
+            ->first();
+
+
+        // return Customer::whereHas('booking', function ($q) {
+        //     $q->where('booking_status', '!=', 0)
+        //         ->where('booking_status', '<=', 3);
+        // })->with(
+        //     ['booking' => [
+        //         'bookedRooms',
+        //         'payments',
+        //     ]]
+        // )
+        //     ->find($id);
+
+    }
+
+    public function getCustomerHistory($id)
+    {
+        $customer = Customer::with('bookings.payments', 'idCardType')->find($id);
+        $res = $customer->bookings->toArray();
+        $bookingIds = array_column($res, 'id');
+        $revenue = Payment::whereIn('booking_id', $bookingIds)->sum('amount');
+        return response()->json(['data' => $customer, 'revenue' => $revenue, 'status' => true]);
     }
 }

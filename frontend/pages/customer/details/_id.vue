@@ -114,6 +114,20 @@
                 (booking && booking.total_days) || "---"
               }}</v-col>
             </v-row>
+
+            <!-- <v-row>
+              <v-col cols="3"><b>Posting Amount :</b></v-col>
+              <v-col cols="3"
+                >{{ (booking && booking.total_price) || "00" }}.00</v-col
+              >
+            </v-row> -->
+
+            <v-row>
+              <v-col cols="4"><b>Customer Request :</b></v-col>
+              <v-col cols="8">{{
+                (booking && booking.request) || "---"
+              }}</v-col>
+            </v-row>
           </div>
           <br /><br />
           <h5>Booked Rooms</h5>
@@ -154,6 +168,8 @@
             <tr>
               <th>#</th>
               <th>Date</th>
+              <th>Room</th>
+              <th>Type</th>
               <th>Payment Mode</th>
               <th>Description</th>
               <th>Amount</th>
@@ -169,20 +185,25 @@
               <td>
                 <b>{{ ++index }}</b>
               </td>
-              <td>{{ item.created_at }}</td>
-              <td>{{ item && item.payment_mode.name }}</td>
-              <td>{{ item.description }}</td>
-              <td>{{ item.amount }}</td>
-              <td>
-                <!-- <v-icon
-                  @click="viewCustomerBilling(item.id)"
-                  x-small
-                  color="primary"
-                  class="mr-2"
-                >
-                  mdi-eye
-                </v-icon> -->
-              </td>
+              <td>{{ item.created_at || "---" }}</td>
+              <td>{{ item.room || "---" }}</td>
+              <td>{{ item.type || "---" }}</td>
+              <td>{{ (item && item.payment_mode.name) || "---" }}</td>
+              <td>{{ item.description || "---" }}</td>
+              <td>{{ item.amount || "---" }}</td>
+            </tr>
+            <tr style="background-color:white">
+              <td colspan="8"><hr /></td>
+            </tr>
+            <tr style="background-color:white">
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <th>{{ totalAmount }}.00</th>
+              <td></td>
             </tr>
           </table>
         </v-card>
@@ -210,7 +231,9 @@ export default {
     payments: [],
     booking: [],
     bookedRooms: [],
-    errors: []
+    errors: [],
+    totalAmount: 0,
+    totalPostingAmount: 0
   }),
 
   computed: {},
@@ -233,14 +256,25 @@ export default {
       );
     },
 
+    calTotalAmount(payments) {
+      let sum = 0;
+      payments.forEach(item => {
+        sum += parseInt(item.amount);
+      });
+      this.totalAmount = sum;
+    },
+
     getData() {
       let id = this.$route.params.id;
+
       this.$axios.get(`booking_customer/${id}`).then(({ data }) => {
-        this.customer = data;
-        this.booking = data.booking;
-        this.payments = data.booking.payments;
-        this.bookedRooms = data.booking.booked_rooms;
+        this.customer = data.customer;
+        console.log(data);
+        this.booking = data;
+        this.payments = data.payments;
+        this.bookedRooms = data.booked_rooms;
         this.loading = false;
+        this.calTotalAmount(this.payments);
       });
     }
   }
