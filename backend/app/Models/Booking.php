@@ -155,6 +155,16 @@ class Booking extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function cityLedgerPayments()
+    {
+        return $this->hasMany(Payment::class)->where('is_city_ledger', 1);
+    }
+
+    public function withOutCityLedgerPayments()
+    {
+        return $this->hasMany(Payment::class)->where('is_city_ledger', 0);
+    }
+
     /**
      * Get the idCardType that owns the Booking
      *

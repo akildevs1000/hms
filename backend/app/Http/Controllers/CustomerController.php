@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Http\Requests\Customer\StoreRequest;
+use App\Http\Requests\Customer\UpdateRequest;
 
 class CustomerController extends Controller
 {
@@ -36,6 +37,22 @@ class CustomerController extends Controller
             throw $th;
         }
     }
+
+
+    public function update(UpdateRequest $request)
+    {
+        try {
+            // return $request->validated();
+            $updated = Customer::find($request->id)->update($request->validated());
+            if ($updated) {
+                return $this->response('Customer successfully updated.', null, true);
+            }
+            return $this->response('something wrong.', null, true);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
 
     public function search(Request $request, $key)
     {
@@ -116,10 +133,12 @@ class CustomerController extends Controller
 
     public function getCustomerHistory($id)
     {
-        $customer = Customer::with('bookings.payments', 'idCardType')->find($id);
+        // $customer = Customer::with(['bookings' => '[cityLedgerPayments,withOutCityLedgerPayments]'], 'idCardType')->find($id);
+        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments']], 'idCardType')->find($id);
         $res = $customer->bookings->toArray();
         $bookingIds = array_column($res, 'id');
-        $revenue = Payment::whereIn('booking_id', $bookingIds)->sum('amount');
-        return response()->json(['data' => $customer, 'revenue' => $revenue, 'status' => true]);
+        $revenue = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
+        $city_ledger = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 1)->sum('amount');
+        return response()->json(['data' => $customer, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
     }
 }

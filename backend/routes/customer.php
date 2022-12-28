@@ -6,6 +6,7 @@
 
     Route::get('customer', [CustomerController::class, 'index']);
     Route::post('customer', [CustomerController::class, 'store']);
+    Route::post('customer_update', [CustomerController::class, 'update']);
 
 
     Route::get('/booking_customers', [CustomerController::class, 'bookingCustomers']);
