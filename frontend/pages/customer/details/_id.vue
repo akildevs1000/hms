@@ -163,9 +163,9 @@
         </v-card>
       </v-col>
       <v-col md="7">
-        <v-card class="mb-5 rounded-md " elevation="0">
+        <v-card class="mb-5 rounded-md" elevation="0">
           <table>
-            <tr>
+            <tr style="font-size:13px;background-color:#5FAFA3;color:white">
               <th>#</th>
               <th>Date</th>
               <th>Room</th>
@@ -190,21 +190,63 @@
               <td>{{ item.type || "---" }}</td>
               <td>{{ (item && item.payment_mode.name) || "---" }}</td>
               <td>{{ item.description || "---" }}</td>
-              <td>{{ item.amount || "---" }}</td>
+              <td class="text-right">{{ item.amount || "---" }}</td>
             </tr>
             <tr style="background-color:white">
-              <td colspan="8"><hr /></td>
+              <!-- <td colspan="8"><hr /></td> -->
             </tr>
             <tr style="background-color:white">
+              <!-- <td></td>
               <td></td>
               <td></td>
               <td></td>
               <td></td>
-              <td></td>
-              <td></td>
-              <th>{{ totalAmount }}.00</th>
-              <td></td>
+              <td></td> -->
+              <th colspan="7" class="text-right">{{ totalAmount }}.00</th>
             </tr>
+          </table>
+        </v-card>
+        <v-card class="mb-5 rounded-md" elevation="0">
+          <table>
+            <thead>
+              <tr style="font-size:13px;background-color:#5FAFA3;color:white">
+                <th>No</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>After Discount</th>
+                <th>Sgst</th>
+                <th>Cgst</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody v-for="(item, index) in bookedRooms" :key="index">
+              <tr style="font-size:13px">
+                <td>{{ item.room_no || "---" }}</td>
+                <td>{{ item.room_type || "---" }}</td>
+                <td class="text-right">{{ item.price || "---" }}.00</td>
+                <td class="text-right">
+                  {{ item.after_discount || "---" }}.00
+                </td>
+                <td class="text-right">{{ item.sgst || "---" }}.00</td>
+                <td class="text-right">{{ item.cgst || "---" }}.00</td>
+                <td class="text-right">{{ item.total || "---" }}.00</td>
+              </tr>
+              <tr
+                style="font-size:13px"
+                v-for="(postingItem, postingIndex) in item.postings"
+                :key="postingIndex"
+              >
+                <td>{{ item.room_no || "---" }}</td>
+                <td>(Posting) {{ postingItem.item || "---" }}</td>
+                <td class="text-right">{{ postingItem.amount || "---" }}</td>
+                <td class="text-right">{{ postingItem.amount || "---" }}</td>
+                <td class="text-right">{{ postingItem.sgst || "---" }}.00</td>
+                <td class="text-right">{{ postingItem.cgst || "---" }}.00</td>
+                <td class="text-right">
+                  {{ postingItem.amount_with_tax || "---" }}.00
+                </td>
+              </tr>
+            </tbody>
           </table>
         </v-card>
       </v-col>
@@ -296,11 +338,12 @@ td,
 th {
   text-align: left;
   padding: 8px;
+  border: 1px solid black !important;
 }
 
-tr:nth-child(even) {
+/* tr:nth-child(even) {
   background-color: #e9e9e9;
-}
+} */
 
 .custom-text-box {
   border-radius: 2px !important;

@@ -3,7 +3,7 @@
     <v-row>
       <v-col md="3">
         <v-card class="pa-5 mt-0" elevation="0">
-          <h5>Agents</h5>
+          <h5>{{ agent.source == "walking" ? "customer" : "Agents" }}</h5>
           <hr />
           <table>
             <tbody>

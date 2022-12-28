@@ -35,7 +35,7 @@
     <v-dialog v-model="createReservationDialog" max-width="1200px">
       <Reservation :reservation="reservation" />
     </v-dialog>
-    <!-- <v-dialog v-model="checkInDialog" persistenta max-width="700px">
+    <!-- <v-dialog v-model="checkInDialog" max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}ddd</span>
@@ -915,7 +915,6 @@
         </v-list>
       </v-menu>
     </div>
-
     <v-dialog v-model="LoadingDialog" hide-overlay persistent width="300">
       <v-card color="primary" dark>
         <v-card-text class="py-3">
@@ -1065,23 +1064,27 @@ export default {
           this.create_reservation(date, obj);
         },
 
-        eventResize: (arg, delta) => {
-          let obj = {
-            eventId: arg.event.id,
-            start: this.convert_date_format(arg.event.start),
-            end: this.convert_date_format(arg.event.end),
-            roomId: arg.event._def.resourceIds[0]
-          };
+        // eventResize: (arg, delta) => {
+        //   let obj = {
+        //     eventId: arg.event.id,
+        //     start: this.convert_date_format(arg.event.start),
+        //     end: this.convert_date_format(arg.event.end),
+        //     roomId: arg.event._def.resourceIds[0]
+        //   };
 
-          this.change_date_by_drag(obj);
-        },
+        //   this.change_date_by_drag(obj);
+        // },
+
         eventDrop: (arg, delta) => {
           let obj = {
             eventId: arg.event.id,
-            start: this.convert_date_format(arg.event.start),
-            end: this.convert_date_format(arg.event.end),
+            // start: this.convert_date_format(arg.event.start),
+            // end: this.convert_date_format(arg.event.end),
+            company_id: this.$auth.user.company.id,
+
             roomId: arg.event._def.resourceIds[0]
           };
+          console.log(obj);
           this.change_room_by_drag(obj);
         }
       },

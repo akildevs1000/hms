@@ -75,7 +75,7 @@
             <td>{{ item.no_of_adult }}</td>
             <td>{{ item.no_of_child }}</td>
             <td>{{ item.no_of_baby }}</td>
-            <td>{{ item.request }}</td>
+            <!-- <td>{{ item.request }}</td> -->
             <td>{{ item.address }}</td>
             <td>
               <v-icon
@@ -158,9 +158,9 @@ export default {
       {
         text: "Babies"
       },
-      {
-        text: "Others"
-      },
+      // {
+      //   text: "Others"
+      // },
       {
         text: "Address"
       },

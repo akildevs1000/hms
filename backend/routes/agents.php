@@ -10,6 +10,7 @@
 
     Route::get('get_agent_booking', [AgentsController::class, 'getAgentBookings']);
     Route::post('payment_by_agent', [AgentsController::class, 'paymentByAgent']);
+    Route::post('payment_by_customer', [AgentsController::class, 'paymentByCustomer']);
     Route::get('get_agent_details', [AgentsController::class, 'getAgentDetails']);
 
 

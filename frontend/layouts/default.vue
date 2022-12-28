@@ -327,18 +327,18 @@ export default {
           open_menu: false,
           menu: "reservation_access",
           hasChildren: [
-            {
-              icon: "mdi-bookmark ",
-              title: "Bulk Reservation",
-              to: "/reservation/bulk",
-              menu: "reservation_access"
-            },
-            {
-              icon: "mdi-bookmark ",
-              title: "Add Reservation",
-              to: "/reservation/create",
-              menu: "reservation_access"
-            },
+            // {
+            //   icon: "mdi-bookmark ",
+            //   title: "Bulk Reservation",
+            //   to: "/reservation/bulk",
+            //   menu: "reservation_access"
+            // },
+            // {
+            //   icon: "mdi-bookmark ",
+            //   title: "Add Reservation",
+            //   to: "/reservation/create",
+            //   menu: "reservation_access"
+            // },
             {
               icon: "mdi-bed",
               title: "List Reservation",
@@ -347,12 +347,12 @@ export default {
             }
           ]
         },
-        {
-          icon: "mdi-bed",
-          title: "Manage Room",
-          to: "/room",
-          menu: "room_access"
-        },
+        // {
+        //   icon: "mdi-bed",
+        //   title: "Manage Room",
+        //   to: "/room",
+        //   menu: "room_access"
+        // },
         {
           icon: "mdi-account",
           title: "Customers",
