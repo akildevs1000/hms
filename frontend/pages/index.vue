@@ -1,5 +1,7 @@
 <template>
   <div>
+    <link href="matrix/dist/css/style.min.css" rel="stylesheet" />
+
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -170,7 +172,7 @@
               small
               @click="store_check_in(checkData)"
               :loading="false"
-              >Save</v-btn
+              >Check In</v-btn
             >
             <v-btn class="error" small @click="close"> Cancel </v-btn>
           </v-card-actions>
@@ -294,7 +296,7 @@
                     ></v-select>
                   </td>
                 </tr>
-                <tr>
+                <!-- <tr>
                   <th>
                     Payment Mode
                     <span class="text-danger">*</span>
@@ -318,7 +320,7 @@
                       :height="1"
                     ></v-select>
                   </td>
-                </tr>
+                </tr> -->
                 <tr style="background-color: white">
                   <th>
                     Amount With Tax
@@ -335,9 +337,9 @@
 
           <v-card-actions>
             <v-btn class="primary" small @click="store_posting" :loading="false"
-              >submit</v-btn
+              >Post</v-btn
             >
-            <v-btn class="error" small @click="postingDialog = false">
+            <v-btn class="error" small @click="closePosting">
               Cancel
             </v-btn>
           </v-card-actions>
@@ -609,7 +611,9 @@
             </v-container>
           </v-card-text>
           <v-card-actions>
-            <v-btn class="primary" small @click="store_check_out">Save</v-btn>
+            <v-btn class="primary" small @click="store_check_out"
+              >Check Out</v-btn
+            >
             <v-btn class="error" small @click="checkOutDialog = false">
               Cancel
             </v-btn>
@@ -649,7 +653,7 @@
     </div>
     <!--end dialogs -->
 
-    <v-row>
+    <!-- <v-row>
       <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
@@ -791,7 +795,7 @@
           </div>
         </div>
       </div>
-    </v-row>
+    </v-row> -->
 
     <div>
       <v-row class="flex" justify="center"> </v-row>
@@ -868,99 +872,243 @@
       </v-menu>
     </div>
 
-    <v-row class="mt-0">
-      <v-col md="10" sm="12" cols="12">
-        <v-card class="pa-5 mt-0">
-          <h6>Rooms</h6>
-          <v-row>
-            <!-- {{ rooms.notAvailableRooms }} -->
-            <v-col
-              :class="noAvailableRoom.id"
-              lg="1"
-              md="4"
-              sm="12"
-              cols="12"
-              v-for="(noAvailableRoom, i) in notAvailableRooms"
-              :key="i"
-            >
-              <v-card
-                @contextmenu="show"
-                :elevation="0"
-                @mouseover="
-                  mouseOver(
-                    noAvailableRoom.booked_room.id,
-                    noAvailableRoom.booked_room.booking.booking_status
-                  )
-                "
-                @dblclick="dblclick"
-                class="ma-0 px-md-1 py-md-2"
-                dark
-                :style="
-                  `background-image:${noAvailableRoom.booked_room.background}`
-                "
-                ><div class="text-center">
-                  {{ caps(noAvailableRoom.room_type.name) }}
+    <div class="page-wrapper">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-cyan text-center">
+                <div class="d-flex justify-space-around py-0 my-0">
+                  <h1 class="font-light text-white py-0 my-0">
+                    <i class="fas fa-male"></i>
+                    <h5>{{ members.adult }}</h5>
+                    <h6>Adult</h6>
+                  </h1>
+                  <h1 class="font-light text-white py-0 my-0">
+                    <i class="fas fa-child"></i>
+                    <h5>{{ members.child }}</h5>
+                    <h6>Child</h6>
+                  </h1>
+                  <h1 class="font-light text-white py-0 my-0">
+                    <i class="fas fa-baby"></i>
+                    <h5>{{ members.baby }}</h5>
+                    <h6>Babies</h6>
+                  </h1>
                 </div>
-                <div class="text-center">
-                  {{ noAvailableRoom.room_no }}
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              :class="room.id"
-              lg="1"
-              md="4"
-              sm="12"
-              cols="12"
-              v-for="(room, index) in availableRooms"
-              :key="index"
-            >
-              <v-card
-                :elevation="0"
-                class="ma-0 px-md-1 py-md-2"
-                :class="getRelaventColor(room.status)"
-                dark
-                ><div class="text-center">{{ caps(room.room_type.name) }}</div>
-                <div class="text-center">
-                  {{ room.room_no }}
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-      <v-col md="2" sm="12" cols="12">
-        <div class="col-xl-12 col-lg-12 text-uppercase">
-          <div class="card px-2 available">
-            <div class="card-statistic-3">
-              <div class="card-icon card-icon-large">
-                <i style="font-size: 78px" class="fas fa-users"></i>
               </div>
-              <div class="card-content">
-                <h4 class="card-title text-capitalize">Checked In</h4>
-                <span class="data-1">
-                  <small>Adults : {{ members.adult }}</small
-                  ><br />
-                  <small>Child : {{ members.child }}</small
-                  ><br />
-                  <small>Babies : {{ members.baby }}</small>
-                </span>
-                <p class="mb-0 text-sm">
-                  <span class="mr-2">
-                    <v-icon dark small>mdi-arrow-right</v-icon>
-                  </span>
-                  <a class="text-nowrap text-white" target="_blank">
-                    <span class="text-nowrap">View Report</span>
-                  </a>
-                </p>
+            </div>
+          </div>
+          <!-- Column -->
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-success text-center">
+                <h1 class="font-light text-white">
+                  <i class="fas fa-door-open"></i>
+                  <h5>
+                    {{ (availableRooms && availableRooms.length) || 0 }}
+                  </h5>
+                </h1>
+                <h6 class="text-white">Available</h6>
+              </div>
+            </div>
+          </div>
+          <!-- Column -->
+          <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-warning text-center">
+                <h1 class="font-light text-white">
+                  <i class="fas fa-door-closed"></i>
+                  <h5>
+                    {{ (notAvailableRooms && notAvailableRooms.length) || 0 }}
+                  </h5>
+                </h1>
+                <h6 class="text-white">Booked Room</h6>
+              </div>
+            </div>
+          </div>
+          <!-- Column -->
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-danger text-center">
+                <h1 class="font-light text-white">
+                  <!-- <i class="fas fa-door-closed"></i> -->
+                  <i class="fas fa-money-bill"></i>
+                  <h5>
+                    {{ confirmedBooking || "---" }}
+                  </h5>
+                </h1>
+                <h6 class="text-white">Advance Paid Booking</h6>
+              </div>
+            </div>
+          </div>
+          <!-- Column -->
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-info text-center">
+                <h1 class="font-light text-white">
+                  <i class="fas fa-door-closed"></i>
+                  <h5>
+                    {{ waitingBooking || "---" }}
+                  </h5>
+                </h1>
+                <h6 class="text-white">Only Booking</h6>
+              </div>
+            </div>
+          </div>
+          <!-- Column -->
+          <!-- Column -->
+          <div class="col-md-6 col-lg-4 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-primary text-center">
+                <h1 class="font-light text-white">
+                  <i
+                    class="fas fa-plane-arrival"
+                    style="-webkit-transform: scaleX(-1);transform: scaleX(-1);"
+                  ></i>
+                  <h5>
+                    {{ expectCheckIn.length || 0 }}
+                  </h5>
+                </h1>
+                <h6 class="text-white">Expect Check In</h6>
+              </div>
+            </div>
+          </div>
+          <!-- Column -->
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-info text-center">
+                <h1 class="font-light text-white">
+                  <i class="fas fa-plane-departure"></i>
+                  <h5>
+                    {{ expectCheckOut.length || 0 }}
+                  </h5>
+                </h1>
+                <h6 class="text-white">Expect Checked Out</h6>
+              </div>
+            </div>
+          </div>
+          <!-- Column -->
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-cyan text-center">
+                <h1 class="font-light text-white">
+                  <svg
+                    viewBox="0 0 576 512"
+                    fill="#ffff"
+                    width="50px"
+                    height="40px"
+                    style="-webkit-transform: scaleX(-1); transform: scaleX(-1);"
+                  >
+                    <path
+                      d="M432 96c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"
+                    />
+                  </svg>
+                  <h5>{{ checkIn.length || "0" }}</h5>
+                </h1>
+                <h6 class="text-white">Check In</h6>
+              </div>
+            </div>
+          </div>
+          <!-- Column -->
+          <div class="col-md-6 col-lg-4 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-success text-center">
+                <h1 class="font-light text-white">
+                  <svg
+                    viewBox="0 0 576 512"
+                    fill="#ffff"
+                    width="50px"
+                    height="40px"
+                  >
+                    <path
+                      d="M432 96c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"
+                    />
+                  </svg>
+                  <h5>{{ checkOut.length || "0" }}</h5>
+                </h1>
+                <h6 class="text-white">Check Out</h6>
               </div>
             </div>
           </div>
         </div>
-      </v-col>
-    </v-row>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card elevation-0">
+              <div class="card-body">
+                <div class="d-md-flex align-items-center">
+                  <div>
+                    <h4 class="card-title">Rooms</h4>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12 pt-0">
+                    <v-row>
+                      <v-col
+                        :class="noAvailableRoom.id"
+                        lg="1"
+                        md="4"
+                        sm="12"
+                        cols="12"
+                        v-for="(noAvailableRoom, i) in notAvailableRooms"
+                        :key="i"
+                      >
+                        <v-card
+                          @contextmenu="show"
+                          :elevation="0"
+                          @mouseover="
+                            mouseOver(
+                              noAvailableRoom.booked_room.id,
+                              noAvailableRoom.booked_room.booking.booking_status
+                            )
+                          "
+                          @dblclick="dblclick"
+                          class="ma-0 px-md-1 py-md-2"
+                          dark
+                          :style="
+                            `background-image:${noAvailableRoom.booked_room.background}`
+                          "
+                          ><div class="text-center">
+                            {{ caps(noAvailableRoom.room_type.name) }}
+                          </div>
+                          <div class="text-center">
+                            {{ noAvailableRoom.room_no }}
+                          </div>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col
+                        :class="room.id"
+                        lg="1"
+                        md="4"
+                        sm="12"
+                        cols="12"
+                        v-for="(room, index) in availableRooms"
+                        :key="index"
+                      >
+                        <v-card
+                          :elevation="0"
+                          class="ma-0 px-md-1 py-md-2"
+                          :class="getRelaventColor(room.status)"
+                          dark
+                          ><div class="text-center">
+                            {{ caps(room.room_type.name) }}
+                          </div>
+                          <div class="text-center">
+                            {{ room.room_no }}
+                          </div>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <ReservationList />
   </div>
 </template>
@@ -1025,6 +1173,8 @@ export default {
       postings: [],
       notAvailableRooms: [],
       availableRooms: [],
+      checkIn: [],
+      checkOut: [],
       confirmedBooking: "",
       waitingBooking: "",
       reason: "",
@@ -1170,9 +1320,10 @@ export default {
         this.availableRooms = data.availableRooms;
         this.confirmedBooking = data.confirmedBooking;
         this.waitingBooking = data.waitingBooking;
-
         this.expectCheckIn = data.expectCheckIn;
         this.expectCheckOut = data.expectCheckOut;
+        this.checkIn = data.checkIn;
+        this.checkOut = data.checkOut;
 
         this.members = {
           ...data.members
@@ -1205,7 +1356,7 @@ export default {
     },
 
     viewBillingDialog() {
-      let id = this.customerId;
+      let id = this.bookingId;
       this.$router.push(`/customer/details/${id}`);
     },
 
@@ -1452,6 +1603,7 @@ export default {
       if (check_in) {
         this.checkData = {};
         this.checkInDialog = false;
+        this.new_payment = 0;
       }
       if (check_out) {
         this.checkData = {};
@@ -1479,12 +1631,29 @@ export default {
 
     close() {
       this.checkInDialog = false;
+      this.new_payment = 0;
+      this.checkOutDialog = false;
+    },
+
+    closePosting() {
+      this.postingDialog = false;
+      this.posting = {
+        item: "",
+        qty: "",
+        amount: 0,
+        bill_no: "",
+        amount_with_tax: 0,
+        tax: 0,
+        sgst: 0,
+        cgst: 0,
+        tax_type: -1
+      };
     }
   }
 };
 </script>
 
-<style scoped src="@/assets/dashtem.css"></style>
+<!-- <style scoped src="@/assets/dashtem.css"></style> -->
 
 <style scoped>
 .app {

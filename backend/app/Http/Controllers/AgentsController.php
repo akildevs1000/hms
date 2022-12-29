@@ -133,7 +133,7 @@ class AgentsController extends Controller
             if ($found) {
                 $found->update($paymentsData);
             }
-            Agent::find($agentId)->update(['is_paid' => true, 'paid_date' => date('Y-m-d'), 'payment_mode' => $request->payment_mode_id,]);
+            Agent::find($agentId)->update(['is_paid' => true, 'paid_date' => date('Y-m-d'), 'payment_mode' => $request->payment_mode_id, 'transaction' =>  $request->transaction]);
             return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
         }
 

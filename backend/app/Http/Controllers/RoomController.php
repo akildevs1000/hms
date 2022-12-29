@@ -49,7 +49,7 @@ class RoomController extends Controller
             } else {
                 return $this->response('Room cannot add.', null, 'Database error');
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -105,6 +105,22 @@ class RoomController extends Controller
                 $q->where('booking_status', '=', 2);
             })->get();
 
+
+        $checkInModel = BookedRoom::query();
+        $checkIn      = $checkInModel->clone()->whereDate('check_in', $request->check_in)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+            })->get();
+
+
+        $checkOutModel = BookedRoom::query();
+        $checkOut      = $checkOutModel->clone()->whereDate('check_out', $request->check_in)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 3);
+            })->get();
+
         $confirmedBooking = BookedRoom::whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', 0);
             $q->where('booking_status', 1);
@@ -156,6 +172,9 @@ class RoomController extends Controller
             'expectCheckIn'     => $expectCheckIn,
             'expectCheckOut'    => $expectCheckOut,
 
+            'checkIn'    => $checkIn,
+            'checkOut'    => $checkOut,
+
             'members'           => [
                 'adult' => array_sum($no_of_adult),
                 'child' => array_sum($no_of_child),
@@ -195,7 +214,7 @@ class RoomController extends Controller
 
     public function get_color($val)
     {
-        return match($val) {
+        return match ($val) {
             'queen' => 'red',
             'king' => 'green',
             'castle' => '#9966CC',

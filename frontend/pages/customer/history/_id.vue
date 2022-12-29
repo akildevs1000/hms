@@ -3,10 +3,7 @@
     <v-row>
       <v-col md="3">
         <div class="profile-view">
-          <div
-            class="cover-image"
-            style="background-image: url('https://images.lastminutes.deals/hotels/IN/534702592.jpg');"
-          ></div>
+          <div class="cover-image" style="background-color: #5FAFA3;"></div>
           <div class="profile-view-header">
             <div class="avatar-container">
               <img
@@ -724,7 +721,7 @@ export default {
 
 .cover-image {
   width: 100%;
-  height: 300px;
+  height: 130px;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -763,7 +760,7 @@ export default {
   align-items: center;
   padding: 20px;
   position: absolute;
-  top: 264px;
+  top: 99px;
 }
 
 .avatar-container {

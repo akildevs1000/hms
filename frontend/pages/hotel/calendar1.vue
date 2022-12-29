@@ -262,7 +262,9 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="primary" small @click="store_check_out">Save</v-btn>
+          <v-btn class="primary" small @click="store_check_out"
+            >Check Out</v-btn
+          >
           <v-btn class="error" small @click="checkOutDialog = false">
             Cancel
           </v-btn>
@@ -407,7 +409,7 @@
                   ></v-select>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <th>
                   Payment Mode
                   <span class="text-danger">*</span>
@@ -431,7 +433,7 @@
                     :height="1"
                   ></v-select>
                 </td>
-              </tr>
+              </tr> -->
               <tr style="background-color: white">
                 <th>
                   Amount With Tax
@@ -448,9 +450,9 @@
 
         <v-card-actions>
           <v-btn class="primary" small @click="store_posting" :loading="loading"
-            >submit</v-btn
+            >Post</v-btn
           >
-          <v-btn class="error" small @click="postingDialog = false">
+          <v-btn class="error" small @click="closePosting">
             Cancel
           </v-btn>
         </v-card-actions>
@@ -1285,7 +1287,9 @@ export default {
       this.reservation.room_type = obj.room_type;
       this.reservation.room_no = obj.room_no;
       this.reservation.check_in = e.startStr;
-      this.reservation.check_out = this.convert_checkout_date_format(e.endStr); //this.convert_date_format(e.end);
+      this.reservation.check_out = this.convert_checkout_date_format(
+        new Date(e.endStr)
+      ); //this.convert_date_format(e.end);
 
       let payload = {
         params: {
@@ -1306,8 +1310,18 @@ export default {
       });
     },
 
+    convert_checkout_date_format(val) {
+      const previous = new Date(val.getTime());
+      previous.setDate(val.getDate() - 1);
+      const date = new Date(previous);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return [year, month, day].join("-");
+    },
+
     viewBillingDialog() {
-      let id = this.customerId;
+      let id = this.bookingId;
       this.$router.push(`/customer/details/${id}`);
     },
 
@@ -1351,14 +1365,6 @@ export default {
       this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
         this.postings = data;
       });
-    },
-
-    convert_checkout_date_format(val) {
-      const date = new Date(val);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate() - 1).padStart(2, "0");
-      return [year, month, day].join("-");
     },
 
     convert_date_format(val) {
@@ -1622,7 +1628,25 @@ export default {
 
     close() {
       this.checkInDialog = false;
+      this.new_payment = 0;
+      this.checkOutDialog = false;
     },
+
+    closePosting() {
+      this.postingDialog = false;
+      this.posting = {
+        item: "",
+        qty: "",
+        amount: 0,
+        bill_no: "",
+        amount_with_tax: 0,
+        tax: 0,
+        sgst: 0,
+        cgst: 0,
+        tax_type: -1
+      };
+    },
+
     validate_payment() {
       if (
         this.checkData.advance_price == 0 ||

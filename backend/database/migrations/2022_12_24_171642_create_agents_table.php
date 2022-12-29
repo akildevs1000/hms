@@ -29,6 +29,8 @@ return new class extends Migration
             $table->integer('company_id')->nullable();
 
             $table->integer('is_paid')->default(0);
+            $table->string('transaction')->nullable();
+
             $table->date('paid_date')->nullable();
             $table->integer('payment_mode')->nullable();
 

@@ -152,9 +152,11 @@
     </v-app-bar>
 
     <v-main class="main_bg">
-      <v-container>
+      <!-- <v-container> -->
+      <div class="mx-2 my-4">
         <nuxt />
-      </v-container>
+      </div>
+      <!-- </v-container> -->
     </v-main>
     <v-btn
       height="50"

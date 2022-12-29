@@ -107,6 +107,21 @@
                   ></v-text-field>
                 </td>
               </tr>
+              <tr>
+                <th>
+                  Transaction Number
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="booking.transaction"
+                    :hide-details="true"
+                  ></v-text-field>
+                </td>
+              </tr>
               <tr></tr>
             </table>
           </v-container>
@@ -269,6 +284,7 @@
                 {{ item.is_paid == 1 ? "Paid" : "Pending" }}
               </v-chip>
             </td>
+            <td>{{ item.transaction || "---" }}</td>
             <td>{{ item.paid_date || "---" }}</td>
             <td>
               <v-icon
@@ -394,6 +410,9 @@ export default {
         text: "Payment Status"
       },
       {
+        text: "Transaction"
+      },
+      {
         text: "Paid Date"
       },
       {
@@ -484,8 +503,8 @@ export default {
     },
 
     store_agent_payment() {
-      if (this.booking.full_payment == "") {
-        alert("enter full payment");
+      if (this.booking.full_payment == "" || this.booking.transaction == "") {
+        alert("fill required fields");
         return true;
       }
       let payload = {
@@ -493,7 +512,8 @@ export default {
         booking_id: this.booking.id,
         remaining_price: this.booking.remaining_price,
         full_payment: this.booking.full_payment,
-        payment_mode_id: this.booking.payment_mode_id
+        payment_mode_id: this.booking.payment_mode_id,
+        transaction: this.booking.transaction
       };
       // return;
       this.$axios

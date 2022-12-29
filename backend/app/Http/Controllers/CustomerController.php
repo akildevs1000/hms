@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 
 use App\Models\Payment;
+use App\Models\Posting;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Http\Requests\Customer\StoreRequest;
@@ -104,18 +105,11 @@ class CustomerController extends Controller
 
     public function viewBookingCustomerBill($id)
     {
+        $booking =  Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer')->first();
 
-        return  Booking::where('id', $id)
-            // ->where('booking_status', '!=', 0)
-            // ->where('booking_status', '<=', 3)
+        $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
 
-            ->with(
-                'bookedRooms',
-                'payments',
-                'customer',
-            )
-
-            ->first();
+        return response()->json(['booking' => $booking, 'totalPostingAmount' => $totalPostingAmount, 'city_ledger']);
 
 
         // return Customer::whereHas('booking', function ($q) {

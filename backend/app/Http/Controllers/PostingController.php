@@ -106,17 +106,17 @@ class PostingController extends Controller
             $data['posting_date'] = now();
             $posting = Posting::create($data);
 
-            $paymentsData = [
-                'booking_id' => $posting->booking_id,
-                'payment_mode' => $posting->payment_mode_id,
-                'description' => $posting->item,
-                'amount' => $posting->amount_with_tax,
-                'type' => 'posting',
-                'room' => $request->room,
-                'company_id' => $request->company_id,
-            ];
-            $payment = new PaymentController();
-            $payment->store($paymentsData);
+            // $paymentsData = [
+            //     'booking_id' => $posting->booking_id,
+            //     'payment_mode' => $posting->payment_mode_id,
+            //     'description' => $posting->item,
+            //     'amount' => $posting->amount_with_tax,
+            //     'type' => 'posting',
+            //     'room' => $request->room,
+            //     'company_id' => $request->company_id,
+            // ];
+            // $payment = new PaymentController();
+            // $payment->store($paymentsData);
 
 
             return $this->response('Posting Successfully submitted.', $posting, true);

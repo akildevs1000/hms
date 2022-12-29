@@ -35,7 +35,7 @@
     <v-dialog v-model="createReservationDialog" max-width="1200px">
       <Reservation :reservation="reservation" />
     </v-dialog>
-    <!-- <v-dialog v-model="checkInDialog" persistenta max-width="700px">
+    <!-- <v-dialog v-model="checkInDialog" max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}ddd</span>
@@ -169,7 +169,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -188,13 +188,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ checkData && checkData.check_in }}
+                  {{ checkData && checkData.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ checkData && checkData.check_out }}
+                  {{ checkData && checkData.check_out_date }}
                 </td>
               </tr>
               <tr>
@@ -211,7 +211,8 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
+                      { id: 7, name: 'City Ledger' }
                     ]"
                     item-text="name"
                     item-value="id"
@@ -233,7 +234,7 @@
                 <th>Remaining Balance</th>
                 <td>{{ checkData.remaining_price }}.00</td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Full Payment
                   <span class="text-danger">*</span>
@@ -309,7 +310,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Bill No</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   <v-text-field
                     dense
                     outlined
@@ -321,7 +322,7 @@
               </tr>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -337,7 +338,7 @@
                   {{ checkData.room_type }}
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Item
                   <span class="text-danger">*</span>
@@ -352,7 +353,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   QTY
                   <span class="text-danger">*</span>
@@ -367,7 +368,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Amount
                   <span class="text-danger">*</span>
@@ -382,7 +383,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Type
                   <span class="text-danger">*</span>
@@ -431,7 +432,7 @@
                   ></v-select>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Amount With Tax
                   <span class="text-danger">*</span>
@@ -514,7 +515,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -533,13 +534,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ checkData && checkData.check_in }}
+                  {{ checkData && checkData.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ checkData && checkData.check_out }}
+                  {{ checkData && checkData.check_out_date }}
                 </td>
               </tr>
               <tr>
@@ -573,9 +574,7 @@
               </tr>
               <tr></tr>
               <tr>
-                <th>
-                  Advance Payed (Rs.)
-                </th>
+                <th>Advance Payed (Rs.)</th>
                 <td>
                   {{ checkData.advance_price }}.00
                   <!-- <v-text-field
@@ -593,10 +592,8 @@
                 <th>Remaining Balance (Rs.)</th>
                 <td>{{ checkData.remaining_price }}.00</td>
               </tr>
-              <tr style="background-color:white">
-                <th>
-                  New Payment
-                </th>
+              <tr style="background-color: white">
+                <th>New Payment</th>
                 <td>
                   <v-text-field
                     dense
@@ -608,7 +605,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Document
                   <span class="text-danger">*</span>
@@ -685,7 +682,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ checkData && checkData.title }}
                 </td>
               </tr>
@@ -704,13 +701,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ checkData && checkData.check_in }}
+                  {{ checkData && checkData.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ checkData && checkData.check_out }}
+                  {{ checkData && checkData.check_out_date }}
                 </td>
               </tr>
               <tr>
@@ -755,7 +752,7 @@
                 <td>{{ checkData.remaining_price }}.00</td>
               </tr>
 
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   New Advance
                   <span class="text-danger">*</span>
@@ -799,10 +796,10 @@
         offset-y
         v-model="showTooltip"
       >
-        <table style=" border: none!important">
+        <table style="border: none !important">
           <tr class="bg-background">
             <th>Customer Name</th>
-            <td style="width:300px">
+            <td style="width: 300px">
               {{ checkData && checkData.title }}
             </td>
           </tr>
@@ -918,7 +915,6 @@
         </v-list>
       </v-menu>
     </div>
-
     <v-dialog v-model="LoadingDialog" hide-overlay persistent width="300">
       <v-card color="primary" dark>
         <v-card-text class="py-3">
@@ -933,7 +929,7 @@
     </v-dialog>
     <v-row>
       <v-col cols="12">
-        <FullCalendar :options="calendarOptions" style="background:#fff;" />
+        <FullCalendar :options="calendarOptions" style="background: #fff" />
       </v-col>
     </v-row>
   </div>
@@ -1044,8 +1040,14 @@ export default {
             jsEvent.preventDefault();
           });
 
-          arg.el.addEventListener("mouseover", jsEvent => {
-            // this.get_event_by_mouse_hover(eventId, jsEvent);
+          // arg.el.addEventListener("mouseover", jsEvent => {
+          //   this.get_event_by_mouse_hover(eventId, jsEvent);
+          // });
+
+          arg.el.addEventListener("dblclick", jsEvent => {
+            this.evenIid = eventId;
+            this.isDbCLick = true;
+            this.get_data();
           });
 
           arg.el.addEventListener("mouseleave", jsEvent => {
@@ -1062,23 +1064,27 @@ export default {
           this.create_reservation(date, obj);
         },
 
-        eventResize: (arg, delta) => {
-          let obj = {
-            eventId: arg.event.id,
-            start: this.convert_date_format(arg.event.start),
-            end: this.convert_date_format(arg.event.end),
-            roomId: arg.event._def.resourceIds[0]
-          };
+        // eventResize: (arg, delta) => {
+        //   let obj = {
+        //     eventId: arg.event.id,
+        //     start: this.convert_date_format(arg.event.start),
+        //     end: this.convert_date_format(arg.event.end),
+        //     roomId: arg.event._def.resourceIds[0]
+        //   };
 
-          this.change_date_by_drag(obj);
-        },
+        //   this.change_date_by_drag(obj);
+        // },
+
         eventDrop: (arg, delta) => {
           let obj = {
             eventId: arg.event.id,
-            start: this.convert_date_format(arg.event.start),
-            end: this.convert_date_format(arg.event.end),
+            // start: this.convert_date_format(arg.event.start),
+            // end: this.convert_date_format(arg.event.end),
+            company_id: this.$auth.user.company.id,
+
             roomId: arg.event._def.resourceIds[0]
           };
+          console.log(obj);
           this.change_room_by_drag(obj);
         }
       },
@@ -1101,6 +1107,7 @@ export default {
       bookingStatus: "",
       reason: "",
       customerId: "",
+      bookingId: "",
 
       document: null,
       new_payment: 0,
@@ -1128,7 +1135,8 @@ export default {
         origin_price: "",
         room_id: "",
         isCalculate: false
-      }
+      },
+      isDbCLick: false
     };
   },
 
@@ -1196,7 +1204,6 @@ export default {
     show(id, jsEvent) {
       this.LoadingDialog = true;
       this.evenIid = id;
-      console.log(this.evenIid);
       this.get_data(jsEvent);
     },
 
@@ -1235,15 +1242,21 @@ export default {
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
+        this.bookingId = data.id;
         this.checkData.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
         console.log(this.checkData);
         this.show_context_menu(jsEvent);
+
+        if (this.isDbCLick) {
+          this.get_event_by_db_click();
+        }
       });
     },
 
     get_event_by_mouse_hover(id, jsEvent) {
+      console.log(id);
       this.evenIid = id;
       this.tx = jsEvent.clientX;
       this.ty = jsEvent.clientY;
@@ -1251,6 +1264,11 @@ export default {
         this.showTooltip = true;
       });
       this.get_data();
+    },
+
+    get_event_by_db_click() {
+      console.log(this.bookingId);
+      this.$router.push(`/customer/details/${this.bookingId}`);
     },
 
     create_reservation(e, obj) {
@@ -1350,10 +1368,10 @@ export default {
     },
 
     store_check_out() {
-      if (this.checkData.full_payment == "") {
-        alert("enter full payment");
-        return true;
-      }
+      // if (this.checkData.full_payment == "") {
+      //   alert("enter full payment");
+      //   return true;
+      // }
 
       this.loading = true;
       let payload = {
@@ -1411,9 +1429,9 @@ export default {
 
     store_check_in(data) {
       if (
-        this.new_payment == "" ||
-        this.new_payment == 0 ||
-        (data.document ? "" : this.document == null)
+        // this.new_payment == "" ||
+        // this.new_payment == 0 ||
+        data.document ? "" : this.document == null
       ) {
         alert("Enter required fields");
         return;
@@ -1465,8 +1483,9 @@ export default {
 
     setAvailable() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        // cancel_by: this.$auth.user.id,
       };
+
       this.$axios
         .post(`set_available/${this.evenIid}`, payload)
         .then(({ data }) => {

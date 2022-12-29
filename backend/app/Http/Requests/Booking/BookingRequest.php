@@ -49,12 +49,16 @@ class BookingRequest extends FormRequest
 
         ];
 
-        if ($this->type == 'Online') {
+        if ($this->type == 'Online' || $this->type == 'Travel Agency') {
             $arr['source'] = 'required';
+            $arr['reference_no'] = 'required';
+            $arr['paid_by'] = 'required';
         }
-        if ($this->type == 'Travel Agency') {
-            $arr['source'] = 'required';
-        }
+        // if ($this->type == 'Travel Agency') {
+        //     $arr['source'] = 'required';
+        //     $arr['reference_no'] = 'required';
+        //     $arr['paid_by'] = 'required';
+        // }
 
         return $arr;
     }

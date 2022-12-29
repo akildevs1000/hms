@@ -305,7 +305,7 @@
 
     <hr style="margin:0px;padding:0">
     @php
-        
+
     @endphp
     <table class="inv-table">
         <tr style="background-color: rgb(19, 19, 75);color:white">
@@ -321,13 +321,18 @@
         </tr>
         <tbody style="font-size: 5px">
             @php
-                
+
                 $totalWithoutDiscounts = 0;
-                $totalWithDiscounts = 0;
+                $totalWithTax = 0;
                 $totalcgst = 0;
                 $totalsgst = 0;
+
+                $totalPostingWithTax = 0;
+                $totalPostingcgst = 0;
+                $totalPostingsgst = 0;
+
                 $grandTotal = 0;
-                
+
             @endphp
             @foreach ($orderRooms as $room)
                 <tr>
@@ -355,6 +360,7 @@
                     </td> --}}
                     @php
                         $totalWithoutDiscounts += $room->after_discount;
+                        $totalWithTax += $room->total;
                         $totalcgst += $room->cgst;
                         $totalsgst += $room->sgst;
                     @endphp
@@ -379,32 +385,41 @@
                             {{ $post->amount }} <br>
                         </td>
                         <td class="txt-inv-amount">
-                            {{ $post->sgst }}.00 <br>
+                            {{ $post->sgst }} <br>
                             ({{ (int) $post->tax_type / 2 }}%)
                         </td>
                         <td class="txt-inv-amount">
-                            {{ $post->cgst }}.00 <br>
+                            {{ $post->cgst }} <br>
                             ({{ (int) $post->tax_type / 2 }} %)
                         </td>
                         <td class="txt-inv-amount">
                             {{ $post->amount_with_tax }}
                         </td>
-                        {{-- @php
-                            $totalPosting += $post->amount_with_tax;
+                        @php
+                            $totalPostingWithTax += $post->amount_with_tax;
                             $totalPostingcgst += $post->cgst;
                             $totalPostingsgst += $post->sgst;
-                        @endphp --}}
+                        @endphp
                     </tr>
                 @endforeach
             @endforeach
+
+            <tr>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td class="txt-inv-amount">{{ $totalPostingsgst + $totalsgst }}</td>
+                <td class="txt-inv-amount">{{ $totalPostingcgst + $totalcgst }}</td>
+                <td class="txt-inv-amount">{{ $totalWithTax + $totalPostingWithTax }}.00</td>
+            </tr>
+
         </tbody>
     </table>
     <table>
-        {{-- <tr colspan="11">
-            <td colspan="11" style="text-align: right">dsdf</td>
-            <td>dsdf</td>
-        </tr> --}}
-        <tr>
+
+        {{-- <tr>
             <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
 
             </td>
@@ -430,10 +445,7 @@
                     </tr>
                 </table>
             </td>
-        </tr>
-
-
-
+        </tr> --}}
         {{-- <tr>
             <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
                 <p>Payment Mode : <b>CASH</b></p>
