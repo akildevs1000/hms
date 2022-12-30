@@ -269,6 +269,7 @@
                       type="number"
                       v-model="posting.amount"
                       :hide-details="true"
+                      @keyup="get_amount_with_tax(posting.tax_type)"
                     ></v-text-field>
                   </td>
                 </tr>
@@ -500,7 +501,7 @@
               :loading="false"
               >Save</v-btn
             >
-            <v-btn class="error" small @click="payingAdvance = false">
+            <v-btn class="error" small @click="close">
               Cancel
             </v-btn>
           </v-card-actions>
@@ -901,7 +902,7 @@
           <!-- Column -->
           <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-success text-center">
+              <div class="box available text-center">
                 <h1 class="font-light text-white">
                   <i class="fas fa-door-open"></i>
                   <h5>
@@ -915,7 +916,7 @@
           <!-- Column -->
           <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-warning text-center">
+              <div class="box booked text-center">
                 <h1 class="font-light text-white">
                   <i class="fas fa-door-closed"></i>
                   <h5>
@@ -929,9 +930,11 @@
           <!-- Column -->
           <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-danger text-center">
+              <div
+                class="box text-center"
+                style="background-image:linear-gradient(135deg, #56ab2f  0, #a8e063 100%)"
+              >
                 <h1 class="font-light text-white">
-                  <!-- <i class="fas fa-door-closed"></i> -->
                   <i class="fas fa-money-bill"></i>
                   <h5>
                     {{ confirmedBooking || "---" }}
@@ -941,10 +944,12 @@
               </div>
             </div>
           </div>
-          <!-- Column -->
           <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-info text-center">
+              <div
+                class="box text-center"
+                style="background-image:linear-gradient(135deg, #d66d75   0, #e29587 100%)"
+              >
                 <h1 class="font-light text-white">
                   <i class="fas fa-door-closed"></i>
                   <h5>
@@ -955,11 +960,12 @@
               </div>
             </div>
           </div>
-          <!-- Column -->
-          <!-- Column -->
           <div class="col-md-6 col-lg-4 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-primary text-center">
+              <div
+                class="box bg-primary text-center"
+                style="background-image: linear-gradient(135deg, #4568dc     0, #8169C4 100%)"
+              >
                 <h1 class="font-light text-white">
                   <i
                     class="fas fa-plane-arrival"
@@ -973,10 +979,12 @@
               </div>
             </div>
           </div>
-          <!-- Column -->
           <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-info text-center">
+              <div
+                class="box text-center"
+                style="background-image: linear-gradient(135deg, #c33764      0, #A05196 100%)"
+              >
                 <h1 class="font-light text-white">
                   <i class="fas fa-plane-departure"></i>
                   <h5>
@@ -987,10 +995,9 @@
               </div>
             </div>
           </div>
-          <!-- Column -->
           <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-cyan text-center">
+              <div class="box checkedIn text-center">
                 <h1 class="font-light text-white">
                   <svg
                     viewBox="0 0 576 512"
@@ -1009,10 +1016,9 @@
               </div>
             </div>
           </div>
-          <!-- Column -->
           <div class="col-md-6 col-lg-4 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-success text-center">
+              <div class="box checkedOut text-center">
                 <h1 class="font-light text-white">
                   <svg
                     viewBox="0 0 576 512"
@@ -1057,15 +1063,23 @@
                           :elevation="0"
                           @mouseover="
                             mouseOver(
-                              noAvailableRoom.booked_room.id,
-                              noAvailableRoom.booked_room.booking.booking_status
+                              noAvailableRoom &&
+                                noAvailableRoom.booked_room &&
+                                noAvailableRoom.booked_room.id,
+                              noAvailableRoom &&
+                                noAvailableRoom.booked_room &&
+                                noAvailableRoom.booked_room.booking
+                                  .booking_status
                             )
                           "
                           @dblclick="dblclick"
                           class="ma-0 px-md-1 py-md-2"
                           dark
                           :style="
-                            `background-image:${noAvailableRoom.booked_room.background}`
+                            `background-image:${(noAvailableRoom &&
+                              noAvailableRoom.booked_room &&
+                              noAvailableRoom.booked_room.background) ||
+                              ''}`
                           "
                           ><div class="text-center">
                             {{ caps(noAvailableRoom.room_type.name) }}
@@ -1261,7 +1275,6 @@ export default {
     mouseOver(bookedRoomId, bookingStatus) {
       this.evenIid = bookedRoomId;
       this.bookingStatus = bookingStatus;
-      console.log(this.evenIid);
     },
 
     show(e) {
@@ -1292,14 +1305,21 @@ export default {
     },
 
     get_amount_with_tax(clause) {
-      let per = clause == "Food" ? 5 : 12;
-      let res = this.getPercentage(this.posting.amount, per);
+      // let per = clause == "Food" ? 5 : 12;
+      let per = 0;
+      if (clause == "Food") {
+        per = 5;
+      } else if (clause == "Mess" || clause == "Bed") {
+        per = 12;
+      }
+
+      let res = this.getPercentage(this.posting.amount || 0, per);
       let gst = parseInt(res) / 2;
       this.posting.sgst = gst;
       this.posting.cgst = gst;
       this.posting.tax = res;
       this.posting.amount_with_tax =
-        parseInt(res) + parseInt(this.posting.amount);
+        parseInt(res) + parseInt(this.posting.amount || 0);
     },
 
     getPercentage(amount, clause) {
@@ -1328,8 +1348,6 @@ export default {
         this.members = {
           ...data.members
         };
-
-        console.log(this.notAvailableRooms.length);
       });
     },
 
@@ -1363,7 +1381,8 @@ export default {
     get_data(jsEvent = null) {
       let payload = {
         params: {
-          id: this.evenIid
+          id: this.evenIid,
+          company_id: this.$auth.user.company.id
         }
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
@@ -1372,7 +1391,6 @@ export default {
         this.checkData.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
-        console.log(this.checkData);
         if (this.isDbCLick) {
           this.get_event_by_db_click();
         }
@@ -1479,7 +1497,7 @@ export default {
         cancel_by: this.$auth.user.id
       };
       this.$axios
-        .post(`set_available/${this.evenIid}`, payload)
+        .post(`set_available/${this.bookingId}`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.snackbar = data.status;
@@ -1499,7 +1517,7 @@ export default {
         cancel_by: this.$auth.user.id
       };
       this.$axios
-        .post(`set_maintenance/${this.evenIid}`, payload)
+        .post(`set_maintenance/${this.bookingId}`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.snackbar = data.status;
@@ -1541,11 +1559,13 @@ export default {
     },
 
     store_check_out() {
-      // if (this.checkData.full_payment == "") {
-      //   alert("enter full payment");
-      //   return true;
-      // }
-
+      if (
+        parseInt(this.checkData.full_payment) >
+        parseInt(this.checkData.remaining_price)
+      ) {
+        alert("enter correct payment");
+        return true;
+      }
       this.loading = true;
       let payload = {
         booking_id: this.checkData.id,
@@ -1566,25 +1586,7 @@ export default {
         })
         .catch(e => console.log(e));
     },
-    setAvailable() {
-      let payload = {
-        cancel_by: this.$auth.user.id
-      };
-      this.$axios
-        .post(`set_available/${this.evenIid}`, payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.snackbar = data.status;
-            this.response = data.message;
-            return;
-          }
-          this.room_list();
-          this.cancelDialog = false;
-          this.snackbar = data.status;
-          this.response = data.message;
-        })
-        .catch(err => console.log(err));
-    },
+
     preview(file) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
@@ -1624,14 +1626,14 @@ export default {
       this.loading = false;
       this.snackbar = true;
       this.response = data.message;
-
-      console.log(this.snackbar);
-      console.log(data.message);
     },
 
     close() {
       this.checkInDialog = false;
       this.new_payment = 0;
+      this.new_advance = 0;
+      this.payingAdvance = false;
+      this.checkOutDialog = false;
       this.checkOutDialog = false;
     },
 

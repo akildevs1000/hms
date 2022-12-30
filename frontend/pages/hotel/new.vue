@@ -158,7 +158,7 @@
                   >Status <span class="text-danger">*</span></label
                 >
                 <v-select
-                  :items="['Cancel', 'Waiting', 'Confirmed']"
+                  :items="['Waiting', 'Confirmed']"
                   dense
                   item-text="name"
                   item-value="id"
@@ -681,7 +681,7 @@
                           v-model="customer.last_name"
                         ></v-text-field>
                       </v-col>
-                      <v-col md="2" cols="12" sm="12">
+                      <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Amount : </label>
                         {{ item.price }}.00
                       </v-col>
@@ -690,7 +690,7 @@
                         <label class="col-form-label">Meal : </label>
                         {{ capsTitle(item.meal) }}
                       </v-col>
-                      <v-col md="3" cols="12" sm="12">
+                      <v-col md="2" cols="12" sm="12">
                         <label class="col-form-label">Tax : </label>
                         {{ item.room_tax }}.00
                       </v-col>
@@ -701,6 +701,18 @@
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Tax with Amount : </label>
                         {{ item.total_with_tax }}.00
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Adult : </label>
+                        {{ item.no_of_adult }}
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Child : </label>
+                        {{ item.no_of_child }}
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Baby : </label>
+                        {{ item.no_of_baby }}
                       </v-col>
                     </v-row>
                   </div>
@@ -967,13 +979,13 @@
               <br /><br />
               <v-col md="6"><b class="#F9FAFD--text">Days</b></v-col>
               <v-col md="6" class="text-right">{{ getDays() }} </v-col>
-              <v-col md="6"><b class="#F9FAFD--text">Bed</b></v-col>
-              <v-col md="6" class="text-right">{{ room.bed_amount }}</v-col>
-              <v-col md="12">
+              <!-- <v-col md="6"><b class="#F9FAFD--text">Bed</b></v-col> -->
+              <!-- <v-col md="6" class="text-right">{{ room.bed_amount }}</v-col> -->
+              <!-- <v-col md="12">
                 <v-divider></v-divider>
-              </v-col>
-              <v-col md="6"><b class="#F9FAFD--text">Adult</b></v-col>
-              <v-col md="6" class="text-right">{{
+              </v-col> -->
+              <!-- <v-col md="6"><b class="#F9FAFD--text">Adult</b></v-col> -->
+              <!-- <v-col md="6" class="text-right">{{
                 customer.no_of_adult
               }}</v-col>
               <v-col md="6"><b class="#F9FAFD--text">Child</b></v-col>
@@ -981,7 +993,7 @@
                 customer.no_of_child
               }}</v-col>
               <v-col md="6"><b class="#F9FAFD--text">Baby</b></v-col>
-              <v-col md="6" class="text-right">{{ customer.no_of_baby }}</v-col>
+              <v-col md="6" class="text-right">{{ customer.no_of_baby }}</v-col> -->
               <v-col md="12" class="text-right"><v-divider></v-divider></v-col>
             </v-row>
             <v-row>
@@ -1040,11 +1052,12 @@
                 ></v-text-field>
               </v-col> -->
               <v-col md="12" cols="12" sm="12">
-                <label class="col-form-label">Advance Price</label>
+                <label class="col-form-label">Advance Amount</label>
                 <v-text-field
                   @keyup="runAllFunctions"
                   dense
                   :hide-details="true"
+                  :disabled="room.paid_by == '2' ? true : false"
                   outlined
                   type="number"
                   v-model="room.advance_price"
@@ -1060,12 +1073,13 @@
                     { id: 3, name: 'Online' },
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                    { id: 7, name: 'City Ledger' }
+                    { id: 6, name: 'Cheque' }
+                    // { id: 7, name: 'City Ledger' }
                   ]"
                   item-text="name"
                   item-value="id"
                   dense
+                  :disabled="room.paid_by == '2' ? true : false"
                   outlined
                   @change="getType(room.type)"
                   :hide-details="errors && !errors.payment_mode_id"
@@ -1724,6 +1738,9 @@ export default {
 
     store() {
       // this.alert("Waiting..!", "Loading...", "info");
+      if (this.room.advance_price == "") {
+        this.room.advance_price = 0;
+      }
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");

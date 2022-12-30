@@ -216,7 +216,7 @@
             </tbody>
           </table>
         </v-card>
-        <v-card class="mb-5 rounded-md" elevation="0">
+        <!-- <v-card class="mb-5 rounded-md" elevation="0">
           <table>
             <tr style="font-size:13px;background-color:#5FAFA3;color:white">
               <th>#</th>
@@ -254,6 +254,47 @@
               <th colspan="7" class="text-right">{{ totalAmount }}.00</th>
             </tr>
           </table>
+        </v-card> -->
+
+        <v-card class="mb-5 rounded-md" elevation="0">
+          <table>
+            <tr style="font-size:13px;background-color:#5FAFA3;color:white">
+              <th>#</th>
+              <th>Date</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Balance</th>
+            </tr>
+            <v-progress-linear
+              v-if="loading"
+              :active="loading"
+              :indeterminate="loading"
+              absolute
+              color="primary"
+            ></v-progress-linear>
+            <tr
+              v-for="(item, index) in transactions"
+              :key="index"
+              style="font-size:13px;"
+            >
+              <td>
+                <b>{{ ++index }}</b>
+              </td>
+              <td>{{ item.created_at || "---" }}</td>
+              <td>{{ item && item.debit == 0 ? "---" : item.debit }}</td>
+              <td>{{ item && item.credit == 0 ? "---" : item.credit }}</td>
+              <td>{{ item.balance || "---" }}</td>
+            </tr>
+            <tr style="font-size:13px;">
+              <td></td>
+              <td></td>
+              <td></td>
+              <th>Balance</th>
+              <td class="text-left">
+                {{ totalTransactionAmount }}
+              </td>
+            </tr>
+          </table>
         </v-card>
       </v-col>
     </v-row>
@@ -279,9 +320,11 @@ export default {
     payments: [],
     booking: [],
     bookedRooms: [],
+    transactions: [],
     errors: [],
     totalAmount: 0,
-    totalPostingAmount: 0
+    totalPostingAmount: 0,
+    totalTransactionAmount: 0
   }),
 
   computed: {},
@@ -318,6 +361,8 @@ export default {
       this.$axios.get(`booking_customer/${id}`).then(({ data }) => {
         //assign booking
         this.totalPostingAmount = data.totalPostingAmount;
+        this.totalTransactionAmount = data.totalTransactionAmount;
+        this.transactions = data.transaction;
         const booking = data.booking;
         this.customer = booking.customer;
         console.log(booking);
@@ -351,9 +396,9 @@ th {
   /* border: 1px solid black !important; */
 }
 
-/* tr:nth-child(even) {
+tr:nth-child(even) {
   background-color: #e9e9e9;
-} */
+}
 
 .custom-text-box {
   border-radius: 2px !important;

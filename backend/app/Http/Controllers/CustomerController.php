@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Posting;
 use App\Models\Customer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Requests\Customer\StoreRequest;
 use App\Http\Requests\Customer\UpdateRequest;
@@ -109,7 +110,16 @@ class CustomerController extends Controller
 
         $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
 
-        return response()->json(['booking' => $booking, 'totalPostingAmount' => $totalPostingAmount, 'city_ledger']);
+        $transaction = Transaction::whereBookingId($id);
+        $transactions = $transaction->clone()->get();
+        $totalTransactionAmount = $transaction->clone()->latest()->first();
+
+        return response()->json([
+            'booking' => $booking,
+            'totalPostingAmount' => $totalPostingAmount,
+            'transaction' => $transactions,
+            'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0
+        ]);
 
 
         // return Customer::whereHas('booking', function ($q) {

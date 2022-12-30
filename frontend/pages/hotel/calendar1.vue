@@ -661,7 +661,7 @@
             small
             @click="store_check_in(checkData)"
             :loading="loading"
-            >Save</v-btn
+            >Check In</v-btn
           >
           <v-btn class="error" small @click="close"> Cancel </v-btn>
         </v-card-actions>
@@ -1049,6 +1049,7 @@ export default {
           arg.el.addEventListener("dblclick", jsEvent => {
             this.evenIid = eventId;
             this.isDbCLick = true;
+            console.log(this.evenIid);
             this.get_data();
           });
 
@@ -1239,9 +1240,11 @@ export default {
     get_data(jsEvent = null) {
       let payload = {
         params: {
-          id: this.evenIid
+          id: this.evenIid,
+          company_id: this.$auth.user.company.id
         }
       };
+      console.log(payload);
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
         this.bookingId = data.id;
@@ -1250,7 +1253,7 @@ export default {
         this.customerId = data.customer_id;
         console.log(this.checkData);
         this.show_context_menu(jsEvent);
-
+        console.log(this.bookingId);
         if (this.isDbCLick) {
           this.get_event_by_db_click();
         }
@@ -1493,7 +1496,7 @@ export default {
       };
 
       this.$axios
-        .post(`set_available/${this.evenIid}`, payload)
+        .post(`set_available/${this.bookingId}`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.snackbar = data.status;
@@ -1513,7 +1516,7 @@ export default {
         cancel_by: this.$auth.user.id
       };
       this.$axios
-        .post(`set_maintenance/${this.evenIid}`, payload)
+        .post(`set_maintenance/${this.bookingId}`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.snackbar = data.status;

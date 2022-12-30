@@ -106,6 +106,22 @@ class PostingController extends Controller
             $data['posting_date'] = now();
             $posting = Posting::create($data);
 
+            $transactionData = [
+                'booking_id' => $data['booking_id'],
+                'customer_id' => 1 ?? '',
+                'date' => now(),
+                'company_id' => $data['company_id'] ?? '',
+            ];
+
+            $payment = new TransactionController();
+
+            // return [
+            //     $transactionData, $posting->amount_with_tax, 'debit'
+            // ];
+
+            $payment->store($transactionData, $posting->amount_with_tax, 'debit');
+
+
             // $paymentsData = [
             //     'booking_id' => $posting->booking_id,
             //     'payment_mode' => $posting->payment_mode_id,
