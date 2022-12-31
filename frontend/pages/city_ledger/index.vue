@@ -14,7 +14,7 @@
     <v-dialog v-model="agentPaymentDialog" persistent max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Agent Payment</span>
+          <span>City Ledger Payment</span>
         </v-toolbar>
         <v-card-text>
           <v-container>
@@ -117,7 +117,9 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="primary" small @click="store_agent_payment">Save</v-btn>
+          <v-btn class="primary" small @click="store_customer_payment"
+            >Save</v-btn
+          >
           <v-btn class="error" small @click="agentPaymentDialog = false">
             Cancel
           </v-btn>
@@ -491,7 +493,7 @@ export default {
       });
     },
 
-    store_agent_payment() {
+    store_customer_payment() {
       if (this.booking.full_payment == "") {
         alert("enter full payment");
         return true;

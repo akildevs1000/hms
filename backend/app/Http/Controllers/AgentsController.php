@@ -107,18 +107,41 @@ class AgentsController extends Controller
         $agentId = $request->agentData['id'];
         $booking_id = $request->booking_id;
         $booking    = Booking::find($booking_id);
-
+        $isFullPayment = false;
         if ($booking->remaining_price <= $request->full_payment) {
             $booking->remaining_price = 0;
             $booking->payment_status  = 1;
             $booking->full_payment    = $booking->total_price;
+            $isFullPayment = true;
         } else {
             $booking->remaining_price = ((int) $booking->total_price - (int) $request->full_payment);
         }
         $booking->payment_mode_id = $request->payment_mode_id;
-        $booking->check_in_price  = $request->full_payment;
+        $booking->check_out_price  = $request->full_payment;
         // $booking->booking_status  = 3;
         if ($booking->save()) {
+
+
+
+            if ($isFullPayment) {
+                $transactionData = [
+                    'booking_id' => $booking->id,
+                    'customer_id' => $booking->customer_id ?? '',
+                    'date' => now(),
+                    'company_id' => $booking->company_id ?? '',
+                    'payment_method_id' => $booking->payment_mode_id,
+                ];
+
+                $payment = new TransactionController();
+                $payment->store($transactionData, $request->full_payment, 'credit');
+            }
+
+
+            //  =====================
+
+
+
+
             $paymentsData = [
                 'booking_id'   => $booking_id,
                 'payment_mode' => $request->payment_mode_id,

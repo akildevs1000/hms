@@ -47,13 +47,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ booking && booking.check_in }}
+                  {{ booking && booking.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ booking && booking.check_out }}
+                  {{ booking && booking.check_out_date }}
                 </td>
               </tr>
               <tr>
@@ -95,7 +95,6 @@
               <tr>
                 <th>
                   Posting Amount
-                  <span class="text-danger">*</span>
                 </th>
                 <td>
                   {{ booking.total_posting_amount }}
@@ -104,13 +103,26 @@
               <tr>
                 <th>
                   Total (Booking + Posting)
-                  <span class="text-danger">*</span>
                 </th>
                 <td>
                   {{ booking.grand_remaining_price }}
                 </td>
               </tr>
-              <tr style="background-color: white">
+              <tr>
+                <th>
+                  Paid with Posting
+                </th>
+                <td>
+                  <v-checkbox
+                    v-model="booking.paid_with_posting"
+                    dense
+                    :hide-details="true"
+                    value="1"
+                    @change="getFullPayment"
+                  ></v-checkbox>
+                </td>
+              </tr>
+              <tr>
                 <th>
                   Full Payment
                   <span class="text-danger">*</span>
@@ -484,6 +496,14 @@ export default {
       );
     },
 
+    getFullPayment() {
+      if (this.booking.paid_with_posting) {
+        this.booking.full_payment = this.booking.grand_remaining_price;
+      } else {
+        this.booking.full_payment = this.booking.total_price;
+      }
+    },
+
     paidAmount(agentData) {
       this.agentData = agentData;
       let payload = {
@@ -498,6 +518,7 @@ export default {
           this.booking.full_payment = "";
           this.bookingStatus = data.booking_status;
           this.customerId = data.customer_id;
+          this.booking.full_payment = this.booking.total_price;
           this.agentPaymentDialog = true;
         }
       });
