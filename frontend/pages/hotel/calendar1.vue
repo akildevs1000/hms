@@ -6,153 +6,11 @@
       </v-snackbar>
     </div>
 
-    <!-- <v-dialog v-model="dateConfirmationDialog" persistent max-width="290">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" dark v-bind="attrs" v-on="on">
-          Open Dialog
-        </v-btn>
-      </template>
-      <v-card>
-        <v-card-title class="text-h5">
-          Use Google's location service?
-        </v-card-title>
-        <v-card-text
-          >Let Google help apps determine location. This means sending anonymous
-          location data to Google, even when no apps are running.</v-card-text
-        >
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog = false">
-            Disagree
-          </v-btn>
-          <v-btn color="green darken-1" text @click="dialog = false">
-            Agree
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
-
     <v-dialog v-model="createReservationDialog" max-width="1200px">
       <Reservation :reservation="reservation" />
     </v-dialog>
-    <!-- <v-dialog v-model="checkInDialog" max-width="700px">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>{{ formTitle }}ddd</span>
-        </v-toolbar>
-        <v-card-text>
-          <v-container>
-            <table>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
-              <tr>
-                <th>Customer Name</th>
-                <td style="width:300px">
-                  {{ checkData && checkData.title }}
-                </td>
-              </tr>
-              <tr>
-                <th>Room No</th>
-                <td>
-                  {{ checkData.room_no }}
-                </td>
-              </tr>
-              <tr>
-                <th>Room Type</th>
-                <td>
-                  {{ checkData.room_type }}
-                </td>
-              </tr>
-              <tr>
-                <th>Check In</th>
-                <td>
-                  {{ checkData && checkData.check_in }}
-                </td>
-              </tr>
-              <tr>
-                <th>Check Out</th>
-                <td>
-                  {{ checkData && checkData.check_out }}
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  Payment Mode
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-select
-                    v-model="checkData.payment_mode_id"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                  ></v-select>
-                </td>
-              </tr>
-              <tr>
-                <th>Total Amount</th>
-                <td>
-                  {{ checkData && checkData.total_price }}
-                </td>
-              </tr>
-              <tr></tr>
-              <tr>
-                <th>
-                  Advance Price
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="checkData.advance_price"
-                    :hide-details="true"
-                    @keyup="get_remaining(checkData.advance_price)"
-                  ></v-text-field>
-                </td>
-              </tr>
-              <tr></tr>
-              <tr>
-                <th>Remaining Balance</th>
-                <td>
-                  {{ checkData.remaining_price }}
-                </td>
-              </tr>
-              <tr></tr>
-            </table>
-          </v-container>
-        </v-card-text>
 
-        <v-card-actions>
-          <v-btn
-            class="primary"
-            small
-            @click="store_check_in(checkData)"
-            :loading="loading"
-            >Save</v-btn
-          >
-          <v-btn class="error" small @click="close"> Cancel </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
-    <v-dialog v-model="checkOutDialog" persistent max-width="700px">
+    <!-- <v-dialog v-model="checkOutDialog" persistent max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
@@ -225,14 +83,14 @@
               </tr>
               <tr>
                 <th>Total Amount</th>
-                <td>{{ checkData && checkData.total_price }}.00</td>
+                <td>{{ checkData && checkData.total_price }}</td>
               </tr>
               <tr></tr>
 
               <tr></tr>
               <tr>
                 <th>Remaining Balance</th>
-                <td>{{ checkData.remaining_price }}.00</td>
+                <td>{{ checkData.remaining_price }}</td>
               </tr>
               <tr style="background-color: white">
                 <th>
@@ -249,14 +107,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <!-- <tr style="background-color:white">
-                <th>
-                  Balance
-                </th>
-                <td>
-                  <span>{{ getBalance }}</span>
-                </td>
-              </tr> -->
+
               <tr></tr>
             </table>
           </v-container>
@@ -270,7 +121,167 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+    </v-dialog> -->
+
+    <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>{{ formTitle }}</span>
+        </v-toolbar>
+        <v-card-text>
+          <v-row>
+            <v-col md="7">
+              <v-container>
+                <table>
+                  <v-progress-linear
+                    v-if="false"
+                    :active="loading"
+                    :indeterminate="loading"
+                    absolute
+                    color="primary"
+                  ></v-progress-linear>
+                  <tr>
+                    <th>Customer Name</th>
+                    <td style="width: 300px">
+                      {{ checkData && checkData.title }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Room No</th>
+                    <td>
+                      {{ checkData.room_no }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Room Type</th>
+                    <td>
+                      {{ checkData.room_type }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Check In</th>
+                    <td>
+                      {{ checkData && checkData.check_in_date }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Check Out</th>
+                    <td>
+                      {{ checkData && checkData.check_out_date }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>
+                      Payment Mode
+                      <span class="text-danger">*</span>
+                    </th>
+                    <td>
+                      <v-select
+                        v-model="checkData.payment_mode_id"
+                        :items="[
+                          { id: 1, name: 'Cash' },
+                          { id: 2, name: 'Card' },
+                          { id: 3, name: 'Online' },
+                          { id: 4, name: 'Bank' },
+                          { id: 5, name: 'UPI' },
+                          { id: 6, name: 'Cheque' },
+                          { id: 7, name: 'City Ledger' }
+                        ]"
+                        item-text="name"
+                        item-value="id"
+                        dense
+                        outlined
+                        :hide-details="true"
+                        :height="1"
+                      ></v-select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Total Amount</th>
+                    <td>{{ checkData && checkData.total_price }}</td>
+                  </tr>
+                  <tr>
+                    <th>Total Posting Amount</th>
+                    <td>{{ checkData && checkData.total_posting_amount }}</td>
+                  </tr>
+                  <tr>
+                    <th>Remaining Balance</th>
+                    <td>{{ checkData.remaining_price }}</td>
+                  </tr>
+                  <tr>
+                    <th>Remaining Balance With Posting</th>
+                    <td>{{ checkData.grand_remaining_price }}</td>
+                  </tr>
+                  <tr
+                    style="background-color: white"
+                    v-if="checkData.paid_by != 2"
+                  >
+                    <th>
+                      Full Payment
+                      <span class="text-danger">*</span>
+                    </th>
+                    <td>
+                      <v-text-field
+                        dense
+                        outlined
+                        type="number"
+                        v-model="checkData.full_payment"
+                        :hide-details="true"
+                      ></v-text-field>
+                    </td>
+                  </tr>
+                  <tr></tr>
+                </table>
+              </v-container>
+            </v-col>
+            <v-col md="5" class="mt-3">
+              <table>
+                <tr style="font-size:13px;background-color:white;color:black">
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Debit</th>
+                  <th>Credit</th>
+                  <th>Balance</th>
+                </tr>
+
+                <tr
+                  v-for="(item, index) in transactions"
+                  :key="index"
+                  style="font-size:13px;background-color: white;color:black"
+                >
+                  <td>
+                    <b>{{ ++index }}</b>
+                  </td>
+                  <td>{{ item.created_at || "---" }}</td>
+                  <td class="text-right">
+                    {{ item && item.debit == 0 ? "---" : item.debit }}
+                  </td>
+                  <td class="text-right">
+                    {{ item && item.credit == 0 ? "---" : item.credit }}
+                  </td>
+                  <td class="text-right">{{ item.balance || "---" }}</td>
+                </tr>
+                <tr style="font-size:13px;background-color: white;color:black">
+                  <th colspan="4" class="text-right">Balance</th>
+                  <td class="text-right" style="background-color: white">
+                    {{ totalTransactionAmount }}
+                  </td>
+                </tr>
+              </table>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn class="primary" small @click="store_check_out"
+            >Check Out</v-btn
+          >
+          <v-btn class="error" small @click="checkOutDialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
+
     <v-dialog v-model="cancelDialog" persistent max-width="500">
       <v-card>
         <v-card-title class="text-h6">
@@ -409,31 +420,7 @@
                   ></v-select>
                 </td>
               </tr>
-              <!-- <tr>
-                <th>
-                  Payment Mode
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-select
-                    v-model="posting.payment_mode_id"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                  ></v-select>
-                </td>
-              </tr> -->
+
               <tr style="background-color: white">
                 <th>
                   Amount With Tax
@@ -572,29 +559,22 @@
               </tr>
               <tr>
                 <th>Total Amount (Rs.)</th>
-                <td>{{ checkData && checkData.total_price }}.00</td>
+                <td>{{ checkData && checkData.total_price }}</td>
               </tr>
               <tr></tr>
               <tr>
                 <th>Advance Payed (Rs.)</th>
                 <td>
-                  {{ checkData.advance_price }}.00
-                  <!-- <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="checkData.advance_price"
-                    :hide-details="true"
-                    @keyup="get_remaining(checkData.advance_price)"
-                  ></v-text-field> -->
+                  {{ checkData.advance_price }}
                 </td>
               </tr>
               <tr></tr>
               <tr>
                 <th>Remaining Balance (Rs.)</th>
-                <td>{{ checkData.remaining_price }}.00</td>
+                <td>{{ checkData.remaining_price }}</td>
               </tr>
-              <tr style="background-color: white">
+
+              <tr style="background-color: white" v-if="checkData.paid_by != 2">
                 <th>New Payment</th>
                 <td>
                   <v-text-field
@@ -739,7 +719,7 @@
               </tr>
               <tr>
                 <th>Total Amount</th>
-                <td>{{ checkData && checkData.total_price }}.00</td>
+                <td>{{ checkData && checkData.total_price }}</td>
               </tr>
               <!-- <tr style="background-color:white">
                 <th>
@@ -751,7 +731,7 @@
               </tr> -->
               <tr>
                 <th>Remaining Balance</th>
-                <td>{{ checkData.remaining_price }}.00</td>
+                <td>{{ checkData.remaining_price }}</td>
               </tr>
 
               <tr style="background-color: white">
@@ -854,18 +834,14 @@
       >
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item
-              v-if="bookingStatus == 1"
-              link
-              @click="checkInDialog = true"
-            >
+            <v-list-item v-if="bookingStatus == 1" link @click="checkInDialog = true">
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
 
             <v-list-item
               v-else-if="bookingStatus == 2"
               link
-              @click="checkOutDialog = true"
+              @click="get_check_out"
             >
               <v-list-item-title>Check Out</v-list-item-title>
             </v-list-item>
@@ -901,7 +877,7 @@
             <v-list-item
               link
               @click="payingAdvance = true"
-              v-if="bookingStatus <= 2"
+              v-if="bookingStatus <= 1 && checkData.paid_by != 2"
             >
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
@@ -1049,7 +1025,6 @@ export default {
           arg.el.addEventListener("dblclick", jsEvent => {
             this.evenIid = eventId;
             this.isDbCLick = true;
-            console.log(this.evenIid);
             this.get_data();
           });
 
@@ -1061,7 +1036,12 @@ export default {
         select: (date, jsEvent, view, resourceObj, vv) => {
           let obj = date.resource.extendedProps;
           if (date.startStr < this.currentDate) {
-            alert("please select current date or future date");
+            this.alert(
+              "Missing!",
+              "Please Select Current Date or Future Date",
+              "error"
+            );
+
             return;
           }
           this.create_reservation(date, obj);
@@ -1087,7 +1067,6 @@ export default {
 
             roomId: arg.event._def.resourceIds[0]
           };
-          console.log(obj);
           this.change_room_by_drag(obj);
         }
       },
@@ -1139,7 +1118,9 @@ export default {
         room_id: "",
         isCalculate: false
       },
-      isDbCLick: false
+      isDbCLick: false,
+      totalTransactionAmount: 0,
+      transactions: []
     };
   },
 
@@ -1237,6 +1218,28 @@ export default {
       return (amount / 100) * clause;
     },
 
+    get_check_out() {
+      this.checkOutDialog = true;
+      this.get_transaction();
+      // console.log("fff" + this.bookingId);
+    },
+
+    get_transaction() {
+      let id = this.bookingId;
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios
+        .get(`get_transaction_by_booking_id/${id}`, payload)
+        .then(({ data }) => {
+          this.transactions = data.transactions;
+          console.log(this.transactions);
+          this.totalTransactionAmount = data.totalTransactionAmount;
+        });
+    },
+
     get_data(jsEvent = null) {
       let payload = {
         params: {
@@ -1244,16 +1247,13 @@ export default {
           company_id: this.$auth.user.company.id
         }
       };
-      console.log(payload);
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
         this.bookingId = data.id;
         this.checkData.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
-        console.log(this.checkData);
         this.show_context_menu(jsEvent);
-        console.log(this.bookingId);
         if (this.isDbCLick) {
           this.get_event_by_db_click();
         }
@@ -1261,7 +1261,6 @@ export default {
     },
 
     get_event_by_mouse_hover(id, jsEvent) {
-      console.log(id);
       this.evenIid = id;
       this.tx = jsEvent.clientX;
       this.ty = jsEvent.clientY;
@@ -1272,7 +1271,6 @@ export default {
     },
 
     get_event_by_db_click() {
-      console.log(this.bookingId);
       this.$router.push(`/customer/details/${this.bookingId}`);
     },
 
@@ -1664,6 +1662,11 @@ export default {
       }
       return false;
     },
+
+    alert(title = "Success!", message = "hello", type = "error") {
+      this.$swal(title, message, type);
+    },
+
     succuss(
       data,
       check_in = false,

@@ -204,13 +204,13 @@
       <v-toolbar class="rounded-md" color="background" dense flat dark>
         <span> {{ Model }} List</span>
         <v-spacer></v-spacer>
-        <v-btn
+        <!-- <v-btn
           class="primary"
           small
           @click="postingDialog = true"
           :loading="loading"
           >New</v-btn
-        >
+        > -->
       </v-toolbar>
       <table>
         <tr>

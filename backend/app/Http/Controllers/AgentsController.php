@@ -6,6 +6,7 @@ use App\Models\Agent;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\BookedRoom;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class AgentsController extends Controller
@@ -81,12 +82,13 @@ class AgentsController extends Controller
 
     public function getAgentBookings(Request $request)
     {
-
         $model =  Booking::where('company_id', $request->company_id)
             ->find($request->id);
-
-        return response()->json(['status' => true, 'data' => $model]);
+        $totalCredit = Transaction::whereBookingId($request->id)->where('company_id', $request->company_id)->sum('credit');
+        return response()->json(['status' => true, 'data' => $model, 'totalCredit' => $totalCredit]);
     }
+
+
 
     public function getAgentDetails(Request $request)
     {

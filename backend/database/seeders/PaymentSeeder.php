@@ -16,6 +16,8 @@ class PaymentSeeder extends Seeder
     public function run()
     {
         DB::table('payment_modes')->truncate();
+        DB::table('id_card_types')->truncate();
+
 
         $data = [
             ['id' => 1, 'name' => 'Cash'],
@@ -27,7 +29,21 @@ class PaymentSeeder extends Seeder
             ['id' => 7, 'name' => 'City Ledger']
         ];
 
-
+        $ids = [
+            [
+                'name' => 'National Identity Card',
+            ],
+            [
+                'name' => 'Voter Id Card',
+            ],
+            [
+                'name' => 'Pan Card',
+            ],
+            [
+                'name' => 'Driving License',
+            ],
+        ];
         DB::table('payment_modes')->insert($data);
+        DB::table('id_card_types')->insert($ids);
     }
 }

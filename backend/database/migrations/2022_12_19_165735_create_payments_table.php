@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->string('room')->nullable();
 
+            $table->integer('is_city_ledger')->default(0);
             $table->integer('booking_id')->nullable();
             $table->integer('company_id')->nullable();
             $table->timestamps();

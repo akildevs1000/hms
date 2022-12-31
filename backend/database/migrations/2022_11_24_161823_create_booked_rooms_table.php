@@ -20,24 +20,22 @@ return new class extends Migration
             $table->integer('room_id')->nullable();
             $table->string('room_no')->nullable();
             $table->string('room_type')->nullable();
-            $table->string('price')->nullable();
-            $table->string('bed_amount')->nullable();
+            $table->decimal('price', 8, 2)->default(0);
+            $table->decimal('bed_amount', 8, 2)->default(0);
             $table->string('meal')->nullable();
-            $table->string('room_tax')->nullable();
-            $table->string('total_with_tax')->nullable();
+            $table->decimal('room_tax', 8, 2)->default(0);
+            $table->decimal('total_with_tax', 8, 2)->default(0);
             $table->dateTime('check_in')->nullable();
             $table->dateTime('check_out')->nullable();
 
-
             $table->string('customer_id')->nullable();
-            $table->string('room_discount')->nullable();
-            $table->string('after_discount')->nullable();
-            $table->string('cgst')->nullable();
-            $table->string('sgst')->nullable();
-            $table->string('total')->nullable();
+            $table->decimal('room_discount', 8, 2)->default(0);
+            $table->decimal('after_discount', 8, 2)->default(0);
+            $table->decimal('cgst', 8, 2)->default(0);
+            $table->decimal('sgst', 8, 2)->default(0);
+            $table->decimal('total', 8, 2)->default(0);
             $table->string('days')->nullable();
-            $table->string('grand_total')->nullable();
-
+            $table->decimal('grand_total', 8, 2)->default(0);
 
             $table->string('no_of_adult')->nullable();
             $table->string('no_of_child')->nullable();

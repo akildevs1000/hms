@@ -78,6 +78,10 @@
               }}</v-col>
             </v-row>
             <v-row>
+              <v-col cols="3"><b>Source </b></v-col>
+              <v-col cols="3">{{ (booking && booking.source) || "---" }}</v-col>
+            </v-row>
+            <v-row>
               <v-col cols="3"><b>Check In </b></v-col>
               <v-col cols="3">{{
                 (booking && booking.check_in_date) || "---"
@@ -89,9 +93,9 @@
             </v-row>
             <v-row>
               <v-col cols="3"><b>Rooms Amount </b></v-col>
-              <v-col cols="3"
-                >{{ (booking && booking.total_price) || "0" }}.00</v-col
-              >
+              <v-col cols="3">{{
+                (booking && booking.total_price) || "0"
+              }}</v-col>
               <v-col cols="2"><b>Days </b></v-col>
               <v-col cols="2">{{
                 (booking && booking.total_days) || "---"
@@ -101,9 +105,7 @@
             <v-row>
               <v-col cols="3"><b>Remaining Amount</b></v-col>
               <v-col cols="4">
-                <span>
-                  {{ (booking && booking.remaining_price) || "0" }}.00</span
-                >
+                <span> {{ (booking && booking.remaining_price) || "0" }}</span>
               </v-col>
             </v-row>
             <v-row>
@@ -119,7 +121,7 @@
                   {{
                     parseInt(totalPostingAmount) +
                       parseInt(booking && booking.remaining_price) || "0"
-                  }}.00</span
+                  }}</span
                 >
               </v-col>
             </v-row>
@@ -152,11 +154,11 @@
                 >
                   <td>{{ item.room_no || "---" }}</td>
                   <td>{{ item.room_type || "---" }}</td>
-                  <td>{{ item.price || "---" }}.00</td>
-                  <td>{{ item.after_discount || "---" }}.00</td>
-                  <td>{{ item.sgst || "---" }}.00</td>
-                  <td>{{ item.cgst || "---" }}.00</td>
-                  <td>{{ item.total || "---" }}.00</td>
+                  <td>{{ item.price || "---" }}</td>
+                  <td>{{ item.after_discount || "---" }}</td>
+                  <td>{{ item.sgst || "---" }}</td>
+                  <td>{{ item.cgst || "---" }}</td>
+                  <td>{{ item.total || "---" }}</td>
                 </tr>
               </tbody>
             </table>
@@ -187,13 +189,13 @@
                 <td>{{ item.no_of_adult || "---" }}</td>
                 <td>{{ item.no_of_child || "---" }}</td>
                 <td>{{ item.no_of_baby || "---" }}</td>
-                <td class="text-right">{{ item.price || "---" }}.00</td>
+                <td class="text-right">{{ item.price || "---" }}</td>
                 <td class="text-right">
-                  {{ item.after_discount || "---" }}.00
+                  {{ item.after_discount || "---" }}
                 </td>
-                <td class="text-right">{{ item.sgst || "---" }}.00</td>
-                <td class="text-right">{{ item.cgst || "---" }}.00</td>
-                <td class="text-right">{{ item.total || "---" }}.00</td>
+                <td class="text-right">{{ item.sgst || "---" }}</td>
+                <td class="text-right">{{ item.cgst || "---" }}</td>
+                <td class="text-right">{{ item.total || "---" }}</td>
               </tr>
               <tr
                 style="font-size:13px"
@@ -207,8 +209,8 @@
                 <td class="text-right"></td>
                 <td class="text-right">{{ postingItem.amount || "---" }}</td>
                 <td class="text-right">{{ postingItem.amount || "---" }}</td>
-                <td class="text-right">{{ postingItem.sgst || "---" }}.00</td>
-                <td class="text-right">{{ postingItem.cgst || "---" }}.00</td>
+                <td class="text-right">{{ postingItem.sgst || "---" }}</td>
+                <td class="text-right">{{ postingItem.cgst || "---" }}</td>
                 <td class="text-right">
                   {{ postingItem.amount_with_tax || "---" }}
                 </td>
@@ -251,7 +253,7 @@
             </tr>
             <tr style="background-color:white"></tr>
             <tr style="background-color:white">
-              <th colspan="7" class="text-right">{{ totalAmount }}.00</th>
+              <th colspan="7" class="text-right">{{ totalAmount }}</th>
             </tr>
           </table>
         </v-card> -->

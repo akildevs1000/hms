@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('reference_no')->nullable();
             $table->string('booking_type')->nullable();
 
-            $table->decimal('amount', 8, 2)->nullable();
+            $table->decimal('amount', 8, 2)->default(0);
+            $table->decimal('posting_amount', 8, 2)->default(0);
 
             $table->date('booking_date')->nullable();
             $table->integer('company_id')->nullable();

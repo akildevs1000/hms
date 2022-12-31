@@ -73,13 +73,11 @@
 
           <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
           <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
-          <td>{{ item.total_price }}.00</td>
-          <td>{{ item.advance_price }}.00</td>
-          <td>{{ item.remaining_price }}.00</td>
-
+          <td>{{ item.total_price }}</td>
+          <td>{{ item.advance_price }}</td>
+          <td>{{ item.remaining_price }}</td>
           <td>{{ item.source }}</td>
           <td>{{ item.booking_date }}</td>
-
           <td>
             <v-btn
               small

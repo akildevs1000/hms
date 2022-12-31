@@ -47,13 +47,13 @@
               <tr>
                 <th>Check In</th>
                 <td>
-                  {{ booking && booking.check_in }}
+                  {{ booking && booking.check_in_date }}
                 </td>
               </tr>
               <tr>
                 <th>Check Out</th>
                 <td>
-                  {{ booking && booking.check_out }}
+                  {{ booking && booking.check_out_date }}
                 </td>
               </tr>
               <tr>
@@ -83,16 +83,21 @@
               </tr>
               <tr>
                 <th>Total Amount</th>
-                <td>{{ booking && booking.total_price }}.00</td>
+                <td>{{ booking && booking.total_price }}</td>
               </tr>
-              <tr></tr>
-
-              <tr></tr>
+              <tr>
+                <th>Total Posting Amount</th>
+                <td>{{ booking && booking.total_posting_amount }}</td>
+              </tr>
+              <tr>
+                <th>previous Credits</th>
+                <td>{{ totalCredit || 0 }}</td>
+              </tr>
               <tr>
                 <th>Remaining Balance</th>
-                <td>{{ booking.remaining_price }}.00</td>
+                <td>{{ booking.grand_remaining_price }}</td>
               </tr>
-              <tr style="background-color: white">
+              <tr>
                 <th>
                   Full Payment
                   <span class="text-danger">*</span>
@@ -256,6 +261,7 @@
             <td>{{ (item && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.amount || "---" }}</td>
+            <td>{{ item.posting_amount || 0 }}.00</td>
             <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
             <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
             <td>{{ item.booking_date || "---" }}</td>
@@ -270,14 +276,14 @@
             </td>
             <td>{{ item.paid_date || "---" }}</td>
             <td>
-              <v-icon
+              <!-- <v-icon
                 x-small
                 color="primary"
                 @click="viewAgentsBilling(item)"
                 class="mr-2"
               >
                 mdi-eye
-              </v-icon>
+              </v-icon> -->
               <v-icon
                 v-if="!item.is_paid"
                 x-small
@@ -378,6 +384,9 @@ export default {
         text: "Amount"
       },
       {
+        text: "Posting Amount"
+      },
+      {
         text: "Check In"
       },
       {
@@ -403,6 +412,7 @@ export default {
     data: [],
     booking: [],
     agentData: [],
+    totalCredit: 0,
     errors: []
   }),
 
@@ -441,6 +451,8 @@ export default {
       };
       this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
         if (data.status) {
+          this.totalCredit = data.totalCredit;
+          console.log(this.transaction);
           this.booking = data.data;
           this.booking.full_payment = "";
           this.bookingStatus = data.booking_status;

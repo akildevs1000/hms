@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('item')->nullable();
             $table->string('description')->nullable();
-            $table->string('amount')->nullable();
+            $table->decimal('amount', 8, 2)->nullable();
             $table->timestamps();
         });
     }

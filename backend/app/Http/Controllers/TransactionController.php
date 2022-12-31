@@ -38,4 +38,16 @@ class TransactionController extends Controller
 
         return  $model->create($data);
     }
+
+    public function getTransactionByBookingId(Request $request, $id)
+    {
+        $transactions = Transaction::whereBookingId($id)->where('company_id', $request->company_id);
+        $totalTransactionAmount = $transactions->clone()->latest()->first();
+
+        return response()->json([
+            'transactions' => $transactions->get(),
+            'status' => true,
+            'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0
+        ]);
+    }
 }

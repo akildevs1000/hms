@@ -340,20 +340,20 @@
                     <td class="txt-inv" style="width:10px">{{ $room->room_no }}</td>
                     <td class="txt-inv" style="width:20px">{{ $room->room_type }}</td>
                     <td class="txt-inv-amount">
-                        {{ $room->price }}.00 <br>
-                        (-{{ $room->room_discount }}.00)
+                        {{ $room->price }} <br>
+                        (-{{ $room->room_discount }})
                     </td>
-                    <td class="txt-inv-amount">{{ $room->after_discount }}.00</td>
+                    <td class="txt-inv-amount">{{ $room->after_discount }}</td>
                     <td class="txt-inv-amount">
-                        {{ $room->cgst }}.00 <br>
+                        {{ $room->cgst }} <br>
                         (6%)
                     </td>
                     <td class="txt-inv-amount">
-                        {{ $room->sgst }}.00 <br>
+                        {{ $room->sgst }} <br>
                         (6%)
                     </td>
                     <td class="txt-inv-amount">
-                        {{ $room->total }}.00
+                        {{ $room->total }}
                     </td>
                     {{-- <td class="txt-inv-amount" style="width:50px">
                         {{ $room->grand_total }} <br>

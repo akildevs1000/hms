@@ -1104,7 +1104,7 @@
                   <tr v-for="(item, index) in selectedRooms" :key="index">
                     <td>{{ item.room_no }}</td>
                     <td>
-                      <div align="right">{{ item.total }}</div>
+                      <div align="right">{{ item.total }}.00</div>
                     </td>
                   </tr>
                   <tr>
@@ -1115,7 +1115,7 @@
                   <!-- <tr>
                     <td>Total Extra</td>
                     <td>
-                      <div align="right">{{ room.total_extra }}.00</div>
+                      <div align="right">{{ room.total_extra }}</div>
                     </td>
                   </tr> -->
                   <tr>

@@ -83,14 +83,32 @@
               </tr>
               <tr>
                 <th>Total Amount</th>
-                <td>{{ booking && booking.total_price }}.00</td>
+                <td>{{ booking && booking.total_price }}</td>
               </tr>
               <tr></tr>
 
               <tr></tr>
-              <tr>
+              <!-- <tr>
                 <th>Remaining Balance</th>
-                <td>{{ booking.remaining_price }}.00</td>
+                <td>{{ booking.remaining_price }}</td>
+              </tr> -->
+              <tr>
+                <th>
+                  Posting Amount
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  {{ booking.total_posting_amount }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Total (Booking + Posting)
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  {{ booking.grand_remaining_price }}
+                </td>
               </tr>
               <tr style="background-color: white">
                 <th>
@@ -107,7 +125,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr>
+              <tr v-if="this.booking.payment_mode_id == 4">
                 <th>
                   Transaction Number
                   <span class="text-danger">*</span>
@@ -116,7 +134,7 @@
                   <v-text-field
                     dense
                     outlined
-                    type="number"
+                    type="text"
                     v-model="booking.transaction"
                     :hide-details="true"
                   ></v-text-field>
@@ -249,7 +267,7 @@
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>
-          <tr style="font-size:15px">
+          <tr style="font-size:12px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
@@ -271,7 +289,13 @@
             <td>{{ item.type || "---" }}</td>
             <td>{{ (item && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
-            <td>{{ item.amount || "---" }}</td>
+            <td>{{ item.amount || "0" }}</td>
+            <td>{{ item.posting_amount || "0" }}.00</td>
+            <td>
+              {{
+                parseInt(item.amount) + parseInt(item.posting_amount) || "---"
+              }}.00
+            </td>
             <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
             <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
             <td>{{ item.booking_date || "---" }}</td>
@@ -287,14 +311,14 @@
             <td>{{ item.transaction || "---" }}</td>
             <td>{{ item.paid_date || "---" }}</td>
             <td>
-              <v-icon
+              <!-- <v-icon
                 x-small
                 color="primary"
                 @click="viewAgentsBilling(item)"
                 class="mr-2"
               >
                 mdi-eye
-              </v-icon>
+              </v-icon> -->
               <v-icon
                 v-if="!item.is_paid"
                 x-small
@@ -395,7 +419,13 @@ export default {
         text: "Source"
       },
       {
-        text: "Amount"
+        text: "Booking Amount"
+      },
+      {
+        text: "Posting Amount"
+      },
+      {
+        text: "Total (Booking+Posting)"
       },
       {
         text: "Check In"
@@ -503,10 +533,14 @@ export default {
     },
 
     store_agent_payment() {
-      if (this.booking.full_payment == "" || this.booking.transaction == "") {
+      if (
+        this.booking.full_payment == ""
+        // (this.booking.payment_mode_id == 4 && this.booking.transaction == "")
+      ) {
         alert("fill required fields");
         return true;
       }
+      return;
       let payload = {
         agentData: this.agentData,
         booking_id: this.booking.id,

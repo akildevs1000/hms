@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookedRoom;
+use App\Models\Agent;
 use App\Models\Booking;
+use App\Models\Payment;
 use App\Models\Posting;
+use App\Models\BookedRoom;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -113,27 +115,21 @@ class PostingController extends Controller
                 'company_id' => $data['company_id'] ?? '',
             ];
 
-            $payment = new TransactionController();
+            $transaction = new TransactionController();
+            $transaction->store($transactionData, $posting->amount_with_tax, 'debit');
 
-            // return [
-            //     $transactionData, $posting->amount_with_tax, 'debit'
-            // ];
+            $booking =  Booking::where('company_id', $request->company_id)->find($request->booking_id);
+            $booking->total_posting_amount = (int)$booking->total_posting_amount + $posting->amount_with_tax;
+            $booking->grand_remaining_price = (int)$posting->amount_with_tax + $booking->grand_remaining_price;
+            $booking->save();
 
-            $payment->store($transactionData, $posting->amount_with_tax, 'debit');
+            $agent = Agent::whereBookingId($request->booking_id)->where('company_id', $request->company_id)->first();
+            $agent->posting_amount = (int) $agent->posting_amount + $posting->amount_with_tax;
+            $agent->save();
 
-
-            // $paymentsData = [
-            //     'booking_id' => $posting->booking_id,
-            //     'payment_mode' => $posting->payment_mode_id,
-            //     'description' => $posting->item,
-            //     'amount' => $posting->amount_with_tax,
-            //     'type' => 'posting',
-            //     'room' => $request->room,
-            //     'company_id' => $request->company_id,
-            // ];
-            // $payment = new PaymentController();
-            // $payment->store($paymentsData);
-
+            $payment = Payment::where('booking_id', $request->booking_id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+            $payment->amount = (int) $payment->amount + $posting->amount_with_tax;
+            $payment->save();
 
             return $this->response('Posting Successfully submitted.', $posting, true);
         } catch (\Throwable $th) {

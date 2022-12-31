@@ -23,17 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call([MasterSeeder::class]);
         $this->call([PermissionSeeder::class]);
         $this->call([ModuleSeeder::class]);
-        $this->call([ShiftTypeTableSeeder::class]);
-        $this->call([DeviceStatusSeeder::class]);
         $this->call([RoomsTableSeeder::class]);
         $this->call([PaymentSeeder::class]);
         $this->call([CountriesTableSeeder::class]);
-
-        // local
-        if (env('APP_ENV') == 'local') {
-            $this->call([MySeeder::class]);
-            $this->call([RoleSeeder::class]);
-            // $this->call([CompSeederTable::class]);
-        }
     }
 }
