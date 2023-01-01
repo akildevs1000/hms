@@ -11,7 +11,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-dialog v-model="agentPaymentDialog" persistent max-width="700px">
+    <v-dialog v-model="agentPaymentDialog" persistent max-width="800px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Agent Payment</span>
@@ -28,7 +28,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width: 300px">
+                <td style="width: 490px">
                   {{ booking && booking.title }}
                 </td>
               </tr>
@@ -70,7 +70,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -93,33 +93,47 @@
                 <td>{{ booking.remaining_price }}</td>
               </tr> -->
               <tr>
-                <th>
-                  Posting Amount
-                </th>
+                <th>Posting Amount</th>
                 <td>
                   {{ booking.total_posting_amount }}
                 </td>
               </tr>
               <tr>
-                <th>
-                  Total (Booking + Posting)
-                </th>
+                <th>Total (Booking + Posting)</th>
                 <td>
                   {{ booking.grand_remaining_price }}
                 </td>
               </tr>
               <tr>
-                <th>
-                  Paid with Posting
-                </th>
+                <th>Payment</th>
                 <td>
-                  <v-checkbox
+                  <!-- <v-checkbox
                     v-model="booking.paid_with_posting"
                     dense
                     :hide-details="true"
                     value="1"
                     @change="getFullPayment"
-                  ></v-checkbox>
+                  ></v-checkbox> -->
+
+                  <v-container fluid>
+                    <v-radio-group
+                      v-model="paid_status"
+                      @change="getFullPayment"
+                      row
+                      dense
+                      :hide-details="errors && !errors.paid_status"
+                      :error="errors && errors.paid_status"
+                      :error-messages="
+                        errors && errors.paid_status
+                          ? errors.paid_status[0]
+                          : ''
+                      "
+                    >
+                      <v-radio label="Only Rooms" :value="1"></v-radio>
+                      <v-radio label="Only Posting" :value="2"></v-radio>
+                      <v-radio label="Rooms + Posting" :value="3"></v-radio>
+                    </v-radio-group>
+                  </v-container>
                 </td>
               </tr>
               <tr>
@@ -137,7 +151,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr v-if="this.booking.payment_mode_id == 4">
+              <tr v-if="booking.payment_mode_id == 4">
                 <th>
                   Transaction Number
                   <span class="text-danger">*</span>
@@ -279,7 +293,7 @@
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>
-          <tr style="font-size:12px">
+          <tr style="font-size: 12px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
@@ -291,7 +305,11 @@
             absolute
             color="primary"
           ></v-progress-linear>
-          <tr v-for="(item, index) in data" :key="index" style="font-size:14px">
+          <tr
+            v-for="(item, index) in data"
+            :key="index"
+            style="font-size: 14px"
+          >
             <td>
               <b>{{ ++index }}</b>
             </td>
@@ -366,6 +384,8 @@
 <script>
 export default {
   data: () => ({
+    radioGroup: 1,
+
     agentPaymentDialog: false,
     snackbar: false,
     response: "",
@@ -379,7 +399,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
     },
     options: {},
     Model: "Agents",
@@ -405,76 +425,77 @@ export default {
       "Cleartrip",
       "in.hotels.com",
       "Booking.com",
-      "TripAdvisor.in"
+      "TripAdvisor.in",
     ],
 
     headers: [
       {
-        text: "#"
+        text: "#",
       },
       {
-        text: "Booking Number"
+        text: "Booking Number",
       },
       {
-        text: "Reference Number"
+        text: "Reference Number",
       },
       {
-        text: "Customer"
+        text: "Customer",
       },
       {
-        text: "Type"
+        text: "Type",
       },
       {
-        text: "Rooms"
+        text: "Rooms",
       },
       {
-        text: "Source"
+        text: "Source",
       },
       {
-        text: "Booking Amount"
+        text: "Booking Amount",
       },
       {
-        text: "Posting Amount"
+        text: "Posting Amount",
       },
       {
-        text: "Total (Booking+Posting)"
+        text: "Total (Booking+Posting)",
       },
       {
-        text: "Check In"
+        text: "Check In",
       },
       {
-        text: "Check Out"
+        text: "Check Out",
       },
       {
-        text: "Booking Date"
+        text: "Booking Date",
       },
       {
-        text: "Payment Status"
+        text: "Payment Status",
       },
       {
-        text: "Transaction"
+        text: "Transaction",
       },
       {
-        text: "Paid Date"
+        text: "Paid Date",
       },
       {
-        text: "Action"
-      }
+        text: "Action",
+      },
     ],
     editedIndex: -1,
     editedItem: { name: "" },
     defaultItem: { name: "" },
     response: "",
     data: [],
-    booking: [],
+    booking: {},
+    paid_status: 1,
     agentData: [],
-    errors: []
+    errors: [],
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    }
+    },
   },
   created() {
     this.loading = true;
@@ -491,16 +512,22 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
 
     getFullPayment() {
-      if (this.booking.paid_with_posting) {
-        this.booking.full_payment = this.booking.grand_remaining_price;
-      } else {
-        this.booking.full_payment = this.booking.total_price;
+      let status = this.paid_status;
+      switch (status) {
+        case 1:
+          this.booking.full_payment = this.booking.total_price;
+          break;
+        case 2:
+          this.booking.full_payment = this.booking.total_posting_amount;
+          break;
+        default:
+          this.booking.full_payment = this.booking.grand_remaining_price;
       }
     },
 
@@ -509,8 +536,8 @@ export default {
       let payload = {
         params: {
           id: agentData.booking_id,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
         if (data.status) {
@@ -542,8 +569,8 @@ export default {
           company_id: this.$auth.user.company.id,
           from: this.from_date,
           to: this.to_date,
-          source: newSource
-        }
+          source: newSource,
+        },
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
@@ -561,16 +588,19 @@ export default {
         alert("fill required fields");
         return true;
       }
-      return;
       let payload = {
         agentData: this.agentData,
         booking_id: this.booking.id,
-        remaining_price: this.booking.remaining_price,
+        total_price: this.booking.remaining_price,
+        posting_price: this.booking.total_posting_amount,
+        total_with_posting: this.booking.grand_remaining_price,
         full_payment: this.booking.full_payment,
         payment_mode_id: this.booking.payment_mode_id,
-        transaction: this.booking.transaction
+        transaction: this.booking.transaction,
+        paid_status: this.paid_status,
       };
       // return;
+      console.log(payload);
       this.$axios
         .post("/payment_by_agent", payload)
         .then(({ data }) => {
@@ -583,7 +613,7 @@ export default {
             this.getDataFromApi();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     searchIt() {
@@ -594,8 +624,8 @@ export default {
       } else if (s > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${search}`);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
