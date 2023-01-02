@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BookedRoom extends Model
 {
@@ -15,6 +16,7 @@ class BookedRoom extends Model
         'resourceId',
         'title',
         'background',
+        'check_out_time',
     ];
 
     protected $casts = [
@@ -62,7 +64,7 @@ class BookedRoom extends Model
             (int) $status = $model->booking_status ?? 0;
         }
 
-        return match($status) {
+        return match ($status) {
 
             1 => 'linear-gradient(135deg, #56ab2f  0, #a8e063 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
@@ -76,12 +78,28 @@ class BookedRoom extends Model
 
     public function SetCheckInAttribute($value)
     {
-        $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
+        // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
+
+        $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
     }
 
     public function SetCheckOutAttribute($value)
     {
-        $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
+        // $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
+
+        $date = Carbon::parse($value);
+        $date->addDays(1);
+        $d = $date->format('Y-m-d');
+        $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+    }
+
+
+    public function GetCheckOutTimeAttribute()
+    {
+        // CheckOUtDateForEachDate
+        $time = $this->check_out;
+
+        return  date('H:i', strtotime($time));
     }
 
     public function GetResourceIdAttribute()

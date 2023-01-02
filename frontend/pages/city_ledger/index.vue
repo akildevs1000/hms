@@ -258,15 +258,15 @@
               <b>{{ ++index }}</b>
             </td>
             <td>{{ item.booking_id || "---" }}</td>
+            <td>{{ item.booking_date || "---" }}</td>
             <td>{{ (item && item.customer.full_name) || "---" }}</td>
             <td>{{ item.type || "---" }}</td>
             <td>{{ (item && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.amount || "---" }}</td>
-            <td>{{ item.posting_amount || 0 }}.00</td>
+            <td>{{ item.posting_amount || 0 }}</td>
             <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
             <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
-            <td>{{ item.booking_date || "---" }}</td>
             <td>
               <v-chip
                 class="ma-2"
@@ -276,6 +276,7 @@
                 {{ item.is_paid == 1 ? "Paid" : "Pending" }}
               </v-chip>
             </td>
+            <td>{{ item.agent_paid_amount || "---" }}</td>
             <td>{{ item.paid_date || "---" }}</td>
             <td>
               <!-- <v-icon
@@ -371,6 +372,9 @@ export default {
         text: "Booking Number"
       },
       {
+        text: "Booking Date"
+      },
+      {
         text: "Customer"
       },
       {
@@ -394,11 +398,12 @@ export default {
       {
         text: "Check Out"
       },
-      {
-        text: "Booking Date"
-      },
+
       {
         text: "Payment Status"
+      },
+      {
+        text: "Paid Amount"
       },
       {
         text: "Paid Date"

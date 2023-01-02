@@ -84,7 +84,7 @@
     <!-- color="#ECF0F4" -->
     <v-app-bar
       elevation="0"
-      style="position: fixed; z-index: 1; left: 315px; width: 70%; top: 64px"
+      style="position: fixed; z-index: 1; left: 280px; width: 75%; top: 64px"
       width="1000"
       scroll-threshold
       tile
@@ -97,7 +97,7 @@
             <h4>New Reservation</h4>
           </v-col>
           <v-col md="6">
-            <div class="text-right">
+            <div class="text-center">
               <v-btn
                 class="mx-2"
                 dark
@@ -108,9 +108,9 @@
               >
                 Submit
               </v-btn>
-              <v-btn class="mx-2" fab dark small color="background">
+              <!-- <v-btn class="mx-2" fab dark small color="background">
                 <v-icon dark>mdi-arrow-left </v-icon>
-              </v-btn>
+              </v-btn> -->
             </div>
           </v-col>
         </v-row>
@@ -158,7 +158,7 @@
                   >Status <span class="text-danger">*</span></label
                 >
                 <v-select
-                  :items="['Cancel', 'Waiting', 'Confirmed']"
+                  :items="['Waiting', 'Confirmed']"
                   dense
                   item-text="name"
                   item-value="id"
@@ -214,7 +214,7 @@
                   v-model="customer.last_name"
                 ></v-text-field>
               </v-col>
-              <v-col md="3" sm="12" cols="12" dense>
+              <!-- <v-col md="3" sm="12" cols="12" dense>
                 <label class="col-form-label"
                   >Adult <span class="text-danger">*</span>
                 </label>
@@ -263,8 +263,8 @@
                     >+</span
                   >
                 </div>
-              </v-col>
-              <v-col md="3"></v-col>
+              </v-col> -->
+
               <v-col md="3" sm="12" cols="12" dense>
                 <label class="col-form-label"
                   >ID Card Type <span class="text-danger">*</span></label
@@ -448,7 +448,7 @@
             </v-row>
             <v-row>
               <div class="d-flex mt-4 primary--text">
-                <v-icon color="primary" large>mdi-room-service</v-icon>
+                <v-icon color="primary" large>mdi-account-details </v-icon>
                 <span style="font-size: 25px" class="ml-2 mt-1">
                   More Details
                 </span>
@@ -476,17 +476,6 @@
               </v-col>
               <v-col md="6" cols="12" sm="12" v-if="isAgent">
                 <label class="col-form-label">Agent Name</label>
-                <!-- <v-text-field
-                  dense
-                  outlined
-                  type="text"
-                  v-model="room.agent_name"
-                  :hide-details="errors && !errors.agent_name"
-                  :error="errors && errors.agent_name"
-                  :error-messages="
-                    errors && errors.agent_name ? errors.agent_name[0] : ''
-                  "
-                ></v-text-field> -->
                 <v-select
                   dense
                   outlined
@@ -536,7 +525,15 @@
                 class="mt-2"
               >
                 <v-container fluid>
-                  <v-radio-group v-model="room.paid_by" row>
+                  <v-radio-group
+                    v-model="room.paid_by"
+                    row
+                    :hide-details="errors && !errors.paid_by"
+                    :error="errors && errors.paid_by"
+                    :error-messages="
+                      errors && errors.paid_by ? errors.paid_by[0] : ''
+                    "
+                  >
                     <v-radio label="Paid at Hotel" value="1"></v-radio>
                     <v-radio label="Paid by Agents" value="2"></v-radio>
                   </v-radio-group>
@@ -684,7 +681,7 @@
                           v-model="customer.last_name"
                         ></v-text-field>
                       </v-col>
-                      <v-col md="2" cols="12" sm="12">
+                      <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Amount : </label>
                         {{ item.price }}.00
                       </v-col>
@@ -693,7 +690,7 @@
                         <label class="col-form-label">Meal : </label>
                         {{ capsTitle(item.meal) }}
                       </v-col>
-                      <v-col md="3" cols="12" sm="12">
+                      <v-col md="2" cols="12" sm="12">
                         <label class="col-form-label">Tax : </label>
                         {{ item.room_tax }}.00
                       </v-col>
@@ -704,6 +701,18 @@
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Tax with Amount : </label>
                         {{ item.total_with_tax }}.00
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Adult : </label>
+                        {{ item.no_of_adult }}
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Child : </label>
+                        {{ item.no_of_child }}
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <label class="col-form-label">Baby : </label>
+                        {{ item.no_of_baby }}
                       </v-col>
                     </v-row>
                   </div>
@@ -970,13 +979,13 @@
               <br /><br />
               <v-col md="6"><b class="#F9FAFD--text">Days</b></v-col>
               <v-col md="6" class="text-right">{{ getDays() }} </v-col>
-              <v-col md="6"><b class="#F9FAFD--text">Bed</b></v-col>
-              <v-col md="6" class="text-right">{{ room.bed_amount }}</v-col>
-              <v-col md="12">
+              <!-- <v-col md="6"><b class="#F9FAFD--text">Bed</b></v-col> -->
+              <!-- <v-col md="6" class="text-right">{{ room.bed_amount }}</v-col> -->
+              <!-- <v-col md="12">
                 <v-divider></v-divider>
-              </v-col>
-              <v-col md="6"><b class="#F9FAFD--text">Adult</b></v-col>
-              <v-col md="6" class="text-right">{{
+              </v-col> -->
+              <!-- <v-col md="6"><b class="#F9FAFD--text">Adult</b></v-col> -->
+              <!-- <v-col md="6" class="text-right">{{
                 customer.no_of_adult
               }}</v-col>
               <v-col md="6"><b class="#F9FAFD--text">Child</b></v-col>
@@ -984,7 +993,7 @@
                 customer.no_of_child
               }}</v-col>
               <v-col md="6"><b class="#F9FAFD--text">Baby</b></v-col>
-              <v-col md="6" class="text-right">{{ customer.no_of_baby }}</v-col>
+              <v-col md="6" class="text-right">{{ customer.no_of_baby }}</v-col> -->
               <v-col md="12" class="text-right"><v-divider></v-divider></v-col>
             </v-row>
             <v-row>
@@ -1043,11 +1052,12 @@
                 ></v-text-field>
               </v-col> -->
               <v-col md="12" cols="12" sm="12">
-                <label class="col-form-label">Advance Price</label>
+                <label class="col-form-label">Advance Amount</label>
                 <v-text-field
                   @keyup="runAllFunctions"
                   dense
                   :hide-details="true"
+                  :disabled="room.paid_by == '2' ? true : false"
                   outlined
                   type="number"
                   v-model="room.advance_price"
@@ -1063,12 +1073,13 @@
                     { id: 3, name: 'Online' },
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                    { id: 7, name: 'City Ledger' }
+                    { id: 6, name: 'Cheque' }
+                    // { id: 7, name: 'City Ledger' }
                   ]"
                   item-text="name"
                   item-value="id"
                   dense
+                  :disabled="room.paid_by == '2' ? true : false"
                   outlined
                   @change="getType(room.type)"
                   :hide-details="errors && !errors.payment_mode_id"
@@ -1093,7 +1104,7 @@
                   <tr v-for="(item, index) in selectedRooms" :key="index">
                     <td>{{ item.room_no }}</td>
                     <td>
-                      <div align="right">{{ item.total }}</div>
+                      <div align="right">{{ item.total }}.00</div>
                     </td>
                   </tr>
                   <tr>
@@ -1104,7 +1115,7 @@
                   <!-- <tr>
                     <td>Total Extra</td>
                     <td>
-                      <div align="right">{{ room.total_extra }}.00</div>
+                      <div align="right">{{ room.total_extra }}</div>
                     </td>
                   </tr> -->
                   <tr>
@@ -1189,7 +1200,7 @@
           </v-container>
         </v-card>
         <pre>
-          {{ selectedRooms }}
+          <!-- {{ selectedRooms }} -->
         </pre>
       </v-col>
       <v-col md="1" style="width: 300px"> </v-col>
@@ -1727,6 +1738,9 @@ export default {
 
     store() {
       // this.alert("Waiting..!", "Loading...", "info");
+      if (this.room.advance_price == "") {
+        this.room.advance_price = 0;
+      }
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");
@@ -1847,6 +1861,7 @@ export default {
             this.errors = [];
             this.alert("Success!", "Successfully room added", "success");
             this.subLoad = false;
+            this.$router.push(`/`);
           }
         })
         .catch(e => console.log(e));

@@ -12,6 +12,6 @@ class Transaction extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'created_at' => 'datetime:d-M-y',
+        'created_at' => 'datetime:Y-m-d',
     ];
 }

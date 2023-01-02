@@ -139,9 +139,9 @@
             </v-row>
             <v-row class="px-10">
               <v-col md="3" dense>
-                <label class="col-form-label"
-                  >Type <span class="text-danger">*</span></label
-                >
+                <label class="col-form-label">
+                  Type
+                </label>
                 <v-select
                   v-model="room.customer_type"
                   :items="['Company', 'Regular']"
@@ -154,9 +154,7 @@
               </v-col>
               <v-col md="6" dense> </v-col>
               <v-col md="3" dense>
-                <label class="col-form-label"
-                  >Status <span class="text-danger">*</span></label
-                >
+                <label class="col-form-label">Status </label>
                 <v-select
                   :items="['Waiting', 'Confirmed']"
                   dense
@@ -287,8 +285,7 @@
               </v-col>
               <v-col md="3" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Selected ID Card Number
-                  <span class="text-danger">*</span></label
+                  >ID Card <span class="text-danger">*</span></label
                 >
                 <v-text-field
                   dense
@@ -718,11 +715,33 @@
                   </div>
                 </v-alert>
                 <!-- ///////////////////////////////// -->
+
+                <v-row v-if="selectedRooms.length > 0">
+                  <div class="d-flex mt-4 mb-10 primary--text">
+                    <v-icon color="primary" large>mdi-bed</v-icon>
+                    <span style="font-size: 25px" class="ml-2 mt-1">
+                      More Room
+                    </span>
+                    <v-divider
+                      class="ml-3 mt-6 mr-3"
+                      style="padding-top: 1px"
+                    ></v-divider>
+                    <v-icon
+                      @click="isSelectRoom = !isSelectRoom"
+                      color="primary"
+                      medium
+                    >
+                      {{ isSelectRoom == false ? "mdi-plus" : "mdi-minus" }}
+                    </v-icon>
+                  </div>
+                </v-row>
+
                 <v-alert
                   border="left"
                   colored-border
                   color="deep-purple accent-4"
                   elevation="2"
+                  v-if="isSelectRoom"
                 >
                   <div class="d-flex justify-space-between">
                     <h6 class="px-2 mt-3">
@@ -731,8 +750,8 @@
                     </h6>
                     <div>
                       <v-btn color="primary" @click="get_available_rooms" small
-                        >Select Room</v-btn
-                      >
+                        >Select Room
+                      </v-btn>
                       <!-- @click.stop="RoomDrawer = !RoomDrawer" -->
                       <v-btn icon>
                         <v-icon>mdi-dots-vertical</v-icon>
@@ -894,36 +913,7 @@
                         ></v-select>
                       </v-col>
                       <v-col md="6" sm="12" cols="12" dense></v-col>
-                      <!-- <v-col md="2" sm="12" cols="12" dense>
-                        <label class="col-form-label">
-                          Extra Bed
-                        </label>
-                        <v-checkbox
-                          value="1"
-                          v-model="isBed"
-                          :hide-details="true"
-                          class="pt-0  py-1 chk-align"
-                        >
-                        </v-checkbox>
-                      </v-col> -->
-                      <!-- <v-col md="4" sm="12" cols="12" dense v-if="isBed">
-                        <label class="col-form-label">
-                          Amount
-                        </label>
-                        <v-text-field
-                          dense
-                          outlined
-                          type="number"
-                          v-model="temp.bed_amount"
-                          :hide-details="errors && !errors.bed_amount"
-                          :error="errors && errors.bed_amount"
-                          :error-messages="
-                            errors && errors.bed_amount
-                              ? errors.bed_amount[0]
-                              : ''
-                          "
-                        ></v-text-field>
-                      </v-col> -->
+
                       <v-col md="2" sm="12" cols="12" dense>
                         <label class="col-form-label"> Discount </label>
                         <v-checkbox
@@ -944,16 +934,19 @@
                           :hide-details="true"
                         ></v-text-field>
                       </v-col>
-                      <!-- <v-col md="12"> Tax: {{ temp.room_tax }} </v-col> -->
-                      <!-- <v-col md="12"> Price: {{ temp.price }} </v-col> -->
                     </v-row>
                   </div>
                 </v-alert>
               </v-col>
               <v-col md="12">
-                <v-btn @click="add_room" color="primary" class="w-100 py-5">
+                <v-btn
+                  @click="add_room"
+                  v-if="isSelectRoom"
+                  color="primary"
+                  class="w-100 py-5"
+                >
                   <v-icon color="white" large>mdi-plus</v-icon>
-                  Add Room
+                  Select Room
                 </v-btn>
               </v-col>
             </v-row>
@@ -1222,6 +1215,7 @@ export default {
       ],
       val: 1,
       Model: "Reservation",
+      isSelectRoom: true,
       isBed: false,
       subLoad: false,
       isDiscount: false,
@@ -1604,6 +1598,7 @@ export default {
 
       this.clear_add_room();
       this.alert("Success!", "success selected room", "success");
+      this.isSelectRoom = false;
       return;
     },
 
@@ -1861,6 +1856,7 @@ export default {
             this.errors = [];
             this.alert("Success!", "Successfully room added", "success");
             this.subLoad = false;
+            this.$router.push(`/`);
           }
         })
         .catch(e => console.log(e));

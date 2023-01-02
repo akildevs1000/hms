@@ -70,7 +70,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' },
+                      { id: 6, name: 'Cheque' }
                     ]"
                     item-text="name"
                     item-value="id"
@@ -171,7 +171,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="primary" small @click="store_agent_payment">Save</v-btn>
+          <v-btn class="primary" small @click="store_agent_payment">Pay</v-btn>
           <v-btn class="error" small @click="agentPaymentDialog = false">
             Cancel
           </v-btn>
@@ -314,13 +314,14 @@
               <b>{{ ++index }}</b>
             </td>
             <td>{{ item.booking_id || "---" }}</td>
+            <td>{{ item.booking_date || "---" }}</td>
             <td>{{ item.reference_no || "---" }}</td>
             <td>{{ (item && item.customer.full_name) || "---" }}</td>
             <td>{{ item.type || "---" }}</td>
             <td>{{ (item && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.amount || "0" }}</td>
-            <td>{{ item.posting_amount || "0" }}.00</td>
+            <td>{{ item.posting_amount || "0" }}</td>
             <td>
               {{
                 parseInt(item.amount) + parseInt(item.posting_amount) || "---"
@@ -328,16 +329,16 @@
             </td>
             <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
             <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
-            <td>{{ item.booking_date || "---" }}</td>
             <td>
               <v-chip
                 class="ma-2"
-                :color="item.is_paid == 1 ? 'green' : 'red'"
+                :color="is_paid_color(item.is_paid)"
                 text-color="white"
               >
-                {{ item.is_paid == 1 ? "Paid" : "Pending" }}
+                {{ is_paid_text(item.is_paid) }}
               </v-chip>
             </td>
+            <td>{{ item.agent_paid_amount || "---" }}</td>
             <td>{{ item.transaction || "---" }}</td>
             <td>{{ item.paid_date || "---" }}</td>
             <td>
@@ -399,7 +400,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10,
+      per_page: 10
     },
     options: {},
     Model: "Agents",
@@ -425,61 +426,65 @@ export default {
       "Cleartrip",
       "in.hotels.com",
       "Booking.com",
-      "TripAdvisor.in",
+      "TripAdvisor.in"
     ],
 
     headers: [
       {
-        text: "#",
+        text: "#"
       },
       {
-        text: "Booking Number",
+        text: "Booking Number"
       },
       {
-        text: "Reference Number",
+        text: "Booking Date"
       },
       {
-        text: "Customer",
+        text: "Reference Number"
       },
       {
-        text: "Type",
+        text: "Customer"
       },
       {
-        text: "Rooms",
+        text: "Type"
       },
       {
-        text: "Source",
+        text: "Rooms"
       },
       {
-        text: "Booking Amount",
+        text: "Source"
       },
       {
-        text: "Posting Amount",
+        text: "Booking Amount"
       },
       {
-        text: "Total (Booking+Posting)",
+        text: "Posting Amount"
       },
       {
-        text: "Check In",
+        text: "Total (Booking+Posting)"
       },
       {
-        text: "Check Out",
+        text: "Check In"
       },
       {
-        text: "Booking Date",
+        text: "Check Out"
+      },
+
+      {
+        text: "Payment Status"
       },
       {
-        text: "Payment Status",
+        text: "Paid Amount"
       },
       {
-        text: "Transaction",
+        text: "Transaction"
       },
       {
-        text: "Paid Date",
+        text: "Paid Date"
       },
       {
-        text: "Action",
-      },
+        text: "Action"
+      }
     ],
     editedIndex: -1,
     editedItem: { name: "" },
@@ -489,13 +494,13 @@ export default {
     booking: {},
     paid_status: 1,
     agentData: [],
-    errors: [],
+    errors: []
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    },
+    }
   },
   created() {
     this.loading = true;
@@ -512,9 +517,38 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
+        (u && u.permissions.some(e => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    is_paid_color(status) {
+      let s = parseInt(status);
+      switch (s) {
+        case 0:
+          return "red";
+          break;
+        case 1:
+          return "green";
+          break;
+        case 2:
+          return "orange";
+          break;
+      }
+    },
+    is_paid_text(status) {
+      let s = parseInt(status);
+      switch (s) {
+        case 0:
+          return "pending";
+          break;
+        case 1:
+          return "paid";
+          break;
+        case 2:
+          return "payment by customer";
+          break;
+      }
     },
 
     getFullPayment() {
@@ -536,8 +570,8 @@ export default {
       let payload = {
         params: {
           id: agentData.booking_id,
-          company_id: this.$auth.user.company.id,
-        },
+          company_id: this.$auth.user.company.id
+        }
       };
       this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
         if (data.status) {
@@ -569,8 +603,8 @@ export default {
           company_id: this.$auth.user.company.id,
           from: this.from_date,
           to: this.to_date,
-          source: newSource,
-        },
+          source: newSource
+        }
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
@@ -597,7 +631,7 @@ export default {
         full_payment: this.booking.full_payment,
         payment_mode_id: this.booking.payment_mode_id,
         transaction: this.booking.transaction,
-        paid_status: this.paid_status,
+        paid_status: this.paid_status
       };
       // return;
       console.log(payload);
@@ -613,7 +647,7 @@ export default {
             this.getDataFromApi();
           }
         })
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
     },
 
     searchIt() {
@@ -624,8 +658,8 @@ export default {
       } else if (s > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${search}`);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use App\Models\Room;
 use App\Models\Payment;
 use App\Models\Customer;
@@ -22,11 +21,6 @@ class Booking extends Model
         'status',
         'check_in_date',
         'check_out_date',
-    ];
-    protected $casts = [
-        'booking_date' => 'datetime:Y-m-d',
-        'check_in_date' => 'datetime:d-M-y H:i',
-        'check_out_date' => 'datetime:d-M-y H:i',
     ];
 
     /**
@@ -57,12 +51,12 @@ class Booking extends Model
 
     public function getCheckInDateAttribute()
     {
-        return  date('Y-m-d H:i', strtotime($this->check_in));
+        return  date('Y-m-d', strtotime($this->check_in));
     }
 
     public function getCheckOutDateAttribute()
     {
-        return  date('Y-m-d H:i', strtotime($this->check_out));
+        return  date('Y-m-d', strtotime($this->check_out));
     }
 
     public function GetTitleAttribute()
@@ -88,6 +82,13 @@ class Booking extends Model
         return Room::find($this->room_id)->status ?? '';
     }
 
+    protected $casts = ['booking_date' => 'datetime:d-M-y'];
+
+    /**
+     * Get the user that owns the Booking
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function customer()
     {
         return $this->belongsTo(Customer::class)->withDefault([
@@ -97,20 +98,12 @@ class Booking extends Model
 
     public function SetCheckInAttribute($value)
     {
-        // dd($value . ' ' . date('H:i:s'));
-        // dd(date('Y-m-d H:i:s', strtotime($value)));
-        // dd($value);
-        // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
-        $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+        $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
     }
 
     public function SetCheckOutAttribute($value)
     {
-        $date = Carbon::parse($value);
-        $date->addDays(1);
-        $d = $date->format('Y-m-d');
-        // $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
-        $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+        $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
     }
 
     // public function GetBackgroundAttribute()

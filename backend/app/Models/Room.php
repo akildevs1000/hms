@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Room extends Model
 {
@@ -65,7 +66,7 @@ class Room extends Model
         // return '#f48665';
 
         $status = $this->room_type_id ?? '';
-        return match($status) {
+        return match ($status) {
             1 => '#f48665',
             2 => '#8e4cf1',
             3 => '#289cf5',
@@ -82,4 +83,18 @@ class Room extends Model
     {
         return RoomType::find($this->room_type_id)->price ?? '';
     }
+
+
+    public function getNumberOfDays(Carbon $startDate, Carbon $endDate)
+    {
+        return $startDate->diffInDays($endDate);
+    }
+
+    // public function isBookedForPeriod(Carbon $startDate, Carbon $endDate)
+    // {
+    //     return $this->bookings()
+    //         ->where('start_date', '<=', $endDate->format('Y-m-d'))
+    //         ->where('end_date', '>=', $startDate->format('Y-m-d'))
+    //         ->exists();
+    // }
 }

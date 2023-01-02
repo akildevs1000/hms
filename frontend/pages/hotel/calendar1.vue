@@ -393,6 +393,7 @@
                     type="number"
                     v-model="posting.amount"
                     :hide-details="true"
+                    @keyup="get_amount_with_tax(posting.tax_type)"
                   ></v-text-field>
                 </td>
               </tr>
@@ -407,7 +408,7 @@
                     :items="[
                       { id: -1, name: 'select..' },
                       { name: 'Food' },
-                      { name: 'Mess' },
+                      { name: 'Mesentery' },
                       { name: 'Bed' }
                     ]"
                     item-text="name"
@@ -731,7 +732,7 @@
               </tr> -->
               <tr>
                 <th>Remaining Balance</th>
-                <td>{{ checkData.remaining_price }}</td>
+                <td>{{ checkData.grand_remaining_price }}</td>
               </tr>
 
               <tr style="background-color: white">
@@ -760,7 +761,7 @@
             small
             @click="store_advance(checkData)"
             :loading="loading"
-            >Save</v-btn
+            >Pay</v-btn
           >
           <v-btn class="error" small @click="payingAdvance = false">
             Cancel
@@ -834,7 +835,11 @@
       >
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item v-if="bookingStatus == 1" link @click="checkInDialog = true">
+            <v-list-item
+              v-if="bookingStatus == 1"
+              link
+              @click="checkInDialog = true"
+            >
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
 
@@ -877,7 +882,7 @@
             <v-list-item
               link
               @click="payingAdvance = true"
-              v-if="bookingStatus <= 1 && checkData.paid_by != 2"
+              v-if="bookingStatus <= 2 && checkData.paid_by != 2"
             >
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
@@ -1203,15 +1208,33 @@ export default {
       });
     },
 
+    // get_amount_with_tax(clause) {
+    //   let per = clause == "Food" ? 5 : 12;
+    //   let res = this.getPercentage(this.posting.amount, per);
+    //   let gst = parseInt(res) / 2;
+    //   this.posting.sgst = gst;
+    //   this.posting.cgst = gst;
+    //   this.posting.tax = res;
+    //   this.posting.amount_with_tax =
+    //     parseInt(res) + parseInt(this.posting.amount);
+    // },
+
     get_amount_with_tax(clause) {
-      let per = clause == "Food" ? 5 : 12;
-      let res = this.getPercentage(this.posting.amount, per);
+      // let per = clause == "Food" ? 5 : 12;
+      let per = 0;
+      if (clause == "Food") {
+        per = 5;
+      } else if (clause == "Mesentery" || clause == "Bed") {
+        per = 12;
+      }
+
+      let res = this.getPercentage(this.posting.amount || 0, per);
       let gst = parseInt(res) / 2;
       this.posting.sgst = gst;
       this.posting.cgst = gst;
       this.posting.tax = res;
       this.posting.amount_with_tax =
-        parseInt(res) + parseInt(this.posting.amount);
+        parseInt(res) + parseInt(this.posting.amount || 0);
     },
 
     getPercentage(amount, clause) {

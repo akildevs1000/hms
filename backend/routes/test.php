@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Hash;
 
 Route::post('/test', function (Request $request) {
 
+
+    return date('Y-m-d H:i:s');
+
     return is_numeric(111);
     try {
         $curl = curl_init();

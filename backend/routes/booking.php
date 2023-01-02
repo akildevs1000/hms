@@ -37,3 +37,4 @@
     Route::post('set_available/{id}', [BookingController::class, 'setAvailable']);
     Route::post('set_maintenance/{id}', [BookingController::class, 'setMaintenance']);
     Route::post('paying_advance', [BookingController::class, 'payingAdvance']);
+    Route::post('paying_amount', [BookingController::class, 'payingAmount']);

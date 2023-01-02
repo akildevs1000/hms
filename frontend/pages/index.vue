@@ -287,7 +287,7 @@
                       :items="[
                         { id: -1, name: 'select..' },
                         { name: 'Food' },
-                        { name: 'Mess' },
+                        { name: 'Mesentery' },
                         { name: 'Bed' }
                       ]"
                       item-text="name"
@@ -473,7 +473,7 @@
                 </tr>
                 <tr>
                   <th>Remaining Balance</th>
-                  <td>{{ checkData.remaining_price }}</td>
+                  <td>{{ checkData.grand_remaining_price }}</td>
                 </tr>
 
                 <tr style="background-color: white">
@@ -502,7 +502,7 @@
               small
               @click="store_advance(checkData)"
               :loading="false"
-              >Save</v-btn
+              >Pay</v-btn
             >
             <v-btn class="error" small @click="close">
               Cancel
@@ -764,7 +764,7 @@
             <v-list-item
               link
               @click="payingAdvance = true"
-              v-if="bookingStatus <= 1 && checkData.paid_by != 2"
+              v-if="bookingStatus <= 2 && checkData.paid_by != 2"
             >
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
@@ -1260,7 +1260,7 @@ export default {
       let per = 0;
       if (clause == "Food") {
         per = 5;
-      } else if (clause == "Mess" || clause == "Bed") {
+      } else if (clause == "Mesentery" || clause == "Bed") {
         per = 12;
       }
 
@@ -1501,6 +1501,7 @@ export default {
       this.loading = true;
       let payload = {
         booking_id: this.checkData.id,
+        grand_remaining_price: this.checkData.grand_remaining_price,
         remaining_price: this.checkData.remaining_price,
         full_payment: this.checkData.full_payment,
         payment_mode_id: this.checkData.payment_mode_id

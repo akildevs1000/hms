@@ -25,11 +25,14 @@ return new class extends Migration
 
             $table->decimal('amount', 8, 2)->default(0);
             $table->decimal('posting_amount', 8, 2)->default(0);
+            $table->decimal('agent_paid_amount', 8, 2)->default(0);
 
             $table->date('booking_date')->nullable();
             $table->integer('company_id')->nullable();
 
+            $table->integer('is_paid_with_posting')->default(0);
             $table->integer('is_paid')->default(0);
+            $table->integer('is_full_payment')->default(0);
             $table->string('transaction')->nullable();
 
             $table->date('paid_date')->nullable();
