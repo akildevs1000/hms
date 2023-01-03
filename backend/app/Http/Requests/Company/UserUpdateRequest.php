@@ -25,8 +25,7 @@ class UserUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'current_password' => 'required',
+        $arr = [
             'password' => [
                 'required',
                 'string',
@@ -39,6 +38,11 @@ class UserUpdateRequest extends FormRequest
                 'regex:/[@$!%*#?&]/', // must contain a special character
             ],
         ];
+
+        if (!$this->is_master) {
+            $arr['current_password'] = 'required';
+        }
+        return $arr;
     }
 
     public function messages()

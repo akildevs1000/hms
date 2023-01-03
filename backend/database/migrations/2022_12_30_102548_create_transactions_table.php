@@ -18,6 +18,7 @@ return new class extends Migration
             $table->bigInteger('booking_id');
             $table->bigInteger('customer_id');
             $table->bigInteger('company_id');
+            $table->string('desc')->nullable();
             $table->bigInteger('payment_method_id')->nullable();
             $table->decimal('debit', 8, 2)->default(0);
             $table->decimal('credit', 8, 2)->default(0);

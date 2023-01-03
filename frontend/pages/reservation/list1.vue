@@ -211,6 +211,7 @@
           <td class="ps-3">
             <b>{{ item.id }}</b>
           </td>
+          <td>{{ item.source }}</td>
           <td>{{ item && item.customer.full_name }}</td>
           <td>
             <span v-for="(room, index) in item.booked_rooms" :key="index">
@@ -222,9 +223,10 @@
           <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
           <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
           <td>{{ item.total_price }}</td>
-          <td>{{ item.advance_price }}</td>
-          <td>{{ item.remaining_price }}</td>
-          <td>{{ item.source }}</td>
+          <td>{{ item.total_posting_amount || 0 }}</td>
+          <td>{{ item.paid_amounts || 0 }}</td>
+          <td>{{ item.balance || 0 }}</td>
+
           <td>{{ item.booking_date }}</td>
           <td>
             <v-btn
@@ -306,17 +308,15 @@ export default {
     total: 0,
     headers: [
       { text: "&nbsp RESERVATION NUMBER" },
-
+      { text: "Source" },
       { text: "Customer" },
       { text: "Rooms" },
-      // { text: "Room Status" },
       { text: "Arrival  Date" },
       { text: "Departure  Date" },
       { text: "Total" },
-      { text: "Advance" },
-      { text: "Remaining" },
-      // { text: "Payment Status" },
-      { text: "Source" },
+      { text: "Posting" },
+      { text: "Paid Amount" },
+      { text: "Balance" },
       { text: "Booking Date" },
       { text: "Reservation Status" },
       { text: "View" },

@@ -287,8 +287,8 @@
                       :items="[
                         { id: -1, name: 'select..' },
                         { name: 'Food' },
-                        { name: 'Mesentery' },
-                        { name: 'Bed' }
+                        { name: 'Others' },
+                        { name: 'ExtraBed' }
                       ]"
                       item-text="name"
                       item-value="id"
@@ -602,6 +602,17 @@
                       <th>Remaining Balance With Posting</th>
                       <td>{{ checkData.grand_remaining_price }}</td>
                     </tr>
+                    <tr>
+                      <th>Print Invoice</th>
+                      <td>
+                        <v-checkbox
+                          v-model="isPrintInvoice"
+                          :hide-details="true"
+                          class="pt-0 py-1 chk-align"
+                        >
+                        </v-checkbox>
+                      </td>
+                    </tr>
                     <tr
                       style="background-color: white"
                       v-if="checkData.paid_by != 2"
@@ -615,7 +626,7 @@
                           dense
                           outlined
                           type="number"
-                          v-model="checkData.full_payment"
+                          v-model="full_payment"
                           :hide-details="true"
                         ></v-text-field>
                       </td>
@@ -781,7 +792,7 @@
       </v-menu>
     </div>
 
-    <div class="page-wrapper">
+    <div class="page-wrapper mb-0 pb-0">
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
@@ -1027,11 +1038,10 @@
               </div>
             </div>
           </div>
+          <ReservationList />
         </div>
       </div>
     </div>
-
-    <ReservationList />
   </div>
 </template>
 <script>
@@ -1103,6 +1113,8 @@ export default {
       totalTransactionAmount: 0,
       new_payment: 0,
       new_advance: 0,
+      full_payment: 0,
+      isPrintInvoice: false,
       items: [],
       transactions: [],
       checkData: {},
@@ -1219,7 +1231,7 @@ export default {
         this.checkData = data;
         this.bookingId = data.id;
         console.log(this.bookingId);
-        this.checkData.full_payment = "";
+        this.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
         if (this.isDbCLick) {
@@ -1260,21 +1272,22 @@ export default {
       let per = 0;
       if (clause == "Food") {
         per = 5;
-      } else if (clause == "Mesentery" || clause == "Bed") {
+      } else if (clause == "Others" || clause == "ExtraBed") {
         per = 12;
       }
-
       let res = this.getPercentage(this.posting.amount || 0, per);
-      let gst = parseInt(res) / 2;
+      let gst = parseFloat(res) / 2;
       this.posting.sgst = gst;
       this.posting.cgst = gst;
       this.posting.tax = res;
-      this.posting.amount_with_tax =
-        parseInt(res) + parseInt(this.posting.amount || 0);
+      let a = parseFloat(res) + parseFloat(this.posting.amount || 0);
+      console.log(a.toFixed(2));
+      this.posting.amount_with_tax =a.toFixed(2);
     },
 
     getPercentage(amount, clause) {
-      return (amount / 100) * clause;
+      let res = (amount / 100) * clause;
+      return res;
     },
 
     room_list() {
@@ -1491,10 +1504,7 @@ export default {
     },
 
     store_check_out() {
-      if (
-        parseInt(this.checkData.full_payment) >
-        parseInt(this.checkData.remaining_price)
-      ) {
+      if (this.full_payment == "") {
         alert("enter correct payment");
         return true;
       }
@@ -1503,10 +1513,11 @@ export default {
         booking_id: this.checkData.id,
         grand_remaining_price: this.checkData.grand_remaining_price,
         remaining_price: this.checkData.remaining_price,
-        full_payment: this.checkData.full_payment,
-        payment_mode_id: this.checkData.payment_mode_id
+        full_payment: this.full_payment,
+        payment_mode_id: this.checkData.payment_mode_id,
+        company_id: this.$auth.user.company.id,
+        isPrintInvoice: this.isPrintInvoice
       };
-      // return;
       this.$axios
         .post("/check_out_room", payload)
         .then(({ data }) => {
@@ -1514,10 +1525,20 @@ export default {
             this.errors = data.errors;
           } else {
             this.succuss(data, false, false, true);
-            this.redirect_to_invoice(data.data);
+            if (this.isPrintInvoice) {
+              this.redirect_to_invoice(data.bookingId);
+            }
           }
         })
         .catch(e => console.log(e));
+    },
+
+    redirect_to_invoice(id) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `http://127.0.0.1:8000/api/invoice/${id}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     preview(file) {

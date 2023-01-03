@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Hash;
 Route::post('/test', function (Request $request) {
 
 
+
+    return Hash::make('DE6aMuM#');
     return date('Y-m-d H:i:s');
 
     return is_numeric(111);

@@ -13,6 +13,7 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SourceController;
 use App\Http\Controllers\TradeLicenseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -117,3 +118,10 @@ Route::get('SyncCompanyIdsWithDevices', [AttendanceLogController::class, 'SyncCo
 Route::get('SyncAttendance', [AttendanceController::class, 'SyncAttendance']);
 Route::get('SyncAbsent', [AttendanceController::class, 'SyncAbsent']);
 // Route::get('SyncAbsentForMultipleDays', [AttendanceController::class, 'SyncAbsentForMultipleDays']);
+
+
+
+// Hotel
+Route::resource('source', SourceController::class);
+Route::get('get_online', [SourceController::class, 'getOnline']);
+Route::get('get_agent', [SourceController::class, 'getAgent']);

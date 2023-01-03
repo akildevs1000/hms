@@ -478,6 +478,8 @@
                   outlined
                   :items="agentList"
                   type="text"
+                  item-value="name"
+                  item-text="name"
                   v-model="room.source"
                   :hide-details="errors && !errors.source"
                   :error="errors && errors.source"
@@ -493,6 +495,8 @@
                   :items="sources"
                   dense
                   outlined
+                  item-value="name"
+                  item-text="name"
                   :hide-details="errors && !errors.source"
                   :error="errors && errors.source"
                   :error-messages="
@@ -720,7 +724,7 @@
                   <div class="d-flex mt-4 mb-10 primary--text">
                     <v-icon color="primary" large>mdi-bed</v-icon>
                     <span style="font-size: 25px" class="ml-2 mt-1">
-                      More Room
+                      Add Room
                     </span>
                     <v-divider
                       class="ml-3 mt-6 mr-3"
@@ -1235,20 +1239,9 @@ export default {
       availableRooms: [],
       selectedRooms: [],
       rooms: [],
-      sources: [
-        "MakeMyTrip",
-        "OYO Rooms",
-        "Airbnb.co.in",
-        "Expedia.co.in",
-        "Trivago.in",
-        "Yatra",
-        "Cleartrip",
-        "in.hotels.com",
-        "Booking.com",
-        "TripAdvisor.in"
-      ],
+      sources: [],
 
-      agentList: ["agent1", "agent2", "agent3", "agent4", "agent5"],
+      agentList: [],
 
       idCards: [],
       temp: {
@@ -1362,6 +1355,8 @@ export default {
     this.get_id_cards();
     this.runAllFunctions();
     this.get_countries();
+    this.get_agents();
+    this.get_online();
   },
   methods: {
     runAllFunctions() {
@@ -1460,6 +1455,29 @@ export default {
         this.roomTypes = data;
       });
     },
+
+    get_agents() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`get_agent`, payload).then(({ data }) => {
+        this.agentList = data;
+      });
+    },
+
+    get_online() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`get_online`, payload).then(({ data }) => {
+        this.sources = data;
+      });
+    },
+
     get_id_cards() {
       let payload = {
         params: {

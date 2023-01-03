@@ -20,19 +20,14 @@ class InvoiceController extends Controller
             ->setPaper('a4', 'portrait')
             ->stream();
     }
-
-
-    // public function index($id)
-    // {
-
-    //     $booking = Booking::with('bookedRooms', 'customer')->find($id);
-    //     $bookedRooms = $booking->bookedRooms;
-
-
-    //     return Pdf::loadView('invoice.invoice', compact("booking", "bookedRooms"))
-    //         // ->setPaper('a4', 'landscape')
-    //         ->setPaper('a4', 'portrait')
-
-    //         ->stream();
-    // }
+    public function printInvoice($id)
+    {
+        // return $booking = Booking::with('orderRooms.postings', 'customer')->find($id);
+        $booking = Booking::with('orderRooms', 'customer')->find($id);
+        $orderRooms = $booking->orderRooms;
+        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms"))
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
 }

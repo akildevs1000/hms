@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use App\Http\Requests\Company\UserRequest;
 use App\Http\Requests\Company\StoreRequest;
-use App\Http\Requests\Company\CompanyRequest;
 use App\Http\Requests\Company\ContactRequest;
+use App\Http\Requests\Company\CompanyRequest;
 use App\Http\Requests\Company\UserUpdateRequest;
 use App\Notifications\CompanyCreationNotification;
 use App\Http\Requests\Company\CompanyUpdateRequest;
@@ -260,7 +260,13 @@ class CompanyController extends Controller
 
     public function updateContact(ContactRequest $request, $id)
     {
-        $contact = CompanyContact::where('company_id', $id)->update($request->validated());
+
+        // $contact = CompanyContact::where('company_id', $id)->update($request->validated());
+
+        $contact = CompanyContact::updateOrCreate(
+            ['company_id' => $id],
+            $request->validated()
+        );
 
         if (!$contact) {
             return $this->response('Contact cannot updated.', null, false);
@@ -289,18 +295,25 @@ class CompanyController extends Controller
             "password" => Hash::make($data["password"]),
             "first_login" => 0,
         ];
-
-        if (Hash::check($request->current_password, $user->password)) {
+        if ($request->is_master) {
             $record = $user->update($arr);
             if (!$record) {
                 return $this->response('User cannot update.', null, false);
             }
             return $this->response('User successfully updated.', $record, true);
         } else {
-            return [
-                "status" => false,
-                "errors" => ['current_password' => 'Current password does not match'],
-            ];
+            if (Hash::check($request->current_password, $user->password)) {
+                $record = $user->update($arr);
+                if (!$record) {
+                    return $this->response('User cannot update.', null, false);
+                }
+                return $this->response('User successfully updated.', $record, true);
+            } else {
+                return [
+                    "status" => false,
+                    "errors" => ['current_password' => 'Current password does not match'],
+                ];
+            }
         }
     }
 }

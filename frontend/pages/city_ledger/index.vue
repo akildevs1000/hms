@@ -134,45 +134,6 @@
       </v-col>
     </v-row>
     <v-row>
-      <!-- <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          @change="getDataFromApi(`booking_agents`)"
-          v-model="pagination.per_page"
-          :items="[50, 100, 500, 1000]"
-          placeholder="Per Page Records"
-          solo
-          dense
-          flat
-          :hide-details="true"
-        ></v-select>
-      </v-col> -->
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="type"
-          :items="types"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-        ></v-select>
-      </v-col>
-
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="source"
-          :items="type == 'Online' ? sources : agentList"
-          dense
-          placeholder="Sources"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
-      </v-col>
       <v-col md="3">
         <v-menu
           v-model="from_menu"
@@ -241,7 +202,7 @@
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>
-          <tr style="font-size:15px">
+          <tr style="font-size:13px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
@@ -257,16 +218,20 @@
             <td>
               <b>{{ ++index }}</b>
             </td>
-            <td>{{ item.booking_id || "---" }}</td>
+            <td>{{ item.id || "---" }}</td>
             <td>{{ item.booking_date || "---" }}</td>
-            <td>{{ (item && item.customer.full_name) || "---" }}</td>
+            <td>
+              {{ (item && item.customer && item.customer.full_name) || "---" }}
+            </td>
             <td>{{ item.type || "---" }}</td>
-            <td>{{ (item && item.booking.rooms) || "---" }}</td>
+            <td>{{ (item && item.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
-            <td>{{ item.amount || "---" }}</td>
-            <td>{{ item.posting_amount || 0 }}</td>
-            <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
-            <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
+            <td>{{ item.total_price || "---" }}</td>
+            <td>{{ item.total_posting_amount || 0 }}</td>
+            <td>{{ item.paid_amounts || 0 }}</td>
+            <td>{{ item.balance || 0 }}</td>
+            <td>{{ (item && item.check_in_date) || "---" }}</td>
+            <td>{{ (item && item.check_out_date) || "---" }}</td>
             <td>
               <v-chip
                 class="ma-2"
@@ -276,8 +241,6 @@
                 {{ item.is_paid == 1 ? "Paid" : "Pending" }}
               </v-chip>
             </td>
-            <td>{{ item.agent_paid_amount || "---" }}</td>
-            <td>{{ item.paid_date || "---" }}</td>
             <td>
               <!-- <v-icon
                 x-small
@@ -393,6 +356,12 @@ export default {
         text: "Posting Amount"
       },
       {
+        text: "Total Paid Amount"
+      },
+      {
+        text: "Pending Payment"
+      },
+      {
         text: "Check In"
       },
       {
@@ -402,12 +371,7 @@ export default {
       {
         text: "Payment Status"
       },
-      {
-        text: "Paid Amount"
-      },
-      {
-        text: "Paid Date"
-      },
+
       {
         text: "Action"
       }
@@ -418,7 +382,7 @@ export default {
     response: "",
     data: [],
     booking: [],
-    agentData: [],
+    cityLedgerData: [],
     totalCredit: 0,
     errors: []
   }),
@@ -448,11 +412,11 @@ export default {
       );
     },
 
-    paidAmount(agentData) {
-      this.agentData = agentData;
+    paidAmount(cityLedgerData) {
+      this.cityLedgerData = cityLedgerData;
       let payload = {
         params: {
-          id: agentData.booking_id,
+          id: cityLedgerData.id,
           company_id: this.$auth.user.company.id
         }
       };
@@ -478,7 +442,6 @@ export default {
     },
 
     getDataFromApi(url = this.endpoint) {
-      let newSource = this.source;
       this.loading = true;
       let page = this.pagination.current;
       let options = {
@@ -486,14 +449,14 @@ export default {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
           from: this.from_date,
-          to: this.to_date,
-          source: newSource
+          to: this.to_date
         }
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        this.data = data.data;
-        this.pagination.current = data.current_page;
-        this.pagination.total = data.last_page;
+        this.data = data.city_ledgers.data;
+        console.log(this.data);
+        this.pagination.current = data.city_ledgers.current_page;
+        this.pagination.total = data.city_ledgers.last_page;
         this.loading = false;
       });
     },
@@ -504,11 +467,12 @@ export default {
         return true;
       }
       let payload = {
-        agentData: this.agentData,
+        cityLedgerData: this.cityLedgerData,
         booking_id: this.booking.id,
         remaining_price: this.booking.remaining_price,
         full_payment: this.booking.full_payment,
-        payment_mode_id: this.booking.payment_mode_id
+        payment_mode_id: this.booking.payment_mode_id,
+        company_id: this.$auth.user.company.id
       };
       // return;
       this.$axios

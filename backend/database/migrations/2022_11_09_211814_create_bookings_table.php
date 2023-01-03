@@ -28,6 +28,8 @@ return new class extends Migration
             $table->decimal('remaining_price', 8, 2)->default(0);
             $table->decimal('total_posting_amount', 8, 2)->default(0);
             $table->decimal('grand_remaining_price', 8, 2)->default(0)->comment('remaining price with total_posting_amount');
+            $table->decimal('balance', 8, 2)->default(0);
+            $table->decimal('paid_amounts', 8, 2)->default(0);
             $table->decimal('full_payment', 8, 2)->default(0);
             $table->decimal('all_room_Total_amount', 8, 2)->default(0);
             $table->decimal('advance_price', 8, 2)->default(0);

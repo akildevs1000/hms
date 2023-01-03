@@ -39,6 +39,40 @@ class AgentsController extends Controller
 
     public function getCityLedger(Request $request)
     {
+        $model = Booking::query();
+        $model->where('company_id', $request->company_id);
+        $model->where('balance', '>', 0);
+        $model->with('customer');
+        $model->where(function ($q) {
+            $q->where('source', 'walking');
+            $q->orWhere('source', 'complimentary');
+        });
+
+
+        // if ($request->filled('search') && $request->search != "") {
+        //     $model->whereHas('customer', function ($q) use ($request) {
+        //         $q->where('first_name', 'LIKE', "%$request->search%");
+        //         $q->orWhere('last_name', 'LIKE', "%$request->search%");
+        //     });
+        // }
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->where(function ($q) use ($request) {
+                $q->whereDate('check_in', '<=', $request->to);
+                $q->WhereDate('check_out', '>=', $request->from);
+            });
+        }
+
+        return response()->json([
+            'city_ledgers' => $model->paginate($request->per_page ?? 20),
+            'message' => '',
+            'status' => true
+
+        ]);
+    }
+
+    public function getCityLedger1(Request $request)
+    {
         $model = Agent::query();
         $model->where('company_id', $request->company_id);
         $model->where('type', 'Customer');
@@ -67,6 +101,9 @@ class AgentsController extends Controller
 
         return $model->paginate($request->per_page ?? 20);
     }
+
+
+
 
     public function store($data)
     {
@@ -265,9 +302,68 @@ class AgentsController extends Controller
 
     public function paymentByCustomer(Request $request)
     {
+        $booking_id = $request->booking_id;
+        $booking    = Booking::where('company_id', $request->company_id)->find($booking_id);
+
+        $transactionData = [
+            'booking_id'        => $booking->id,
+            'customer_id'       => $booking->customer_id ?? '',
+            'date'              => now(),
+            'company_id'        => $booking->company_id ?? '',
+            'payment_method_id' => $booking->payment_mode_id,
+            'desc' => 'paid by city ledger',
+        ];
+
+        $payment = new TransactionController();
+        $payment->store($transactionData, $request->full_payment, 'credit');
+        $booking = Booking::find($booking_id);
+        if ($booking) {
+            if ($booking->balance > 0) {
+                $booking->payment_status  = 0;
+                $booking->remaining_price       =  (int)$booking->remaining_price - (int)$request->full_payment;
+                $booking->grand_remaining_price = (int)$booking->remaining_price + (int)$booking->total_posting_amount;;
+
+                $paymentsData = [
+                    'booking_id'     => $booking_id,
+                    'payment_mode'   => $request->payment_mode_id,
+                    'description'    =>  'payment by ' . $request->cityLedgerData['source'] ?? '',
+                    'amount'         => $request->full_payment,
+                    'type'           => 'customer',
+                    'room'           => $booking->rooms,
+                    'company_id'     => $booking->company_id,
+                    'is_city_ledger' => 0,
+                    'created_at'     => now(),
+                ];
+                $payment = Payment::whereBookingId($booking->id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+                if ($payment) {
+                    $payment->amount = (int) $booking->balance;
+                    $payment->save();
+                }
+                $payment = new PaymentController();
+                $payment->store($paymentsData);
+            } else {
+                $booking->payment_status  = 1;
+                $booking->full_payment    = $booking->paid_amounts;
+                $booking->remaining_price       = 0;
+                $booking->grand_remaining_price = 0;
+                $booking->total_posting_amount  = 0;
+            }
+            $booking->save();
+            return response()->json(['data' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
+        }
+        return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+    }
+    public function paymentByCustomer1(Request $request)
+    {
         $agentId    = $request->agentData['id'];
         $booking_id = $request->booking_id;
         $booking    = Booking::find($booking_id);
+
+
+
+
+
+
         $isFullPayment = false;
         if ($booking->grand_remaining_price <= $request->full_payment) {
             $booking->payment_status  = 1;
@@ -280,7 +376,6 @@ class AgentsController extends Controller
             $booking->grand_remaining_price = ((int) $booking->grand_remaining_price - (int) $request->full_payment);
         }
         $booking->payment_mode_id = $request->payment_mode_id;
-        // $booking->check_in_price  = $request->full_payment;
         if ($booking->save()) {
 
             $transactionData = [
@@ -289,6 +384,7 @@ class AgentsController extends Controller
                 'date'              => now(),
                 'company_id'        => $booking->company_id ?? '',
                 'payment_method_id' => $booking->payment_mode_id,
+                'desc' => 'payment by city ledger',
             ];
 
             $payment = new TransactionController();

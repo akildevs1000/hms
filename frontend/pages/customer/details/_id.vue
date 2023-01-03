@@ -103,25 +103,22 @@
             </v-row>
 
             <v-row>
+              <v-row>
+                <v-col cols="3"><b>Posting Amount</b></v-col>
+                <v-col cols="4">
+                  <span> {{ totalPostingAmount || "0" }}</span>
+                </v-col>
+              </v-row>
               <v-col cols="3"><b>Remaining Amount</b></v-col>
               <v-col cols="4">
                 <span> {{ (booking && booking.remaining_price) || "0" }}</span>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="3"><b>Posting Amount</b></v-col>
-              <v-col cols="4">
-                <span> {{ totalPostingAmount || "0" }}</span>
-              </v-col>
-            </v-row>
-            <v-row>
               <v-col cols="3"><b>Grand Remaining</b></v-col>
               <v-col cols="4">
                 <span class="red--text">
-                  {{
-                    parseInt(totalPostingAmount) +
-                      parseInt(booking && booking.remaining_price) || "0"
-                  }}</span
+                  {{ grand_remaining_price || "0" }}</span
                 >
               </v-col>
             </v-row>

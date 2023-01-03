@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 
@@ -10,15 +11,6 @@ class TransactionController extends Controller
     public function store($data, $amount, $paymentType = null)
     {
         $model = Transaction::query();
-
-        // $data = [
-        //     'booking_id' => $booked->id,
-        //     'customer_id' => $booked->customer_id ?? '',
-        //     'date' => now(),
-        //     'company_id' => $request->company_id ?? '',
-        //     'payment_method_id' => $booked->payment_mode_id,
-        // ];
-
         $payment = $model->whereBookingId($data['booking_id'])->orderBy('id', 'desc')->first();
 
         if ($payment) {
@@ -36,7 +28,9 @@ class TransactionController extends Controller
             $data['balance'] = $amount;
         }
 
-        return  $model->create($data);
+        $trans =  $model->create($data);
+        $totalCredit = $model->whereBookingId($trans->booking_id)->sum('credit');
+        Booking::find($trans->booking_id)->update(['balance' => $trans->balance, 'paid_amounts' => $totalCredit]);
     }
 
     public function getTransactionByBookingId(Request $request, $id)

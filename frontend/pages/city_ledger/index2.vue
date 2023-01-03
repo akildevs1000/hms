@@ -11,10 +11,10 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-dialog v-model="agentPaymentDialog" persistent max-width="800px">
+    <v-dialog v-model="agentPaymentDialog" persistent max-width="700px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Agent Payment</span>
+          <span>City Ledger Payment</span>
         </v-toolbar>
         <v-card-text>
           <v-container>
@@ -28,7 +28,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
-                <td style="width: 490px">
+                <td style="width: 300px">
                   {{ booking && booking.title }}
                 </td>
               </tr>
@@ -85,56 +85,17 @@
                 <th>Total Amount</th>
                 <td>{{ booking && booking.total_price }}</td>
               </tr>
-              <tr></tr>
-
-              <tr></tr>
-              <!-- <tr>
+              <tr>
+                <th>Total Posting Amount</th>
+                <td>{{ booking && booking.total_posting_amount }}</td>
+              </tr>
+              <tr>
+                <th>previous Credits</th>
+                <td>{{ totalCredit || 0 }}</td>
+              </tr>
+              <tr>
                 <th>Remaining Balance</th>
-                <td>{{ booking.remaining_price }}</td>
-              </tr> -->
-              <tr>
-                <th>Posting Amount</th>
-                <td>
-                  {{ booking.total_posting_amount }}
-                </td>
-              </tr>
-              <tr>
-                <th>Total (Booking + Posting)</th>
-                <td>
-                  {{ booking.grand_remaining_price }}
-                </td>
-              </tr>
-              <tr>
-                <th>Payment</th>
-                <td>
-                  <!-- <v-checkbox
-                    v-model="booking.paid_with_posting"
-                    dense
-                    :hide-details="true"
-                    value="1"
-                    @change="getFullPayment"
-                  ></v-checkbox> -->
-
-                  <v-container fluid>
-                    <v-radio-group
-                      v-model="paid_status"
-                      @change="getFullPayment"
-                      row
-                      dense
-                      :hide-details="errors && !errors.paid_status"
-                      :error="errors && errors.paid_status"
-                      :error-messages="
-                        errors && errors.paid_status
-                          ? errors.paid_status[0]
-                          : ''
-                      "
-                    >
-                      <v-radio label="Only Rooms" :value="1"></v-radio>
-                      <v-radio label="Only Posting" :value="2"></v-radio>
-                      <v-radio label="Rooms + Posting" :value="3"></v-radio>
-                    </v-radio-group>
-                  </v-container>
-                </td>
+                <td>{{ booking.grand_remaining_price }}</td>
               </tr>
               <tr>
                 <th>
@@ -151,27 +112,14 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr v-if="booking.payment_mode_id == 4">
-                <th>
-                  Transaction Number
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="text"
-                    v-model="booking.transaction"
-                    :hide-details="true"
-                  ></v-text-field>
-                </td>
-              </tr>
               <tr></tr>
             </table>
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="primary" small @click="store_agent_payment">Pay</v-btn>
+          <v-btn class="primary" small @click="store_customer_payment"
+            >Save</v-btn
+          >
           <v-btn class="error" small @click="agentPaymentDialog = false">
             Cancel
           </v-btn>
@@ -293,7 +241,7 @@
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>
-          <tr style="font-size: 12px">
+          <tr style="font-size:15px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
@@ -305,41 +253,30 @@
             absolute
             color="primary"
           ></v-progress-linear>
-          <tr
-            v-for="(item, index) in data"
-            :key="index"
-            style="font-size: 12px"
-          >
+          <tr v-for="(item, index) in data" :key="index" style="font-size:14px">
             <td>
               <b>{{ ++index }}</b>
             </td>
             <td>{{ item.booking_id || "---" }}</td>
             <td>{{ item.booking_date || "---" }}</td>
-            <td>{{ item.reference_no || "---" }}</td>
             <td>{{ (item && item.customer.full_name) || "---" }}</td>
             <td>{{ item.type || "---" }}</td>
             <td>{{ (item && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
-            <td>{{ item.amount || "0" }}</td>
-            <td>{{ item.posting_amount || "0" }}</td>
-            <td>
-              {{
-                parseInt(item.amount) + parseInt(item.posting_amount) || "---"
-              }}.00
-            </td>
+            <td>{{ item.amount || "---" }}</td>
+            <td>{{ item.posting_amount || 0 }}</td>
             <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
             <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
             <td>
               <v-chip
                 class="ma-2"
-                :color="is_paid_color(item.is_paid)"
+                :color="item.is_paid == 1 ? 'green' : 'red'"
                 text-color="white"
               >
-                {{ is_paid_text(item.is_paid) }}
+                {{ item.is_paid == 1 ? "Paid" : "Pending" }}
               </v-chip>
             </td>
             <td>{{ item.agent_paid_amount || "---" }}</td>
-            <td>{{ item.transaction || "---" }}</td>
             <td>{{ item.paid_date || "---" }}</td>
             <td>
               <!-- <v-icon
@@ -385,8 +322,6 @@
 <script>
 export default {
   data: () => ({
-    radioGroup: 1,
-
     agentPaymentDialog: false,
     snackbar: false,
     response: "",
@@ -403,8 +338,8 @@ export default {
       per_page: 10
     },
     options: {},
-    Model: "Agents",
-    endpoint: "agents",
+    Model: "City Ledger",
+    endpoint: "city_ledger",
     search: "",
     snackbar: false,
     dialog: false,
@@ -440,9 +375,6 @@ export default {
         text: "Booking Date"
       },
       {
-        text: "Reference Number"
-      },
-      {
         text: "Customer"
       },
       {
@@ -455,13 +387,10 @@ export default {
         text: "Source"
       },
       {
-        text: "Booking Amount"
+        text: "Amount"
       },
       {
         text: "Posting Amount"
-      },
-      {
-        text: "Total (Booking+Posting)"
       },
       {
         text: "Check In"
@@ -477,9 +406,6 @@ export default {
         text: "Paid Amount"
       },
       {
-        text: "Transaction"
-      },
-      {
         text: "Paid Date"
       },
       {
@@ -491,9 +417,9 @@ export default {
     defaultItem: { name: "" },
     response: "",
     data: [],
-    booking: {},
-    paid_status: 1,
+    booking: [],
     agentData: [],
+    totalCredit: 0,
     errors: []
   }),
 
@@ -522,50 +448,6 @@ export default {
       );
     },
 
-    is_paid_color(status) {
-      let s = parseInt(status);
-      switch (s) {
-        case 0:
-          return "red";
-          break;
-        case 1:
-          return "green";
-          break;
-        case 2:
-          return "orange";
-          break;
-      }
-    },
-
-    is_paid_text(status) {
-      let s = parseInt(status);
-      switch (s) {
-        case 0:
-          return "pending";
-          break;
-        case 1:
-          return "paid";
-          break;
-        case 2:
-          return "payment by customer";
-          break;
-      }
-    },
-
-    getFullPayment() {
-      let status = this.paid_status;
-      switch (status) {
-        case 1:
-          this.booking.full_payment = this.booking.total_price;
-          break;
-        case 2:
-          this.booking.full_payment = this.booking.total_posting_amount;
-          break;
-        default:
-          this.booking.full_payment = this.booking.grand_remaining_price;
-      }
-    },
-
     paidAmount(agentData) {
       this.agentData = agentData;
       let payload = {
@@ -576,11 +458,12 @@ export default {
       };
       this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
         if (data.status) {
+          this.totalCredit = data.totalCredit;
+          console.log(this.transaction);
           this.booking = data.data;
           this.booking.full_payment = "";
           this.bookingStatus = data.booking_status;
           this.customerId = data.customer_id;
-          this.booking.full_payment = this.booking.total_price;
           this.agentPaymentDialog = true;
         }
       });
@@ -615,29 +498,21 @@ export default {
       });
     },
 
-    store_agent_payment() {
-      if (
-        this.booking.full_payment == ""
-        // (this.booking.payment_mode_id == 4 && this.booking.transaction == "")
-      ) {
-        alert("fill required fields");
+    store_customer_payment() {
+      if (this.booking.full_payment == "") {
+        alert("enter full payment");
         return true;
       }
       let payload = {
         agentData: this.agentData,
         booking_id: this.booking.id,
-        total_price: this.booking.remaining_price,
-        posting_price: this.booking.total_posting_amount,
-        total_with_posting: this.booking.grand_remaining_price,
+        remaining_price: this.booking.remaining_price,
         full_payment: this.booking.full_payment,
-        payment_mode_id: this.booking.payment_mode_id,
-        transaction: this.booking.transaction,
-        paid_status: this.paid_status
+        payment_mode_id: this.booking.payment_mode_id
       };
       // return;
-      console.log(payload);
       this.$axios
-        .post("/payment_by_agent", payload)
+        .post("/payment_by_customer", payload)
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;

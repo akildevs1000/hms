@@ -31,9 +31,9 @@
               <v-tab>
                 <v-icon> mdi-domain </v-icon>
               </v-tab>
-              <v-tab>
+              <!-- <v-tab>
                 <v-icon> fab fa-wpforms </v-icon>
-              </v-tab>
+              </v-tab> -->
               <v-tab>
                 <v-icon> mdi-account </v-icon>
               </v-tab>
@@ -297,153 +297,6 @@
                 <v-card flat>
                   <v-card-text>
                     <div class="row">
-                      <!-- {{ company_trade_license }} -->
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label class="col-form-label"> License </label>
-                          <span class="text-danger">*</span>
-                          <input
-                            v-model="company_trade_license.license_no"
-                            class="form-control"
-                            type="text"
-                          />
-                          <span
-                            v-if="errors && errors.license_no"
-                            class="text-danger mt-2"
-                            >{{ errors.license_no[0] }}</span
-                          >
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label class="col-form-label"> License Type </label>
-                          <span class="text-danger">*</span>
-                          <select
-                            v-model="company_trade_license.license_type"
-                            class="form-select"
-                          >
-                            <option value="">Select Type</option>
-                            <option value="commercial_licenses">
-                              Commercial licenses
-                            </option>
-                            <option value="industrial_license">
-                              Industrial License
-                            </option>
-                            <option value="professional_license">
-                              Professional license
-                            </option>
-                          </select>
-                          <span
-                            v-if="errors && errors.license_type"
-                            class="text-danger mt-2"
-                            >{{ errors.license_type[0] }}</span
-                          >
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label class="col-form-label">Emirate </label>
-                          <span class="text-danger">*</span>
-                          <input
-                            v-model="company_trade_license.emirate"
-                            class="form-control"
-                            type="text"
-                          />
-                          <span
-                            v-if="errors && errors.emirate"
-                            class="text-danger mt-2"
-                            >{{ errors.emirate[0] }}</span
-                          >
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label class="col-form-label">Manager </label>
-                          <span class="text-danger">*</span>
-                          <input
-                            v-model="company_trade_license.manager"
-                            class="form-control"
-                            type="text"
-                          />
-                          <span
-                            v-if="errors && errors.manager"
-                            class="text-danger mt-2"
-                            >{{ errors.manager[0] }}</span
-                          >
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label class="col-form-label">Issue Date </label>
-                          <span class="text-danger">*</span>
-                          <input
-                            v-model="company_trade_license.issue_date"
-                            class="form-control"
-                            type="date"
-                          />
-                          <span
-                            v-if="errors && errors.issue_date"
-                            class="text-danger mt-2"
-                            >{{ errors.issue_date[0] }}</span
-                          >
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label class="col-form-label">Expiry Date </label>
-                          <span class="text-danger">*</span>
-                          <input
-                            v-model="company_trade_license.expiry_date"
-                            class="form-control"
-                            type="date"
-                          />
-                          <span
-                            v-if="errors && errors.expiry_date"
-                            class="text-danger mt-2"
-                            >{{ errors.expiry_date[0] }}</span
-                          >
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label class="col-form-label">Makeem No </label>
-                          <span class="text-danger">*</span>
-                          <input
-                            v-model="company_trade_license.makeem_no"
-                            class="form-control"
-                            type="text"
-                          />
-                          <span
-                            v-if="errors && errors.makeem_no"
-                            class="text-danger mt-2"
-                            >{{ errors.makeem_no[0] }}</span
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <v-row>
-                      <v-col cols="12">
-                        <div class="text-right">
-                          <v-btn
-                            v-if="can('master')"
-                            small
-                            :loading="loading"
-                            color="primary"
-                            @click="update_license"
-                          >
-                            Submit
-                          </v-btn>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <div class="row">
                       <div class="col-sm-6">
                         <div class="form-group">
                           <label class="col-form-label"
@@ -660,7 +513,7 @@
                             <v-text-field
                               dense
                               outlined
-                              :hide-details="!errors.password"
+                              :hide-details="errors && !errors.password"
                               :append-icon="
                                 show_password ? 'mdi-eye' : 'mdi-eye-off'
                               "
@@ -668,7 +521,7 @@
                               v-model="user_payload.password"
                               class="input-group--focused"
                               @click:append="show_password = !show_password"
-                              :error="errors.password"
+                              :error="errors && errors.password"
                               :error-messages="
                                 errors && errors.password
                                   ? errors.password[0]
@@ -685,7 +538,9 @@
                             <v-text-field
                               dense
                               outlined
-                              :hide-details="!errors.password_confirmation"
+                              :hide-details="
+                                errors && !errors.password_confirmation
+                              "
                               :append-icon="
                                 show_password_confirm
                                   ? 'mdi-eye'
@@ -699,7 +554,7 @@
                               @click:append="
                                 show_password_confirm = !show_password_confirm
                               "
-                              :error="errors.show_password_confirm"
+                              :error="errors && errors.show_password_confirm"
                               :error-messages="
                                 errors && errors.show_password_confirm
                                   ? errors.show_password_confirm[0]
@@ -819,7 +674,9 @@ export default {
       this.$axios.get(`company/${this.id}`).then(({ data }) => {
         let r = data.record;
         this.company_payload = r;
-        this.contact_payload = r.contact;
+        this.contact_payload = {
+          ...r.contact
+        };
         this.user_payload = r.user;
 
         if (r.trade_license) {
@@ -914,6 +771,7 @@ export default {
     },
     start_process(url, payload, model) {
       this.loading = true;
+      console.log(payload);
 
       this.$axios
         .post(url, payload)
