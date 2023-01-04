@@ -1258,7 +1258,6 @@ export default {
         .get(`get_transaction_by_booking_id/${id}`, payload)
         .then(({ data }) => {
           this.transactions = data.transactions;
-          console.log(this.transactions);
           this.totalTransactionAmount = data.totalTransactionAmount;
         });
     },

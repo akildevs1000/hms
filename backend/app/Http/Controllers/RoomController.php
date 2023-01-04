@@ -88,8 +88,60 @@ class RoomController extends Controller
         return Room::with('roomType')->get();
     }
 
+    private function hideAttributes()
+    {
+        return ['resourceId', 'title', 'background', 'check_out_time', 'postings'];
+    }
+
     public function roomListForGridView(Request $request)
     {
+
+        $foodForMembers = BookedRoom::select('id', 'booking_id', 'no_of_adult', 'no_of_child', 'no_of_baby')
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', 2);
+            })->withOut('booking');
+
+        $room_only_price = $foodForMembers->clone()->where('meal', 'room_only_price');
+        $Break_fast_price = $foodForMembers->clone()->where('meal', 'Break_fast_price');
+        $Break_fast_with_dinner_price = $foodForMembers->clone()->where('meal', 'Break_fast_with_dinner_price');
+        $Break_fast_with_lunch_price = $foodForMembers->clone()->where('meal', 'Break_fast_with_lunch_price');
+        $full_board_price = $foodForMembers->clone()->where('meal', 'full_board_price');
+
+        [
+            'room_only_price' => [
+                'adult' => $room_only_price->sum('no_of_adult'),
+                'child' => $room_only_price->sum('no_of_child'),
+                'baby' => $room_only_price->sum('no_of_baby'),
+            ],
+            'Break_fast_price' => [
+                'adult' => $Break_fast_price->sum('no_of_adult'),
+                'child' => $Break_fast_price->sum('no_of_child'),
+                'baby' => $Break_fast_price->sum('no_of_baby'),
+            ],
+            'Break_fast_with_dinner_price' => [
+                'adult' => $Break_fast_with_dinner_price->sum('no_of_adult'),
+                'child' => $Break_fast_with_dinner_price->sum('no_of_child'),
+                'baby' => $Break_fast_with_dinner_price->sum('no_of_baby'),
+            ],
+            'Break_fast_with_lunch_price' => [
+                'adult' => $Break_fast_with_lunch_price->sum('no_of_adult'),
+                'child' => $Break_fast_with_lunch_price->sum('no_of_child'),
+                'baby' => $Break_fast_with_lunch_price->sum('no_of_baby'),
+            ],
+            'full_board_price' => [
+                'adult' => $full_board_price->sum('no_of_adult'),
+                'child' => $full_board_price->sum('no_of_child'),
+                'baby' => $full_board_price->sum('no_of_baby'),
+            ],
+        ];
+
+        // return [
+        //     'break_fast'
+        // ];
+
+
+        // ======================
 
         $dirtyRooms = BookedRoom::whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', 0);

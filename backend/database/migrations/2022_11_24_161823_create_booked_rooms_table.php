@@ -34,14 +34,14 @@ return new class extends Migration
             $table->decimal('cgst', 8, 2)->default(0);
             $table->decimal('sgst', 8, 2)->default(0);
             $table->decimal('total', 8, 2)->default(0);
-            $table->string('days')->nullable();
+            $table->integer('days')->nullable();
             $table->decimal('grand_total', 8, 2)->default(0);
 
-            $table->string('no_of_adult')->nullable();
-            $table->string('no_of_child')->nullable();
-            $table->string('no_of_baby')->nullable();
+            $table->integer('no_of_adult')->nullable();
+            $table->integer('no_of_child')->nullable();
+            $table->integer('no_of_baby')->nullable();
 
-            $table->string('booking_status')->default(1);
+            $table->integer('booking_status')->default(1);
 
 
             $table->timestamps();

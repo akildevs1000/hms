@@ -43,9 +43,9 @@ return new class extends Migration
             $table->text('reason')->nullable();
             $table->string('cancel_by')->nullable();
 
-            $table->string('no_of_adult')->nullable();
-            $table->string('no_of_child')->nullable();
-            $table->string('no_of_baby')->nullable();
+            $table->integer('no_of_adult')->nullable();
+            $table->integer('no_of_child')->nullable();
+            $table->integer('no_of_baby')->nullable();
 
 
             $table->timestamps();

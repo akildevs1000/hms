@@ -16,7 +16,7 @@ use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\BookingRequest;
 use Illuminate\Support\Facades\Log as Logger;
 
-class BookingController extends Controller
+class BookingController1 extends Controller
 {
 
     public function index(Request $request)
