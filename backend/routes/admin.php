@@ -123,5 +123,6 @@ Route::get('SyncAbsent', [AttendanceController::class, 'SyncAbsent']);
 
 // Hotel
 Route::resource('source', SourceController::class);
+Route::get('source/search/{key}', [SourceController::class, 'search']);
 Route::get('get_online', [SourceController::class, 'getOnline']);
 Route::get('get_agent', [SourceController::class, 'getAgent']);

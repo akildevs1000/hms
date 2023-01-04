@@ -218,6 +218,8 @@
           v-model="source"
           :items="type == 'Online' ? sources : agentList"
           dense
+          item-value="name"
+          item-text="name"
           placeholder="Sources"
           solo
           flat
@@ -291,6 +293,8 @@
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List</span>
+          <v-spacer></v-spacer>
+          <v-btn class="primary" small @click="agentCreate">New</v-btn>
         </v-toolbar>
         <table>
           <tr style="font-size: 12px">
@@ -324,7 +328,8 @@
             <td>{{ item.posting_amount || "0" }}</td>
             <td>
               {{
-                parseInt(item.amount) + parseInt(item.posting_amount) || "---"
+                parseFloat(item.amount) + parseFloat(item.posting_amount) ||
+                  "---"
               }}.00
             </td>
             <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
@@ -413,21 +418,9 @@ export default {
     total: 0,
     type: "",
     source: "",
-    agentList: ["Select All", "agent1", "agent2", "agent3", "agent4", "agent5"],
+    agentList: [],
     types: ["Online", "Travel Agency"],
-    sources: [
-      "Select All",
-      "MakeMyTrip",
-      "OYO Rooms",
-      "Airbnb.co.in",
-      "Expedia.co.in",
-      "Trivago.in",
-      "Yatra",
-      "Cleartrip",
-      "in.hotels.com",
-      "Booking.com",
-      "TripAdvisor.in"
-    ],
+    sources: [],
 
     headers: [
       {
@@ -504,6 +497,8 @@ export default {
   },
   created() {
     this.loading = true;
+    this.get_agents();
+    this.get_online();
   },
   mounted() {
     this.getDataFromApi();
@@ -592,6 +587,32 @@ export default {
 
     commonMethod() {
       this.getDataFromApi();
+    },
+
+    agentCreate() {
+      this.$router.push(`/Source/`);
+    },
+
+    get_agents() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`get_agent`, payload).then(({ data }) => {
+        this.agentList = data;
+      });
+    },
+
+    get_online() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`get_online`, payload).then(({ data }) => {
+        this.sources = data;
+      });
     },
 
     getDataFromApi(url = this.endpoint) {

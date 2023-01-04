@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Source;
 use Illuminate\Http\Request;
 use App\Http\Requests\Source\StoreRequest;
+use App\Http\Requests\Source\UpdateRequest;
 
 class SourceController extends Controller
 {
@@ -16,6 +17,7 @@ class SourceController extends Controller
         $model = Source::query();
         $model->where('company_id', $request->company_id);
         // return    $model->count();
+        return $model->paginate(10 ?? $request->perPage);
         return response()->json(['sources' => $model->paginate(10 ?? $request->perPage), null, 'status' => true]);
     }
 
@@ -50,6 +52,29 @@ class SourceController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function update(UpdateRequest $request, Source $source)
+    {
+        try {
+            $record = $source->update($request->validated());
+            if ($record) {
+                return $this->response('Source successfully updated.', 'null', true);
+            } else {
+                return $this->response('Source cannot update.', null, false);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function search(Request $request, $key)
+    {
+        $model = Source::query();
+        $model->where('id', 'LIKE', "%$key%");
+        $model->where('company_id', $request->company_id);
+        $model->orWhere('name', 'LIKE', "%$key%");
+        return $model->paginate($request->per_page);
     }
 
     public function destroy($id)

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Customer;
+namespace App\Http\Requests\Source;
 
 use App\Traits\failedValidationWithName;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,8 +26,14 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         $arr = [
-            'name'      => 'required',
-            'type'      => 'required',
+            'name'      => 'nullable',
+            'type'      => 'nullable',
+            'contact_name'      => 'nullable',
+            'mobile'      => 'nullable',
+            'address'      => 'nullable',
+            'gst'      => 'nullable',
+            'company_id' => 'nullable',
+
         ];
 
         return $arr;

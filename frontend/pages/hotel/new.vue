@@ -684,7 +684,7 @@
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Amount : </label>
-                        {{ item.price }}.00
+                        {{ item.price }}
                       </v-col>
 
                       <v-col md="3" cols="12" sm="12">
@@ -693,15 +693,15 @@
                       </v-col>
                       <v-col md="2" cols="12" sm="12">
                         <label class="col-form-label">Tax : </label>
-                        {{ item.room_tax }}.00
+                        {{ convert_decimal(item.room_tax) }}
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">After Discount : </label>
-                        {{ item.after_discount }}.00
+                        {{ convert_decimal(item.after_discount) }}
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Tax with Amount : </label>
-                        {{ item.total_with_tax }}.00
+                        {{ convert_decimal(item.total_with_tax) }}
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Adult : </label>
@@ -1101,7 +1101,7 @@
                   <tr v-for="(item, index) in selectedRooms" :key="index">
                     <td>{{ item.room_no }}</td>
                     <td>
-                      <div align="right">{{ item.total }}.00</div>
+                      <div align="right">{{ convert_decimal(item.total) }}</div>
                     </td>
                   </tr>
                   <tr>
@@ -1119,7 +1119,7 @@
                     <td>Total</td>
                     <td>
                       <div align="right">
-                        {{ room.all_room_Total_amount }}.00
+                        {{ convert_decimal(room.all_room_Total_amount) }}
                       </div>
                     </td>
                   </tr>
@@ -1140,7 +1140,7 @@
                     <td>Room Price</td>
                     <td>
                       <div align="right">
-                        {{ room.all_room_Total_amount }}.00
+                        {{ convert_decimal(room.all_room_Total_amount) }}
                       </div>
                     </td>
                   </tr>
@@ -1148,10 +1148,12 @@
                     <td>
                       <!-- Sub Total (Total Days x Room Price) ({{ getDays() }} x -->
                       Sub Total ({{ getDays() }} x
-                      {{ room.all_room_Total_amount }})
+                      {{ convert_decimal(room.all_room_Total_amount) }})
                     </td>
                     <td>
-                      <div align="right">{{ room.sub_total }}.00</div>
+                      <div align="right">
+                        {{ convert_decimal(room.sub_total) }}
+                      </div>
                     </td>
                   </tr>
                   <!-- <tr>
@@ -1175,19 +1177,26 @@
                   <tr>
                     <th>Total</th>
                     <td>
-                      <div align="right">{{ room.total_price }}.00</div>
+                      <div align="right">
+                        {{ convert_decimal(room.total_price) }}
+                      </div>
                     </td>
                   </tr>
                   <tr>
                     <td>Advance Payment</td>
                     <td>
-                      <div align="right">{{ room.advance_price }}.00</div>
+                      <div align="right">
+                        {{ room.advance_price }}
+                        <!-- {{ convert_decimal(room.advance_price) }} -->
+                      </div>
                     </td>
                   </tr>
                   <tr>
                     <td>Remaining Amount</td>
                     <td>
-                      <div align="right">{{ room.remaining_price }}.00</div>
+                      <div align="right">
+                        {{ convert_decimal(room.remaining_price) }}
+                      </div>
                     </td>
                   </tr>
                 </table>
@@ -1366,6 +1375,8 @@ export default {
       // this.getAmountAfterSalesTax();
       this.getTotal();
       this.getRemainingAmount();
+
+      // this.convert_decimal(this.room.advance_price);
     },
     getDays() {
       let ci = new Date(this.temp.check_in);
@@ -1406,6 +1417,15 @@ export default {
       });
     },
 
+    convert_decimal(n) {
+      console.log(n === +n && n !== (n | 0));
+      if (n === +n && n !== (n | 0)) {
+        return n.toFixed(2);
+      } else {
+        return n + ".00";
+      }
+    },
+
     getTotal() {
       return (this.room.total_price = this.subTotal());
       // parseInt(this.getAmountAfterSalesTax()) +
@@ -1420,7 +1440,8 @@ export default {
     },
     subTotal() {
       return (this.room.sub_total =
-        parseInt(this.room.all_room_Total_amount) * parseInt(this.getDays()));
+        parseFloat(this.room.all_room_Total_amount) *
+        parseFloat(this.getDays()));
     },
     getType(val) {
       if (val == "Online") {
@@ -1506,6 +1527,7 @@ export default {
       this.get_total_amounts();
       this.get_all_room_Total_amount();
       this.runAllFunctions();
+      this.isSelectRoom = true;
       if (this.selectedRooms.length == 0) {
       }
     },
@@ -1524,8 +1546,8 @@ export default {
     get_all_room_Total_amount() {
       let sum = 0;
       let res = 0;
-      this.selectedRooms.map(e => (sum += parseInt(e.total_with_tax)));
-      res = parseInt(sum) + parseInt(this.room.total_extra);
+      this.selectedRooms.map(e => (sum += parseFloat(e.total_with_tax)));
+      res = parseFloat(sum) + parseFloat(this.room.total_extra);
       this.room.all_room_Total_amount = res;
     },
 
@@ -1534,8 +1556,8 @@ export default {
       let tax = (amount / 100) * per;
       this.temp.room_tax = tax;
       this.temp.total_with_tax =
-        parseInt(this.temp.after_discount) + parseInt(tax);
-      let gst = parseInt(tax) / 2;
+        parseFloat(this.temp.after_discount) + parseFloat(tax);
+      let gst = parseFloat(tax) / 2;
       this.temp.cgst = gst;
       this.temp.sgst = gst;
       return tax;
@@ -1590,15 +1612,15 @@ export default {
       // return;
 
       this.temp.after_discount =
-        parseInt(this.temp.price) -
-        parseInt(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
+        parseFloat(this.temp.price) -
+        parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
       this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
 
-      this.temp.total = parseInt(this.temp.total_with_tax);
+      this.temp.total = parseFloat(this.temp.total_with_tax);
 
       this.temp.grand_total =
-        parseInt(this.temp.days) * parseInt(this.temp.total);
+        parseFloat(this.temp.days) * parseFloat(this.temp.total);
 
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
@@ -1631,19 +1653,20 @@ export default {
 
       let tot_total = 0;
       this.selectedRooms.map(
-        e => (tot_bed_amount += e.bed_amount == "" ? 0 : parseInt(e.bed_amount))
+        e =>
+          (tot_bed_amount += e.bed_amount == "" ? 0 : parseFloat(e.bed_amount))
       );
 
       this.room.total_extra = tot_bed_amount;
 
       this.selectedRooms.map(
-        e => (tot_total += e.total == "" ? 0 : parseInt(e.total))
+        e => (tot_total += e.total == "" ? 0 : parseFloat(e.total))
       );
       this.room.all_room_Total_amount = tot_total;
     },
 
     get_room_discount(val) {
-      this.temp.price = parseInt(this.temp.price) - parseInt(val);
+      this.temp.price = parseFloat(this.temp.price) - parseFloat(val);
     },
 
     clear_add_room() {

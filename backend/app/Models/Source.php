@@ -34,13 +34,13 @@ class Source extends Model
         return  ucfirst($value);
     }
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    protected static function boot()
+    {
+        parent::boot();
 
-    //     // Order by name DESC
-    //     static::addGlobalScope('order', function (Builder $builder) {
-    //         $builder->orderBy('id', 'desc');
-    //     });
-    // }
+        // Order by name DESC
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('id', 'desc');
+        });
+    }
 }

@@ -91,6 +91,11 @@ class RoomController extends Controller
     public function roomListForGridView(Request $request)
     {
 
+        $dirtyRooms = BookedRoom::whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', 0);
+            $q->where('booking_status', 3);
+        })->count();
+
         $expectCheckInModel = BookedRoom::query();
         $expectCheckIn      = $expectCheckInModel->whereDate('check_in', $request->check_in)
             ->whereHas('booking', function ($q) {
@@ -164,6 +169,8 @@ class RoomController extends Controller
         // return Room::whereIn('id', $roomIds)->with('bookedRoom.booking:id')->get();
 
         return [
+            'dirtyRooms'    => $dirtyRooms,
+
             'notAvailableRooms' => $notAvailableRooms,
             // 'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(), //$notAvailableRooms,
             'availableRooms'    => Room::whereNotIn('id', $roomIds)->get(),

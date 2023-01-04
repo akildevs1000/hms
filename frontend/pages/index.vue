@@ -818,6 +818,29 @@
               </div>
             </div>
           </div>
+          <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
+            <div class="card card-hover">
+              <div class="box bg-cyan text-center">
+                <div class="d-flex justify-space-around py-0 my-0">
+                  <h1 class="font-light text-white py-0 my-0">
+                    <i class="fas fa-male"></i>
+                    <h5>{{ members.adult }}</h5>
+                    <h6>Adult</h6>
+                  </h1>
+                  <h1 class="font-light text-white py-0 my-0">
+                    <i class="fas fa-child"></i>
+                    <h5>{{ members.child }}</h5>
+                    <h6>Child</h6>
+                  </h1>
+                  <h1 class="font-light text-white py-0 my-0">
+                    <i class="fas fa-baby"></i>
+                    <h5>{{ members.baby }}</h5>
+                    <h6>Babies</h6>
+                  </h1>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- Column -->
           <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
@@ -833,7 +856,7 @@
             </div>
           </div>
           <!-- Column -->
-          <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
               <div class="box booked text-center">
                 <h1 class="font-light text-white">
@@ -872,14 +895,14 @@
                 <h1 class="font-light text-white">
                   <i class="fas fa-door-closed"></i>
                   <h5>
-                    {{ waitingBooking || "---" }}
+                    {{ dirtyRooms || "---" }}
                   </h5>
                 </h1>
-                <h6 class="text-white">Only Booking</h6>
+                <h6 class="text-white">Dirty Room</h6>
               </div>
             </div>
           </div>
-          <div class="col-md-6 col-lg-4 col-xlg-3 py-0">
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
               <div
                 class="box bg-primary text-center"
@@ -935,7 +958,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6 col-lg-4 col-xlg-3 py-0">
+          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
             <div class="card card-hover">
               <div class="box checkedOut text-center">
                 <h1 class="font-light text-white">
@@ -1138,6 +1161,7 @@ export default {
         child: 0,
         baby: 0
       },
+      dirtyRooms: 0,
       expectCheckIn: "",
       expectCheckOut: "",
       headers: [
@@ -1282,7 +1306,7 @@ export default {
       this.posting.tax = res;
       let a = parseFloat(res) + parseFloat(this.posting.amount || 0);
       console.log(a.toFixed(2));
-      this.posting.amount_with_tax =a.toFixed(2);
+      this.posting.amount_with_tax = a.toFixed(2);
     },
 
     getPercentage(amount, clause) {
@@ -1300,6 +1324,7 @@ export default {
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         this.rooms = data;
 
+        this.dirtyRooms = data.dirtyRooms;
         this.notAvailableRooms = data.notAvailableRooms;
         this.availableRooms = data.availableRooms;
         this.confirmedBooking = data.confirmedBooking;

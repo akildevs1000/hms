@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('type')->comment('agent/online');
             $table->string('name');
             $table->string('slug')->nullable();
+            $table->string('contact_name')->nullable();
+            $table->string('mobile')->nullable();
+            $table->text('address')->nullable();
+            $table->text('gst')->nullable();
             $table->integer('company_id');
             $table->timestamps();
         });

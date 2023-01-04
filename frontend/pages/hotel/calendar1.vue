@@ -1229,12 +1229,12 @@ export default {
       }
 
       let res = this.getPercentage(this.posting.amount || 0, per);
-      let gst = parseInt(res) / 2;
+      let gst = parseFloat(res) / 2;
       this.posting.sgst = gst;
       this.posting.cgst = gst;
       this.posting.tax = res;
       this.posting.amount_with_tax =
-        parseInt(res) + parseInt(this.posting.amount || 0);
+        parseFloat(res) + parseFloat(this.posting.amount || 0);
     },
 
     getPercentage(amount, clause) {

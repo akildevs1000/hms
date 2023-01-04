@@ -26,5 +26,6 @@ class DatabaseSeeder extends Seeder
         $this->call([RoomsTableSeeder::class]);
         $this->call([PaymentSeeder::class]);
         $this->call([CountriesTableSeeder::class]);
+        $this->call([SourceTableSeeder::class]);
     }
 }

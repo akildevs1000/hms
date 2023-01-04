@@ -28,6 +28,10 @@ class StoreRequest extends FormRequest
         $arr = [
             'name'      => 'required',
             'type'      => 'required',
+            'contact_name'      => 'nullable',
+            'mobile'      => 'nullable',
+            'address'      => 'nullable',
+            'gst'      => 'nullable',
             'company_id'      => 'required',
         ];
 

@@ -16,15 +16,15 @@ return new class extends Migration
         Schema::create('room_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->string('price')->nullable();
+            $table->decimal('price', 8, 2)->default(0);
 
 
-            $table->string('room_only_price')->nullable();
-            $table->string('Break_fast_price')->nullable();
-            $table->string('Break_fast_with_dinner_price')->nullable();
-            $table->string('Break_fast_with_lunch_price')->nullable();
-            $table->string('lunch_with_dinner_price')->nullable();
-            $table->string('full_board_price')->nullable();
+            $table->decimal('room_only_price', 8, 2)->default(0);
+            $table->decimal('Break_fast_price', 8, 2)->default(0);
+            $table->decimal('Break_fast_with_dinner_price', 8, 2)->default(0);
+            $table->decimal('Break_fast_with_lunch_price', 8, 2)->default(0);
+            $table->decimal('lunch_with_dinner_price', 8, 2)->default(0);
+            $table->decimal('full_board_price', 8, 2)->default(0);
 
 
             $table->string('max_person')->nullable();

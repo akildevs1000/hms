@@ -349,7 +349,7 @@ export default {
     calTotalAmount(payments) {
       let sum = 0;
       payments.forEach(item => {
-        sum += parseInt(item.amount);
+        sum += parseFloat(item.amount);
       });
       this.totalAmount = sum;
     },
