@@ -229,13 +229,13 @@
 
           <td>{{ item.booking_date }}</td>
           <td>
+            <!-- v-if="item.payment_status == 1" -->
             <v-btn
               small
               elevation="0"
               dark
               class="l-bg-green-dark"
               :class="getRelaventColor(item.booking_status)"
-              v-if="item.payment_status == 1"
             >
               {{ getRelaventStatus(item.booking_status) }}
             </v-btn>
@@ -392,18 +392,13 @@ export default {
           return "booked";
         case 2:
           return "checkedIn";
-        // case 3:
-        //   return "checkedOut";
-        // case 4:
-        //   return "background";
-        // case 5:
-        //   return "grey";
         default:
           return "checkedOut";
       }
     },
 
     getRelaventStatus(status) {
+      console.log(status);
       switch (parseInt(status)) {
         case 1:
           return "booked";
@@ -411,10 +406,6 @@ export default {
           return "checkedIn";
         case 3:
           return "checkedOut";
-        // case 4:
-        //   return "background";
-        // case 5:
-        //   return "grey";
         default:
           return "checkedOut";
       }
@@ -456,7 +447,6 @@ export default {
         payment_mode_id: this.checkData.payment_mode_id,
         company_id: this.$auth.user.company.id
       };
-      console.log(payload);
       return;
       this.$axios
         .post("/paying_amount", payload)
@@ -487,7 +477,6 @@ export default {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
-        console.log(this.data);
         this.loading = false;
       });
     },

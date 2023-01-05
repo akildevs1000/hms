@@ -820,22 +820,31 @@
           </div>
           <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box bg-cyan text-center">
+              <div class="box text-center" style="background-color:#D0B38B">
                 <div class="d-flex justify-space-around py-0 my-0">
                   <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-male"></i>
-                    <h5>{{ members.adult }}</h5>
-                    <h6>Adult</h6>
+                    <i class="fas fa-coffee fx-1"></i>
+                    <h5>
+                      {{ onlyBreakfast.adult }} | {{ onlyBreakfast.child }} |
+                      {{ onlyBreakfast.baby }}
+                    </h5>
+                    <h6>Breakfast</h6>
                   </h1>
                   <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-child"></i>
-                    <h5>{{ members.child }}</h5>
-                    <h6>Child</h6>
+                    <i class="fas fa-concierge-bell"></i>
+                    <h5>
+                      {{ onlyLunch.adult }} | {{ onlyLunch.child }} |
+                      {{ onlyLunch.baby }}
+                    </h5>
+                    <h6>Lunch</h6>
                   </h1>
                   <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-baby"></i>
-                    <h5>{{ members.baby }}</h5>
-                    <h6>Babies</h6>
+                    <i class=" fas fa-hamburger"></i>
+                    <h5>
+                      {{ onlyDinner.adult }} | {{ onlyDinner.child }} |
+                      {{ onlyDinner.baby }}
+                    </h5>
+                    <h6>Dinner</h6>
                   </h1>
                 </div>
               </div>
@@ -1161,6 +1170,9 @@ export default {
         child: 0,
         baby: 0
       },
+      onlyBreakfast: {},
+      onlyLunch: {},
+      onlyDinner: {},
       dirtyRooms: 0,
       expectCheckIn: "",
       expectCheckOut: "",
@@ -1235,7 +1247,6 @@ export default {
         .then(({ data }) => {
           this.transactions = data.transactions;
           this.totalTransactionAmount = data.totalTransactionAmount;
-          console.log(this.transactions);
         });
     },
 
@@ -1254,7 +1265,6 @@ export default {
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
         this.bookingId = data.id;
-        console.log(this.bookingId);
         this.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
@@ -1305,7 +1315,6 @@ export default {
       this.posting.cgst = gst;
       this.posting.tax = res;
       let a = parseFloat(res) + parseFloat(this.posting.amount || 0);
-      console.log(a.toFixed(2));
       this.posting.amount_with_tax = a.toFixed(2);
     },
 
@@ -1323,7 +1332,17 @@ export default {
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         this.rooms = data;
-
+        // this.onlyBreakfast = data.fooForCustomers.onlyBreakfast;
+        this.onlyBreakfast = {
+          ...data.fooForCustomers.onlyBreakfast
+        };
+        this.onlyLunch = {
+          ...data.fooForCustomers.onlyLunch
+        };
+        this.onlyDinner = {
+          ...data.fooForCustomers.onlyDinner
+        };
+        console.log(this.onlyBreakfast);
         this.dirtyRooms = data.dirtyRooms;
         this.notAvailableRooms = data.notAvailableRooms;
         this.availableRooms = data.availableRooms;
@@ -1529,10 +1548,10 @@ export default {
     },
 
     store_check_out() {
-      if (this.full_payment == "") {
-        alert("enter correct payment");
-        return true;
-      }
+      // if (this.full_payment == "") {
+      //   alert("enter correct payment");
+      //   return true;
+      // }
       this.loading = true;
       let payload = {
         booking_id: this.checkData.id,
@@ -1614,6 +1633,7 @@ export default {
       this.payingAdvance = false;
       this.checkOutDialog = false;
       this.checkOutDialog = false;
+      this.document = null;
     },
 
     closePosting() {

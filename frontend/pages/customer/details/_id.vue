@@ -172,6 +172,7 @@
                 <th>Adults</th>
                 <th>Child</th>
                 <th>Babies</th>
+                <th>Meal Plan</th>
                 <th class="text-right">Price</th>
                 <th class="text-right">After Discount</th>
                 <th class="text-right">Sgst</th>
@@ -186,6 +187,7 @@
                 <td>{{ item.no_of_adult || "---" }}</td>
                 <td>{{ item.no_of_child || "---" }}</td>
                 <td>{{ item.no_of_baby || "---" }}</td>
+                <td>{{ capsTitle(item.meal) || "---" }}</td>
                 <td class="text-right">{{ item.price || "---" }}</td>
                 <td class="text-right">
                   {{ item.after_discount || "---" }}
@@ -344,6 +346,14 @@ export default {
         (u && u.permissions.some(e => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    capsTitle(val) {
+      if (!val) return "---";
+      let res = val;
+      let upper = res.toUpperCase();
+      let title = upper.replace(/[^A-Z]/g, " ");
+      return title.replace("PRICE", "");
     },
 
     calTotalAmount(payments) {

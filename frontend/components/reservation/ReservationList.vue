@@ -134,7 +134,6 @@ export default {
   watch: {
     search() {
       this.getDataFromApi();
-      console.log("ff");
     }
   },
   created() {
@@ -157,12 +156,10 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      console.log(id);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `http://127.0.0.1:8000/api/invoice/${id}`);
       document.body.appendChild(element);
-      console.log(element);
       element.click();
     },
 
@@ -197,7 +194,6 @@ export default {
           date: new Date().toJSON().slice(0, 10)
         }
       };
-      console.log(options);
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
@@ -207,7 +203,6 @@ export default {
     },
 
     searchIt() {
-      console.log(this.search.length);
       if (this.search.length == 0) {
         this.getDataFromApi();
       } else if (this.search.length > 2) {

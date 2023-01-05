@@ -1431,18 +1431,22 @@ export default {
       // parseInt(this.getAmountAfterSalesTax()) +
       // this.subTotal() - this.room.discount);
     },
+
     getRemainingAmount() {
       return (this.room.remaining_price =
         this.getTotal() - this.room.advance_price);
     },
+
     getPercentage(amount, clause) {
       return (amount / 100) * clause;
     },
+
     subTotal() {
       return (this.room.sub_total =
         parseFloat(this.room.all_room_Total_amount) *
         parseFloat(this.getDays()));
     },
+
     getType(val) {
       if (val == "Online") {
         this.isOnline = true;
@@ -1466,6 +1470,7 @@ export default {
       this.isOnline = false;
       this.isAgent = false;
     },
+
     get_room_types() {
       let payload = {
         params: {
@@ -1522,6 +1527,7 @@ export default {
       this.room.check_in = this.reservation.check_in;
       this.room.check_out = this.reservation.check_out;
     },
+
     remove_select_room(index) {
       this.selectedRooms.splice(index, 1);
       this.get_total_amounts();
@@ -1543,6 +1549,7 @@ export default {
         this.availableRooms = res;
       }
     },
+
     get_all_room_Total_amount() {
       let sum = 0;
       let res = 0;
@@ -1717,6 +1724,7 @@ export default {
       this.temp.no_of_child = 0;
       this.temp.no_of_baby = 0;
     },
+
     get_available_rooms() {
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
         alert("Please select date");
@@ -1764,6 +1772,7 @@ export default {
         this.checkLoader = false;
       });
     },
+
     can(per) {
       let u = this.$auth.user;
       return (

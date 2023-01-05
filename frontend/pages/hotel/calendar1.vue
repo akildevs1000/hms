@@ -1614,6 +1614,7 @@ export default {
     },
 
     change_room_by_drag(obj) {
+      console.log(obj);
       this.$axios
         .post("/change_room_by_drag", obj)
         .then(({ data }) => {

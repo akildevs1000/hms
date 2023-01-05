@@ -75,57 +75,116 @@ class BookingController extends Controller
     public function store1(Request $request)
     {
         try {
-            $data                   = [];
-            $data                   = $request->except('document');
-            $data["customer_id"]    = $request->customer_id;
-            $data['booking_date']   = now();
-            $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
-            $data['remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
-            $data['grand_remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
+            return   DB::transaction(function () use ($request) {
+                $data                   = [];
+                $data                   = $request->except('document');
+                $data["customer_id"]    = $request->customer_id;
+                $data['booking_date']   = now();
+                $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
+                $data['remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
+                $data['grand_remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
 
-            $booked  = Booking::create($data);
+                $booked  = Booking::create($data);
 
-            if ($booked) {
+                if ($booked) {
 
-                $transactionData = [
-                    'booking_id' => $booked->id,
-                    'customer_id' => $booked->customer_id ?? '',
-                    'date' => now(),
-                    'company_id' => $request->company_id ?? '',
-                    'payment_method_id' => $booked->payment_mode_id,
-                    'desc' => 'rooms booking amount',
-                ];
+                    $transactionData = [
+                        'booking_id' => $booked->id,
+                        'customer_id' => $booked->customer_id ?? '',
+                        'date' => now(),
+                        'company_id' => $request->company_id ?? '',
+                        'payment_method_id' => $booked->payment_mode_id,
+                        'desc' => 'rooms booking amount',
+                    ];
 
-                //Transaction
-                $payment = new TransactionController();
-                $payment->store($transactionData, $request->total_price, 'debit');
+                    //Transaction
+                    $payment = new TransactionController();
+                    $payment->store($transactionData, $request->total_price, 'debit');
 
-                if ($request->advance_price && $request->advance_price > 0) {
-                    $transactionData['desc'] = 'advance payment';
-                    $payment->store($transactionData, $request->advance_price, 'credit');
-                }
-                //End Transaction
-                if ((int)$booked->advance_price == 0) {
+                    if ($request->advance_price && $request->advance_price > 0) {
+                        $transactionData['desc'] = 'advance payment';
+                        $payment->store($transactionData, $request->advance_price, 'credit');
+                    }
+                    //End Transaction
+                    if ((int)$booked->advance_price == 0) {
 
-                    if (($booked->paid_by && $booked->paid_by == 2) || ($booked->type != 'Walking' && $booked->type != 'Complimentary')) {
-                        $agentsData = [
-                            'booking_id'   => $booked->id,
-                            'customer_id'  => $booked->customer_id ?? '',
-                            'type'         => $booked->type ?? '',
-                            'source'       => $booked->source,
-                            'reference_no' => $booked->reference_no ?? '',
-                            'amount'       => $booked->total_price ?? '',
-                            'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
-                            'company_id'   => $request->company_id ?? '',
-                            'is_paid'      => $booked->paid_by == 1 ? 2 : 0,
-                        ];
-                        $payment = new AgentsController();
-                        $payment->store($agentsData);
+                        if (($booked->paid_by && $booked->paid_by == 2) || ($booked->type != 'Walking' && $booked->type != 'Complimentary')) {
+                            $agentsData = [
+                                'booking_id'   => $booked->id,
+                                'customer_id'  => $booked->customer_id ?? '',
+                                'type'         => $booked->type ?? '',
+                                'source'       => $booked->source,
+                                'reference_no' => $booked->reference_no ?? '',
+                                'amount'       => $booked->total_price ?? '',
+                                'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
+                                'company_id'   => $request->company_id ?? '',
+                                'is_paid'      => $booked->paid_by == 1 ? 2 : 0,
+                            ];
+                            $payment = new AgentsController();
+                            $payment->store($agentsData);
+
+                            $paymentsData = [
+                                'booking_id'   => $booked->id,
+                                'payment_mode' => 7,
+                                'description'  => 'booked from ' . $booked->source,
+                                'amount'       =>   $booked->remaining_price,
+                                'type'         => 'room',
+                                'room'         => $booked->rooms,
+                                'company_id'   => $request->company_id,
+                                'is_city_ledger'  => 1,
+                            ];
+                            $payment = new PaymentController();
+                            $payment->store($paymentsData);
+                        } else {
+                            $agentsData = [
+                                'booking_id'   => $booked->id,
+                                'customer_id'  => $booked->customer_id ?? '',
+                                'type'         => 'Customer' ?? '',
+                                'source'       => $booked->source,
+                                'reference_no' => $booked->reference_no ?? '',
+                                'amount'       => $booked->total_price ?? '',
+                                'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
+                                'company_id'   => $request->company_id ?? '',
+                            ];
+                            $payment = new AgentsController();
+                            $payment->store($agentsData);
+
+
+                            $paymentsData = [
+                                'booking_id'   => $booked->id,
+                                'payment_mode' => 7,
+                                'description'  => 'booked from ' . $booked->source,
+                                'amount'       =>   $booked->remaining_price,
+                                'type'         => 'room',
+                                'room'         => $booked->rooms,
+                                'company_id'   => $request->company_id,
+                                'is_city_ledger'  => 1,
+                            ];
+                            $payment = new PaymentController();
+                            $payment->store($paymentsData);
+                        }
+                    } else {
+
+                        if ($request->total_price >= $request->advance_price) {
+
+                            $paymentsData = [
+                                'booking_id'   => $booked->id,
+                                'payment_mode' => $booked->payment_mode_id,
+                                'description'  => 'advance payment',
+                                'amount'       =>   $booked->advance_price,
+                                'type'         => 'room',
+                                'room'         => $booked->rooms,
+                                'company_id'   => $request->company_id,
+                                'is_city_ledger'  => 0,
+                            ];
+                            $payment = new PaymentController();
+                            $payment->store($paymentsData);
+                        }
 
                         $paymentsData = [
                             'booking_id'   => $booked->id,
                             'payment_mode' => 7,
-                            'description'  => 'booked from ' . $booked->source,
+                            'description'  => 'pending payment',
                             'amount'       =>   $booked->remaining_price,
                             'type'         => 'room',
                             'room'         => $booked->rooms,
@@ -134,7 +193,7 @@ class BookingController extends Controller
                         ];
                         $payment = new PaymentController();
                         $payment->store($paymentsData);
-                    } else {
+
                         $agentsData = [
                             'booking_id'   => $booked->id,
                             'customer_id'  => $booked->customer_id ?? '',
@@ -142,74 +201,17 @@ class BookingController extends Controller
                             'source'       => $booked->source,
                             'reference_no' => $booked->reference_no ?? '',
                             'amount'       => $booked->total_price ?? '',
+                            'agent_paid_amount'       => $booked->advance_price ?? '',
                             'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
                             'company_id'   => $request->company_id ?? '',
                         ];
                         $payment = new AgentsController();
                         $payment->store($agentsData);
-
-
-                        $paymentsData = [
-                            'booking_id'   => $booked->id,
-                            'payment_mode' => 7,
-                            'description'  => 'booked from ' . $booked->source,
-                            'amount'       =>   $booked->remaining_price,
-                            'type'         => 'room',
-                            'room'         => $booked->rooms,
-                            'company_id'   => $request->company_id,
-                            'is_city_ledger'  => 1,
-                        ];
-                        $payment = new PaymentController();
-                        $payment->store($paymentsData);
                     }
-                } else {
-
-                    if ($request->total_price >= $request->advance_price) {
-
-                        $paymentsData = [
-                            'booking_id'   => $booked->id,
-                            'payment_mode' => $booked->payment_mode_id,
-                            'description'  => 'advance payment',
-                            'amount'       =>   $booked->advance_price,
-                            'type'         => 'room',
-                            'room'         => $booked->rooms,
-                            'company_id'   => $request->company_id,
-                            'is_city_ledger'  => 0,
-                        ];
-                        $payment = new PaymentController();
-                        $payment->store($paymentsData);
-                    }
-
-                    $paymentsData = [
-                        'booking_id'   => $booked->id,
-                        'payment_mode' => 7,
-                        'description'  => 'pending payment',
-                        'amount'       =>   $booked->remaining_price,
-                        'type'         => 'room',
-                        'room'         => $booked->rooms,
-                        'company_id'   => $request->company_id,
-                        'is_city_ledger'  => 1,
-                    ];
-                    $payment = new PaymentController();
-                    $payment->store($paymentsData);
-
-                    $agentsData = [
-                        'booking_id'   => $booked->id,
-                        'customer_id'  => $booked->customer_id ?? '',
-                        'type'         => 'Customer' ?? '',
-                        'source'       => $booked->source,
-                        'reference_no' => $booked->reference_no ?? '',
-                        'amount'       => $booked->total_price ?? '',
-                        'agent_paid_amount'       => $booked->advance_price ?? '',
-                        'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
-                        'company_id'   => $request->company_id ?? '',
-                    ];
-                    $payment = new AgentsController();
-                    $payment->store($agentsData);
                 }
-            }
 
-            return $this->response('Room Booked Successfully.', $booked, true);
+                return $this->response('Room Booked Successfully.', $booked, true);
+            });
         } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
@@ -388,8 +390,10 @@ class BookingController extends Controller
                 'desc' => 'paid by city ledger',
             ];
 
-            $payment = new TransactionController();
-            $payment->store($transactionData, $request->full_payment, 'credit');
+            $trans = new TransactionController();
+            if ($request->full_payment > 0) {
+                $trans->store($transactionData, $request->full_payment, 'credit');
+            }
             $booking = Booking::find($booking_id);
             if ($booking) {
                 if ($booking->balance > 0) {

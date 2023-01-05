@@ -93,22 +93,92 @@ class RoomController extends Controller
         return ['resourceId', 'title', 'background', 'check_out_time', 'postings'];
     }
 
-    public function roomListForGridView(Request $request)
+
+    private function getCustomersBreakfastOnly($food)
     {
+        $onlyBreakfastAdult = [
+            $food['Break_fast_price']['adult'],
+            $food['Break_fast_with_dinner_price']['adult'],
+            $food['Break_fast_with_lunch_price']['adult'],
+            $food['full_board_price']['adult'],
+        ];
 
-        $foodForMembers = BookedRoom::select('id', 'booking_id', 'no_of_adult', 'no_of_child', 'no_of_baby')
-            ->whereHas('booking', function ($q) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', 2);
-            })->withOut('booking');
+        $onlyBreakfastChild = [
+            $food['Break_fast_price']['child'],
+            $food['Break_fast_with_dinner_price']['child'],
+            $food['Break_fast_with_lunch_price']['child'],
+            $food['full_board_price']['child'],
+        ];
+        $onlyBreakfastBaby = [
+            $food['Break_fast_price']['baby'],
+            $food['Break_fast_with_dinner_price']['baby'],
+            $food['Break_fast_with_lunch_price']['baby'],
+            $food['full_board_price']['baby'],
+        ];
 
+        return  [
+            'adult' => array_sum($onlyBreakfastAdult),
+            'child' => array_sum($onlyBreakfastChild),
+            'baby' => array_sum($onlyBreakfastBaby),
+        ];
+    }
+
+    private function getCustomersLunchOnly($food)
+    {
+        $onlyLunchAdult = [
+            $food['Break_fast_with_lunch_price']['adult'],
+            $food['full_board_price']['adult'],
+        ];
+
+        $onlyLunchChild = [
+            $food['Break_fast_with_lunch_price']['child'],
+            $food['full_board_price']['child'],
+        ];
+        $onlyLunchBaby = [
+            $food['Break_fast_with_lunch_price']['baby'],
+            $food['full_board_price']['baby'],
+        ];
+
+        return  [
+            'adult' => array_sum($onlyLunchAdult),
+            'child' => array_sum($onlyLunchChild),
+            'baby' => array_sum($onlyLunchBaby),
+        ];
+    }
+
+    private function getCustomersDinnerOnly($food)
+    {
+        $onlyDinnerAdult = [
+            $food['Break_fast_with_dinner_price']['adult'],
+            $food['full_board_price']['adult'],
+        ];
+
+        $onlyDinnerChild = [
+            $food['Break_fast_with_dinner_price']['child'],
+            $food['full_board_price']['child'],
+        ];
+        $onlyDinnerBaby = [
+            $food['Break_fast_with_dinner_price']['baby'],
+            $food['full_board_price']['baby'],
+        ];
+
+        return  [
+            'adult' => array_sum($onlyDinnerAdult),
+            'child' => array_sum($onlyDinnerChild),
+            'baby' => array_sum($onlyDinnerBaby),
+        ];
+    }
+
+
+    private function getFoodForCustomers($foodForMembers)
+    {
         $room_only_price = $foodForMembers->clone()->where('meal', 'room_only_price');
         $Break_fast_price = $foodForMembers->clone()->where('meal', 'Break_fast_price');
         $Break_fast_with_dinner_price = $foodForMembers->clone()->where('meal', 'Break_fast_with_dinner_price');
         $Break_fast_with_lunch_price = $foodForMembers->clone()->where('meal', 'Break_fast_with_lunch_price');
         $full_board_price = $foodForMembers->clone()->where('meal', 'full_board_price');
 
-        [
+        $food =   [
             'room_only_price' => [
                 'adult' => $room_only_price->sum('no_of_adult'),
                 'child' => $room_only_price->sum('no_of_child'),
@@ -136,10 +206,22 @@ class RoomController extends Controller
             ],
         ];
 
-        // return [
-        //     'break_fast'
-        // ];
+        return [
+            'onlyBreakfast' => $this->getCustomersBreakfastOnly($food),
+            'onlyLunch' => $this->getCustomersLunchOnly($food),
+            'onlyDinner' => $this->getCustomersDinnerOnly($food),
+        ];
+    }
 
+    public function roomListForGridView(Request $request)
+    {
+        $foodForMembers = BookedRoom::select('id', 'booking_id', 'no_of_adult', 'no_of_child', 'no_of_baby')
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', 2);
+            })->withOut('booking');
+
+        $fooForCustomers =   $this->getFoodForCustomers($foodForMembers);
 
         // ======================
 
@@ -203,13 +285,11 @@ class RoomController extends Controller
         $model   = BookedRoom::query();
         $roomIds = $model
             ->whereDate('check_in', '<=', $request->check_in)
-            // ->WhereDate('check_out', '>=', $request->check_out)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '<=', 4);
             })
             ->with('booking')
-            // ->get();
             ->pluck('room_id');
 
         $notAvailableRooms = Room::whereIn('id', $roomIds)
@@ -239,6 +319,8 @@ class RoomController extends Controller
                 'child' => array_sum($no_of_child),
                 'baby'  => array_sum($no_of_baby),
             ],
+
+            'fooForCustomers' => $fooForCustomers,
         ];
 
         $arr  = [];
