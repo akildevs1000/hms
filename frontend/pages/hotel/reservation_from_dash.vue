@@ -1366,6 +1366,7 @@ export default {
     this.get_countries();
     this.get_agents();
     this.get_online();
+    console.log(this.$store.state.reservation);
   },
   methods: {
     runAllFunctions() {
@@ -1397,6 +1398,19 @@ export default {
     //   return this.room.after_discount;
     // },
 
+    get_reservation() {
+      this.reservation = this.$store.state.reservation;
+      this.temp.room_id = this.reservation.room_id;
+      this.temp.room_no = this.reservation.room_no;
+      this.temp.room_type = this.reservation.room_type;
+      this.temp.price = this.reservation.price;
+      this.temp.check_in = this.reservation.check_in;
+      this.temp.check_out = this.reservation.check_out;
+      this.temp.room_tax = this.get_room_tax(this.reservation.price);
+      this.room.check_in = this.reservation.check_in;
+      this.room.check_out = this.reservation.check_out;
+    },
+
     mergeContact() {
       if (!this.isDiff) {
         this.customer.whatsapp = this.customer.contact_no;
@@ -1418,7 +1432,6 @@ export default {
     },
 
     convert_decimal(n) {
-      console.log(n === +n && n !== (n | 0));
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
@@ -1515,19 +1528,6 @@ export default {
       });
     },
 
-    get_reservation() {
-      this.reservation = this.$store.state.reservation;
-      this.temp.room_id = this.reservation.room_id;
-      this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type;
-      this.temp.price = this.reservation.price;
-      this.temp.check_in = this.reservation.check_in;
-      this.temp.check_out = this.reservation.check_out;
-      this.temp.room_tax = this.get_room_tax(this.reservation.price);
-      this.room.check_in = this.reservation.check_in;
-      this.room.check_out = this.reservation.check_out;
-    },
-
     remove_select_room(index) {
       this.selectedRooms.splice(index, 1);
       this.get_total_amounts();
@@ -1593,8 +1593,6 @@ export default {
         return;
       }
 
-      console.log(this.temp.room_type);
-      console.log(mealType);
       let payload = {
         params: {
           room_type: this.temp.room_type,
@@ -1606,7 +1604,6 @@ export default {
         .get(`get_room_price_by_meal_plan`, payload)
         .then(({ data }) => {
           this.temp.price = data;
-          console.log(data);
         });
     },
 
@@ -1615,7 +1612,6 @@ export default {
         this.alert("Missing!", "Select room", "error");
         return;
       }
-      console.log(this.temp);
       // return;
 
       this.temp.after_discount =
@@ -1849,7 +1845,6 @@ export default {
         ...this.room,
         customer_id: id
       };
-      console.log(payload);
       this.$axios
         .post("/booking1", payload)
         .then(({ data }) => {

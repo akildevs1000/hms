@@ -139,7 +139,12 @@
                 color="primary"
               ></v-progress-linear>
               <tr v-for="(item, index) in data" :key="index">
-                <td>{{ caps(item.id) }}</td>
+                <!-- <td>{{ caps(item.id) }}</td> -->
+                <td>
+                  {{
+                    (pagination.current - 1) * pagination.per_page + index + 1
+                  }}
+                </td>
                 <td>{{ caps(item.contact_name) }}</td>
                 <td>{{ caps(item.name) }}</td>
                 <td>{{ caps(item.type) }}</td>

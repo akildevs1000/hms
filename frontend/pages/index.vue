@@ -687,7 +687,6 @@
       <!-- end check out  -->
 
       <!-- cancel room  -->
-
       <v-dialog v-model="cancelDialog" persistent max-width="500">
         <v-card>
           <v-card-title class="text-h6">
@@ -713,7 +712,60 @@
         </v-card>
       </v-dialog>
 
-      <!-- end cancel room  -->
+      <!-- end cancel room -->
+
+      <!-- New Booking room  -->
+      <v-dialog v-model="NewBooking" persistent max-width="500">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span> Select Check Out Date</span>
+          </v-toolbar>
+          <v-container grid-list-xs>
+            {{ newBookingRoom }}
+            <v-col cols="12" sm="12" md="12">
+              <label class="col-form-label">Check Out Date </label>
+              <v-menu
+                v-model="check_out_menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="check_out"
+                    readonly
+                    v-on="on"
+                    v-bind="attrs"
+                    :hide-details="true"
+                    dense
+                    outlined
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="check_out"
+                  @input="check_out_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+          </v-container>
+
+          <v-card-actions>
+            <v-btn
+              class="primary"
+              small
+              :loading="false"
+              @click="SubmitNewBooking"
+            >
+              Book
+            </v-btn>
+            <v-btn class="error" small @click="NewBooking = false">
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
     <!--end dialogs -->
 
@@ -786,6 +838,21 @@
               v-if="bookingStatus == 1"
             >
               <v-list-item-title>Cancel Room</v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
+      <v-menu
+        v-model="showMenuForNewBooking"
+        :position-x="x"
+        :position-y="y"
+        absolute
+        offset-y
+      >
+        <v-list>
+          <v-list-item-group>
+            <v-list-item link @click="NewBooking = true">
+              <v-list-item-title>New Reservation</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -1052,6 +1119,8 @@
                         :key="index"
                       >
                         <v-card
+                          @contextmenu="makeNewBooking"
+                          @mouseover="mouseOverForAvailable(room)"
                           :elevation="0"
                           class="ma-0 px-md-1 py-md-2"
                           :class="getRelaventColor(room.status)"
@@ -1082,6 +1151,11 @@ export default {
   components: { ReservationList },
   data() {
     return {
+      check_out_menu: false,
+      check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+
       temp: "",
       loading: false,
       snackbar: false,
@@ -1094,10 +1168,13 @@ export default {
       postingDialog: false,
       viewPostingDialog: false,
       cancelDialog: false,
+      NewBooking: false,
 
       formTitle: "",
       selectedItem: 0,
       showMenu: false,
+      showMenuForNewBooking: false,
+
       bookingStatus: "",
       eventStatus: "",
       x: 0,
@@ -1186,7 +1263,8 @@ export default {
         { text: "QTY" },
         { text: "Amount" },
         { text: "Date" }
-      ]
+      ],
+      newBookingRoom: {}
     };
   },
   watch: {
@@ -1255,6 +1333,10 @@ export default {
       this.bookingStatus = bookingStatus;
     },
 
+    mouseOverForAvailable(newBookingRoom) {
+      this.newBookingRoom = newBookingRoom;
+    },
+
     get_data(jsEvent = null) {
       let payload = {
         params: {
@@ -1281,6 +1363,61 @@ export default {
       this.y = e.clientY;
       this.$nextTick(() => {
         this.showMenu = true;
+      });
+    },
+
+    makeNewBooking(e) {
+      e.preventDefault();
+      // this.get_data();
+      this.x = e.clientX;
+      this.y = e.clientY;
+      this.$nextTick(() => {
+        this.showMenuForNewBooking = true;
+      });
+    },
+
+    SubmitNewBooking() {
+      //       {
+      //     "id": 1,
+      //     "room_type_id": 1,
+      //     "room_no": "101",
+      //     "status": "0",
+      //     "deleteStatus": 0,
+      //     "company_id": 1,
+      //     "created_at": null,
+      //     "background": "#f48665",
+      //     "price": "2800.00",
+      //     "room_type": {
+      //         "id": 1,
+      //         "name": "queen",
+      //         "price": "2800.00"
+      //     }
+      // }
+
+      this.reservation.room_id = obj.room_type;
+      this.reservation.room_type = obj.room_type;
+      this.reservation.room_no = obj.room_no;
+      this.reservation.check_in = e.startStr;
+      this.reservation.check_out = this.convert_checkout_date_format(
+        new Date(e.endStr)
+      ); //this.convert_date_format(e.end);
+
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          roomType: obj.room_type,
+          room_no: obj.room_no
+        }
+      };
+      this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
+        this.reservation.room_id = data.id;
+        this.reservation.price = data.room_type.price;
+
+        let commitObj = {
+          ...this.reservation
+        };
+        this.$store.commit("reservation", commitObj);
+        this.$router.push(`/hotel/new`);
       });
     },
 
@@ -1593,6 +1730,7 @@ export default {
       element.click();
       // document.body.removeChild(element);
     },
+
     succuss(
       data,
       check_in = false,

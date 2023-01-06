@@ -1366,6 +1366,8 @@ export default {
     this.get_countries();
     this.get_agents();
     this.get_online();
+
+    console.log(this.$store.state.reservation);
   },
   methods: {
     runAllFunctions() {
@@ -1396,6 +1398,19 @@ export default {
     //   this.room.after_discount = this.subTotal() - this.room.discount;
     //   return this.room.after_discount;
     // },
+
+    get_reservation() {
+      this.reservation = this.$store.state.reservation;
+      this.temp.room_id = this.reservation.room_id;
+      this.temp.room_no = this.reservation.room_no;
+      this.temp.room_type = this.reservation.room_type;
+      this.temp.price = this.reservation.price;
+      this.temp.check_in = this.reservation.check_in;
+      this.temp.check_out = this.reservation.check_out;
+      this.temp.room_tax = this.get_room_tax(this.reservation.price);
+      this.room.check_in = this.reservation.check_in;
+      this.room.check_out = this.reservation.check_out;
+    },
 
     mergeContact() {
       if (!this.isDiff) {
@@ -1513,19 +1528,6 @@ export default {
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
       });
-    },
-
-    get_reservation() {
-      this.reservation = this.$store.state.reservation;
-      this.temp.room_id = this.reservation.room_id;
-      this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type;
-      this.temp.price = this.reservation.price;
-      this.temp.check_in = this.reservation.check_in;
-      this.temp.check_out = this.reservation.check_out;
-      this.temp.room_tax = this.get_room_tax(this.reservation.price);
-      this.room.check_in = this.reservation.check_in;
-      this.room.check_out = this.reservation.check_out;
     },
 
     remove_select_room(index) {
