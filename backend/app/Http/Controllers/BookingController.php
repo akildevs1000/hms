@@ -393,6 +393,7 @@ class BookingController extends Controller
             $trans = new TransactionController();
             if ($request->full_payment > 0) {
                 $trans->store($transactionData, $request->full_payment, 'credit');
+                // (new TransactionController)->store($transactionData, $request->full_payment, 'credit');
             }
             $booking = Booking::find($booking_id);
             if ($booking) {
@@ -452,7 +453,6 @@ class BookingController extends Controller
                 //     $inv = new InvoiceController;
                 //     $inv->printInvoice($booking_id);
                 // }
-
                 return response()->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
             }
         } catch (\Throwable $th) {
