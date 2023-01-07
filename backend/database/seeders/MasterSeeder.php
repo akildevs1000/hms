@@ -17,7 +17,7 @@ class MasterSeeder extends Seeder
     {
         DB::table('users')->insert([
             'name' => 'master',
-            'email' => 'master@hrms.com',
+            'email' => 'master@ezhms.com',
             'password' => Hash::make('secret'),
             'is_master' => 1,
         ]);

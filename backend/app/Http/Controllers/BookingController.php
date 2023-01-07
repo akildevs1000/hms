@@ -8,6 +8,7 @@ use App\Models\Agent;
 use App\Models\Booking;
 use App\Models\Payment;
 use Carbon\CarbonPeriod;
+use App\Jobs\WhatsappJob;
 use App\Models\OrderRoom;
 use App\Models\BookedRoom;
 use App\Models\CancelRoom;
@@ -240,47 +241,28 @@ class BookingController extends Controller
     {
         try {
             $rooms   = $request->all();
-            $totSgst = 0;
-            $totCgst = 0;
             foreach ($rooms as $room) {
                 $bookedRoomId = BookedRoom::create($room);
                 $period       = CarbonPeriod::create($room['check_in'], $room['check_out']);
                 foreach ($period as $date) {
                     $room['date']           = $date->format('Y-m-d');
                     $room['booked_room_id'] = $bookedRoomId->id;
-                    // $totSgst += $room['sgst'];
-                    // $totCgst += $room['cgst'];
                     OrderRoom::create($room);
                 }
-                // $bookedRoomId->sgst = $totSgst;
-                $bookedRoomId->cgst = $totCgst;
-                // $bookedRoomId->save();
             }
 
+            $data = [
+                "from" => "14157386102",
+                "to" => "971502848071",
+                "message_type" => "text",
+                "text" => "you have to " . count($rooms) . " rooms booking \nyour reservation number is " . $rooms[0]['booking_id'],
+                "channel" => "whatsapp"
+            ];
+
+            WhatsappJob::dispatch($data);
+
+
             return $this->response('Room Booked Successfully.', $rooms, true);
-
-            // $data = $request->except(['room_type', 'amount', 'price']);
-            // $data["customer_id"] = $request->customer_id;
-            // $data['booking_date'] = now();
-            // $data['payment_status'] = $request->total_price == $request->remaining_price ? '0' : '1';
-
-            // $room  = new RoomController();
-            // $room->update($request->room_id, 1);
-            // $booked =  Booking::create($data);
-
-            // if (now() <= $booked->check_in) {
-            //     $room  = new RoomController();
-            //     $room->update($request->room_id, 1);
-            // } else {
-            //     $room  = new RoomController();
-            //     $room->update($request->room_id, 0);
-            // }
-
-            // if ($booked) {
-            //     return $this->response('Room Booked Successfully.', null, true);
-            // } else {
-            //     return $this->response('DataBase Error in status change', null, true);
-            // }
         } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
