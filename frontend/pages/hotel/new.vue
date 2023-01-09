@@ -123,6 +123,7 @@
           <v-divider class="p-0 m-0" dense></v-divider>
           <v-container style="background-color: #f9fafd">
             <v-row>
+              <!-- <v-btn color="success" @click="store_document(4)">sub</v-btn> -->
               <div class="d-flex mt-4 primary--text">
                 <v-icon color="primary" large>mdi-account</v-icon>
                 <span style="font-size: 25px" class="ml-2 mt-1">
@@ -143,8 +144,8 @@
                   Type
                 </label>
                 <v-select
-                  v-model="room.customer_type"
-                  :items="['Company', 'Regular']"
+                  v-model="customer.customer_type"
+                  :items="['Company', 'Regular', 'Corporate']"
                   dense
                   item-text="name"
                   item-value="id"
@@ -152,8 +153,8 @@
                   :hide-details="true"
                 ></v-select>
               </v-col>
-              <v-col md="6" dense> </v-col>
-              <v-col md="3" dense>
+              <v-col md="9" dense> </v-col>
+              <!-- <v-col md="3" dense>
                 <label class="col-form-label">Status </label>
                 <v-select
                   :items="['Waiting', 'Confirmed']"
@@ -164,7 +165,7 @@
                   outlined
                   v-model="room.customer_status"
                 ></v-select>
-              </v-col>
+              </v-col> -->
               <v-col md="12" class="b-0 mt-2" style="padding-bottom: 0px" dense>
                 <h6><b>Personal Details</b></h6>
               </v-col>
@@ -355,6 +356,31 @@
                   </template>
                 </v-file-input>
               </v-col>
+              <v-col md="12" cols="12" sm="12">
+                <label class="col-form-label">Photo</label>
+                <v-file-input
+                  v-model="room.image"
+                  color="primary"
+                  counter
+                  placeholder="Select your files"
+                  prepend-icon="mdi-paperclip"
+                  outlined
+                  :show-size="1000"
+                >
+                  <template v-slot:selection="{ index, text }">
+                    <v-chip v-if="index < 2" color="primary" dark label small>
+                      {{ text }}
+                    </v-chip>
+
+                    <span
+                      v-else-if="index === 2"
+                      class="text-overline grey--text text--darken-3 mx-2"
+                    >
+                      +{{ room.image.length - 2 }} File(s)
+                    </span>
+                  </template>
+                </v-file-input>
+              </v-col>
               <v-col md="12" class="b-0 mt-2" style="padding-bottom: 0px" dense>
                 <h6><b>Contact Number</b></h6>
               </v-col>
@@ -419,6 +445,61 @@
                   outlined
                 ></v-select>
               </v-col>
+              <v-col md="6" cols="12" sm="12">
+                <label class="col-form-label">DOB</label>
+                <v-menu
+                  v-model="customer.dob_menu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="customer.dob"
+                      readonly
+                      v-on="on"
+                      v-bind="attrs"
+                      :hide-details="true"
+                      dense
+                      outlined
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="customer.dob"
+                    @input="customer.dob_menu = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <!-- <v-col cols="6" sm="12" md="12">
+                <label class="col-form-label">DOB</label>
+                {{ customer.dob }}
+                <v-menu
+                  v-model="customer.dob_menu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="customer.dob"
+                      readonly
+                      v-on="on"
+                      v-bind="attrs"
+                      :hide-details="true"
+                      dense
+                      outlined
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="customer.dob"
+                    @input="customer.dob_menu = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col> -->
               <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label"
                   >Email <span class="text-danger">*</span></label
@@ -553,6 +634,15 @@
                 <v-textarea
                   rows="3"
                   v-model="room.request"
+                  :hide-details="true"
+                  outlined
+                ></v-textarea>
+              </v-col>
+              <v-col md="12">
+                <label class="col-form-label">Purpose</label>
+                <v-textarea
+                  rows="3"
+                  v-model="room.purpose"
                   :hide-details="true"
                   outlined
                 ></v-textarea>
@@ -1351,8 +1441,13 @@ export default {
         no_of_child: 0,
         no_of_baby: 0,
         address: "",
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+          .toISOString()
+          .substr(0, 10)
       },
+      id_card_type_id: 0,
       errors: []
     };
   },
@@ -1366,8 +1461,6 @@ export default {
     this.get_countries();
     this.get_agents();
     this.get_online();
-
-    console.log(this.$store.state.reservation);
   },
   methods: {
     runAllFunctions() {
@@ -1384,20 +1477,11 @@ export default {
       let ci = new Date(this.temp.check_in);
       let co = new Date(this.temp.check_out);
       let Difference_In_Time = co.getTime() - ci.getTime();
-      let days = Difference_In_Time / (1000 * 3600 * 24) + 1;
+      let days = Difference_In_Time / (1000 * 3600 * 24);
       if (days > 0) {
         return (this.room.total_days = days);
       }
     },
-    // getAmountAfterSalesTax() {
-    //   let amount = this.afterDiscount();
-    //   let per = amount < 3000 ? 12 : 18;
-    //   return (this.room.sales_tax = this.getPercentage(amount, per).toFixed(0));
-    // },
-    // afterDiscount() {
-    //   this.room.after_discount = this.subTotal() - this.room.discount;
-    //   return this.room.after_discount;
-    // },
 
     get_reservation() {
       this.reservation = this.$store.state.reservation;
@@ -1433,7 +1517,6 @@ export default {
     },
 
     convert_decimal(n) {
-      console.log(n === +n && n !== (n | 0));
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
@@ -1595,8 +1678,6 @@ export default {
         return;
       }
 
-      console.log(this.temp.room_type);
-      console.log(mealType);
       let payload = {
         params: {
           room_type: this.temp.room_type,
@@ -1608,7 +1689,6 @@ export default {
         .get(`get_room_price_by_meal_plan`, payload)
         .then(({ data }) => {
           this.temp.price = data;
-          console.log(data);
         });
     },
 
@@ -1617,8 +1697,6 @@ export default {
         this.alert("Missing!", "Select room", "error");
         return;
       }
-      console.log(this.temp);
-      // return;
 
       this.temp.after_discount =
         parseFloat(this.temp.price) -
@@ -1770,6 +1848,8 @@ export default {
           ...data.data,
           customer_id: data.data.id
         };
+
+        this.customer.id_card_type_id = parseInt(this.customer.id_card_type_id);
         this.searchDialog = false;
         this.checkLoader = false;
       });
@@ -1801,7 +1881,6 @@ export default {
         ...this.room,
         ...this.customer
       };
-
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {
@@ -1821,6 +1900,7 @@ export default {
         })
         .catch(e => console.log(e));
     },
+
     store_customer() {
       let payload = {
         ...this.customer,
@@ -1849,9 +1929,9 @@ export default {
     store_booking(id) {
       let payload = {
         ...this.room,
-        customer_id: id
+        customer_id: id,
+        type: this.customer.customer_type
       };
-      console.log(payload);
       this.$axios
         .post("/booking1", payload)
         .then(({ data }) => {
@@ -1870,6 +1950,7 @@ export default {
     store_document(id) {
       let payload = new FormData();
       payload.append("document", this.room.document);
+      payload.append("image", this.room.image);
       payload.append("booking_id", id);
       this.$axios
         .post("/store_document", payload)

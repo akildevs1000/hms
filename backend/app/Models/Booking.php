@@ -106,11 +106,12 @@ class Booking extends Model
 
     public function SetCheckOutAttribute($value)
     {
-        $date = Carbon::parse($value);
-        $date->addDays(1);
-        $d = $date->format('Y-m-d');
-        // $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
-        $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+        $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
+
+        // $date = Carbon::parse($value);
+        // $date->addDays(1);
+        // $d = $date->format('Y-m-d');
+        // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
     }
 
     // public function GetBackgroundAttribute()

@@ -25,7 +25,38 @@ class BookedRoom extends Model
     ];
 
     protected $with = ['postings', 'booking'];
-    // protected $with = ['postings'];
+
+
+    public function getAppends()
+    {
+        return   array_merge($this->with, $this->appends);
+    }
+
+    public function getCustomAppends()
+    {
+        $custom = [
+            'created_at',
+            'updated_at',
+            'booking_status',
+        ];
+        return   array_merge($this->with, $this->appends, $custom);
+    }
+
+    public function getWithoutAppends()
+    {
+        $attributes = $this->attributesToArray();
+
+        unset($attributes['check_out_time']);
+        unset($attributes['end']);
+        unset($attributes['background']);
+        unset($attributes['resourceId']);
+        unset($attributes['title']);
+        unset($attributes['booking_status']);
+        unset($attributes['created_at']);
+        unset($attributes['updated_at']);
+
+        return $attributes;
+    }
 
     public function booking()
     {
@@ -86,12 +117,13 @@ class BookedRoom extends Model
 
     public function SetCheckOutAttribute($value)
     {
-        // $this->attributes['check_out'] = date('Y-m-d h:m', strtotime($value));
+        $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
 
-        $date = Carbon::parse($value);
-        $date->addDays(1);
-        $d = $date->format('Y-m-d');
-        $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+        // $date = Carbon::parse($value);
+        // $date->addDays(1);
+        // $d = $date->format('Y-m-d');
+        // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+
     }
 
 

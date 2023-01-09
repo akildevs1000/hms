@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
 
+            $table->string('customer_type')->nullable();
             $table->string('title')->nullable();
             $table->string('name')->nullable();
             $table->string('first_name')->nullable();
@@ -34,8 +35,8 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->integer('company_id')->default(0);
 
-
-
+            $table->date('dob')->nullable();
+            $table->string('document')->nullable();
 
             $table->timestamps();
         });

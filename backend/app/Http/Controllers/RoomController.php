@@ -93,7 +93,6 @@ class RoomController extends Controller
         return ['resourceId', 'title', 'background', 'check_out_time', 'postings'];
     }
 
-
     private function getCustomersBreakfastOnly($food)
     {
         $onlyBreakfastAdult = [

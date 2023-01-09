@@ -27,6 +27,7 @@ class StoreRequest extends FormRequest
     {
 
         $arr = [
+
             'first_name'      => 'required',
             'last_name'       => 'nullable',
             'contact_no'      => 'required|min:10|max:13',
@@ -39,10 +40,12 @@ class StoreRequest extends FormRequest
             'no_of_baby'      => 'nullable',
             'address'         => 'nullable',
             'company_id'      => 'required',
+            'customer_type'   => 'nullable',
+            'dob'             => 'nullable',
 
             'title'      => 'required',
-            'whatsapp'      => 'required',
-            'nationality'      => 'required',
+            'whatsapp'   => 'required',
+            'nationality' => 'required',
         ];
 
         return $arr;

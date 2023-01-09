@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\Agent;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Customer;
 use Carbon\CarbonPeriod;
 use App\Jobs\WhatsappJob;
 use App\Models\OrderRoom;
@@ -15,6 +16,7 @@ use App\Models\CancelRoom;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\BookingRequest;
 use Illuminate\Support\Facades\Log as Logger;
@@ -78,7 +80,7 @@ class BookingController extends Controller
         try {
             return   DB::transaction(function () use ($request) {
                 $data                   = [];
-                $data                   = $request->except('document');
+                $data                   = $request->except('document', 'image');
                 $data["customer_id"]    = $request->customer_id;
                 $data['booking_date']   = now();
                 $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
@@ -224,17 +226,40 @@ class BookingController extends Controller
     {
         $booking_id = $request->booking_id;
         $booking    = Booking::find($booking_id);
+        $customer    = Customer::find($booking->customer_id);
 
         if ($request->hasFile('document')) {
-            $file     = $request->file('document');
-            $ext      = $file->getClientOriginalExtension();
+            $file = $request->file('document');
+            $ext = $file->getClientOriginalExtension();
             $fileName = time() . '.' . $ext;
-            $request->document->move(public_path('documents/booking/'), $fileName);
-            // $data['document'] = $fileName;
+
+            $path = $file->storeAs('public/documents/booking', $fileName);
+            Storage::copy($path, 'public/documents/customer/' . $fileName);
+
             $booking->document = $fileName;
+            $customer->document = $fileName;
             $booking->save();
-            return $this->response('Room Booked Successfully.', null, true);
+            $customer->save();
         }
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $ext = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $ext;
+
+            $path = $file->storeAs('public/documents/customer/photo', $fileName);
+            $customer->image = $fileName;
+            $booking->save();
+        }
+
+        return $this->response('Room Booked Successfully.', null, true);
+    }
+
+    private function checkOutDate($date)
+    {
+        $date = date_create($date);
+        date_modify($date, "-1 days");
+        return date_format($date, "Y-m-d");
     }
 
     public function storeBookedRooms(Request $request)
@@ -243,7 +268,7 @@ class BookingController extends Controller
             $rooms   = $request->all();
             foreach ($rooms as $room) {
                 $bookedRoomId = BookedRoom::create($room);
-                $period       = CarbonPeriod::create($room['check_in'], $room['check_out']);
+                $period       = CarbonPeriod::create($room['check_in'], $this->checkOutDate($room['check_out']));
                 foreach ($period as $date) {
                     $room['date']           = $date->format('Y-m-d');
                     $room['booked_room_id'] = $bookedRoomId->id;
@@ -792,9 +817,10 @@ class BookingController extends Controller
     public function events_list(Request $request)
     {
 
-        return BookedRoom::whereHas('booking', function ($q) {
+        return BookedRoom::whereHas('booking', function ($q) use ($request) {
             $q->where('booking_status', '!=', 0);
-        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out as end']);
+            $q->where('company_id', $request->company_id);
+        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out']);
 
         // return Booking::where('company_id', $request->company_id)
         //     ->where('booking_status', '!=', 0)
@@ -823,39 +849,10 @@ class BookingController extends Controller
     public function cancelRoom(Request $request, $id)
     {
 
-
-        $data =  [
-            'company_id',
-            'booking_id',
-            'room_id',
-            'room_no',
-            'room_type',
-            'price',
-            'bed_amount',
-            'meal',
-            'room_tax',
-            'total_with_tax',
-            'check_in',
-            'heck_out',
-            'customer_id',
-            'room_discount',
-            'after_discount',
-            'cgst',
-            'sgst',
-            'total',
-            'days',
-            'grand_total',
-            'no_of_adult',
-            'no_of_child',
-            'no_of_baby',
-        ];
-
         try {
             $model = BookedRoom::find($id)
-                ->makeHidden(['id', 'postings', 'resourceId', 'title', 'background', 'created_at', 'updated_at', 'booking_status', 'booking', 'check_out_time', 'end']);
-
-
-
+                ->makeHidden((new BookedRoom)->getCustomAppends());
+            // ->makeHidden(['id', 'postings', 'resourceId', 'title', 'background', 'created_at', 'updated_at', 'booking_status', 'booking', 'check_out_time', 'end']);
             $numberOfRooms = BookedRoom::where('booking_id', $model->booking_id)->count();
 
             $bookedRoom = $model;

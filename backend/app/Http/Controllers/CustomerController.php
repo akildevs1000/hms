@@ -30,6 +30,7 @@ class CustomerController extends Controller
 
             if ($customer) {
                 $id = $customer->id;
+                $customer->update($request->validated());
             } else {
                 $record = Customer::create($request->validated());
                 $id = $record->id;

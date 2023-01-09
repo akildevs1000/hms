@@ -34,6 +34,9 @@ class PaymentSeeder extends Seeder
                 'name' => 'National Identity Card',
             ],
             [
+                'name' => 'Aadhar Card',
+            ],
+            [
                 'name' => 'Voter Id Card',
             ],
             [
@@ -42,7 +45,11 @@ class PaymentSeeder extends Seeder
             [
                 'name' => 'Driving License',
             ],
+            [
+                'name' => 'Passport Number'
+            ],
         ];
+
         DB::table('payment_modes')->insert($data);
         DB::table('id_card_types')->insert($ids);
     }

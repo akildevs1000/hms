@@ -1297,6 +1297,8 @@ export default {
     },
 
     create_reservation(e, obj) {
+      console.log(e.startStr);
+      console.log(e.endStr);
       this.get_room_types(e, obj);
     },
 
@@ -1310,9 +1312,11 @@ export default {
       this.reservation.room_type = obj.room_type;
       this.reservation.room_no = obj.room_no;
       this.reservation.check_in = e.startStr;
-      this.reservation.check_out = this.convert_checkout_date_format(
-        new Date(e.endStr)
-      ); //this.convert_date_format(e.end);
+      // this.reservation.check_out = this.convert_checkout_date_format(
+      //   new Date(e.endStr)
+      // ); //this.convert_date_format(e.end);
+
+      this.reservation.check_out = e.endStr; //this.convert_date_format(e.end);
 
       let payload = {
         params: {
@@ -1614,7 +1618,6 @@ export default {
     },
 
     change_room_by_drag(obj) {
-      console.log(obj);
       this.$axios
         .post("/change_room_by_drag", obj)
         .then(({ data }) => {

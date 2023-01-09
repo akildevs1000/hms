@@ -46,6 +46,7 @@ return new class extends Migration
             $table->string('document')->nullable();
             $table->text('request')->nullable();
             $table->text('customer_status')->nullable();
+            $table->text('purpose')->nullable();
             $table->integer('company_id')->default(0);
 
             $table->string('customer_type')->nullable();
@@ -54,7 +55,6 @@ return new class extends Migration
 
             $table->string('reference_no')->nullable();
             $table->string('paid_by')->nullable(); // paid by hotel => 1,  paid by agent => 2,
-
 
             $table->text('reason')->nullable();
             $table->integer('user_id')->nullable();
