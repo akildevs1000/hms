@@ -17,6 +17,7 @@ class BookedRoom extends Model
         'title',
         'background',
         'check_out_time',
+        'end',
     ];
 
     protected $casts = [
@@ -100,6 +101,13 @@ class BookedRoom extends Model
         $time = $this->check_out;
 
         return  date('H:i', strtotime($time));
+    }
+
+    public function GetEndAttribute()
+    {
+        $date = date_create($this->check_out);
+        date_modify($date, "-1 days");
+        return date_format($date, "Y-m-d H:i");
     }
 
     public function GetResourceIdAttribute()

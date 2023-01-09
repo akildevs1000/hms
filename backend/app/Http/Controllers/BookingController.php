@@ -823,9 +823,38 @@ class BookingController extends Controller
     public function cancelRoom(Request $request, $id)
     {
 
+
+        $data =  [
+            'company_id',
+            'booking_id',
+            'room_id',
+            'room_no',
+            'room_type',
+            'price',
+            'bed_amount',
+            'meal',
+            'room_tax',
+            'total_with_tax',
+            'check_in',
+            'heck_out',
+            'customer_id',
+            'room_discount',
+            'after_discount',
+            'cgst',
+            'sgst',
+            'total',
+            'days',
+            'grand_total',
+            'no_of_adult',
+            'no_of_child',
+            'no_of_baby',
+        ];
+
         try {
             $model = BookedRoom::find($id)
-                ->makeHidden(['id', 'postings', 'resourceId', 'title', 'background', 'created_at', 'updated_at', 'booking_status', 'booking', 'check_out_time']);
+                ->makeHidden(['id', 'postings', 'resourceId', 'title', 'background', 'created_at', 'updated_at', 'booking_status', 'booking', 'check_out_time', 'end']);
+
+
 
             $numberOfRooms = BookedRoom::where('booking_id', $model->booking_id)->count();
 

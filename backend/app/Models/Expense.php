@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\PaymentMode;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Expense extends Model
 {
@@ -23,7 +24,7 @@ class Expense extends Model
      */
     public function paymentMode()
     {
-        return $this->belongsTo(paymentMode::class, 'payment_modes', 'id');
+        return $this->belongsTo(PaymentMode::class, 'payment_modes', 'id');
     }
 
     public function getTimeAttribute()
