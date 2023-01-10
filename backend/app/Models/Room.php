@@ -71,6 +71,7 @@ class Room extends Model
             2 => '#8e4cf1',
             3 => '#289cf5',
             4 => '#23bdb8',
+            5 => '#23b8',
         };
     }
 

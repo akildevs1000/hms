@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call([PermissionSeeder::class]);
         $this->call([ModuleSeeder::class]);
         $this->call([RoomsTableSeeder::class]);
+        $this->call([FoodTableSeeder::class]);
         $this->call([PaymentSeeder::class]);
         $this->call([CountriesTableSeeder::class]);
         $this->call([SourceTableSeeder::class]);

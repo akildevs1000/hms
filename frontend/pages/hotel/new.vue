@@ -123,7 +123,6 @@
           <v-divider class="p-0 m-0" dense></v-divider>
           <v-container style="background-color: #f9fafd">
             <v-row>
-              <!-- <v-btn color="success" @click="store_document(4)">sub</v-btn> -->
               <div class="d-flex mt-4 primary--text">
                 <v-icon color="primary" large>mdi-account</v-icon>
                 <span style="font-size: 25px" class="ml-2 mt-1">
@@ -213,57 +212,6 @@
                   v-model="customer.last_name"
                 ></v-text-field>
               </v-col>
-              <!-- <v-col md="3" sm="12" cols="12" dense>
-                <label class="col-form-label"
-                  >Adult <span class="text-danger">*</span>
-                </label>
-                <div class="wrapper">
-                  <span
-                    class="minus"
-                    @click="customer.no_of_adult < 1 || customer.no_of_adult--"
-                    >-</span
-                  >
-                  <span class="num">{{ customer.no_of_adult }}</span>
-                  <span
-                    class="plus"
-                    @click="customer.no_of_adult > 2 || customer.no_of_adult++"
-                    >+</span
-                  >
-                </div>
-              </v-col>
-              <v-col md="3" sm="12" cols="12" dense>
-                <label class="col-form-label">Child </label>
-                <div class="wrapper">
-                  <span
-                    class="minus"
-                    @click="customer.no_of_child < 1 || customer.no_of_child--"
-                    >-</span
-                  >
-                  <span class="num">{{ customer.no_of_child }}</span>
-                  <span
-                    class="plus"
-                    @click="customer.no_of_child > 1 || customer.no_of_child++"
-                    >+</span
-                  >
-                </div>
-              </v-col>
-              <v-col md="3" sm="12" cols="12" dense>
-                <label class="col-form-label">Baby </label>
-                <div class="wrapper">
-                  <span
-                    class="minus"
-                    @click="customer.no_of_baby < 1 || customer.no_of_baby--"
-                    >-</span
-                  >
-                  <span class="num">{{ customer.no_of_baby }}</span>
-                  <span
-                    class="plus"
-                    @click="customer.no_of_baby > 1 || customer.no_of_baby++"
-                    >+</span
-                  >
-                </div>
-              </v-col> -->
-
               <v-col md="3" sm="12" cols="12" dense>
                 <label class="col-form-label"
                   >ID Card Type <span class="text-danger">*</span></label
@@ -472,34 +420,6 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <!-- <v-col cols="6" sm="12" md="12">
-                <label class="col-form-label">DOB</label>
-                {{ customer.dob }}
-                <v-menu
-                  v-model="customer.dob_menu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="customer.dob"
-                      readonly
-                      v-on="on"
-                      v-bind="attrs"
-                      :hide-details="true"
-                      dense
-                      outlined
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="customer.dob"
-                    @input="customer.dob_menu = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col> -->
               <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label"
                   >Email <span class="text-danger">*</span></label
@@ -943,16 +863,24 @@
                         <label class="col-form-label"
                           >Adult <span class="text-danger">*</span>
                         </label>
+
+                        {{ temp.no_of_adult }}
                         <div class="wrapper">
                           <span
                             class="minus"
-                            @click="temp.no_of_adult < 1 || temp.no_of_adult--"
+                            @mouseup="
+                              get_food_price_cal('adult', --temp.no_of_adult)
+                            "
+                            @click="temp.no_of_adult < 1 || temp.no_of_adult"
                             >-</span
                           >
                           <span class="num">{{ temp.no_of_adult }}</span>
                           <span
                             class="plus"
-                            @click="temp.no_of_adult > 2 || temp.no_of_adult++"
+                            @mouseup="
+                              get_food_price_cal('adult', ++temp.no_of_adult)
+                            "
+                            @click="temp.no_of_adult > 3 || temp.no_of_adult"
                             >+</span
                           >
                         </div>
@@ -962,13 +890,19 @@
                         <div class="wrapper">
                           <span
                             class="minus"
-                            @click="temp.no_of_child < 1 || temp.no_of_child--"
+                            @mouseup="
+                              get_food_price_cal('child', --temp.no_of_child)
+                            "
+                            @click="temp.no_of_child < 1 || temp.no_of_child"
                             >-</span
                           >
                           <span class="num">{{ temp.no_of_child }}</span>
                           <span
                             class="plus"
-                            @click="temp.no_of_child > 1 || temp.no_of_child++"
+                            @mouseup="
+                              get_food_price_cal('child', ++temp.no_of_child)
+                            "
+                            @click="temp.no_of_child > 1 || temp.no_of_child"
                             >+</span
                           >
                         </div>
@@ -978,18 +912,25 @@
                         <div class="wrapper">
                           <span
                             class="minus"
-                            @click="temp.no_of_baby < 1 || temp.no_of_baby--"
+                            @mouseup="
+                              get_food_price_cal('baby', --temp.no_of_baby)
+                            "
+                            @click="temp.no_of_baby < 1 || temp.no_of_baby"
                             >-</span
                           >
                           <span class="num">{{ temp.no_of_baby }}</span>
                           <span
                             class="plus"
-                            @click="temp.no_of_baby > 1 || temp.no_of_baby++"
+                            @mouseup="
+                              get_food_price_cal('baby', ++temp.no_of_baby)
+                            "
+                            @click="temp.no_of_baby > 1 || temp.no_of_baby"
                             >+</span
                           >
                         </div>
                       </v-col>
-                      <v-col md="6" sm="12" cols="12" dense>
+
+                      <!-- <v-col md="6" sm="12" cols="12" dense>
                         <label class="col-form-label"> Meals </label>
                         <v-select
                           v-model="temp.meal"
@@ -1005,9 +946,60 @@
                           "
                           @change="changeMealPlan(temp.meal)"
                         ></v-select>
-                      </v-col>
-                      <v-col md="6" sm="12" cols="12" dense></v-col>
+                      </v-col> -->
 
+                      <v-col md="8" sm="12" cols="12" dense>
+                        <label class="col-form-label"> Meals </label>
+                        {{ temp.meal }}
+                        <v-radio-group row dense>
+                          <v-checkbox
+                            v-model="temp.breakfast"
+                            label="Breakfast"
+                            value="breakfast"
+                            class="px-3"
+                            @change="meal_cal(temp.breakfast)"
+                          >
+                          </v-checkbox>
+                          <v-checkbox
+                            v-model="temp.lunch"
+                            label="Lunch"
+                            value="lunch"
+                            class="px-3"
+                            @change="meal_cal(temp.lunch)"
+                          >
+                          </v-checkbox>
+                          <v-checkbox
+                            v-model="temp.dinner"
+                            label="Dinner"
+                            value="dinner"
+                            class="px-3"
+                            @change="meal_cal(temp.dinner)"
+                          >
+                          </v-checkbox>
+                        </v-radio-group>
+                      </v-col>
+                      <v-col md="4">
+                        <table class="food-table">
+                          <tr class="food-table">
+                            <th class="food-table">Type</th>
+                            <td class="food-table">Breakfast</td>
+                            <td class="food-table">Lunch</td>
+                            <td class="food-table">Dinner</td>
+                          </tr>
+                          <tr class="food-table">
+                            <th class="food-table">Adult</th>
+                            <td class="food-table">{{ tempAdult.tot_ab }}</td>
+                            <td class="food-table">{{ tempAdult.tot_al }}</td>
+                            <td class="food-table">{{ tempAdult.tot_ad }}</td>
+                          </tr>
+                          <tr class="food-table">
+                            <th class="food-table">Child</th>
+                            <td class="food-table">{{ tempChild.tot_cb }}</td>
+                            <td class="food-table">{{ tempChild.tot_cl }}</td>
+                            <td class="food-table">{{ tempChild.tot_cd }}</td>
+                          </tr>
+                        </table>
+                      </v-col>
                       <v-col md="2" sm="12" cols="12" dense>
                         <label class="col-form-label"> Discount </label>
                         <v-checkbox
@@ -1066,21 +1058,6 @@
               <br /><br />
               <v-col md="6"><b class="#F9FAFD--text">Days</b></v-col>
               <v-col md="6" class="text-right">{{ getDays() }} </v-col>
-              <!-- <v-col md="6"><b class="#F9FAFD--text">Bed</b></v-col> -->
-              <!-- <v-col md="6" class="text-right">{{ room.bed_amount }}</v-col> -->
-              <!-- <v-col md="12">
-                <v-divider></v-divider>
-              </v-col> -->
-              <!-- <v-col md="6"><b class="#F9FAFD--text">Adult</b></v-col> -->
-              <!-- <v-col md="6" class="text-right">{{
-                customer.no_of_adult
-              }}</v-col>
-              <v-col md="6"><b class="#F9FAFD--text">Child</b></v-col>
-              <v-col md="6" class="text-right">{{
-                customer.no_of_child
-              }}</v-col>
-              <v-col md="6"><b class="#F9FAFD--text">Baby</b></v-col>
-              <v-col md="6" class="text-right">{{ customer.no_of_baby }}</v-col> -->
               <v-col md="12" class="text-right"><v-divider></v-divider></v-col>
             </v-row>
             <v-row>
@@ -1127,17 +1104,6 @@
             style="background-color: #f9fafd"
           >
             <v-row>
-              <!-- <v-col md="12" cols="12" sm="12">
-                <label class="col-form-label">Discount</label>
-                <v-text-field
-                  @keyup="runAllFunctions"
-                  type="number"
-                  dense
-                  :hide-details="true"
-                  outlined
-                  v-model="room.discount"
-                ></v-text-field>
-              </v-col> -->
               <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label">Advance Amount</label>
                 <v-text-field
@@ -1161,7 +1127,6 @@
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
                     { id: 6, name: 'Cheque' }
-                    // { id: 7, name: 'City Ledger' }
                   ]"
                   item-text="name"
                   item-value="id"
@@ -1246,24 +1211,6 @@
                       </div>
                     </td>
                   </tr>
-                  <!-- <tr>
-                    <td>Discount</td>
-                    <td>
-                      <div align="right">{{ room.discount }}</div>
-                    </td>
-                  </tr> -->
-                  <!-- <tr>
-                    <td>After Discount</td>
-                    <td>
-                      <div align="right">{{ room.after_discount }}</div>
-                    </td>
-                  </tr> -->
-                  <!-- <tr>
-                    <td>Sales Tax</td>
-                    <td>
-                      <div align="right">{{ room.sales_tax }}</div>
-                    </td>
-                  </tr> -->
                   <tr>
                     <th>Total</th>
                     <td>
@@ -1307,6 +1254,7 @@
 export default {
   data() {
     return {
+      selectMeal: [],
       row: null,
       calIn: {},
       calOut: {},
@@ -1343,6 +1291,7 @@ export default {
       agentList: [],
 
       idCards: [],
+
       temp: {
         check_in_menu: false,
         check_out_menu: false,
@@ -1355,7 +1304,7 @@ export default {
         cgst: 0,
         check_in: "",
         check_out: "",
-        meal: "room_only_price",
+        // meal: [],
         bed_amount: 0,
         room_discount: 0,
         after_discount: 0, //(price - room_discount)
@@ -1367,7 +1316,10 @@ export default {
 
         no_of_adult: 1,
         no_of_child: 0,
-        no_of_baby: 0
+        no_of_baby: 0,
+        breakfast: "",
+        lunch: "",
+        dinner: ""
       },
 
       check_in_menu: false,
@@ -1408,6 +1360,8 @@ export default {
       },
       reservation: {},
       countryList: [],
+      foodPriceList: [],
+      person_type_arr: [],
 
       titleItems: [
         { id: 1, name: "Mr" },
@@ -1448,10 +1402,13 @@ export default {
           .substr(0, 10)
       },
       id_card_type_id: 0,
-      errors: []
+      errors: [],
+      tempAdult: {},
+      tempChild: {}
     };
   },
   created() {
+    this.get_food_price();
     this.get_reservation();
     this.preloader = false;
     this.get_room_types();
@@ -1494,6 +1451,111 @@ export default {
       this.temp.room_tax = this.get_room_tax(this.reservation.price);
       this.room.check_in = this.reservation.check_in;
       this.room.check_out = this.reservation.check_out;
+    },
+
+    get_food_price() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
+        }
+      };
+      this.$axios.get(`get_food_prices`, payload).then(({ data }) => {
+        this.foodPriceList = data;
+        console.log(this.foodPriceList);
+        this.get_food_price_cal("adult", 1);
+      });
+    },
+
+    get_food_price_cal(person_type, person_qty) {
+      if (this.foodPriceList.length == 0) {
+        return;
+      }
+      let person = this.foodPriceList.find(e => e.type == person_type);
+
+      person.qty = person_qty;
+
+      let index = this.person_type_arr.findIndex(e => e.type == person_type);
+
+      if (index == -1) {
+        this.person_type_arr.push(person);
+      } else {
+        this.person_type_arr.splice(index, 1, person);
+      }
+      console.log(this.person_type_arr);
+    },
+
+    meal_cal(meal_type) {
+      // console.log(this.person_type_arr);
+      // return;
+      let res = this.person_type_arr.find(e => {
+        if (e.type == "adult") {
+          this.get_adult_cal(e);
+        }
+        if (e.type == "child") {
+          this.get_child_cal(e);
+        }
+        // if (e.type == "baby") {
+        //   this.get_baby_cal(e);
+        // }
+      });
+    },
+
+    get_adult_cal(e) {
+      let tab, tax_tab, tal, tax_tal, tad, tax_tad;
+      if (this.temp.breakfast) {
+        tab = parseFloat(e.breakfast) * parseFloat(e.qty);
+        tax_tab = this.get_amount_with_tax(tab);
+      }
+      if (this.temp.lunch) {
+        tal = parseFloat(e.lunch) * parseFloat(e.qty);
+        tax_tal = this.get_amount_with_tax(tal);
+      }
+      if (this.temp.dinner) {
+        tad = parseFloat(e.dinner) * parseFloat(e.qty);
+        tax_tad = this.get_amount_with_tax(tad);
+      }
+
+      this.tempAdult = {
+        tot_ab: tax_tab + tab,
+        tot_al: tax_tal + tad,
+        tot_ad: tax_tad + tad
+      };
+      console.log(this.tempAdult);
+    },
+
+    get_child_cal(e) {
+      let tcb, tax_tcb, tcl, tax_tcl, tcd, tax_tcd;
+      if (this.temp.breakfast) {
+        tcb = parseFloat(e.breakfast) * parseFloat(e.qty);
+        tax_tcb = this.get_amount_with_tax(tcb);
+      }
+      if (this.temp.lunch) {
+        tcl = parseFloat(e.lunch) * parseFloat(e.qty);
+        tax_tcl = this.get_amount_with_tax(tcl);
+      }
+      if (this.temp.dinner) {
+        tcd = parseFloat(e.dinner) * parseFloat(e.qty);
+        tax_tcd = this.get_amount_with_tax(tcd);
+      }
+
+      this.tempChild = {
+        tot_cb: tax_tcb + tcb,
+        tot_cl: tax_tcl + tcd,
+        tot_cd: tax_tcd + tcd
+      };
+      console.log(this.tempChild);
+    },
+
+    get_amount_with_tax(amount) {
+      let per = 5;
+      let tax = this.getPercentage(amount, per);
+      return tax;
+      // console.log(amount);
+    },
+
+    getPercentage(amount, clause) {
+      let res = (amount / 100) * clause;
+      return res;
     },
 
     mergeContact() {
@@ -1798,7 +1860,7 @@ export default {
       // this.temp.bed_amount = 0;
       this.temp.room_discount = 0;
       this.temp.check_out = check_out;
-      this.temp.meal = "Room only";
+      // this.temp.meal = "Room only";
 
       this.temp.no_of_adult = 1;
       this.temp.no_of_child = 0;
@@ -1814,7 +1876,8 @@ export default {
       let payload = {
         params: {
           check_in: this.temp.check_in,
-          check_out: this.temp.check_out
+          check_out: this.temp.check_out,
+          company_id: this.$auth.user.company.id
         }
       };
       this.RoomDrawer = true;
@@ -2038,5 +2101,25 @@ fieldset {
 th {
   text-align: left;
   padding: 7px;
+}
+
+.food-table table {
+  border: 1px solid #a0a0a0 !important;
+  border-collapse: collapse;
+}
+
+/* .food-table
+th,
+td {
+  border: 1px solid #a0a0a0 !important;
+  border-collapse: collapse;
+} */
+
+.food-table {
+  border: 1px solid #a0a0a0 !important;
+  border-collapse: collapse;
+  width: 250px;
+  text-align: right;
+  padding: 0 5px;
 }
 </style>

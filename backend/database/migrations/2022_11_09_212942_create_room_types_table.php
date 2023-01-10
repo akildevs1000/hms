@@ -26,9 +26,7 @@ return new class extends Migration
             $table->decimal('lunch_with_dinner_price', 8, 2)->default(0);
             $table->decimal('full_board_price', 8, 2)->default(0);
 
-
             $table->string('max_person')->nullable();
-
 
             // "Breakfast",
             // "Breakfast and Dinner",

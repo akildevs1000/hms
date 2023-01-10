@@ -357,12 +357,13 @@ class RoomController extends Controller
         $roomIds = $model
             ->whereDate('check_in', '<=', $request->check_in)
             ->WhereDate('check_out', '>=', $request->check_out)
-            ->whereHas('booking', function ($q) {
+            ->whereHas('booking', function ($q) use ($request) {
                 $q->where('booking_status', '!=', 0);
+                $q->where('company_id', $request->company_id);
             })
-            // ->get();
             ->pluck('room_id');
         return Room::whereNotIn('id', $roomIds)
+            ->where('company_id', $request->company_id)
             ->get();
     }
 
@@ -381,5 +382,12 @@ class RoomController extends Controller
         return RoomType::where('company_id', $request->company_id)
             ->where('name', $request->room_type)
             ->pluck($request->slug)[0];
+    }
+
+    public function getFoodPrices(Request $request)
+    {
+        return  DB::table('food_prices')
+            ->where('company_id', $request->company_id)
+            ->get();
     }
 }
