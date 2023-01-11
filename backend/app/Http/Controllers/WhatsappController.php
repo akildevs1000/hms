@@ -36,6 +36,11 @@ class WhatsappController extends Controller
         return $resp;
     }
 
+    public function toSendNotification($data)
+    {
+        return $this->api($data);
+    }
+
     public function api($data)
     {
         $url = "https://messages-sandbox.nexmo.com/v1/messages";
@@ -55,11 +60,5 @@ class WhatsappController extends Controller
         }
         Log::Info('this message from whatsapp notification', [$response]);
         return 'something went wrong';
-    }
-
-
-    public function toSendNotification($data)
-    {
-        return $this->api($data);
     }
 }

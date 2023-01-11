@@ -303,7 +303,7 @@ class RoomController extends Controller
             ->pluck('room_id');
 
         $notAvailableRooms = Room::whereIn('id', $roomIds)
-            ->where('company_id', $company_id)
+            // ->where('company_id', $company_id)
 
             ->with('bookedRoom', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
