@@ -76,18 +76,13 @@ class CustomerController extends Controller
         return $model->where("company_id", $request->company_id)->paginate($request->perPage);
     }
 
-    public function getCustomer($id)
+    public function getCustomer($id, Request $request)
     {
-        $data =  Customer::where('contact_no', $id)->first();
+        $data =  Customer::where('contact_no', $id)
+            ->where('company_id', $request->company_id)
+            ->first();
 
         if ($data) {
-            // if (str_word_count($data->name) > 1) {
-            //     $name = $data->name;
-            //     $data->first_name =   explode(" ", $name)[0];
-            //     $data->last_name =   explode(" ", $name)[1];
-            // } else {
-            //     $data->first_name = $data->name;
-            // }
             return response()->json(['data' => $data, 'status' => true]);
         } else {
             return response()->json(['data' => [], 'status' => false]);

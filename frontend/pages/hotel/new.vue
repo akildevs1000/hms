@@ -2090,26 +2090,36 @@ export default {
         this.checkLoader = false;
         return;
       }
-      this.$axios.get(`get_customer/${contact_no}`).then(({ data }) => {
-        if (!data.status) {
-          this.checkLoader = false;
-          // this.customer = {};
-          this.customer.contact_no = contact_no;
-          this.customer.whatsapp = contact_no;
-          alert("Customer not found");
-          return;
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id
         }
+      };
 
-        this.customer = {
-          ...data.data,
-          customer_id: data.data.id
-        };
-        // this.getImage();
-        console.log(data.data);
-        this.customer.id_card_type_id = parseInt(this.customer.id_card_type_id);
-        this.searchDialog = false;
-        this.checkLoader = false;
-      });
+      this.$axios
+        .get(`get_customer/${contact_no}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.checkLoader = false;
+            // this.customer = {};
+            this.customer.contact_no = contact_no;
+            this.customer.whatsapp = contact_no;
+            alert("Customer not found");
+            return;
+          }
+
+          this.customer = {
+            ...data.data,
+            customer_id: data.data.id
+          };
+          // this.getImage();
+          console.log(data.data);
+          this.customer.id_card_type_id = parseInt(
+            this.customer.id_card_type_id
+          );
+          this.searchDialog = false;
+          this.checkLoader = false;
+        });
     },
 
     can(per) {
