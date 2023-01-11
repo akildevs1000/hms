@@ -65,6 +65,9 @@ Route::post('/test', function (Request $request) {
         "channel" => "whatsapp"
     ];
 
+    (new WhatsappController)->toSendNotification($data);
+
+
     for ($i = 0; $i < 1000; $i++) {
         WhatsappJob::dispatch($data);
     }
