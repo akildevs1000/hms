@@ -359,7 +359,7 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      let url = process.env.BACKEND_URL + "/invoice";
+      let url = process.env.BACKEND_URL + "invoice";
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}/${id}`);
