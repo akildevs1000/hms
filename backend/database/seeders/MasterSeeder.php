@@ -97,5 +97,37 @@ class MasterSeeder extends Seeder
             'lat' => '1212',
             'lon' => '2323'
         ]);
+
+        //demo account
+        $userDemo =    User::create([
+            'name' => 'ignore',
+            'email' => 'demo@demo.com',
+            'password' => Hash::make('Abc@123'),
+            'is_master' => true,
+            'role_id' => 1,
+            'company_id' => 3,
+            'branch_id' => 0,
+            'employee_role_id' => 0,
+            'first_login' => true,
+        ]);
+
+        Company::create([
+            'id' => 3,
+            'user_id' => $userDemo->id,
+            'name' => 'Demo',
+            'member_from' => '2023-01-27',
+            'expiry' => '2023-01-27',
+            'max_employee' => 100000,
+            'max_devices' => 1,
+            'location' => 'Demo',
+            'logo' => '1673109140.jpg',
+            'p_o_box_no' => null,
+            'mol_id' => null,
+            'company_code' => '1',
+            'no_branch' => 'false',
+            'max_branches' => '1',
+            'lat' => '1212',
+            'lon' => '2323'
+        ]);
     }
 }
