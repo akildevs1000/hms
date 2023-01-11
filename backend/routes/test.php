@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Employee;
 use Carbon\CarbonPeriod;
@@ -10,70 +11,91 @@ use App\Models\BookedRoom;
 use Illuminate\Http\Request;
 use App\Models\ReportNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Mail\ReportNotificationMail;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\WhatsappNotification;
+use App\Http\Controllers\WhatsappController;
+use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\AttendanceController;
-use Illuminate\Support\Facades\Hash;
+use App\Jobs\WhatsappJob;
 
 Route::post('/test', function (Request $request) {
 
+    $column =  [
+        'company_id',
+        'booking_id',
+        'room_id',
+        'room_no',
+        'room_type',
+        'price',
+        'bed_amount',
+        'meal',
+        'room_tax',
+        'total_with_tax',
+        'check_in',
+        'check_out',
+        'customer_id',
+        'room_discount',
+        'after_discount',
+        'cgst',
+        'sgst',
+        'total',
+        'days',
+        'grand_total',
+        'no_of_adult',
+        'no_of_child',
+        'no_of_baby',
+    ];
 
+    return (new BookedRoom)->getCustomAppends();
 
-    return Hash::make('DE6aMuM#');
-    return date('Y-m-d H:i:s');
+    BookedRoom::select($column)->find(1)->makeHidden(['postings', 'booking']);
 
-    return is_numeric(111);
-    try {
-        $curl = curl_init();
+    $data = [
+        "from" => "14157386102",
+        "to" => "971502848071",
+        "message_type" => "text",
+        "text" => "This is a WhatsApp Message sent from the EZHMS",
+        "channel" => "whatsapp"
+    ];
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://graph.facebook.com/v15.0/102482416002121/messages',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
-    "messaging_product": "whatsapp",
-    "to": "923108559858",
-    "type": "template",
-    "template": {
-        "name": "hello_world",
-        "language": {
-            "code": "en_US"
-        }
+    for ($i = 0; $i < 1000; $i++) {
+        WhatsappJob::dispatch($data);
     }
-}',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer EAAMGxA8O290BAGKRYuhwVdA1GAgpZB7UnlKF8kgIGdieVXQotF51BavjJ7t8ckHyP4dpwHmDGJULscjCdgs6k4d5Y81McR5q86D5XfG489CPS1qpCJPe7kLW9ltFx0sRVMxiCw7VYkvFybjQ6lrCNHR0ce86p9KHQKz2UpJyEVHX5EcVW997dL5ZBkskbTctzWyDE6z0oXOKHXGKZAD',
-                'Content-Type: application/json'
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-        echo $response;
-    } catch (\Throwable $th) {
-        throw $th;
-    }
-
-    // $data = [
-    //     'file' => collect(glob(storage_path("app/ideaHrms/*.zip")))->last(),
-    //     'date' => date('Y-M-d'),
-    //     'body' => 'ideahrms Database Backup',
-    // ];
-
-    // Mail::to('fahathammex90@gmail.com')
-    //     ->queue(new DbBackupMail($data));
 });
 
+Route::post('/db_backup', function (Request $request) {
 
+    ini_set("display_errors", "On");
+    error_reporting(E_ALL);
+    $MysqlHost         = env('DB_HOST', '<your host>');
+    $MysqlUser         = env('DB_USERNAME', '<your username>');
+    $MysqlPassword     = env('DB_PASSWORD', '<your password>');
+    $databasename      = env('DB_DATABASE', '<your db name>');
+
+    $backupDate         = date("Y_m_d");
+    //Store inside Storage Directory
+    $backupPath         = storage_path("daily_backup_db");
+    $filePath          = storage_path("daily_backup_file");
+
+    $backupName = $backupPath . $databasename . "_" . $backupDate . ".sql.gz";
+    $fileBackupName = $databasename . '_' . $backupDate;
+
+    // Take the mysql Dump
+    $dbBackup = "/usr/bin/mysqldump  --opt  -u$MysqlUser -h$MysqlHost --password=$MysqlPassword $databasename | gzip  > $backupName ";
+    $dbOutput = shell_exec($dbBackup);
+
+    // Take the code dump
+    $fileBackupPath = "{$backupPath}$fileBackupName.tar.gz";
+    $fileOutput = shell_exec("tar -cvzpf $fileBackupPath  $filePath");
+    return   $mysqlBackupPath = $backupName;
+});
 
 
 Route::get('/reset_attendance', [AttendanceController::class, 'ResetAttendance']);

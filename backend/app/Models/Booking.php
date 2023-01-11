@@ -134,7 +134,7 @@ class Booking extends Model
         if (!$value) {
             return null;
         }
-        return asset('documents/booking/' . $value);
+        return asset('storage/documents/booking/' . $value);
     }
 
     public function scopeFilter($query,  $filter)

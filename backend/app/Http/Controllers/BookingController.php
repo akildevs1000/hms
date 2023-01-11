@@ -239,7 +239,6 @@ class BookingController extends Controller
             $booking->document = $fileName;
             $customer->document = $fileName;
             $booking->save();
-            $customer->save();
         }
 
         if ($request->hasFile('image')) {
@@ -249,9 +248,8 @@ class BookingController extends Controller
 
             $path = $file->storeAs('public/documents/customer/photo', $fileName);
             $customer->image = $fileName;
-            $booking->save();
         }
-
+        $customer->save();
         return $this->response('Room Booked Successfully.', null, true);
     }
 

@@ -288,6 +288,7 @@
                         { id: -1, name: 'select..' },
                         { name: 'Food' },
                         { name: 'Others' },
+                        { name: 'Mesentery' },
                         { name: 'ExtraBed' }
                       ]"
                       item-text="name"
@@ -1443,7 +1444,7 @@ export default {
       let per = 0;
       if (clause == "Food") {
         per = 5;
-      } else if (clause == "Others" || clause == "ExtraBed") {
+      } else if (clause == "Mesentery" || clause == "ExtraBed") {
         per = 12;
       }
       let res = this.getPercentage(this.posting.amount || 0, per);

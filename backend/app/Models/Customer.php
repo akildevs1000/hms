@@ -13,7 +13,7 @@ class Customer extends Model
     protected $guarded = [];
 
     protected $appends = [
-        'full_name'
+        'full_name',
     ];
 
 
@@ -42,5 +42,21 @@ class Customer extends Model
     public function idCardType(): BelongsTo
     {
         return $this->belongsTo(IdCardType::class);
+    }
+
+    public function getImageAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/documents/customer/photo/' . $value);
+    }
+
+    public function getDocumentAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/documents/customer/' . $value);
     }
 }

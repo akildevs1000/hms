@@ -66,7 +66,7 @@
             <td>
               <b>{{ ++index }}</b>
             </td>
-            <td>{{ item.name }}</td>
+            <td>{{ item.full_name }}</td>
             <td>{{ item.contact_no }}</td>
             <td>{{ item.email }}</td>
             <td>{{ item.id_card_type_id }}</td>

@@ -408,6 +408,7 @@
                     :items="[
                       { id: -1, name: 'select..' },
                       { name: 'Food' },
+                      { name: 'Others' },
                       { name: 'Mesentery' },
                       { name: 'Bed' }
                     ]"

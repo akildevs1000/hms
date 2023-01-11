@@ -272,15 +272,58 @@
                   v-model="customer.car_no"
                 ></v-text-field>
               </v-col>
-              <v-col md="12" cols="12" sm="12">
+              <v-col md="6" cols="12" sm="12">
+                <div v-if="customer.document && !wantNewDoc">
+                  <label class="col-form-label">Preview Document</label>
+                  <br />
+                  <v-btn
+                    small
+                    dark
+                    class="primary pt-4 pb-4"
+                    @click="preview(customer.document)"
+                  >
+                    Preview
+                    <v-icon right dark>mdi-file</v-icon>
+                  </v-btn>
+                </div>
+                <div v-else>
+                  <label class="col-form-label">Document</label>
+                  <v-file-input
+                    v-model="room.document"
+                    color="primary"
+                    counter
+                    placeholder="Select your files"
+                    prepend-icon="mdi-paperclip"
+                    outlined
+                    :show-size="1000"
+                    style="margin-top:150px"
+                  >
+                    <template v-slot:selection="{ index, text }">
+                      <v-chip v-if="index < 2" color="primary" dark label small>
+                        {{ text }}
+                      </v-chip>
+
+                      <span
+                        v-else-if="index === 2"
+                        class="text-overline grey--text text--darken-3 mx-2"
+                      >
+                        +{{ room.document.length - 2 }} File(s)
+                      </span>
+                    </template>
+                  </v-file-input>
+                </div>
+                <v-checkbox
+                  :label="
+                    customer.document ? 'New Document' : 'Existing Document'
+                  "
+                  v-model="wantNewDoc"
+                  value="true"
+                  v-if="customer.document"
+                ></v-checkbox>
+              </v-col>
+
+              <!-- <v-col md="6" cols="12" sm="12" v-if="wantNewDoc">
                 <label class="col-form-label">Document</label>
-                <!-- <v-text-field
-                  dense
-                  outlined
-                  type="number"
-                  v-model="customer.document"
-                  :hide-details="true"
-                ></v-text-field> -->
                 <v-file-input
                   v-model="room.document"
                   color="primary"
@@ -289,6 +332,7 @@
                   prepend-icon="mdi-paperclip"
                   outlined
                   :show-size="1000"
+                  style="margin-top:150px"
                 >
                   <template v-slot:selection="{ index, text }">
                     <v-chip v-if="index < 2" color="primary" dark label small>
@@ -303,8 +347,42 @@
                     </span>
                   </template>
                 </v-file-input>
+              </v-col> -->
+
+              <v-col cols="6">
+                <label class="col-form-label">Photo</label>
+                <div class="pa-5" style="background-color:#E5E5E5">
+                  <v-img
+                    @click="onpick_attachment"
+                    style="width: 150px;height: 150px;margin: 0 auto;border-radius: 50%;"
+                    :src="showImage"
+                  ></v-img>
+                </div>
+                <v-btn
+                  elevation="0"
+                  style="width: 100%"
+                  @click="onpick_attachment"
+                  >{{ !upload.name ? "Upload Image" : "Image Uploaded" }}
+                  <v-icon right dark>mdi-cloud-upload</v-icon>
+                </v-btn>
+                <input
+                  required
+                  type="file"
+                  @change="attachment"
+                  style="display: none"
+                  accept="image/*"
+                  ref="attachment_input"
+                />
+                <span v-if="errors && errors.image" class="text-danger mt-2">{{
+                  errors.image[0]
+                }}</span>
               </v-col>
-              <v-col md="12" cols="12" sm="12">
+
+              <!-- <v-col md="2">
+                <v-btn color="success" @click="store_document(4)">text</v-btn>
+              </v-col> -->
+
+              <!-- <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label">Photo</label>
                 <v-file-input
                   v-model="room.image"
@@ -328,7 +406,8 @@
                     </span>
                   </template>
                 </v-file-input>
-              </v-col>
+              </v-col> -->
+
               <v-col md="12" class="b-0 mt-2" style="padding-bottom: 0px" dense>
                 <h6><b>Contact Number</b></h6>
               </v-col>
@@ -696,8 +775,7 @@
                         <label class="col-form-label">Amount : </label>
                         {{ item.price }}
                       </v-col>
-
-                      <v-col md="3" cols="12" sm="12">
+                      <v-col md="4" cols="12" sm="12">
                         <label class="col-form-label">Meal : </label>
                         {{ capsTitle(item.meal) }}
                       </v-col>
@@ -713,15 +791,36 @@
                         <label class="col-form-label">Tax with Amount : </label>
                         {{ convert_decimal(item.total_with_tax) }}
                       </v-col>
-                      <v-col md="3" cols="12" sm="12">
+
+                      <v-col md="4" cols="12" sm="12">
+                        <label class="col-form-label"
+                          >Adult Food Amount :
+                        </label>
+                        {{ convert_decimal(item.tot_adult_food) }}
+                      </v-col>
+                      <v-col md="4" cols="12" sm="12">
+                        <label class="col-form-label"
+                          >Child Food Amount :
+                        </label>
+                        {{ convert_decimal(item.tot_child_food) }}
+                      </v-col>
+
+                      <v-col md="4" cols="12" sm="12">
+                        <label class="col-form-label"
+                          >Room Grand Amount :
+                        </label>
+                        {{ convert_decimal(item.total) }}
+                      </v-col>
+
+                      <v-col md="2" cols="12" sm="12">
                         <label class="col-form-label">Adult : </label>
                         {{ item.no_of_adult }}
                       </v-col>
-                      <v-col md="3" cols="12" sm="12">
+                      <v-col md="2" cols="12" sm="12">
                         <label class="col-form-label">Child : </label>
                         {{ item.no_of_child }}
                       </v-col>
-                      <v-col md="3" cols="12" sm="12">
+                      <v-col md="2" cols="12" sm="12">
                         <label class="col-form-label">Baby : </label>
                         {{ item.no_of_baby }}
                       </v-col>
@@ -869,7 +968,10 @@
                           <span
                             class="minus"
                             @mouseup="
-                              get_food_price_cal('adult', --temp.no_of_adult)
+                              get_food_price_cal(
+                                'adult',
+                                temp.no_of_adult == 0 ? 0 : --temp.no_of_adult
+                              )
                             "
                             @click="temp.no_of_adult < 1 || temp.no_of_adult"
                             >-</span
@@ -878,7 +980,10 @@
                           <span
                             class="plus"
                             @mouseup="
-                              get_food_price_cal('adult', ++temp.no_of_adult)
+                              get_food_price_cal(
+                                'adult',
+                                temp.no_of_adult < 4 ? ++temp.no_of_adult : 4
+                              )
                             "
                             @click="temp.no_of_adult > 3 || temp.no_of_adult"
                             >+</span
@@ -891,7 +996,10 @@
                           <span
                             class="minus"
                             @mouseup="
-                              get_food_price_cal('child', --temp.no_of_child)
+                              get_food_price_cal(
+                                'child',
+                                temp.no_of_child == 0 ? 0 : --temp.no_of_child
+                              )
                             "
                             @click="temp.no_of_child < 1 || temp.no_of_child"
                             >-</span
@@ -900,7 +1008,10 @@
                           <span
                             class="plus"
                             @mouseup="
-                              get_food_price_cal('child', ++temp.no_of_child)
+                              get_food_price_cal(
+                                'child',
+                                temp.no_of_child < 3 ? ++temp.no_of_child : 3
+                              )
                             "
                             @click="temp.no_of_child > 1 || temp.no_of_child"
                             >+</span
@@ -913,7 +1024,10 @@
                           <span
                             class="minus"
                             @mouseup="
-                              get_food_price_cal('baby', --temp.no_of_baby)
+                              get_food_price_cal(
+                                'baby',
+                                temp.no_of_baby == 0 ? 0 : --temp.no_of_baby
+                              )
                             "
                             @click="temp.no_of_baby < 1 || temp.no_of_baby"
                             >-</span
@@ -922,35 +1036,18 @@
                           <span
                             class="plus"
                             @mouseup="
-                              get_food_price_cal('baby', ++temp.no_of_baby)
+                              get_food_price_cal(
+                                'baby',
+                                temp.no_of_baby < 1 ? ++temp.no_of_baby : 1
+                              )
                             "
                             @click="temp.no_of_baby > 1 || temp.no_of_baby"
                             >+</span
                           >
                         </div>
                       </v-col>
-
-                      <!-- <v-col md="6" sm="12" cols="12" dense>
-                        <label class="col-form-label"> Meals </label>
-                        <v-select
-                          v-model="temp.meal"
-                          :items="meals"
-                          dense
-                          item-text="name"
-                          item-value="slug"
-                          outlined
-                          :hide-details="errors && !errors.meal"
-                          :error="errors && errors.meal"
-                          :error-messages="
-                            errors && errors.meal ? errors.meal[0] : ''
-                          "
-                          @change="changeMealPlan(temp.meal)"
-                        ></v-select>
-                      </v-col> -->
-
                       <v-col md="8" sm="12" cols="12" dense>
                         <label class="col-form-label"> Meals </label>
-                        {{ temp.meal }}
                         <v-radio-group row dense>
                           <v-checkbox
                             v-model="temp.breakfast"
@@ -1255,6 +1352,7 @@ export default {
   data() {
     return {
       selectMeal: [],
+      wantNewDoc: false,
       row: null,
       calIn: {},
       calOut: {},
@@ -1319,7 +1417,9 @@ export default {
         no_of_baby: 0,
         breakfast: "",
         lunch: "",
-        dinner: ""
+        dinner: "",
+        tot_adult_food: 0,
+        tot_child_food: 0
       },
 
       check_in_menu: false,
@@ -1395,6 +1495,7 @@ export default {
         no_of_child: 0,
         no_of_baby: 0,
         address: "",
+        image: "",
         company_id: this.$auth.user.company.id,
         dob_menu: false,
         dob: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -1403,8 +1504,24 @@ export default {
       },
       id_card_type_id: 0,
       errors: [],
-      tempAdult: {},
-      tempChild: {}
+      tempAdult: {
+        tot_ab: 0,
+        tot_al: 0,
+        tot_ad: 0
+      },
+      tempChild: {
+        tot_cb: 0,
+        tot_cl: 0,
+        tot_cd: 0
+      },
+
+      imgPath: "",
+      image: "",
+
+      upload: {
+        name: ""
+      },
+      previewImage: null
     };
   },
   created() {
@@ -1413,13 +1530,47 @@ export default {
     this.preloader = false;
     this.get_room_types();
     this.get_id_cards();
-    this.get_id_cards();
     this.runAllFunctions();
     this.get_countries();
     this.get_agents();
     this.get_online();
+    // this.getImage();
+  },
+  computed: {
+    showImage() {
+      if (!this.customer.image && !this.previewImage) {
+        return "/no-image.PNG";
+      } else if (this.previewImage) {
+        return this.previewImage;
+      }
+
+      return this.customer.image;
+    }
   },
   methods: {
+    onpick_attachment() {
+      this.$refs.attachment_input.click();
+    },
+
+    attachment(e) {
+      this.customer.image = e.target.files[0] || "";
+
+      let input = this.$refs.attachment_input;
+      let file = input.files;
+      if (file && file[0]) {
+        let reader = new FileReader();
+        reader.onload = e => {
+          this.previewImage = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+        this.$emit("input", file[0]);
+      }
+    },
+
+    // getImage() {
+    //   this.imgPath = this.customer.image;
+    // },
+
     runAllFunctions() {
       this.getDays();
       this.subTotal();
@@ -1430,6 +1581,7 @@ export default {
 
       // this.convert_decimal(this.room.advance_price);
     },
+
     getDays() {
       let ci = new Date(this.temp.check_in);
       let co = new Date(this.temp.check_out);
@@ -1466,6 +1618,15 @@ export default {
       });
     },
 
+    preview(file) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", file);
+      document.body.appendChild(element);
+      element.click();
+      // document.body.removeChild(element);
+    },
+
     get_food_price_cal(person_type, person_qty) {
       if (this.foodPriceList.length == 0) {
         return;
@@ -1485,9 +1646,7 @@ export default {
     },
 
     meal_cal(meal_type) {
-      // console.log(this.person_type_arr);
-      // return;
-      let res = this.person_type_arr.find(e => {
+      this.person_type_arr.find(e => {
         if (e.type == "adult") {
           this.get_adult_cal(e);
         }
@@ -1516,11 +1675,11 @@ export default {
       }
 
       this.tempAdult = {
-        tot_ab: tax_tab + tab,
-        tot_al: tax_tal + tad,
-        tot_ad: tax_tad + tad
+        tot_ab: tax_tab + tab || 0,
+        tot_al: tax_tal + tal || 0,
+        tot_ad: tax_tad + tad || 0
       };
-      console.log(this.tempAdult);
+      // console.log(this.tempAdult);
     },
 
     get_child_cal(e) {
@@ -1539,11 +1698,10 @@ export default {
       }
 
       this.tempChild = {
-        tot_cb: tax_tcb + tcb,
-        tot_cl: tax_tcl + tcd,
-        tot_cd: tax_tcd + tcd
+        tot_cb: tax_tcb + tcb || 0,
+        tot_cl: tax_tcl + tcl || 0,
+        tot_cd: tax_tcd + tcd || 0
       };
-      console.log(this.tempChild);
     },
 
     get_amount_with_tax(amount) {
@@ -1730,8 +1888,8 @@ export default {
       if (!val) return "---";
       let res = val;
       let upper = res.toUpperCase();
-      let title = upper.replace(/[^A-Z]/g, " ");
-      return title;
+      // let title = upper.replace(/[^A-Z]/g, " ");
+      return upper;
     },
 
     changeMealPlan(mealType) {
@@ -1766,7 +1924,22 @@ export default {
       this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
 
-      this.temp.total = parseFloat(this.temp.total_with_tax);
+      let adult_f_tot = Object.values(this.tempAdult).reduce(
+        (a, b) => a + b,
+        0
+      );
+      let child_f_tot = Object.values(this.tempChild).reduce(
+        (a, b) => a + b,
+        0
+      );
+
+      this.temp.tot_adult_food = adult_f_tot;
+      this.temp.tot_child_food = child_f_tot;
+
+      this.temp.total =
+        parseFloat(this.temp.total_with_tax) +
+        parseFloat(adult_f_tot) +
+        parseFloat(child_f_tot);
 
       this.temp.grand_total =
         parseFloat(this.temp.days) * parseFloat(this.temp.total);
@@ -1777,8 +1950,16 @@ export default {
       this.temp.room_discount =
         this.temp.room_discount == "" ? 0 : this.temp.room_discount;
 
+      this.temp.meal = `${this.temp.breakfast || "---"} | ${this.temp.lunch ||
+        "---"} | ${this.temp.dinner || "---"}`;
+
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
+      delete this.temp.breakfast;
+      delete this.temp.lunch;
+      delete this.temp.dinner;
+
+      console.log(this.temp);
 
       this.selectedRooms.push(this.temp);
 
@@ -1849,6 +2030,17 @@ export default {
         no_of_baby: 0
       };
 
+      this.tempAdult = {
+        tot_ab: 0,
+        tot_al: 0,
+        tot_ad: 0
+      };
+      this.tempChild = {
+        tot_cb: 0,
+        tot_cl: 0,
+        tot_cd: 0
+      };
+
       return;
 
       let check_in = this.temp.check_in;
@@ -1903,6 +2095,7 @@ export default {
           this.checkLoader = false;
           // this.customer = {};
           this.customer.contact_no = contact_no;
+          this.customer.whatsapp = contact_no;
           alert("Customer not found");
           return;
         }
@@ -1911,7 +2104,8 @@ export default {
           ...data.data,
           customer_id: data.data.id
         };
-
+        // this.getImage();
+        console.log(data.data);
         this.customer.id_card_type_id = parseInt(this.customer.id_card_type_id);
         this.searchDialog = false;
         this.checkLoader = false;
@@ -2013,8 +2207,11 @@ export default {
     store_document(id) {
       let payload = new FormData();
       payload.append("document", this.room.document);
-      payload.append("image", this.room.image);
+      payload.append("image", this.customer.image);
       payload.append("booking_id", id);
+
+      console.log(payload);
+
       this.$axios
         .post("/store_document", payload)
         .then(({ data }) => {
