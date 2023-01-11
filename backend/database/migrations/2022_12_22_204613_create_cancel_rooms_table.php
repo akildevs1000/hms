@@ -32,6 +32,8 @@ return new class extends Migration
 
             $table->string('customer_id')->nullable();
             $table->string('room_discount')->nullable();
+            $table->decimal('tot_adult_food', 8, 2)->default(0);
+            $table->decimal('tot_child_food', 8, 2)->default(0);
             $table->string('after_discount')->nullable();
             $table->string('cgst')->nullable();
             $table->string('sgst')->nullable();
