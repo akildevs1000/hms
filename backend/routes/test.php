@@ -27,35 +27,7 @@ use App\Jobs\WhatsappJob;
 
 Route::post('/test', function (Request $request) {
 
-    $column =  [
-        'company_id',
-        'booking_id',
-        'room_id',
-        'room_no',
-        'room_type',
-        'price',
-        'bed_amount',
-        'meal',
-        'room_tax',
-        'total_with_tax',
-        'check_in',
-        'check_out',
-        'customer_id',
-        'room_discount',
-        'after_discount',
-        'cgst',
-        'sgst',
-        'total',
-        'days',
-        'grand_total',
-        'no_of_adult',
-        'no_of_child',
-        'no_of_baby',
-    ];
-
-    return (new BookedRoom)->getCustomAppends();
-
-    BookedRoom::select($column)->find(1)->makeHidden(['postings', 'booking']);
+    return 'hello world';
 
     $data = [
         "from" => "14157386102",
@@ -74,7 +46,7 @@ Route::post('/test', function (Request $request) {
     }
 });
 
-Route::post('/db_backup', function (Request $request) {
+Route::get('/db_backup', function (Request $request) {
 
     $data = [
         'file' => collect(glob(storage_path("app/ezhms/*.zip")))->last(),
