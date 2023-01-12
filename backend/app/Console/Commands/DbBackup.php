@@ -42,6 +42,6 @@ class DbBackup extends Command
             'body' => 'ezhms Database Backup',
         ];
 
-        Mail::to(env("ADMIN_MAIL_RECEIVERS"))->queue(new DbBackupMail($data));
+        Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new DbBackupMail($data));
     }
 }
