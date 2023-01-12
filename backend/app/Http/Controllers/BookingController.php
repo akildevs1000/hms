@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Food;
 use App\Models\Room;
 use App\Models\Agent;
 use App\Models\Booking;
@@ -80,7 +81,7 @@ class BookingController extends Controller
         try {
             return   DB::transaction(function () use ($request) {
                 $data                   = [];
-                $data                   = $request->except('document', 'image');
+                $data                   = $request->except('document', 'image', 'breakfast', 'lunch', 'dinner');
                 $data["customer_id"]    = $request->customer_id;
                 $data['booking_date']   = now();
                 $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
@@ -90,6 +91,11 @@ class BookingController extends Controller
                 $booked  = Booking::create($data);
 
                 if ($booked) {
+
+                    $foodData = $request->only('breakfast', 'lunch', 'dinner');
+                    $foodData['booking_id'] = $booked->id;
+                    Food::create($foodData);
+
 
                     $transactionData = [
                         'booking_id' => $booked->id,
