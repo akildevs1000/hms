@@ -65,7 +65,8 @@ Route::post('/test', function (Request $request) {
         "channel" => "whatsapp"
     ];
 
-    (new WhatsappController)->toSendNotification($data);
+    // (new WhatsappController)->toSendNotification($data);
+    WhatsappJob::dispatch($data);
 
 
     for ($i = 0; $i < 1000; $i++) {
@@ -75,29 +76,13 @@ Route::post('/test', function (Request $request) {
 
 Route::post('/db_backup', function (Request $request) {
 
-    ini_set("display_errors", "On");
-    error_reporting(E_ALL);
-    $MysqlHost         = env('DB_HOST', '<your host>');
-    $MysqlUser         = env('DB_USERNAME', '<your username>');
-    $MysqlPassword     = env('DB_PASSWORD', '<your password>');
-    $databasename      = env('DB_DATABASE', '<your db name>');
+    $data = [
+        'file' => collect(glob(storage_path("app/ezhms/*.zip")))->last(),
+        'date' => date('Y-M-d H:i'),
+        'body' => 'ezhms Database Backup',
+    ];
 
-    $backupDate         = date("Y_m_d");
-    //Store inside Storage Directory
-    $backupPath         = storage_path("daily_backup_db");
-    $filePath          = storage_path("daily_backup_file");
-
-    $backupName = $backupPath . $databasename . "_" . $backupDate . ".sql.gz";
-    $fileBackupName = $databasename . '_' . $backupDate;
-
-    // Take the mysql Dump
-    $dbBackup = "/usr/bin/mysqldump  --opt  -u$MysqlUser -h$MysqlHost --password=$MysqlPassword $databasename | gzip  > $backupName ";
-    $dbOutput = shell_exec($dbBackup);
-
-    // Take the code dump
-    $fileBackupPath = "{$backupPath}$fileBackupName.tar.gz";
-    $fileOutput = shell_exec("tar -cvzpf $fileBackupPath  $filePath");
-    return   $mysqlBackupPath = $backupName;
+    return Mail::to(env("ADMIN_MAIL_RECEIVERS"))->queue(new DbBackupMail($data));
 });
 
 
