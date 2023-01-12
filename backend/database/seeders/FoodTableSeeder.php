@@ -73,5 +73,35 @@ class FoodTableSeeder extends Seeder
 
 
         DB::table('food_prices')->insert($foodForKodai);
+
+
+        // ==========================
+
+        $foodForDemo = [
+            [
+                'type' => 'adult',
+                'breakfast' => '250',
+                'lunch' => '500',
+                'dinner' => '500',
+                'company_id' => 3,
+            ],
+            [
+                'type' => 'child',
+                'breakfast' => '150',
+                'lunch' => '300',
+                'dinner' => '300',
+                'company_id' => 3,
+            ],
+            [
+                'type' => 'baby',
+                'breakfast' => '0',
+                'lunch' => '0',
+                'dinner' => '0',
+                'company_id' => 3,
+            ],
+        ];
+
+
+        DB::table('food_prices')->insert($foodForDemo);
     }
 }
