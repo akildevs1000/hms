@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
         $schedule
             ->command('task:db_backup')
             ->dailyAt('3:00')
-            // ->everyMinute()
+            ->everyMinute()
             ->appendOutputTo("db_backup.log")
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
