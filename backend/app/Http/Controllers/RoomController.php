@@ -64,10 +64,10 @@ class RoomController extends Controller
         return DB::table('id_card_types')->get(['id', 'name']);
     }
 
-    public function roomList()
+    public function roomList(Request $request)
     {
         $arr  = [];
-        $data = Room::with('roomType')->get();
+        $data = Room::with('roomType')->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
             // $color =  $this->get_color($d->roomType->name);
             $arr[] = [

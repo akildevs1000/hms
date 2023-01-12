@@ -24,13 +24,6 @@ class MasterSeeder extends Seeder
                 'password' => Hash::make('secret'),
                 'is_master' => 1,
             ],
-            [
-                'name' => 'master',
-                'email' => 'master@ezhms.com',
-                'password' => Hash::make('secret'),
-                'is_master' => 1,
-            ],
-
         );
 
         //hyderspark thanjavur
@@ -98,10 +91,10 @@ class MasterSeeder extends Seeder
             'lon' => '2323'
         ]);
 
-        //demo account
+        //hyderspark kodai
         $userDemo =    User::create([
             'name' => 'ignore',
-            'email' => 'demo@demo.com',
+            'email' => 'demo@gcompany.com',
             'password' => Hash::make('Abc@123'),
             'is_master' => true,
             'role_id' => 1,

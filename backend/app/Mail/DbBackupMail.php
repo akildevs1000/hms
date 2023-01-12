@@ -19,6 +19,7 @@ class DbBackupMail extends Mailable implements ShouldQueue
      */
     public function __construct($data)
     {
+
         $this->data = $data;
     }
 

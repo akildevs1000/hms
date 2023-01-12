@@ -37,9 +37,9 @@ class DbBackup extends Command
         echo exec("php artisan backup:run --only-db");
 
         $data = [
-            'file' => collect(glob(storage_path("app/ideahrms/*.zip")))->last(),
-            'date' => date('Y-M-d'),
-            'body' => 'ideahrms Database Backup',
+            'file' => collect(glob(storage_path("app/ezhms/*.zip")))->last(),
+            'date' => date('Y-M-d H:i'),
+            'body' => 'ezhms Database Backup',
         ];
 
         Mail::to(env("ADMIN_MAIL_RECEIVERS"))->queue(new DbBackupMail($data));

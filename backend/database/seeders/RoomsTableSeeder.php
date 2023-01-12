@@ -825,5 +825,404 @@ class RoomsTableSeeder extends Seeder
 
         DB::table('room_types')->insert($typesForKodai);
         DB::table('rooms')->insert($roomsForKodai);
+
+        // demo
+
+        $typesForDemo = [
+            // room type for thanjavur
+            [
+                'name' => 'queen',
+                'price' => '2800',
+                'adult' => '2',
+                'child' => '2',
+                'baby' => '1',
+                'max_person' => '5',
+                'room_only_price'   => '2800',
+                'Break_fast_price' => '2800',
+                'Break_fast_with_dinner_price' => '2800',
+                'Break_fast_with_lunch_price'  => '2800',
+                'lunch_with_dinner_price' => '2800',
+                'full_board_price' => '2800',
+                'company_id' => 3
+            ],
+            [
+                'name' => 'castle',
+                'price' => '3800',
+                'adult' => '3',
+                'child' => '0',
+                'baby' => '1',
+                'max_person' => '4',
+                'room_only_price'   => '3800',
+                'Break_fast_price' => '3800',
+                'Break_fast_with_dinner_price' => '3800',
+                'Break_fast_with_lunch_price'  => '3800',
+                'lunch_with_dinner_price' => '3800',
+                'full_board_price' => '3800',
+                'company_id' => 3
+            ],
+            [
+                'name' => 'king',
+                'price' => '3200',
+                'adult' => '2',
+                'child' => '1',
+                'baby' => '1',
+                'max_person' => '4',
+                'room_only_price'   => '3200',
+                'Break_fast_price' => '3200',
+                'Break_fast_with_dinner_price' => '3200',
+                'Break_fast_with_lunch_price'  => '3200',
+                'lunch_with_dinner_price' => '3200',
+                'full_board_price' => '3200',
+                'company_id' => 3
+            ],
+            [
+                'name' => 'palace',
+                'price' => '5000',
+                'adult' => '4',
+                'child' => '2',
+                'baby' => '2',
+                'max_person' => '8',
+                'room_only_price'   => '5000',
+                'Break_fast_price' => '5000',
+                'Break_fast_with_dinner_price' => '5000',
+                'Break_fast_with_lunch_price'  => '5000',
+                'lunch_with_dinner_price' => '5000',
+                'full_board_price' => '5000',
+                'company_id' => 3
+            ],
+            [
+                'name' => 'honey',
+                'price' => '4500',
+                'adult' => '2',
+                'child' => '0',
+                'baby' => '0',
+                'max_person' => '2',
+                'room_only_price'   => '4500',
+                'Break_fast_price' => '4500',
+                'Break_fast_with_dinner_price' => '4500',
+                'Break_fast_with_lunch_price'  => '4500',
+                'lunch_with_dinner_price' => '4500',
+                'full_board_price' => '4500',
+                'company_id' => 3
+            ],
+            [
+                'name' => 'premium',
+                'price' => '3000',
+                'adult' => '2',
+                'child' => '2',
+                'baby' => '1',
+                'max_person' => '5',
+                'room_only_price'   => '3000',
+                'Break_fast_price' => '3000',
+                'Break_fast_with_dinner_price' => '3000',
+                'Break_fast_with_lunch_price'  => '3000',
+                'lunch_with_dinner_price' => '3000',
+                'full_board_price' => '3000',
+                'company_id' => 3
+            ],
+            [
+                'name' => 'grand',
+                'price' => '4000',
+                'adult' => '3',
+                'child' => '0',
+                'baby' => '0',
+                'max_person' => '3',
+                'room_only_price'   => '4000',
+                'Break_fast_price' => '4000',
+                'Break_fast_with_dinner_price' => '4000',
+                'Break_fast_with_lunch_price'  => '4000',
+                'lunch_with_dinner_price' => '4000',
+                'full_board_price' => '4000',
+                'company_id' => 3
+            ],
+
+
+        ];
+
+        $roomsForDemo = [
+            // room for thanjavur
+            // queen
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '102',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '104',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '105',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '107',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '108',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '109',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '202',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '204',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '206',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '207',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '209',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '210',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            [
+                'room_type_id'     => '6',
+                'room_no'          => '211',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            // castle
+
+            [
+                'room_type_id'     => '7',
+                'room_no'          => '101',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '7',
+                'room_no'          => '103',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '7',
+                'room_no'          => '203',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '7',
+                'room_no'          => '205',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+
+            //king
+            [
+                'room_type_id'     => '8',
+                'room_no'          => '303',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '8',
+                'room_no'          => '305',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '8',
+                'room_no'          => '308',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '8',
+                'room_no'          => '309',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '8',
+                'room_no'          => '310',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+
+            // palace
+            [
+                'room_type_id'     => '9',
+                'room_no'          => '106',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '9',
+                'room_no'          => '208',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            //honey
+            [
+                'room_type_id'     => '10',
+                'room_no'          => '201',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '10',
+                'room_no'          => '301',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '10',
+                'room_no'          => '311',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '10',
+                'room_no'          => '312',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            //premium
+            [
+                'room_type_id'     => '11',
+                'room_no'          => '304',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '11',
+                'room_no'          => '306',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+
+            //grand
+            [
+                'room_type_id'     => '12',
+                'room_no'          => '302',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+            [
+                'room_type_id'     => '12',
+                'room_no'          => '307',
+                'check_in_status'  => '0',
+                'check_out_status' => '0',
+                'deleteStatus'     => '0',
+                'company_id' => 3
+            ],
+        ];
+
+        DB::table('room_types')->insert($typesForDemo);
+        DB::table('rooms')->insert($roomsForDemo);
     }
 }
