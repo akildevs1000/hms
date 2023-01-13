@@ -48,7 +48,7 @@
                           {{ customer.contact_no || "---" }}
                         </li>
                         <li>
-                          <span class="label">Phone:</span>
+                          <span class="label">Whatsapp:</span>
                           {{ customer.whatsapp || "---" }}
                         </li>
                         <li>
@@ -76,16 +76,28 @@
                         </li>
 
                         <li>
-                          <span class="label">Adults:</span>
-                          {{ customer.no_of_adult || "---" }}
+                          <span class="label">Date of Birth:</span>
+                          {{ customer.dob || "---" }}
                         </li>
-                        <li>
-                          <span class="label">Child:</span>
-                          {{ customer.no_of_child || "---" }}
-                        </li>
-                        <li>
-                          <span class="label">Babies:</span>
-                          {{ customer.no_of_baby || "---" }}
+
+                        <li v-if="customer.document">
+                          <span class="label">
+                            {{
+                              (customer &&
+                                customer.id_card_type &&
+                                customer.id_card_type.name) ||
+                                "---"
+                            }}
+                          </span>
+                          <v-btn
+                            x-small
+                            dark
+                            class="primary pt-4 pb-4"
+                            @click="preview(customer.document)"
+                          >
+                            Preview
+                            <v-icon right dark>mdi-file</v-icon>
+                          </v-btn>
                         </li>
                       </ul>
                     </div>
@@ -229,7 +241,7 @@
                       {{ item.check_out || "---" }}
                     </td>
                     <td data-title="Budget" data-type="currency">
-                      {{ item.total_price || "---" }}.00
+                      {{ item.total_price || "---" }}
                     </td>
                   </tr>
                 </tbody>
@@ -259,7 +271,7 @@
                           outlined
                         ></v-select>
                       </v-col>
-                      <v-col md="4" cols="12" sm="12">
+                      <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label"
                           >First Name <span class="red--text">*</span></label
                         >
@@ -278,7 +290,7 @@
                           "
                         ></v-text-field>
                       </v-col>
-                      <v-col md="4" cols="12" sm="12">
+                      <v-col md="3" cols="12" sm="12">
                         <label class="col-form-label">Last Name</label>
                         <v-text-field
                           dense
@@ -287,6 +299,33 @@
                           type="text"
                           v-model="customer.last_name"
                         ></v-text-field>
+                      </v-col>
+                      <v-col md="4" cols="12" sm="12">
+                        <label class="col-form-label">DOB</label>
+                        <v-menu
+                          v-model="customer.dob_menu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          transition="scale-transition"
+                          offset-y
+                          min-width="auto"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-model="customer.dob"
+                              readonly
+                              v-on="on"
+                              v-bind="attrs"
+                              :hide-details="true"
+                              dense
+                              outlined
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="customer.dob"
+                            @input="customer.dob_menu = false"
+                          ></v-date-picker>
+                        </v-menu>
                       </v-col>
                       <v-col md="4" cols="12" sm="12">
                         <label class="col-form-label"
@@ -356,6 +395,7 @@
                           outlined
                         ></v-select>
                       </v-col>
+                      <!--
                       <v-col md="3" sm="12" cols="12" dense>
                         <label class="col-form-label"
                           >Adult <span class="red--text">*</span>
@@ -417,7 +457,7 @@
                             >+</span
                           >
                         </div>
-                      </v-col>
+                      </v-col> -->
 
                       <v-col md="3" sm="12" cols="12" dense>
                         <label class="col-form-label"
@@ -469,6 +509,73 @@
                           v-model="customer.car_no"
                         ></v-text-field>
                       </v-col>
+
+                      <v-col md="6" cols="12" sm="12">
+                        <div>
+                          <label class="col-form-label">Document</label>
+                          <v-file-input
+                            v-model="document"
+                            color="primary"
+                            counter
+                            placeholder="Select your files"
+                            prepend-icon="mdi-paperclip"
+                            outlined
+                            :show-size="1000"
+                            style="margin-top:150px"
+                          >
+                            <template v-slot:selection="{ index, text }">
+                              <v-chip
+                                v-if="index < 2"
+                                color="primary"
+                                dark
+                                label
+                                small
+                              >
+                                {{ text }}
+                              </v-chip>
+                              <span
+                                v-else-if="index === 2"
+                                class="text-overline grey--text text--darken-3 mx-2"
+                              >
+                                +{{ room.document.length - 2 }} File(s)
+                              </span>
+                            </template>
+                          </v-file-input>
+                        </div>
+                      </v-col>
+                      <v-col cols="6">
+                        <label class="col-form-label">Photo</label>
+                        <div class="pa-5" style="background-color:#E5E5E5">
+                          <v-img
+                            @click="onpick_attachment"
+                            style="width: 150px;height: 150px;margin: 0 auto;border-radius: 50%;"
+                            :src="showImage"
+                          ></v-img>
+                        </div>
+                        <v-btn
+                          elevation="0"
+                          style="width: 100%"
+                          @click="onpick_attachment"
+                          >{{
+                            !upload.name ? "Upload Image" : "Image Uploaded"
+                          }}
+                          <v-icon right dark>mdi-cloud-upload</v-icon>
+                        </v-btn>
+                        <input
+                          required
+                          type="file"
+                          @change="attachment"
+                          style="display: none"
+                          accept="image/*"
+                          ref="attachment_input"
+                        />
+                        <span
+                          v-if="errors && errors.image"
+                          class="text-danger mt-2"
+                          >{{ errors.image[0] }}</span
+                        >
+                      </v-col>
+
                       <v-col cols="12">
                         <label class="col-form-label">Address </label>
                         <v-textarea
@@ -553,6 +660,7 @@ export default {
     dialog: false,
     ids: [],
     loading: false,
+    document: false,
     response: "",
     customer: [],
     payments: [],
@@ -584,18 +692,43 @@ export default {
       no_of_child: "",
       no_of_baby: "",
       address: "",
-      company_id: ""
+      company_id: "",
+
+      dob_menu: false,
+      dob: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10)
     },
+
     titleItems: [
       { id: 1, name: "Mr" },
       { id: 2, name: "Mrs" },
       { id: 3, name: "Miss" },
       { id: 4, name: "Ms" },
       { id: 5, name: "Dr" }
-    ]
+    ],
+
+    imgPath: "",
+    image: "",
+
+    upload: {
+      name: ""
+    }
   }),
 
-  computed: {},
+  previewImage: null,
+
+  computed: {
+    showImage() {
+      if (!this.customer.image && !this.previewImage) {
+        return "/no-image.PNG";
+      } else if (this.previewImage) {
+        return this.previewImage;
+      }
+
+      return this.customer.image;
+    }
+  },
   created() {
     this.loading = true;
     this.id_card_type_id = this.customer.id_card_type_id;
@@ -606,16 +739,45 @@ export default {
   mounted() {},
 
   methods: {
+    onpick_attachment() {
+      this.$refs.attachment_input.click();
+    },
+
+    attachment(e) {
+      this.customer.image = e.target.files[0] || "";
+
+      let input = this.$refs.attachment_input;
+      let file = input.files;
+      if (file && file[0]) {
+        let reader = new FileReader();
+        reader.onload = e => {
+          this.previewImage = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+        this.$emit("input", file[0]);
+      }
+    },
+
     getDate(dataTime) {
       return dataTime;
       // return new Date(dataTime.toDateString());
     },
+
     can(per) {
       let u = this.$auth.user;
       return (
         (u && u.permissions.some(e => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    preview(file) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", file);
+      document.body.appendChild(element);
+      element.click();
+      // document.body.removeChild(element);
     },
 
     getData() {
@@ -634,6 +796,7 @@ export default {
     store_customer() {
       let payload = {
         ...this.customer,
+        document: document,
         company_id: this.$auth.user.company.id,
         id_card_type_id: this.id_card_type_id
       };
@@ -649,6 +812,7 @@ export default {
             this.errors = data.errors;
           } else {
             this.errors = [];
+            this.getData();
             this.alert("Success!", "Successfully customer updated", "success");
           }
         })

@@ -63,13 +63,17 @@
             </span>
           </td>
 
-          <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
-          <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
-          <td>{{ item.total_price }}</td>
-          <td>{{ item.advance_price }}</td>
-          <td>{{ item.remaining_price }}</td>
+          <td style="width:150px">
+            {{ item.check_in_date }}
+          </td>
+          <td style="width:150px">
+            {{ item.check_out_date }}
+          </td>
+          <td>{{ item.total_price || 0 }}</td>
+          <!-- <td>{{ item.advance_price }}</td> -->
+          <!-- <td>{{ item.remaining_price }}</td> -->
 
-          <td>{{ item.source }}</td>
+          <td>{{ item.source || "---" }}</td>
           <td>{{ convert_date_format(item.booking_date) }}</td>
         </tr>
       </table>
@@ -118,8 +122,8 @@ export default {
       { text: "Arrival  Date" },
       { text: "Departure  Date" },
       { text: "Total" },
-      { text: "Advance" },
-      { text: "Remaining" },
+      // { text: "Advance" },
+      // { text: "Remaining" },
       { text: "Source" },
       { text: "Booking Date" }
     ],

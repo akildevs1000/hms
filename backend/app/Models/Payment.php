@@ -30,4 +30,14 @@ class Payment extends Model
     {
         return date('H:i', strtotime($this->created_at));
     }
+
+    /**
+     * Get the booking that owns the Payment
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
 }

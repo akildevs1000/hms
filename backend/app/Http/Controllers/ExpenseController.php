@@ -14,6 +14,7 @@ class ExpenseController extends Controller
 {
     protected $model_name = 'Expense';
     protected $model;
+    protected $name;
 
     public function __construct()
     {
@@ -108,6 +109,9 @@ class ExpenseController extends Controller
 
         $income = Payment::query()
             ->where('company_id', $request->company_id)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            })
             ->orderByDesc("id");
 
         if ($request->filled('from_date') && $request->filled('to_date')) {

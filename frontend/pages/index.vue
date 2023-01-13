@@ -1347,6 +1347,7 @@ export default {
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
+        console.log(this.checkData);
         this.bookingId = data.id;
         this.full_payment = "";
         this.bookingStatus = data.booking_status;
@@ -1472,13 +1473,13 @@ export default {
         this.rooms = data;
         // this.onlyBreakfast = data.fooForCustomers.onlyBreakfast;
         this.onlyBreakfast = {
-          ...data.fooForCustomers.onlyBreakfast
+          ...data.fooForCustomers.breakfast
         };
         this.onlyLunch = {
-          ...data.fooForCustomers.onlyLunch
+          ...data.fooForCustomers.lunch
         };
         this.onlyDinner = {
-          ...data.fooForCustomers.onlyDinner
+          ...data.fooForCustomers.dinner
         };
         console.log(this.onlyBreakfast);
         this.dirtyRooms = data.dirtyRooms;

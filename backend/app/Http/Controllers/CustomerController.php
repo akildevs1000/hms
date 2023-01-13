@@ -45,7 +45,6 @@ class CustomerController extends Controller
     public function update(UpdateRequest $request)
     {
         try {
-            // return $request->validated();
             $updated = Customer::find($request->id)->update($request->validated());
             if ($updated) {
                 return $this->response('Customer successfully updated.', null, true);
@@ -133,8 +132,7 @@ class CustomerController extends Controller
 
     public function getCustomerHistory($id)
     {
-        // $customer = Customer::with(['bookings' => '[cityLedgerPayments,withOutCityLedgerPayments]'], 'idCardType')->find($id);
-        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments']], 'idCardType')->find($id);
+        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType'])->find($id);
         $res = $customer->bookings->toArray();
         $bookingIds = array_column($res, 'id');
         $revenue = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');

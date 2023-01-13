@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\IdCardType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ class Customer extends Model
 
     protected $appends = [
         'full_name',
+        'document_name',
     ];
 
 
@@ -58,5 +60,13 @@ class Customer extends Model
             return null;
         }
         return asset('storage/documents/customer/' . $value);
+    }
+
+    public function getDocumentNameAttribute()
+    {
+        if ($this->attributes['document'] ?? false) {
+            return $this->attributes['document'];
+        }
+        return null;
     }
 }

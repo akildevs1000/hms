@@ -17,4 +17,14 @@ class Food extends Model
         'lunch' => 'array',
         'dinner' => 'array',
     ];
+
+    /**
+     * Get the booking that owns the Food
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
 }

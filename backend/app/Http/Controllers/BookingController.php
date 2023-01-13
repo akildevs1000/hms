@@ -81,7 +81,7 @@ class BookingController extends Controller
         try {
             return   DB::transaction(function () use ($request) {
                 $data                   = [];
-                $data                   = $request->except('document', 'image', 'breakfast', 'lunch', 'dinner');
+                $data                   = $request->except('document', 'image', 'qty_breakfast', 'qty_lunch', 'qty_dinner');
                 $data["customer_id"]    = $request->customer_id;
                 $data['booking_date']   = now();
                 $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
@@ -92,9 +92,12 @@ class BookingController extends Controller
 
                 if ($booked) {
 
-                    $foodData = $request->only('breakfast', 'lunch', 'dinner');
-                    $foodData['booking_id'] = $booked->id;
-                    Food::create($foodData);
+                    Food::create([
+                        'booking_id' => $booked->id,
+                        'breakfast' => $request->json('qty_breakfast'),
+                        'lunch' => $request->json('qty_lunch'),
+                        'dinner' => $request->json('qty_dinner'),
+                    ]);
 
 
                     $transactionData = [
@@ -118,6 +121,7 @@ class BookingController extends Controller
                     if ((int)$booked->advance_price == 0) {
 
                         if (($booked->paid_by && $booked->paid_by == 2) || ($booked->type != 'Walking' && $booked->type != 'Complimentary')) {
+
                             $agentsData = [
                                 'booking_id'   => $booked->id,
                                 'customer_id'  => $booked->customer_id ?? '',
@@ -233,18 +237,16 @@ class BookingController extends Controller
         $booking_id = $request->booking_id;
         $booking    = Booking::find($booking_id);
         $customer    = Customer::find($booking->customer_id);
-
         if ($request->hasFile('document')) {
             $file = $request->file('document');
             $ext = $file->getClientOriginalExtension();
             $fileName = time() . '.' . $ext;
-
             $path = $file->storeAs('public/documents/booking', $fileName);
             Storage::copy($path, 'public/documents/customer/' . $fileName);
-
             $booking->document = $fileName;
             $customer->document = $fileName;
-            $booking->save();
+        } else {
+            $booking->document = $customer->document_name ?? null;
         }
 
         if ($request->hasFile('image')) {
@@ -255,6 +257,7 @@ class BookingController extends Controller
             $path = $file->storeAs('public/documents/customer/photo', $fileName);
             $customer->image = $fileName;
         }
+        $booking->save();
         $customer->save();
         return $this->response('Room Booked Successfully.', null, true);
     }
@@ -470,6 +473,7 @@ class BookingController extends Controller
             throw $th;
         }
     }
+
     public function check_out_room1(Request $request)
     {
         $booking_id = $request->booking_id;
@@ -820,17 +824,10 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-
         return BookedRoom::whereHas('booking', function ($q) use ($request) {
             $q->where('booking_status', '!=', 0);
             $q->where('company_id', $request->company_id);
         })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out']);
-
-        // return Booking::where('company_id', $request->company_id)
-        //     ->where('booking_status', '!=', 0)
-        //     ->with('bookedRooms')
-        //     ->get(['id', 'room_id', 'customer_id', 'check_in as start', 'check_out as end']);
-
     }
 
     public function events_list1(Request $request)
@@ -865,11 +862,9 @@ class BookingController extends Controller
                 $bookedRoom->cancel_by = $request->cancel_by;
 
                 $arr = $bookedRoom->toArray();
-                // return getType($arr);
                 $cancel = CancelRoom::create($arr);
-                // return $model->booking_id;
                 if ($cancel) {
-                    $numberOfRooms == 1 ? Booking::where('id', $model->booking_id)->update(['booking_status' => 0]) : null;
+                    $numberOfRooms == 1 ? Booking::where('id', $model->booking_id)->update(['booking_status' => -1]) : null;
                     $model->delete();
                 }
             }
@@ -990,9 +985,10 @@ class BookingController extends Controller
         return $model
             ->with([
                 'bookedRooms:booking_id,id,room_no,room_type',
-                'customer:id,first_name,last_name',
+                'customer:id,first_name,last_name,document',
             ])
             ->where('company_id', $request->company_id)
+            ->where('booking_status', '!=', -1)
             // ->where('booking_status', '!=', 0)
             ->paginate($request->per_page ?? 20);
     }
@@ -1004,13 +1000,14 @@ class BookingController extends Controller
         $model
             ->with([
                 'bookedRooms:booking_id,id,room_no,room_type',
-                'customer:id,first_name,last_name',
+                'customer:id,first_name,last_name,document',
             ]);
 
         $model->where('company_id', $request->company_id);
 
         if ($request->filled('status') && $request->status == 1) {
             $model->where('booking_status', $request->status);
+            $model->WhereDate('check_in',  $request->date);
         } else if ($request->filled('status') && $request->status == 2) {
             $model->where('booking_status', $request->status);
             $model->whereDate('check_in', '<=',  $request->date);
@@ -1020,6 +1017,7 @@ class BookingController extends Controller
         }
 
         $model->where('booking_status', '!=', 0);
+        $model->where('booking_status', '<=', 2);
         return   $model->paginate($request->per_page ?? 20);
     }
 

@@ -379,7 +379,7 @@
               </v-col>
 
               <!-- <v-col md="2">
-                <v-btn color="success" @click="store_document(4)">text</v-btn>
+                <v-btn color="success" @click="store_document(9)">text</v-btn>
               </v-col> -->
 
               <!-- <v-col md="12" cols="12" sm="12">
@@ -1096,6 +1096,15 @@
                             <td class="food-table">{{ tempChild.tot_cd }}</td>
                           </tr>
                         </table>
+
+                        <!-- Breakfast
+                        {{ breakfast }} <br />
+
+                        Lunch
+                        {{ lunch }}<br />
+
+                        Dinner
+                        {{ dinner }} -->
                       </v-col>
                       <v-col md="2" sm="12" cols="12" dense>
                         <label class="col-form-label"> Discount </label>
@@ -1521,7 +1530,26 @@ export default {
       upload: {
         name: ""
       },
-      previewImage: null
+
+      previewImage: null,
+
+      breakfast: {
+        adult: 0,
+        child: 0,
+        baby: 0
+      },
+
+      lunch: {
+        adult: 0,
+        child: 0,
+        baby: 0
+      },
+
+      dinner: {
+        adult: 0,
+        child: 0,
+        baby: 0
+      }
     };
   },
   created() {
@@ -1566,10 +1594,6 @@ export default {
         this.$emit("input", file[0]);
       }
     },
-
-    // getImage() {
-    //   this.imgPath = this.customer.image;
-    // },
 
     runAllFunctions() {
       this.getDays();
@@ -1646,6 +1670,8 @@ export default {
     },
 
     meal_cal(meal_type) {
+      // console.log(this.person_type_arr);
+
       this.person_type_arr.find(e => {
         if (e.type == "adult") {
           this.get_adult_cal(e);
@@ -1653,9 +1679,9 @@ export default {
         if (e.type == "child") {
           this.get_child_cal(e);
         }
-        // if (e.type == "baby") {
-        //   this.get_baby_cal(e);
-        // }
+        if (e.type == "baby") {
+          this.get_baby_cal(e);
+        }
       });
     },
 
@@ -1663,15 +1689,24 @@ export default {
       let tab, tax_tab, tal, tax_tal, tad, tax_tad;
       if (this.temp.breakfast) {
         tab = parseFloat(e.breakfast) * parseFloat(e.qty);
+        this.breakfast.adult = e.qty;
         tax_tab = this.get_amount_with_tax(tab);
+      } else {
+        this.breakfast.adult = 0;
       }
       if (this.temp.lunch) {
         tal = parseFloat(e.lunch) * parseFloat(e.qty);
         tax_tal = this.get_amount_with_tax(tal);
+        this.lunch.adult = e.qty;
+      } else {
+        this.lunch.adult = 0;
       }
       if (this.temp.dinner) {
         tad = parseFloat(e.dinner) * parseFloat(e.qty);
         tax_tad = this.get_amount_with_tax(tad);
+        this.dinner.adult = e.qty;
+      } else {
+        this.dinner.adult = 0;
       }
 
       this.tempAdult = {
@@ -1687,14 +1722,25 @@ export default {
       if (this.temp.breakfast) {
         tcb = parseFloat(e.breakfast) * parseFloat(e.qty);
         tax_tcb = this.get_amount_with_tax(tcb);
+        this.breakfast.child = e.qty;
+      } else {
+        this.breakfast.child = 0;
       }
+
       if (this.temp.lunch) {
         tcl = parseFloat(e.lunch) * parseFloat(e.qty);
         tax_tcl = this.get_amount_with_tax(tcl);
+        this.lunch.child = e.qty;
+      } else {
+        this.lunch.child = 0;
       }
+
       if (this.temp.dinner) {
         tcd = parseFloat(e.dinner) * parseFloat(e.qty);
         tax_tcd = this.get_amount_with_tax(tcd);
+        this.dinner.child = e.qty;
+      } else {
+        this.dinner.child = 0;
       }
 
       this.tempChild = {
@@ -1702,6 +1748,26 @@ export default {
         tot_cl: tax_tcl + tcl || 0,
         tot_cd: tax_tcd + tcd || 0
       };
+    },
+
+    get_baby_cal(e) {
+      if (this.temp.breakfast) {
+        this.breakfast.baby = e.qty;
+      } else {
+        this.breakfast.baby = 0;
+      }
+
+      if (this.temp.lunch) {
+        this.lunch.baby = e.qty;
+      } else {
+        this.lunch.baby = 0;
+      }
+
+      if (this.temp.dinner) {
+        this.dinner.baby = e.qty;
+      } else {
+        this.dinner.baby = 0;
+      }
     },
 
     get_amount_with_tax(amount) {
@@ -1958,9 +2024,6 @@ export default {
       delete this.temp.breakfast;
       delete this.temp.lunch;
       delete this.temp.dinner;
-
-      console.log(this.temp);
-
       this.selectedRooms.push(this.temp);
 
       this.get_total_amounts();
@@ -2148,6 +2211,7 @@ export default {
         ...this.room,
         ...this.customer
       };
+
       this.$axios
         .post("/booking_validate", payload)
         .then(({ data }) => {
@@ -2197,8 +2261,14 @@ export default {
       let payload = {
         ...this.room,
         customer_id: id,
-        type: this.customer.customer_type
+        customer_type: this.customer.customer_type,
+        qty_breakfast: this.breakfast,
+        qty_lunch: this.lunch,
+        qty_dinner: this.dinner
       };
+      console.log(payload);
+      // this.subLoad = false;
+      // return;
       this.$axios
         .post("/booking1", payload)
         .then(({ data }) => {
@@ -2221,7 +2291,6 @@ export default {
       payload.append("booking_id", id);
 
       console.log(payload);
-
       this.$axios
         .post("/store_document", payload)
         .then(({ data }) => {

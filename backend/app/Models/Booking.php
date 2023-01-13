@@ -149,6 +149,8 @@ class Booking extends Model
                     fn ($query) =>
                     $query->Where('first_name', 'Like', '%' . $search . '%')
                         ->orWhere('last_name', 'Like', '%' . $search . '%')
+                        ->orWhere('whatsapp', 'Like', '%' . $search . '%')
+                        ->orWhere('contact_no', 'Like', '%' . $search . '%')
                 )
         ));
     }

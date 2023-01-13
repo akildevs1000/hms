@@ -42,6 +42,7 @@ class AgentsController extends Controller
         $model = Booking::query();
         $model->where('company_id', $request->company_id);
         $model->where('balance', '>', 0);
+        $model->where('booking_status', '!=', -1);
         $model->with('customer');
         $model->where(function ($q) {
             $q->where('source', 'walking');

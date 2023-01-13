@@ -62,6 +62,12 @@
                   {{ (customer && customer.car_no) || "---" }}
                 </td>
               </tr>
+              <tr>
+                <th class="no-bg">Date or Birth</th>
+                <td class="no-bg">
+                  {{ (customer && customer.dob) || "---" }}
+                </td>
+              </tr>
             </tbody>
           </table>
           <br />
@@ -127,6 +133,20 @@
               <v-col cols="8">{{
                 (booking && booking.request) || "---"
               }}</v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="3"><b>Document</b></v-col>
+              <v-col cols="8">
+                <v-btn
+                  small
+                  dark
+                  class="primary pt-4 pb-4"
+                  @click="preview(booking && booking.document)"
+                >
+                  Preview
+                  <v-icon right dark>mdi-file</v-icon>
+                </v-btn>
+              </v-col>
             </v-row>
           </div>
           <br /><br />
@@ -203,6 +223,7 @@
               >
                 <td>{{ item.room_no || "---" }}</td>
                 <td>(Posting) {{ postingItem.item || "---" }}</td>
+                <td class="text-right"></td>
                 <td class="text-right"></td>
                 <td class="text-right"></td>
                 <td class="text-right"></td>
@@ -346,6 +367,14 @@ export default {
         (u && u.permissions.some(e => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+    preview(file) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", file);
+      document.body.appendChild(element);
+      element.click();
+      // document.body.removeChild(element);
     },
 
     capsTitle(val) {
