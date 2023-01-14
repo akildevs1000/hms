@@ -34,6 +34,10 @@ class ExpenseController extends Controller
             $model->whereDate('created_at', '<=', $to);
         }
 
+        if ($request->is_account && $request->has('is_account') && $request->filled('is_account')) {
+            return  $model->get();
+        }
+
         return  $model->paginate($request->per_page ?? 20);
     }
 

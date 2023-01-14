@@ -195,7 +195,10 @@
 
               <td v-for="i in 7" :key="i" class="text-right">
                 <span
-                  v-if="(item && item.payment_mode.name) == 'Cash' && i == 1"
+                  v-if="
+                    (item && item.payment_mode && item.payment_mode.name) ==
+                      'Cash' && i == 1
+                  "
                 >
                   {{ item.amount }}
                 </span>
@@ -453,7 +456,8 @@ export default {
           company_id: this.$auth.user.company.id,
 
           from_date: this.from_date,
-          to_date: this.to_date
+          to_date: this.to_date,
+          is_account: true
         }
       };
 
