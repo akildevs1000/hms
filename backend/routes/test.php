@@ -1,9 +1,12 @@
 <?php
 
 use Carbon\Carbon;
+use App\Models\Food;
 use App\Models\User;
+use App\Models\Customer;
 use App\Models\Employee;
 use Carbon\CarbonPeriod;
+use App\Jobs\WhatsappJob;
 use App\Models\OrderRoom;
 use App\Mail\DbBackupMail;
 use App\Models\Attendance;
@@ -19,27 +22,39 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\TestController;
 use App\Notifications\WhatsappNotification;
 use App\Http\Controllers\WhatsappController;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\AttendanceController;
-use App\Jobs\WhatsappJob;
+
+
+
+Route::post('store_test', [TestController::class, 'store']);
 
 Route::post('/test', function (Request $request) {
 
-    return 'hello world';
+    $Customer = Customer::select("id", "first_name")
+        ->addSelect("last_name")
+        // ->addSelect(DB::raw('first_name as full_name'))
+        ->take(10)
+        ->get();
+
+    return $Customer;
+
 
     $data = [
         "from" => "14157386102",
-        "to" => "971502848071",
+        "to" => "971554501483",
         "message_type" => "text",
         "text" => "This is a WhatsApp Message sent from the EZHMS",
         "channel" => "whatsapp"
     ];
 
-    // (new WhatsappController)->toSendNotification($data);
+    (new WhatsappController)->toSendNotification($data);
+    return 'done';
     WhatsappJob::dispatch($data);
-
+    return;
 
     for ($i = 0; $i < 1000; $i++) {
         WhatsappJob::dispatch($data);
@@ -48,13 +63,21 @@ Route::post('/test', function (Request $request) {
 
 Route::get('/db_backup', function (Request $request) {
 
+    // $data = [
+    //     'file' => collect(glob(storage_path("app/ezhms/*.zip")))->last(),
+    //     'date' => date('Y-M-d H:i'),
+    //     'body' => 'ezhms Database Backup',
+    // ];
+
+    // return Mail::to(env("ADMIN_MAIL_RECEIVERS"))->queue(new DbBackupMail($data));
+
     $data = [
         'file' => collect(glob(storage_path("app/ezhms/*.zip")))->last(),
         'date' => date('Y-M-d H:i'),
         'body' => 'ezhms Database Backup',
     ];
 
-    return Mail::to(env("ADMIN_MAIL_RECEIVERS"))->queue(new DbBackupMail($data));
+    Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new DbBackupMail($data));
 });
 
 

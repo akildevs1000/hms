@@ -2,243 +2,271 @@
 
 namespace App\Http\Controllers;
 
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\App;
+use Carbon\Carbon;
+use App\Models\Food;
+use App\Models\Room;
+use App\Models\Agent;
+use App\Models\Booking;
+use App\Models\Payment;
+use App\Models\Customer;
+use Carbon\CarbonPeriod;
+use App\Jobs\WhatsappJob;
+use App\Models\OrderRoom;
+use App\Models\BookedRoom;
+use App\Models\CancelRoom;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Booking\StoreRequest;
+use App\Http\Requests\Booking\BookingRequest;
+use Illuminate\Support\Facades\Log as Logger;
 
 
 
 class TestController extends Controller
 {
-    public function index()
+
+    public function store(Request $request)
     {
+
+        DB::transaction(function ()  use ($request) {
+            $booking = $this->storeBooking($request);
+            if ($booking) {
+                $this->storeBookedRooms($request, $booking);
+                return $this->response('Room Booked Successfully.', null, true);
+            }
+        });
     }
 
-    public function test_week()
+
+
+    public function storeBooking($request)
     {
-        $pdf = App::make('dompdf.wrapper');
+        try {
+            return   DB::transaction(function () use ($request) {
+                $data                   = [];
+                $data                   = $request->except('document', 'image', 'qty_breakfast', 'qty_lunch', 'qty_dinner', 'selectedRooms');
+                $data["customer_id"]    = $request->customer_id;
+                $data['booking_date']   = now();
+                $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
+                $data['remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
+                $data['grand_remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
 
-        $str = '
+                $booked  = Booking::create($data);
 
-        <!DOCTYPE html>
-        <html>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <head>
-        <style>
-            table { font-family: arial, sans-serif; border-collapse: collapse; border: none; width: 100%; }
-            td, th { border: 1px solid #eeeeee; text-align: left; }
+                if ($booked) {
 
-            th { font-size: 9px; }
-            td { font-size: 7px; }
-
-            .page-break { page-break-after: always; }
-            .main-table {
-                padding-right: 15px;
-                padding-left: 15px;
-            }
-            hr {
-                position: relative;
-                border: none;
-                height: 2px;
-                background: #c5c2c2;
-                padding: 0px
-            }
-            .title-font {
-                font-family: Arial, Helvetica, sans-serif !important;
-                font-size: 14px;
-                font-weight: bold
-            }
-
-            .summary-header th {
-                font-size: 10px
-            }
-
-            .summary-table td {
-                font-size: 9px
-            }
-            footer {
-                bottom: 0px;
-                position: absolute;
-                width: 100%;
-            }
-        </style>
-        </head>
-        <body>
-
-        <table style="margin-top: -20px !important;backgroundd-color:blue;padding-bottom:0px ">
-        <tr>
-            <td style="text-align: left;width: 300px; border :none; padding:15px;   backgrozund-color: red">
-                <div style="img">
-               <img src="' . getcwd() . '/upload/app-logo.jpeg" height="70px" width="200">
-                </div>
-            </td>
-            <td style="text-align: left;width: 333px; border :none; padding:15px; backgrozusnd-color:blue">
-                <div>
-                    <table style="text-align: left; border :none;  ">
-                        <tr style="text-align: left; border :none;">
-                            <td style="text-align: center; border :none">
-                                <span class="title-font">
-                                Weekly Attendance Summary Report
-                                </span>
-                                <hr style="width: 230px">
-                            </td>
-                        </tr>
-                        <tr style="text-align: left; border :none;">
-                            <td style="text-align: center; border :none">
-                                <span style="font-size: 11px">
-                                ' . date('d M Y')  . ' - ' .  date('d M Y')  . ' <br>
-                                   <small> Department : All </small>
-                                </span>
-                                <hr style="width: 230px">
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </td>
-            <td style="text-align: right;width: 300px; border :none; backgrounsd-color: red">
+                    Food::create([
+                        'booking_id' => $booked->id,
+                        'breakfast' => $request->json('qty_breakfast'),
+                        'lunch' => $request->json('qty_lunch'),
+                        'dinner' => $request->json('qty_dinner'),
+                    ]);
 
 
-                <table class="summary-table"
-                style="border:none; padding:0px 50px; margin-left:35px;margin-top:20px;margin-bottom:0px">
-                <tr style="text-align: left; border :none;">
-                    <td style="text-align: right; border :none;font-size:10px">
-                        <b>
-                        Akil
-                        </b>
-                        <br>
-                    </td>
-                </tr>
-                <tr style="text-align: left; border :none;">
-                    <td style="text-align: right; border :none;font-size:10px">
-                        <span style="margin-right: 3px"> P.O.Box:  12568 </span>
-                        <br>
-                    </td>
-                </tr>
-                <tr style="text-align: left; border :none;">
-                    <td style="text-align: right; border :none;font-size:10px">
-                        <span style="margin-right: 3px"> UAE </span>
-                        <br>
-                    </td>
-                </tr>
-                <tr style="text-align: left; border :none;">
-                    <td style="text-align: right; border :none;font-size:10px">
-                        <span style="margin-right: 3px"> Tel:075236986 </span>
-                        <br>
-                    </td>
-                </tr>
-            </table>
+                    $transactionData = [
+                        'booking_id' => $booked->id,
+                        'customer_id' => $booked->customer_id ?? '',
+                        'date' => now(),
+                        'company_id' => $request->company_id ?? '',
+                        'payment_method_id' => $booked->payment_mode_id,
+                        'desc' => 'rooms booking amount',
+                    ];
 
-                <br>
-            </td>
-            </td>
-        </tr>
-    </table>
-    <hr style="margin:0px;padding:0">
+                    //Transaction
+                    $payment = new TransactionController();
+                    $payment->store($transactionData, $request->total_price, 'debit');
 
+                    if ($request->advance_price && $request->advance_price > 0) {
+                        $transactionData['desc'] = 'advance payment';
+                        $payment->store($transactionData, $request->advance_price, 'credit');
+                    }
+                    //End Transaction
+                    if ((int)$booked->advance_price == 0) {
 
+                        if (($booked->paid_by && $booked->paid_by == 2) || ($booked->type != 'Walking' && $booked->type != 'Complimentary')) {
 
+                            $agentsData = [
+                                'booking_id'   => $booked->id,
+                                'customer_id'  => $booked->customer_id ?? '',
+                                'type'         => $booked->type ?? '',
+                                'source'       => $booked->source,
+                                'reference_no' => $booked->reference_no ?? '',
+                                'amount'       => $booked->total_price ?? '',
+                                'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
+                                'company_id'   => $request->company_id ?? '',
+                                'is_paid'      => $booked->paid_by == 1 ? 2 : 0,
+                            ];
+                            $payment = new AgentsController();
+                            $payment->store($agentsData);
 
-            <div class="page-breaks">
-            <table class="main-table" style="margin-top: 10px !important;">
-            <tr style="text-align: left; border :1px solid black; width:120px;">
-                <td style="text-align:left;width:120px"><b>Name</b>:fahath</td>
-                <td style="text-align:left;width:120px"><b>EID</b>:fahath</td>
-                <td style="text-align:left;width:120px"><b>Total</b>:fahath</td>
-                <td style="text-align:left;width:120px"><b>OT</b>:fahath</td>
-                <td style="text-align:left;width:120px"><b>Present</b>:fahath</td>
-                <td style="text-align:left;width:120px"><b>Absent</b>:fahath</td>
-                <td style="text-align:left;width:120px"><b>Missing</b>:fahath</td>
-                <td style="text-align:left;width:120px"><b>Manual</b>:fahath</td>
-            </tr>
-
-
-        ' . $this->weekDays() . '
-
-        </div>
-
-        </table>
-
-        <hr style=" bottom: 0px; position: absolute; width: 100%; margin-bottom:20px">
-        <footer style="padding-top: 0px!important">
-        <table class="main-table">
-            <tr style="border :none">
-                <td style="text-align: left;border :none"><b>Device</b>: Main Entrance = MED, Back Entrance = BED</td>
-                <td style="text-align: left;border :none"><b>Shift Type</b>: Manual = MA, Auto = AU, NO = NO</td>
-                <td style="text-align: left;border :none"><b>Shift</b>: Morning = Mor, Evening = Eve, Evening2 = Eve2
-                </td>
-                <td style="text-align: right;border :none;">
-                    <b>Powered by</b>: <span style="color:blue"> www.ideahrms.com</span>
-                </td>
-                <td style="text-align: right;border :none">
-                    Printed on :  ' . date("d-M-Y ") . '
-                </td>
-            </tr>
-        </table>
-    </footer>
-    </body>
-</html>
-
-        ';
-
-        return $pdf->loadHTML($str)->stream();
-    }
-
-    public function weekDays()
-    {
-        $status = '';
+                            $paymentsData = [
+                                'booking_id'   => $booked->id,
+                                'payment_mode' => 7,
+                                'description'  => 'booked from ' . $booked->source,
+                                'amount'       =>   $booked->remaining_price,
+                                'type'         => 'room',
+                                'room'         => $booked->rooms,
+                                'company_id'   => $request->company_id,
+                                'is_city_ledger'  => 1,
+                            ];
+                            $payment = new PaymentController();
+                            $payment->store($paymentsData);
+                        } else {
+                            $agentsData = [
+                                'booking_id'   => $booked->id,
+                                'customer_id'  => $booked->customer_id ?? '',
+                                'type'         => 'Customer' ?? '',
+                                'source'       => $booked->source,
+                                'reference_no' => $booked->reference_no ?? '',
+                                'amount'       => $booked->total_price ?? '',
+                                'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
+                                'company_id'   => $request->company_id ?? '',
+                            ];
+                            $payment = new AgentsController();
+                            $payment->store($agentsData);
 
 
-        for ($a = 1; $a < 5; $a++) {
-            $dates = '<tr"><td style="text-align:left;width:100px"><b>Dates</b></td>';
-            $days = '<tr"><td><b>Days</b></td>';
-            $in = '<tr"><td><b>In</b></td>';
-            $out = '<tr"><td><b>Out</b></td>';
-            $work = '<tr"><td><b>Work</b></td>';
-            $ot = '<tr"><td><b>OT</b></td>';
-            $shift = '<tr"><td><b>Shift</b></td>';
-            $shift_type = '<tr "><td><b>Shift Type</b></td>';
-            $din = '<tr"><td><b>Device In</b></td>';
-            $dout = '<tr"><td><b>Device Out</b></td>';
-            $status_tr = '<tr"><td><b>Status</b></td>';
+                            $paymentsData = [
+                                'booking_id'   => $booked->id,
+                                'payment_mode' => 7,
+                                'description'  => 'booked from ' . $booked->source,
+                                'amount'       =>   $booked->remaining_price,
+                                'type'         => 'room',
+                                'room'         => $booked->rooms,
+                                'company_id'   => $request->company_id,
+                                'is_city_ledger'  => 1,
+                            ];
+                            $payment = new PaymentController();
+                            $payment->store($paymentsData);
+                        }
+                    } else {
 
-            $totdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sat', 'Sat'];
-            $times = ['10:25', '08:12', '13:00', '09:00', '11:00', '08:00', '09:00', '09:00', '09:00'];
-            $shifts = ['mrg', 'evg', 'night', 'mitnight', 'regular', 'regular', 'regular', 'regular', 'regular', 'regular', 'regular'];
-            $shiftTypes = ['FILO', 'Auto', 'Manual'];
+                        if ($request->total_price >= $request->advance_price) {
 
-            for ($i = 1; $i <= 7; $i++) {
-                $td = array_rand($totdays);
-                $ti = array_rand($times);
-                $s = array_rand($shifts);
-                $st = array_rand($shiftTypes);
+                            $paymentsData = [
+                                'booking_id'   => $booked->id,
+                                'payment_mode' => $booked->payment_mode_id,
+                                'description'  => 'advance payment',
+                                'amount'       =>   $booked->advance_price,
+                                'type'         => 'room',
+                                'room'         => $booked->rooms,
+                                'company_id'   => $request->company_id,
+                                'is_city_ledger'  => 0,
+                            ];
+                            $payment = new PaymentController();
+                            $payment->store($paymentsData);
+                        }
 
-                $dates .= '<td style="text-align: center;">' . $i . ' </td>';
-                $days .= '<td style="text-align: center;"> ' .  $totdays[$td] . ' </td>';
-                $in .= '<td style="text-align: center;"> ' . $times[$ti] . '   </td>';
-                $out .= '<td style="text-align: center;">' . $times[$ti] . '  </td>';
-                $work .= '<td style="text-align: center;">' . $times[$ti] . '  </td>';
-                $ot .= '<td style="text-align: center;">' . $times[$ti] . '  </td>';
-                $shift .= '<td style="text-align: center;">' . $shifts[$s] . '  </td>';
-                $shift_type .= '<td style="text-align: center;"> ' . $shiftTypes[$st] . '  </td>';
-                $din .= '<td style="text-align: center;">' . $times[$ti] . '  </td>';
-                $dout .= '<td style="text-align: center;">' . $times[$ti] . '  </td>';
-                $status .= '<td style="text-align: center;">' . $times[$ti] . '  </td>';
-                $status_tr .= '<td style="text-align: center; ">' . $times[$ti] . '  </td>';
-            }
+                        $paymentsData = [
+                            'booking_id'   => $booked->id,
+                            'payment_mode' => 7,
+                            'description'  => 'pending payment',
+                            'amount'       =>   $booked->remaining_price,
+                            'type'         => 'room',
+                            'room'         => $booked->rooms,
+                            'company_id'   => $request->company_id,
+                            'is_city_ledger'  => 1,
+                        ];
+                        $payment = new PaymentController();
+                        $payment->store($paymentsData);
 
-            $dates .= '</tr>';
-            $days .= '</tr>';
-            $in .= '</tr>';
-            $out .= '</tr>';
-            $work .= '</tr>';
-            $ot .= '</tr>';
-            $shift .= '</tr>';
-            $shift_type .= '</tr>';
-            $din .= '</tr>';
-            $dout .= '</tr>';
-            $status_tr .= '</tr>';
+                        $agentsData = [
+                            'booking_id'   => $booked->id,
+                            'customer_id'  => $booked->customer_id ?? '',
+                            'type'         => 'Customer' ?? '',
+                            'source'       => $booked->source,
+                            'reference_no' => $booked->reference_no ?? '',
+                            'amount'       => $booked->total_price ?? '',
+                            'agent_paid_amount'       => $booked->advance_price ?? '',
+                            'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
+                            'company_id'   => $request->company_id ?? '',
+                        ];
+                        $payment = new AgentsController();
+                        $payment->store($agentsData);
+                    }
+                }
+
+                return $booked;
+
+                return $this->response('Room Booked Successfully.', $booked, true);
+            });
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
         }
-        $str =   $dates . $days . $in . $out . $work . $ot . $shift . $shift_type . $din . $dout . $status_tr;
+    }
 
-        return $str;
+    public function storeBookedRooms($request, $booking)
+    {
+        try {
+            $rooms   = $request->only('selectedRooms');
+            foreach ($rooms['selectedRooms'] as $room) {
+                $room['booking_id'] = $booking->id;
+                $room['customer_id'] = $booking->customer_id;
+                $bookedRoomId = BookedRoom::create($room);
+                $period       = CarbonPeriod::create($room['check_in'], $this->checkOutDate($room['check_out']));
+                foreach ($period as $date) {
+                    $room['date']           = $date->format('Y-m-d');
+                    $room['booked_room_id'] = $bookedRoomId->id;
+                    OrderRoom::create($room);
+                }
+            }
+
+            // $data = [
+            //     "from" => "14157386102",
+            //     "to" => "971502848071",
+            //     "message_type" => "text",
+            //     "text" => "you have to " . count($rooms) . " rooms booking \nyour reservation number is " . $rooms[0]['booking_id'],
+            //     "channel" => "whatsapp"
+            // ];
+
+            // WhatsappJob::dispatch($data);
+            return $rooms;
+            return $this->response('Room Booked Successfully.', $rooms, true);
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
+    public function storeDocument($request)
+    {
+        $booking_id = $request->booking_id;
+        $booking    = Booking::find($booking_id);
+        $customer    = Customer::find($booking->customer_id);
+        if ($request->hasFile('document')) {
+            $file = $request->file('document');
+            $ext = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $ext;
+            $path = $file->storeAs('public/documents/booking', $fileName);
+            Storage::copy($path, 'public/documents/customer/' . $fileName);
+            $booking->document = $fileName;
+            $customer->document = $fileName;
+        } else {
+            $booking->document = $customer->document_name ?? null;
+        }
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $ext = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $ext;
+
+            $path = $file->storeAs('public/documents/customer/photo', $fileName);
+            $customer->image = $fileName;
+        }
+        $booking->save();
+        $customer->save();
+        return $this->response('Room Booked Successfully.', null, true);
+    }
+
+    private function checkOutDate($date)
+    {
+        $date = date_create($date);
+        date_modify($date, "-1 days");
+        return date_format($date, "Y-m-d");
     }
 }
