@@ -34,7 +34,7 @@ class ExpenseController extends Controller
             $model->whereDate('created_at', '<=', $to);
         }
 
-        return  $model->get();
+        return  $model->paginate($request->per_page ?? 20);
     }
 
     public function search(Request $request, $key)
@@ -138,18 +138,23 @@ class ExpenseController extends Controller
                 'OverallTotal' => $expense->clone()->sum('amount'),
             ],
             'income' => [
-                'Cash' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 1))->sum('amount'),
-                'Card' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 2))->sum('amount'),
-                'Online' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 3))->sum('amount'),
-                'Bank' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 4))->sum('amount'),
-                'UPI' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 5))->sum('amount'),
-                'Cheque' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 6))->sum('amount'),
-                'City_ledger' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 7))->sum('amount'),
+                'Cash' => $this->getSumByModel($income, 1),
+                'Card' => $this->getSumByModel($income, 2),
+                'Online' => $this->getSumByModel($income, 3),
+                'Bank' => $this->getSumByModel($income, 4),
+                'UPI' => $this->getSumByModel($income, 5),
+                'Cheque' => $this->getSumByModel($income, 6),
+                'City_ledger' => $this->getSumByModel($income, 7),
                 'OverallTotal' => $income->clone()->sum('amount'),
             ],
 
             'profit' =>  $profit > 0 ? $profit . '.00' : 0 . '.00',
             'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
         ];
+    }
+
+    public function getSumByModel($model, $id)
+    {
+        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
     }
 }
