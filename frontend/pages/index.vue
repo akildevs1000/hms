@@ -1347,7 +1347,6 @@ export default {
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
-        console.log(this.checkData);
         this.bookingId = data.id;
         this.full_payment = "";
         this.bookingStatus = data.booking_status;

@@ -412,7 +412,7 @@
                 <td> </td>
                 <td class="txt-inv-amount">{{ $totalPostingsgst + $totalsgst }}</td>
                 <td class="txt-inv-amount">{{ $totalPostingcgst + $totalcgst }}</td>
-                <td class="txt-inv-amount">{{ $totalWithTax + $totalPostingWithTax }}.00</td>
+                <td class="txt-inv-amount">{{ $totalWithTax + $totalPostingWithTax }}</td>
             </tr>
 
         </tbody>

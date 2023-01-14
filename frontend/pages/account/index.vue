@@ -163,7 +163,7 @@
     </v-row>
 
     <v-row>
-      <v-col md="6">
+      <v-col md="10">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <label class="white--text"> Income List</label>
@@ -188,6 +188,7 @@
               <td>{{ ++index }}</td>
               <td>{{ item.created_at }}</td>
               <td>{{ item.time }}</td>
+              <td>{{ item.booking_id }}</td>
               <td>{{ item.type }}</td>
               <td>{{ item.room }}</td>
               <td>{{ item.description }}</td>
@@ -241,7 +242,7 @@
               </td>
             </tr>
             <tr class="text-right">
-              <th colspan="6">Total</th>
+              <th colspan="7">Total</th>
               <th>{{ totalIncomes.Cash }}</th>
               <th>{{ totalIncomes.Card }}</th>
               <th>{{ totalIncomes.Online }}</th>
@@ -378,6 +379,7 @@ export default {
       { text: "#" },
       { text: "Date" },
       { text: "Time" },
+      { text: "Reservation Number" },
       { text: "Type" },
       { text: "Rooms" },
       { text: "Description" },
