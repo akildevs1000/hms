@@ -296,7 +296,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 30
     },
     options: {},
     endpoint: "reservation_list",
