@@ -34,7 +34,7 @@ class ExpenseController extends Controller
             $model->whereDate('created_at', '<=', $to);
         }
 
-        return  $model->paginate($request->per_page);
+        return  $model->get();
     }
 
     public function search(Request $request, $key)
@@ -101,7 +101,6 @@ class ExpenseController extends Controller
         // ['id' => 7, 'name' => 'City Ledger']
 
 
-        // return Payment::get();
 
         $expense = $this->model
             ->where('company_id', $request->company_id)
@@ -148,9 +147,6 @@ class ExpenseController extends Controller
                 'City_ledger' => $income->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 7))->sum('amount'),
                 'OverallTotal' => $income->clone()->sum('amount'),
             ],
-
-            // 'profit' =>  $profit > 0 ? $loss . '.00' : 0 . '.00',
-            // 'loss' =>  $loss < 0 ? $loss . '.00' : 0 . '.00',
 
             'profit' =>  $profit > 0 ? $profit . '.00' : 0 . '.00',
             'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',

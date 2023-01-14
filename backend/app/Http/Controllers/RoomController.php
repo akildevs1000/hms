@@ -100,9 +100,6 @@ class RoomController extends Controller
         $breakfast_child_sum = 0;
         $breakfast_baby_sum = 0;
 
-
-        // dd($breakfast);
-
         foreach ($breakfast as $item) {
             $breakfast_adult_sum += $item['adult'];
             $breakfast_child_sum += $item['child'];

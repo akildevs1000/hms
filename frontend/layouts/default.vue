@@ -407,6 +407,12 @@ export default {
               to: "/expense",
               menu: "expense_access"
             }
+            // {
+            //   icon: "mdi-cash",
+            //   title: "Transaction",
+            //   to: "/transactions",
+            //   menu: "transaction_access"
+            // }
           ]
         }
       ],

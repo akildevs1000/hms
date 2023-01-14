@@ -719,7 +719,7 @@
       <v-dialog v-model="NewBooking" persistent max-width="500">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span> Select Check Out Date</span>
+            <span> New Reservation</span>
           </v-toolbar>
           <v-container grid-list-xs>
             {{ newBookingRoom }}
@@ -1336,6 +1336,7 @@ export default {
 
     mouseOverForAvailable(newBookingRoom) {
       this.newBookingRoom = newBookingRoom;
+      // console.log(this.newBookingRoom);
     },
 
     get_data(jsEvent = null) {
@@ -1378,22 +1379,42 @@ export default {
     },
 
     SubmitNewBooking() {
+      let room = this.newBookingRoom;
+      let bookingDetails = {};
+
       //       {
-      //     "id": 1,
-      //     "room_type_id": 1,
-      //     "room_no": "101",
+      //     "id": 51,
+      //     "room_type_id": 7,
+      //     "room_no": "103",
       //     "status": "0",
       //     "deleteStatus": 0,
-      //     "company_id": 1,
+      //     "company_id": 2,
       //     "created_at": null,
-      //     "background": "#f48665",
-      //     "price": "2800.00",
+      //     "background": "#8e4cf1",
+      //     "price": "3800.00",
       //     "room_type": {
-      //         "id": 1,
-      //         "name": "queen",
-      //         "price": "2800.00"
+      //         "id": 7,
+      //         "name": "castle",
+      //         "price": "3800.00"
       //     }
       // }
+
+      // this.reservation = room;
+      bookingDetails.room_id = room.id;
+      bookingDetails.room_no = room.room_no;
+      bookingDetails.room_type = room.room_type.name;
+      bookingDetails.price = room.price;
+      bookingDetails.check_in = "2023-01-20";
+
+      // bookingDetails.check_out = this.reservation.check_out;
+      // bookingDetails.room_tax = this.get_room_tax(this.reservation.price);
+      // bookingDetails.check_in = this.reservation.check_in;
+      // bookingDetails.check_out = this.reservation.check_out;
+      console.log(bookingDetails);
+
+      this.$store.commit("reservation", commitObj);
+      this.$router.push(`/hotel/new`);
+      return;
 
       this.reservation.room_id = obj.room_type;
       this.reservation.room_type = obj.room_type;
@@ -1403,6 +1424,17 @@ export default {
         new Date(e.endStr)
       ); //this.convert_date_format(e.end);
 
+      //   this.reservation = this.$store.state.reservation;
+      //   this.temp.room_id = this.reservation.room_id;
+      //   this.temp.room_no = this.reservation.room_no;
+      //   this.temp.room_type = this.reservation.room_type;
+      //   this.temp.price = this.reservation.price;
+      //   this.temp.check_in = this.reservation.check_in;
+      //   this.temp.check_out = this.reservation.check_out;
+      //   this.temp.room_tax = this.get_room_tax(this.reservation.price);
+      //   this.room.check_in = this.reservation.check_in;
+      //   this.room.check_out = this.reservation.check_out;
+
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -1410,6 +1442,8 @@ export default {
           room_no: obj.room_no
         }
       };
+      console.log(payload);
+      return;
       this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
         this.reservation.room_id = data.id;
         this.reservation.price = data.room_type.price;

@@ -20,6 +20,7 @@ class PaymentController extends Controller
 
     public function index(Request $request)
     {
+
         $model = Payment::query();
 
         $model->where('company_id', $request->company_id);
@@ -35,6 +36,6 @@ class PaymentController extends Controller
             $model->whereDate('created_at', '<=', $to);
         }
 
-        return $model->paginate($request->per_page);
+        return $model->get();
     }
 }

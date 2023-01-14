@@ -458,9 +458,9 @@ export default {
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        this.expenseData = data.data;
-        this.pagination.current = data.current_page;
-        this.pagination.total = data.last_page;
+        this.expenseData = data;
+        // this.pagination.current = data.current_page;
+        // this.pagination.total = data.last_page;
         this.loading = false;
       });
     },
@@ -480,7 +480,7 @@ export default {
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        this.incomeData = data.data;
+        this.incomeData = data;
       });
     },
 

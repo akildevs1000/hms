@@ -86,6 +86,8 @@ class RoomTypeController extends Controller
 
     public function getDataBySelect(Request $request)
     {
-        return Room::where('room_no', $request->room_no)->first();
+        return Room::where('room_no', $request->room_no)
+            ->where('company_id', $request->company_id)
+            ->first();
     }
 }

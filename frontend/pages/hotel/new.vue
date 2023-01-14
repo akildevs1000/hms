@@ -1388,7 +1388,7 @@ export default {
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
 
       search: {
-        mobile: "0752388923"
+        mobile: ""
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1555,7 +1555,6 @@ export default {
   created() {
     this.get_food_price();
     this.get_reservation();
-    this.preloader = false;
     this.get_room_types();
     this.get_id_cards();
     this.runAllFunctions();
@@ -1563,6 +1562,7 @@ export default {
     this.get_agents();
     this.get_online();
     // this.getImage();
+    this.preloader = false;
   },
   computed: {
     showImage() {
@@ -1796,18 +1796,18 @@ export default {
       }
     },
 
-    get_countries() {
-      this.$axios.get(`get_countries`).then(({ data }) => {
-        this.countryList = data;
-      });
-    },
-
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
         return n + ".00";
       }
+    },
+
+    get_countries() {
+      this.$axios.get(`get_countries`).then(({ data }) => {
+        this.countryList = data;
+      });
     },
 
     getTotal() {
