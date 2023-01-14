@@ -163,7 +163,7 @@
     </v-row>
 
     <v-row>
-      <v-col md="10">
+      <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <label class="white--text"> Income List</label>
@@ -257,7 +257,7 @@
           </table>
         </v-card>
       </v-col>
-      <v-col md="6">
+      <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md " color="background" dense flat>
             <label class="white--text"> {{ Model }} List</label>
@@ -343,10 +343,10 @@ export default {
   data: () => ({
     Model: "Expense",
 
-    from_date: "",
+    from_date: new Date().toJSON().slice(0, 10),
     from_menu: false,
 
-    to_date: "",
+    to_date: new Date().toJSON().slice(0, 10),
     to_menu: false,
 
     pagination: {
