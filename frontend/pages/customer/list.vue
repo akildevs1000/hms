@@ -50,7 +50,7 @@
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>
-          <tr>
+          <tr style="font-size:13px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
@@ -62,14 +62,14 @@
             absolute
             color="primary"
           ></v-progress-linear>
-          <tr v-for="(item, index) in data" :key="index">
+          <tr v-for="(item, index) in data" :key="index" style="font-size:13px">
             <td>
               <b>{{ ++index }}</b>
             </td>
             <td>{{ item.full_name }}</td>
             <td>{{ item.contact_no }}</td>
             <td>{{ item.email }}</td>
-            <td>{{ item.id_card_type_id }}</td>
+            <td>{{ item.id_card_type && item.id_card_type.name }}</td>
             <td>{{ item.id_card_no }}</td>
             <td>{{ item.car_no }}</td>
             <td>{{ item.no_of_adult }}</td>
@@ -115,7 +115,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 30
     },
     options: {},
     Model: "Customer",

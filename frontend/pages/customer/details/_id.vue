@@ -134,7 +134,7 @@
                 (booking && booking.request) || "---"
               }}</v-col>
             </v-row>
-            <v-row>
+            <v-row v-if="booking && booking.document">
               <v-col cols="3"><b>Document</b></v-col>
               <v-col cols="8">
                 <v-btn

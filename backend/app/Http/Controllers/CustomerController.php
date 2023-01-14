@@ -18,6 +18,7 @@ class CustomerController extends Controller
     {
         return $model
             ->where('company_id', $request->company_id)
+            ->with('idCardType')
             ->paginate($request->per_page);
     }
 

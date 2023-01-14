@@ -537,7 +537,7 @@
                                 v-else-if="index === 2"
                                 class="text-overline grey--text text--darken-3 mx-2"
                               >
-                                +{{ room.document.length - 2 }} File(s)
+                                +{{ document.length - 2 }} File(s)
                               </span>
                             </template>
                           </v-file-input>
@@ -660,7 +660,7 @@ export default {
     dialog: false,
     ids: [],
     loading: false,
-    document: false,
+    document: null,
     response: "",
     customer: [],
     payments: [],
