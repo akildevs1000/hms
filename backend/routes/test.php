@@ -30,22 +30,18 @@ use App\Http\Controllers\AttendanceController;
 
 
 
+Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
 
 Route::post('/test', function (Request $request) {
 
-    $Customer = Customer::select("id", "first_name")
-        ->addSelect("last_name")
-        // ->addSelect(DB::raw('first_name as full_name'))
-        ->take(10)
-        ->get();
 
-    return $Customer;
+    return    Customer::customerAttributes();
 
 
     $data = [
         "from" => "14157386102",
-        "to" => "971554501483",
+        "to" => "971502848071",
         "message_type" => "text",
         "text" => "This is a WhatsApp Message sent from the EZHMS",
         "channel" => "whatsapp"
