@@ -69,4 +69,32 @@ class Customer extends Model
         }
         return null;
     }
+
+    public static function customerAttributes()
+    {
+        return [
+            'first_name',
+            'last_name',
+            'contact_no',
+            'email',
+            'id_card_type_id',
+            'id_card_no',
+            'car_no',
+            'no_of_adult',
+            'no_of_child',
+            'no_of_baby',
+            'address',
+            'company_id',
+            'customer_type',
+            'dob',
+            'title',
+            'whatsapp',
+            'nationality',
+        ];
+    }
+
+    // public static function customerAttributes()
+    // {
+    //     return  ['full_name', 'document_name', 'document', 'image'];
+    // }
 }

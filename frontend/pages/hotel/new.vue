@@ -2218,7 +2218,7 @@ export default {
           this.loading = false;
           if (!data.status) {
             this.alert(
-              "No reservation created!",
+              "Not reservation created!",
               "Some fields are missing or invalid",
               "error"
             );

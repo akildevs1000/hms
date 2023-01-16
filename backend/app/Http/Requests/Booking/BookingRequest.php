@@ -27,9 +27,8 @@ class BookingRequest extends FormRequest
     {
 
         $arr = [
+            //booking rules
             'type'            => 'required',
-            // 'room_type'       => 'required',
-            // 'room_id'         => 'required',
             'check_in'        => 'required',
             'check_out'       => 'required',
             'discount'        => 'required',
@@ -37,15 +36,32 @@ class BookingRequest extends FormRequest
             'payment_mode_id' => 'required',
             'total_days'      => 'required',
             'sub_total'       => 'required',
-
             'after_discount' => 'required',
             'sales_tax' => 'required',
             'total_price' => 'required',
             'remaining_price' => 'required',
-
             'request'     => 'nullable',
             'company_id'     => 'required',
-            // 'customer_id'     => 'required',
+
+            //customer rules
+
+            'first_name'      => 'required',
+            'last_name'       => 'nullable',
+            'contact_no'      => 'required|min:10|max:13',
+            'email'           => 'required',
+            // 'id_card_type_id' => 'required',
+            // 'id_card_no'      => 'required',
+            'car_no'          => 'nullable',
+            'no_of_adult'     => 'nullable',
+            'no_of_child'     => 'nullable',
+            'no_of_baby'      => 'nullable',
+            'address'         => 'nullable',
+            'company_id'      => 'required',
+            'customer_type'   => 'nullable',
+            'dob'             => 'nullable',
+            'title'      => 'required',
+            'whatsapp'   => 'required',
+            'nationality' => 'required',
 
         ];
 
@@ -54,11 +70,6 @@ class BookingRequest extends FormRequest
             $arr['reference_no'] = 'required';
             $arr['paid_by'] = 'required';
         }
-        // if ($this->type == 'Travel Agency') {
-        //     $arr['source'] = 'required';
-        //     $arr['reference_no'] = 'required';
-        //     $arr['paid_by'] = 'required';
-        // }
 
         return $arr;
     }

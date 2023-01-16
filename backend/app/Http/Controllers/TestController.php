@@ -27,33 +27,55 @@ use Illuminate\Support\Facades\Log as Logger;
 class TestController extends Controller
 {
 
+    public function booking_validate(BookingRequest $request)
+    {
+        return $this->response('Booking validated.', null, true);
+    }
+
+    public function customerStore($customer)
+    {
+        try {
+            $isExistCustomer =   Customer::whereContactNo($customer['contact_no'])->first();
+            $id = "";
+            if ($isExistCustomer) {
+                $id = $isExistCustomer->id;
+                $isExistCustomer->update($customer);
+            } else {
+                $record = Customer::create($customer);
+                $id = $record->id;
+            }
+            return $id;
+            return $this->response('Customer successfully added.', $id, true);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
     public function store(Request $request)
     {
-
-        DB::transaction(function ()  use ($request) {
+        return DB::transaction(function ()  use ($request) {
+            $customer_id = $this->customerStore($request->only(Customer::customerAttributes()));
+            $request['customer_id'] = $customer_id;
             $booking = $this->storeBooking($request);
             if ($booking) {
                 $this->storeBookedRooms($request, $booking);
-                return $this->response('Room Booked Successfully.', null, true);
+                return response()->json(['data' => $booking->id, 'status' => true]);
             }
         });
     }
-
-
 
     public function storeBooking($request)
     {
         try {
             return   DB::transaction(function () use ($request) {
                 $data                   = [];
-                $data                   = $request->except('document', 'image', 'qty_breakfast', 'qty_lunch', 'qty_dinner', 'selectedRooms');
-                $data["customer_id"]    = $request->customer_id;
+                $data                   = $request->only(Booking::bookingAttributes());
                 $data['booking_date']   = now();
                 $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
-                $data['remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
-                $data['grand_remaining_price'] = (int)$request->total_price - (int)$request->advance_price;
+                $data['remaining_price'] = (float)$request->total_price - (float)$request->advance_price;
+                $data['grand_remaining_price'] = (int)$request->total_price - (float)$request->advance_price;
 
-                $booked  = Booking::create($data);
+                return  $booked  = Booking::create($data);
 
                 if ($booked) {
 
@@ -83,7 +105,7 @@ class TestController extends Controller
                         $payment->store($transactionData, $request->advance_price, 'credit');
                     }
                     //End Transaction
-                    if ((int)$booked->advance_price == 0) {
+                    if ((float)$booked->advance_price == 0) {
 
                         if (($booked->paid_by && $booked->paid_by == 2) || ($booked->type != 'Walking' && $booked->type != 'Complimentary')) {
 
@@ -233,10 +255,9 @@ class TestController extends Controller
         }
     }
 
-    public function storeDocument($request)
+    public function storeDocument($request, $booking)
     {
-        $booking_id = $request->booking_id;
-        $booking    = Booking::find($booking_id);
+        $booking    = Booking::find($booking->id);
         $customer    = Customer::find($booking->customer_id);
         if ($request->hasFile('document')) {
             $file = $request->file('document');

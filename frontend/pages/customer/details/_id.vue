@@ -124,7 +124,7 @@
               <v-col cols="3"><b>Grand Remaining</b></v-col>
               <v-col cols="4">
                 <span class="red--text">
-                  {{ grand_remaining_price || "0" }}</span
+                  {{ (booking && booking.grand_remaining_price) || "0" }}</span
                 >
               </v-col>
             </v-row>

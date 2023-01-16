@@ -1334,7 +1334,7 @@ export default {
           ...this.reservation
         };
         this.$store.commit("reservation", commitObj);
-        this.$router.push(`/hotel/new`);
+        this.$router.push(`/hotel/new2`);
       });
     },
 

@@ -153,18 +153,6 @@
                 ></v-select>
               </v-col>
               <v-col md="9" dense> </v-col>
-              <!-- <v-col md="3" dense>
-                <label class="col-form-label">Status </label>
-                <v-select
-                  :items="['Waiting', 'Confirmed']"
-                  dense
-                  item-text="name"
-                  item-value="id"
-                  :hide-details="true"
-                  outlined
-                  v-model="room.customer_status"
-                ></v-select>
-              </v-col> -->
               <v-col md="12" class="b-0 mt-2" style="padding-bottom: 0px" dense>
                 <h6><b>Personal Details</b></h6>
               </v-col>
@@ -213,9 +201,7 @@
                 ></v-text-field>
               </v-col>
               <v-col md="3" sm="12" cols="12" dense>
-                <label class="col-form-label"
-                  >ID Card Type <span class="text-danger">*</span></label
-                >
+                <label class="col-form-label">ID Card Type </label>
                 <v-select
                   v-model="customer.id_card_type_id"
                   :items="idCards"
@@ -233,9 +219,7 @@
                 ></v-select>
               </v-col>
               <v-col md="3" cols="12" sm="12">
-                <label class="col-form-label"
-                  >ID Card <span class="text-danger">*</span></label
-                >
+                <label class="col-form-label">ID Card </label>
                 <v-text-field
                   dense
                   outlined
@@ -321,34 +305,6 @@
                   v-if="customer.document"
                 ></v-checkbox>
               </v-col>
-
-              <!-- <v-col md="6" cols="12" sm="12" v-if="wantNewDoc">
-                <label class="col-form-label">Document</label>
-                <v-file-input
-                  v-model="room.document"
-                  color="primary"
-                  counter
-                  placeholder="Select your files"
-                  prepend-icon="mdi-paperclip"
-                  outlined
-                  :show-size="1000"
-                  style="margin-top:150px"
-                >
-                  <template v-slot:selection="{ index, text }">
-                    <v-chip v-if="index < 2" color="primary" dark label small>
-                      {{ text }}
-                    </v-chip>
-
-                    <span
-                      v-else-if="index === 2"
-                      class="text-overline grey--text text--darken-3 mx-2"
-                    >
-                      +{{ room.document.length - 2 }} File(s)
-                    </span>
-                  </template>
-                </v-file-input>
-              </v-col> -->
-
               <v-col cols="6">
                 <label class="col-form-label">Photo</label>
                 <div class="pa-5" style="background-color:#E5E5E5">
@@ -639,12 +595,19 @@
               </v-col>
               <v-col md="12">
                 <label class="col-form-label">Purpose</label>
-                <v-textarea
+                <!-- <v-textarea
                   rows="3"
                   v-model="room.purpose"
                   :hide-details="true"
                   outlined
-                ></v-textarea>
+                ></v-textarea> -->
+
+                <v-select
+                  v-model="room.purpose"
+                  :items="purposes"
+                  dense
+                  outlined
+                ></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -824,6 +787,11 @@
                         <label class="col-form-label">Baby : </label>
                         {{ item.no_of_baby }}
                       </v-col>
+
+                      <v-col md="12" cols="12" sm="12">
+                        <label class="col-form-label">Discount Reason : </label>
+                        {{ item.discount_reason }}
+                      </v-col>
                     </v-row>
                   </div>
                 </v-alert>
@@ -963,7 +931,6 @@
                           >Adult <span class="text-danger">*</span>
                         </label>
 
-                        {{ temp.no_of_adult }}
                         <div class="wrapper">
                           <span
                             class="minus"
@@ -1095,6 +1062,12 @@
                             <td class="food-table">{{ tempChild.tot_cl }}</td>
                             <td class="food-table">{{ tempChild.tot_cd }}</td>
                           </tr>
+                          <tr>
+                            <th colspan="2" style="text-align:left">
+                              Room Price
+                            </th>
+                            <td colspan="2">{{ temp.price }}</td>
+                          </tr>
                         </table>
 
                         <!-- Breakfast
@@ -1123,6 +1096,16 @@
                           outlined
                           type="number"
                           v-model="temp.room_discount"
+                          :hide-details="true"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="4" sm="12" cols="12" dense v-if="isDiscount">
+                        <label class="col-form-label"> Reason </label>
+                        <v-text-field
+                          dense
+                          outlined
+                          type="text"
+                          v-model="temp.discount_reason"
                           :hide-details="true"
                         ></v-text-field>
                       </v-col>
@@ -1360,6 +1343,13 @@
 export default {
   data() {
     return {
+      purposes: [
+        "Visiting",
+        "Business",
+        "Hospital",
+        "Party/Functions",
+        "Visiting For Relatives"
+      ],
       selectMeal: [],
       wantNewDoc: false,
       row: null,
@@ -1388,7 +1378,7 @@ export default {
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
 
       search: {
-        mobile: ""
+        mobile: "0752388923"
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1428,7 +1418,8 @@ export default {
         lunch: "",
         dinner: "",
         tot_adult_food: 0,
-        tot_child_food: 0
+        tot_child_food: 0,
+        discount_reason: ""
       },
 
       check_in_menu: false,
@@ -1465,7 +1456,8 @@ export default {
         remark: "",
         rooms: "",
         reference_no: "",
-        paid_by: ""
+        paid_by: "",
+        purpose: "Visiting"
       },
       reservation: {},
       countryList: [],
@@ -1507,9 +1499,10 @@ export default {
         image: "",
         company_id: this.$auth.user.company.id,
         dob_menu: false,
-        dob: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-          .toISOString()
-          .substr(0, 10)
+        dob: null
+        //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        //   .toISOString()
+        //   .substr(0, 10)
       },
       id_card_type_id: 0,
       errors: [],
@@ -2087,7 +2080,7 @@ export default {
         total: 0, //(total_with_tax * bed_amount)
         grand_total: 0, //(total * days)
         company_id: this.$auth.user.company.id,
-
+        discount_reason: "",
         no_of_adult: 1,
         no_of_child: 0,
         no_of_baby: 0
@@ -2194,7 +2187,6 @@ export default {
     },
 
     store() {
-      // this.alert("Waiting..!", "Loading...", "info");
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
@@ -2211,9 +2203,8 @@ export default {
         ...this.room,
         ...this.customer
       };
-
       this.$axios
-        .post("/booking_validate", payload)
+        .post("/booking_validate1", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
@@ -2226,87 +2217,33 @@ export default {
             this.subLoad = false;
           } else {
             this.errors = [];
-            this.store_customer();
+            this.store_booking();
           }
         })
         .catch(e => console.log(e));
     },
 
-    store_customer() {
-      let payload = {
-        ...this.customer,
-        company_id: this.$auth.user.company.id
-      };
-      this.$axios
-        .post("/customer", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.alert(
-              "No reservation created!",
-              "Some fields are missing or invalid",
-              "error"
-            );
-            this.subLoad = false;
-            this.errors = data.errors;
-          } else {
-            this.errors = [];
-            this.store_booking(data.record);
-          }
-        })
-        .catch(e => console.log(e));
-    },
-
-    store_booking(id) {
+    store_booking() {
       let payload = {
         ...this.room,
-        customer_id: 1,
         customer_type: this.customer.customer_type,
         qty_breakfast: this.breakfast,
         qty_lunch: this.lunch,
         qty_dinner: this.dinner,
-        selectedRooms: this.selectedRooms
+        selectedRooms: this.selectedRooms,
+        ...this.customer
       };
+      console.log(payload);
       this.$axios
-        .post("/booking1", payload)
+        .post("/booking", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.store_booked_rooms(data.record.id, id);
-            this.store_document(data.record.id);
-          }
-        })
-        .catch(e => console.log(e));
-    },
-
-    store_booked_rooms(id, customer_id) {
-      this.selectedRooms.forEach(key => {
-        key.booking_id = id;
-        key.customer_id = customer_id;
-      });
-
-      let payload = {
-        ...this.selectedRooms
-      };
-      this.$axios
-        .post("/store_booked_rooms", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.alert(
-              "No reservation created!",
-              "Some fields are missing or invalid",
-              "error"
-            );
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.errors = [];
+            this.store_document(data.data);
             this.alert("Success!", "Successfully room added", "success");
-            this.subLoad = false;
             this.$router.push(`/`);
           }
         })
@@ -2318,7 +2255,6 @@ export default {
       payload.append("document", this.room.document);
       payload.append("image", this.customer.image);
       payload.append("booking_id", id);
-
       console.log(payload);
       this.$axios
         .post("/store_document", payload)

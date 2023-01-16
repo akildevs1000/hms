@@ -29,14 +29,8 @@ class Booking extends Model
         'check_out_date' => 'datetime:d-M-y H:i',
     ];
 
-    /**
-     * Get the user that owns the Booking
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function room()
     {
-
         return $this->belongsTo(Room::class);
     }
 
@@ -155,11 +149,6 @@ class Booking extends Model
         ));
     }
 
-    /**
-     * Get all of the payments for the Booking
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function payments()
     {
         return $this->hasMany(Payment::class);
@@ -175,9 +164,35 @@ class Booking extends Model
         return $this->hasMany(Payment::class)->where('is_city_ledger', 0);
     }
 
-    /**
-     * Get the idCardType that owns the Booking
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    public static function bookingAttributes()
+    {
+        return [
+            "customer_id",
+            "customer_type",
+            "customer_status",
+            "all_room_Total_amount",
+            "total_extra",
+            "type",
+            "source",
+            "agent_name",
+            "check_in",
+            "check_out",
+            "discount",
+            "advance_price",
+            "payment_mode_id",
+            "total_days",
+            "sub_total",
+            "after_discount",
+            "sales_tax",
+            "total_price",
+            "remaining_price",
+            "request",
+            "company_id",
+            "remark",
+            "rooms",
+            "reference_no",
+            "paid_by",
+            "purpose",
+        ];
+    }
 }

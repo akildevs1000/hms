@@ -863,7 +863,7 @@
     <div class="page-wrapper mb-0 pb-0">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
+          <!-- <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
             <div class="card card-hover">
               <div class="box bg-cyan text-center">
                 <div class="d-flex justify-space-around py-0 my-0">
@@ -885,11 +885,19 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
             <div class="card card-hover">
-              <div class="box text-center" style="background-color:#D0B38B">
+              <div class="box text-center bg-cyan">
                 <div class="d-flex justify-space-around py-0 my-0">
+                  <h1 class="font-light text-white py-0 my-0">
+                    <i class="fas fa-male fx-1"></i>
+                    <h5>
+                      {{ members.child }} | {{ members.child }} |
+                      {{ members.baby }}
+                    </h5>
+                    <h6>Customers</h6>
+                  </h1>
                   <h1 class="font-light text-white py-0 my-0">
                     <i class="fas fa-coffee fx-1"></i>
                     <h5>
