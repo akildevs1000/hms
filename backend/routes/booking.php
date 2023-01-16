@@ -10,8 +10,8 @@
     Route::get('booking/search/{key}', [BookingController::class, 'search']);
 
 
-    Route::post('booking1', [BookingController::class, 'store1']);
-    Route::post('store_booked_rooms', [BookingController::class, 'storeBookedRooms']);
+    Route::post('booking', [BookingController::class, 'store']);
+    // Route::post('store_booked_rooms', [BookingController::class, 'storeBookedRooms']);
     Route::post('store_document', [BookingController::class, 'storeDocument']);
 
 
