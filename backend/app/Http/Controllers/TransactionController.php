@@ -36,7 +36,7 @@ class TransactionController extends Controller
     public function getTransactionByBookingId(Request $request, $id)
     {
         $transactions = Transaction::whereBookingId($id)->where('company_id', $request->company_id);
-        $totalTransactionAmount = $transactions->clone()->latest()->first();
+        $totalTransactionAmount = $transactions->clone()->orderBy('id', 'desc')->first();
 
         return response()->json([
             'transactions' => $transactions->get(),

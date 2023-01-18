@@ -863,206 +863,214 @@
     <div class="page-wrapper mb-0 pb-0">
       <div class="container-fluid">
         <div class="row">
-          <!-- <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div class="box bg-cyan text-center">
-                <div class="d-flex justify-space-around py-0 my-0">
-                  <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-male"></i>
-                    <h5>{{ members.adult }}</h5>
-                    <h6>Adult</h6>
-                  </h1>
-                  <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-child"></i>
-                    <h5>{{ members.child }}</h5>
-                    <h6>Child</h6>
-                  </h1>
-                  <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-baby"></i>
-                    <h5>{{ members.baby }}</h5>
-                    <h6>Babies</h6>
+          <div class="col-12 col-md-12">
+            <div class="row">
+              <div class="col-md-12 col-12 col-lg-4 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div class="box text-center bg-cyan">
+                    <div class="d-flex justify-space-around py-0 my-0">
+                      <h1 class="font-light text-white py-0 my-0">
+                        <i class="fas fa-male fx-1"></i>
+                        <h5>
+                          {{ members.adult }} | {{ members.child }} |
+                          {{ members.baby }}
+                        </h5>
+                        <h6>Customers</h6>
+                      </h1>
+                      <h1 class="font-light text-white py-0 my-0">
+                        <i class="fas fa-coffee fx-1"></i>
+                        <h5>
+                          {{ onlyBreakfast.adult }} |
+                          {{ onlyBreakfast.child }} |
+                          {{ onlyBreakfast.baby }}
+                        </h5>
+                        <h6>Breakfast</h6>
+                      </h1>
+                      <h1 class="font-light text-white py-0 my-0">
+                        <i class="fas fa-concierge-bell"></i>
+                        <h5>
+                          {{ onlyLunch.adult }} | {{ onlyLunch.child }} |
+                          {{ onlyLunch.baby }}
+                        </h5>
+                        <h6>Lunch</h6>
+                      </h1>
+                      <h1 class="font-light text-white py-0 my-0">
+                        <i class=" fas fa-hamburger"></i>
+                        <h5>
+                          {{ onlyDinner.adult }} | {{ onlyDinner.child }} |
+                          {{ onlyDinner.baby }}
+                        </h5>
+                        <h6>Dinner</h6>
+                      </h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div class="box available text-center">
+                    <h1 class="font-light text-white">
+                      <i class="fas fa-door-open"></i>
+                      <h5>
+                        {{ (availableRooms && availableRooms.length) || 0 }}
+                      </h5>
+                    </h1>
+                    <h6 class="text-white">Available</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-5 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div class="box booked text-center">
+                    <h1 class="font-light text-white">
+                      <i class="fas fa-door-closed"></i>
+                      <h5>
+                        {{
+                          (notAvailableRooms && notAvailableRooms.length) || 0
+                        }}
+                      </h5>
+                    </h1>
+                    <h6 class="text-white">Booked Room</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div
+                    class="box text-center"
+                    style="background-image:linear-gradient(135deg, #56ab2f  0, #a8e063 100%)"
+                  >
+                    <h1 class="font-light text-white">
+                      <i class="fas fa-money-bill"></i>
+                      <h5>
+                        {{ confirmedBooking || "---" }}
+                      </h5>
+                    </h1>
+                    <h6 class="text-white">Advance Paid Booking</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div
+                    class="box text-center"
+                    style="background-image:linear-gradient(135deg, #ff0000   0, #ff0000 100%)"
+                  >
+                    <h1 class="font-light text-white">
+                      <i class="fas fa-door-closed"></i>
+                      <h5>
+                        {{ dirtyRooms || "---" }}
+                      </h5>
+                    </h1>
+                    <h6 class="text-white">Dirty Room</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div
+                    class="box bg-primary text-center"
+                    style="background-image: linear-gradient(135deg, #4568dc     0, #8169C4 100%)"
+                  >
+                    <h1 class="font-light text-white">
+                      <i
+                        class="fas fa-plane-arrival"
+                        style="-webkit-transform: scaleX(-1);transform: scaleX(-1);"
+                      ></i>
+                      <h5>
+                        {{ expectCheckIn.length || 0 }}
+                      </h5>
+                    </h1>
+                    <h6 class="text-white">Expect Check In</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div
+                    class="box text-center"
+                    style="background-image: linear-gradient(135deg, #c33764      0, #A05196 100%)"
+                  >
+                    <h1 class="font-light text-white">
+                      <i class="fas fa-plane-departure"></i>
+                      <h5>
+                        {{ expectCheckOut.length || 0 }}
+                      </h5>
+                    </h1>
+                    <h6 class="text-white">Expect Checked Out</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div class="box checkedIn text-center">
+                    <h1 class="font-light text-white">
+                      <svg
+                        viewBox="0 0 576 512"
+                        fill="#ffff"
+                        width="50px"
+                        height="40px"
+                        style="-webkit-transform: scaleX(-1); transform: scaleX(-1);"
+                      >
+                        <path
+                          d="M432 96c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"
+                        />
+                      </svg>
+                      <h5>{{ checkIn.length || "0" }}</h5>
+                    </h1>
+                    <h6 class="text-white">Check In</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+                <div class="card card-hover">
+                  <div class="box checkedOut text-center">
+                    <h1 class="font-light text-white">
+                      <svg
+                        viewBox="0 0 576 512"
+                        fill="#ffff"
+                        width="50px"
+                        height="40px"
+                      >
+                        <path
+                          d="M432 96c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"
+                        />
+                      </svg>
+                      <h5>{{ checkOut.length || "0" }}</h5>
+                    </h1>
+                    <h6 class="text-white">Check Out</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-6 col-xlg-12 py-0">
+                <div class="card card-hover p-0 m-0">
+                  <div
+                    class="text-center p-0 m-0"
+                    style="background-color: white"
+                  >
+                    <h1 class="font-light p-0 m-0 text-black">
+                      <NewPie :renderChartData="renderChartData" />
+                    </h1>
+                  </div>
+                </div>
+              </div>
+              {{ renderChartData }}
+            </div>
+          </div>
+          <!-- <div class="col-12 col-md-3">
+            <div class="col-md-12 col-lg-12 col-xlg-12 py-0">
+              <div class="card card-hover p-0 m-0">
+                <div
+                  class="text-center p-0 m-0"
+                  style="background-color: white"
+                >
+                  <h1 class="font-light p-0 m-0 text-black">
+                    <NewPie :renderChartData="renderChartData" />
                   </h1>
                 </div>
               </div>
             </div>
           </div> -->
-          <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div class="box text-center bg-cyan">
-                <div class="d-flex justify-space-around py-0 my-0">
-                  <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-male fx-1"></i>
-                    <h5>
-                      {{ members.child }} | {{ members.child }} |
-                      {{ members.baby }}
-                    </h5>
-                    <h6>Customers</h6>
-                  </h1>
-                  <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-coffee fx-1"></i>
-                    <h5>
-                      {{ onlyBreakfast.adult }} | {{ onlyBreakfast.child }} |
-                      {{ onlyBreakfast.baby }}
-                    </h5>
-                    <h6>Breakfast</h6>
-                  </h1>
-                  <h1 class="font-light text-white py-0 my-0">
-                    <i class="fas fa-concierge-bell"></i>
-                    <h5>
-                      {{ onlyLunch.adult }} | {{ onlyLunch.child }} |
-                      {{ onlyLunch.baby }}
-                    </h5>
-                    <h6>Lunch</h6>
-                  </h1>
-                  <h1 class="font-light text-white py-0 my-0">
-                    <i class=" fas fa-hamburger"></i>
-                    <h5>
-                      {{ onlyDinner.adult }} | {{ onlyDinner.child }} |
-                      {{ onlyDinner.baby }}
-                    </h5>
-                    <h6>Dinner</h6>
-                  </h1>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Column -->
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div class="box available text-center">
-                <h1 class="font-light text-white">
-                  <i class="fas fa-door-open"></i>
-                  <h5>
-                    {{ (availableRooms && availableRooms.length) || 0 }}
-                  </h5>
-                </h1>
-                <h6 class="text-white">Available</h6>
-              </div>
-            </div>
-          </div>
-          <!-- Column -->
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div class="box booked text-center">
-                <h1 class="font-light text-white">
-                  <i class="fas fa-door-closed"></i>
-                  <h5>
-                    {{ (notAvailableRooms && notAvailableRooms.length) || 0 }}
-                  </h5>
-                </h1>
-                <h6 class="text-white">Booked Room</h6>
-              </div>
-            </div>
-          </div>
-          <!-- Column -->
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div
-                class="box text-center"
-                style="background-image:linear-gradient(135deg, #56ab2f  0, #a8e063 100%)"
-              >
-                <h1 class="font-light text-white">
-                  <i class="fas fa-money-bill"></i>
-                  <h5>
-                    {{ confirmedBooking || "---" }}
-                  </h5>
-                </h1>
-                <h6 class="text-white">Advance Paid Booking</h6>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div
-                class="box text-center"
-                style="background-image:linear-gradient(135deg, #d66d75   0, #e29587 100%)"
-              >
-                <h1 class="font-light text-white">
-                  <i class="fas fa-door-closed"></i>
-                  <h5>
-                    {{ dirtyRooms || "---" }}
-                  </h5>
-                </h1>
-                <h6 class="text-white">Dirty Room</h6>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div
-                class="box bg-primary text-center"
-                style="background-image: linear-gradient(135deg, #4568dc     0, #8169C4 100%)"
-              >
-                <h1 class="font-light text-white">
-                  <i
-                    class="fas fa-plane-arrival"
-                    style="-webkit-transform: scaleX(-1);transform: scaleX(-1);"
-                  ></i>
-                  <h5>
-                    {{ expectCheckIn.length || 0 }}
-                  </h5>
-                </h1>
-                <h6 class="text-white">Expect Check In</h6>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div
-                class="box text-center"
-                style="background-image: linear-gradient(135deg, #c33764      0, #A05196 100%)"
-              >
-                <h1 class="font-light text-white">
-                  <i class="fas fa-plane-departure"></i>
-                  <h5>
-                    {{ expectCheckOut.length || 0 }}
-                  </h5>
-                </h1>
-                <h6 class="text-white">Expect Checked Out</h6>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div class="box checkedIn text-center">
-                <h1 class="font-light text-white">
-                  <svg
-                    viewBox="0 0 576 512"
-                    fill="#ffff"
-                    width="50px"
-                    height="40px"
-                    style="-webkit-transform: scaleX(-1); transform: scaleX(-1);"
-                  >
-                    <path
-                      d="M432 96c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"
-                    />
-                  </svg>
-                  <h5>{{ checkIn.length || "0" }}</h5>
-                </h1>
-                <h6 class="text-white">Check In</h6>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-            <div class="card card-hover">
-              <div class="box checkedOut text-center">
-                <h1 class="font-light text-white">
-                  <svg
-                    viewBox="0 0 576 512"
-                    fill="#ffff"
-                    width="50px"
-                    height="40px"
-                  >
-                    <path
-                      d="M432 96c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"
-                    />
-                  </svg>
-                  <h5>{{ checkOut.length || "0" }}</h5>
-                </h1>
-                <h6 class="text-white">Check Out</h6>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="row">
           <div class="col-md-12">
@@ -1101,6 +1109,12 @@
                           "
                           @dblclick="dblclick"
                           class="ma-0 px-md-1 py-md-2"
+                          :class="
+                            noAvailableRoom.booked_room.background ==
+                            'linear-gradient(135deg, #c33764      0, #A05196 100%)'
+                              ? 'element'
+                              : ''
+                          "
                           dark
                           :style="
                             `background-image:${(noAvailableRoom &&
@@ -1160,6 +1174,10 @@ export default {
   components: { ReservationList },
   data() {
     return {
+      chart: {
+        eco: 35
+      },
+
       check_out_menu: false,
       check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
@@ -1307,6 +1325,19 @@ export default {
     this.first_login_auth = this.$auth.user.first_login;
   },
 
+  computed: {
+    renderChartData() {
+      let arr = [
+        34,
+        this.expectCheckIn.length,
+        this.expectCheckOut.length,
+        this.notAvailableRooms.length,
+        this.availableRooms.length
+      ];
+      return arr;
+    }
+  },
+
   methods: {
     caps(str) {
       if (str == "" || str == null) {
@@ -1418,7 +1449,6 @@ export default {
       // bookingDetails.room_tax = this.get_room_tax(this.reservation.price);
       // bookingDetails.check_in = this.reservation.check_in;
       // bookingDetails.check_out = this.reservation.check_out;
-      console.log(bookingDetails);
 
       this.$store.commit("reservation", commitObj);
       this.$router.push(`/hotel/new`);
@@ -1450,7 +1480,6 @@ export default {
           room_no: obj.room_no
         }
       };
-      console.log(payload);
       return;
       this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
         this.reservation.room_id = data.id;
@@ -1522,7 +1551,6 @@ export default {
         this.onlyDinner = {
           ...data.fooForCustomers.dinner
         };
-        console.log(this.onlyBreakfast);
         this.dirtyRooms = data.dirtyRooms;
         this.notAvailableRooms = data.notAvailableRooms;
         this.availableRooms = data.availableRooms;
@@ -1838,6 +1866,18 @@ export default {
 <!-- <style scoped src="@/assets/dashtem.css"></style> -->
 
 <style scoped>
+.chart {
+  display: flex;
+  align-items: flex-end;
+}
+
+.bar {
+  width: 20px;
+  margin-right: 10px;
+  background-color: blue;
+  transition: height 0.5s;
+}
+
 .app {
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 14px;
@@ -1876,5 +1916,34 @@ td {
   border-top: none !important;
   border-right: none !important;
   border-left: none !important;
+}
+
+.element {
+  height: 60px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: lime;
+  animation-name: stretch;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-play-state: running;
+}
+
+@keyframes stretch {
+  0% {
+    transform: scale(0.8);
+    background-color: orange;
+  }
+
+  50% {
+    background-color: orange;
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: orange;
+  }
 }
 </style>

@@ -92,6 +92,8 @@ class BookedRoom extends Model
 
         if ($model->booking_status == 1 && $model->advance_price == 0) {
             (int) $status = 6;
+        } else if (($model->booking_status == 2) && (date('Y-m-d', strtotime($model->check_out)) <= date('Y-m-d'))) {
+            (int) $status = 7;
         } else {
             (int) $status = $model->booking_status ?? 0;
         }
@@ -99,12 +101,15 @@ class BookedRoom extends Model
         return match ($status) {
 
             1 => 'linear-gradient(135deg, #56ab2f  0, #a8e063 100%)', //paid advance
-            0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
+            0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
             2 => 'linear-gradient(135deg, #8e4cf1 0, #c554bc 100%)',
-            3 => 'linear-gradient(135deg, #289cf5, #4f8bb7)',
+            // 3 => 'linear-gradient(135deg, #289cf5, #4f8bb7)',
+            // 3 => 'linear-gradient(135deg, #d66d75   0, #e29587 100%)', //dirty room
+            3 => 'linear-gradient(135deg, #ff0000   0, #ff0000 100%)', //dirty room
             4 => 'linear-gradient(135deg, #34444c 0, #657177 100%)',
             5 => 'green',
             6 => 'linear-gradient(135deg, #f48665 0, #d68e41 100%)', //only booking
+            7 => 'linear-gradient(135deg, #c33764      0, #A05196 100%)', //expect check out
         };
     }
 

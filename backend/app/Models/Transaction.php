@@ -11,7 +11,17 @@ class Transaction extends Model
 
     protected $guarded = [];
 
+    protected $appends = [
+        'time'
+    ];
+
     protected $casts = [
         'created_at' => 'datetime:Y-m-d',
+        'date' => 'datetime:Y-m-d',
     ];
+
+    public function getTimeAttribute()
+    {
+        return date('H:i', strtotime($this->attributes['date']));
+    }
 }

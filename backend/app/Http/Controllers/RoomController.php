@@ -253,7 +253,7 @@ class RoomController extends Controller
 
 
         $checkInModel = BookedRoom::query();
-        $checkIn      = $checkInModel->clone()->whereDate('check_in', $request->check_in)
+        $checkIn      = $checkInModel->clone() //->whereDate('check_in', $request->check_in)
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 2);

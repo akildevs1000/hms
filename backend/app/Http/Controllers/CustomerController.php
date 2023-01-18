@@ -108,7 +108,7 @@ class CustomerController extends Controller
 
         $transaction = Transaction::whereBookingId($id);
         $transactions = $transaction->clone()->get();
-        $totalTransactionAmount = $transaction->clone()->latest()->first();
+        $totalTransactionAmount = $transaction->clone()->orderBy('id', 'desc')->first();
 
         return response()->json([
             'booking' => $booking,
