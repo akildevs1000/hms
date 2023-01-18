@@ -1046,15 +1046,14 @@
                 <div class="card card-hover p-0 m-0">
                   <div
                     class="text-center p-0 m-0"
-                    style="background-color: white"
+                    style="background-color: white;height: 120px !important;"
                   >
                     <h1 class="font-light p-0 m-0 text-black">
-                      <NewPie :renderChartData="renderChartData" />
+                      <NewPie :renderChartData="renderChartData()" />
                     </h1>
                   </div>
                 </div>
               </div>
-              {{ renderChartData }}
             </div>
           </div>
           <!-- <div class="col-12 col-md-3">
@@ -1325,20 +1324,20 @@ export default {
     this.first_login_auth = this.$auth.user.first_login;
   },
 
-  computed: {
+  computed: {},
+
+  methods: {
     renderChartData() {
       let arr = [
-        34,
         this.expectCheckIn.length,
         this.expectCheckOut.length,
         this.notAvailableRooms.length,
         this.availableRooms.length
       ];
+      // console.log(arr);
       return arr;
-    }
-  },
+    },
 
-  methods: {
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -1561,6 +1560,8 @@ export default {
         this.checkIn = data.checkIn;
         this.checkOut = data.checkOut;
 
+        this.renderChartData();
+        console.log("from parent");
         this.members = {
           ...data.members
         };

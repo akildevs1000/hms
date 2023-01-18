@@ -1,8 +1,6 @@
 <template>
   <div style="padding: 0px ;width:90%;">
     <div id="pie" style="height: 100px"></div>
-    {{ renderChartData }}
-    {{ options.series[0].data }}
   </div>
 </template>
 
@@ -14,7 +12,7 @@ export default {
       options: {
         series: [
           {
-            data: [44, 55, 41, 64, 22, 43, 21]
+            data: []
           }
         ],
         chart: {
@@ -57,12 +55,23 @@ export default {
   //   this.options.series[0].data = this.renderChartData.map(e => e);
   // },
 
-  computed: {},
-
   mounted() {
-    this.options.series[0].data = this.renderChartData.map(e => e);
-    console.log(this.options.series[0].data);
-    new ApexCharts(document.querySelector("#pie"), this.options).render();
+    setTimeout(
+      () => {
+        console.log("from child");
+        // this.options.series[0].data = [1, 2, 3, 4];
+        this.options.series[0].data = this.renderChartData.map(e => e);
+        console.log(this.options.series[0].data);
+        new ApexCharts(document.querySelector("#pie"), this.options).render();
+      },
+
+      1000
+    );
+
+    // console.log("from child");
+    // this.options.series[0].data = [1, 2, 3, 4];
+    // // this.options.series[0].data = this.renderChartData.map(e => e);
+    // console.log(this.options.series[0].data);
   },
   methods: {}
 };
