@@ -2,6 +2,7 @@
 
     use Illuminate\Support\Facades\Route;
     use App\Http\Controllers\BookingController;
+use App\Http\Controllers\TaxableController;
 
     Route::get('booking', [BookingController::class, 'index']);
     Route::post('store_bulk', [BookingController::class, 'storeBulk']);
@@ -38,3 +39,10 @@
     Route::post('set_maintenance/{id}', [BookingController::class, 'setMaintenance']);
     Route::post('paying_advance', [BookingController::class, 'payingAdvance']);
     Route::post('paying_amount', [BookingController::class, 'payingAmount']);
+
+
+
+    // Taxable Invoice 
+
+
+    Route::post('taxable_invoice', [TaxableController::class,"taxableInvoice"]);
