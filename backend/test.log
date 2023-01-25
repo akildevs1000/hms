@@ -1,9 +1,0 @@
-[2022-10-14 21:46:01] Cron: SyncAbsent. Total 126employees absent.
-[2022-10-14 21:47:01] Cron: SyncAbsent. No employee found.
-[2022-10-14 21:48:01] Cron: SyncAbsent. No employee found.
-[2022-10-14 21:50:01] Cron: SyncAttendanceLogs. No new data found.
-[2022-10-14 21:50:01] Cron: UpdateCompanyIds. No new record found while updating company ids for device.
-[2022-10-14 21:50:02] Cron: SyncAttendance. No new logs found.
-[2022-10-14 21:51:02] Cron: SyncAttendanceLogs. No new data found.
-[2022-10-14 21:51:03] Cron: UpdateCompanyIds. No new record found while updating company ids for device.
-[2022-10-14 21:51:04] Cron: SyncAttendance. No new logs found.
