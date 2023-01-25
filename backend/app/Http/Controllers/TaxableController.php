@@ -32,9 +32,9 @@ class TaxableController extends Controller
 
         $model = Taxable::query();
 
-        $counter = $model->latest('taxable_invoice_number')->value('taxable_invoice_number') ?? $starting_value;
+        $counter = $model->where('company_id', $company_id)->latest('taxable_invoice_number')->value('taxable_invoice_number') ?? $starting_value;
 
-        $exist = $model->where('booking_id', $booking_id)->exists();
+        $exist = $model->where('company_id', $company_id)->where('booking_id', $booking_id)->exists();
 
         if (!$exist) {
             $created = $model->create([

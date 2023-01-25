@@ -15,6 +15,13 @@ class Taxable extends Model
 
     protected $appends = ["show_taxable_invoice_number"];
 
+    protected $casts = [
+        "created_at" => "datetime:d-M-y",
+    ];
+
+    protected $hidden = ["updated_at","taxable_invoice_number"];
+
+
 
     /**
      * Get the user's first name.
@@ -23,7 +30,9 @@ class Taxable extends Model
      */
     protected function getShowTaxableInvoiceNumberAttribute()
     {
-        return "KG-" . $this->taxable_invoice_iumber;
+        $id = $this->company_id;
+        if ($id == 1) return "TG-" . $this->taxable_invoice_number;
+        else if ($id == 2) return "KG-" . $this->taxable_invoice_number;
     }
 
     /**
