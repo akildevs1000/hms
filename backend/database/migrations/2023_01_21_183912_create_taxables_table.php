@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer("taxable_invoice_number")->default(1000);
             $table->integer("booking_id");
+            $table->integer("company_id")->default(0);
             $table->timestamps();
         });
     }

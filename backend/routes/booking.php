@@ -45,4 +45,5 @@ use App\Http\Controllers\TaxableController;
     // Taxable Invoice 
 
 
+    Route::get('taxable_invoice', [TaxableController::class,"index"]);
     Route::post('taxable_invoice', [TaxableController::class,"taxableInvoice"]);

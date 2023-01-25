@@ -14,7 +14,7 @@ class TaxableController extends Controller
      */
     public function index()
     {
-        //
+        return Taxable::get();
     }
 
     /**
@@ -26,6 +26,7 @@ class TaxableController extends Controller
     public function taxableInvoice(Request $request)
     {
         $booking_id = $request->booking_id;
+        $company_id = $request->company_id;
 
         $starting_value = 1000;
 
@@ -39,24 +40,11 @@ class TaxableController extends Controller
             $created = $model->create([
                 "booking_id" => $booking_id,
                 "taxable_invoice_number" => ++$counter,
+                "company_id" => $company_id,
             ]);
 
             return $created;
         }
-
-        // $booking_id = $request->booking_id;
-
-        // $starting_value = 1000;
-
-        // $table = DB::table('table_taxables');
-
-        // $counter = $table->latest('taxable_invoice_number')->value('taxable_invoice_number') ?? $starting_value;
-
-        // $exist = $table->where('booking_id', $booking_id)->exists();
-
-        // if (!$exist) {
-        //     return $table->insert(["booking_id" => $booking_id, "taxable_invoice_number" => ++$counter]);
-        // }
 
         return "exit";
     }
