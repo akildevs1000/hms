@@ -33,12 +33,20 @@ use App\Http\Controllers\AttendanceController;
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
 
-Route::post('/test', function (Request $request) {
+Route::post('/test', function (Request $request) { {
+        $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
+            'number' => '971502848071',
+            'type' => 'text',
+            'message' => 'hello world',
+            'instance_id' => env('INSTANCE_ID'),
+            'access_token' => env('ACCESS_TOKEN'),
+        ]);
+        return $response->status();
+    }
+
 
 
     return    Customer::customerAttributes();
-
-
     $data = [
         "from" => "14157386102",
         "to" => "971502848071",

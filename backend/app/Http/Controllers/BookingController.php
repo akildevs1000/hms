@@ -263,15 +263,9 @@ class BookingController extends Controller
                 }
             }
 
-            $data = [
-                "from" => "14157386102",
-                "to" => "971502848071",
-                "message_type" => "text",
-                "text" => "you have to " . count($rooms) . " rooms booking \nyour reservation number is " . $rooms[0]['booking_id'],
-                "channel" => "whatsapp"
-            ];
+            $customer = Customer::find($booking->customer_id);
+            $this->whatsappNotification($booking, $rooms['selectedRooms'], $customer);
 
-            WhatsappJob::dispatch($data);
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
         } catch (\Throwable $th) {
@@ -279,6 +273,43 @@ class BookingController extends Controller
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
         }
+    }
+
+    private function whatsappNotification($booking, $rooms, $customer)
+    {
+        $numberOfRooms = count($rooms);
+        $customerName = $customer['first_name'] ?? 'Guest';
+        $checkIn = date('d-M-y', strtotime($booking->check_in));
+        $checkOut = date('d-M-y', strtotime($booking->check_out));
+        $days = $booking->total_days;
+        $bookedRooms = $booking->rooms;
+        $totalAmount = $booking->total_price;
+        $advanceAmount = $booking->advance_price;
+        $remainingAmount = $booking->remaining_price;
+        $company_id = $booking->company_id;
+        $appName = env('APP_NAME');
+        $msg = "";
+        $msg .= "Dear $customerName, \n";
+        $msg .= "Welcome to $appName! Your booking number $booking->id. \n";
+        $msg .= "you have booked $numberOfRooms rooms from $checkIn to $checkOut. \n";
+        $msg .= "Room numbers $bookedRooms . \n";
+        $msg .= "Your total bill is $totalAmount \n";
+        $msg .= "You paid advance $advanceAmount \n";
+        $msg .= "Your remaining amount is $remainingAmount \n";
+        $msg .= " \n";
+
+        if ($company_id == 1) {
+            $msg .= "Find us at https://goo.gl/maps/gA9h3YxGTwLaRETG6";
+        } else if ($company_id == 2) {
+            $msg .= "Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
+        }
+
+        $data = [
+            'to' => env('COUNTRY_CODE') . $customer['whatsapp'],
+            'message' => $msg,
+        ];
+
+        (new WhatsappController)->sentNotification($data);
     }
 
     public function storeDocument(Request $request)

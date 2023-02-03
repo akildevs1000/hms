@@ -74,6 +74,7 @@ class WhatsappController extends Controller
         ]);
 
         return $response->status();
+        // dd($response->status());
 
         if ($response->successful()) {
             $data = $response->body();
