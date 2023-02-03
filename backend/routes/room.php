@@ -30,3 +30,4 @@
 
 
     Route::post('generate_bill', [BookingController::class, 'generateBill']);
+    Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);

@@ -12,9 +12,9 @@ class TaxableController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request  $request)
     {
-        return Taxable::get();
+        return Taxable::whereCompanyId($request->company_id)->with('booking.customer')->paginate(30);
     }
 
     /**
@@ -48,6 +48,35 @@ class TaxableController extends Controller
 
         return "exit";
     }
+
+    public function storeTaxableInvoice($data)
+    {
+        $booking_id = $data['id'];
+        $reservation_no = $data['reservation_no'];
+        $company_id = $data['company_id'];
+
+        $starting_value = 1000;
+
+        $model = Taxable::query();
+
+        $counter = $model->where('company_id', $company_id)->latest('taxable_invoice_number')->value('taxable_invoice_number') ?? $starting_value;
+
+        $exist = $model->where('company_id', $company_id)->where('booking_id', $booking_id)->exists();
+
+        if (!$exist) {
+            $created = $model->create([
+                "booking_id" => $booking_id,
+                "taxable_invoice_number" => ++$counter,
+                "company_id" => $company_id,
+                "reservation_no" => $reservation_no,
+            ]);
+
+            return $created;
+        }
+
+        return "exit";
+    }
+
 
     /**
      * Display the specified resource.

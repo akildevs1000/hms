@@ -10,4 +10,9 @@ class Holiday extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'from' => 'datetime:Y-m-d',
+        'to' => 'datetime:Y-m-d'
+    ];
 }

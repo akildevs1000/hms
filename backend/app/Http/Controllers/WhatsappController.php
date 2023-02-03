@@ -61,4 +61,26 @@ class WhatsappController extends Controller
         Log::Info('this message from whatsapp notification', [$response]);
         return 'something went wrong';
     }
+
+
+    public function sentNotification($data)
+    {
+        $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
+            'number' => $data['to'],
+            'type' => 'text',
+            'message' => $data['message'],
+            'instance_id' => env('INSTANCE_ID'),
+            'access_token' => env('ACCESS_TOKEN'),
+        ]);
+
+        return $response->status();
+
+        if ($response->successful()) {
+            $data = $response->body();
+            Log::Info('this message from whatsapp notification', [$data]);
+            return $data;
+        }
+        Log::Info('this message from whatsapp notification', [$response]);
+        return 'something went wrong';
+    }
 }

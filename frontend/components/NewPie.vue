@@ -58,7 +58,6 @@ export default {
   mounted() {
     setTimeout(
       () => {
-        console.log("from child");
         // this.options.series[0].data = [1, 2, 3, 4];
         this.options.series[0].data = this.renderChartData.map(e => e);
         console.log(this.options.series[0].data);

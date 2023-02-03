@@ -19,7 +19,7 @@ class Taxable extends Model
         "created_at" => "datetime:d-M-y",
     ];
 
-    protected $hidden = ["updated_at","taxable_invoice_number"];
+    protected $hidden = ["updated_at", "taxable_invoice_number"];
 
 
 
@@ -40,8 +40,8 @@ class Taxable extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function company()
+    public function booking()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Booking::class);
     }
 }

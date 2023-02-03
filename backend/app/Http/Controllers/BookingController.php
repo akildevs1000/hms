@@ -71,6 +71,22 @@ class BookingController extends Controller
         });
     }
 
+    public function getReservationNumber($data)
+    {
+        $company_id = $data['company_id'];
+        $starting_value = 00001;
+        $model = Booking::query();
+
+        (int)$counter = $model->where('company_id', $company_id)->latest('reservation_no')->value('reservation_no') ?? $starting_value;
+        $exist = $model->where('company_id', $company_id)->where('reservation_no', $counter)->exists();
+
+        if ($exist) {
+            return   (int)++$counter;
+        } else {
+            return $starting_value;
+        }
+    }
+
     public function storeBooking($request)
     {
         try {
@@ -81,6 +97,7 @@ class BookingController extends Controller
                 $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
                 $data['remaining_price'] = (float)$request->total_price - (float)$request->advance_price;
                 $data['grand_remaining_price'] = (int)$request->total_price - (float)$request->advance_price;
+                $data['reservation_no']  = $this->getReservationNumber($data);
 
                 $booked  = Booking::create($data);
 
@@ -215,6 +232,8 @@ class BookingController extends Controller
                         $payment = new AgentsController();
                         $payment->store($agentsData);
                     }
+
+                    (new TaxableController)->storeTaxableInvoice($booked);
                 }
 
                 return $booked;
@@ -244,15 +263,15 @@ class BookingController extends Controller
                 }
             }
 
-            // $data = [
-            //     "from" => "14157386102",
-            //     "to" => "971502848071",
-            //     "message_type" => "text",
-            //     "text" => "you have to " . count($rooms) . " rooms booking \nyour reservation number is " . $rooms[0]['booking_id'],
-            //     "channel" => "whatsapp"
-            // ];
+            $data = [
+                "from" => "14157386102",
+                "to" => "971502848071",
+                "message_type" => "text",
+                "text" => "you have to " . count($rooms) . " rooms booking \nyour reservation number is " . $rooms[0]['booking_id'],
+                "channel" => "whatsapp"
+            ];
 
-            // WhatsappJob::dispatch($data);
+            WhatsappJob::dispatch($data);
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
         } catch (\Throwable $th) {
@@ -266,6 +285,8 @@ class BookingController extends Controller
     {
         $booking    = Booking::find($request->booking_id);
         $customer    = Customer::find($booking->customer_id);
+
+
         if ($request->hasFile('document')) {
             $file = $request->file('document');
             $ext = $file->getClientOriginalExtension();
@@ -277,6 +298,7 @@ class BookingController extends Controller
         } else {
             $booking->document = $customer->document_name ?? null;
         }
+
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -928,10 +950,11 @@ class BookingController extends Controller
 
     public function get_booking(Request $request)
     {
-        $bookedRoom                     = BookedRoom::with('booking')->where('company_id', $request->company_id)->findOrFail($request->id);
+        $bookedRoom                     = BookedRoom::with(['booking', 'customer'])->where('company_id', $request->company_id)->findOrFail($request->id);
         $bookedRoom->booking->room_id   = $bookedRoom->room_id;
         $bookedRoom->booking->room_no   = $bookedRoom->room_no;
         $bookedRoom->booking->room_type = $bookedRoom->room_type;
+        $bookedRoom->booking->contact_no = $bookedRoom->customer->contact_no;
         return  $bookedRoom->booking;
         // return response()->json(['booking' => $bookedRoom->booking, 'status' => true]);
     }

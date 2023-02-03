@@ -899,6 +899,7 @@
         </v-list>
       </v-menu>
     </div>
+
     <v-dialog v-model="LoadingDialog" hide-overlay persistent width="300">
       <v-card color="primary" dark>
         <v-card-text class="py-3">
@@ -1137,6 +1138,7 @@ export default {
   mounted() {
     this.room_list();
     this.get_events();
+    document.querySelector(".fc-license-message").style.display = "none";
   },
 
   watch: {
@@ -1245,7 +1247,6 @@ export default {
     get_check_out() {
       this.checkOutDialog = true;
       this.get_transaction();
-      // console.log("fff" + this.bookingId);
     },
 
     get_transaction() {
@@ -1298,8 +1299,6 @@ export default {
     },
 
     create_reservation(e, obj) {
-      console.log(e.startStr);
-      console.log(e.endStr);
       this.get_room_types(e, obj);
     },
 
@@ -1756,9 +1755,7 @@ th {
 tr:nth-child(even) {
   background-color: #e9e9e9;
 }
-.fc-license-message {
-  display: none !important;
-}
+
 .bg-background {
   background-color: #34444c !important;
 }
@@ -1768,5 +1765,19 @@ td {
   border-top: none !important;
   border-right: none !important;
   border-left: none !important;
+}
+.fc-license-message {
+  display: none !important;
+  z-index: 99999 !important;
+  position: absolute !important;
+  bottom: 10px !important;
+  left: 1px !important;
+  background: rgb(238, 238, 238) !important;
+  border-color: rgb(221, 221, 221) !important;
+  border-style: solid !important;
+  border-width: 1px 1px 0px 0px !important;
+  padding: 2px 4px !important;
+  font-size: 12px !important;
+  border-top-right-radius: 3px !important;
 }
 </style>

@@ -84,6 +84,11 @@ class RoomTypeController extends Controller
         //
     }
 
+    public function getPriceList(Request $request)
+    {
+        return RoomType::where('company_id', $request->company_id)->get();
+    }
+
     public function getDataBySelect(Request $request)
     {
         return Room::where('room_no', $request->room_no)

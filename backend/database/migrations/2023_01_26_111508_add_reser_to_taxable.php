@@ -13,13 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('holidays', function (Blueprint $table) {
-            $table->id();
-            $table->date("from");
-            $table->date("to");
-            $table->string("description");
-            $table->integer("company_id")->default(0);
-            $table->timestamps();
+        Schema::table('taxables', function (Blueprint $table) {
+            $table->string('reservation_no')->default(0);
         });
     }
 
@@ -30,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('holidays');
+        Schema::table('taxables', function (Blueprint $table) {
+            $table->dropColumn('reservation_no');
+        });
     }
 };
