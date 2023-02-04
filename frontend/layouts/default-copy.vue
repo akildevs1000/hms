@@ -19,11 +19,7 @@
           :class="!miniVariant || 'pl-2'"
         >
           <v-list-item-icon class="ma-2">
-            <v-icon
-              @mouseover="showTooltipMenu(i.title)"
-              @mouseleave="show = false"
-              >{{ i.icon }}
-            </v-icon>
+            <v-icon>{{ i.icon }}</v-icon>
           </v-list-item-icon>
           <v-list-item-title> {{ i.title }}&nbsp; </v-list-item-title>
         </v-list-item>
@@ -62,8 +58,6 @@
                 <v-icon
                   :to="j.to"
                   :style="miniVariant ? 'margin-left: 12px;' : ''"
-                  @mouseover="showTooltipMenu(j.title)"
-                  @mouseleave="show = false"
                 >
                   {{ j.icon }}
                 </v-icon>
@@ -74,6 +68,10 @@
       </v-list>
     </v-navigation-drawer>
 
+    <!-- style="
+    margin-left: -49px;
+" -->
+
     <v-app-bar
       elevation="0"
       :color="changeColor"
@@ -81,9 +79,8 @@
       :clipped-left="clipped"
       fixed
       app
+      :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''"
     >
-      <!-- :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''" -->
-
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
@@ -156,18 +153,6 @@
 
     <v-main class="main_bg">
       <!-- <v-container> -->
-      <v-tooltip
-        v-model="show"
-        top
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-y
-        color="primary"
-      >
-        <span>{{ menuName }}</span>
-      </v-tooltip>
-
       <div class="mx-2 my-4">
         <nuxt />
       </div>
@@ -319,10 +304,6 @@ export default {
   mounted() {},
   data() {
     return {
-      menuName: "",
-      show: false,
-      y: 0,
-      x: 0,
       miniVariant: false,
       right: true,
       rightDrawer: false,
@@ -382,7 +363,7 @@ export default {
         },
 
         {
-          icon: "mdi mdi-food",
+          icon: "mdi-cash",
           title: "Posting",
           to: "/posting",
           menu: "posting_access"
@@ -396,7 +377,7 @@ export default {
         },
 
         {
-          icon: "mdi-account-cash",
+          icon: "mdi-account",
           title: "City Ledger",
           to: "/city_ledger",
           menu: "city_ledger_access"
@@ -415,13 +396,13 @@ export default {
             //   menu: "customer_bill_access"
             // },
             {
-              icon: "mdi mdi-bank-transfer-in",
+              icon: "mdi-cash-multiple",
               title: "Income",
               to: "/account",
               menu: "income_access"
             },
             {
-              icon: "mdi mdi-bank-transfer-out",
+              icon: "mdi-cash",
               title: "Expense",
               to: "/expense",
               menu: "expense_access"
@@ -447,6 +428,147 @@ export default {
           menu: "city_ledger_access"
         }
       ],
+
+      // menus: [
+      //   {
+      //     icon: "mdi-briefcase-outline",
+      //     title: `Organization`,
+      //     open_menu: false,
+      //     menu: "company_access",
+      //     hasChildren: [
+      //       {
+      //         icon: "mdi-domain",
+      //         title: "Department",
+      //         to: "/department",
+      //         menu: "department_access"
+      //       },
+      //       {
+      //         icon: "mdi-lan",
+      //         title: "Sub Department",
+      //         to: "/sub-department",
+      //         menu: "sub_department_access"
+      //       },
+
+      //       {
+      //         icon: "mdi-treasure-chest ",
+      //         title: "Designation",
+      //         to: "/designation",
+      //         menu: "designation_access"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     icon: "mdi-door",
+      //     title: "Devices",
+      //     to: "/device",
+      //     menu: "device_access"
+      //   },
+      //   {
+      //     icon: "mdi-clipboard-edit-outline",
+      //     title: "Policy",
+      //     to: "/policy",
+      //     menu: "policy_access"
+      //   },
+      //   {
+      //     icon: "mdi-bullhorn-variant-outline",
+      //     title: "Announcement",
+      //     to: "/announcement",
+      //     menu: "announcement_access"
+      //   },
+      //   {
+      //     icon: "mdi-account",
+      //     title: "Employees",
+      //     to: "/employees",
+      //     menu: "employee_access"
+      //   },
+      //   {
+      //     icon: "mdi-clock",
+      //     title: "Shift",
+      //     to: "/shift",
+      //     menu: "shift_access"
+      //   },
+      //   {
+      //     icon: "mdi-account",
+      //     title: "Employee Schedule",
+      //     to: "/employee_schedule",
+      //     menu: "employee_schedule_access"
+      //   },
+
+      //   {
+      //     icon: "mdi-cash-multiple",
+      //     title: `Payroll`,
+      //     open_menu: false,
+      //     menu: "payroll_access",
+      //     hasChildren: [
+      //       // {
+      //       //   icon: "mdi-cash-multiple ",
+      //       //   title: "Generate Month",
+      //       //   to: "/payroll/month",
+      //       //   menu:("payroll_generate_month_access")
+      //       // },
+
+      //       // {
+      //       //   icon: "mdi-cash-multiple ",
+      //       //   title: "Generate Payroll",
+      //       //   to: "/employees",
+      //       //   menu:("employee_schedule_access")
+      //       // },
+      //       {
+      //         icon: "mdi-cash ",
+      //         title: "Salary",
+      //         to: "/payroll/salary",
+      //         menu: "payroll_generate_access"
+      //       }
+      //       // {
+      //       //   icon: "mdi-cash-multiple ",
+      //       //   title: "Salary Advance",
+      //       //   to: "/employee_schedule",
+      //       //   menu:("employee_schedule_access")
+      //       // }
+      //     ]
+      //   },
+
+      //   {
+      //     icon: "mdi-account",
+      //     title: `User Management`,
+      //     open_menu: false,
+      //     menu: "payroll_access",
+      //     hasChildren: [
+      //       {
+      //         icon: "mdi-account-plus",
+      //         title: "Roles",
+      //         to: "/role",
+      //         menu: "role_access"
+      //       },
+      //       {
+      //         icon: "mdi-lock",
+      //         title: "Assign Permissions",
+      //         to: "/assign_permission",
+      //         menu: "assign_permission_access"
+      //       }
+      //     ]
+      //   },
+
+      //   {
+      //     icon: "mdi-clipboard-text-clock",
+      //     title: "Reports",
+      //     to: "/attendance_report",
+      //     menu: "attendance_report_access"
+      //   },
+
+      //   {
+      //     icon: "mdi-email",
+      //     title: "Notification",
+      //     to: "/report_notifications",
+      //     menu: "notifications_access"
+      //   },
+      //   {
+      //     icon: "mdi-cog",
+      //     title: "Setting",
+      //     to: "/setting",
+      //     menu: "setting_access"
+      //   }
+      // ],
       items: [],
       modules: {
         module_ids: [],
@@ -462,7 +584,6 @@ export default {
       }
     };
   },
-
   created() {
     let das = {
       icon: "mdi-home",
@@ -487,11 +608,6 @@ export default {
 
     this.getCompanyDetails();
   },
-
-  mounted() {
-    document.addEventListener("mousemove", this.updateMouseLocation);
-  },
-
   computed: {
     changeColor() {
       return this.$store.state.color;
@@ -506,16 +622,6 @@ export default {
     }
   },
   methods: {
-    showTooltipMenu(e) {
-      this.show = true;
-      this.menuName = e;
-    },
-
-    updateMouseLocation(event) {
-      this.x = event.clientX;
-      this.y = event.clientY;
-    },
-
     changeTopBarColor(color) {
       this.color = color;
       this.$store.commit("change_color", color);

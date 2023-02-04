@@ -33,12 +33,47 @@ use App\Http\Controllers\AttendanceController;
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
 
-Route::post('/test', function (Request $request) {
+Route::post('/test', function (Request $request) { {
+
+
+
+        $arr = [
+            "to" => "971502848071",
+            "message" => "
+          Dear fahath,
+          Welcome to Hpyders Park! Your booking number 344.
+          you have booked 3 rooms from 03-Feb-23 to 06-Feb-23.
+          Room numbers 104,102,109 .
+          Your total bill is 32161.5
+          You paid advance 1000
+          Your remaining amount is 31161.5
+
+          Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9
+          ",
+            "company" => 2,
+            "instance_id" => "THANJ_INSTANCE_ID",
+            "access_token" => "THANJ_ACCESS_TOKEN",
+        ];
+
+
+        (new WhatsappController)->sentNotification($arr);
+
+        return
+
+            $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
+                'number' => '971502848071',
+                'type' => 'text',
+                'message' => 'hello world',
+                'instance_id' => env('KODAI_INSTANCE_ID'),
+                'access_token' => env('KODAI_ACCESS_TOKEN'),
+            ]);
+        return $response->status();
+    }
+    // THANJ_INSTANCE_ID
+    // THANJ_ACCESS_TOKEN
 
 
     return    Customer::customerAttributes();
-
-
     $data = [
         "from" => "14157386102",
         "to" => "971502848071",

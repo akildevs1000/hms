@@ -5,7 +5,7 @@ namespace App\Http\Requests\Booking;
 use App\Traits\failedValidationWithName;
 use Illuminate\Foundation\Http\FormRequest;
 
-class BookingRequest extends FormRequest
+class  BookingRequest extends FormRequest
 {
     use failedValidationWithName;
     /**
@@ -47,7 +47,7 @@ class BookingRequest extends FormRequest
 
             'first_name'      => 'required',
             'last_name'       => 'nullable',
-            'contact_no'      => 'required|min:10|max:13',
+            'contact_no'      => 'required|min:9|max:13',
             'email'           => 'required',
             // 'id_card_type_id' => 'required',
             // 'id_card_no'      => 'required',
@@ -63,6 +63,7 @@ class BookingRequest extends FormRequest
             'whatsapp'   => 'required',
             'nationality' => 'required',
 
+            'image' => 'max:2048',
         ];
 
         if ($this->type == 'Online' || $this->type == 'Travel Agency') {

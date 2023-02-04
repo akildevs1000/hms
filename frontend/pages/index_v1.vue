@@ -1,10 +1,6 @@
 <template>
   <div>
-    <link
-      href="matrix/dist/css/style.min.css"
-      rel="stylesheet"
-      v-if="isIndex"
-    />
+    <link href="matrix/dist/css/style.min.css" rel="stylesheet" />
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -20,18 +16,168 @@
     <!-- dialogs -->
     <div>
       <!-- check in dialog -->
-      <v-dialog v-model="checkInDialog" persistent max-width="80%">
+      <v-dialog v-model="checkInDialog" persistent max-width="700px">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="close">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-card-text>
-            <check-in :BookingData="checkData"></check-in>
+            <v-container>
+              <table>
+                <v-progress-linear
+                  v-if="false"
+                  :active="loading"
+                  :indeterminate="loading"
+                  absolute
+                  color="primary"
+                ></v-progress-linear>
+                <tr>
+                  <th>Customer Name</th>
+                  <td style="width: 300px">
+                    {{ checkData && checkData.title }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Room No</th>
+                  <td>
+                    {{ checkData.room_no }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Room Type</th>
+                  <td>
+                    {{ checkData.room_type }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Check In</th>
+                  <td>
+                    {{ checkData && checkData.check_in }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Check Out</th>
+                  <td>
+                    {{ checkData && checkData.check_out }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    Payment Mode
+                    <span class="text-danger">*</span>
+                  </th>
+                  <td>
+                    <v-select
+                      v-model="checkData.payment_mode_id"
+                      :items="[
+                        { id: 1, name: 'Cash' },
+                        { id: 2, name: 'Card' },
+                        { id: 3, name: 'Online' },
+                        { id: 4, name: 'Bank' },
+                        { id: 5, name: 'UPI' },
+                        { id: 6, name: 'Cheque' }
+                      ]"
+                      item-text="name"
+                      item-value="id"
+                      dense
+                      outlined
+                      :hide-details="true"
+                      :height="1"
+                    ></v-select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Total Amount (Rs.)</th>
+                  <td>{{ checkData && checkData.total_price }}</td>
+                </tr>
+                <tr></tr>
+                <tr>
+                  <th>Advance Payed (Rs.)</th>
+                  <td>{{ checkData.advance_price }}</td>
+                </tr>
+                <tr></tr>
+                <tr>
+                  <th>Remaining Balance (Rs.)</th>
+                  <td>{{ checkData.remaining_price }}</td>
+                </tr>
+                <tr
+                  style="background-color: white"
+                  v-if="checkData.paid_by != 2"
+                >
+                  <th>New Payment</th>
+                  <td>
+                    <v-text-field
+                      dense
+                      outlined
+                      type="number"
+                      v-model="new_payment"
+                      :hide-details="true"
+                      @keyup="get_remaining(new_payment)"
+                    ></v-text-field>
+                  </td>
+                </tr>
+                <tr style="background-color: white">
+                  <th>
+                    Document
+                    <span class="text-danger">*</span>
+                  </th>
+                  <td>
+                    <div v-if="checkData.document">
+                      <v-btn
+                        small
+                        dark
+                        class="primary pt-4 pb-4"
+                        @click="preview(checkData.document)"
+                      >
+                        Preview
+                        <v-icon right dark>mdi-file</v-icon>
+                      </v-btn>
+                    </div>
+                    <v-file-input
+                      v-else
+                      v-model="document"
+                      color="primary"
+                      counter
+                      placeholder="Select your files"
+                      prepend-icon="mdi-paperclip"
+                      outlined
+                      :show-size="1000"
+                    >
+                      <template v-slot:selection="{ index, text }">
+                        <v-chip
+                          v-if="index < 2"
+                          color="primary"
+                          dark
+                          label
+                          small
+                        >
+                          {{ text }}
+                        </v-chip>
+
+                        <span
+                          v-else-if="index === 2"
+                          class="text-overline grey--text text--darken-3 mx-2"
+                        >
+                          +{{ document.length - 2 }} File(s)
+                        </span>
+                      </template>
+                    </v-file-input>
+                  </td>
+                </tr>
+                <tr></tr>
+              </table>
+            </v-container>
           </v-card-text>
-          <v-container></v-container>
-          <v-card-actions> </v-card-actions>
+          <v-card-actions>
+            <v-btn
+              class="primary"
+              small
+              @click="store_check_in(checkData)"
+              :loading="false"
+              >Check In</v-btn
+            >
+            <v-btn class="error" small @click="close"> Cancel </v-btn>
+          </v-card-actions>
         </v-card>
       </v-dialog>
       <!-- end check in dialog -->
@@ -1024,10 +1170,9 @@
   </div>
 </template>
 <script>
-import CheckIn from "../components/booking/CheckIn.vue";
 import ReservationList from "../components/reservation/ReservationList.vue";
 export default {
-  components: { ReservationList, CheckIn },
+  components: { ReservationList },
   data() {
     return {
       chart: {
@@ -1147,15 +1292,13 @@ export default {
         { text: "Amount" },
         { text: "Date" }
       ],
-      newBookingRoom: {},
-      isIndex: true
+      newBookingRoom: {}
     };
   },
   watch: {
     checkInDialog() {
       this.formTitle = "Check In";
       this.get_data();
-      this.checkInDialog ? (this.isIndex = false) : (this.isIndex = true);
     },
 
     postingDialog() {

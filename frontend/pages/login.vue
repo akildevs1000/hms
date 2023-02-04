@@ -1,5 +1,9 @@
 <template>
   <v-app>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
+    />
     <section class="h-100 gradient-form" style="background-color: #eee">
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -175,7 +179,13 @@ export default {
           password: this.password
         };
         this.$auth
-          .loginWith("local", { data: credentials })
+          .loginWith(
+            "local",
+            { data: credentials },
+            {
+              "Access-Control-Allow-Origin": "*"
+            }
+          )
           .then(({ data }) => {
             let id, name;
             // if (data.user && data.user.user_type == "employee") {

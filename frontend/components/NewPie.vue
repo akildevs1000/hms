@@ -17,11 +17,18 @@ export default {
         ],
         chart: {
           type: "bar",
-          height: 150
+          height: 150,
+          toolbar: {
+            show: false
+          }
         },
+
+        colors: ["#5768D5", "#4290CB", "#EB895A", "#51AF95"],
+
         plotOptions: {
           bar: {
             horizontal: true,
+            distributed: true,
             dataLabels: {
               position: "top"
             }
@@ -45,21 +52,28 @@ export default {
           intersect: false
         },
         xaxis: {
-          categories: ["Ex Check In", "Check Out", "Booked", "Available"]
+          categories: [
+            "Expect Check In",
+            "Expect Check Out",
+            "Booked",
+            "Available"
+          ],
+          labels: {
+            show: false
+          }
+        },
+        yaxis: {
+          labels: {
+            show: false
+          }
         }
       }
     };
   },
 
-  // created() {
-  //   this.options.series[0].data = this.renderChartData.map(e => e);
-  // },
-
   mounted() {
     setTimeout(
       () => {
-        console.log("from child");
-        // this.options.series[0].data = [1, 2, 3, 4];
         this.options.series[0].data = this.renderChartData.map(e => e);
         console.log(this.options.series[0].data);
         new ApexCharts(document.querySelector("#pie"), this.options).render();
@@ -67,11 +81,6 @@ export default {
 
       1000
     );
-
-    // console.log("from child");
-    // this.options.series[0].data = [1, 2, 3, 4];
-    // // this.options.series[0].data = this.renderChartData.map(e => e);
-    // console.log(this.options.series[0].data);
   },
   methods: {}
 };
