@@ -65,12 +65,13 @@ class WhatsappController extends Controller
 
     public function sentNotification($data)
     {
+
         $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
             'number' => $data['to'],
             'type' => 'text',
             'message' => $data['message'],
-            'instance_id' => env('INSTANCE_ID'),
-            'access_token' => env('ACCESS_TOKEN'),
+            'instance_id' => env($data['instance_id']),
+            'access_token' => env($data['access_token']),
         ]);
 
         return $response->status();

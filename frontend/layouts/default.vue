@@ -382,7 +382,7 @@ export default {
         },
 
         {
-          icon: "mdi-cash",
+          icon: "mdi mdi-food",
           title: "Posting",
           to: "/posting",
           menu: "posting_access"
@@ -396,7 +396,7 @@ export default {
         },
 
         {
-          icon: "mdi-account",
+          icon: "mdi-account-cash",
           title: "City Ledger",
           to: "/city_ledger",
           menu: "city_ledger_access"
@@ -415,13 +415,13 @@ export default {
             //   menu: "customer_bill_access"
             // },
             {
-              icon: "mdi-cash-multiple",
+              icon: "mdi mdi-bank-transfer-in",
               title: "Income",
               to: "/account",
               menu: "income_access"
             },
             {
-              icon: "mdi-cash",
+              icon: "mdi mdi-bank-transfer-out",
               title: "Expense",
               to: "/expense",
               menu: "expense_access"

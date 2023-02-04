@@ -277,6 +277,8 @@ class BookingController extends Controller
 
     private function whatsappNotification($booking, $rooms, $customer)
     {
+        $instance_id = "";
+        $access_token = "";
         $numberOfRooms = count($rooms);
         $customerName = $customer['first_name'] ?? 'Guest';
         $checkIn = date('d-M-y', strtotime($booking->check_in));
@@ -300,15 +302,23 @@ class BookingController extends Controller
 
         if ($company_id == 1) {
             $msg .= "Find us at https://goo.gl/maps/gA9h3YxGTwLaRETG6";
+            $company = 1;
+            $instance_id = "THANJ_INSTANCE_ID";
+            $access_token = "THANJ_ACCESS_TOKEN";
         } else if ($company_id == 2) {
             $msg .= "Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
+            $company = 2;
+            $instance_id = "THANJ_INSTANCE_ID";
+            $access_token = "THANJ_ACCESS_TOKEN";
         }
 
         $data = [
             'to' => env('COUNTRY_CODE') . $customer['whatsapp'],
             'message' => $msg,
+            'company' => $company ?? false,
+            'instance_id' => $instance_id,
+            'access_token' => $access_token,
         ];
-
         (new WhatsappController)->sentNotification($data);
     }
 
