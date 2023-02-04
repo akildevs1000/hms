@@ -1,6 +1,10 @@
 <template>
   <div>
-    <link href="matrix/dist/css/style.min.css" rel="stylesheet" />
+    <link
+      href="matrix/dist/css/style.min.css"
+      rel="stylesheet"
+      v-if="isIndex"
+    />
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -1143,13 +1147,15 @@ export default {
         { text: "Amount" },
         { text: "Date" }
       ],
-      newBookingRoom: {}
+      newBookingRoom: {},
+      isIndex: true
     };
   },
   watch: {
     checkInDialog() {
       this.formTitle = "Check In";
       this.get_data();
+      this.checkInDialog ? (this.isIndex = false) : (this.isIndex = true);
     },
 
     postingDialog() {

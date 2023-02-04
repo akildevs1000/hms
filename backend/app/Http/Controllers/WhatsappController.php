@@ -65,7 +65,6 @@ class WhatsappController extends Controller
 
     public function sentNotification($data)
     {
-
         $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
             'number' => $data['to'],
             'type' => 'text',

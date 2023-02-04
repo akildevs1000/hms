@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\BookingRequest;
+use App\Models\IdCardType;
 use Illuminate\Support\Facades\Log as Logger;
 
 class BookingController extends Controller
@@ -264,7 +265,7 @@ class BookingController extends Controller
             }
 
             $customer = Customer::find($booking->customer_id);
-            $this->whatsappNotification($booking, $rooms['selectedRooms'], $customer);
+            $this->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
@@ -275,14 +276,17 @@ class BookingController extends Controller
         }
     }
 
-    private function whatsappNotification($booking, $rooms, $customer)
+
+
+    private function whatsappNotification($booking, $rooms, $customer, $type)
     {
         $instance_id = "";
         $access_token = "";
+        $msg = "";
         $numberOfRooms = count($rooms);
-        $customerName = $customer['first_name'] ?? 'Guest';
+        $customerName = ucfirst($customer['first_name']) ?? 'Guest';
         $checkIn = date('d-M-y', strtotime($booking->check_in));
-        $checkOut = date('d-M-y', strtotime($booking->check_out));
+        $checkOut = date('d-M-y H:i', strtotime($booking->check_out));
         $days = $booking->total_days;
         $bookedRooms = $booking->rooms;
         $totalAmount = $booking->total_price;
@@ -290,27 +294,105 @@ class BookingController extends Controller
         $remainingAmount = $booking->remaining_price;
         $company_id = $booking->company_id;
         $appName = env('APP_NAME');
-        $msg = "";
-        $msg .= "Dear $customerName, \n";
-        $msg .= "Welcome to $appName! Your booking number $booking->id. \n";
-        $msg .= "you have booked $numberOfRooms rooms from $checkIn to $checkOut. \n";
-        $msg .= "Room numbers $bookedRooms . \n";
-        $msg .= "Your total bill is $totalAmount \n";
-        $msg .= "You paid advance $advanceAmount \n";
-        $msg .= "Your remaining amount is $remainingAmount \n";
-        $msg .= " \n";
+
 
         if ($company_id == 1) {
-            $msg .= "Find us at https://goo.gl/maps/gA9h3YxGTwLaRETG6";
+            $location = "Find us at https://goo.gl/maps/gA9h3YxGTwLaRETG6";
             $company = 1;
             $instance_id = "THANJ_INSTANCE_ID";
             $access_token = "THANJ_ACCESS_TOKEN";
+            $comName = "Thanjavur";
         } else if ($company_id == 2) {
-            $msg .= "Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
+            $location = "Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
             $company = 2;
             $instance_id = "THANJ_INSTANCE_ID";
             $access_token = "THANJ_ACCESS_TOKEN";
+            $comName = "Kodaikanal";
         }
+
+        $msg .= "Dear $customerName, \n";
+
+        $msg .= "Welcome to HYDERS PARK The Luxury Hotel, $comName, \n";
+        $msg .= "Your booking reference number, $booking->id, \n";
+        $msg .= "Number of Rooms, $numberOfRooms, \n";
+
+        $msg .= "Check In/Out , $checkIn to $checkOut, \n";
+        $msg .= "Your total bill is ₹$totalAmount \n";
+        $msg .= "You paid advance ₹$advanceAmount \n";
+        $msg .= "Your remaining amount is ₹$remainingAmount \n";
+        $msg .= "You must pay an advance within 48 hours to confirm your booking.\n";
+
+
+        $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
+        $msg .= "\n";
+
+        $msg .= "About us.\n";
+        $msg .= "Location $location.\n";
+        $msg .= "More https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels.\n";
+
+        $data = [
+            'to' => env('COUNTRY_CODE') . $customer['whatsapp'],
+            'message' => $msg,
+            'company' => $company ?? false,
+            'instance_id' => $instance_id,
+            'access_token' => $access_token,
+        ];
+        (new WhatsappController)->sentNotification($data);
+    }
+
+
+    private function checkInNotification($booking, $customer)
+    {
+        $instance_id = "";
+        $access_token = "";
+        $msg = "";
+        $customerName = ucfirst($customer['first_name']) ?? 'Guest';
+        $checkOut = date('d-M-y H:i', strtotime($booking->check_out));
+        $company_id = $booking->company_id;
+
+        if ($company_id == 1) {
+            $location = "Find us at https://goo.gl/maps/gA9h3YxGTwLaRETG6";
+            $company = 1;
+            $instance_id = "THANJ_INSTANCE_ID";
+            $access_token = "THANJ_ACCESS_TOKEN";
+            $video = "https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels";
+            $comName = "Thanjavur";
+        } else if ($company_id == 2) {
+            $location = "Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
+            $company = 2;
+            $instance_id = "THANJ_INSTANCE_ID";
+            $access_token = "THANJ_ACCESS_TOKEN";
+            $comName = "Kodaikanal";
+            $video = "https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels";
+        }
+
+        $msg .= "Dear $customerName, \n";
+
+        $msg .= "Welcome to HYDERS PARK The Luxury Hotel, $comName, We are pleased to have you as our guest. Enjoy your stay \n";
+        $msg .= "\n";
+        $msg .= "We hope that your stay with us is both comfortable and memorable, \n";
+        $msg .= "If you have any questions or concerns, please don't hesitate to reach out to our staff, \n";
+        $msg .= "We are here to make your experience at $comName an exceptional one, \n";
+        $msg .= "Enjoy your time in $comName, \n";
+        $msg .= "\n";
+
+        $msg .= "Stay connected during your stay with our complimentary high-speed Wi-Fi, \n";
+        $msg .= "Enjoy seamless browsing and streaming in the comfort of your room, \n";
+        $msg .= "Keep in touch with loved ones, get some work done, \n";
+        $msg .= "all at lightning-fast speeds, \n";
+        $msg .= "Enjoy your time in  $comName, \n";
+        $msg .= "\n";
+
+        $msg .= "USER NAME - HYDERSPARK, \n";
+        $msg .= "PASSWORD - Park@1234, \n";
+        $msg .= "Check Out  $checkOut, \n";
+
+        $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
+        $msg .= "\n";
+
+        $msg .= "About us.\n";
+        $msg .= "Location $location\n";
+        $msg .= "More $video\n";
 
         $data = [
             'to' => env('COUNTRY_CODE') . $customer['whatsapp'],
@@ -349,6 +431,7 @@ class BookingController extends Controller
             $path = $file->storeAs('public/documents/customer/photo', $fileName);
             $customer->image = $fileName;
         }
+
         $booking->save();
         $customer->save();
         return $this->response('Room Booked Successfully.', null, true);
@@ -456,21 +539,45 @@ class BookingController extends Controller
 
     public function check_in_room(Request $request)
     {
-
+        // return $request->all();
         try {
             $booking_id               = $request->booking_id;
             $booking                  = Booking::find($booking_id);
+            $customer                  = Customer::find($request->customer_id);
             $rem                      = (float) $request->remaining_price - (float) $request->new_payment;
             $booking->remaining_price = $rem;
             $booking->grand_remaining_price = $rem;
             $booking->check_in_price  = $request->new_payment;
             $booking->payment_mode_id = $request->payment_mode_id;
             $booking->booking_status  = 2;
+            $booking->id_card_no  = $request->id_card_no;
+            $booking->expired  = $request->expired;
+            $booking->id_card_type = IdCardType::find($request->id_card_type_id)->name ?? "";
+            $customer->id_card_type_id = $request->id_card_type_id;
+            $customer->id_card_no = $request->id_card_no;
+
+            if ($request->hasFile('document')) {
+                $file = $request->file('document');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $path = $file->storeAs('public/documents/booking', $fileName);
+                Storage::copy($path, 'public/documents/customer/' . $fileName);
+                $booking->document = $fileName;
+                $customer->document = $fileName;
+            }
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $path = $file->storeAs('public/documents/customer/photo', $fileName);
+                $customer->image = $fileName;
+            }
 
             $checkedIn = $booking->save();
 
             if ($checkedIn) {
-
+                $customer->save();
                 $transactionData = [
                     'booking_id' => $booking->id,
                     'customer_id' => $booking->customer_id ?? '',
@@ -526,6 +633,12 @@ class BookingController extends Controller
                 }
 
                 BookedRoom::whereBookingId($booking_id)->update(['booking_status' => 2]);
+
+
+
+                $customer = Customer::find($booking->customer_id);
+                $this->checkInNotification($booking,  $customer);
+
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
             }
 

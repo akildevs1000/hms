@@ -24,11 +24,11 @@
             >mdi mdi-close-box</v-icon
           >
         </v-toolbar>
-        <v-container class="p-3">
+        <v-container class="pa-5">
           <v-row>
             <v-col md="12" sm="12" cols="12" dense>
               <v-select
-                v-model="customer.id_card_type_id"
+                v-model="checkIn.id_card_type_id"
                 :items="idCards"
                 dense
                 label="ID Card Type"
@@ -50,7 +50,7 @@
                 label="ID Card"
                 outlined
                 type="text"
-                v-model="customer.id_card_no"
+                v-model="checkIn.id_card_no"
                 :hide-details="errors && !errors.id_card_no"
                 :error="errors && errors.id_card_no"
                 :error-messages="
@@ -58,9 +58,36 @@
                 "
               ></v-text-field>
             </v-col>
+            <v-col md="12" cols="12" sm="12">
+              <v-menu
+                v-model="checkIn.exp_menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="checkIn.exp"
+                    readonly
+                    label="Expired"
+                    v-on="on"
+                    v-bind="attrs"
+                    :hide-details="true"
+                    dense
+                    outlined
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="checkIn.exp"
+                  @input="checkIn.exp_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
             <v-col md="12">
               <v-file-input
-                v-model="checkIn_document"
+                v-model="checkIn.checkIn_document"
                 color="primary"
                 counter
                 placeholder="Select your files"
@@ -76,7 +103,7 @@
                     v-else-if="index === 2"
                     class="text-overline grey--text text--darken-3 mx-2"
                   >
-                    +{{ checkIn_document.length - 2 }} File(s)
+                    +{{ checkIn.checkIn_document.length - 2 }} File(s)
                   </span>
                 </template>
               </v-file-input>
@@ -191,6 +218,7 @@
                           :items="titleItems"
                           label="Tittle *"
                           dense
+                          readonly
                           item-text="name"
                           item-value="name"
                           :hide-details="errors && !errors.title"
@@ -206,6 +234,7 @@
                           label="First Name *"
                           dense
                           outlined
+                          readonly
                           type="text"
                           v-model="customer.first_name"
                           :hide-details="errors && !errors.first_name"
@@ -220,6 +249,7 @@
                       <v-col md="5" cols="12" sm="12">
                         <v-text-field
                           label="Last Name"
+                          readonly
                           dense
                           :hide-details="true"
                           outlined
@@ -232,6 +262,7 @@
                           dense
                           label="Contact No *"
                           outlined
+                          readonly
                           type="number"
                           v-model="customer.contact_no"
                           :hide-details="errors && !errors.contact_no"
@@ -249,6 +280,7 @@
                           dense
                           label="Whatsapp No"
                           outlined
+                          readonly
                           type="number"
                           v-model="customer.whatsapp"
                           :hide-details="errors && !errors.whatsapp"
@@ -263,6 +295,7 @@
                         <v-text-field
                           dense
                           label="Email *"
+                          readonly
                           outlined
                           type="email"
                           v-model="customer.email"
@@ -281,6 +314,7 @@
                     <v-select
                       v-model="customer.nationality"
                       :items="countryList"
+                      readonly
                       label="Nationality"
                       item-text="name"
                       item-value="name"
@@ -300,6 +334,7 @@
                       v-model="customer.dob_menu"
                       :close-on-content-click="false"
                       :nudge-right="40"
+                      readonly
                       transition="scale-transition"
                       offset-y
                       min-width="auto"
@@ -319,6 +354,7 @@
                       <v-date-picker
                         v-model="customer.dob"
                         @input="customer.dob_menu = false"
+                        readonly
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
@@ -333,64 +369,7 @@
                     ></v-select>
                   </v-col>
                 </v-row>
-                <v-row>
-                  <v-col md="3" sm="12" cols="12" dense>
-                    <v-select
-                      v-model="customer.id_card_type_id"
-                      :items="idCards"
-                      dense
-                      label="ID Card Type"
-                      outlined
-                      item-text="name"
-                      item-value="id"
-                      :hide-details="errors && !errors.id_card_type_id"
-                      :error="errors && errors.id_card_type_id"
-                      :error-messages="
-                        errors && errors.id_card_type_id
-                          ? errors.id_card_type_id[0]
-                          : ''
-                      "
-                    ></v-select>
-                  </v-col>
-                  <v-col md="3" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      label="ID Card"
-                      outlined
-                      type="text"
-                      v-model="customer.id_card_no"
-                      :hide-details="errors && !errors.id_card_no"
-                      :error="errors && errors.id_card_no"
-                      :error-messages="
-                        errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                      "
-                    ></v-text-field>
-                  </v-col>
-                  <v-col md="3" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      outlined
-                      label="GST"
-                      type="text"
-                      v-model="customer.gst_number"
-                      :hide-details="errors && !errors.gst_number"
-                      :error="errors && errors.gst_number"
-                      :error-messages="
-                        errors && errors.gst_number ? errors.gst_number[0] : ''
-                      "
-                    ></v-text-field>
-                  </v-col>
-                  <v-col md="3" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      label="Car Number"
-                      outlined
-                      :hide-details="true"
-                      type="text"
-                      v-model="customer.car_no"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+
                 <v-row>
                   <v-col md="12">
                     <v-textarea
@@ -407,6 +386,7 @@
                       label="Address"
                       v-model="customer.address"
                       outlined
+                      readonly
                       :hide-details="true"
                     ></v-textarea>
                   </v-col>
@@ -905,6 +885,13 @@ export default {
       documentDialog: false,
       // ------------------
 
+      checkIn: {
+        id_card_type_id: "",
+        id_card_no: "",
+        exp: "",
+        checkIn_document: null
+      },
+
       purposes: [
         "Visiting",
         "Business",
@@ -931,7 +918,6 @@ export default {
       imgView: 0,
       isImg: false,
       isPdf: false,
-      checkIn_document: null,
       // ----------------------
       documentObj: {
         fileExtension: null,
@@ -1027,7 +1013,9 @@ export default {
         image: "",
         company_id: this.$auth.user.company.id,
         dob_menu: false,
-        dob: null
+        dob: null,
+        exp_menu: false,
+        exp: null
       },
       id_card_type_id: 0,
       errors: [],
@@ -1042,6 +1030,7 @@ export default {
       previewImage: null
     };
   },
+
   created() {
     this.get_countries();
     this.get_customer();
@@ -1100,27 +1089,49 @@ export default {
       if (
         // this.new_payment == "" ||
         // this.new_payment == 0 ||
-        data.document ? "" : this.checkIn_document == null
+        data.document ? "" : this.checkIn.checkIn_document == null
       ) {
         alert("Enter required fields");
         return;
       }
-      this.loading = true;
+      // this.loading = true;
       let bookingId = data.id;
-      let payload = {
+      let payloads = {
         new_payment: this.new_payment,
         booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id
       };
+
+      let payload = new FormData();
+      payload.append("customer_id", data.customer_id);
+      payload.append("new_payment", this.new_payment);
+      payload.append("booking_id", data.id);
+      payload.append("remaining_price", data.remaining_price);
+      payload.append("payment_mode_id", data.payment_mode_id);
+      payload.append("company_id", this.$auth.user.company.id);
+      payload.append("id_card_type_id", this.checkIn.id_card_type_id);
+      payload.append("id_card_no", this.checkIn.id_card_no);
+      payload.append("expired", this.checkIn.exp);
+      payload.append("image", this.customer.image);
+
+      this.customer.image;
+
+      if (this.checkIn.checkIn_document) {
+        payload.append("document", this.checkIn.checkIn_document);
+      }
+
       this.$axios
         .post("/check_in_room", payload)
         .then(({ data }) => {
+          console.log(data);
           if (!data.status) {
             this.errors = data.errors;
+            console.log(1);
           } else {
-            this.succuss(data, true, false);
-            data.document ? "" : this.store_document(bookingId);
+            this.alert("Success!", "success check in", "success");
+            console.log(2);
+            location.reload();
           }
         })
         .catch(e => console.log(e));
@@ -1131,7 +1142,7 @@ export default {
       this.checkLoader = true;
       let contact_no = this.BookingData.contact_no;
       if (contact_no == undefined || contact_no == "") {
-        alert("Enter contact number");
+        // alert("Enter contact number");
         this.checkLoader = false;
         return;
       }

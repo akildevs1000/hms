@@ -1,6 +1,22 @@
 <template>
   <div>
     <v-row>
+      <v-dialog v-model="imgView" max-width="80%">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Preview</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="imgView = false"
+              >mdi mdi-close-box</v-icon
+            >
+          </v-toolbar>
+          <v-container>
+            <ImagePreview :docObj="documentObj"></ImagePreview>
+          </v-container>
+          <v-card-actions> </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-col md="8">
         <v-tabs
           v-model="activeTab"
@@ -41,6 +57,17 @@
                     <span v-if="errors && errors.image" class="red--text mt-2">
                       {{ errors.image[0] }}</span
                     >
+                    <div class="mt-2 ml-4" v-if="customer.document">
+                      <v-btn
+                        small
+                        dark
+                        class="primary pt-4 pb-4"
+                        @click="preview(customer.document)"
+                      >
+                        Preview
+                        <v-icon right dark>mdi-file</v-icon>
+                      </v-btn>
+                    </div>
                   </v-col>
                   <v-col md="10" cols="12">
                     <v-row>
@@ -1266,10 +1293,12 @@
 </template>
 <script>
 import History from "../../components/customer/History.vue";
+import ImagePreview from "../../components/images/ImagePreview.vue";
 
 export default {
   components: {
-    History
+    History,
+    ImagePreview
   },
   data() {
     return {
@@ -1349,7 +1378,7 @@ export default {
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
 
       search: {
-        mobile: "0752388923"
+        mobile: ""
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1359,7 +1388,7 @@ export default {
       agentList: [],
 
       idCards: [],
-
+      imgView: false,
       temp: {
         check_in_menu: false,
         check_out_menu: false,
@@ -1513,6 +1542,11 @@ export default {
         adult: 0,
         child: 0,
         baby: 0
+      },
+
+      documentObj: {
+        fileExtension: null,
+        file: null
       }
     };
   },
@@ -1571,6 +1605,19 @@ export default {
       }
     },
 
+    preview(file) {
+      const fileExtension = file
+        .split(".")
+        .pop()
+        .toLowerCase();
+      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
+      this.documentObj = {
+        fileExtension: fileExtension,
+        file: file
+      };
+      this.imgView = true;
+    },
+
     getMealSeparate(meal) {
       const mealsString = this.capsTitle(meal);
       const mealsArray = mealsString.split("|");
@@ -1623,14 +1670,14 @@ export default {
       });
     },
 
-    preview(file) {
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", file);
-      document.body.appendChild(element);
-      element.click();
-      // document.body.removeChild(element);
-    },
+    // preview(file) {
+    //   let element = document.createElement("a");
+    //   element.setAttribute("target", "_blank");
+    //   element.setAttribute("href", file);
+    //   document.body.appendChild(element);
+    //   element.click();
+    //   // document.body.removeChild(element);
+    // },
 
     get_food_price_cal(person_type, person_qty) {
       if (this.foodPriceList.length == 0) {
