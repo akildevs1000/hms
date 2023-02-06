@@ -167,7 +167,7 @@
                       <v-btn
                         small
                         dark
-                        class="primary pt-4 pb-4"
+                        class="primary pt-4 pb-4 doc-btn1"
                         @click="preview(BookingData.document)"
                       >
                         Preview

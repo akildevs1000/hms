@@ -693,7 +693,13 @@
                     <v-btn x-small @click="prevTab" dark color="background">
                       Back
                     </v-btn>
-                    <v-btn x-small @click="store" color="primary">Submit</v-btn>
+                    <v-btn
+                      x-small
+                      @click="store"
+                      :loading="subLoad"
+                      color="primary"
+                      >Submit</v-btn
+                    >
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -1965,6 +1971,16 @@ export default {
     },
 
     selectRoom(item) {
+      let isSelect = this.selectedRooms.find(e => e.room_no == item.room_no);
+      if (isSelect) {
+        this.alert(
+          "oops",
+          "Already selected please choose another room",
+          "error"
+        );
+        return;
+      }
+
       this.RoomDrawer = false;
       this.temp.company_id = this.$auth.user.company.id;
       this.temp.room_no = item.room_no;

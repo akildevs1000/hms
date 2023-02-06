@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isPageLoad">
     <link
       href="matrix/dist/css/style.min.css"
       rel="stylesheet"
@@ -1022,6 +1022,11 @@
       </div>
     </div>
   </div>
+  <div v-else>
+    <div class="text-center" style="width: 50px; margin: 25% auto">
+      <v-img src="/preloaders/1.gif"></v-img>
+    </div>
+  </div>
 </template>
 <script>
 import CheckIn from "../components/booking/CheckIn.vue";
@@ -1040,6 +1045,7 @@ export default {
         .substr(0, 10),
 
       temp: "",
+      isPageLoad: false,
       loading: false,
       snackbar: false,
       response: "",
@@ -1424,6 +1430,10 @@ export default {
         this.members = {
           ...data.members
         };
+
+        setTimeout(() => {
+          this.isPageLoad = true;
+        }, 100);
       });
     },
 
