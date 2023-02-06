@@ -304,7 +304,6 @@ Route::get('/my_test', function () {
 
 Route::get('remove_booking/{id}', function ($id) {
 
-    return $id;
     Booking::find($id)->delete();
     Payment::whereBookingId($id)->delete();
     Transaction::whereBookingId($id)->delete();
@@ -313,5 +312,5 @@ Route::get('remove_booking/{id}', function ($id) {
     CancelRoom::whereBookingId($id)->delete();
     Food::whereBookingId($id)->delete();
 
-    return "this is remove booking";
+    return "removed booking";
 });
