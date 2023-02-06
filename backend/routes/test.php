@@ -7,6 +7,7 @@ use App\Jobs\WhatsappJob;
 use App\Mail\DbBackupMail;
 use App\Mail\ReportNotificationMail;
 use App\Models\Attendance;
+use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\OrderRoom;
@@ -296,6 +297,9 @@ Route::get('/my_test', function () {
     return $dates; //= $period->toArray();
 });
 
-Route::get('remove_booking', function () {
+Route::get('remove_booking/{id}', function ($id) {
+
+    return Booking::find($id);
+
     return "this is remove booking";
 });
