@@ -346,6 +346,8 @@ class BookingController extends Controller
         $instance_id = "";
         $access_token = "";
         $comName = "";
+        $location = "";
+        $video = "";
         $msg = "";
         $customerName = ucfirst($customer['first_name']) ?? 'Guest';
         $checkOut = date('d-M-y H:i', strtotime($booking->check_out));
