@@ -436,7 +436,7 @@
                             color="primary"
                             @click="get_available_rooms"
                             small
-                            >Select Room
+                            >Add Room
                           </v-btn>
                           <v-btn icon>
                             <v-icon>mdi-dots-vertical</v-icon>
@@ -676,16 +676,19 @@
                         </v-row>
 
                         <v-row>
-                          <v-col md="6"> </v-col>
+                          <v-col md="12">
+                            <v-btn
+                              @click="add_room"
+                              class="float-right"
+                              color="primary"
+                            >
+                              <v-icon color="white" large>mdi-plus</v-icon>
+                              Confirm Room
+                            </v-btn>
+                          </v-col>
                         </v-row>
                       </div>
                     </v-alert>
-                  </v-col>
-                  <v-col md="12">
-                    <v-btn @click="add_room" color="primary">
-                      <v-icon color="white" large>mdi-plus</v-icon>
-                      Select Room
-                    </v-btn>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -693,13 +696,13 @@
                     <v-btn x-small @click="prevTab" dark color="background">
                       Back
                     </v-btn>
-                    <v-btn
+                    <!-- <v-btn
                       x-small
                       @click="store"
                       :loading="subLoad"
                       color="primary"
                       >Submit</v-btn
-                    >
+                    > -->
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -994,6 +997,17 @@
                   >
                     <strong>{{ convert_decimal(room.remaining_price) }}</strong>
                   </div>
+                </div>
+                <div class="input-group input-group-sm px-3 mb-5">
+                  <v-btn
+                    style="background-color: #5FAFA3;"
+                    width="100%"
+                    height="60"
+                    @click="store"
+                    :loading="subLoad"
+                    dark
+                    >Booking</v-btn
+                  >
                 </div>
               </section>
             </v-card>
@@ -2397,7 +2411,7 @@ td {
   line-height: 1.9;
   /* border-radius: 0.25rem; */
   text-align: left;
-  width: 120px;
+  width: 150px;
 }
 
 .form-control {

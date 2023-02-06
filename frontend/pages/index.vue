@@ -20,7 +20,17 @@
     <!-- dialogs -->
     <div>
       <!-- check in dialog -->
-      <v-dialog v-model="checkInDialog" persistent max-width="80%">
+      <!-- max-width="80%"
+        sm-max-width="10%" -->
+      <!-- style="min-width: 80% !important;" -->
+      <!-- :width="1366" -->
+
+      <v-dialog
+        v-model="checkInDialog"
+        persistent
+        :width="1366"
+        class="checkin-models"
+      >
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
@@ -1190,7 +1200,10 @@ export default {
   },
 
   computed: {},
-
+  mounted() {
+    const screenResolution = window.innerWidth + " x " + window.innerHeight;
+    console.log(screenResolution);
+  },
   methods: {
     renderChartData() {
       let arr = [
@@ -1430,7 +1443,7 @@ export default {
         this.members = {
           ...data.members
         };
-
+        this.isIndex = true;
         setTimeout(() => {
           this.isPageLoad = true;
         }, 100);
@@ -1732,9 +1745,9 @@ export default {
   }
 };
 </script>
-
 <!-- <style scoped src="@/assets/dashtem.css"></style> -->
-
+<!-- <style scoped src="@/assets/custom/style.min.css"></style> -->
+<style src="@/assets/custom/check.css"></style>
 <style scoped>
 .chart {
   display: flex;
