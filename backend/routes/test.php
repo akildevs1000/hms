@@ -7,11 +7,16 @@ use App\Jobs\WhatsappJob;
 use App\Mail\DbBackupMail;
 use App\Mail\ReportNotificationMail;
 use App\Models\Attendance;
+use App\Models\BookedRoom;
 use App\Models\Booking;
+use App\Models\CancelRoom;
 use App\Models\Customer;
 use App\Models\Employee;
+use App\Models\Food;
 use App\Models\OrderRoom;
+use App\Models\Payment;
 use App\Models\ReportNotification;
+use App\Models\Transaction;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -299,7 +304,14 @@ Route::get('/my_test', function () {
 
 Route::get('remove_booking/{id}', function ($id) {
 
-    return Booking::find($id);
+    return $id;
+    Booking::find($id)->delete();
+    Payment::whereBookingId($id)->delete();
+    Transaction::whereBookingId($id)->delete();
+    BookedRoom::whereBookingId($id)->delete();
+    OrderRoom::whereBookingId($id)->delete();
+    CancelRoom::whereBookingId($id)->delete();
+    Food::whereBookingId($id)->delete();
 
     return "this is remove booking";
 });
