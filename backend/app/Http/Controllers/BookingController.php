@@ -43,7 +43,7 @@ class BookingController extends Controller
     public function customerStore($customer)
     {
         try {
-            $isExistCustomer =   Customer::whereContactNo($customer['contact_no'])->first();
+            $isExistCustomer =   Customer::whereContactNo($customer['contact_no'])->whereCompanyId($customer['company_id'])->first();
             $id = "";
             if ($isExistCustomer) {
                 $id = $isExistCustomer->id;
@@ -276,8 +276,6 @@ class BookingController extends Controller
         }
     }
 
-
-
     private function whatsappNotification($booking, $rooms, $customer, $type)
     {
         $instance_id = "";
@@ -304,8 +302,8 @@ class BookingController extends Controller
         } else if ($company_id == 2) {
             $location = "  https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
             $company = 2;
-            $instance_id = "THANJ_INSTANCE_ID";
-            $access_token = "THANJ_ACCESS_TOKEN";
+            $instance_id = "KODAI_INSTANCE_ID";
+            $access_token = "KODAI_ACCESS_TOKEN";
             $comName = "Kodaikanal";
         }
 
@@ -345,7 +343,6 @@ class BookingController extends Controller
         ];
         (new WhatsappController)->sentNotification($data);
     }
-
 
     private function checkInNotification($booking, $customer)
     {
