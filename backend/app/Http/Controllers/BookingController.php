@@ -295,15 +295,14 @@ class BookingController extends Controller
         $company_id = $booking->company_id;
         $appName = env('APP_NAME');
 
-
         if ($company_id == 1) {
-            $location = "Find us at https://goo.gl/maps/gA9h3YxGTwLaRETG6";
+            $location = "  https://goo.gl/maps/gA9h3YxGTwLaRETG6";
             $company = 1;
             $instance_id = "THANJ_INSTANCE_ID";
             $access_token = "THANJ_ACCESS_TOKEN";
             $comName = "Thanjavur";
         } else if ($company_id == 2) {
-            $location = "Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
+            $location = "  https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
             $company = 2;
             $instance_id = "THANJ_INSTANCE_ID";
             $access_token = "THANJ_ACCESS_TOKEN";
@@ -320,14 +319,21 @@ class BookingController extends Controller
         $msg .= "Your total bill is ₹$totalAmount \n";
         $msg .= "You paid advance ₹$advanceAmount \n";
         $msg .= "Your remaining amount is ₹$remainingAmount \n";
-        $msg .= "You must pay an advance within 48 hours to confirm your booking.\n";
+
+        if ($advanceAmount <= 0) {
+            $msg .= "You must pay an advance within 48 hours to confirm your booking.\n";
+        }
 
 
-        $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
+        $msg .= "\n";
+        $msg .= "Further information can   be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
+        $msg .= "\n";
         $msg .= "\n";
 
-        $msg .= "About us.\n";
-        $msg .= "Location $location.\n";
+        // $msg .= "About us.\n";
+        $msg .= "Google Map  $location.\n";
+        $msg .= "\n";
+        $msg .= "\n";
         $msg .= "More https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels.\n";
 
         $data = [
@@ -354,14 +360,14 @@ class BookingController extends Controller
         $company_id = $booking->company_id;
 
         if ($company_id == 1) {
-            $location = "Find us at https://goo.gl/maps/gA9h3YxGTwLaRETG6";
+            $location = "  https://goo.gl/maps/gA9h3YxGTwLaRETG6";
             $company = 1;
             $instance_id = "THANJ_INSTANCE_ID";
             $access_token = "THANJ_ACCESS_TOKEN";
             $video = "https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels";
             $comName = "Thanjavur";
         } else if ($company_id == 2) {
-            $location = "Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
+            $location = "  https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
             $company = 2;
             $instance_id = "THANJ_INSTANCE_ID";
             $access_token = "THANJ_ACCESS_TOKEN";
@@ -376,13 +382,12 @@ class BookingController extends Controller
         $msg .= "We hope that your stay with us is both comfortable and memorable, \n";
         $msg .= "If you have any questions or concerns, please don't hesitate to reach out to our staff, \n";
         $msg .= "We are here to make your experience at $comName an exceptional one, \n";
-        $msg .= "Enjoy your time in $comName, \n";
         $msg .= "\n";
 
         $msg .= "Stay connected during your stay with our complimentary high-speed Wi-Fi, \n";
-        $msg .= "Enjoy seamless browsing and streaming in the comfort of your room, \n";
-        $msg .= "Keep in touch with loved ones, get some work done, \n";
-        $msg .= "all at lightning-fast speeds, \n";
+        // $msg .= "Enjoy seamless browsing and streaming in the comfort of your room, \n";
+        // $msg .= "Keep in touch with loved ones, get some work done, \n";
+        // $msg .= "all at lightning-fast speeds, \n";
         $msg .= "Enjoy your time in  $comName, \n";
         $msg .= "\n";
 
@@ -392,9 +397,11 @@ class BookingController extends Controller
 
         $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
         $msg .= "\n";
+        $msg .= "\n";
 
-        $msg .= "About us.\n";
+        // $msg .= "About us.\n";
         $msg .= "Location $location\n";
+        $msg .= "\n";
         $msg .= "More $video\n";
 
         $data = [
