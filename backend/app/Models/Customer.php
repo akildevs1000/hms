@@ -93,8 +93,20 @@ class Customer extends Model
         ];
     }
 
-    // public static function customerAttributes()
-    // {
-    //     return  ['full_name', 'document_name', 'document', 'image'];
-    // }
+    public function scopeFilter($query,  $filter)
+    {
+        $query->when($filter ?? false, fn ($query, $search) =>
+        $query->where(
+            fn ($query) => $query
+                ->orWhere('name', 'Like', '%' . $search . '%')
+                ->orWhere('contact_no', 'Like', '%' . $search . '%')
+                ->orWhere('whatsapp', 'Like', '%' . $search . '%')
+                ->orWhere('email', 'Like', '%' . $search . '%')
+                ->orWhere('id_card_type_id', 'Like', '%' . $search . '%')
+                ->orWhere('id_card_no', 'Like', '%' . $search . '%')
+                ->orWhere('car_no', 'Like', '%' . $search . '%')
+                ->orWhere('no_of_adult', 'Like', '%' . $search . '%')
+                ->orWhere('address', 'Like', '%' . $search . '%')
+        ));
+    }
 }

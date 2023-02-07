@@ -57,24 +57,45 @@ class CustomerController extends Controller
     }
 
 
+    // public function search(Request $request, $key)
+    // {
+
+    //     $model  = Customer::query();
+
+    //     $fields = [
+    //         'name',
+    //         'contact_no',
+    //         'email',
+    //         "id_card_type_id",
+    //         "id_card_no",
+    //         'car_no',
+    //         "no_of_adult",
+    //         "no_of_child",
+    //         "no_of_baby",
+    //         "address",
+    //     ];
+
+    //     $model = $this->process_search($model, $key, $fields);
+
+
+    //     return  $model->where("company_id", $request->company_id)->get();
+
+    //     return $model->paginate($request->perPage);
+    // }
+
+
     public function search(Request $request, $key)
     {
-        $model  = Customer::query();
-        $fields = [
-            'name',
-            'contact_no',
-            'email',
-            "id_card_type_id",
-            "id_card_no",
-            'car_no',
-            "no_of_adult",
-            "no_of_child",
-            "no_of_baby",
-            "address",
-        ];
-        $model = $this->process_search($model, $key, $fields);
-        return $model->where("company_id", $request->company_id)->paginate($request->perPage);
+        return Customer::query()
+            ->latest()
+            ->filter($key)
+            ->where('company_id', $request->company_id)
+            ->paginate($request->perPage ?? 20);
     }
+
+
+
+
 
     public function getCustomer($id, Request $request)
     {
