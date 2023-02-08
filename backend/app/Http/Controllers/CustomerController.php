@@ -9,6 +9,7 @@ use App\Models\Posting;
 use App\Models\Customer;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Customer\StoreRequest;
 use App\Http\Requests\Customer\UpdateRequest;
 
@@ -43,11 +44,60 @@ class CustomerController extends Controller
     }
 
 
+    public function storeNewCustomer(StoreRequest $request)
+    {
+        try {
+            $customer =   Customer::create($request->validated());
+            if ($customer) {
+                if ($request->hasFile('document')) {
+                    $file = $request->file('document');
+                    $ext = $file->getClientOriginalExtension();
+                    $fileName = time() . '.' . $ext;
+                    $path = $file->storeAs('public/documents/booking', $fileName);
+                    Storage::copy($path, 'public/documents/customer/' . $fileName);
+                    $customer->document = $fileName;
+                }
+                if ($request->hasFile('image')) {
+                    $file = $request->file('image');
+                    $ext = $file->getClientOriginalExtension();
+                    $fileName = time() . '.' . $ext;
+                    $path = $file->storeAs('public/documents/customer/photo', $fileName);
+                    $customer->image = $fileName;
+                }
+                $customer->save();
+
+
+                return $this->response('Customer successfully added.', $customer->id, true);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
     public function update(UpdateRequest $request)
     {
         try {
+            // return $request->hasFile('image');
+            $customer = Customer::find($request->id);
             $updated = Customer::find($request->id)->update($request->validated());
             if ($updated) {
+                if ($request->hasFile('document')) {
+                    $file = $request->file('document');
+                    $ext = $file->getClientOriginalExtension();
+                    $fileName = time() . '.' . $ext;
+                    $path = $file->storeAs('public/documents/booking', $fileName);
+                    Storage::copy($path, 'public/documents/customer/' . $fileName);
+                    $customer->document = $fileName;
+                }
+                if ($request->hasFile('image')) {
+                    $file = $request->file('image');
+                    $ext = $file->getClientOriginalExtension();
+                    $fileName = time() . '.' . $ext;
+                    $path = $file->storeAs('public/documents/customer/photo', $fileName);
+                    $customer->image = $fileName;
+                }
+                $customer->save();
                 return $this->response('Customer successfully updated.', null, true);
             }
             return $this->response('something wrong.', null, true);
@@ -160,5 +210,12 @@ class CustomerController extends Controller
         $revenue = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
         $city_ledger = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 1)->sum('amount');
         return response()->json(['data' => $customer, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
+    }
+
+
+    public function show($id)
+    {
+        $customer = Customer::find($id);
+        return response()->json(['data' => $customer, 'status' => true]);
     }
 }

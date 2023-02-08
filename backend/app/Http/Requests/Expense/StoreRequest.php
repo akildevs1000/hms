@@ -33,6 +33,10 @@ class StoreRequest extends FormRequest
             'qty' => 'required',
             'company_id' => 'required',
             'voucher' => 'required',
+
+            'reference' => 'nullable',
+            'total' => 'nullable',
+            'description' => 'nullable',
         ];
     }
 }

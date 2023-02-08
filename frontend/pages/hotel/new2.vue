@@ -6,9 +6,9 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Preview</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="imgView = false"
-              >mdi mdi-close-box</v-icon
-            >
+            <v-icon dark class="pa-0" @click="imgView = false">
+              mdi mdi-close-box
+            </v-icon>
           </v-toolbar>
           <v-container>
             <ImagePreview :docObj="documentObj"></ImagePreview>
@@ -31,6 +31,10 @@
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-bed </v-icon>
           </v-tab>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-2" @click="redirect">
+            mdi mdi-close-box
+          </v-icon>
           <v-tab active-class="active-link" v-if="customer.id > 0">
             <v-icon> mdi mdi-clipboard-text-clock </v-icon>
           </v-tab>
@@ -43,7 +47,12 @@
                   <v-col md="2" cols="12">
                     <v-img
                       @click="onpick_attachment"
-                      style="width: 150px;height: 150px;margin: 0 auto;border-radius: 50%;"
+                      style="
+                        width: 150px;
+                        height: 150px;
+                        margin: 0 auto;
+                        border-radius: 50%;
+                      "
                       :src="showImage"
                     ></v-img>
                     <input
@@ -74,6 +83,7 @@
                       <v-col md="2" class="mt-0">
                         <v-btn color="primary" @click="searchDialog = true">
                           Search
+                          <v-icon right dark>mdi mdi-magnify</v-icon>
                         </v-btn>
                       </v-col>
                       <v-col md="5" dense> </v-col>
@@ -314,7 +324,7 @@
                       label="Paid Type"
                       :items="[
                         { name: 'Paid at Hotel', value: '1' },
-                        { name: 'Paid by Agents', value: '2' }
+                        { name: 'Paid by Agents', value: '2' },
                       ]"
                       dense
                       outlined
@@ -436,7 +446,9 @@
                             color="primary"
                             @click="get_available_rooms"
                             small
-                            >Add Room
+                          >
+                            <v-icon color="white" small>mdi-plus</v-icon>
+                            Add Room
                           </v-btn>
                           <v-btn icon>
                             <v-icon>mdi-dots-vertical</v-icon>
@@ -582,18 +594,18 @@
                             <table class="food-table">
                               <tr
                                 class="food-table"
-                                style="background-color:#4390FC;color:white"
+                                style="background-color: #4390fc; color: white"
                               >
-                                <th class="food-table" style="width:100px">
+                                <th class="food-table" style="width: 100px">
                                   Type
                                 </th>
-                                <td class="food-table" style="width:100px">
+                                <td class="food-table" style="width: 100px">
                                   Breakfast
                                 </td>
-                                <td class="food-table" style="width:100px">
+                                <td class="food-table" style="width: 100px">
                                   Lunch
                                 </td>
-                                <td class="food-table" style="width:100px">
+                                <td class="food-table" style="width: 100px">
                                   Dinner
                                 </td>
                               </tr>
@@ -622,10 +634,10 @@
                                 </td>
                               </tr>
                               <tr>
-                                <th colspan="2" style="text-align:left">
+                                <th colspan="2" style="text-align: left">
                                   Room Price
                                 </th>
-                                <td colspan="2" style="text-align:right">
+                                <td colspan="2" style="text-align: right">
                                   {{ temp.price }}
                                 </td>
                               </tr>
@@ -682,7 +694,7 @@
                               class="float-right"
                               color="primary"
                             >
-                              <v-icon color="white" large>mdi-plus</v-icon>
+                              <v-icon color="white" small>mdi-plus</v-icon>
                               Confirm Room
                             </v-btn>
                           </v-col>
@@ -735,7 +747,7 @@
           <v-tab
             class="p-0 m-0"
             active-class="active-link"
-            style="min-width:10px !important"
+            style="min-width: 10px !important"
             v-for="(item, index) in selectedRooms"
             :key="index"
           >
@@ -748,9 +760,9 @@
           <!-- room summary -->
           <v-tab-item>
             <v-card flat>
-              <p class="px-5 py-0" style="font-size:16px;color:#AAAAAA">
+              <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
                 Summary
-              </p>
+              </p> -->
               <v-divider class="px-5 py-0"></v-divider>
               <section>
                 <div class="input-group input-group-sm px-5 py-0">
@@ -781,7 +793,7 @@
                     {{ customer.contact_no || "---" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm  px-5">
+                <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Check In
                   </span>
@@ -838,15 +850,16 @@
                   </div>
                 </div>
               </section>
-              <p class="px-5 py-0" style="font-size:16px;color:#AAAAAA">
+              <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
                 Payment
-              </p>
+              </p> -->
               <v-divider class="px-5 py-0"></v-divider>
               <section class="payment-section pt-0">
                 <v-row class="px-5 mt-0">
-                  <div class="input-group input-group-sm px-4">
+                  <div class="input-group input-group-sm px-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">
-                      <v-select
+                      <!-- <v-select
+                      elevation="0"
                         v-model="room.payment_mode_id"
                         :items="[
                           { id: 1, name: 'Cash' },
@@ -854,12 +867,13 @@
                           { id: 3, name: 'Online' },
                           { id: 4, name: 'Bank' },
                           { id: 5, name: 'UPI' },
-                          { id: 6, name: 'Cheque' }
+                          { id: 6, name: 'Cheque' },
                         ]"
                         item-text="name"
                         item-value="id"
                         :outlined="false"
                         dense
+                        solo
                         :disabled="room.paid_by == '2' ? true : false"
                         @change="getType(room.type)"
                         :hide-details="errors && !errors.payment_mode_id"
@@ -869,18 +883,57 @@
                             ? errors.payment_mode_id[0]
                             : ''
                         "
-                      ></v-select>
+                      ></v-select> -->
+
+                      <v-autocomplete
+                        v-model="room.payment_mode_id"
+                        :items="[
+                          { id: 1, name: 'Cash' },
+                          { id: 2, name: 'Card' },
+                          { id: 3, name: 'Online' },
+                          { id: 4, name: 'Bank' },
+                          { id: 5, name: 'UPI' },
+                          { id: 6, name: 'Cheque' },
+                        ]"
+                        cache-items
+                        item-text="name"
+                        item-value="id"
+                        class="ma-0 pa-0"
+                        dense
+                        flat
+                        hide-no-data
+                        hide-details
+                        solo-inverted
+                        background-color="#E9ECEF"
+                      ></v-autocomplete>
                     </span>
                     <input
                       type="number"
                       class="form-control"
                       aria-label="Sizing example input"
                       aria-describedby="inputGroup-sizing-sm"
-                      style="height: 41px;"
+                      style="height: 48px"
                       @keyup="runAllFunctions"
                       :disabled="room.paid_by == '2' ? true : false"
                       v-model="room.advance_price"
                     />
+                  </div>
+
+                  <div
+                    class="input-group input-group-sm px-3"
+                    v-if="room.payment_mode_id != 1"
+                  >
+                    <span class="input-group-text" id="inputGroup-sizing-sm">
+                      Reference No
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm"
+                      style="height: 39px"
+                    />
+                    <!-- v-model="room.reference_no" -->
                   </div>
 
                   <!-- <v-col md="12" cols="12" sm="12">
@@ -927,7 +980,7 @@
                   </v-col>
                 </v-row>
 
-                <div class="input-group input-group-sm px-5 ">
+                <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Room Price
                   </span>
@@ -956,7 +1009,7 @@
                     {{ convert_decimal(room.sub_total) }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm  px-5">
+                <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
                   </span>
@@ -1000,13 +1053,13 @@
                 </div>
                 <div class="input-group input-group-sm px-3 mb-5">
                   <v-btn
-                    style="background-color: #5FAFA3;"
+                    style="background-color: #5fafa3"
                     width="100%"
                     height="60"
                     @click="store"
                     :loading="subLoad"
                     dark
-                    >Booking</v-btn
+                    >Book</v-btn
                   >
                 </div>
               </section>
@@ -1018,7 +1071,7 @@
             <v-card flat>
               <div
                 class="px-5 pt-2 d-flex justify-space-between"
-                style="font-size:16px;color:#AAAAAA"
+                style="font-size: 16px; color: #aaaaaa"
               >
                 <span> Room - {{ item.room_no }}</span>
                 <span> {{ item.room_type }}</span>
@@ -1026,26 +1079,26 @@
               <v-divider></v-divider>
               <section class="payment-section">
                 <div class="input-group input-group-sm px-5 pt-2 text-center">
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     <div class="d-flex justify-space-between">
-                      <span class="pa-0 m-0" style="width:33.33%" outlined>
+                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
                         {{ item.no_of_adult }}|
                       </span>
-                      <span class="pa-0 m-0" style="width:33.33%" outlined>
+                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
                         {{ item.no_of_child }} |
                       </span>
-                      <span class="pa-0 m-0" style="width:33.33%" outlined>
+                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
                         {{ item.no_of_baby }}
                       </span>
                     </div>
                   </v-card>
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     {{ getMealSeparate(item.meal)[0] }}
                   </v-card>
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     {{ getMealSeparate(item.meal)[1] }}
                   </v-card>
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     {{ getMealSeparate(item.meal)[2] }}
                   </v-card>
                 </div>
@@ -1230,16 +1283,14 @@
 
     <v-dialog v-model="searchDialog" width="500">
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          Customer
-        </v-card-title>
+        <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
         <v-card-text>
           <v-row>
             <v-col md="12" cols="12" sm="12">
               <label class="col-form-label"
                 >Search By Mobile Number
-                <span class="text-danger">*</span></label
-              >
+                <span class="text-danger">*</span>
+              </label>
               <v-text-field
                 dense
                 outlined
@@ -1255,6 +1306,7 @@
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="get_customer" :loading="checkLoader">
             Search
+            <v-icon right dark>mdi mdi-magnify</v-icon>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -1318,7 +1370,7 @@ import ImagePreview from "../../components/images/ImagePreview.vue";
 export default {
   components: {
     History,
-    ImagePreview
+    ImagePreview,
   },
   data() {
     return {
@@ -1333,29 +1385,29 @@ export default {
 
       headers: [
         {
-          text: "#"
+          text: "#",
         },
         {
-          text: "Type"
+          text: "Type",
         },
         {
-          text: "Source"
+          text: "Source",
         },
         {
-          text: "Rooms"
+          text: "Rooms",
         },
         {
-          text: "Booking Date"
+          text: "Booking Date",
         },
         {
-          text: "Check In"
+          text: "Check In",
         },
         {
-          text: "Check Out"
+          text: "Check Out",
         },
         {
-          text: "Total Price"
-        }
+          text: "Total Price",
+        },
       ],
       // ----------------------
       vertical: false,
@@ -1364,11 +1416,12 @@ export default {
       // ------------------
 
       purposes: [
-        "Visiting",
+        "Tour",
         "Business",
         "Hospital",
+        "Holiday",
         "Party/Functions",
-        "Visiting For Relatives"
+        "Friend Visit",
       ],
       selectMeal: [],
       wantNewDoc: false,
@@ -1379,7 +1432,7 @@ export default {
       RoomDrawer: null,
       items: [
         { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" }
+        { title: "About", icon: "mdi-forum" },
       ],
       val: 1,
       Model: "Reservation",
@@ -1398,7 +1451,7 @@ export default {
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
 
       search: {
-        mobile: ""
+        mobile: "",
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1439,13 +1492,13 @@ export default {
         dinner: "",
         tot_adult_food: 0,
         tot_child_food: 0,
-        discount_reason: ""
+        discount_reason: "",
       },
 
       check_in_menu: false,
       check_out_menu: false,
       upload: {
-        name: ""
+        name: "",
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
@@ -1477,7 +1530,7 @@ export default {
         rooms: "",
         reference_no: "",
         paid_by: "",
-        purpose: "Visiting"
+        purpose: "Visiting",
       },
       reservation: {},
       countryList: [],
@@ -1489,7 +1542,7 @@ export default {
         { id: 2, name: "Mrs" },
         { id: 3, name: "Miss" },
         { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" }
+        { id: 5, name: "Dr" },
       ],
 
       meals: [
@@ -1497,7 +1550,7 @@ export default {
         { name: "Breakfast", slug: "Break_fast_price" },
         { name: "Breakfast and Dinner", slug: "Break_fast_with_dinner_price" },
         { name: "Breakfast and Lunch", slug: "Break_fast_with_lunch_price" },
-        { name: "Full Board", slug: "full_board_price" }
+        { name: "Full Board", slug: "full_board_price" },
         // { name: 5, slug: "lunch_with_dinner_price" },
       ],
 
@@ -1519,7 +1572,7 @@ export default {
         image: "",
         company_id: this.$auth.user.company.id,
         dob_menu: false,
-        dob: null
+        dob: null,
         //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         //   .toISOString()
         //   .substr(0, 10)
@@ -1529,19 +1582,19 @@ export default {
       tempAdult: {
         tot_ab: 0,
         tot_al: 0,
-        tot_ad: 0
+        tot_ad: 0,
       },
       tempChild: {
         tot_cb: 0,
         tot_cl: 0,
-        tot_cd: 0
+        tot_cd: 0,
       },
 
       imgPath: "",
       image: "",
 
       upload: {
-        name: ""
+        name: "",
       },
 
       previewImage: null,
@@ -1549,25 +1602,25 @@ export default {
       breakfast: {
         adult: 0,
         child: 0,
-        baby: 0
+        baby: 0,
       },
 
       lunch: {
         adult: 0,
         child: 0,
-        baby: 0
+        baby: 0,
       },
 
       dinner: {
         adult: 0,
         child: 0,
-        baby: 0
+        baby: 0,
       },
 
       documentObj: {
         fileExtension: null,
-        file: null
-      }
+        file: null,
+      },
     };
   },
   created() {
@@ -1591,7 +1644,7 @@ export default {
       }
 
       return this.customer.image;
-    }
+    },
   },
   methods: {
     nextTab() {
@@ -1617,7 +1670,7 @@ export default {
       let file = input.files;
       if (file && file[0]) {
         let reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
           this.previewImage = e.target.result;
         };
         reader.readAsDataURL(file[0]);
@@ -1626,14 +1679,11 @@ export default {
     },
 
     preview(file) {
-      const fileExtension = file
-        .split(".")
-        .pop()
-        .toLowerCase();
+      const fileExtension = file.split(".").pop().toLowerCase();
       fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
       this.documentObj = {
         fileExtension: fileExtension,
-        file: file
+        file: file,
       };
       this.imgView = true;
     },
@@ -1681,8 +1731,8 @@ export default {
     get_food_price() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_food_prices`, payload).then(({ data }) => {
         this.foodPriceList = data;
@@ -1699,15 +1749,19 @@ export default {
     //   // document.body.removeChild(element);
     // },
 
+    redirect() {
+      this.$router.push("/");
+    },
+
     get_food_price_cal(person_type, person_qty) {
       if (this.foodPriceList.length == 0) {
         return;
       }
-      let person = this.foodPriceList.find(e => e.type == person_type);
+      let person = this.foodPriceList.find((e) => e.type == person_type);
 
       person.qty = person_qty;
 
-      let index = this.person_type_arr.findIndex(e => e.type == person_type);
+      let index = this.person_type_arr.findIndex((e) => e.type == person_type);
 
       if (index == -1) {
         this.person_type_arr.push(person);
@@ -1717,7 +1771,7 @@ export default {
     },
 
     meal_cal(meal_type) {
-      this.person_type_arr.find(e => {
+      this.person_type_arr.find((e) => {
         if (e.type == "adult") {
           this.get_adult_cal(e);
         }
@@ -1757,7 +1811,7 @@ export default {
       this.tempAdult = {
         tot_ab: tax_tab + tab || 0,
         tot_al: tax_tal + tal || 0,
-        tot_ad: tax_tad + tad || 0
+        tot_ad: tax_tad + tad || 0,
       };
     },
 
@@ -1790,7 +1844,7 @@ export default {
       this.tempChild = {
         tot_cb: tax_tcb + tcb || 0,
         tot_cl: tax_tcl + tcl || 0,
-        tot_cd: tax_tcd + tcd || 0
+        tot_cd: tax_tcd + tcd || 0,
       };
     },
 
@@ -1901,8 +1955,8 @@ export default {
     get_room_types() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`room_type`, payload).then(({ data }) => {
         this.roomTypes = data;
@@ -1912,8 +1966,8 @@ export default {
     get_agents() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_agent`, payload).then(({ data }) => {
         this.agentList = data;
@@ -1923,8 +1977,8 @@ export default {
     get_online() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_online`, payload).then(({ data }) => {
         this.sources = data;
@@ -1934,8 +1988,8 @@ export default {
     get_id_cards() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
@@ -1954,7 +2008,7 @@ export default {
 
     searchAvailableRoom(val) {
       let arr = this.availableRooms;
-      let res = arr.filter(e => e.room_no == val);
+      let res = arr.filter((e) => e.room_no == val);
       if (val.length == 0) {
         this.get_available_rooms();
         return;
@@ -1967,7 +2021,7 @@ export default {
     get_all_room_Total_amount() {
       let sum = 0;
       let res = 0;
-      this.selectedRooms.map(e => (sum += parseFloat(e.total_with_tax)));
+      this.selectedRooms.map((e) => (sum += parseFloat(e.total_with_tax)));
       res = parseFloat(sum) + parseFloat(this.room.total_extra);
       this.room.all_room_Total_amount = res;
     },
@@ -1985,7 +2039,7 @@ export default {
     },
 
     selectRoom(item) {
-      let isSelect = this.selectedRooms.find(e => e.room_no == item.room_no);
+      let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
       if (isSelect) {
         this.alert(
           "oops",
@@ -2021,8 +2075,8 @@ export default {
         params: {
           room_type: this.temp.room_type,
           slug: mealType,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios
         .get(`get_room_price_by_meal_plan`, payload)
@@ -2069,8 +2123,9 @@ export default {
       this.temp.room_discount =
         this.temp.room_discount == "" ? 0 : this.temp.room_discount;
 
-      this.temp.meal = `${this.temp.breakfast || "---"} | ${this.temp.lunch ||
-        "---"} | ${this.temp.dinner || "---"}`;
+      this.temp.meal = `${this.temp.breakfast || "---"} | ${
+        this.temp.lunch || "---"
+      } | ${this.temp.dinner || "---"}`;
 
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
@@ -2099,14 +2154,14 @@ export default {
 
       let tot_total = 0;
       this.selectedRooms.map(
-        e =>
+        (e) =>
           (tot_bed_amount += e.bed_amount == "" ? 0 : parseFloat(e.bed_amount))
       );
 
       this.room.total_extra = tot_bed_amount;
 
       this.selectedRooms.map(
-        e => (tot_total += e.total == "" ? 0 : parseFloat(e.total))
+        (e) => (tot_total += e.total == "" ? 0 : parseFloat(e.total))
       );
       this.room.all_room_Total_amount = tot_total;
     },
@@ -2143,18 +2198,18 @@ export default {
         discount_reason: "",
         no_of_adult: 1,
         no_of_child: 0,
-        no_of_baby: 0
+        no_of_baby: 0,
       };
 
       this.tempAdult = {
         tot_ab: 0,
         tot_al: 0,
-        tot_ad: 0
+        tot_ad: 0,
       };
       this.tempChild = {
         tot_cb: 0,
         tot_cl: 0,
-        tot_cd: 0
+        tot_cd: 0,
       };
 
       return;
@@ -2185,8 +2240,8 @@ export default {
         params: {
           check_in: this.temp.check_in,
           check_out: this.temp.check_out,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.RoomDrawer = true;
       this.$axios
@@ -2208,8 +2263,8 @@ export default {
       }
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
 
       this.$axios
@@ -2226,7 +2281,7 @@ export default {
 
           this.customer = {
             ...data.data,
-            customer_id: data.data.id
+            customer_id: data.data.id,
           };
           this.customer.id_card_type_id = parseInt(
             this.customer.id_card_type_id
@@ -2240,7 +2295,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -2256,11 +2311,11 @@ export default {
         return;
       }
 
-      let rooms = this.selectedRooms.map(e => e.room_no);
+      let rooms = this.selectedRooms.map((e) => e.room_no);
       this.room.rooms = rooms.toString();
       let payload = {
         ...this.room,
-        ...this.customer
+        ...this.customer,
       };
       this.$axios
         .post("/booking_validate1", payload)
@@ -2279,7 +2334,7 @@ export default {
             this.store_booking();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_booking() {
@@ -2290,7 +2345,7 @@ export default {
         qty_lunch: this.lunch,
         qty_dinner: this.dinner,
         selectedRooms: this.selectedRooms,
-        ...this.customer
+        ...this.customer,
       };
       this.$axios
         .post("/booking", payload)
@@ -2305,7 +2360,7 @@ export default {
             this.$router.push(`/`);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_document(id) {
@@ -2322,13 +2377,13 @@ export default {
             this.subLoad = false;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

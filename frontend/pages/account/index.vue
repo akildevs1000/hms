@@ -4,13 +4,11 @@
       <div class="col-xl-3 col-lg-6 text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Total Income
-              </h4>
+              <h4 class="card-title text-capitalize">Total Income</h4>
               <span class="data-1">
                 RS. {{ totalIncomes.OverallTotal || 0 }}</span
               >
@@ -29,13 +27,11 @@
       <div class="col-xl-3 col-lg-6 text-uppercase">
         <div class="card px-2 booked">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Total Expense
-              </h4>
+              <h4 class="card-title text-capitalize">Total Expense</h4>
               <span class="data-1"
                 >RS. {{ totalExpenses.OverallTotal || 0 }}
               </span>
@@ -54,13 +50,11 @@
       <div class="col-xl-3 col-lg-6 text-uppercase">
         <div class="card px-2 checkedIn">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Total Profit
-              </h4>
+              <h4 class="card-title text-capitalize">Total Profit</h4>
               <span class="data-1"> RS. {{ profit }}</span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -77,13 +71,11 @@
       <div class="col-xl-3 col-lg-6 text-uppercase">
         <div class="card px-2 booked">
           <div class="card-statistic-3">
-            <div class="card-icon card-icon-large ">
+            <div class="card-icon card-icon-large">
               <i class="fas fa-door-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">
-                Total Loss
-              </h4>
+              <h4 class="card-title text-capitalize">Total Loss</h4>
               <span class="data-1"> RS.{{ loss }}</span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -239,9 +231,7 @@
                   {{ item.amount }}
                 </span>
 
-                <span v-else>
-                  ---
-                </span>
+                <span v-else> --- </span>
               </td>
             </tr>
             <tr class="text-right">
@@ -259,7 +249,7 @@
       </v-col>
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md " color="background" dense flat>
+          <v-toolbar class="rounded-md" color="background" dense flat>
             <label class="white--text"> {{ Model }} List</label>
           </v-toolbar>
           <table>
@@ -317,9 +307,7 @@
                   {{ item.amount }}
                 </span>
 
-                <span v-else>
-                  ---
-                </span>
+                <span v-else> --- </span>
               </td>
             </tr>
             <tr class="text-right">
@@ -353,7 +341,7 @@ export default {
       current: 1,
       total: 0,
       per_page: 10,
-      status: "-1"
+      status: "-1",
     },
     options: {},
     endpoint: "expense",
@@ -376,7 +364,7 @@ export default {
       { text: "Online" },
       { text: "Bank" },
       { text: "UPI" },
-      { text: "Cheque" }
+      { text: "Cheque" },
     ],
     incomeHeaders: [
       { text: "#" },
@@ -392,7 +380,7 @@ export default {
       { text: "Bank" },
       { text: "UPI" },
       { text: "Cheque" },
-      { text: "City Ledger" }
+      { text: "City Ledger" },
     ],
     editedIndex: -1,
     response: "",
@@ -402,10 +390,10 @@ export default {
     editedItem: {
       item: null,
       amount: null,
-      payment_modes: "CASH"
+      payment_modes: "CASH",
     },
     totalExpenses: {},
-    totalIncomes: {}
+    totalIncomes: {},
   }),
 
   created() {
@@ -423,7 +411,7 @@ export default {
       let user = this.$auth;
       return;
       return (
-        (user && user.permissions.some(e => e.permission == permission)) ||
+        (user && user.permissions.some((e) => e.permission == permission)) ||
         user.master
       );
     },
@@ -432,7 +420,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
 
@@ -457,8 +445,8 @@ export default {
 
           from_date: this.from_date,
           to_date: this.to_date,
-          is_account: true
-        }
+          is_account: true,
+        },
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -479,8 +467,8 @@ export default {
           company_id: this.$auth.user.company.id,
 
           from_date: this.from_date,
-          to_date: this.to_date
-        }
+          to_date: this.to_date,
+        },
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -494,19 +482,19 @@ export default {
           company_id: this.$auth.user.company.id,
 
           from_date: this.from_date,
-          to_date: this.to_date
-        }
+          to_date: this.to_date,
+        },
       };
       this.$axios.get(`account_count`, payload).then(({ data }) => {
         this.counts = data;
         this.loss = data.loss;
         this.profit = data.profit;
         this.totalExpenses = {
-          ...data.expense
+          ...data.expense,
         };
 
         this.totalIncomes = {
-          ...data.income
+          ...data.income,
         };
       });
     },
@@ -517,8 +505,8 @@ export default {
       } else if (e.length > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${e}`);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

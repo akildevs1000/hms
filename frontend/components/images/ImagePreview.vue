@@ -13,13 +13,13 @@ export default {
       imgView: false,
       isImg: false,
       isPdf: false,
-      src: false
+      src: false,
     };
   },
   watch: {
     docObj() {
       this.docView();
-    }
+    },
   },
   mounted() {
     this.docView();
@@ -27,7 +27,6 @@ export default {
 
   methods: {
     docView() {
-      console.log(this.docObj);
       if (this.docObj.fileExtension == "pdf") {
         this.isPdf = true;
         this.isImg = false;
@@ -36,12 +35,8 @@ export default {
         this.isImg = true;
       }
       this.src = this.docObj.file;
-
-      console.log(this.isPdf + "isPdf");
-      console.log(this.isImg + "isImg");
-      console.log(this.src);
-    }
-  }
+    },
+  },
 };
 </script>
 

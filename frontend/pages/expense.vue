@@ -54,27 +54,31 @@
                     v-model="editedItem.voucher"
                     placeholder="Voucher"
                     outlined
+                    :hide-details="true"
                     dense
                   ></v-text-field>
                   <span v-if="errors && errors.voucher" class="error--text">{{
                     errors.voucher[0]
                   }}</span>
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="12" class="m-0 p-0">
                   <v-text-field
                     v-model="editedItem.item"
                     placeholder="Item"
                     outlined
+                    :hide-details="true"
                     dense
                   ></v-text-field>
                   <span v-if="errors && errors.item" class="error--text">{{
                     errors.item[0]
                   }}</span>
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="12" class="m-0 p-0">
                   <v-text-field
                     v-model="editedItem.amount"
                     placeholder="Amount"
+                    :hide-details="true"
+                    @keyup="calSum"
                     outlined
                     dense
                     type="number"
@@ -87,12 +91,28 @@
                   <v-text-field
                     v-model="editedItem.qty"
                     placeholder="QTY"
+                    :hide-details="true"
                     outlined
                     dense
+                    @keyup="calSum"
                     type="number"
                   ></v-text-field>
                   <span v-if="errors && errors.qty" class="error--text">{{
                     errors.qty[0]
+                  }}</span>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="editedItem.total"
+                    placeholder="Total Amount"
+                    readonly
+                    :hide-details="true"
+                    outlined
+                    dense
+                    type="number"
+                  ></v-text-field>
+                  <span v-if="errors && errors.amount" class="error--text">{{
+                    errors.amount[0]
                   }}</span>
                 </v-col>
                 <v-col cols="12">
@@ -104,12 +124,13 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
                     placeholder="Select Payment Mode"
                     outlined
+                    :hide-details="true"
                     dense
                   >
                   </v-autocomplete>
@@ -117,6 +138,33 @@
                     v-if="errors && errors.department_id"
                     class="error--text"
                     >{{ errors.department_id[0] }}</span
+                  >
+                </v-col>
+                <v-col cols="12" v-if="editedItem.payment_modes != 1">
+                  <v-text-field
+                    v-model="editedItem.reference"
+                    placeholder="Reference"
+                    :hide-details="true"
+                    outlined
+                    dense
+                    type="text"
+                  ></v-text-field>
+                  <span v-if="errors && errors.amount" class="error--text">{{
+                    errors.amount[0]
+                  }}</span>
+                </v-col>
+                <v-col cols="12">
+                  <v-textarea
+                    filled
+                    label="Description"
+                    :hide-details="true"
+                    v-model="editedItem.description"
+                    outlined
+                  ></v-textarea>
+                  <span
+                    v-if="errors && errors.description"
+                    class="error--text"
+                    >{{ errors.description[0] }}</span
                   >
                 </v-col>
                 <v-card-actions>
@@ -134,7 +182,11 @@
           </v-toolbar>
           <table>
             <tr>
-              <th v-for="(item, index) in headers" :key="index">
+              <th
+                v-for="(item, index) in headers"
+                :key="index"
+                style="font-size: 12px"
+              >
                 <span v-html="item.text"></span>
               </th>
             </tr>
@@ -145,13 +197,19 @@
               absolute
               color="primary"
             ></v-progress-linear>
-            <tr v-for="(item, index) in data" :key="index">
+            <tr
+              v-for="(item, index) in data"
+              :key="index"
+              style="font-size: 12px"
+            >
               <td>{{ ++index }}</td>
-              <td>{{ item.voucher }}</td>
-              <td>{{ item.item }}</td>
-              <td>{{ item.qty }}</td>
-              <td>{{ item.amount }}</td>
-              <td>{{ item && item.payment_mode.name }}</td>
+              <td>{{ item.voucher || "" }}</td>
+              <td>{{ item.item || "" }}</td>
+              <td>{{ item.qty || "" }}</td>
+              <td>{{ item.amount || "" }}</td>
+              <td>{{ item.total || "" }}</td>
+              <td>{{ (item && item.payment_mode.name) || "" }}</td>
+              <td>{{ (item && item.reference) || "" }}</td>
               <td>{{ item.created_at }}</td>
             </tr>
           </table>
@@ -181,7 +239,7 @@ export default {
       current: 1,
       total: 0,
       per_page: 10,
-      status: "-1"
+      status: "-1",
     },
     options: {},
     endpoint: "expense",
@@ -197,19 +255,24 @@ export default {
       { text: "Item" },
       { text: "QTY" },
       { text: "Amount" },
+      { text: "Total" },
       { text: "Mode" },
-      { text: "Date" }
+      { text: "Reference" },
+      { text: "Date" },
     ],
     editedIndex: -1,
     response: "",
     errors: [],
     editedItem: {
       item: null,
-      amount: null,
+      amount: 0,
       qty: "",
-      payment_modes: "",
-      voucher: ""
-    }
+      payment_modes: 1,
+      voucher: "",
+      description: "",
+      total: 0,
+      reference: "",
+    },
   }),
 
   created() {
@@ -225,16 +288,23 @@ export default {
       let user = this.$auth;
       return;
       return (
-        (user && user.permissions.some(e => e.permission == permission)) ||
+        (user && user.permissions.some((e) => e.permission == permission)) ||
         user.master
       );
     },
+
+    calSum() {
+      let tot =
+        parseFloat(this.editedItem.amount) * parseInt(this.editedItem.qty);
+      this.editedItem.total = tot.toFixed(2);
+    },
+
     caps(str) {
       if (str == "" || str == null) {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
     onPageChange() {
@@ -247,8 +317,8 @@ export default {
         params: {
           status: this.pagination.status,
           per_page: this.pagination.per_page,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -269,7 +339,7 @@ export default {
     save() {
       let payload = {
         ...this.editedItem,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
 
       this.$axios
@@ -287,9 +357,9 @@ export default {
             this.search = "";
           }
         })
-        .catch(res => console.log(res));
-    }
-  }
+        .catch((res) => console.log(res));
+    },
+  },
 };
 </script>
 
