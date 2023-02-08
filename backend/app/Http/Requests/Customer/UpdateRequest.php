@@ -27,18 +27,19 @@ class UpdateRequest extends FormRequest
     {
 
         $arr = [
-            'first_name'      => 'required',
+            'first_name'      => 'nullable',
             'last_name'       => 'nullable',
-            'contact_no'      => 'required|min:10|max:13',
-            'email'           => 'required',
-            'id_card_type_id' => 'required',
-            'id_card_no'      => 'required',
+            'contact_no'      => 'required|min:9|max:13',
+            'email'           => 'nullable',
+            'id_card_type_id' => 'nullable',
+            'id_card_no'      => 'nullable',
             'car_no'          => 'nullable',
             'no_of_adult'     => 'nullable',
             'no_of_child'     => 'nullable',
             'no_of_baby'      => 'nullable',
             'address'         => 'nullable',
-            'company_id'      => 'required',
+            'company_id'      => 'nullable',
+            'passport_expiration' => 'nullable',
             'dob'             => 'nullable',
 
             'title'      => 'required',

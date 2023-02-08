@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col md="4" class=" text-uppercase">
+      <v-col md="4" class="text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large"></div>
@@ -17,7 +17,7 @@
           </div>
         </div>
       </v-col>
-      <v-col md="4" class=" text-uppercase">
+      <v-col md="4" class="text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large"></div>
@@ -33,7 +33,7 @@
           </div>
         </div>
       </v-col>
-      <v-col md="4" class=" text-uppercase">
+      <v-col md="4" class="text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large"></div>
@@ -112,36 +112,36 @@ export default {
 
       headers: [
         {
-          text: "#"
+          text: "#",
         },
         {
-          text: "Type"
+          text: "Type",
         },
         {
-          text: "Source"
+          text: "Source",
         },
         {
-          text: "Rooms"
+          text: "Rooms",
         },
         {
-          text: "Booking Date"
+          text: "Booking Date",
         },
         {
-          text: "Check In"
+          text: "Check In",
         },
         {
-          text: "Check Out"
+          text: "Check Out",
         },
         {
-          text: "Total Price"
-        }
-      ]
+          text: "Total Price",
+        },
+      ],
     };
   },
   watch: {
     customerId() {
       this.get_customer_history();
-    }
+    },
   },
   mounted() {
     this.get_customer_history();
@@ -154,13 +154,12 @@ export default {
         .then(({ data }) => {
           this.customer = data.data;
           this.bookings = data.data.bookings;
-          console.log(this.bookings);
           this.revenue = data.revenue;
           this.city_ledger = data.city_ledger;
           this.loading = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

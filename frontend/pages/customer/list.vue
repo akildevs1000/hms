@@ -5,6 +5,23 @@
         {{ response }}
       </v-snackbar>
     </div>
+
+    <v-dialog v-model="NewCustomerDialog" max-width="60%">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Create Customer</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="NewCustomerDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
+        </v-toolbar>
+        <v-container>
+          <CreateCustomer />
+        </v-container>
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -25,15 +42,6 @@
         ></v-select>
       </v-col>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <!-- <v-text-field
-          class="rounded-md custom-text-box shadow-none"
-          :hide-details="true"
-          placeholder="Search..."
-          solo
-          flat
-          @input="searchIt"
-          v-model="search"
-        ></v-text-field> -->
         <input
           class="form-control py-3 custom-text-box floating shadow-none"
           placeholder="Search..."
@@ -43,14 +51,23 @@
         />
       </v-col>
     </v-row>
-
     <div v-if="can(`customer_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span> {{ Model }} List</span>
+          <span> {{ Model }} List </span>
+          <v-spacer></v-spacer>
+          <v-btn
+            class="float-right py-3"
+            @click="NewCustomerDialog = true"
+            x-small
+            color="primary"
+          >
+            <v-icon color="white" small class="py-5">mdi-plus</v-icon>
+            Add Customer
+          </v-btn>
         </v-toolbar>
         <table>
-          <tr style="font-size:13px">
+          <tr style="font-size: 13px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
@@ -62,7 +79,11 @@
             absolute
             color="primary"
           ></v-progress-linear>
-          <tr v-for="(item, index) in data" :key="index" style="font-size:13px">
+          <tr
+            v-for="(item, index) in data"
+            :key="index"
+            style="font-size: 13px"
+          >
             <td>
               <b>{{ ++index }}</b>
             </td>
@@ -109,65 +130,68 @@
   <NoAccess v-else />
 </template>
 <script>
+import CreateCustomer from "../../components/customer/CreateCustomer.vue";
 export default {
+  components: { CreateCustomer },
   data: () => ({
     pagination: {
       current: 1,
       total: 0,
-      per_page: 30
+      per_page: 30,
     },
     options: {},
     Model: "Customer",
     endpoint: "customer",
     search: "",
     snackbar: false,
+    NewCustomerDialog: false,
     dialog: false,
     ids: [],
     loading: false,
     total: 0,
     headers: [
       {
-        text: "#"
+        text: "#",
       },
       {
-        text: "Name"
+        text: "Name",
       },
       {
-        text: "Contact"
-      },
-
-      {
-        text: "Email"
-      },
-      {
-        text: "Id Card Type"
-      },
-      {
-        text: "Id Card"
-      },
-      {
-        text: "Car No."
+        text: "Contact",
       },
 
       {
-        text: "Address"
+        text: "Email",
       },
       {
-        text: "Action"
-      }
+        text: "Id Card Type",
+      },
+      {
+        text: "Id Card",
+      },
+      {
+        text: "Car No.",
+      },
+
+      {
+        text: "Address",
+      },
+      {
+        text: "Action",
+      },
     ],
     editedIndex: -1,
     editedItem: { name: "" },
     defaultItem: { name: "" },
     response: "",
     data: [],
-    errors: []
+    errors: [],
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    }
+    },
   },
   created() {
     this.loading = true;
@@ -184,7 +208,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -199,8 +223,8 @@ export default {
       let options = {
         params: {
           per_page: this.pagination.per_page,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -219,8 +243,8 @@ export default {
       } else if (s > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${search}`);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

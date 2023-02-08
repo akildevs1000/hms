@@ -149,7 +149,12 @@
                   <v-col md="2" cols="12">
                     <v-img
                       @click="onpick_attachment"
-                      style="width: 150px;height: 150px;margin: 0 auto;border-radius: 50%;"
+                      style="
+                        width: 150px;
+                        height: 150px;
+                        margin: 0 auto;
+                        border-radius: 50%;
+                      "
                       :src="showImage"
                     ></v-img>
                     <input
@@ -424,7 +429,7 @@
           <v-tab
             class="p-0 m-0"
             active-class="active-link"
-            style="min-width:10px !important"
+            style="min-width: 10px !important"
             v-for="(item, index) in selectedRooms"
             :key="index"
           >
@@ -436,9 +441,6 @@
           <!-- room summary -->
           <v-tab-item>
             <v-card flat>
-              <p class="px-5 py-0" style="font-size:16px;color:#AAAAAA">
-                Summary
-              </p>
               <v-divider class="px-5 py-0"></v-divider>
               <section>
                 <div class="input-group input-group-sm px-5 py-0">
@@ -469,7 +471,7 @@
                     {{ BookingData.contact_no || "---" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm  px-5">
+                <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Check In
                   </span>
@@ -526,13 +528,11 @@
                   </div>
                 </div>
               </section>
-              <p class="px-5 py-0" style="font-size:16px;color:#AAAAAA">
-                Check In Payment
-              </p>
+
               <v-divider class="px-5 py-0"></v-divider>
               <section class="payment-section pt-0">
                 <v-row class="px-5 mt-0">
-                  <div class="input-group input-group-sm px-4">
+                  <div class="input-group input-group-sm px-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">
                       <v-select
                         v-model="room.payment_mode_id"
@@ -542,12 +542,17 @@
                           { id: 3, name: 'Online' },
                           { id: 4, name: 'Bank' },
                           { id: 5, name: 'UPI' },
-                          { id: 6, name: 'Cheque' }
+                          { id: 6, name: 'Cheque' },
                         ]"
                         item-text="name"
                         item-value="id"
                         :outlined="false"
+                        cache-items
                         dense
+                        flat
+                        hide-no-data
+                        solo-inverted
+                        background-color="#E9ECEF"
                         :disabled="room.paid_by == '2' ? true : false"
                         :hide-details="errors && !errors.payment_mode_id"
                         :error="errors && errors.payment_mode_id"
@@ -556,6 +561,7 @@
                             ? errors.payment_mode_id[0]
                             : ''
                         "
+                        style="font-size: 13px"
                       ></v-select>
                     </span>
                     <input
@@ -563,17 +569,36 @@
                       class="form-control"
                       aria-label="Sizing example input"
                       aria-describedby="inputGroup-sizing-sm"
-                      style="height: 41px;"
+                      style="height: 48px"
                       v-model="new_payment"
                     />
                   </div>
-
+                  <div
+                    class="input-group input-group-sm px-3"
+                    v-if="room.payment_mode_id != 1"
+                  >
+                    <span class="input-group-text" id="inputGroup-sizing-sm">
+                      Reference No
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm"
+                      style="
+                        height: 35px;
+                        text-align: left !important;
+                        text-transform: lowercase !important ;
+                      "
+                    />
+                    <!-- v-model="room.reference_no" -->
+                  </div>
                   <v-col md="12">
                     <v-divider></v-divider>
                   </v-col>
                 </v-row>
 
-                <div class="input-group input-group-sm px-5 ">
+                <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Room Price
                   </span>
@@ -587,7 +612,7 @@
                     {{ BookingData.total_price || "0" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm  px-5">
+                <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
                   </span>
@@ -649,7 +674,7 @@
             <v-card flat>
               <div
                 class="px-5 pt-2 d-flex justify-space-between"
-                style="font-size:16px;color:#AAAAAA"
+                style="font-size: 16px; color: #aaaaaa"
               >
                 <span> Room - {{ item.room_no }}</span>
                 <span> {{ item.room_type }}</span>
@@ -657,26 +682,26 @@
               <v-divider></v-divider>
               <section class="payment-section">
                 <div class="input-group input-group-sm px-5 pt-2 text-center">
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     <div class="d-flex justify-space-between">
-                      <span class="pa-0 m-0" style="width:33.33%" outlined>
+                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
                         {{ item.no_of_adult }}|
                       </span>
-                      <span class="pa-0 m-0" style="width:33.33%" outlined>
+                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
                         {{ item.no_of_child }} |
                       </span>
-                      <span class="pa-0 m-0" style="width:33.33%" outlined>
+                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
                         {{ item.no_of_baby }}
                       </span>
                     </div>
                   </v-card>
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     {{ getMealSeparate(item.meal)[0] }}
                   </v-card>
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     {{ getMealSeparate(item.meal)[1] }}
                   </v-card>
-                  <v-card class="pa-2" style="width:25%" outlined tile>
+                  <v-card class="pa-2" style="width: 25%" outlined tile>
                     {{ getMealSeparate(item.meal)[2] }}
                   </v-card>
                 </div>
@@ -836,9 +861,7 @@
 
     <v-dialog v-model="searchDialog" width="500">
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          Customer
-        </v-card-title>
+        <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
         <v-card-text>
           <v-row>
             <v-col md="12" cols="12" sm="12">
@@ -874,7 +897,7 @@ export default {
   props: ["BookingData"],
   components: {
     History,
-    ImagePreview
+    ImagePreview,
   },
   data() {
     return {
@@ -889,7 +912,7 @@ export default {
         id_card_type_id: "",
         id_card_no: "",
         exp: "",
-        checkIn_document: null
+        checkIn_document: null,
       },
 
       purposes: [
@@ -897,7 +920,7 @@ export default {
         "Business",
         "Hospital",
         "Party/Functions",
-        "Visiting For Relatives"
+        "Visiting For Relatives",
       ],
       selectMeal: [],
       wantNewDoc: false,
@@ -908,7 +931,7 @@ export default {
       RoomDrawer: null,
       items: [
         { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" }
+        { title: "About", icon: "mdi-forum" },
       ],
       val: 1,
       Model: "Reservation",
@@ -921,7 +944,7 @@ export default {
       // ----------------------
       documentObj: {
         fileExtension: null,
-        file: null
+        file: null,
       },
       isSelectRoom: true,
       isBed: false,
@@ -937,7 +960,7 @@ export default {
       roomTypes: [],
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
       search: {
-        mobile: "0752388923"
+        mobile: "0752388923",
       },
       availableRooms: [],
       selectedRooms: [],
@@ -948,7 +971,7 @@ export default {
       check_in_menu: false,
       check_out_menu: false,
       upload: {
-        name: ""
+        name: "",
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
@@ -980,7 +1003,7 @@ export default {
         rooms: "",
         reference_no: "",
         paid_by: "",
-        purpose: "Visiting"
+        purpose: "Visiting",
       },
       reservation: {},
       countryList: [],
@@ -992,7 +1015,7 @@ export default {
         { id: 2, name: "Mrs" },
         { id: 3, name: "Miss" },
         { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" }
+        { id: 5, name: "Dr" },
       ],
 
       customer: {
@@ -1015,7 +1038,7 @@ export default {
         dob_menu: false,
         dob: null,
         exp_menu: false,
-        exp: null
+        exp: null,
       },
       id_card_type_id: 0,
       errors: [],
@@ -1024,10 +1047,10 @@ export default {
       image: "",
 
       upload: {
-        name: ""
+        name: "",
       },
 
-      previewImage: null
+      previewImage: null,
     };
   },
 
@@ -1046,7 +1069,7 @@ export default {
       }
 
       return this.customer.image;
-    }
+    },
   },
   methods: {
     nextTab() {
@@ -1072,7 +1095,7 @@ export default {
       let file = input.files;
       if (file && file[0]) {
         let reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
           this.previewImage = e.target.result;
         };
         reader.readAsDataURL(file[0]);
@@ -1100,7 +1123,7 @@ export default {
         new_payment: this.new_payment,
         booking_id: data.id,
         remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id
+        payment_mode_id: data.payment_mode_id,
       };
 
       let payload = new FormData();
@@ -1134,7 +1157,7 @@ export default {
             location.reload();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     get_customer() {
@@ -1148,8 +1171,8 @@ export default {
       }
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
 
       this.$axios
@@ -1166,7 +1189,7 @@ export default {
 
           this.customer = {
             ...data.data,
-            customer_id: data.data.id
+            customer_id: data.data.id,
           };
           this.customer.id_card_type_id = parseInt(
             this.customer.id_card_type_id
@@ -1178,14 +1201,11 @@ export default {
     },
 
     preview(file) {
-      const fileExtension = file
-        .split(".")
-        .pop()
-        .toLowerCase();
+      const fileExtension = file.split(".").pop().toLowerCase();
       fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
       this.documentObj = {
         fileExtension: fileExtension,
-        file: file
+        file: file,
       };
       this.imgView = true;
     },
@@ -1221,8 +1241,8 @@ export default {
     get_room_types() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`room_type`, payload).then(({ data }) => {
         this.roomTypes = data;
@@ -1232,8 +1252,8 @@ export default {
     get_id_cards() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
@@ -1251,7 +1271,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -1267,11 +1287,11 @@ export default {
         return;
       }
 
-      let rooms = this.selectedRooms.map(e => e.room_no);
+      let rooms = this.selectedRooms.map((e) => e.room_no);
       this.room.rooms = rooms.toString();
       let payload = {
         ...this.room,
-        ...this.customer
+        ...this.customer,
       };
       this.$axios
         .post("/booking_validate1", payload)
@@ -1290,7 +1310,7 @@ export default {
             this.store_booking();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_booking() {
@@ -1301,7 +1321,7 @@ export default {
         qty_lunch: this.lunch,
         qty_dinner: this.dinner,
         selectedRooms: this.selectedRooms,
-        ...this.customer
+        ...this.customer,
       };
       this.$axios
         .post("/booking", payload)
@@ -1316,7 +1336,7 @@ export default {
             this.$router.push(`/`);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_document(id) {
@@ -1333,13 +1353,13 @@ export default {
             this.subLoad = false;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
-    }
-  }
+    },
+  },
 };
 </script>
 

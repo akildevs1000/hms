@@ -39,7 +39,7 @@
                   <v-col cols="12">
                     <v-text-field
                       v-model="editedItem.name"
-                      placeholder="Source"
+                      placeholder="Company"
                       :hide-details="true"
                       outlined
                       dense
@@ -65,6 +65,30 @@
                     <v-text-field
                       v-model="editedItem.mobile"
                       placeholder="Mobile"
+                      outlined
+                      dense
+                      :hide-details="true"
+                      type="number"
+                    ></v-text-field>
+                    <span v-if="errors && errors.mobile" class="error--text">{{
+                      errors.mobile[0]
+                    }}</span>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      placeholder="Landline"
+                      outlined
+                      dense
+                      :hide-details="true"
+                      type="number"
+                    ></v-text-field>
+                    <span v-if="errors && errors.mobile" class="error--text">{{
+                      errors.mobile[0]
+                    }}</span>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      placeholder="Email"
                       outlined
                       dense
                       :hide-details="true"
@@ -112,19 +136,21 @@
               <span> {{ Model }} List</span>
             </v-toolbar>
             <v-text-field
-              class="form-control py-0  ma-1 mb-0 w-25 float-start custom-text-box floating shadow-none"
+              class="pa-2"
               placeholder="Search..."
-              solo
               flat
+              dense
+              outlined
               @input="searchIt"
               v-model="search"
               :hide-details="true"
+              style="width: 150px"
             ></v-text-field>
-            <table>
-              <tr>
+            <table class="mt-0">
+              <tr style="font-size: 13px">
                 <th class="ps-5">#</th>
                 <th>Name</th>
-                <th>Source</th>
+                <th>Company</th>
                 <th>Type</th>
                 <th>GST</th>
                 <th>Address</th>
@@ -138,7 +164,11 @@
                 absolute
                 color="primary"
               ></v-progress-linear>
-              <tr v-for="(item, index) in data" :key="index">
+              <tr
+                v-for="(item, index) in data"
+                :key="index"
+                style="font-size: 13px"
+              >
                 <!-- <td>{{ caps(item.id) }}</td> -->
                 <td>
                   {{
@@ -162,18 +192,14 @@
                     </template>
                     <v-list width="120" dense>
                       <v-list-item @click="editItem(item)">
-                        <v-list-item-title style="cursor:pointer">
-                          <v-icon color="secondary" small>
-                            mdi-pencil
-                          </v-icon>
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="secondary" small> mdi-pencil </v-icon>
                           Edit
                         </v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="deleteItem(item)">
-                        <v-list-item-title style="cursor:pointer">
-                          <v-icon color="error" small>
-                            mdi-delete
-                          </v-icon>
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="error" small> mdi-delete </v-icon>
                           Delete
                         </v-list-item-title>
                       </v-list-item>
@@ -211,7 +237,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
     },
     Model: "Sources",
     options: {},
@@ -230,7 +256,7 @@ export default {
       gst: "",
       mobile: "",
       name: "",
-      type: ""
+      type: "",
     },
     defaultItem: {
       contact_name: "",
@@ -238,18 +264,18 @@ export default {
       gst: "",
       mobile: "",
       name: "",
-      type: ""
+      type: "",
     },
     response: "",
     data: [],
     sourceTypeList: ["Online", "Agent"],
-    errors: []
+    errors: [],
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    }
+    },
   },
 
   watch: {
@@ -257,7 +283,7 @@ export default {
       val || this.close();
       this.errors = [];
       this.search = "";
-    }
+    },
   },
 
   created() {
@@ -269,7 +295,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
     caps(str) {
@@ -277,7 +303,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
     onPageChange() {
@@ -289,8 +315,8 @@ export default {
       let options = {
         params: {
           per_page: this.pagination.per_page,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -316,15 +342,15 @@ export default {
     },
 
     delteteSelectedRecords() {
-      let just_ids = this.ids.map(e => e.id);
+      let just_ids = this.ids.map((e) => e.id);
       confirm(
         "Are you sure you wish to delete selected records , to mitigate any inconvenience in future."
       ) &&
         this.$axios
           .post(`${this.endpoint}/delete/selected`, {
-            ids: just_ids
+            ids: just_ids,
           })
-          .then(res => {
+          .then((res) => {
             if (!res.data.status) {
               this.errors = res.data.errors;
             } else {
@@ -334,7 +360,7 @@ export default {
               this.response = "Selected records has been deleted";
             }
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
     },
 
     deleteItem(item) {
@@ -349,7 +375,7 @@ export default {
             this.snackbar = data.status;
             this.response = data.message;
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
     },
 
     close() {
@@ -368,7 +394,7 @@ export default {
         address: this.editedItem.address,
         mobile: this.editedItem.mobile,
         contact_name: this.editedItem.contact_name.toLowerCase(),
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       if (this.editedIndex > -1) {
         this.$axios
@@ -378,7 +404,7 @@ export default {
               this.errors = data.errors;
             } else {
               const index = this.data.findIndex(
-                item => item.id == this.editedItem.id
+                (item) => item.id == this.editedItem.id
               );
               this.getDataFromApi();
               this.snackbar = data.status;
@@ -386,7 +412,7 @@ export default {
               this.close();
             }
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
       } else {
         this.$axios
           .post(this.endpoint, payload)
@@ -402,10 +428,10 @@ export default {
               this.search = "";
             }
           })
-          .catch(res => console.log(res));
+          .catch((res) => console.log(res));
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>

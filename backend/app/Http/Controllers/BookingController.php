@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\BookingRequest;
+use App\Http\Requests\Booking\DocumentRequest;
 use App\Models\IdCardType;
 use Illuminate\Support\Facades\Log as Logger;
 
@@ -38,6 +39,11 @@ class BookingController extends Controller
     public function booking_validate(BookingRequest $request)
     {
         return $this->response('Booking validated.', null, true);
+    }
+
+    public function document_validate(DocumentRequest $request)
+    {
+        return $this->response('Document validated.', null, true);
     }
 
     public function customerStore($customer)
@@ -283,6 +289,7 @@ class BookingController extends Controller
         $msg = "";
         $numberOfRooms = count($rooms);
         $customerName = ucfirst($customer['first_name']) ?? 'Guest';
+        $title = ucfirst($customer['title']) ?? ' ';
         $checkIn = date('d-M-y', strtotime($booking->check_in));
         $checkOut = date('d-M-y H:i', strtotime($booking->check_out));
         $days = $booking->total_days;
@@ -291,7 +298,6 @@ class BookingController extends Controller
         $advanceAmount = $booking->advance_price;
         $remainingAmount = $booking->remaining_price;
         $company_id = $booking->company_id;
-        $appName = env('APP_NAME');
 
         if ($company_id == 1) {
             $location = "  https://goo.gl/maps/gA9h3YxGTwLaRETG6";
@@ -307,19 +313,18 @@ class BookingController extends Controller
             $comName = "Kodaikanal";
         }
 
-        $msg .= "Dear $customerName, \n";
-
+        $msg .= "Dear $title $customerName, \n";
         $msg .= "Welcome to HYDERS PARK The Luxury Hotel, $comName, \n";
         $msg .= "Your booking reference number, $booking->id, \n";
         $msg .= "Number of Rooms, $numberOfRooms, \n";
-
-        $msg .= "Check In/Out , $checkIn to $checkOut, \n";
+        $msg .= "from, $checkIn to $checkOut, \n";
         $msg .= "Your total bill is ₹$totalAmount \n";
         $msg .= "You paid advance ₹$advanceAmount \n";
         $msg .= "Your remaining amount is ₹$remainingAmount \n";
 
         if ($advanceAmount <= 0) {
-            $msg .= "You must pay an advance within 48 hours to confirm your booking.\n";
+            $msg .= "Please pay Advance to confirm your booking  .\n";
+            // $msg .= "You must pay an advance within 48 hours to confirm your booking.\n";
         }
 
 
