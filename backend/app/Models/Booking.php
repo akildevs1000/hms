@@ -193,6 +193,17 @@ class Booking extends Model
             "reference_no",
             "paid_by",
             "purpose",
+            "gst_number",
         ];
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(company::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

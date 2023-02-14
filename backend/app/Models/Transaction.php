@@ -24,4 +24,10 @@ class Transaction extends Model
     {
         return date('H:i', strtotime($this->attributes['date']));
     }
+
+
+    public function paymentMode()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_method_id');
+    }
 }

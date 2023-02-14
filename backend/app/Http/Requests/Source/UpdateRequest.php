@@ -33,7 +33,8 @@ class UpdateRequest extends FormRequest
             'address'      => 'nullable',
             'gst'      => 'nullable',
             'company_id' => 'nullable',
-
+            'email'      => 'nullable',
+            'landline'      => 'nullable',
         ];
 
         return $arr;

@@ -30,6 +30,8 @@ class StoreRequest extends FormRequest
             'type'      => 'required',
             'contact_name'      => 'nullable',
             'mobile'      => 'nullable',
+            'email'      => 'nullable',
+            'landline'      => 'nullable',
             'address'      => 'nullable',
             'gst'      => 'nullable',
             'company_id'      => 'required',

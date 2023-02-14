@@ -391,8 +391,14 @@ export default {
             },
             {
               icon: "mdi mdi-human-male-board-poll",
-              title: "Agents",
+              title: "Reservation from Agents",
               to: "/agents",
+              menu: "agent_access",
+            },
+            {
+              icon: "mdi mdi-human-male-board-poll",
+              title: "Agents",
+              to: "/source",
               menu: "agent_access",
             },
           ],

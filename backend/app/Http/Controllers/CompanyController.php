@@ -278,7 +278,6 @@ class CompanyController extends Controller
     public function updateCompanyGeographic(GeographicUpdateRequest $request, $id)
     {
         $geographic = Company::find($id)->update($request->validated());
-
         if (!$geographic) {
             return $this->response('Geographic Info cannot updated.', null, false);
         }

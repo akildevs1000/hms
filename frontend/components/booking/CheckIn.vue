@@ -110,11 +110,13 @@
             </v-col>
             <v-divider></v-divider>
             <v-col md="12">
+              <!-- @click="documentDialog = false" -->
+
               <v-btn
                 small
                 dark
                 class="primary pt-4 pb-4"
-                @click="documentDialog = false"
+                @click="store_document(BookingData.id)"
               >
                 Submit
                 <v-icon right dark>mdi-file</v-icon>
@@ -661,7 +663,7 @@
                     width="100%"
                     height="60"
                     @click="store_check_in(BookingData)"
-                    :loading="false"
+                    :loading="loading"
                     >Check In</v-btn
                   >
                 </v-card-actions>
@@ -1109,22 +1111,23 @@ export default {
     },
 
     store_check_in(data) {
+      this.loading = true;
       if (
         // this.new_payment == "" ||
         // this.new_payment == 0 ||
         data.document ? "" : this.checkIn.checkIn_document == null
       ) {
         alert("Enter required fields");
+        this.loading = false;
         return;
       }
-      // this.loading = true;
-      let bookingId = data.id;
-      let payloads = {
-        new_payment: this.new_payment,
-        booking_id: data.id,
-        remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id,
-      };
+      // let bookingId = data.id;
+      // let payloads = {
+      //   new_payment: this.new_payment,
+      //   booking_id: data.id,
+      //   remaining_price: data.remaining_price,
+      //   payment_mode_id: data.payment_mode_id,
+      // };
 
       let payload = new FormData();
       payload.append("customer_id", data.customer_id);
@@ -1137,9 +1140,6 @@ export default {
       payload.append("id_card_no", this.checkIn.id_card_no);
       payload.append("expired", this.checkIn.exp);
       payload.append("image", this.customer.image);
-
-      this.customer.image;
-
       if (this.checkIn.checkIn_document) {
         payload.append("document", this.checkIn.checkIn_document);
       }
@@ -1150,10 +1150,8 @@ export default {
           console.log(data);
           if (!data.status) {
             this.errors = data.errors;
-            console.log(1);
           } else {
             this.alert("Success!", "success check in", "success");
-            console.log(2);
             location.reload();
           }
         })
@@ -1331,7 +1329,7 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.store_document(data.data);
+            // this.store_document(data.data);
             this.alert("Success!", "Successfully room added", "success");
             this.$router.push(`/`);
           }
@@ -1341,9 +1339,13 @@ export default {
 
     store_document(id) {
       let payload = new FormData();
-      payload.append("document", this.room.document);
+      // payload.append("document", this.room.document);
+      payload.append("document", this.checkIn.checkIn_document);
       payload.append("image", this.customer.image);
       payload.append("booking_id", id);
+
+      console.log(id);
+
       this.$axios
         .post("/store_document", payload)
         .then(({ data }) => {
@@ -1351,6 +1353,8 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
             this.subLoad = false;
+          } else {
+            this.documentDialog = false;
           }
         })
         .catch((e) => console.log(e));

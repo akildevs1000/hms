@@ -2,20 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use Dompdf\Dompdf;
+use NumberFormatter;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Dompdf\Dompdf;
 
 class InvoiceController extends Controller
 {
 
     public function index($id)
     {
-        // return $booking = Booking::with('orderRooms.postings', 'customer')->find($id);
-        $booking = Booking::with('orderRooms', 'customer')->find($id);
+        $booking = Booking::with('orderRooms', 'customer', 'company.user', 'transactions', 'bookedRooms')->find($id);
         $orderRooms = $booking->orderRooms;
-        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms"))
+        $company = $booking->company;
+        $transactions = $booking->transactions;
+        $amtLatter =  $this->amountToText($transactions->sum('debit') ?? 0);
+        $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
+            return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
+        });
+
+        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter","numberOfCustomers"))
             // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
@@ -29,5 +36,12 @@ class InvoiceController extends Controller
             // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
+    }
+
+    function amountToText($amount)
+    {
+        $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
+        $text = ucwords($formatter->format($amount));
+        return $text;
     }
 }

@@ -416,12 +416,68 @@ class BookingController extends Controller
         (new WhatsappController)->sentNotification($data);
     }
 
+    private function checkOutNotification($booking, $customer)
+    {
+        $instance_id = "";
+        $access_token = "";
+        $comName = "";
+        $location = "";
+        $video = "";
+        $msg = "";
+        $title = ucfirst($customer['title']) ?? 'Mr';
+        $customerName = ucfirst($customer['first_name']) ?? 'Guest';
+        $checkOut = date('d-M-y H:i', strtotime($booking->check_out));
+        $company_id = $booking->company_id;
+
+        if ($company_id == 1) {
+            $location = "  https://goo.gl/maps/gA9h3YxGTwLaRETG6";
+            $company = 1;
+            $instance_id = "THANJ_INSTANCE_ID";
+            $access_token = "THANJ_ACCESS_TOKEN";
+            $video = "https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels";
+            $comName = "Thanjavur";
+        } else if ($company_id == 2) {
+            $location = "  https://goo.gl/maps/bNznm2Z4pbxo2ZJw9";
+            $company = 2;
+            $instance_id = "THANJ_INSTANCE_ID";
+            $access_token = "THANJ_ACCESS_TOKEN";
+            $comName = "Kodaikanal";
+            $video = "https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels";
+        }
+
+        $msg .= "Dear $title $customerName, \n";
+
+        $msg .= "Thank you for trusting us with your stay \n";
+        $msg .= "\n";
+        $msg .= "We hope that your experience with us was great, \n";
+        $msg .= "We had a great time serving you, \n";
+        $msg .= "we look forward to having you back with us soon, \n";
+        $msg .= "Safe Travels, \n";
+        $msg .= "\n";
+
+        $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
+        $msg .= "\n";
+        $msg .= "\n";
+
+        $msg .= "Location $location\n";
+        $msg .= "\n";
+        $msg .= "More $video\n";
+
+        $data = [
+            'to' => env('COUNTRY_CODE') . $customer['whatsapp'],
+            'message' => $msg,
+            'company' => $company ?? false,
+            'instance_id' => $instance_id,
+            'access_token' => $access_token,
+        ];
+        // dd($data);
+        (new WhatsappController)->sentNotification($data);
+    }
+
     public function storeDocument(Request $request)
     {
         $booking    = Booking::find($request->booking_id);
         $customer    = Customer::find($booking->customer_id);
-
-
         if ($request->hasFile('document')) {
             $file = $request->file('document');
             $ext = $file->getClientOriginalExtension();
@@ -434,12 +490,10 @@ class BookingController extends Controller
             $booking->document = $customer->document_name ?? null;
         }
 
-
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $ext = $file->getClientOriginalExtension();
             $fileName = time() . '.' . $ext;
-
             $path = $file->storeAs('public/documents/customer/photo', $fileName);
             $customer->image = $fileName;
         }
@@ -590,6 +644,7 @@ class BookingController extends Controller
 
             if ($checkedIn) {
                 $customer->save();
+
                 $transactionData = [
                     'booking_id' => $booking->id,
                     'customer_id' => $booking->customer_id ?? '',
@@ -669,8 +724,22 @@ class BookingController extends Controller
     public function check_out_room(Request $request)
     {
         try {
+
             $booking_id = $request->booking_id;
             $booking    = Booking::where('company_id', $request->company_id)->find($booking_id);
+
+            $transactionDataForDiscount = [
+                'booking_id'        => $booking->id,
+                'customer_id'       => $booking->customer_id ?? '',
+                'date'              => now(),
+                'company_id'        => $booking->company_id ?? '',
+                'desc' => 'discount',
+            ];
+
+            $trans = new TransactionController();
+            if ($request->discount > 0) {
+                $trans->store($transactionDataForDiscount, -abs($request->discount), 'debit');
+            }
 
             $transactionData = [
                 'booking_id'        => $booking->id,
@@ -684,10 +753,12 @@ class BookingController extends Controller
             $trans = new TransactionController();
             if ($request->full_payment > 0) {
                 $trans->store($transactionData, $request->full_payment, 'credit');
-                // (new TransactionController)->store($transactionData, $request->full_payment, 'credit');
             }
+
             $booking = Booking::find($booking_id);
             if ($booking) {
+                $customer    = Customer::find($booking->customer_id);
+
                 if ($booking->balance > 0) {
                     $booking->payment_status  = 0;
                     $booking->remaining_price       =  (int)$booking->remaining_price - (int)$request->full_payment;
@@ -739,6 +810,9 @@ class BookingController extends Controller
                 }
                 $booking->booking_status  = 3;
                 $booking->save();
+
+                $this->checkOutNotification($booking,  $customer);
+
 
                 // if ($request->isPrintInvoice) {
                 //     $inv = new InvoiceController;
@@ -1224,7 +1298,7 @@ class BookingController extends Controller
         }
     }
 
-    public function changeDateByDrag(Request $request)
+    public function changeDateByDrag_old(Request $request)
     {
         try {
             $booked = Booking::find($request->eventId);
@@ -1245,6 +1319,104 @@ class BookingController extends Controller
             } else {
                 return $this->response('DataBase Error in status change', null, true);
             }
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
+    public function changeDateByDrag(Request $request)
+    {
+        try {
+            $end =  date('Y-m-d', strtotime($request->end . '+1day'));
+            $bookedRoom = BookedRoom::find($request->eventId);
+            $booking = Booking::find($bookedRoom->booking_id);
+            $nightsCal = Carbon::parse(date('Y-m-d', strtotime($request->start)))->diffInDays(date('Y-m-d', strtotime($end)));
+            $nights = $nightsCal; // - 1;
+            $bookingDays = Carbon::parse(date('Y-m-d', strtotime($booking->check_in)))->diffInDays(date('Y-m-d', strtotime($booking->check_out)));
+            $extraDays = $nights - $bookingDays;
+            $extraDaysAmount = $extraDays * $booking->all_room_Total_amount;
+
+            // return [
+            //     $request->start,
+            //     $end,
+            //     $nights,
+            //     $bookedRoom->total *  $nights,
+
+            //     'booking_check_in' => $booking->check_in,
+            //     'booking_check_out' => $booking->check_out,
+            //     'bookingdays' => ($nights - $bookingDays),
+            //     'roomamount' => $booking->all_room_Total_amount,
+            //     'extradateamount' => ($nights - $bookingDays) * $booking->all_room_Total_amount,
+
+            //     'check_in' => $request->start,
+            //     'check_out' => $end,
+            //     'total_days' => $nights,
+            //     'total_price' => $booking->all_room_Total_amount *  $nights,
+            //     'grand_remaining_price' => ($booking->all_room_Total_amount *  $nights)  - $booking->paid_amounts,
+            // ];
+
+
+            $updated =  $bookedRoom->update([
+                'check_in' => $request->start,
+                'check_out' => $end,
+                'days' => $nights,
+                'grand_total' => $bookedRoom->total *  $nights,
+            ]);
+
+            $updated =  $booking->update([
+                'check_in' => $request->start,
+                'check_out' => $end,
+                'total_days' => $nights,
+                'total_price' => $booking->all_room_Total_amount *  $nights,
+                'grand_remaining_price' => ($booking->all_room_Total_amount *  $nights)  - $booking->paid_amounts,
+                'balance' => ($booking->all_room_Total_amount *  $nights)  - $booking->paid_amounts,
+                'remaining_price' => ($booking->all_room_Total_amount *  $nights)  - $booking->paid_amounts,
+            ]);
+
+            $transactionData = [
+                'booking_id' => $booking->id,
+                'customer_id' => $booking->customer_id ?? '',
+                'date' => now(),
+                'company_id' => $booking->company_id ?? '',
+                'payment_method_id' => $booking->payment_mode_id,
+                'desc' => 'room extends amount',
+            ];
+
+            if ($extraDaysAmount > 0) {
+                (new TransactionController)->store($transactionData, $extraDaysAmount, 'debit');
+            }
+
+            return $this->response('Date changed Successfully.', null, true);
+            return;
+
+
+            $period       = CarbonPeriod::create(date('Y-m-d', strtotime($request->start)), $this->checkOutDate(date('Y-m-d', strtotime($request->end))));
+            if ($updated) {
+                OrderRoom::whereBookedRoomId($bookedRoom->id)->delete();
+                foreach ($period as $date) {
+                    $bookedRoom['date'] =  $date->format('Y-m-d');
+                    $bookedRoom['booked_room_id'] = $bookedRoom->id;
+                    OrderRoom::create($bookedRoom->getWithoutAppends());
+                }
+            }
+            return;
+
+
+
+
+            $room   = Room::where('company_id', $request->company_id)->whereRoomNo($request->roomId)->first();
+
+            $bookedRoom->room_id = $room->id;
+            $bookedRoom->room_no = $room->room_no;
+
+            if ($bookedRoom->save()) {
+                $rooms = $this->getBookedRoomsFromBookingId($bookedRoom->booking_id);
+                $bookedRoom->booking()->update(['rooms' => $rooms]);
+                return $this->response('Room changed Successfully.', null, true);
+            }
+            return $this->response('DataBase Error in status change', null, true);
         } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);

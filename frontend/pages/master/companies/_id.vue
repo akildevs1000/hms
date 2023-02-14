@@ -101,7 +101,7 @@
                     <div class="row">
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Mol ID</label>
+                          <label class="col-form-label">GSTIN</label>
                           <span class="text-danger">*</span>
                           <input
                             v-model="company_payload.mol_id"
@@ -241,8 +241,8 @@
                                 "
                                 :src="
                                   previewImage ||
-                                    company_payload.logo ||
-                                    '/no-image.PNG'
+                                  company_payload.logo ||
+                                  '/no-image.PNG'
                                 "
                               ></v-img>
                             </div>
@@ -614,7 +614,7 @@ export default {
     loading: false,
     preloader: true,
     upload: {
-      name: ""
+      name: "",
     },
 
     company_payload: {
@@ -626,7 +626,7 @@ export default {
       max_employee: "",
       max_devices: "",
       mol_id: "",
-      p_o_box_no: ""
+      p_o_box_no: "",
     },
 
     company_trade_license: {
@@ -636,30 +636,30 @@ export default {
       makeem_no: "",
       manager: "",
       issue_date: "",
-      expiry_date: ""
+      expiry_date: "",
     },
 
     contact_payload: {
       name: "",
       number: "",
       position: "",
-      whatsapp: ""
+      whatsapp: "",
     },
     user_payload: {
       password: "",
-      password_confirmation: ""
+      password_confirmation: "",
     },
     geographic_payload: {
       lat: "",
       lon: "",
-      location: ""
+      location: "",
     },
     e1: 1,
     errors: [],
     previewImage: null,
     data: {},
     response: "",
-    snackbar: false
+    snackbar: false,
   }),
   async created() {
     this.getDataFromApi();
@@ -675,7 +675,7 @@ export default {
         let r = data.record;
         this.company_payload = r;
         this.contact_payload = {
-          ...r.contact
+          ...r.contact,
         };
         this.user_payload = r.user;
 
@@ -691,7 +691,7 @@ export default {
         this.geographic_payload = {
           lat: this.company_payload.lat,
           lon: this.company_payload.lon,
-          location: this.company_payload.location
+          location: this.company_payload.location,
         };
 
         this.preloader = false;
@@ -713,7 +713,7 @@ export default {
       let file = input.files;
       if (file && file[0]) {
         let reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
           this.previewImage = e.target.result;
         };
         reader.readAsDataURL(file[0]);
@@ -785,8 +785,8 @@ export default {
             this.response = model + " updated successfully";
           }
         })
-        .catch(e => console.log(e));
-    }
-  }
+        .catch((e) => console.log(e));
+    },
+  },
 };
 </script>

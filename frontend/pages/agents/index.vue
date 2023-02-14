@@ -70,7 +70,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -329,7 +329,7 @@
             <td>
               {{
                 parseFloat(item.amount) + parseFloat(item.posting_amount) ||
-                  "---"
+                "---"
               }}.00
             </td>
             <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
@@ -405,7 +405,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
     },
     options: {},
     Model: "Agents",
@@ -424,60 +424,60 @@ export default {
 
     headers: [
       {
-        text: "#"
+        text: "#",
       },
       {
-        text: "Booking Number"
+        text: "Booking Number",
       },
       {
-        text: "Booking Date"
+        text: "Booking Date",
       },
       {
-        text: "Reference Number"
+        text: "Reference Number",
       },
       {
-        text: "Customer"
+        text: "Customer",
       },
       {
-        text: "Type"
+        text: "Type",
       },
       {
-        text: "Rooms"
+        text: "Rooms",
       },
       {
-        text: "Source"
+        text: "Source",
       },
       {
-        text: "Booking Amount"
+        text: "Booking Amount",
       },
       {
-        text: "Posting Amount"
+        text: "Posting Amount",
       },
       {
-        text: "Total (Booking+Posting)"
+        text: "Total (Booking+Posting)",
       },
       {
-        text: "Check In"
+        text: "Check In",
       },
       {
-        text: "Check Out"
+        text: "Check Out",
       },
 
       {
-        text: "Payment Status"
+        text: "Payment Status",
       },
       {
-        text: "Paid Amount"
+        text: "Paid Amount",
       },
       {
-        text: "Transaction"
+        text: "Transaction",
       },
       {
-        text: "Paid Date"
+        text: "Paid Date",
       },
       {
-        text: "Action"
-      }
+        text: "Action",
+      },
     ],
     editedIndex: -1,
     editedItem: { name: "" },
@@ -487,13 +487,13 @@ export default {
     booking: {},
     paid_status: 1,
     agentData: [],
-    errors: []
+    errors: [],
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    }
+    },
   },
   created() {
     this.loading = true;
@@ -512,7 +512,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -542,7 +542,7 @@ export default {
           return "paid";
           break;
         case 2:
-          return "payment by customer";
+          return "customer";
           break;
       }
     },
@@ -566,8 +566,8 @@ export default {
       let payload = {
         params: {
           id: agentData.booking_id,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
         if (data.status) {
@@ -596,8 +596,8 @@ export default {
     get_agents() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_agent`, payload).then(({ data }) => {
         this.agentList = data;
@@ -607,8 +607,8 @@ export default {
     get_online() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_online`, payload).then(({ data }) => {
         this.sources = data;
@@ -625,8 +625,8 @@ export default {
           company_id: this.$auth.user.company.id,
           from: this.from_date,
           to: this.to_date,
-          source: newSource
-        }
+          source: newSource,
+        },
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
@@ -653,7 +653,7 @@ export default {
         full_payment: this.booking.full_payment,
         payment_mode_id: this.booking.payment_mode_id,
         transaction: this.booking.transaction,
-        paid_status: this.paid_status
+        paid_status: this.paid_status,
       };
       // return;
       console.log(payload);
@@ -669,7 +669,7 @@ export default {
             this.getDataFromApi();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     searchIt() {
@@ -680,8 +680,8 @@ export default {
       } else if (s > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${search}`);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
