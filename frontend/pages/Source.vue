@@ -11,208 +11,267 @@
         <div>Dashboard / {{ Model }}</div>
       </v-col>
     </v-row>
-    <div v-if="can(`employee_view`)">
-      <v-row>
-        <v-col md="4" lg="4">
-          <v-card elevation="0">
+    <div>
+      <v-dialog v-model="agentDialog" max-width="40%">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
             <v-toolbar color="background" dense flat dark>
               <span>{{ formTitle }} {{ Model }}</span>
             </v-toolbar>
-            <v-divider class="py-0 my-0"></v-divider>
-            <v-card-text>
-              <v-container>
-                <v-row class="mt-">
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="editedItem.contact_name"
-                      placeholder="Name"
-                      outlined
-                      :hide-details="true"
-                      dense
-                    ></v-text-field>
-                    <span
-                      v-if="errors && errors.contact_name"
-                      class="error--text"
-                      >{{ errors.contact_name[0] }}</span
-                    >
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="editedItem.name"
-                      placeholder="Company"
-                      :hide-details="true"
-                      outlined
-                      dense
-                    ></v-text-field>
-                    <span v-if="errors && errors.name" class="error--text">{{
-                      errors.name[0]
-                    }}</span>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-select
-                      v-model="editedItem.type"
-                      :items="sourceTypeList"
-                      placeholder="Type"
-                      dense
-                      outlined
-                      :hide-details="true"
-                    ></v-select>
-                    <span v-if="errors && errors.type" class="error--text">{{
-                      errors.type[0]
-                    }}</span>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="editedItem.mobile"
-                      placeholder="Mobile"
-                      outlined
-                      dense
-                      :hide-details="true"
-                      type="number"
-                    ></v-text-field>
-                    <span v-if="errors && errors.mobile" class="error--text">{{
-                      errors.mobile[0]
-                    }}</span>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      placeholder="Landline"
-                      outlined
-                      dense
-                      :hide-details="true"
-                      type="number"
-                    ></v-text-field>
-                    <span v-if="errors && errors.mobile" class="error--text">{{
-                      errors.mobile[0]
-                    }}</span>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      placeholder="Email"
-                      outlined
-                      dense
-                      :hide-details="true"
-                      type="number"
-                    ></v-text-field>
-                    <span v-if="errors && errors.mobile" class="error--text">{{
-                      errors.mobile[0]
-                    }}</span>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="editedItem.gst"
-                      placeholder="GST"
-                      :hide-details="true"
-                      outlined
-                      dense
-                    ></v-text-field>
-                    <span v-if="errors && errors.gst" class="error--text">{{
-                      errors.gst[0]
-                    }}</span>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="editedItem.address"
-                      placeholder="address"
-                      outlined
-                      textarea
-                    ></v-text-field>
-                    <span v-if="errors && errors.address" class="error--text">{{
-                      errors.gst[0]
-                    }}</span>
-                  </v-col>
-                  <v-card-actions>
-                    <v-btn class="error" @click="close"> Cancel </v-btn>
-                    <v-btn class="primary" @click="save">Save</v-btn>
-                  </v-card-actions>
-                </v-row>
-              </v-container>
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col md="8" lg="8">
-          <v-card class="mb-5 rounded-md" elevation="0">
-            <v-toolbar class="rounded-md" color="background" dense flat dark>
-              <span> {{ Model }} List</span>
-            </v-toolbar>
-            <v-text-field
-              class="pa-2"
-              placeholder="Search..."
-              flat
-              dense
-              outlined
-              @input="searchIt"
-              v-model="search"
-              :hide-details="true"
-              style="width: 150px"
-            ></v-text-field>
-            <table class="mt-0">
-              <tr style="font-size: 13px">
-                <th class="ps-5">#</th>
-                <th>Name</th>
-                <th>Company</th>
-                <th>Type</th>
-                <th>GST</th>
-                <th>Address</th>
-                <th>Date</th>
-                <th class="text-center">Action</th>
-              </tr>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
-              <tr
-                v-for="(item, index) in data"
-                :key="index"
-                style="font-size: 13px"
-              >
-                <!-- <td>{{ caps(item.id) }}</td> -->
-                <td>
-                  {{
-                    (pagination.current - 1) * pagination.per_page + index + 1
-                  }}
-                </td>
-                <td>{{ caps(item.contact_name) }}</td>
-                <td>{{ caps(item.name) }}</td>
-                <td>{{ caps(item.type) }}</td>
-                <td>{{ caps(item.gst) }}</td>
-                <td>{{ caps(item.address) }}</td>
-                <td>
-                  {{ item.created_at }}
-                </td>
-                <td class="text-center">
-                  <v-menu bottom left>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list width="120" dense>
-                      <v-list-item @click="editItem(item)">
-                        <v-list-item-title style="cursor: pointer">
-                          <v-icon color="secondary" small> mdi-pencil </v-icon>
-                          Edit
-                        </v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="deleteItem(item)">
-                        <v-list-item-title style="cursor: pointer">
-                          <v-icon color="error" small> mdi-delete </v-icon>
-                          Delete
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </td>
-              </tr>
-            </table>
-          </v-card>
-        </v-col>
-      </v-row>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="agentDialog = false"
+              >mdi mdi-close-box</v-icon
+            >
+          </v-toolbar>
+          <v-container>
+            <v-row>
+              <v-col md="12" lg="12">
+                <v-card elevation="0">
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col md="6" cols="12">
+                          <v-text-field
+                            v-model="editedItem.contact_name"
+                            placeholder="Name"
+                            label="Name"
+                            outlined
+                            :hide-details="true"
+                            dense
+                          ></v-text-field>
+                          <span
+                            v-if="errors && errors.contact_name"
+                            class="error--text"
+                            >{{ errors.contact_name[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="6" cols="12">
+                          <v-text-field
+                            v-model="editedItem.name"
+                            placeholder="Company"
+                            :hide-details="true"
+                            outlined
+                            label="Company"
+                            dense
+                          ></v-text-field>
+                          <span
+                            v-if="errors && errors.name"
+                            class="error--text"
+                            >{{ errors.name[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="12" cols="12">
+                          <v-select
+                            v-model="editedItem.type"
+                            :items="sourceTypeList"
+                            placeholder="Type"
+                            dense
+                            label="Type"
+                            item-text="name"
+                            item-value="value"
+                            outlined
+                            :hide-details="true"
+                          ></v-select>
+                          <span
+                            v-if="errors && errors.type"
+                            class="error--text"
+                            >{{ errors.type[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="6" cols="6">
+                          <v-text-field
+                            v-model="editedItem.mobile"
+                            placeholder="Mobile"
+                            label="Mobile"
+                            outlined
+                            dense
+                            :hide-details="true"
+                            type="number"
+                          ></v-text-field>
+                          <span
+                            v-if="errors && errors.mobile"
+                            class="error--text"
+                            >{{ errors.mobile[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="6" cols="12">
+                          <v-text-field
+                            v-model="editedItem.landline"
+                            placeholder="Landline"
+                            outlined
+                            label="Landline"
+                            dense
+                            :hide-details="true"
+                            type="number"
+                          ></v-text-field>
+                          <span
+                            v-if="errors && errors.mobile"
+                            class="error--text"
+                            >{{ errors.mobile[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="6" cols="12">
+                          <v-text-field
+                            v-model="editedItem.email"
+                            placeholder="Email"
+                            outlined
+                            label="Email"
+                            dense
+                            :hide-details="true"
+                            type="email"
+                          ></v-text-field>
+                          <span
+                            v-if="errors && errors.email"
+                            class="error--text"
+                            >{{ errors.email[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="6" cols="12">
+                          <v-text-field
+                            v-model="editedItem.gst"
+                            placeholder="GST"
+                            label="GST"
+                            :hide-details="true"
+                            outlined
+                            dense
+                          ></v-text-field>
+                          <span
+                            v-if="errors && errors.gst"
+                            class="error--text"
+                            >{{ errors.gst[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="12" cols="12">
+                          <v-text-field
+                            v-model="editedItem.address"
+                            placeholder="Address"
+                            outlined
+                            label="Address"
+                            textarea
+                          ></v-text-field>
+                          <span
+                            v-if="errors && errors.address"
+                            class="error--text"
+                            >{{ errors.gst[0] }}</span
+                          >
+                        </v-col>
+                        <v-card-actions>
+                          <v-btn class="error" @click="agentDialog = false">
+                            Cancel
+                          </v-btn>
+                          <v-btn class="primary" @click="save">Save</v-btn>
+                        </v-card-actions>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-card-actions> </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <div>
         <v-row>
+          <v-col md="12" lg="12">
+            <v-card class="mb-5 rounded-md" elevation="0">
+              <v-toolbar class="rounded-md" color="background" dense flat dark>
+                <span> {{ Model }} List</span>
+                <v-spacer></v-spacer>
+                <v-btn
+                  class="float-right py-3"
+                  @click="agentDialog = true"
+                  x-small
+                  color="primary"
+                >
+                  <v-icon color="white" small class="py-5">mdi-plus</v-icon>
+                  Add Travel Agent
+                </v-btn>
+              </v-toolbar>
+              <v-text-field
+                class="pa-2"
+                placeholder="Search..."
+                flat
+                dense
+                outlined
+                @input="searchIt"
+                v-model="search"
+                :hide-details="true"
+                style="width: 250px"
+              ></v-text-field>
+              <table class="mt-0">
+                <tr style="font-size: 13px">
+                  <th class="ps-5">#</th>
+                  <th>Name</th>
+                  <th>Company</th>
+                  <th>Type</th>
+                  <th>Mobile</th>
+                  <th>Landline</th>
+                  <th>Email</th>
+                  <th>GST</th>
+                  <th>Address</th>
+                  <th>Date</th>
+                  <th class="text-center">Action</th>
+                </tr>
+                <v-progress-linear
+                  v-if="loading"
+                  :active="loading"
+                  :indeterminate="loading"
+                  absolute
+                  color="primary"
+                ></v-progress-linear>
+                <tr
+                  v-for="(item, index) in data"
+                  :key="index"
+                  style="font-size: 13px"
+                >
+                  <!-- <td>{{ caps(item.id) }}</td> -->
+                  <td>
+                    {{
+                      (pagination.current - 1) * pagination.per_page + index + 1
+                    }}
+                  </td>
+                  <td>{{ caps(item.contact_name) }}</td>
+                  <td>{{ caps(item.name) }}</td>
+                  <td>{{ caps(item.type) }}</td>
+                  <td>{{ caps(item.mobile) }}</td>
+                  <td>{{ caps(item.landline) }}</td>
+                  <td>{{ caps(item.email) }}</td>
+                  <td>{{ caps(item.gst) }}</td>
+                  <td>{{ caps(item.address) }}</td>
+                  <td>
+                    {{ item.created_at }}
+                  </td>
+                  <td class="text-center">
+                    <v-menu bottom left>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list width="120" dense>
+                        <v-list-item @click="editItem(item)">
+                          <v-list-item-title style="cursor: pointer">
+                            <v-icon color="secondary" small>
+                              mdi-pencil
+                            </v-icon>
+                            Edit
+                          </v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="deleteItem(item)">
+                          <v-list-item-title style="cursor: pointer">
+                            <v-icon color="error" small> mdi-delete </v-icon>
+                            Delete
+                          </v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </td>
+                </tr>
+              </table>
+            </v-card>
+          </v-col>
           <v-col md="12" class="float-right">
             <div class="float-right">
               <v-pagination
@@ -226,8 +285,6 @@
         </v-row>
       </div>
     </div>
-
-    <NoAccess v-else />
   </div>
   <NoAccess v-else />
 </template>
@@ -245,6 +302,7 @@ export default {
     search: "",
     snackbar: false,
     dialog: false,
+    agentDialog: false,
     ids: [],
     loading: false,
     total: 0,
@@ -257,6 +315,8 @@ export default {
       mobile: "",
       name: "",
       type: "",
+      email: "",
+      landline: "",
     },
     defaultItem: {
       contact_name: "",
@@ -265,10 +325,21 @@ export default {
       mobile: "",
       name: "",
       type: "",
+      email: "",
+      landline: "",
     },
     response: "",
     data: [],
-    sourceTypeList: ["Online", "Agent"],
+    sourceTypeList: [
+      {
+        name: "Online",
+        value: "Online",
+      },
+      {
+        name: "Travel Agent",
+        value: "Agent",
+      },
+    ],
     errors: [],
   }),
 
@@ -279,7 +350,7 @@ export default {
   },
 
   watch: {
-    dialog(val) {
+    agentDialog(val) {
       val || this.close();
       this.errors = [];
       this.search = "";
@@ -316,6 +387,7 @@ export default {
         params: {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
+          search: this.search,
         },
       };
 
@@ -328,6 +400,9 @@ export default {
     },
     searchIt(e) {
       let s = e.toLowerCase();
+      this.getDataFromApi();
+      return;
+
       if (s.length == 0) {
         this.getDataFromApi();
       } else if (s.length > 2) {
@@ -338,7 +413,10 @@ export default {
     editItem(item) {
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+
+      console.log(item);
+
+      this.agentDialog = true;
     },
 
     delteteSelectedRecords() {
@@ -379,11 +457,12 @@ export default {
     },
 
     close() {
-      this.dialog = false;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
+      this.agentDialog = false;
+
+      // setTimeout(() => {
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
+      // }, 300);
     },
 
     save() {
@@ -393,6 +472,8 @@ export default {
         gst: this.editedItem.gst,
         address: this.editedItem.address,
         mobile: this.editedItem.mobile,
+        email: this.editedItem.email,
+        landline: this.editedItem.landline,
         contact_name: this.editedItem.contact_name.toLowerCase(),
         company_id: this.$auth.user.company.id,
       };

@@ -143,10 +143,6 @@ class CustomerController extends Controller
             ->paginate($request->perPage ?? 20);
     }
 
-
-
-
-
     public function getCustomer($id, Request $request)
     {
         $data =  Customer::where('contact_no', $id)
@@ -159,7 +155,6 @@ class CustomerController extends Controller
             return response()->json(['data' => [], 'status' => false]);
         }
     }
-
 
     public function bookingCustomers(Request $request)
     {
@@ -177,7 +172,7 @@ class CustomerController extends Controller
 
         $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
 
-        $transaction = Transaction::whereBookingId($id);
+        $transaction = Transaction::with('paymentMode')->whereBookingId($id);
         $transactions = $transaction->clone()->get();
         $totalTransactionAmount = $transaction->clone()->orderBy('id', 'desc')->first();
 
@@ -211,7 +206,6 @@ class CustomerController extends Controller
         $city_ledger = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 1)->sum('amount');
         return response()->json(['data' => $customer, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
     }
-
 
     public function show($id)
     {

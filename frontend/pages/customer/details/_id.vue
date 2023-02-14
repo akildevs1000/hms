@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-row>
-      <v-col md="3">
+      <!-- <v-col md="3">
         <div class="profile-view">
-          <div class="cover-image" style="background-color: #5FAFA3;"></div>
+          <div class="cover-image" style="background-color: #5fafa3"></div>
           <div class="profile-view-header">
             <div class="avatar-container">
               <img
@@ -18,7 +18,7 @@
             <div class=""></div>
           </div>
 
-          <div class="profile-view-body ">
+          <div class="profile-view-body">
             <v-card flat>
               <v-card-text>
                 <div class="contact-info-container">
@@ -64,9 +64,9 @@
             </v-card>
           </div>
         </div>
-      </v-col>
+      </v-col> -->
 
-      <v-col md="9">
+      <v-col md="12">
         <v-card elevation="0">
           <v-toolbar color="cyan" dark flat>
             <v-app-bar-nav-icon></v-app-bar-nav-icon>
@@ -255,7 +255,7 @@
                   </tr>
                 </thead>
                 <tbody v-for="(item, index) in bookedRooms" :key="index">
-                  <tr style="font-size:13px">
+                  <tr style="font-size: 13px">
                     <td>{{ item.room_no || "---" }}</td>
                     <td>{{ item.room_type || "---" }}</td>
                     <td>{{ item.no_of_adult || "---" }}</td>
@@ -271,7 +271,7 @@
                     <td class="text-right">{{ item.total || "---" }}</td>
                   </tr>
                   <tr
-                    style="font-size:13px"
+                    style="font-size: 13px"
                     v-for="(postingItem, postingIndex) in item.postings"
                     :key="postingIndex"
                   >
@@ -306,6 +306,9 @@
                           <th>#</th>
                           <th>Date</th>
                           <th>Time</th>
+                          <th>payment Mode</th>
+                          <th>Reference</th>
+                          <th>Description</th>
                           <th>Debit</th>
                           <th>Credit</th>
                           <th>Balance</th>
@@ -322,14 +325,24 @@
                         <tr
                           v-for="(item, index) in transactions"
                           :key="index"
-                          style="font-size:13px;"
-                          class="no-bg "
+                          style="font-size: 13px"
+                          class="no-bg"
                         >
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
                           <td>{{ item.date || "---" }}</td>
                           <td>{{ item.time || "---" }}</td>
+                          <td>
+                            {{
+                              (item &&
+                                item.payment_mode &&
+                                item.payment_mode.name) ||
+                              "---"
+                            }}
+                          </td>
+                          <td>{{ item.reference_number || "---" }}</td>
+                          <td>{{ item.desc || "---" }}</td>
                           <td class="text-right">
                             {{ item && item.debit == 0 ? "---" : item.debit }}
                           </td>
@@ -341,7 +354,10 @@
                           </td>
                         </tr>
                       </tbody>
-                      <tr style="font-size:13px;">
+                      <tr style="font-size: 13px">
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -412,7 +428,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
     },
     options: {},
     Model: "Customer",
@@ -425,35 +441,34 @@ export default {
     customer: [],
     itemsCustomer: ["Reservation", "Room", "Transaction"],
     tab1: null,
-    text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 
     tab: null,
     headers: [
       {
-        text: "#"
+        text: "#",
       },
       {
-        text: "Type"
+        text: "Type",
       },
       {
-        text: "Source"
+        text: "Source",
       },
       {
-        text: "Rooms"
+        text: "Rooms",
       },
       {
-        text: "Booking Date"
+        text: "Booking Date",
       },
       {
-        text: "Check In"
+        text: "Check In",
       },
       {
-        text: "Check Out"
+        text: "Check Out",
       },
       {
-        text: "Total Price"
-      }
+        text: "Total Price",
+      },
     ],
     payments: [],
     booking: [],
@@ -462,7 +477,7 @@ export default {
     errors: [],
     totalAmount: 0,
     totalPostingAmount: 0,
-    totalTransactionAmount: 0
+    totalTransactionAmount: 0,
   }),
 
   computed: {},
@@ -480,7 +495,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -503,7 +518,7 @@ export default {
 
     calTotalAmount(payments) {
       let sum = 0;
-      payments.forEach(item => {
+      payments.forEach((item) => {
         sum += parseFloat(item.amount);
       });
       this.totalAmount = sum;
@@ -527,8 +542,8 @@ export default {
         this.loading = false;
         this.calTotalAmount(this.payments);
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped src="@/assets/custom.css"></style>

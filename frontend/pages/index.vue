@@ -377,6 +377,29 @@
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="checkOutDialog = false"
+              >mdi mdi-close-box</v-icon
+            >
+          </v-toolbar>
+          <v-card-text>
+            <check-out :BookingData="checkData" />
+          </v-card-text>
+          <v-card-actions>
+            <!-- <v-btn class="primary" small @click="store_check_out">
+              Check Out
+            </v-btn> -->
+            <!-- <v-btn class="error" small @click="checkOutDialog = false">
+              Cancel
+            </v-btn> -->
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>{{ formTitle }}</span>
           </v-toolbar>
           <v-card-text>
             <v-row>
@@ -557,7 +580,8 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-dialog> -->
+
       <!-- end check out  -->
 
       <!-- cancel room  -->
@@ -1062,9 +1086,10 @@
 </template>
 <script>
 import CheckIn from "../components/booking/CheckIn.vue";
+import CheckOut from "../components/booking/CheckOut.vue";
 import ReservationList from "../components/reservation/ReservationList.vue";
 export default {
-  components: { ReservationList, CheckIn },
+  components: { ReservationList, CheckIn, CheckOut },
   data() {
     return {
       chart: {

@@ -16,7 +16,16 @@ class SourceController extends Controller
         $request->company_id;
         $model = Source::query();
         $model->where('company_id', $request->company_id);
-        // return    $model->count();
+
+        if ($request->filled('search') && $request->search) {
+            $model->where(function ($q) use ($request) {
+                $q->orWhere('name', 'LIKE', "%$request->search%");
+                $q->orWhere('contact_name', 'LIKE', "%$request->search%");
+                $q->orWhere('mobile', 'LIKE', "%$request->search%");
+                $q->orWhere('gst', 'LIKE', "%$request->search%");
+                $q->orWhere('type', 'LIKE', "%$request->search%");
+            });
+        }
         return $model->paginate(10 ?? $request->perPage);
         return response()->json(['sources' => $model->paginate(10 ?? $request->perPage), null, 'status' => true]);
     }
