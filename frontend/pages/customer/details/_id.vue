@@ -248,6 +248,7 @@
                     <th>Babies</th>
                     <th>Meal Plan</th>
                     <th class="text-right">Price</th>
+                    <th class="text-right">Discount</th>
                     <th class="text-right">After Discount</th>
                     <th class="text-right">Sgst</th>
                     <th class="text-right">Cgst</th>
@@ -264,6 +265,9 @@
                     <td>{{ capsTitle(item.meal) || "---" }}</td>
                     <td class="text-right">{{ item.price || "---" }}</td>
                     <td class="text-right">
+                      {{ item.room_discount || "---" }}
+                    </td>
+                    <td class="text-right">
                       {{ item.after_discount || "---" }}
                     </td>
                     <td class="text-right">{{ item.sgst || "---" }}</td>
@@ -277,6 +281,7 @@
                   >
                     <td>{{ item.room_no || "---" }}</td>
                     <td>(Posting) {{ postingItem.item || "---" }}</td>
+                    <td class="text-right"></td>
                     <td class="text-right"></td>
                     <td class="text-right"></td>
                     <td class="text-right"></td>

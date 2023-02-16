@@ -105,6 +105,7 @@ class PostingController extends Controller
     {
         try {
             $data = $request->except('room');
+            BookedRoom::find($data['booked_room_id'])->room_no;
             $data['posting_date'] = now();
             $posting = Posting::create($data);
 
@@ -112,6 +113,7 @@ class PostingController extends Controller
                 'booking_id' => $data['booking_id'],
                 'customer_id' => 1 ?? '',
                 'date' => now(),
+                'desc' => "posting reservation no " . $data['booking_id'] . " and room no " . BookedRoom::find($data['booked_room_id'])->room_no ?? "",
                 'company_id' => $data['company_id'] ?? '',
             ];
 

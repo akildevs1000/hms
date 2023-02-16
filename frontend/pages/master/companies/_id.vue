@@ -242,7 +242,7 @@
                                 :src="
                                   previewImage ||
                                   company_payload.logo ||
-                                  '/no-image.PNG'
+                                  '/no-profile-image.jpg'
                                 "
                               ></v-img>
                             </div>

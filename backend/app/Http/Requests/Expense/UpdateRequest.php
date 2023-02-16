@@ -27,12 +27,16 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            
-            'item' => 'required',
-            'amount' => 'required',
-            'payment_modes' => 'required',
-            'company_id' => 'required',
+            'item' => 'nullable',
+            'amount' => 'nullable',
+            'payment_modes' => 'nullable',
+            'qty' => 'nullable',
+            'company_id' => 'nullable',
+            'voucher' => 'nullable',
+            'reference' => 'nullable',
+            'total' => 'nullable',
+            'description' => 'nullable',
+            'document' => 'nullable',
         ];
-
     }
 }

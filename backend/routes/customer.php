@@ -17,6 +17,7 @@
     Route::get('customer/search/{key}', [CustomerController::class, 'search']);
 
     Route::get('/get_customer/{contact}', [CustomerController::class, 'getCustomer']);
+    Route::get('/get_customer_by_id/{id}', [CustomerController::class, 'getCustomerById']);
 
     Route::get('/get_customer_history/{id}', [CustomerController::class, 'getCustomerHistory']);
 

@@ -16,7 +16,6 @@
           <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
-
       <v-col md="8">
         <v-tabs
           v-model="activeTab"
@@ -31,13 +30,13 @@
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-bed </v-icon>
           </v-tab>
+          <v-tab active-class="active-link" v-if="customer.id > 0">
+            <v-icon> mdi mdi-clipboard-text-clock </v-icon>
+          </v-tab>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-2" @click="redirect">
             mdi mdi-close-box
           </v-icon>
-          <v-tab active-class="active-link" v-if="customer.id > 0">
-            <v-icon> mdi mdi-clipboard-text-clock </v-icon>
-          </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
           <v-tab-item>
             <v-card flat>
@@ -755,14 +754,9 @@
               {{ item && item.room_no }}
             </small>
           </v-tab>
-
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
-          <!-- room summary -->
           <v-tab-item>
             <v-card flat>
-              <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
-                Summary
-              </p> -->
               <v-divider class="px-5 py-0"></v-divider>
               <section>
                 <div class="input-group input-group-sm px-5 py-0">

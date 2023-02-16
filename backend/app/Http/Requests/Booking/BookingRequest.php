@@ -44,11 +44,9 @@ class  BookingRequest extends FormRequest
             'company_id'     => 'required',
 
             //customer rules
-
             'first_name'      => 'required',
             'last_name'       => 'nullable',
-            'contact_no'      => 'required|min:9|max:13',
-            'email'           => 'required',
+            'email'           => 'nullable',
             // 'id_card_type_id' => 'required',
             // 'id_card_no'      => 'required',
             'car_no'          => 'nullable',
@@ -60,7 +58,6 @@ class  BookingRequest extends FormRequest
             'customer_type'   => 'nullable',
             'dob'             => 'nullable',
             'title'      => 'required',
-            'whatsapp'   => 'required',
             'nationality' => 'required',
 
             'image' => 'max:2048',
@@ -71,6 +68,12 @@ class  BookingRequest extends FormRequest
             $arr['reference_no'] = 'required';
             $arr['paid_by'] = 'required';
         }
+
+        if (!$this->reference_no) {
+            $arr['whatsapp'] = 'required|min:9|max:13';
+            $arr['contact_no'] = 'required|min:9|max:13';
+        }
+
 
         return $arr;
     }

@@ -25,7 +25,9 @@
           <v-col cols="6" style="border-right: 1px dashed #808080">
             <v-list-item>
               <v-list-item-avatar tile size="120">
-                <v-img :src="company_payload.logo || '/no-image.PNG'"></v-img>
+                <v-img
+                  :src="company_payload.logo || '/no-profile-image.jpg'"
+                ></v-img>
               </v-list-item-avatar>
               <v-list-item-content>
                 <div class="text-overline mb-1">
@@ -142,21 +144,15 @@
         </v-toolbar>
         <v-tabs vertical>
           <v-tab>
-            <v-icon left>
-              mdi-account
-            </v-icon>
+            <v-icon left> mdi-account </v-icon>
             Sources
           </v-tab>
           <v-tab>
-            <v-icon left>
-              mdi-lock
-            </v-icon>
+            <v-icon left> mdi-lock </v-icon>
             Rooms
           </v-tab>
           <v-tab>
-            <v-icon left>
-              mdi-access-point
-            </v-icon>
+            <v-icon left> mdi-access-point </v-icon>
             Prices
           </v-tab>
           <v-tab-item>
@@ -326,18 +322,18 @@ export default {
       max_employee: "",
       max_devices: "",
       lat: "",
-      lon: ""
+      lon: "",
     },
     contact_payload: {
       name: "",
       number: "",
       position: "",
-      whatsapp: ""
+      whatsapp: "",
     },
 
     source: {
       name: "",
-      type: ""
+      type: "",
     },
 
     sourceTypeList: ["online", "agent"],
@@ -345,7 +341,7 @@ export default {
       user_name: "",
       email: "",
       password: "",
-      password_confirmation: ""
+      password_confirmation: "",
     },
 
     e1: 1,
@@ -357,8 +353,8 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
-    }
+      per_page: 10,
+    },
   }),
   async created() {
     this.getDataFromApi();
@@ -394,7 +390,7 @@ export default {
     store_sources() {
       let payload = {
         ...this.source,
-        company_id: this.$route.params.id
+        company_id: this.$route.params.id,
       };
       this.$axios
         .post("/source", payload)
@@ -410,15 +406,15 @@ export default {
             this.getSources();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     getSources() {
       let payload = {
         params: {
           company_id: this.$route.params.id,
-          page: this.pagination.current
-        }
+          page: this.pagination.current,
+        },
       };
       console.log(payload);
       this.$axios.get(`source/`, payload).then(({ data }) => {
@@ -454,7 +450,7 @@ export default {
         let { contact, member_from, expiry, user } = data.record;
 
         this.contact_payload = {
-          ...data.record.contact
+          ...data.record.contact,
         };
 
         let { name: user_name, email } = user;
@@ -491,14 +487,14 @@ export default {
 
     deleteItem(item) {
       confirm("Are you sure you want to delete this item?") &&
-        this.$axios.delete("source/" + item.id).then(res => {
+        this.$axios.delete("source/" + item.id).then((res) => {
           console.log(res);
           this.snackbar = true;
           this.response = "Successfully deleted";
           this.getSources();
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

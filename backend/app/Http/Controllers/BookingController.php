@@ -46,25 +46,6 @@ class BookingController extends Controller
         return $this->response('Document validated.', null, true);
     }
 
-    public function customerStore($customer)
-    {
-        try {
-            $isExistCustomer =   Customer::whereContactNo($customer['contact_no'])->whereCompanyId($customer['company_id'])->first();
-            $id = "";
-            if ($isExistCustomer) {
-                $id = $isExistCustomer->id;
-                $isExistCustomer->update($customer);
-            } else {
-                $record = Customer::create($customer);
-                $id = $record->id;
-            }
-            return $id;
-            return $this->response('Customer successfully added.', $id, true);
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
-
     public function store(Request $request)
     {
         return DB::transaction(function ()  use ($request) {
@@ -270,8 +251,13 @@ class BookingController extends Controller
                 }
             }
 
-            $customer = Customer::find($booking->customer_id);
-            $this->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
+
+            if (app()->isProduction()) {
+                $customer = Customer::find($booking->customer_id);
+                $this->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
+            }
+
+
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
@@ -644,7 +630,6 @@ class BookingController extends Controller
 
             if ($checkedIn) {
                 $customer->save();
-
                 $transactionData = [
                     'booking_id' => $booking->id,
                     'customer_id' => $booking->customer_id ?? '',
@@ -653,7 +638,6 @@ class BookingController extends Controller
                     'payment_method_id' => $booking->payment_mode_id,
                     'desc' => 'check in payment',
                 ];
-
                 $payment = new TransactionController();
                 if ($request->new_payment && $request->new_payment > 0) {
                     $payment->store($transactionData, $request->new_payment, 'credit');
@@ -698,14 +682,15 @@ class BookingController extends Controller
                     $payment = new PaymentController();
                     $payment->store($paymentsData);
                 }
-
                 BookedRoom::whereBookingId($booking_id)->update(['booking_status' => 2]);
 
-
-
-                $customer = Customer::find($booking->customer_id);
-                $this->checkInNotification($booking,  $customer);
-
+                if (app()->isProduction()) {
+                    $customer = Customer::find($booking->customer_id);
+                    $this->checkInNotification($booking, $customer);
+                }
+                $customerData = $request->only(Customer::customerAttributes());
+                $customerData['id'] = $request->customer_id;
+                $this->customerUpdateById($customerData);
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
             }
 
@@ -716,6 +701,39 @@ class BookingController extends Controller
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+    public function customerUpdateById($customer)
+    {
+        try {
+            $isExistCustomer =   Customer::find($customer['id']);
+            if ($isExistCustomer) {
+                $isExistCustomer->update($customer);
+            }
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function customerStore($customer)
+    {
+        try {
+            $isExistCustomer =   Customer::whereContactNo($customer['contact_no'])->whereCompanyId($customer['company_id'])->first();
+            $id = "";
+            if ($isExistCustomer) {
+                $id = $isExistCustomer->id;
+                $isExistCustomer->update($customer);
+            } else {
+                $record = Customer::create($customer);
+                $id = $record->id;
+            }
+            return $id;
+            return $this->response('Customer successfully added.', $id, true);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -811,8 +829,9 @@ class BookingController extends Controller
                 $booking->booking_status  = 3;
                 $booking->save();
 
-                $this->checkOutNotification($booking,  $customer);
-
+                if (app()->isProduction()) {
+                    $this->checkOutNotification($booking,  $customer);
+                }
 
                 // if ($request->isPrintInvoice) {
                 //     $inv = new InvoiceController;
@@ -1176,7 +1195,7 @@ class BookingController extends Controller
     public function events_list(Request $request)
     {
         return BookedRoom::whereHas('booking', function ($q) use ($request) {
-            $q->where('booking_status', '!=', 0);
+            // $q->where('booking_status', '!=', 0);
             $q->where('company_id', $request->company_id);
         })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out']);
     }
