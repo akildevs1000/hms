@@ -120,7 +120,12 @@
                   <div class="pa-5">
                     <v-img
                       @click="onpick_attachment"
-                      style="width: 150px;height: 150px;margin: 0 auto;border-radius: 50%;"
+                      style="
+                        width: 150px;
+                        height: 150px;
+                        margin: 0 auto;
+                        border-radius: 50%;
+                      "
                       :src="showImage"
                     ></v-img>
                   </div>
@@ -178,7 +183,7 @@ export default {
     id: "",
     snackbar: false,
     upload: {
-      name: ""
+      name: "",
     },
 
     logo: "",
@@ -187,11 +192,11 @@ export default {
     payload: {
       password: "",
       current_password: "",
-      password_confirmation: ""
+      password_confirmation: "",
     },
 
     errors: [],
-    previewImage: null
+    previewImage: null,
   }),
 
   created() {
@@ -203,13 +208,13 @@ export default {
   computed: {
     showImage() {
       if (!this.imgPath && !this.previewImage) {
-        return "/no-image.PNG";
+        return "/no-profile-image.jpg";
       } else if (this.previewImage) {
         return this.previewImage;
       }
 
       return this.imgPath;
-    }
+    },
   },
   methods: {
     changeTopBarColor(color) {
@@ -219,7 +224,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
     onpick_attachment() {
@@ -233,7 +238,7 @@ export default {
       let file = input.files;
       if (file && file[0]) {
         let reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
           this.previewImage = e.target.result;
         };
         reader.readAsDataURL(file[0]);
@@ -277,8 +282,8 @@ export default {
             }
           }
         })
-        .catch(e => console.log(e));
-    }
-  }
+        .catch((e) => console.log(e));
+    },
+  },
 };
 </script>

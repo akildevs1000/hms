@@ -44,6 +44,7 @@
           <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
+
       <!-- end check in dialog -->
 
       <!-- posting dialog -->
@@ -51,6 +52,10 @@
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="postingDialog = false"
+              >mdi mdi-close-box</v-icon
+            >
           </v-toolbar>
           <v-card-text>
             <v-container>
@@ -211,6 +216,30 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <!-- <v-dialog v-model="postingDialog" persistent max-width="700px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>{{ formTitle }}</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="postingDialog = false"
+              >mdi mdi-close-box</v-icon
+            >
+          </v-toolbar>
+          <posting />
+          <v-card-actions>
+            <v-btn
+              class="primary"
+              small
+              @click="store_posting"
+              :loading="false"
+            >
+              Post
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog> -->
+
       <!-- end posting dialog -->
 
       <!--  viewPosting dialog -->

@@ -33,7 +33,7 @@ class AgentsController extends Controller
                 $q->WhereDate('check_out', '>=', $request->from);
             });
         }
-
+        $model->orderBy('id', 'desc');
         return $model->paginate($request->per_page);
     }
 
@@ -102,9 +102,6 @@ class AgentsController extends Controller
 
         return $model->paginate($request->per_page ?? 20);
     }
-
-
-
 
     public function store($data)
     {
@@ -178,6 +175,130 @@ class AgentsController extends Controller
     }
 
     public function paymentByAgent(Request $request)
+    {
+        $agentId       = $request->agentData['id'];
+        $booking_id    = $request->booking_id;
+        $paid_status   = (int) $request->paid_status;
+        $booking       = Booking::find($booking_id);
+        $isFullPayment = false;
+        switch ($paid_status) {
+            case 1:
+                $onlyRoom =  $this->paidOnlyRooms($booking, $request);
+                break;
+            case 2:
+                $onlyPosting = $this->paidOnlyPosting($booking, $request);
+                break;
+            case 3:
+                $fullPayment = $this->paidWithAll($booking, $request);
+                break;
+        }
+
+        $transactionData = [
+            'booking_id'        => $booking->id,
+            'customer_id'       => $booking->customer_id ?? '',
+            'date'              => now(),
+            'company_id'        => $booking->company_id ?? '',
+            'payment_method_id' => $booking->payment_mode_id,
+        ];
+        $transaction = new TransactionController();
+        $transaction->store($transactionData, $request->full_payment, 'credit');
+
+        $paymentsData = [
+            'booking_id'     => $booking_id,
+            'payment_mode'   => $request->payment_mode_id,
+            'description'    => 'full payment by ' . $request->agentData['source'] ?? '',
+            'amount'         => $request->full_payment,
+            'type'           => 'agent',
+            'room'           => $booking->rooms,
+            'company_id'     => $booking->company_id,
+            'is_city_ledger' => 0,
+            'created_at'     => now(),
+        ];
+
+        $payment = Payment::whereBookingId($booking->id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+        if ($payment) {
+            $payment->amount = (int) $payment->amount - (int) $request->full_payment;
+            $payment->save();
+        }
+
+        $payment = new PaymentController();
+        $payment->store($paymentsData);
+
+        $totCredit = Transaction::whereBookingId($booking->id)->where('company_id', $booking->company_id)->sum('credit');
+        Agent::find($agentId)->update([
+            'is_paid'      => true,
+            'paid_date'    => date('Y-m-d'),
+            'payment_mode' => $request->payment_mode_id,
+            'transaction'  => $request->transaction,
+            'agent_paid_amount'  => $totCredit,
+            'agent_paid_amount'  => $request->full_payment,
+            'is_paid_with_posting'  => $paid_status == 3 ? 1 : 0,
+            'is_full_payment'  => $booking->grand_remaining_price <= $request->full_payment ? 1 : 0,
+        ]);
+
+        return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
+
+        // =============================
+
+        $agentId       = $request->agentData['id'];
+        $booking_id    = $request->booking_id;
+        $booking       = Booking::find($booking_id);
+        $isFullPayment = false;
+        if ($booking->remaining_price <= $request->full_payment) {
+            $booking->remaining_price = 0;
+            $booking->payment_status  = 1;
+            $booking->full_payment    = $booking->total_price;
+            $isFullPayment            = true;
+        } else {
+            $booking->remaining_price = ((int) $booking->total_price - (int) $request->full_payment);
+        }
+        $booking->payment_mode_id = $request->payment_mode_id;
+        $booking->check_out_price = $request->full_payment;
+        // $booking->booking_status  = 3;
+        if ($booking->save()) {
+
+            if ($isFullPayment) {
+                $transactionData = [
+                    'booking_id'        => $booking->id,
+                    'customer_id'       => $booking->customer_id ?? '',
+                    'date'              => now(),
+                    'company_id'        => $booking->company_id ?? '',
+                    'payment_method_id' => $booking->payment_mode_id,
+                ];
+
+                $payment = new TransactionController();
+                $payment->store($transactionData, $request->full_payment, 'credit');
+            }
+
+            //  =====================
+
+            $paymentsData = [
+                'booking_id'     => $booking_id,
+                'payment_mode'   => $request->payment_mode_id,
+                'description'    => 'full payment by ' . $request->agentData['source'] ?? '',
+                'amount'         => $request->full_payment,
+                'type'           => 'agent',
+                'room'           => $booking->rooms,
+                'company_id'     => $booking->company_id,
+                'is_city_ledger' => 0,
+                'created_at'     => now(),
+            ];
+
+            // $found = Payment::where('booking_id', $booking_id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+            // if ($found) {
+            //     $found->update($paymentsData);
+            // }
+
+
+
+            Agent::find($agentId)->update(['is_paid' => true, 'paid_date' => date('Y-m-d'), 'payment_mode' => $request->payment_mode_id, 'transaction' => $request->transaction]);
+            return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
+        }
+
+        return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+    }
+
+    public function paymentByAgentOld(Request $request)
     {
         $agentId       = $request->agentData['id'];
         $booking_id    = $request->booking_id;

@@ -220,7 +220,7 @@ export default {
   computed: {
     showImage() {
       if (!this.customer.image && !this.previewImage) {
-        return "/no-image.PNG";
+        return "/no-profile-image.jpg";
       } else if (this.previewImage) {
         return this.previewImage;
       }

@@ -151,6 +151,7 @@
             height="40"
             width="25%"
             small
+            :loading="loading"
             @click="store_check_out"
           >
             Check Out
@@ -191,28 +192,13 @@
             </td>
           </tr>
         </table>
-        <!-- <v-btn
-          class="primary"
-          height="70"
-          width="100%"
-          small
-          @click="store_check_out"
-        >
-          Check Out
-        </v-btn> -->
       </v-col>
     </v-row>
   </div>
 </template>
 <script>
-import History from "../../components/customer/History.vue";
-import ImagePreview from "../../components/images/ImagePreview.vue";
 export default {
   props: ["BookingData"],
-  components: {
-    History,
-    ImagePreview,
-  },
   data() {
     return {
       isDiscount: false,
@@ -296,10 +282,6 @@ export default {
     },
 
     store_check_out() {
-      // if (this.full_payment == "") {
-      //   alert("enter correct payment");
-      //   return true;
-      // }
       this.loading = true;
       let payload = {
         booking_id: this.BookingData.id,
@@ -318,6 +300,7 @@ export default {
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
+            this.loading = false;
           } else {
             this.alert("Success", "Successfully Checkout", "success");
             if (this.isPrintInvoice) {
@@ -337,32 +320,6 @@ export default {
       element.click();
     },
 
-    preview(file) {
-      const fileExtension = file.split(".").pop().toLowerCase();
-      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
-      this.documentObj = {
-        fileExtension: fileExtension,
-        file: file,
-      };
-      this.imgView = true;
-    },
-
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00";
-      }
-    },
-
-    capsTitle(val) {
-      if (!val) return "---";
-      let res = val;
-      let upper = res.toUpperCase();
-      // let title = upper.replace(/[^A-Z]/g, " ");
-      return upper;
-    },
-
     can(per) {
       let u = this.$auth.user;
       return (
@@ -378,85 +335,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.chart {
-  display: flex;
-  align-items: flex-end;
-}
-
-.bar {
-  width: 20px;
-  margin-right: 10px;
-  background-color: blue;
-  transition: height 0.5s;
-}
-
-.app {
-  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-  font-size: 14px;
-}
-
-.portrait.v-card {
-  margin: 0 auto;
-  max-width: 600px;
-  width: 100%;
-}
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid #e9e9e9;
-}
-td,
-th {
-  text-align: left;
-  padding: 8px;
-  border: 1px solid #e9e9e9;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
-.fc-license-message {
-  display: none !important;
-}
-.bg-background {
-  background-color: #34444c !important;
-}
-
-.bg-background th,
-td {
-  border-top: none !important;
-  border-right: none !important;
-  border-left: none !important;
-}
-
-.element {
-  height: 60px;
-  width: 100%;
-  margin: 0 auto;
-  background-color: lime;
-  animation-name: stretch;
-  animation-duration: 1s;
-  animation-timing-function: ease-out;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-  animation-play-state: running;
-}
-
-@keyframes stretch {
-  0% {
-    transform: scale(0.8);
-    background-color: orange;
-  }
-
-  50% {
-    background-color: orange;
-  }
-
-  100% {
-    transform: scale(1);
-    background-color: orange;
-  }
-}
-</style>
+<style scoped src="@/assets/custom/checkout.css"></style>

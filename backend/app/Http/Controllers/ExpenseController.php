@@ -59,6 +59,7 @@ class ExpenseController extends Controller
         try {
             $record = Expense::create($request->validated());
             if ($record) {
+                $this->storeDocument($request, $record);
                 return $this->response($this->name . ' Successfully created.', $record, true);
             } else {
                 return $this->response($this->name . ' cannot create.', null, false);
@@ -72,8 +73,8 @@ class ExpenseController extends Controller
     {
         try {
             $record = $expense->update($request->validated());
-
             if ($record) {
+                $this->storeDocument($request, $expense);
                 return $this->response($this->name . ' successfully updated.', $record, true);
             } else {
                 return $this->response($this->name . ' cannot update.', null, false);
@@ -160,5 +161,19 @@ class ExpenseController extends Controller
     public function getSumByModel($model, $id)
     {
         return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
+    }
+
+
+    public function storeDocument($request, $model)
+    {
+        if ($request->hasFile('document')) {
+            $file = $request->file('document');
+            $ext = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $ext;
+            $file->storeAs('public/documents/expense', $fileName);
+            $model->document = $fileName;
+            return $model->save();
+        }
+        return null;
     }
 }

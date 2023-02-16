@@ -178,8 +178,8 @@
                             "
                             :src="
                               previewImage ||
-                                company_payload.logo ||
-                                '/no-image.PNG'
+                              company_payload.logo ||
+                              '/no-profile-image.jpg'
                             "
                           ></v-img>
                         </div>
@@ -402,7 +402,7 @@ export default {
     preloader: false,
     loading: false,
     upload: {
-      name: ""
+      name: "",
     },
     company_payload: {
       name: "",
@@ -413,23 +413,23 @@ export default {
       no_branch: "",
       max_branches: "",
       max_employee: "",
-      max_devices: ""
+      max_devices: "",
     },
     contact_payload: {
       name: "",
       number: "",
       position: "",
-      whatsapp: ""
+      whatsapp: "",
     },
     // location: "",
     geographic_payload: {
       location: "",
       lat: "",
-      lon: ""
+      lon: "",
     },
     e1: 1,
     errors: [],
-    previewImage: null
+    previewImage: null,
   }),
   created() {
     this.preloader = false;
@@ -450,7 +450,7 @@ export default {
       let file = input.files;
       if (file && file[0]) {
         let reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
           this.previewImage = e.target.result;
         };
         reader.readAsDataURL(file[0]);
@@ -482,7 +482,7 @@ export default {
             this.e1 = 2;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
     validate_contact() {
       this.loading = true;
@@ -499,7 +499,7 @@ export default {
             this.e1 = 3;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
     validate_geographic_info() {
       this.loading = true;
@@ -516,7 +516,7 @@ export default {
             this.store_data();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_data() {
@@ -557,8 +557,8 @@ export default {
             this.$router.push("/master/companies");
           }
         })
-        .catch(e => console.log(e));
-    }
-  }
+        .catch((e) => console.log(e));
+    },
+  },
 };
 </script>

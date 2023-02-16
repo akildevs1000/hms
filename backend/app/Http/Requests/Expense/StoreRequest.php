@@ -37,6 +37,8 @@ class StoreRequest extends FormRequest
             'reference' => 'nullable',
             'total' => 'nullable',
             'description' => 'nullable',
+            'document' => 'nullable',
+
         ];
     }
 }

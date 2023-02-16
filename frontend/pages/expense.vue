@@ -39,146 +39,223 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col md="4" lg="4">
-        <v-card elevation="0">
+    <v-dialog v-model="imgView" max-width="80%">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Preview</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="imgView = false"
+            >mdi mdi-close-box</v-icon
+          >
+        </v-toolbar>
+        <v-container>
+          <!-- <ImagePreview :docObj="documentObj"></ImagePreview> -->
+          <image-preview :docObj="documentObj" />
+        </v-container>
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="expenseDialog" max-width="40%">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
           <v-toolbar color="background" dense flat dark>
-            <span>Create {{ Model }}</span>
+            <span>{{ formTitle }} {{ Model }}</span>
           </v-toolbar>
-          <v-divider class="py-0 my-0"></v-divider>
-          <v-card-text>
-            <v-container>
-              <v-row class="mt-2">
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="editedItem.voucher"
-                    placeholder="Voucher"
-                    outlined
-                    :hide-details="true"
-                    dense
-                  ></v-text-field>
-                  <span v-if="errors && errors.voucher" class="error--text">{{
-                    errors.voucher[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12" class="m-0 p-0">
-                  <v-text-field
-                    v-model="editedItem.item"
-                    placeholder="Item"
-                    outlined
-                    :hide-details="true"
-                    dense
-                  ></v-text-field>
-                  <span v-if="errors && errors.item" class="error--text">{{
-                    errors.item[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12" class="m-0 p-0">
-                  <v-text-field
-                    v-model="editedItem.amount"
-                    placeholder="Amount"
-                    :hide-details="true"
-                    @keyup="calSum"
-                    outlined
-                    dense
-                    type="number"
-                  ></v-text-field>
-                  <span v-if="errors && errors.amount" class="error--text">{{
-                    errors.amount[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="editedItem.qty"
-                    placeholder="QTY"
-                    :hide-details="true"
-                    outlined
-                    dense
-                    @keyup="calSum"
-                    type="number"
-                  ></v-text-field>
-                  <span v-if="errors && errors.qty" class="error--text">{{
-                    errors.qty[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="editedItem.total"
-                    placeholder="Total Amount"
-                    readonly
-                    :hide-details="true"
-                    outlined
-                    dense
-                    type="number"
-                  ></v-text-field>
-                  <span v-if="errors && errors.amount" class="error--text">{{
-                    errors.amount[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12">
-                  <v-autocomplete
-                    v-model="editedItem.payment_modes"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' },
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    placeholder="Select Payment Mode"
-                    outlined
-                    :hide-details="true"
-                    dense
-                  >
-                  </v-autocomplete>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="expenseDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
+        </v-toolbar>
+        <v-container>
+          <v-row class="mt-0 px-2">
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.voucher"
+                placeholder="Voucher"
+                label="Voucher"
+                outlined
+                :hide-details="true"
+                dense
+              ></v-text-field>
+              <span v-if="errors && errors.voucher" class="error--text">{{
+                errors.voucher[0]
+              }}</span>
+            </v-col>
+            <v-col cols="6" class="m-0 p-0">
+              <v-text-field
+                v-model="editedItem.item"
+                placeholder="Item"
+                label="Item"
+                outlined
+                :hide-details="true"
+                dense
+              ></v-text-field>
+              <span v-if="errors && errors.item" class="error--text">{{
+                errors.item[0]
+              }}</span>
+            </v-col>
+            <v-col cols="6" class="m-0 p-0">
+              <v-text-field
+                v-model="editedItem.amount"
+                placeholder="Amount"
+                label="Amount"
+                :hide-details="true"
+                @keyup="calSum"
+                outlined
+                dense
+                type="number"
+              ></v-text-field>
+              <span v-if="errors && errors.amount" class="error--text">{{
+                errors.amount[0]
+              }}</span>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.qty"
+                placeholder="QTY"
+                label="QTY"
+                :hide-details="true"
+                outlined
+                dense
+                @keyup="calSum"
+                type="number"
+              ></v-text-field>
+              <span v-if="errors && errors.qty" class="error--text">{{
+                errors.qty[0]
+              }}</span>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="editedItem.total"
+                placeholder="Total Amount"
+                label="Total Amount"
+                readonly
+                :hide-details="true"
+                outlined
+                dense
+                type="number"
+              ></v-text-field>
+              <span v-if="errors && errors.amount" class="error--text">{{
+                errors.amount[0]
+              }}</span>
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="editedItem.payment_modes"
+                :items="[
+                  { id: 1, name: 'Cash' },
+                  { id: 2, name: 'Card' },
+                  { id: 3, name: 'Online' },
+                  { id: 4, name: 'Bank' },
+                  { id: 5, name: 'UPI' },
+                  { id: 6, name: 'Cheque' },
+                ]"
+                item-text="name"
+                item-value="id"
+                placeholder="Select Payment Mode"
+                label="Select Payment Mode"
+                outlined
+                :hide-details="true"
+                dense
+              >
+              </v-autocomplete>
+              <span v-if="errors && errors.department_id" class="error--text">{{
+                errors.department_id[0]
+              }}</span>
+            </v-col>
+            <v-col cols="6" v-if="editedItem.payment_modes != 1">
+              <v-text-field
+                v-model="editedItem.reference"
+                placeholder="Reference"
+                label="Reference"
+                :hide-details="true"
+                outlined
+                dense
+                type="text"
+              ></v-text-field>
+              <span v-if="errors && errors.amount" class="error--text">{{
+                errors.amount[0]
+              }}</span>
+            </v-col>
+            <v-col :md="formTitle === 'New' ? 12 : 12">
+              <v-file-input
+                v-model="editedItem.document"
+                color="primary"
+                counter
+                placeholder="Select your files"
+                :hide-details="true"
+                outlined
+                :show-size="1000"
+              >
+                <template v-slot:selection="{ index, text }">
+                  <v-chip v-if="index < 2" color="primary" dark label small>
+                    {{ text }}
+                  </v-chip>
+
                   <span
-                    v-if="errors && errors.department_id"
-                    class="error--text"
-                    >{{ errors.department_id[0] }}</span
+                    v-else-if="index === 2"
+                    class="text-overline grey--text text--darken-3 mx-2"
                   >
-                </v-col>
-                <v-col cols="12" v-if="editedItem.payment_modes != 1">
-                  <v-text-field
-                    v-model="editedItem.reference"
-                    placeholder="Reference"
-                    :hide-details="true"
-                    outlined
-                    dense
-                    type="text"
-                  ></v-text-field>
-                  <span v-if="errors && errors.amount" class="error--text">{{
-                    errors.amount[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12">
-                  <v-textarea
-                    filled
-                    label="Description"
-                    :hide-details="true"
-                    v-model="editedItem.description"
-                    outlined
-                  ></v-textarea>
-                  <span
-                    v-if="errors && errors.description"
-                    class="error--text"
-                    >{{ errors.description[0] }}</span
-                  >
-                </v-col>
-                <v-card-actions>
-                  <v-btn class="primary" @click="save">Save</v-btn>
-                </v-card-actions>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col md="8" class="float-right">
+                    +{{ editedItem.document.length - 2 }} File(s)
+                  </span>
+                </template>
+              </v-file-input>
+              <small class="red--text" v-if="errors && errors.document">
+                {{ errors && errors.document ? errors.document[0] : "" }}
+              </small>
+            </v-col>
+            <!-- <div class="mt-2 ml-4" v-if="getDocType(editedItem.document)">
+              <v-btn
+                small
+                dark
+                class="primary lg-pt-4 lg-pb-4 doc-btn"
+                @click="preview(editedItem.document)"
+              >
+                Preview
+                <v-icon right dark>mdi-file</v-icon>
+              </v-btn>
+            </div> -->
+            <v-col cols="12">
+              <v-textarea
+                filled
+                placeholder="Description"
+                label="Description"
+                :hide-details="true"
+                v-model="editedItem.description"
+                outlined
+                dense
+                rows="4"
+                row-height="15"
+              ></v-textarea>
+              <span v-if="errors && errors.description" class="error--text">{{
+                errors.description[0]
+              }}</span>
+            </v-col>
+            <v-card-actions>
+              <v-btn class="primary" @click="save">Save</v-btn>
+            </v-card-actions>
+          </v-row>
+        </v-container>
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-row>
+      <v-col md="12" class="float-right">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span> Today {{ Model }} List</span>
+            <v-spacer></v-spacer>
+            <v-btn
+              class="float-right py-3"
+              @click="expenseDialog = true"
+              x-small
+              color="primary"
+            >
+              <v-icon color="white" small class="py-5">mdi-plus</v-icon>
+              Add Expense
+            </v-btn>
           </v-toolbar>
           <table>
             <tr>
@@ -210,7 +287,42 @@
               <td>{{ item.total || "" }}</td>
               <td>{{ (item && item.payment_mode.name) || "" }}</td>
               <td>{{ (item && item.reference) || "" }}</td>
+              <td>
+                <v-btn
+                  small
+                  dark
+                  class="primary lg-pt-4 lg-pb-4 doc-btn"
+                  @click="preview(item.document)"
+                >
+                  Preview
+                  <v-icon right dark>mdi-file</v-icon>
+                </v-btn>
+                <!-- {{ (item && item.document) || "" }} -->
+              </td>
               <td>{{ item.created_at }}</td>
+              <td class="text-center">
+                <v-menu bottom left>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list width="120" dense>
+                    <v-list-item @click="editItem(item)">
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="secondary" small> mdi-pencil </v-icon>
+                        Edit
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="deleteItem(item)">
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="error" small> mdi-delete </v-icon>
+                        Delete
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </td>
             </tr>
           </table>
         </v-card>
@@ -231,7 +343,9 @@
   </div>
 </template>
 <script>
+import ImagePreview from "../components/images/ImagePreview.vue";
 export default {
+  components: { ImagePreview },
   data: () => ({
     Model: "Expense",
 
@@ -246,8 +360,14 @@ export default {
     search: "",
     snackbar: false,
     dialog: false,
+    expenseDialog: false,
     data: [],
     loading: false,
+    imgView: false,
+    documentObj: {
+      fileExtension: null,
+      file: null,
+    },
     total: 0,
     headers: [
       { text: "#" },
@@ -258,6 +378,7 @@ export default {
       { text: "Total" },
       { text: "Mode" },
       { text: "Reference" },
+      { text: "Document" },
       { text: "Date" },
     ],
     editedIndex: -1,
@@ -272,8 +393,23 @@ export default {
       description: "",
       total: 0,
       reference: "",
+      document: null,
     },
   }),
+
+  watch: {
+    expenseDialog(val) {
+      val || this.close();
+      this.errors = [];
+      this.search = "";
+    },
+  },
+
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? "New" : "Edit";
+    },
+  },
 
   created() {
     this.loading = true;
@@ -293,6 +429,13 @@ export default {
       );
     },
 
+    close() {
+      this.expenseDialog = false;
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedItem.payment_modes = 1;
+      this.editedIndex = -1;
+    },
+
     calSum() {
       let tot =
         parseFloat(this.editedItem.amount) * parseInt(this.editedItem.qty);
@@ -310,6 +453,30 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
+
+    getDocType(doc) {
+      return typeof doc == "string" ? true : false;
+    },
+
+    preview(doc) {
+      // let file = this.editedItem.document ?? null;
+      let file = doc ?? null;
+      const fileExtension = file.split(".").pop().toLowerCase();
+      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
+      this.documentObj = {
+        fileExtension: fileExtension,
+        file: file,
+      };
+      this.imgView = true;
+    },
+
+    editItem(item) {
+      this.editedIndex = this.data.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      console.log(this.editedItem);
+      this.expenseDialog = true;
+    },
+
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
@@ -336,28 +503,60 @@ export default {
         this.getDataFromApi(`${this.endpoint}/search/${e}`);
       }
     },
-    save() {
-      let payload = {
-        ...this.editedItem,
-        company_id: this.$auth.user.company.id,
-      };
 
-      this.$axios
-        .post(this.endpoint, payload)
-        .then(({ data }) => {
-          console.log(data);
-          if (!data.status) {
-            this.errors = data.errors;
-          } else {
-            this.getDataFromApi();
-            this.snackbar = true;
-            this.response = "Expenses successfully added";
-            this.close();
-            this.errors = [];
-            this.search = "";
-          }
-        })
-        .catch((res) => console.log(res));
+    mapper(obj) {
+      let payload = new FormData();
+      for (let x in obj) {
+        if (obj[x]) {
+          console.log(x);
+          payload.append(x, obj[x]);
+        }
+      }
+
+      if (this.editedIndex > -1) {
+        payload.append("_method", "PUT");
+      }
+      payload.append("company_id", this.$auth.user.company.id);
+      return payload;
+    },
+
+    save() {
+      let payload = this.mapper(this.editedItem);
+      if (this.editedIndex > -1) {
+        this.$axios
+          .post(this.endpoint + "/" + this.editedItem.id, payload)
+          .then(({ data }) => {
+            if (!data.status) {
+              this.errors = data.errors;
+            } else {
+              const index = this.data.findIndex(
+                (item) => item.id == this.editedItem.id
+              );
+              this.getDataFromApi();
+              this.snackbar = data.status;
+              this.response = data.message;
+              this.expenseDialog = false;
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        this.$axios
+          .post(this.endpoint, payload)
+          .then(({ data }) => {
+            console.log(data);
+            if (!data.status) {
+              this.errors = data.errors;
+            } else {
+              this.getDataFromApi();
+              this.snackbar = true;
+              this.response = "Expenses successfully added";
+              this.close();
+              this.errors = [];
+              this.search = "";
+            }
+          })
+          .catch((res) => console.log(res));
+      }
     },
   },
 };

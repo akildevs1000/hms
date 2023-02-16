@@ -81,17 +81,26 @@
                   ></v-select>
                 </td>
               </tr>
+              <tr v-if="booking.payment_mode_id != 1">
+                <th>
+                  Reference Number
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field
+                    dense
+                    outlined
+                    type="text"
+                    v-model="booking.transaction"
+                    :hide-details="true"
+                  ></v-text-field>
+                </td>
+              </tr>
               <tr>
                 <th>Total Amount</th>
                 <td>{{ booking && booking.total_price }}</td>
               </tr>
-              <tr></tr>
 
-              <tr></tr>
-              <!-- <tr>
-                <th>Remaining Balance</th>
-                <td>{{ booking.remaining_price }}</td>
-              </tr> -->
               <tr>
                 <th>Posting Amount</th>
                 <td>
@@ -107,14 +116,6 @@
               <tr>
                 <th>Payment</th>
                 <td>
-                  <!-- <v-checkbox
-                    v-model="booking.paid_with_posting"
-                    dense
-                    :hide-details="true"
-                    value="1"
-                    @change="getFullPayment"
-                  ></v-checkbox> -->
-
                   <v-container fluid>
                     <v-radio-group
                       v-model="paid_status"
@@ -136,6 +137,8 @@
                   </v-container>
                 </td>
               </tr>
+              <tr></tr>
+              <tr></tr>
               <tr>
                 <th>
                   Full Payment
@@ -151,22 +154,6 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr v-if="booking.payment_mode_id == 4">
-                <th>
-                  Transaction Number
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="text"
-                    v-model="booking.transaction"
-                    :hide-details="true"
-                  ></v-text-field>
-                </td>
-              </tr>
-              <tr></tr>
             </table>
           </v-container>
         </v-card-text>
@@ -322,7 +309,7 @@
             <td>{{ item.reference_no || "---" }}</td>
             <td>{{ (item && item.customer.full_name) || "---" }}</td>
             <td>{{ item.type || "---" }}</td>
-            <td>{{ (item && item.booking.rooms) || "---" }}</td>
+            <td>{{ (item && item.booking && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.amount || "0" }}</td>
             <td>{{ item.posting_amount || "0" }}</td>

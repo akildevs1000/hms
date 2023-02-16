@@ -111,7 +111,7 @@
 
           <v-btn icon color="yellow" v-bind="attrs" v-on="on">
             <v-avatar>
-              <img :src="getLogo || '/no-image.PNG'" />
+              <img :src="getLogo || '/no-profile-image.jpg'" />
             </v-avatar>
           </v-btn>
         </template>
@@ -209,13 +209,13 @@ export default {
       order_count: "",
       admins: [
         ["Management", "mdi-account-multiple-outline"],
-        ["Settings", "mdi-cog-outline"]
+        ["Settings", "mdi-cog-outline"],
       ],
       cruds: [
         ["Create", "mdi-plus-outline"],
         ["Read", "mdi-file-outline"],
         ["Update", "mdi-update"],
-        ["Delete", "mdi-delete"]
+        ["Delete", "mdi-delete"],
       ],
 
       items: [
@@ -223,7 +223,7 @@ export default {
           icon: "mdi-home",
           title: "Home",
           to: "/employee_dashboard",
-          permission: this.can("/")
+          permission: this.can("/"),
         },
         {
           icon: "mdi-domain",
@@ -235,13 +235,13 @@ export default {
               icon: "mdi-domain",
               title: "My Profile",
               to: `/employee_dashboard/profile/${this.$auth?.user?.employee?.id}`, //this.$auth.user.employee.id
-              permission: this.can("employee_access")
+              permission: this.can("employee_access"),
             },
             {
               icon: "mdi-door",
               title: "Leave Request",
               to: "/employee_dashboard/leave",
-              permission: this.can("department_access")
+              permission: this.can("department_access"),
             },
 
             // {
@@ -255,16 +255,16 @@ export default {
               icon: "mdi-bullhorn-variant-outline",
               title: "Leave Notification",
               to: "/employee_dashboard/leave_notification",
-              permission: this.can("leave_notification_access")
-            }
-          ]
+              permission: this.can("leave_notification_access"),
+            },
+          ],
         },
         {
           icon: "mdi-clipboard-text-clock",
           title: "Reports",
           to: "/attendance_report",
-          permission: this.can("attendance_report")
-        }
+          permission: this.can("attendance_report"),
+        },
 
         // {
         //   icon: "mdi-cog",
@@ -275,7 +275,7 @@ export default {
       ],
       modules: {
         module_ids: [],
-        module_names: []
+        module_names: [],
       },
       clipped: true,
 
@@ -283,8 +283,8 @@ export default {
       title: "ideaHRMS",
       logout_btn: {
         icon: "mdi-logout",
-        label: "Logout"
-      }
+        label: "Logout",
+      },
     };
   },
   created() {
@@ -297,11 +297,11 @@ export default {
 
     getLogo() {
       return this.$auth.user && this.$auth.user.employee.profile_picture;
-    }
+    },
   },
   methods: {
     caps(str) {
-      return str.replace(/\b\w/g, c => c.toUpperCase());
+      return str.replace(/\b\w/g, (c) => c.toUpperCase());
     },
 
     getCompanyDetails() {
@@ -312,25 +312,25 @@ export default {
 
         this.modules = {
           module_ids: modules.module_ids || [],
-          module_names: modules.module_names.map(e => ({
+          module_names: modules.module_names.map((e) => ({
             icon: "mdi-chart-bubble",
             title: this.caps(e),
             to: "/" + e + "_modules",
-            permission: true
-          }))
+            permission: true,
+          })),
         };
       });
     },
     can(per) {
       let user = this.$auth.user;
-      return user && user.permissions.some(e => e == per || per == "/");
+      return user && user.permissions.some((e) => e == per || per == "/");
     },
     async logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

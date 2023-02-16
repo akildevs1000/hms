@@ -225,7 +225,6 @@
                           :items="titleItems"
                           label="Tittle *"
                           dense
-                          readonly
                           item-text="name"
                           item-value="name"
                           :hide-details="errors && !errors.title"
@@ -241,7 +240,6 @@
                           label="First Name *"
                           dense
                           outlined
-                          readonly
                           type="text"
                           v-model="customer.first_name"
                           :hide-details="errors && !errors.first_name"
@@ -256,7 +254,6 @@
                       <v-col md="5" cols="12" sm="12">
                         <v-text-field
                           label="Last Name"
-                          readonly
                           dense
                           :hide-details="true"
                           outlined
@@ -269,7 +266,6 @@
                           dense
                           label="Contact No *"
                           outlined
-                          readonly
                           type="number"
                           v-model="customer.contact_no"
                           :hide-details="errors && !errors.contact_no"
@@ -287,7 +283,6 @@
                           dense
                           label="Whatsapp No"
                           outlined
-                          readonly
                           type="number"
                           v-model="customer.whatsapp"
                           :hide-details="errors && !errors.whatsapp"
@@ -302,7 +297,6 @@
                         <v-text-field
                           dense
                           label="Email *"
-                          readonly
                           outlined
                           type="email"
                           v-model="customer.email"
@@ -321,7 +315,6 @@
                     <v-select
                       v-model="customer.nationality"
                       :items="countryList"
-                      readonly
                       label="Nationality"
                       item-text="name"
                       item-value="name"
@@ -341,7 +334,6 @@
                       v-model="customer.dob_menu"
                       :close-on-content-click="false"
                       :nudge-right="40"
-                      readonly
                       transition="scale-transition"
                       offset-y
                       min-width="auto"
@@ -361,7 +353,6 @@
                       <v-date-picker
                         v-model="customer.dob"
                         @input="customer.dob_menu = false"
-                        readonly
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
@@ -393,7 +384,6 @@
                       label="Address"
                       v-model="customer.address"
                       outlined
-                      readonly
                       :hide-details="true"
                     ></v-textarea>
                   </v-col>
@@ -445,7 +435,7 @@
             <v-card flat>
               <v-divider class="px-5 py-0"></v-divider>
               <section>
-                <div class="input-group input-group-sm px-5 py-0">
+                <div class="input-group input-group-sm px-0 py-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Name
                   </span>
@@ -459,7 +449,7 @@
                     {{ BookingData.title || "---" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <div class="input-group input-group-sm px-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Contact
                   </span>
@@ -473,7 +463,7 @@
                     {{ BookingData.contact_no || "---" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <div class="input-group input-group-sm px-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Check In
                   </span>
@@ -487,7 +477,7 @@
                     {{ BookingData.check_in_date || "---" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <div class="input-group input-group-sm px-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Check Out
                   </span>
@@ -501,7 +491,7 @@
                     {{ BookingData.check_out_date || "---" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <div class="input-group input-group-sm px-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Days
                   </span>
@@ -515,8 +505,8 @@
                     {{ BookingData.total_days || "---" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm mb-2 px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
+                <div class="input-group input-group-sm mb-2 px-0">
+                  <span class="input-group-text" id="inputGroup-sizing-sm ">
                     No. Rooms
                   </span>
                   <div
@@ -531,11 +521,15 @@
                 </div>
               </section>
 
-              <v-divider class="px-5 py-0"></v-divider>
+              <!-- <v-divider class="px-5 py-0"></v-divider> -->
               <section class="payment-section pt-0">
-                <v-row class="px-5 mt-0">
-                  <div class="input-group input-group-sm px-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">
+                <v-row class="pl-0 pr-2 mt-0">
+                  <div class="input-group input-group-sm px-1">
+                    <span
+                      class="input-group-text"
+                      id="inputGroup-sizing-sm"
+                      style="height: 44px; padding: 2px 41px 39px 8px"
+                    >
                       <v-select
                         v-model="room.payment_mode_id"
                         :items="[
@@ -554,6 +548,7 @@
                         flat
                         hide-no-data
                         solo-inverted
+                        color="white"
                         background-color="#E9ECEF"
                         :disabled="room.paid_by == '2' ? true : false"
                         :hide-details="errors && !errors.payment_mode_id"
@@ -571,15 +566,19 @@
                       class="form-control"
                       aria-label="Sizing example input"
                       aria-describedby="inputGroup-sizing-sm"
-                      style="height: 48px"
+                      style="height: 44px"
                       v-model="new_payment"
                     />
                   </div>
                   <div
-                    class="input-group input-group-sm px-3"
+                    class="input-group input-group-sm px-1"
                     v-if="room.payment_mode_id != 1"
                   >
-                    <span class="input-group-text" id="inputGroup-sizing-sm">
+                    <span
+                      class="input-group-text"
+                      id="inputGroup-sizing-sm"
+                      style="height: 44px; padding: 10px 18px 16px 23px"
+                    >
                       Reference No
                     </span>
                     <input
@@ -588,19 +587,16 @@
                       aria-label="Sizing example input"
                       aria-describedby="inputGroup-sizing-sm"
                       style="
-                        height: 35px;
+                        height: 44px;
                         text-align: left !important;
                         text-transform: lowercase !important ;
                       "
                     />
                     <!-- v-model="room.reference_no" -->
                   </div>
-                  <v-col md="12">
-                    <v-divider></v-divider>
-                  </v-col>
                 </v-row>
 
-                <div class="input-group input-group-sm px-5">
+                <div class="input-group input-group-sm px-0 mt-3">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Room Price
                   </span>
@@ -614,7 +610,7 @@
                     {{ BookingData.total_price || "0" }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <div class="input-group input-group-sm px-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
                   </span>
@@ -628,7 +624,7 @@
                     {{ BookingData.total_price }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <div class="input-group input-group-sm px-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Advance Payment
                   </span>
@@ -642,7 +638,7 @@
                     {{ BookingData.advance_price }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5 mb-5">
+                <div class="input-group input-group-sm px-0 mb-0">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     <strong>Balance Amount</strong>
                   </span>
@@ -656,7 +652,7 @@
                     <strong>{{ BookingData.remaining_price }}</strong>
                   </div>
                 </div>
-                <v-card-actions class="px-5">
+                <v-card-actions class="pl-0 pr-2">
                   <v-btn
                     class="primary"
                     small
@@ -1065,7 +1061,8 @@ export default {
   computed: {
     showImage() {
       if (!this.customer.image && !this.previewImage) {
-        return "/no-image.PNG";
+        // return "/no-image.PNG";
+        return "/no-profile-image.jpg";
       } else if (this.previewImage) {
         return this.previewImage;
       }
@@ -1075,9 +1072,7 @@ export default {
   },
   methods: {
     nextTab() {
-      // if (this.activeTab) {
       this.activeTab += 1;
-      // }
     },
 
     prevTab() {
@@ -1112,22 +1107,11 @@ export default {
 
     store_check_in(data) {
       this.loading = true;
-      if (
-        // this.new_payment == "" ||
-        // this.new_payment == 0 ||
-        data.document ? "" : this.checkIn.checkIn_document == null
-      ) {
+      if (data.document ? "" : this.checkIn.checkIn_document == null) {
         alert("Enter required fields");
         this.loading = false;
         return;
       }
-      // let bookingId = data.id;
-      // let payloads = {
-      //   new_payment: this.new_payment,
-      //   booking_id: data.id,
-      //   remaining_price: data.remaining_price,
-      //   payment_mode_id: data.payment_mode_id,
-      // };
 
       let payload = new FormData();
       payload.append("customer_id", data.customer_id);
@@ -1144,15 +1128,30 @@ export default {
         payload.append("document", this.checkIn.checkIn_document);
       }
 
+      payload.append("title", this.customer.title);
+      payload.append("first_name", this.customer.first_name);
+      payload.append("last_name", this.customer.last_name);
+      payload.append("contact_no", this.customer.contact_no);
+      payload.append("whatsapp", this.customer.whatsapp);
+      payload.append("nationality", this.customer.nationality);
+      payload.append("address", this.customer.address);
+      if (this.customer.dob) {
+        payload.append("dob", this.customer.dob);
+      }
+      payload.append("email", this.customer.email);
+
       this.$axios
         .post("/check_in_room", payload)
         .then(({ data }) => {
-          console.log(data);
           if (!data.status) {
             this.errors = data.errors;
           } else {
             this.alert("Success!", "success check in", "success");
-            location.reload();
+            if ($nuxt.$route.name == "hotel-calendar1") {
+              this.$router.push(`/`);
+            } else {
+              location.reload();
+            }
           }
         })
         .catch((e) => console.log(e));
@@ -1161,12 +1160,12 @@ export default {
     get_customer() {
       this.errors = [];
       this.checkLoader = true;
-      let contact_no = this.BookingData.contact_no;
-      if (contact_no == undefined || contact_no == "") {
-        // alert("Enter contact number");
-        this.checkLoader = false;
-        return;
-      }
+      let customer_id = this.BookingData.customer_id;
+      // if (contact_no == undefined || contact_no == "") {
+      //   // alert("Enter contact number");
+      //   this.checkLoader = false;
+      //   return;
+      // }
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -1174,13 +1173,10 @@ export default {
       };
 
       this.$axios
-        .get(`get_customer/${contact_no}`, payload)
+        .get(`get_customer_by_id/${customer_id}`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.checkLoader = false;
-            // this.customer = {};
-            this.customer.contact_no = contact_no;
-            this.customer.whatsapp = contact_no;
             alert("Customer not found");
             return;
           }
@@ -1343,8 +1339,6 @@ export default {
       payload.append("document", this.checkIn.checkIn_document);
       payload.append("image", this.customer.image);
       payload.append("booking_id", id);
-
-      console.log(id);
 
       this.$axios
         .post("/store_document", payload)

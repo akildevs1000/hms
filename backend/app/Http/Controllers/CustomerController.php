@@ -43,7 +43,6 @@ class CustomerController extends Controller
         }
     }
 
-
     public function storeNewCustomer(StoreRequest $request)
     {
         try {
@@ -73,7 +72,6 @@ class CustomerController extends Controller
             throw $th;
         }
     }
-
 
     public function update(UpdateRequest $request)
     {
@@ -156,6 +154,19 @@ class CustomerController extends Controller
         }
     }
 
+    public function getCustomerById($id, Request $request)
+    {
+        $data =  Customer::where('id', $id)
+            ->where('company_id', $request->company_id)
+            ->first();
+
+        if ($data) {
+            return response()->json(['data' => $data, 'status' => true]);
+        } else {
+            return response()->json(['data' => [], 'status' => false]);
+        }
+    }
+
     public function bookingCustomers(Request $request)
     {
         return Customer::whereHas('booking', function ($q) {
@@ -173,7 +184,7 @@ class CustomerController extends Controller
         $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
 
         $transaction = Transaction::with('paymentMode')->whereBookingId($id);
-        $transactions = $transaction->clone()->get();
+        $transactions = $transaction->clone()->orderBy('id', 'asc')->get();
         $totalTransactionAmount = $transaction->clone()->orderBy('id', 'desc')->first();
 
         return response()->json([
