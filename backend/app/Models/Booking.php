@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Models\Room;
+use App\Models\Company;
 use App\Models\Payment;
 use App\Models\Customer;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -98,6 +100,12 @@ class Booking extends Model
         $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
     }
 
+
+    public function SetReferenceNoAttribute($value)
+    {
+        $this->attributes['reference_no'] = Str::lower($value);
+    }
+
     public function SetCheckOutAttribute($value)
     {
         $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
@@ -137,6 +145,7 @@ class Booking extends Model
         $query->where(
             fn ($query) => $query
                 ->orWhere('id', 'Like', '%' . $search . '%')
+                ->orWhere('reference_no', 'Like', '%' . $search . '%')
                 ->orWhere('type', 'Like', '%' . $search . '%')
                 ->orWhereHas(
                     'customer',
@@ -199,7 +208,7 @@ class Booking extends Model
 
     public function company()
     {
-        return $this->belongsTo(company::class);
+        return $this->belongsTo(Company::class);
     }
 
     public function transactions()
