@@ -642,13 +642,17 @@
       <!-- end cancel room -->
 
       <!-- New Booking room  -->
-      <v-dialog v-model="NewBooking" persistent max-width="500">
+
+      <!-- <v-dialog v-model="NewBooking" persistent>
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span> New Reservation</span>
           </v-toolbar>
-          <v-container grid-list-xs>
-            {{ newBookingRoom }}
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="NewBooking = false"
+            >mdi mdi-close-box</v-icon
+          >
+          <v-container>
             <v-col cols="12" sm="12" md="12">
               <label class="col-form-label">Check Out Date </label>
               <v-menu
@@ -676,8 +680,8 @@
                 ></v-date-picker>
               </v-menu>
             </v-col>
-          </v-container>
 
+          </v-container>
           <v-card-actions>
             <v-btn
               class="primary"
@@ -690,6 +694,30 @@
             <v-btn class="error" small @click="NewBooking = false">
               Cancel
             </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog> -->
+
+      <v-dialog v-model="NewBooking" persistent width="90%">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>{{ formTitle }}</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="NewBooking = false"
+              >mdi mdi-close-box</v-icon
+            >
+          </v-toolbar>
+          <v-card-text>
+            <!-- <check-out :BookingData="checkData" /> -->
+            <new-check-in />
+          </v-card-text>
+          <v-card-actions>
+            <!-- <v-btn class="primary" small @click="store_check_out">
+              Check Out
+            </v-btn> -->
+            <!-- <v-btn class="error" small @click="checkOutDialog = false">
+              Cancel
+            </v-btn> -->
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -1116,9 +1144,10 @@
 <script>
 import CheckIn from "../components/booking/CheckIn.vue";
 import CheckOut from "../components/booking/CheckOut.vue";
+import NewCheckIn from "../components/booking/NewCheckIn.vue";
 import ReservationList from "../components/reservation/ReservationList.vue";
 export default {
-  components: { ReservationList, CheckIn, CheckOut },
+  components: { ReservationList, CheckIn, CheckOut, NewCheckIn },
   data() {
     return {
       chart: {
