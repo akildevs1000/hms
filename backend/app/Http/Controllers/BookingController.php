@@ -706,7 +706,6 @@ class BookingController extends Controller
         }
     }
 
-
     public function customerUpdateById($customer)
     {
         try {
@@ -1456,6 +1455,23 @@ class BookingController extends Controller
             ])
             ->where('company_id', $request->company_id)
             ->where('booking_status', '!=', -1)
+            ->where('booking_status', '!=', 1)
+            ->paginate($request->per_page ?? 20);
+    }
+
+    public function newReservationList(Request $request)
+    {
+        $model = Booking::query()
+            ->latest()
+            ->filter(request('search'));
+
+        return $model
+            ->with([
+                'bookedRooms:booking_id,id,room_no,room_type',
+                'customer:id,first_name,last_name,document',
+            ])
+            ->where('company_id', $request->company_id)
+            ->where('booking_status', '=', 1)
             // ->where('booking_status', '!=', 0)
             ->paginate($request->per_page ?? 20);
     }
