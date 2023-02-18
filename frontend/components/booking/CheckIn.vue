@@ -914,12 +914,14 @@ export default {
       },
 
       purposes: [
-        "Visiting",
+        "Tour",
         "Business",
         "Hospital",
+        "Holiday",
         "Party/Functions",
-        "Visiting For Relatives",
+        "Friend Visit",
       ],
+
       selectMeal: [],
       wantNewDoc: false,
       row: null,

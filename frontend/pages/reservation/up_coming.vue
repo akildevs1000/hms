@@ -165,40 +165,48 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog
+      v-model="checkInDialog"
+      persistent
+      :width="1366"
+      class="checkin-models"
+    >
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Check In</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="checkInDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
+        </v-toolbar>
+        <v-card-text>
+          <!-- <check-in :BookingData="checkData"></check-in> -->
+          <check-in :BookingData="BookingData" />
+        </v-card-text>
+        <v-container></v-container>
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-row>
-      <!-- <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          class="form-control"
-          @change="getDataFromApi(`reservation`)"
-          v-model="pagination.per_page"
-          :items="[10, 25, 50, 100]"
-          placeholder="Per Page Records"
-          solo
-          hide-details
-          flat
-        ></v-select>
-      </v-col> -->
       <v-col xs="12" sm="12" md="3" cols="12">
-        <!-- <v-text-field
-          class="form-control py-0 custom-text-box floating shadow-none"
-          placeholder="Search..."
-          solo
-          flat
-          @input="searchIt"
-          v-model="search"
-          hide-details
-        ></v-text-field> -->
         <v-text-field
           class=""
           label="Search..."
-          dense
           outlined
           flat
+          dense
           append-icon="mdi-magnify"
           @input="searchIt"
           v-model="search"
           hide-details
         ></v-text-field>
+      </v-col>
+      <v-col xs="12" sm="12" class="pl-0 ml-0" md="3" cols="12">
+        <v-btn color="primary" class="l-0" height="37" @click="checkIn">
+          Check In
+          <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
+        </v-btn>
       </v-col>
     </v-row>
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
@@ -226,7 +234,8 @@
           <td class="ps-3">
             <b>{{ item.id }}</b>
           </td>
-          <td>{{ item.source }}</td>
+          <td>{{ item.source || "---" }}</td>
+          <td>{{ item.reference_no || "---" }}</td>
           <td>{{ item && item.customer.full_name }}</td>
           <td>
             <span v-for="(room, index) in item.booked_rooms" :key="index">
@@ -306,7 +315,9 @@
   </div>
 </template>
 <script>
+import CheckIn from "../../components/booking/CheckIn.vue";
 export default {
+  components: { CheckIn },
   data: () => ({
     Model: "Reservation",
     checkOutDialog: false,
@@ -316,8 +327,9 @@ export default {
       per_page: 30,
     },
     options: {},
-    endpoint: "reservation_list",
+    endpoint: "up_coming_reservation_list",
     search: "",
+    checkInDialog: false,
     snackbar: false,
     dialog: false,
     data: [],
@@ -326,6 +338,7 @@ export default {
     headers: [
       { text: "Reser. No" },
       { text: "Source" },
+      { text: "Reference" },
       { text: "Customer" },
       { text: "Rooms" },
       { text: "Arrival  Date" },
@@ -343,6 +356,7 @@ export default {
     editedIndex: -1,
     response: "",
     errors: [],
+    BookingData: {},
     checkData: {},
     transactions: [],
     totalTransactionAmount: 0,
@@ -392,6 +406,7 @@ export default {
 
       return [year, month, day].join("-");
     },
+
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -400,6 +415,7 @@ export default {
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
+
     onPageChange() {
       this.getDataFromApi();
     },
@@ -477,6 +493,17 @@ export default {
           }
         })
         .catch((e) => console.log(e));
+    },
+
+    checkIn() {
+      console.log(this.data.length);
+      if (this.data.length == 1) {
+        this.BookingData = this.data[0];
+        this.checkInDialog = true;
+        return;
+      }
+      alert("invalid reference");
+      return;
     },
 
     getDataFromApi(url = this.endpoint) {

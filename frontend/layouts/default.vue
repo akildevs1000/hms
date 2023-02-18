@@ -343,13 +343,6 @@ export default {
           menu: "reservation_access",
         },
 
-        {
-          icon: "mdi-bed",
-          title: "Reservation",
-          to: "/reservation/list1",
-          menu: "reservation_access",
-        },
-
         // {
         //   icon: "mdi-bed",
         //   title: `Reservation`,
@@ -376,6 +369,33 @@ export default {
         //     },
         //   ],
         // },
+
+        {
+          icon: "mdi-bed",
+          title: `Reservation`,
+          open_menu: false,
+          menu: "customer_access",
+          hasChildren: [
+            {
+              icon: "mdi mdi-home-import-outline",
+              title: "Upcoming",
+              to: "/reservation/up_coming",
+              menu: "reservation_access",
+            },
+            {
+              icon: "mdi mdi-home-account",
+              title: "In House",
+              to: "/reservation/in_house",
+              menu: "reservation_access",
+            },
+            {
+              icon: "mdi mdi-home-import-outline",
+              title: "Checkout",
+              to: "/reservation/check_out",
+              menu: "reservation_access",
+            },
+          ],
+        },
 
         {
           icon: "mdi mdi-human-male-female-child",

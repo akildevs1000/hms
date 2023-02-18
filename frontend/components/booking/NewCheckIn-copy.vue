@@ -1507,7 +1507,6 @@ export default {
         type: "",
         source: "",
         agent_name: "",
-        booking_status: 1,
         check_in: null,
         check_out: null,
         discount: 0,

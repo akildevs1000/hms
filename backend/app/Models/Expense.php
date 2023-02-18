@@ -31,4 +31,12 @@ class Expense extends Model
     {
         return date('H:i', strtotime($this->created_at));
     }
+
+    public function getDocumentAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/documents/expense/' . $value);
+    }
 }

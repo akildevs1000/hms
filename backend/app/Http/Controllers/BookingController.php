@@ -242,22 +242,21 @@ class BookingController extends Controller
             foreach ($rooms['selectedRooms'] as $room) {
                 $room['booking_id'] = $booking->id;
                 $room['customer_id'] = $booking->customer_id;
+                $room['booking_status'] = $booking->booking_status;
                 $bookedRoomId = BookedRoom::create($room);
+                $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
                 $period       = CarbonPeriod::create($room['check_in'], $this->checkOutDate($room['check_out']));
                 foreach ($period as $date) {
-                    $room['date']           = $date->format('Y-m-d');
-                    $room['booked_room_id'] = $bookedRoomId->id;
-                    OrderRoom::create($room);
+                    $orderRooms['date']           = $date->format('Y-m-d');
+                    $orderRooms['booked_room_id'] = $bookedRoomId->id;
+                    OrderRoom::create($orderRooms);
                 }
             }
-
 
             if (app()->isProduction()) {
                 $customer = Customer::find($booking->customer_id);
                 $this->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
             }
-
-
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
@@ -408,6 +407,7 @@ class BookingController extends Controller
         $access_token = "";
         $comName = "";
         $location = "";
+        $review = "";
         $video = "";
         $msg = "";
         $title = ucfirst($customer['title']) ?? 'Mr';
@@ -429,11 +429,12 @@ class BookingController extends Controller
             $access_token = "THANJ_ACCESS_TOKEN";
             $comName = "Kodaikanal";
             $video = "https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels";
+            $review = "https://search.google.com/local/writereview?placeid=ChIJP4ZnsL1nBzsRNgn1M2X8Gd4";
         }
 
         $msg .= "Dear $title $customerName, \n";
 
-        $msg .= "Thank you for trusting us with your stay \n";
+        $msg .= "Thank you for your stay \n";
         $msg .= "\n";
         $msg .= "We hope that your experience with us was great, \n";
         $msg .= "We had a great time serving you, \n";
@@ -441,9 +442,10 @@ class BookingController extends Controller
         $msg .= "Safe Travels, \n";
         $msg .= "\n";
 
+
         $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
         $msg .= "\n";
-        $msg .= "\n";
+        $msg .= "$review";
 
         $msg .= "Location $location\n";
         $msg .= "\n";
@@ -705,7 +707,6 @@ class BookingController extends Controller
             throw $th;
         }
     }
-
 
     public function customerUpdateById($customer)
     {
@@ -1456,8 +1457,52 @@ class BookingController extends Controller
             ])
             ->where('company_id', $request->company_id)
             ->where('booking_status', '!=', -1)
-            // ->where('booking_status', '!=', 0)
+            ->where('booking_status', '!=', 1)
             ->paginate($request->per_page ?? 20);
+    }
+
+
+    public function getReservationList(Request $request, $status)
+    {
+        $model = Booking::query()
+            ->latest()
+            ->filter(request('search'));
+        switch ($status) {
+            case 'upcoming':
+                $model->where('booking_status', '=', 1);
+                break;
+            case 'check_out':
+                $model->where('booking_status', '>', 2);
+                break;
+            case 'in_house':
+                $model->where('booking_status', '=', 2);
+                break;
+            default:
+                abort(400, 'Invalid status');
+        }
+
+        return $model
+            ->with([
+                'bookedRooms:booking_id,id,room_no,room_type',
+                'customer:id,first_name,last_name,document',
+            ])
+            ->where('company_id', $request->company_id)
+            ->paginate($request->per_page ?? 20);
+    }
+
+    public function upComingReservationList(Request $request)
+    {
+        return $this->getReservationList($request, 'upcoming');
+    }
+
+    public function checkOutReservationList(Request $request)
+    {
+        return $this->getReservationList($request, 'check_out');
+    }
+
+    public function inHouseReservationList(Request $request)
+    {
+        return $this->getReservationList($request, 'in_house');
     }
 
     public function reservationListForDash(Request $request)

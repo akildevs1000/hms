@@ -63,9 +63,9 @@
             <span>{{ formTitle }} {{ Model }}</span>
           </v-toolbar>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="expenseDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="expenseDialog = false">
+            mdi mdi-close-box
+          </v-icon>
         </v-toolbar>
         <v-container>
           <v-row class="mt-0 px-2">
@@ -77,10 +77,11 @@
                 outlined
                 :hide-details="true"
                 dense
-              ></v-text-field>
-              <span v-if="errors && errors.voucher" class="error--text">{{
-                errors.voucher[0]
-              }}</span>
+              >
+              </v-text-field>
+              <span v-if="errors && errors.voucher" class="error--text">
+                {{ errors.voucher[0] }}
+              </span>
             </v-col>
             <v-col cols="6" class="m-0 p-0">
               <v-text-field
@@ -91,9 +92,9 @@
                 :hide-details="true"
                 dense
               ></v-text-field>
-              <span v-if="errors && errors.item" class="error--text">{{
-                errors.item[0]
-              }}</span>
+              <span v-if="errors && errors.item" class="error--text">
+                {{ errors.item[0] }}
+              </span>
             </v-col>
             <v-col cols="6" class="m-0 p-0">
               <v-text-field
@@ -106,9 +107,9 @@
                 dense
                 type="number"
               ></v-text-field>
-              <span v-if="errors && errors.amount" class="error--text">{{
-                errors.amount[0]
-              }}</span>
+              <span v-if="errors && errors.amount" class="error--text">
+                {{ errors.amount[0] }}
+              </span>
             </v-col>
             <v-col cols="6">
               <v-text-field

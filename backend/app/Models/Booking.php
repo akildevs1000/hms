@@ -177,6 +177,7 @@ class Booking extends Model
     {
         return [
             "customer_id",
+            "booking_status",
             "customer_type",
             "customer_status",
             "all_room_Total_amount",

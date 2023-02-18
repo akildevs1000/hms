@@ -308,7 +308,7 @@
 <script>
 export default {
   data: () => ({
-    Model: "Reservation",
+    Model: "In House Reservation",
     checkOutDialog: false,
     pagination: {
       current: 1,
@@ -316,7 +316,7 @@ export default {
       per_page: 30,
     },
     options: {},
-    endpoint: "reservation_list",
+    endpoint: "in_house_reservation_list",
     search: "",
     snackbar: false,
     dialog: false,

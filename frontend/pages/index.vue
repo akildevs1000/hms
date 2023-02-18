@@ -642,13 +642,17 @@
       <!-- end cancel room -->
 
       <!-- New Booking room  -->
-      <v-dialog v-model="NewBooking" persistent max-width="500">
+
+      <!-- <v-dialog v-model="NewBooking" persistent>
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span> New Reservation</span>
           </v-toolbar>
-          <v-container grid-list-xs>
-            {{ newBookingRoom }}
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="NewBooking = false"
+            >mdi mdi-close-box</v-icon
+          >
+          <v-container>
             <v-col cols="12" sm="12" md="12">
               <label class="col-form-label">Check Out Date </label>
               <v-menu
@@ -676,8 +680,8 @@
                 ></v-date-picker>
               </v-menu>
             </v-col>
-          </v-container>
 
+          </v-container>
           <v-card-actions>
             <v-btn
               class="primary"
@@ -690,6 +694,60 @@
             <v-btn class="error" small @click="NewBooking = false">
               Cancel
             </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog> -->
+
+      <v-dialog v-model="NewBooking" persistent width="90%">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>{{ formTitle }}</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="NewBooking = false"
+              >mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <!-- {{ newBookingRoom }} -->
+            <!-- <check-out :BookingData="checkData" /> -->
+
+            <new-check-in :reservation="newBookingRoom" />
+
+            <!-- <v-col cols="12" sm="12" md="12">
+              <label class="col-form-label">Check Out Date </label>
+              <v-menu
+                v-model="check_out_menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="check_out"
+                    readonly
+                    v-on="on"
+                    v-bind="attrs"
+                    :hide-details="true"
+                    dense
+                    outlined
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="check_out"
+                  @input="check_out_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col> -->
+          </v-card-text>
+          <v-card-actions>
+            <!-- <v-btn class="primary" small @click="store_check_out">
+              Check Out
+            </v-btn> -->
+            <!-- <v-btn class="error" small @click="checkOutDialog = false">
+              Cancel
+            </v-btn> -->
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -779,7 +837,7 @@
         <v-list>
           <v-list-item-group>
             <v-list-item link @click="NewBooking = true">
-              <v-list-item-title>New Reservation</v-list-item-title>
+              <v-list-item-title>CheckIn</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -1116,9 +1174,10 @@
 <script>
 import CheckIn from "../components/booking/CheckIn.vue";
 import CheckOut from "../components/booking/CheckOut.vue";
+import NewCheckIn from "../components/booking/NewCheckIn.vue";
 import ReservationList from "../components/reservation/ReservationList.vue";
 export default {
-  components: { ReservationList, CheckIn, CheckOut },
+  components: { ReservationList, CheckIn, CheckOut, NewCheckIn },
   data() {
     return {
       chart: {
@@ -1248,6 +1307,10 @@ export default {
       this.formTitle = "Check In";
       this.get_data();
       this.checkInDialog ? (this.isIndex = false) : (this.isIndex = true);
+    },
+
+    NewBooking() {
+      this.NewBooking ? (this.isIndex = false) : (this.isIndex = true);
     },
 
     postingDialog() {
