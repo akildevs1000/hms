@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 0px ;width:90%;">
+  <div style="padding: 0px; width: 90%">
     <div id="pie" style="height: 100px"></div>
   </div>
 </template>
@@ -12,15 +12,15 @@ export default {
       options: {
         series: [
           {
-            data: []
-          }
+            data: [],
+          },
         ],
         chart: {
           type: "bar",
           height: 150,
           toolbar: {
-            show: false
-          }
+            show: false,
+          },
         },
 
         colors: ["#5768D5", "#4290CB", "#EB895A", "#51AF95"],
@@ -30,59 +30,58 @@ export default {
             horizontal: true,
             distributed: true,
             dataLabels: {
-              position: "top"
-            }
-          }
+              position: "top",
+            },
+          },
         },
         dataLabels: {
           enabled: true,
           offsetX: -6,
           style: {
             fontSize: "12px",
-            colors: ["#fff"]
-          }
+            colors: ["#fff"],
+          },
         },
         stroke: {
           show: true,
           width: 1,
-          colors: ["#fff"]
+          colors: ["#fff"],
         },
         tooltip: {
           shared: true,
-          intersect: false
+          intersect: false,
         },
         xaxis: {
           categories: [
             "Expect Check In",
             "Expect Check Out",
             "Booked",
-            "Available"
+            "Available",
           ],
           labels: {
-            show: false
-          }
+            show: false,
+          },
         },
         yaxis: {
           labels: {
-            show: false
-          }
-        }
-      }
+            show: false,
+          },
+        },
+      },
     };
   },
 
   mounted() {
     setTimeout(
       () => {
-        this.options.series[0].data = this.renderChartData.map(e => e);
-        console.log(this.options.series[0].data);
+        this.options.series[0].data = this.renderChartData.map((e) => e);
         new ApexCharts(document.querySelector("#pie"), this.options).render();
       },
 
       1000
     );
   },
-  methods: {}
+  methods: {},
 };
 </script>
 

@@ -82,7 +82,7 @@ td {
   padding: 0.375rem 0.75rem;
   /* font-size: 0.875rem; */
   font-size: 10px;
-  line-height: 1.9;
+  line-height: 2.2;
   /* border-radius: 0.25rem; */
   text-align: left;
   width: 120px;
@@ -148,8 +148,22 @@ input[type="number"]:focus.form-control {
   outline: none;
 }
 
+input[type="text"]:focus.form-control {
+  /* border: 2px solid #5fafa3 !important; */
+  border-color: #4390fc;
+  outline: none;
+}
+
 @media screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
   .doc-btn {
-    background-color: green !important
+    background-color: green !important;
   }
+
+  .checkin-model {
+    width: 100%;
+  }
+}
+
+.checkin-model {
+  width: 80%;
 }

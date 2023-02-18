@@ -704,12 +704,42 @@
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="NewBooking = false"
-              >mdi mdi-close-box</v-icon
-            >
+              >mdi mdi-close-box
+            </v-icon>
           </v-toolbar>
           <v-card-text>
+            <!-- {{ newBookingRoom }} -->
             <!-- <check-out :BookingData="checkData" /> -->
-            <new-check-in />
+
+            <new-check-in :reservation="newBookingRoom" />
+
+            <!-- <v-col cols="12" sm="12" md="12">
+              <label class="col-form-label">Check Out Date </label>
+              <v-menu
+                v-model="check_out_menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="check_out"
+                    readonly
+                    v-on="on"
+                    v-bind="attrs"
+                    :hide-details="true"
+                    dense
+                    outlined
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="check_out"
+                  @input="check_out_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col> -->
           </v-card-text>
           <v-card-actions>
             <!-- <v-btn class="primary" small @click="store_check_out">
@@ -807,7 +837,7 @@
         <v-list>
           <v-list-item-group>
             <v-list-item link @click="NewBooking = true">
-              <v-list-item-title>New Reservation</v-list-item-title>
+              <v-list-item-title>CheckIn</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -1277,6 +1307,10 @@ export default {
       this.formTitle = "Check In";
       this.get_data();
       this.checkInDialog ? (this.isIndex = false) : (this.isIndex = true);
+    },
+
+    NewBooking() {
+      this.NewBooking ? (this.isIndex = false) : (this.isIndex = true);
     },
 
     postingDialog() {

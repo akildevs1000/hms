@@ -93,12 +93,64 @@
               >
                 <table>
                   <tr>
+                    <td>Customer :</td>
+                    <td>
+                      {{
+                        (booking &&
+                          booking.customer &&
+                          booking.customer.title) ||
+                        ""
+                      }}.
+                      {{
+                        (booking &&
+                          booking.customer &&
+                          booking.customer.full_name) ||
+                        "---"
+                      }}
+                    </td>
+                    <td>Contact No :</td>
+                    <td>
+                      {{
+                        (booking &&
+                          booking.customer &&
+                          booking.customer.contact_no) ||
+                        "---"
+                      }}
+                    </td>
+                    <td>Whatsapp :</td>
+                    <td>
+                      {{
+                        (booking &&
+                          booking.customer &&
+                          booking.customer.whatsapp) ||
+                        "---"
+                      }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="6"><hr /></td>
+                  </tr>
+                  <tr>
                     <td>Reservation No :</td>
                     <td>{{ (booking && booking.id) || "---" }}</td>
                     <td>Number of Rooms :</td>
                     <td>{{ (bookedRooms && bookedRooms.length) || "---" }}</td>
+                    <td>Booking Date :</td>
+                    <td>{{ (booking && booking.booking_date) || "---" }}</td>
+                  </tr>
+                  <tr>
                     <td>Source :</td>
                     <td>{{ (booking && booking.source) || "---" }}</td>
+                    <td>Reference Number :</td>
+                    <td>{{ (booking && booking.reference_no) || "---" }}</td>
+                    <td>Pay Type :</td>
+                    <td>
+                      {{
+                        (booking && booking.paid_by == 2
+                          ? "Paid By Agent"
+                          : "Paid By Guest") || "---"
+                      }}
+                    </td>
                   </tr>
                   <tr class="bg-white">
                     <td>Check In :</td>
@@ -247,6 +299,8 @@
                     <th>Child</th>
                     <th>Babies</th>
                     <th>Meal Plan</th>
+                    <th>Adult Food Amount</th>
+                    <th>Child Food Amount</th>
                     <th class="text-right">Price</th>
                     <th class="text-right">Discount</th>
                     <th class="text-right">After Discount</th>
@@ -263,6 +317,12 @@
                     <td>{{ item.no_of_child || "---" }}</td>
                     <td>{{ item.no_of_baby || "---" }}</td>
                     <td>{{ capsTitle(item.meal) || "---" }}</td>
+                    <td class="text-right">
+                      {{ item.tot_adult_food || "---" }}
+                    </td>
+                    <td class="text-right">
+                      {{ item.tot_child_food || "---" }}
+                    </td>
                     <td class="text-right">{{ item.price || "---" }}</td>
                     <td class="text-right">
                       {{ item.room_discount || "---" }}
@@ -281,6 +341,8 @@
                   >
                     <td>{{ item.room_no || "---" }}</td>
                     <td>(Posting) {{ postingItem.item || "---" }}</td>
+                    <td class="text-right"></td>
+                    <td class="text-right"></td>
                     <td class="text-right"></td>
                     <td class="text-right"></td>
                     <td class="text-right"></td>

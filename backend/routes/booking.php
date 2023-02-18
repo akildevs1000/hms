@@ -29,6 +29,11 @@
     Route::get('get_booking', [BookingController::class, 'get_booking']);
 
     Route::get('reservation_list', [BookingController::class, 'reservationList']);
+
+    Route::get('up_coming_reservation_list', [BookingController::class, 'upComingReservationList']);
+    Route::get('in_house_reservation_list', [BookingController::class, 'inHouseReservationList']);
+    Route::get('check_out_reservation_list', [BookingController::class, 'checkOutReservationList']);
+
     Route::get('reservation_list_dash', [BookingController::class, 'reservationListForDash']);
 
     Route::post('check_in_room', [BookingController::class, 'check_in_room']);

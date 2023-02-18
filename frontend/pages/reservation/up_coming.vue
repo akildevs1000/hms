@@ -327,7 +327,7 @@ export default {
       per_page: 30,
     },
     options: {},
-    endpoint: "new_reservation_list",
+    endpoint: "up_coming_reservation_list",
     search: "",
     checkInDialog: false,
     snackbar: false,

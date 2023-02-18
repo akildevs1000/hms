@@ -378,14 +378,20 @@ export default {
           hasChildren: [
             {
               icon: "mdi mdi-home-import-outline",
-              title: "Outsourcing",
-              to: "/reservation/new_reservation_list",
+              title: "Upcoming",
+              to: "/reservation/up_coming",
               menu: "reservation_access",
             },
             {
-              icon: "mdi mdi-home-export-outline",
+              icon: "mdi mdi-home-account",
               title: "In House",
-              to: "/reservation/list1",
+              to: "/reservation/in_house",
+              menu: "reservation_access",
+            },
+            {
+              icon: "mdi mdi-home-import-outline",
+              title: "Checkout",
+              to: "/reservation/check_out",
               menu: "reservation_access",
             },
           ],
