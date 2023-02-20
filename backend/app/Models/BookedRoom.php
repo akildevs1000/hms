@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class BookedRoom extends Model
 {
@@ -26,10 +25,9 @@ class BookedRoom extends Model
 
     protected $with = ['postings', 'booking'];
 
-
     public function getAppends()
     {
-        return   array_merge($this->with, $this->appends);
+        return array_merge($this->with, $this->appends);
     }
 
     public function getCustomAppends()
@@ -39,7 +37,7 @@ class BookedRoom extends Model
             'updated_at',
             'booking_status',
         ];
-        return   array_merge($this->with, $this->appends, $custom);
+        return array_merge($this->with, $this->appends, $custom);
     }
 
     public function getWithoutAppends()
@@ -103,7 +101,7 @@ class BookedRoom extends Model
             (int) $status = $model->booking_status ?? 0;
         }
 
-        return match ($status) {
+        return match($status) {
 
             1 => 'linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
@@ -127,6 +125,7 @@ class BookedRoom extends Model
 
     public function SetCheckOutAttribute($value)
     {
+        // dd($this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value)));
         $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
 
         // $date = Carbon::parse($value);
@@ -136,13 +135,12 @@ class BookedRoom extends Model
 
     }
 
-
     public function GetCheckOutTimeAttribute()
     {
         // CheckOUtDateForEachDate
         $time = $this->check_out;
 
-        return  date('H:i', strtotime($time));
+        return date('H:i', strtotime($time));
     }
 
     public function GetEndAttribute()
@@ -155,5 +153,35 @@ class BookedRoom extends Model
     public function GetResourceIdAttribute()
     {
         return Room::find($this->room_id)->room_no ?? '';
+    }
+
+    public static function bookedRoomAttributes()
+    {
+        return [
+            "room_no",
+            "room_type",
+            "room_id",
+            "price",
+            "days",
+            "sgst",
+            "cgst",
+            "check_in",
+            "check_out",
+            "bed_amount",
+            "room_discount",
+            "after_discount",
+            "room_tax",
+            "total_with_tax",
+            "total",
+            "grand_total",
+            "company_id",
+            "no_of_adult",
+            "no_of_child",
+            "no_of_baby",
+            "tot_adult_food",
+            "tot_child_food",
+            "discount_reason",
+            "meal",
+        ];
     }
 }

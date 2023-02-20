@@ -690,10 +690,9 @@ export default {
         eventDrop: (arg, delta) => {
           let obj = {
             eventId: arg.event.id,
-            // start: this.convert_date_format(arg.event.start),
-            // end: this.convert_date_format(arg.event.end),
+            start: this.convert_date_format(arg.event.start),
+            end: this.convert_end_date_format(arg.event.start, arg.event.end),
             company_id: this.$auth.user.company.id,
-
             roomId: arg.event._def.resourceIds[0],
           };
 
@@ -1049,6 +1048,26 @@ export default {
 
     convert_date_format(val) {
       return new Date(val - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10);
+    },
+
+    get_next_day(val) {
+      const tomorrow = new Date(val);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      let tmrew = tomorrow.toISOString().substr(0, 10);
+      console.log(tmrew);
+      return tmrew;
+    },
+
+    convert_end_date_format(start, end) {
+      console.log(end);
+      if (end == null) {
+        return this.get_next_day(start);
+      }
+      return this.get_next_day(end);
+
+      return new Date(end - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10);
     },
