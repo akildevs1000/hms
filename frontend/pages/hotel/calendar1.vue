@@ -581,6 +581,9 @@ export default {
         selectable: true,
         initialView: "resourceTimelineMonth",
 
+        eventResizableFromStart: true, // enables resizing from the start of the event
+        slotEventOverlap: false, // allows events to overlap time slots
+        eventResizable: true,
         navLinks: true,
         resourceAreaWidth: "12%",
 
@@ -600,34 +603,33 @@ export default {
           // { id: "103", room_no: "103", room_type: "king", eventColor: "green" },
           // { id: "104", room_no: "104", eventColor: "orange" }
         ],
-
         events: [
           // {
           //   id: "1",
           //   room_id: "1",
           //   resourceId: "104",
-          //   start: "2022-11-17 01:00:00",
-          //   end: "2022-11-18 23:00:00",
+          //   start: "2023-02-20 01:00:00",
+          //   end: "2023-02-20 23:00:00",
           //   title: "e",
           //   background: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)",
-          //   eventBorderColor: "red"
-          // }
+          //   eventBorderColor: "red",
+          // },
           // {
           //   id: "1",
           //   room_id: "1",
           //   resourceId: "104",
-          //   start: "2022-11-09 00:00:00",
-          //   end: "2022-11-11 06:00:00",
-          //   title: "e"
+          //   start: "2023-02-20 01:00:00",
+          //   end: "2023-02-20 23:00:00",
+          //   title: "e",
           // },
           // {
           //   id: "1",
           //   room_id: "1",
           //   resourceId: "103",
-          //   start: "2022-11-09 00:00:00",
-          //   end: "2022-11-11 06:00:00",
-          //   title: "e"
-          // }
+          //   start: "2023-02-20 01:00:00",
+          //   end: "2023-02-20 23:00:00",
+          //   title: "e",
+          // },
         ],
 
         eventDidMount: (arg) => {
@@ -666,9 +668,9 @@ export default {
               "Please Select Current Date or Future Date",
               "error"
             );
-
             return;
           }
+          console.log(date);
           this.create_reservation(date, obj);
         },
 
@@ -679,6 +681,8 @@ export default {
             end: this.convert_date_format(arg.event.end),
             roomId: arg.event._def.resourceIds[0],
           };
+          console.log(obj);
+          // return;
 
           this.change_date_by_drag(obj);
         },
@@ -694,7 +698,6 @@ export default {
           };
 
           console.log(obj);
-          return;
           this.change_room_by_drag(obj);
         },
       },
@@ -829,6 +832,46 @@ export default {
       this.y = jsEvent.clientY;
       this.$nextTick(() => {
         this.showMenu = true;
+      });
+    },
+
+    get_events() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`events_list`, payload).then(({ data }) => {
+        this.calendarOptions.events = data;
+        console.log(this.calendarOptions.events);
+        return;
+        let a2 = {
+          id: "1",
+          room_id: "1",
+          resourceId: "104",
+          start: "2023-02-20 01:00:00",
+          end: "2023-02-20 23:00:00",
+          title: "e",
+          background: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)",
+          eventBorderColor: "red",
+        };
+
+        let a1 = {
+          id: 390,
+          room_id: 37,
+          booking_id: 329,
+          customer_id: "190",
+          start: "2023-02-20 12:08:58",
+          check_out: "2023-02-22 11:00:00",
+          resourceId: "102",
+          title: "fahath mohamed",
+          background: "linear-gradient(135deg, #FFBE00 0, #FFBE00 100%)",
+          check_out_time: "11:00",
+          // end: "2023-02-23 11:00",
+          end: "2023-02-23 11:00",
+        };
+        this.calendarOptions.events.push(a1),
+          console.log(this.calendarOptions.events);
       });
     },
 
@@ -989,17 +1032,6 @@ export default {
       this.$axios.get(`room_list`, payload).then(({ data }) => {
         this.calendarOptions.resources = data;
         this.RoomList = data;
-      });
-    },
-
-    get_events() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`events_list`, payload).then(({ data }) => {
-        this.calendarOptions.events = data;
       });
     },
 
@@ -1257,7 +1289,6 @@ export default {
     },
 
     change_date_by_drag(obj) {
-      console.log(obj);
       // return;
       this.$axios
         .post("/change_date_by_drag", obj)

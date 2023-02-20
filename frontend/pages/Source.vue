@@ -174,7 +174,20 @@
 
       <div>
         <v-row>
-          <v-col md="12" lg="12">
+          <v-col md="6">
+            <v-text-field
+              class="px-0 ma-0"
+              placeholder="Search..."
+              flat
+              dense
+              outlined
+              @input="searchIt"
+              v-model="search"
+              :hide-details="true"
+              style="width: 250px"
+            ></v-text-field>
+          </v-col>
+          <v-col md="12" lg="12" class="pt-0">
             <v-card class="mb-5 rounded-md" elevation="0">
               <v-toolbar class="rounded-md" color="background" dense flat dark>
                 <span> {{ Model }} List</span>
@@ -186,20 +199,9 @@
                   color="primary"
                 >
                   <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-                  Add Travel Agent
+                  Add
                 </v-btn>
               </v-toolbar>
-              <v-text-field
-                class="pa-2"
-                placeholder="Search..."
-                flat
-                dense
-                outlined
-                @input="searchIt"
-                v-model="search"
-                :hide-details="true"
-                style="width: 250px"
-              ></v-text-field>
               <table class="mt-0">
                 <tr style="font-size: 13px">
                   <th class="ps-5">#</th>

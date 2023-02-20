@@ -281,7 +281,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List</span>
           <v-spacer></v-spacer>
-          <v-btn class="primary" small @click="agentCreate">New</v-btn>
+          <!-- <v-btn class="primary" small @click="agentCreate">New</v-btn> -->
         </v-toolbar>
         <table>
           <tr style="font-size: 12px">
