@@ -1302,7 +1302,8 @@ class BookingController extends Controller
     public function changeDateByDrag(Request $request)
     {
         try {
-            $end             = $request->end; //date('Y-m-d', strtotime($request->end . '+1day'));
+            // $end             = $request->end; //date('Y-m-d', strtotime($request->end . '+1day'));
+            $end             = date('Y-m-d', strtotime($request->end . '+1day'));
             $bookedRoom      = BookedRoom::find($request->eventId);
             $booking         = Booking::find($bookedRoom->booking_id);
             $nightsCal       = Carbon::parse(date('Y-m-d', strtotime($request->start)))->diffInDays(date('Y-m-d', strtotime($end)));
