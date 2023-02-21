@@ -138,6 +138,20 @@
                       dense
                       outlined
                       type="number"
+                      v-model="posting.single_amt"
+                      @keyup="get_multiple_amount(posting.single_amt)"
+                      :hide-details="true"
+                    ></v-text-field>
+                  </td>
+                </tr>
+                <tr style="background-color: white">
+                  <th>Total Amount</th>
+                  <td>
+                    <v-text-field
+                      dense
+                      outlined
+                      type="number"
+                      readonly
                       v-model="posting.amount"
                       :hide-details="true"
                       @keyup="get_amount_with_tax(posting.tax_type)"
@@ -1364,6 +1378,10 @@ export default {
       }
     },
 
+    get_multiple_amount(val) {
+      this.posting.amount = val * this.posting.qty;
+    },
+
     get_check_out() {
       this.checkOutDialog = true;
       this.get_transaction();
@@ -1651,14 +1669,13 @@ export default {
     },
 
     store_posting() {
-      let rule =
-        Object.keys(this.posting.item).length == 0 ||
-        Object.keys(this.posting.amount).length == 0 ||
-        Object.keys(this.posting.qty).length == 0 ||
-        Object.keys(this.posting.bill_no).length == 0 ||
-        this.posting.tax_type == -1;
-
-      if (rule) {
+      console.log(this.posting);
+      if (
+        this.posting.amount_with_tax == 0 ||
+        this.posting.item == "" ||
+        this.posting.bill_no == "" ||
+        this.posting.tax_type == -1
+      ) {
         alert("Please enter required fields");
         return;
       }
@@ -1680,10 +1697,28 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
           } else {
-            this.succuss(data, false, true);
+            this.reset_posting();
+            this.postingDialog = false;
+            this.snackbar = data.status;
+            this.response = data.message;
           }
         })
         .catch((e) => console.log(e));
+    },
+
+    reset_posting() {
+      this.posting = {
+        item: "",
+        qty: "",
+        amount: 0,
+        single_amt: 0,
+        bill_no: "",
+        amount_with_tax: 0,
+        tax: 0,
+        sgst: 0,
+        cgst: 0,
+        tax_type: -1,
+      };
     },
 
     store_advance(data) {

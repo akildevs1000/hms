@@ -14,7 +14,7 @@ class TaxableController extends Controller
      */
     public function index(Request  $request)
     {
-        return Taxable::whereCompanyId($request->company_id)->with('booking.customer')->paginate(30);
+        return Taxable::whereCompanyId($request->company_id)->with('booking.customer')->paginate($request->per_page ?? 30);
     }
 
     /**

@@ -180,7 +180,7 @@
               <td>{{ ++index }}</td>
               <td>{{ item.created_at }}</td>
               <td>{{ item.time }}</td>
-              <td>{{ item.booking_id }}</td>
+              <td>{{ item.booking.reservation_no }}</td>
               <td>{{ item.type }}</td>
               <td>{{ item.room }}</td>
               <td>{{ item.description }}</td>

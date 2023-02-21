@@ -304,10 +304,14 @@
             <td>
               <b>{{ ++index }}</b>
             </td>
-            <td>{{ item.booking_id || "---" }}</td>
+            <td>
+              {{ (item.booking && item.booking.reservation_no) || "---" }}
+            </td>
             <td>{{ item.booking_date || "---" }}</td>
             <td>{{ item.reference_no || "---" }}</td>
-            <td>{{ (item && item.customer.full_name) || "---" }}</td>
+            <td>
+              {{ (item && item.customer && item.customer.full_name) || "---" }}
+            </td>
             <td>{{ item.type || "---" }}</td>
             <td>{{ (item && item.booking && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
@@ -319,8 +323,16 @@
                 "---"
               }}.00
             </td>
-            <td>{{ (item && item.booking.check_in_date) || "---" }}</td>
-            <td>{{ (item && item.booking.check_out_date) || "---" }}</td>
+            <td>
+              {{
+                (item && item.booking && item.booking.check_in_date) || "---"
+              }}
+            </td>
+            <td>
+              {{
+                (item && item.booking && item.booking.check_out_date) || "---"
+              }}
+            </td>
             <td>
               <v-chip
                 class="ma-2"
@@ -342,8 +354,10 @@
               >
                 mdi-eye
               </v-icon> -->
+
+              <!-- v-if="!item.is_paid" -->
+
               <v-icon
-                v-if="!item.is_paid"
                 x-small
                 color="primary"
                 @click="paidAmount(item)"

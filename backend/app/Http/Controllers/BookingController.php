@@ -146,19 +146,6 @@ class BookingController extends Controller
                             $payment = new PaymentController();
                             $payment->store($paymentsData);
                         } else {
-                            $agentsData = [
-                                'booking_id'   => $booked->id,
-                                'customer_id'  => $booked->customer_id ?? '',
-                                'type'         => 'Customer' ?? '',
-                                'source'       => $booked->source,
-                                'reference_no' => $booked->reference_no ?? '',
-                                'amount'       => $booked->total_price ?? '',
-                                'booking_date' => date('Y-m-d', strtotime($booked->created_at)) ?? '',
-                                'company_id'   => $request->company_id ?? '',
-                            ];
-                            $payment = new AgentsController();
-                            $payment->store($agentsData);
-
                             $paymentsData = [
                                 'booking_id'     => $booked->id,
                                 'payment_mode'   => 7,
@@ -218,14 +205,16 @@ class BookingController extends Controller
                         $payment->store($agentsData);
                     }
 
-                    (new TaxableController)->storeTaxableInvoice($booked);
+                    if ($request->gst_number) {
+                        (new TaxableController)->storeTaxableInvoice($booked);
+                    }
                 }
 
                 return $booked;
 
                 return $this->response('Room Booked Successfully.', $booked, true);
             });
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -257,7 +246,7 @@ class BookingController extends Controller
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -609,7 +598,7 @@ class BookingController extends Controller
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -622,7 +611,7 @@ class BookingController extends Controller
                 $isExistCustomer->update($customer);
             }
             return true;
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -641,7 +630,7 @@ class BookingController extends Controller
             }
             return $id;
             return $this->response('Customer successfully added.', $id, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -746,7 +735,7 @@ class BookingController extends Controller
                 // }
                 return response()->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -947,7 +936,7 @@ class BookingController extends Controller
                 return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -1006,7 +995,7 @@ class BookingController extends Controller
                 return response()->json(['bookingId' => $booking->id, 'message' => 'Payment Successfully', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -1142,7 +1131,7 @@ class BookingController extends Controller
             }
 
             return response()->json(['data' => '', 'message' => 'Successfully canceled', 'status' => true]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -1158,7 +1147,7 @@ class BookingController extends Controller
                 BookedRoom::whereBookingId($booking->id)->update(['booking_status' => 0]);
                 return $this->response('Now room available.', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -1174,7 +1163,7 @@ class BookingController extends Controller
                 BookedRoom::whereBookingId($booking->id)->update(['booking_status' => 4]);
                 return $this->response('Now room maintenance.', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -1201,35 +1190,62 @@ class BookingController extends Controller
     {
         try {
             $oldRoom       = BookedRoom::without('postings', 'booking')->where('company_id', $request->company_id)->find($request->eventId);
+
             $newRoom       = Room::where('company_id', $request->company_id)->whereRoomNo($request->roomId)->first();
             $newUpdateRoom = $this->getRoomAmtWithTax($oldRoom, $newRoom, $request);
             $newUpdateRoom['check_out'];
-            $extraAmt             = $newRoom->room_type->price - $oldRoom->total;
+            $extraAmt  = $newRoom->room_type->price - $oldRoom->price;
             $bookedRoomAttributes = array_intersect_key($newUpdateRoom, array_flip(BookedRoom::bookedRoomAttributes()));
-
+            $transactionData = [
+                'booking_id'        => $oldRoom->booking_id,
+                'customer_id'       => $oldRoom->customer_id ?? '',
+                'date'              => now(),
+                'company_id'        => $oldRoom->company_id ?? '',
+                'payment_method_id' => 7,
+                'desc'              => 'room/date change',
+            ];
+            (new TransactionController)->store($transactionData, $extraAmt, 'debit');
+            $transactionSummary =   (new TransactionController)->getTransactionSummaryByBookingId($oldRoom->booking_id);
             if ($oldRoom->update($bookedRoomAttributes)) {
                 $oldRoom->booking->update([
                     'check_in'  => $newUpdateRoom['check_in'],
                     'check_out' => $newUpdateRoom['check_out'],
                     'rooms'     => $this->getBookedRoomsFromBookingId($oldRoom->booking_id),
+                    'total_price' => $transactionSummary['balance'],
+                    'grand_remaining_price' => $transactionSummary['balance'],
+                    'balance'               => $transactionSummary['balance'],
+                    'remaining_price'       => $transactionSummary['balance'],
+                    'paid_amounts'       => $transactionSummary['sumCredit'],
+
                 ]);
                 BookedRoom::whereBookingId($oldRoom->booking_id)->update([
                     'check_in'  => date('Y-m-d 11:00', strtotime($newUpdateRoom['check_in'])),
                     'check_out' => date('Y-m-d 11:00', strtotime($newUpdateRoom['check_out'])),
                 ]);
-                $transactionData = [
-                    'booking_id'        => $oldRoom->booking_id,
-                    'customer_id'       => $oldRoom->customer_id ?? '',
-                    'date'              => now(),
-                    'company_id'        => $oldRoom->company_id ?? '',
-                    'payment_method_id' => null,
-                    'desc'              => 'room/date change',
+
+                $paymentsData = [
+                    'booking_id'   => $oldRoom->booking_id,
+                    'payment_mode' => 7,
+                    'description'  => 'room/date change',
+                    'amount'       => $extraAmt,
+                    'company_id'   => $oldRoom->company_id,
+                    'type'         => 'room',
+                    'room'         =>  $oldRoom->booking->rooms ?? "",
                 ];
-                (new TransactionController)->store($transactionData, $extraAmt, 'debit');
+
+                $payment = Payment::whereBookingId($oldRoom->booking_id)->where('company_id', $oldRoom->company_id)->where('is_city_ledger', 1)->first();
+                if ($payment) {
+                    $payment->amount = (int) $payment->amount + (int) $extraAmt;
+                    $payment->save();
+                }
+
+                $payment = new PaymentController();
+                $payment->store($paymentsData);
+
                 return $this->response('Room changed Successfully.', null, true);
             }
             return $this->response('DataBase Error in status change', null, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -1261,7 +1277,7 @@ class BookingController extends Controller
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -1297,14 +1313,84 @@ class BookingController extends Controller
         return array_merge($oldRoom->toArray(), $data);
     }
 
-    // $flattened = Arr::flatten($array);
-
     public function changeDateByDrag(Request $request)
     {
         try {
-            // $end             = $request->end; //date('Y-m-d', strtotime($request->end . '+1day'));
-            $end             = date('Y-m-d', strtotime($request->end . '+1day'));
+            $res = [];
             $bookedRoom      = BookedRoom::find($request->eventId);
+            $bookedRoomIds =  BookedRoom::pluck('id');
+
+            foreach ($bookedRoomIds as $bookedRoomId) {
+                $res[] =  $this->changeDateByDragProcess($request, $bookedRoomId);
+            }
+            $all_room_Total_amount = array_sum(array_column($res, 'all_room_Total_amount'));
+            $nights = $res[0]['nights'];
+            $paid_amounts = $res[0]['paid_amounts'];
+            $extraDaysAmount = $res[0]['extraDaysAmount'];
+            Booking::find($bookedRoom->booking_id)->update([
+                'check_in'              => $request->start,
+                'check_out'             => $request->end,
+                'total_days'            => $nights,
+                'total_price'           => $all_room_Total_amount * $nights,
+                'grand_remaining_price' => ($all_room_Total_amount * $nights) - $paid_amounts,
+                'balance'               => ($all_room_Total_amount * $nights) - $paid_amounts,
+                'remaining_price'       => ($all_room_Total_amount * $nights) - $paid_amounts,
+            ]);
+
+            $transactionData = [
+                'booking_id'        => $bookedRoom->booking_id,
+                'customer_id'       => $bookedRoom->customer_id ?? '',
+                'date'              => now(),
+                'company_id'        => $bookedRoom->company_id ?? '',
+                'payment_method_id' => 7,
+                'desc'              => 'room extends amount',
+            ];
+
+            (new TransactionController)->store($transactionData, $extraDaysAmount, 'debit');
+
+            $period = CarbonPeriod::create($request->start, $this->checkOutDate(date('Y-m-d', strtotime($request->end))));
+            OrderRoom::whereBookedRoomId($bookedRoom->id)->delete();
+            foreach ($period as $date) {
+                $bookedRoom['date']           = $date->format('Y-m-d');
+                $bookedRoom['booked_room_id'] = $bookedRoom->id;
+                OrderRoom::create($bookedRoom->toArray());
+            }
+
+            $paymentsData = [
+                'booking_id'   => $bookedRoom->booking_id,
+                'payment_mode' => 7,
+                'description'  => 'room/date change',
+                'amount'       => $extraDaysAmount,
+                'company_id'   => $bookedRoom->company_id,
+                'type'         => 'room',
+                'room'         =>  $bookedRoom->booking->rooms ?? "",
+            ];
+
+            $payment = Payment::whereBookingId($bookedRoom->booking_id)->where('company_id', $bookedRoom->company_id)->where('is_city_ledger', 1)->first();
+            if ($payment) {
+                $payment->amount = (int) $payment->amount + (int) $extraDaysAmount;
+                $payment->save();
+            }
+
+            // $payment = new PaymentController();
+            // $payment->store($paymentsData);
+
+            return $this->response('Date changed Successfully.', null, true);
+
+            return $this->response('DataBase Error in status change', null, true);
+        } catch (\Throwable $th) {
+            return $th;
+            Logger::channel("custom")->error("BookingController: " . $th);
+            return ["done" => false, "data" => "DataBase Error booking"];
+        }
+    }
+
+    private function changeDateByDragProcess($request, $bookedRoomId)
+    {
+        try {
+            $end             = $request->end; //date('Y-m-d', strtotime($request->end . '+1day'));
+            // $end             = date('Y-m-d', strtotime($request->end . '+1day'));
+            $bookedRoom      = BookedRoom::find($bookedRoomId);
             $booking         = Booking::find($bookedRoom->booking_id);
             $nightsCal       = Carbon::parse(date('Y-m-d', strtotime($request->start)))->diffInDays(date('Y-m-d', strtotime($end)));
             $nights          = $nightsCal; // - 1;
@@ -1346,27 +1432,6 @@ class BookingController extends Controller
                 'grand_total' => $bookedRoom->total * $nights,
             ]);
 
-            $updated = $booking->update([
-                'check_in'              => $request->start,
-                'check_out'             => $end,
-                'total_days'            => $nights,
-                'total_price'           => $booking->all_room_Total_amount * $nights,
-                'grand_remaining_price' => ($booking->all_room_Total_amount * $nights) - $booking->paid_amounts,
-                'balance'               => ($booking->all_room_Total_amount * $nights) - $booking->paid_amounts,
-                'remaining_price'       => ($booking->all_room_Total_amount * $nights) - $booking->paid_amounts,
-            ]);
-
-            $transactionData = [
-                'booking_id'        => $booking->id,
-                'customer_id'       => $booking->customer_id ?? '',
-                'date'              => now(),
-                'company_id'        => $booking->company_id ?? '',
-                'payment_method_id' => $booking->payment_mode_id,
-                'desc'              => 'room extends amount',
-            ];
-
-            (new TransactionController)->store($transactionData, $extraDaysAmount, 'debit');
-
             $period = CarbonPeriod::create($request->start, $this->checkOutDate(date('Y-m-d', strtotime($end))));
             if ($updated) {
                 OrderRoom::whereBookedRoomId($bookedRoom->id)->delete();
@@ -1377,20 +1442,13 @@ class BookingController extends Controller
                 }
             }
 
-            return $this->response('Date changed Successfully.', null, true);
-
-            $room = Room::where('company_id', $request->company_id)->whereRoomNo($request->roomId)->first();
-
-            $bookedRoom->room_id = $room->id;
-            $bookedRoom->room_no = $room->room_no;
-
-            if ($bookedRoom->save()) {
-                $rooms = $this->getBookedRoomsFromBookingId($bookedRoom->booking_id);
-                $bookedRoom->booking()->update(['rooms' => $rooms]);
-                return $this->response('Room changed Successfully.', null, true);
-            }
-            return $this->response('DataBase Error in status change', null, true);
-        } catch (\Throwable$th) {
+            return [
+                'extraDaysAmount' => $extraDaysAmount,
+                'nights' => $nights,
+                'paid_amounts' => $booking->paid_amounts,
+                'all_room_Total_amount' => $bookedRoom->total_with_tax,
+            ];
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -1484,6 +1542,7 @@ class BookingController extends Controller
         $model->where('booking_status', '<=', 2);
         return $model->paginate($request->per_page ?? 20);
     }
+
     public function getBookedRooms(Request $request)
     {
         return BookedRoom::whereHas('booking', function ($q) {

@@ -255,7 +255,7 @@
               color="primary"
             >
               <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-              Add Expense
+              Add
             </v-btn>
           </v-toolbar>
           <table>
@@ -284,12 +284,13 @@
               <td>{{ item.voucher || "" }}</td>
               <td>{{ item.item || "" }}</td>
               <td>{{ item.qty || "" }}</td>
-              <td>{{ item.amount || "" }}</td>
-              <td>{{ item.total || "" }}</td>
-              <td>{{ (item && item.payment_mode.name) || "" }}</td>
-              <td>{{ (item && item.reference) || "" }}</td>
+              <td>{{ item.amount || "---" }}</td>
+              <td>{{ item.total || "---" }}</td>
+              <td>{{ (item && item.payment_mode.name) || "---" }}</td>
+              <td>{{ (item && item.reference) || "---" }}</td>
               <td>
                 <v-btn
+                  v-if="item.document"
                   small
                   dark
                   class="primary lg-pt-4 lg-pb-4 doc-btn"
@@ -298,7 +299,7 @@
                   Preview
                   <v-icon right dark>mdi-file</v-icon>
                 </v-btn>
-                <!-- {{ (item && item.document) || "" }} -->
+                <span v-else> --- </span>
               </td>
               <td>{{ item.created_at }}</td>
               <td class="text-center">
@@ -461,6 +462,7 @@ export default {
 
     preview(doc) {
       // let file = this.editedItem.document ?? null;
+      console.log(doc);
       let file = doc ?? null;
       const fileExtension = file.split(".").pop().toLowerCase();
       fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);

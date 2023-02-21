@@ -198,7 +198,7 @@
                       <v-col md="5" dense>
                         <v-text-field
                           label="Reservation Number"
-                          v-model="BookingData.id"
+                          v-model="BookingData.reservation_no"
                           :items="['Company', 'Regular', 'Corporate']"
                           dense
                           disabled

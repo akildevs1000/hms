@@ -21,7 +21,7 @@ class AgentsController extends Controller
 
         $model->where('company_id', $request->company_id);
         $model->where('type', '!=', 'Customer');
-        $model->with('customer', 'booking:id,check_in,check_out,rooms');
+        $model->with('customer', 'booking:id,reservation_no,check_in,check_out,rooms');
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
             $model->where('source', $request->source);
@@ -65,7 +65,7 @@ class AgentsController extends Controller
         }
 
         return response()->json([
-            'city_ledgers' => $model->paginate($request->per_page ?? 20),
+            'city_ledgers' => $model->orderBy('id', 'DESC')->paginate($request->per_page ?? 20),
             'message' => '',
             'status' => true
 
@@ -426,6 +426,7 @@ class AgentsController extends Controller
     {
         $booking_id = $request->booking_id;
         $booking    = Booking::where('company_id', $request->company_id)->find($booking_id);
+        $booking = Booking::find($booking_id);
 
         $transactionData = [
             'booking_id'        => $booking->id,
@@ -433,47 +434,46 @@ class AgentsController extends Controller
             'date'              => now(),
             'company_id'        => $booking->company_id ?? '',
             'payment_method_id' => $booking->payment_mode_id,
+            'reference_number' => $request->reference,
             'desc' => 'paid by city ledger',
         ];
 
         $payment = new TransactionController();
         $payment->store($transactionData, $request->full_payment, 'credit');
-        $booking = Booking::find($booking_id);
-        if ($booking) {
-            if ($booking->balance > 0) {
-                $booking->payment_status  = 0;
-                $booking->remaining_price       =  (int)$booking->remaining_price - (int)$request->full_payment;
-                $booking->grand_remaining_price = (int)$booking->remaining_price + (int)$booking->total_posting_amount;;
 
-                $paymentsData = [
-                    'booking_id'     => $booking_id,
-                    'payment_mode'   => $request->payment_mode_id,
-                    'description'    =>  'payment by ' . $request->cityLedgerData['source'] ?? '',
-                    'amount'         => $request->full_payment,
-                    'type'           => 'customer',
-                    'room'           => $booking->rooms,
-                    'company_id'     => $booking->company_id,
-                    'is_city_ledger' => 0,
-                    'created_at'     => now(),
-                ];
-                $payment = Payment::whereBookingId($booking->id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
-                if ($payment) {
-                    $payment->amount = (int) $booking->balance;
-                    $payment->save();
-                }
-                $payment = new PaymentController();
-                $payment->store($paymentsData);
-            } else {
-                $booking->payment_status  = 1;
-                $booking->full_payment    = $booking->paid_amounts;
-                $booking->remaining_price       = 0;
-                $booking->grand_remaining_price = 0;
-                $booking->total_posting_amount  = 0;
+        $transactionSummary = (new TransactionController)->getTransactionSummaryByBookingId($booking_id);
+
+        if ($booking) {
+            $booking->update([
+                'total_price' => $transactionSummary['balance'],
+                'grand_remaining_price' => $transactionSummary['balance'],
+                'balance'               => $transactionSummary['balance'],
+                'remaining_price'       => $transactionSummary['balance'],
+                'paid_amounts'       => $transactionSummary['sumCredit'],
+                'payment_status'       => $transactionSummary['balance'] == 0 ? 1 : 0,
+            ]);
+
+            $paymentsData = [
+                'booking_id'     => $booking_id,
+                'payment_mode'   => $request->payment_mode_id,
+                'description'    =>  'payment by ' . $request->cityLedgerData['source'] ?? '',
+                'amount'         => $request->full_payment,
+                'type'           => 'customer',
+                'room'           => $booking->rooms,
+                'company_id'     => $booking->company_id,
+                'is_city_ledger' => 0,
+                'created_at'     => now(),
+            ];
+            $payment = Payment::whereBookingId($booking->id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+            if ($payment) {
+                $payment->amount = (int) $booking->balance;
+                $payment->save();
             }
-            $booking->save();
-            return response()->json(['data' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
+            $payment = new PaymentController();
+            $payment->store($paymentsData);
         }
-        return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+
+        return response()->json(['data' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
     }
     public function paymentByCustomer1(Request $request)
     {

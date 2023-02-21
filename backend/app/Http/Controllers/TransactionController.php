@@ -44,4 +44,15 @@ class TransactionController extends Controller
             'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0
         ]);
     }
+
+    public function getTransactionSummaryByBookingId($id)
+    {
+        $transactionModel = Transaction::whereBookingId($id);
+
+        return [
+            'sumDebit' => $transactionModel->sum('debit'),
+            'sumCredit' => $transactionModel->sum('credit'),
+            'balance' => $transactionModel->sum('debit') - $transactionModel->sum('credit'),
+        ];
+    }
 }

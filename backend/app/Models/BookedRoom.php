@@ -11,6 +11,34 @@ class BookedRoom extends Model
 
     protected $guarded = [];
 
+
+    // protected $fillable = [
+    //     "room_no",
+    //     "room_type",
+    //     "room_id",
+    //     "price",
+    //     "days",
+    //     "sgst",
+    //     "cgst",
+    //     "check_in",
+    //     "check_out",
+    //     "bed_amount",
+    //     "room_discount",
+    //     "after_discount",
+    //     "room_tax",
+    //     "total_with_tax",
+    //     "total",
+    //     "grand_total",
+    //     "company_id",
+    //     "no_of_adult",
+    //     "no_of_child",
+    //     "no_of_baby",
+    //     "tot_adult_food",
+    //     "tot_child_food",
+    //     "discount_reason",
+    //     "meal"
+    // ];
+
     protected $appends = [
         'resourceId',
         'title',
@@ -101,7 +129,7 @@ class BookedRoom extends Model
             (int) $status = $model->booking_status ?? 0;
         }
 
-        return match($status) {
+        return match ($status) {
 
             1 => 'linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
@@ -146,8 +174,9 @@ class BookedRoom extends Model
     public function GetEndAttribute()
     {
         $date = date_create($this->check_out);
-        date_modify($date, "-1 days");
-        return date_format($date, "Y-m-d H:i");
+        // date_modify($date, "-1 days");
+        return date_format($date, "Y-m-d");
+        // return date_format($date, "Y-m-d H:i");
     }
 
     public function GetResourceIdAttribute()
