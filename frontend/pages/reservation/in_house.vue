@@ -227,6 +227,7 @@
             <b>{{ item.reservation_no }}</b>
           </td>
           <td>{{ item.source }}</td>
+          <td>{{ item.reference_no || "---" }}</td>
           <td>{{ item && item.customer.full_name }}</td>
           <td>
             <span v-for="(room, index) in item.booked_rooms" :key="index">
@@ -326,6 +327,7 @@ export default {
     headers: [
       { text: "Reser. No" },
       { text: "Source" },
+      { text: "Reference" },
       { text: "Customer" },
       { text: "Rooms" },
       { text: "Arrival  Date" },

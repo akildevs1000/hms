@@ -105,8 +105,6 @@ class ExpenseController extends Controller
         // ['id' => 6, 'name' => 'Cheque']
         // ['id' => 7, 'name' => 'City Ledger']
 
-
-
         $expense = $this->model
             ->where('company_id', $request->company_id)
             ->orderByDesc("id");

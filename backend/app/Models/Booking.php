@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Customer;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -216,4 +217,12 @@ class Booking extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    // protected static function boot()
+    // {
+    //     parent::boot();
+    //     static::addGlobalScope('order', function (Builder $builder) {
+    //         $builder->orderBy('id', 'desc');
+    //     });
+    // }
 }

@@ -183,31 +183,6 @@
                     ></v-select>
                   </td>
                 </tr>
-                <!-- <tr>
-                  <th>
-                    Payment Mode
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-select
-                      v-model="posting.payment_mode_id"
-                      :items="[
-                        { id: 1, name: 'Cash' },
-                        { id: 2, name: 'Card' },
-                        { id: 3, name: 'Online' },
-                        { id: 4, name: 'Bank' },
-                        { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
-                      ]"
-                      item-text="name"
-                      item-value="id"
-                      dense
-                      outlined
-                      :hide-details="true"
-                      :height="1"
-                    ></v-select>
-                  </td>
-                </tr> -->
                 <tr style="background-color: white">
                   <th>
                     Amount With Tax
@@ -372,6 +347,21 @@
                     ></v-select>
                   </td>
                 </tr>
+                <tr v-if="checkData.payment_mode_id != 1">
+                  <th>
+                    Reference Number
+                    <span class="text-danger">*</span>
+                  </th>
+                  <td>
+                    <v-text-field
+                      dense
+                      outlined
+                      type="text"
+                      v-model="reference"
+                      :hide-details="true"
+                    ></v-text-field>
+                  </td>
+                </tr>
                 <tr>
                   <th>Total Amount</th>
                   <td>{{ checkData && checkData.total_price }}</td>
@@ -406,7 +396,7 @@
               class="primary"
               small
               @click="store_advance(checkData)"
-              :loading="false"
+              :loading="AdvancePayLoading"
               >Pay</v-btn
             >
             <v-btn class="error" small @click="close"> Cancel </v-btn>
@@ -438,193 +428,6 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
-      <!-- <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-          </v-toolbar>
-          <v-card-text>
-            <v-row>
-              <v-col md="7">
-                <v-container>
-                  <table>
-                    <v-progress-linear
-                      v-if="false"
-                      :active="loading"
-                      :indeterminate="loading"
-                      absolute
-                      color="primary"
-                    ></v-progress-linear>
-                    <tr>
-                      <th>Customer Name</th>
-                      <td style="width: 300px">
-                        {{ checkData && checkData.title }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Room No</th>
-                      <td>
-                        {{ checkData.room_no }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Room Type</th>
-                      <td>
-                        {{ checkData.room_type }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Check In</th>
-                      <td>
-                        {{ checkData && checkData.check_in_date }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Check Out</th>
-                      <td>
-                        {{ checkData && checkData.check_out_date }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>
-                        Payment Mode
-                        <span class="text-danger">*</span>
-                      </th>
-                      <td>
-                        <v-select
-                          v-model="checkData.payment_mode_id"
-                          :items="[
-                            { id: 1, name: 'Cash' },
-                            { id: 2, name: 'Card' },
-                            { id: 3, name: 'Online' },
-                            { id: 4, name: 'Bank' },
-                            { id: 5, name: 'UPI' },
-                            { id: 6, name: 'Cheque' },
-                            { id: 7, name: 'City Ledger' },
-                          ]"
-                          item-text="name"
-                          item-value="id"
-                          dense
-                          outlined
-                          :hide-details="true"
-                          :height="1"
-                        ></v-select>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Total Amount</th>
-                      <td>{{ checkData && checkData.total_price }}</td>
-                    </tr>
-                    <tr>
-                      <th>Total Posting Amount</th>
-                      <td>{{ checkData && checkData.total_posting_amount }}</td>
-                    </tr>
-                    <tr>
-                      <th>Remaining Balance</th>
-                      <td>{{ checkData.remaining_price }}</td>
-                    </tr>
-                    <tr>
-                      <th>Remaining Balance With Posting</th>
-                      <td>{{ checkData.grand_remaining_price }}</td>
-                    </tr>
-                    <tr>
-                      <th>Print Invoice</th>
-                      <td>
-                        <v-checkbox
-                          v-model="isPrintInvoice"
-                          :hide-details="true"
-                          class="pt-0 py-1 chk-align"
-                        >
-                        </v-checkbox>
-                      </td>
-                    </tr>
-                    <tr
-                      style="background-color: white"
-                      v-if="checkData.paid_by != 2"
-                    >
-                      <th>
-                        Full Payment
-                        <span class="text-danger">*</span>
-                      </th>
-                      <td>
-                        <v-text-field
-                          dense
-                          outlined
-                          type="number"
-                          v-model="full_payment"
-                          :hide-details="true"
-                        ></v-text-field>
-                      </td>
-                    </tr>
-                    <tr></tr>
-                  </table>
-                </v-container>
-              </v-col>
-              <v-col md="5" class="mt-3">
-                <table>
-                  <tr
-                    style="
-                      font-size: 13px;
-                      background-color: white;
-                      color: black;
-                    "
-                  >
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Debit</th>
-                    <th>Credit</th>
-                    <th>Balance</th>
-                  </tr>
-
-                  <tr
-                    v-for="(item, index) in transactions"
-                    :key="index"
-                    style="
-                      font-size: 13px;
-                      background-color: white;
-                      color: black;
-                    "
-                  >
-                    <td>
-                      <b>{{ ++index }}</b>
-                    </td>
-                    <td>{{ item.created_at || "---" }}</td>
-                    <td class="text-right">
-                      {{ item && item.debit == 0 ? "---" : item.debit }}
-                    </td>
-                    <td class="text-right">
-                      {{ item && item.credit == 0 ? "---" : item.credit }}
-                    </td>
-                    <td class="text-right">{{ item.balance || "---" }}</td>
-                  </tr>
-                  <tr
-                    style="
-                      font-size: 13px;
-                      background-color: white;
-                      color: black;
-                    "
-                  >
-                    <th colspan="4" class="text-right">Balance</th>
-                    <td class="text-right" style="background-color: white">
-                      {{ totalTransactionAmount }}
-                    </td>
-                  </tr>
-                </table>
-              </v-col>
-            </v-row>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn class="primary" small @click="store_check_out"
-              >Check Out</v-btn
-            >
-            <v-btn class="error" small @click="checkOutDialog = false">
-              Cancel
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog> -->
-
       <!-- end check out  -->
 
       <!-- cancel room  -->
@@ -652,66 +455,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
       <!-- end cancel room -->
 
       <!-- New Booking room  -->
-
-      <!-- <v-dialog v-model="NewBooking" persistent>
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span> New Reservation</span>
-          </v-toolbar>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="NewBooking = false"
-            >mdi mdi-close-box</v-icon
-          >
-          <v-container>
-            <v-col cols="12" sm="12" md="12">
-              <label class="col-form-label">Check Out Date </label>
-              <v-menu
-                v-model="check_out_menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="check_out"
-                    readonly
-                    v-on="on"
-                    v-bind="attrs"
-                    :hide-details="true"
-                    dense
-                    outlined
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="check_out"
-                  @input="check_out_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-
-          </v-container>
-          <v-card-actions>
-            <v-btn
-              class="primary"
-              small
-              :loading="false"
-              @click="SubmitNewBooking"
-            >
-              Book
-            </v-btn>
-            <v-btn class="error" small @click="NewBooking = false">
-              Cancel
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog> -->
-
       <v-dialog v-model="NewBooking" persistent width="90%">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -1270,6 +1016,8 @@ export default {
       totalTransactionAmount: 0,
       new_payment: 0,
       new_advance: 0,
+      AdvancePayLoading: false,
+      reference: 0,
       full_payment: 0,
       isPrintInvoice: false,
       items: [],
@@ -1726,9 +1474,10 @@ export default {
         alert("Enter advance amount");
         return;
       }
-      // this.loading = true;
+      this.AdvancePayLoading = true;
       let payload = {
         new_advance: this.new_advance,
+        reference_number: this.reference,
         booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id,
@@ -1739,8 +1488,10 @@ export default {
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
+            this.AdvancePayLoading = false;
           } else {
             this.succuss(data, false, false, false, true);
+            this.AdvancePayLoading = false;
           }
         })
         .catch((e) => console.log(e));

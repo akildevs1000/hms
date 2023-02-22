@@ -266,121 +266,16 @@
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="payingAdvance = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <table>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
-              <tr>
-                <th>Customer Name</th>
-                <td style="width: 300px">
-                  {{ checkData && checkData.title }}
-                </td>
-              </tr>
-              <tr>
-                <th>Room No</th>
-                <td>
-                  {{ checkData.room_no }}
-                </td>
-              </tr>
-              <tr>
-                <th>Room Type</th>
-                <td>
-                  {{ checkData.room_type }}
-                </td>
-              </tr>
-              <tr>
-                <th>Check In</th>
-                <td>
-                  {{ checkData && checkData.check_in_date }}
-                </td>
-              </tr>
-              <tr>
-                <th>Check Out</th>
-                <td>
-                  {{ checkData && checkData.check_out_date }}
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  Payment Mode
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-select
-                    v-model="checkData.payment_mode_id"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' },
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                  ></v-select>
-                </td>
-              </tr>
-              <tr>
-                <th>Total Amount</th>
-                <td>{{ checkData && checkData.total_price }}</td>
-              </tr>
-              <!-- <tr style="background-color:white">
-                <th>
-                  Advance Price
-                </th>
-                <td>
-                  {{ checkData.advance_price }}
-                </td>
-              </tr> -->
-              <tr>
-                <th>Remaining Balance</th>
-                <td>{{ checkData.grand_remaining_price }}</td>
-              </tr>
-
-              <tr style="background-color: white">
-                <th>
-                  New Advance
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="new_advance"
-                    :hide-details="true"
-                  ></v-text-field>
-                </td>
-              </tr>
-              <tr></tr>
-            </table>
+            <PayAdvance :BookingData="checkData"></PayAdvance>
           </v-container>
         </v-card-text>
-
-        <v-card-actions>
-          <v-btn
-            class="primary"
-            small
-            @click="store_advance(checkData)"
-            :loading="loading"
-            >Pay</v-btn
-          >
-          <v-btn class="error" small @click="payingAdvance = false">
-            Cancel
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -494,6 +389,7 @@
                 <v-list-item-title>View Billing</v-list-item-title>
               </v-list-item>
             </div>
+
             <v-list-item
               link
               @click="payingAdvance = true"
@@ -540,9 +436,11 @@ import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import CheckIn from "../../components/booking/CheckIn.vue";
 import CheckOut from "../../components/booking/CheckOut.vue";
+import PayAdvance from "../../components/booking/PayAdvance.vue";
 
 export default {
   components: {
+    PayAdvance,
     FullCalendar,
     CheckIn,
     CheckOut,
@@ -1268,7 +1166,7 @@ export default {
         alert("Enter reason");
         return;
       }
-
+      this.loading = true;
       let payload = {
         reason: this.reason,
         cancel_by: this.$auth.user.id,
@@ -1279,9 +1177,11 @@ export default {
           if (!data.status) {
             this.snackbar = data.status;
             this.response = data.message;
+            this.loading = false;
             return;
           }
           this.get_events();
+          this.loading = true;
           this.cancelDialog = false;
           this.snackbar = data.status;
           this.response = data.message;

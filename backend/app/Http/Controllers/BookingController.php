@@ -63,7 +63,8 @@ class BookingController extends Controller
         $starting_value = 00001;
         $model          = Booking::query();
 
-        (int) $counter = $model->where('company_id', $company_id)->latest('reservation_no')->value('reservation_no') ?? $starting_value;
+        // (int) $counter = $model->where('company_id', $company_id)->latest('reservation_no')->value('reservation_no') ?? $starting_value;
+        (int) $counter = $model->where('company_id', $company_id)->orderBy('id', 'desc')->first()->reservation_no ?? $starting_value;
         $exist         = $model->where('company_id', $company_id)->where('reservation_no', $counter)->exists();
 
         if ($exist) {
@@ -884,6 +885,41 @@ class BookingController extends Controller
     public function payingAdvance(Request $request)
     {
         try {
+            $booking = Booking::find($request->booking_id);
+            $transactionData = [
+                'booking_id'        => $booking->id,
+                'customer_id'       => $booking->customer_id ?? '',
+                'date'              => now(),
+                'company_id'        => $booking->company_id ?? '',
+                'payment_method_id' => $request->payment_mode_id,
+                'desc'              => 'advance payment',
+                'reference_number'  => $request->reference_number,
+            ];
+
+            (new TransactionController)->store($transactionData, $request->new_advance, 'credit');
+            (new TransactionController)->updateBookingByTransactions($booking->id, 0);
+            $booking->advance_price         = (int) $booking->advance_price + (int) $request->new_advance;
+            $booking->save();
+            $paymentsData = [
+                'booking_id'   => $booking->booking_id,
+                'payment_mode' => $request->payment_mode_id,
+                'description'  => 'advance payment',
+                'amount'       => $request->new_advance,
+                'company_id'   => $booking->company_id,
+                'type'         => 'room',
+                'room'         => $booking->rooms,
+            ];
+
+            $payment = Payment::whereBookingId($booking->id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+            if ($payment) {
+                $payment->amount = (int) $payment->amount - (int) $request->new_advance;
+                $payment->save();
+            }
+            $payment = new PaymentController();
+            $payment->store($paymentsData);
+
+            return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
+
             $booking_id                     = $request->booking_id;
             $booking                        = Booking::find($booking_id);
             $rem                            = (int) $request->remaining_price - (int) $request->new_advance;
@@ -1113,8 +1149,7 @@ class BookingController extends Controller
     public function cancelRoom(Request $request, $id)
     {
         try {
-            $model = BookedRoom::find($id)
-                ->makeHidden((new BookedRoom)->getCustomAppends());
+            $model = BookedRoom::find($id);
             $numberOfRooms = BookedRoom::where('booking_id', $model->booking_id)->count();
 
             $bookedRoom = $model;
@@ -1125,6 +1160,16 @@ class BookingController extends Controller
                 $arr    = $bookedRoom->toArray();
                 $cancel = CancelRoom::create($arr);
                 if ($cancel) {
+                    $transactionData = [
+                        'booking_id'        => $bookedRoom->booking_id,
+                        'customer_id'       => $bookedRoom->customer_id ?? '',
+                        'date'              => now(),
+                        'company_id'        => $bookedRoom->company_id ?? '',
+                        'payment_method_id' => 7,
+                        'desc'              => 'room extends amount',
+                    ];
+                    (new TransactionController)->store($transactionData, -$model->grand_total, 'debit');
+                    (new TransactionController)->updateBookingByTransactions($model->booking_id, -$model->grand_total);
                     $numberOfRooms == 1 ? Booking::where('id', $model->booking_id)->update(['booking_status' => -1]) : null;
                     $model->delete();
                 }
@@ -1211,7 +1256,7 @@ class BookingController extends Controller
                     'check_in'  => $newUpdateRoom['check_in'],
                     'check_out' => $newUpdateRoom['check_out'],
                     'rooms'     => $this->getBookedRoomsFromBookingId($oldRoom->booking_id),
-                    // 'total_price' => $transactionSummary['balance'],
+                    'total_price' => Booking::find($oldRoom->booking_id)->total_price + $extraAmt,
                     'grand_remaining_price' => $transactionSummary['balance'],
                     'balance'               => $transactionSummary['balance'],
                     'remaining_price'       => $transactionSummary['balance'],
@@ -1488,7 +1533,10 @@ class BookingController extends Controller
                 $model->where('booking_status', '=', 1);
                 break;
             case 'check_out':
-                $model->where('booking_status', '>', 2);
+                $model->where(function ($q) {
+                    $q->where('booking_status', '=', 3);
+                    $q->orWhere('booking_status', '=', 0);
+                });
                 break;
             case 'in_house':
                 $model->where('booking_status', '=', 2);

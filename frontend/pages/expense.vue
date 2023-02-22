@@ -234,7 +234,9 @@
               }}</span>
             </v-col>
             <v-card-actions>
-              <v-btn class="primary" @click="save">Save</v-btn>
+              <v-btn class="primary" :loading="loading" @click="save"
+                >Save</v-btn
+              >
             </v-card-actions>
           </v-row>
         </v-container>
@@ -524,6 +526,7 @@ export default {
     },
 
     save() {
+      this.loading = true;
       let payload = this.mapper(this.editedItem);
       if (this.editedIndex > -1) {
         this.$axios
@@ -531,6 +534,7 @@ export default {
           .then(({ data }) => {
             if (!data.status) {
               this.errors = data.errors;
+              this.loading = false;
             } else {
               const index = this.data.findIndex(
                 (item) => item.id == this.editedItem.id
@@ -538,6 +542,7 @@ export default {
               this.getDataFromApi();
               this.snackbar = data.status;
               this.response = data.message;
+              this.loading = false;
               this.expenseDialog = false;
             }
           })
@@ -549,6 +554,7 @@ export default {
             console.log(data);
             if (!data.status) {
               this.errors = data.errors;
+              this.loading = false;
             } else {
               this.getDataFromApi();
               this.snackbar = true;
@@ -556,6 +562,7 @@ export default {
               this.close();
               this.errors = [];
               this.search = "";
+              this.loading = false;
             }
           })
           .catch((res) => console.log(res));
