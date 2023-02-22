@@ -1,13 +1,8 @@
 <template>
   <div>
     <table>
-      <v-progress-linear
-        v-if="false"
-        :active="loading"
-        :indeterminate="loading"
-        absolute
-        color="primary"
-      ></v-progress-linear>
+      <v-progress-linear v-if="false" :active="loading" :indeterminate="loading" absolute
+        color="primary"></v-progress-linear>
       <tr>
         <th>Customer Name</th>
         <td style="width: 300px">
@@ -44,23 +39,14 @@
           <span class="text-danger">*</span>
         </th>
         <td>
-          <v-select
-            v-model="BookingData.payment_mode_id"
-            :items="[
-              { id: 1, name: 'Cash' },
-              { id: 2, name: 'Card' },
-              { id: 3, name: 'Online' },
-              { id: 4, name: 'Bank' },
-              { id: 5, name: 'UPI' },
-              { id: 6, name: 'Cheque' },
-            ]"
-            item-text="name"
-            item-value="id"
-            dense
-            outlined
-            :hide-details="true"
-            :height="1"
-          ></v-select>
+          <v-select v-model="BookingData.payment_mode_id" :items="[
+            { id: 1, name: 'Cash' },
+            { id: 2, name: 'Card' },
+            { id: 3, name: 'Online' },
+            { id: 4, name: 'Bank' },
+            { id: 5, name: 'UPI' },
+            { id: 6, name: 'Cheque' },
+          ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-select>
         </td>
       </tr>
       <tr v-if="BookingData.payment_mode_id != 1">
@@ -69,13 +55,7 @@
           <span class="text-danger">*</span>
         </th>
         <td>
-          <v-text-field
-            dense
-            outlined
-            type="text"
-            v-model="reference"
-            :hide-details="true"
-          ></v-text-field>
+          <v-text-field dense outlined type="text" v-model="reference" :hide-details="true"></v-text-field>
         </td>
       </tr>
       <tr>
@@ -93,24 +73,12 @@
           <span class="text-danger">*</span>
         </th>
         <td>
-          <v-text-field
-            dense
-            outlined
-            type="number"
-            v-model="new_advance"
-            :hide-details="true"
-          ></v-text-field>
+          <v-text-field dense outlined type="number" v-model="new_advance" :hide-details="true"></v-text-field>
         </td>
       </tr>
       <tr></tr>
     </table>
-    <v-btn
-      class="primary mt-2"
-      small
-      @click="store_advance(BookingData)"
-      :loading="loading"
-      >Pay</v-btn
-    >
+    <v-btn class="primary mt-2" small @click="store_advance(BookingData)" :loading="loading">Pay</v-btn>
   </div>
 </template>
 <script>
@@ -123,6 +91,7 @@ export default {
       response: "",
       preloader: false,
       loading: false,
+      new_advance: 0,
       reference: "",
       errors: [],
       checkOutDialog: false,
@@ -133,7 +102,7 @@ export default {
     this.preloader = false;
   },
 
-  mounted() {},
+  mounted() { },
 
   computed: {},
 
@@ -159,11 +128,16 @@ export default {
             this.errors = data.errors;
             this.loading = false;
           } else {
-            console.log("ff");
+            this.new_advance = 0
+            this.closeDialog(data);
             this.loading = false;
           }
         })
         .catch((e) => console.log(e));
+    },
+
+    closeDialog(data) {
+      this.$emit('close-dialog', data)
     },
 
     can(per) {

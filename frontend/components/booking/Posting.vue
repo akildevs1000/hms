@@ -1,177 +1,122 @@
 <template>
   <div>
-    <v-card-text>
-      <v-container>
-        <br />
-        <table>
-          <v-progress-linear
-            v-if="false"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
-          <tr>
-            <th>Bill No</th>
-            <td style="width: 300px">
-              <v-text-field
-                dense
-                outlined
-                type="number"
-                v-model="posting.bill_no"
-                :hide-details="true"
-              ></v-text-field>
-            </td>
-          </tr>
-          <tr>
-            <th>Customer Name</th>
-            <td style="width: 300px">
-              {{ checkData && checkData.title }}
-            </td>
-          </tr>
-          <tr>
-            <th>Room No</th>
-            <td>
-              {{ checkData.room_no }}
-            </td>
-          </tr>
-          <tr>
-            <th>Room Type</th>
-            <td>
-              {{ checkData.room_type }}
-            </td>
-          </tr>
-          <tr style="background-color: white">
-            <th>
-              Item
-              <span class="text-danger">*</span>
-            </th>
-            <td>
-              <v-text-field
-                dense
-                outlined
-                type="text"
-                v-model="posting.item"
-                :hide-details="true"
-              ></v-text-field>
-            </td>
-          </tr>
-          <tr style="background-color: white">
-            <th>
-              QTY
-              <span class="text-danger">*</span>
-            </th>
-            <td>
-              <v-text-field
-                dense
-                outlined
-                type="number"
-                v-model="posting.qty"
-                :hide-details="true"
-              ></v-text-field>
-            </td>
-          </tr>
-          <tr style="background-color: white">
-            <th>
-              Amount
-              <span class="text-danger">*</span>
-            </th>
-            <td>
-              <v-text-field
-                dense
-                outlined
-                type="number"
-                v-model="posting.amount"
-                :hide-details="true"
-                @keyup="get_amount_with_tax(posting.tax_type)"
-              ></v-text-field>
-            </td>
-          </tr>
-          <tr style="background-color: white">
-            <th>
-              Type
-              <span class="text-danger">*</span>
-            </th>
-            <td>
-              <v-select
-                v-model="posting.tax_type"
-                :items="[
-                  { id: -1, name: 'select..' },
-                  { name: 'Food' },
-                  { name: 'Others' },
-                  { name: 'Mesentery' },
-                  { name: 'ExtraBed' },
-                ]"
-                item-text="name"
-                item-value="id"
-                dense
-                outlined
-                :hide-details="true"
-                :height="1"
-                @change="get_amount_with_tax(posting.tax_type)"
-              ></v-select>
-            </td>
-          </tr>
-          <tr style="background-color: white">
-            <th>
-              Amount With Tax
-              <span class="text-danger">*</span>
-            </th>
-            <td>
-              {{ posting.amount_with_tax }}
-            </td>
-          </tr>
-          <tr></tr>
-        </table>
-      </v-container>
-    </v-card-text>
+    <table>
+      <v-progress-linear v-if="false" :active="loading" :indeterminate="loading" absolute
+        color="primary"></v-progress-linear>
+      <tr>
+        <th>Bill No</th>
+        <td style="width: 300px">
+          <v-text-field dense outlined type="number" v-model="posting.bill_no" :hide-details="true"></v-text-field>
+        </td>
+      </tr>
+      <tr>
+        <th>Customer Name</th>
+        <td style="width: 300px">
+          {{ BookingData && BookingData.title }}
+        </td>
+      </tr>
+      <tr>
+        <th>Room No</th>
+        <td>
+          {{ BookingData.room_no }}
+        </td>
+      </tr>
+      <tr>
+        <th>Room Type</th>
+        <td>
+          {{ BookingData.room_type }}
+        </td>
+      </tr>
+      <tr style="background-color: white">
+        <th>
+          Item
+          <span class="text-danger">*</span>
+        </th>
+        <td>
+          <v-text-field dense outlined type="text" v-model="posting.item" :hide-details="true"></v-text-field>
+        </td>
+      </tr>
+      <tr style="background-color: white">
+        <th>
+          QTY
+          <span class="text-danger">*</span>
+        </th>
+        <td>
+          <v-text-field dense outlined type="number" v-model="posting.qty" :hide-details="true"></v-text-field>
+        </td>
+      </tr>
+      <tr style="background-color: white">
+        <th>
+          Amount
+          <span class="text-danger">*</span>
+        </th>
+        <td>
+          <v-text-field dense outlined type="number" v-model="posting.single_amt"
+            @keyup="get_multiple_amount(posting.single_amt)" :hide-details="true"></v-text-field>
+        </td>
+      </tr>
+      <tr style="background-color: white">
+        <th>Total Amount</th>
+        <td>
+          <v-text-field dense outlined type="number" readonly v-model="posting.amount" :hide-details="true"
+            @keyup="get_amount_with_tax(posting.tax_type)"></v-text-field>
+        </td>
+      </tr>
+      <tr style="background-color: white">
+        <th>
+          Type
+          <span class="text-danger">*</span>
+        </th>
+        <td>
+          <v-select v-model="posting.tax_type" :items="[
+            { id: -1, name: 'select..' },
+            { name: 'Food' },
+            { name: 'Mesentery' },
+            { name: 'ExtraBed' },
+            { name: 'Others' },
+          ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"
+            @change="get_amount_with_tax(posting.tax_type)"></v-select>
+        </td>
+      </tr>
+      <tr style="background-color: white">
+        <th>
+          Amount With Tax
+          <span class="text-danger">*</span>
+        </th>
+        <td>
+          {{ posting.amount_with_tax }}
+        </td>
+      </tr>
+      <tr></tr>
+    </table>
+
+    <v-btn class="primary mt-2" small @click="store_posting" :loading="false">Post</v-btn>
+
   </div>
 </template>
 <script>
 export default {
-  props: ["BookingData"],
+  props: ["BookingData", "evenIid"],
   data() {
     return {
-      isDiscount: false,
       snackbar: false,
-      checkLoader: false,
       response: "",
       preloader: false,
       loading: false,
-      show_password: false,
-      show_password_confirm: false,
-      transactions: [],
-      totalTransactionAmount: 0,
-      full_payment: 0,
-      isPrintInvoice: false,
-      discount: 0,
-      reference: "",
-      customer: {
-        title: "",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-        exp_menu: false,
-        exp: null,
-      },
-      after_discount_balance: 0,
-      errors: [],
 
-      checkOutDialog: false,
+      posting: {
+        item: "",
+        qty: "",
+        amount: 0,
+        bill_no: "",
+        amount_with_tax: 0,
+        tax: 0,
+        sgst: 0,
+        cgst: 0,
+        tax_type: -1,
+      },
+
+      errors: [],
     };
   },
 
@@ -180,76 +125,73 @@ export default {
   },
 
   mounted() {
-    this.checkOutDialog = true;
-    this.after_discount_balance = this.BookingData.grand_remaining_price;
-    this.get_transaction();
   },
 
   computed: {},
   methods: {
-    get_after_discount_balance(amt = 0) {
-      let discount = amt || 0;
-      console.log(discount);
-      let blc =
-        parseFloat(this.BookingData.grand_remaining_price) -
-        parseFloat(discount);
-      this.after_discount_balance = blc.toFixed(2) || 0;
+
+    get_multiple_amount(val) {
+      this.posting.amount = val * this.posting.qty;
     },
 
-    get_transaction() {
-      let id = this.BookingData.id;
-      console.log(id);
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios
-        .get(`get_transaction_by_booking_id/${id}`, payload)
-        .then(({ data }) => {
-          this.transactions = data.transactions;
-          this.totalTransactionAmount = data.totalTransactionAmount;
-        });
+    getPercentage(amount, clause) {
+      let res = (amount / 100) * clause;
+      return res;
     },
 
-    store_check_out() {
+    get_amount_with_tax(clause) {
+      let per = 0;
+      if (clause == "Food") {
+        per = 5;
+      } else if (clause == "Mesentery" || clause == "ExtraBed") {
+        per = 12;
+      }
+      let res = this.getPercentage(this.posting.amount || 0, per);
+      let gst = parseFloat(res) / 2;
+      this.posting.sgst = gst;
+      this.posting.cgst = gst;
+      this.posting.tax = res;
+      let a = parseFloat(res) + parseFloat(this.posting.amount || 0);
+      this.posting.amount_with_tax = a.toFixed(2);
+    },
+
+    store_posting() {
+      console.log(this.posting);
+      if (
+        this.posting.amount_with_tax == 0 ||
+        this.posting.item == "" ||
+        this.posting.bill_no == "" ||
+        this.posting.tax_type == -1
+      ) {
+        alert("Please enter required fields");
+        return;
+      }
       this.loading = true;
+      let per = this.posting.tax_type == "Food" ? 5 : 12;
       let payload = {
-        booking_id: this.BookingData.id,
-        grand_remaining_price: this.BookingData.grand_remaining_price,
-        remaining_price: this.BookingData.remaining_price,
-        full_payment: this.full_payment,
-        payment_mode_id: this.BookingData.payment_mode_id,
+        ...this.posting,
+        booked_room_id: this.evenIid,
         company_id: this.$auth.user.company.id,
-        isPrintInvoice: this.isPrintInvoice,
-        reference_number: this.reference,
-        discount: this.discount,
+        booking_id: this.BookingData.id,
+        room_id: this.BookingData.room_id,
+        room: this.BookingData.room_no,
+        tax_type: per,
       };
-
       this.$axios
-        .post("/check_out_room", payload)
+        .post("/posting", payload)
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
-            this.loading = false;
           } else {
-            this.alert("Success", "Successfully Checkout", "success");
-            if (this.isPrintInvoice) {
-              this.redirect_to_invoice(data.bookingId);
-            }
-            location.reload();
+            this.reset_posting();
+            this.postingDialog = false;
+            this.snackbar = data.status;
+            this.response = data.message;
           }
         })
         .catch((e) => console.log(e));
     },
 
-    redirect_to_invoice(id) {
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}invoice/${id}`);
-      document.body.appendChild(element);
-      element.click();
-    },
 
     can(per) {
       let u = this.$auth.user;
@@ -259,6 +201,20 @@ export default {
       );
     },
 
+    reset_posting() {
+      this.posting = {
+        item: "",
+        qty: "",
+        amount: 0,
+        single_amt: 0,
+        bill_no: "",
+        amount_with_tax: 0,
+        tax: 0,
+        sgst: 0,
+        cgst: 0,
+        tax_type: -1,
+      };
+    },
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
     },
