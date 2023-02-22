@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 
 class Taxable extends Model
 {
@@ -33,6 +33,7 @@ class Taxable extends Model
         $id = $this->company_id;
         if ($id == 1) return "TG-" . $this->taxable_invoice_number;
         else if ($id == 2) return "KG-" . $this->taxable_invoice_number;
+        else if ($id == 3) return "DM-" . $this->taxable_invoice_number;
     }
 
     /**
@@ -43,5 +44,13 @@ class Taxable extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('id', 'desc');
+        });
     }
 }
