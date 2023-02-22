@@ -1211,7 +1211,7 @@ class BookingController extends Controller
                     'check_in'  => $newUpdateRoom['check_in'],
                     'check_out' => $newUpdateRoom['check_out'],
                     'rooms'     => $this->getBookedRoomsFromBookingId($oldRoom->booking_id),
-                    'total_price' => $transactionSummary['balance'],
+                    // 'total_price' => $transactionSummary['balance'],
                     'grand_remaining_price' => $transactionSummary['balance'],
                     'balance'               => $transactionSummary['balance'],
                     'remaining_price'       => $transactionSummary['balance'],
@@ -1318,7 +1318,7 @@ class BookingController extends Controller
         try {
             $res = [];
             $bookedRoom      = BookedRoom::find($request->eventId);
-            $bookedRoomIds =  BookedRoom::pluck('id');
+            $bookedRoomIds =  BookedRoom::whereBookingId($bookedRoom->booking_id)->pluck('id');
 
             foreach ($bookedRoomIds as $bookedRoomId) {
                 $res[] =  $this->changeDateByDragProcess($request, $bookedRoomId);
@@ -1327,15 +1327,6 @@ class BookingController extends Controller
             $nights = $res[0]['nights'];
             $paid_amounts = $res[0]['paid_amounts'];
             $extraDaysAmount = $res[0]['extraDaysAmount'];
-            Booking::find($bookedRoom->booking_id)->update([
-                'check_in'              => $request->start,
-                'check_out'             => $request->end,
-                'total_days'            => $nights,
-                'total_price'           => $all_room_Total_amount * $nights,
-                'grand_remaining_price' => ($all_room_Total_amount * $nights) - $paid_amounts,
-                'balance'               => ($all_room_Total_amount * $nights) - $paid_amounts,
-                'remaining_price'       => ($all_room_Total_amount * $nights) - $paid_amounts,
-            ]);
 
             $transactionData = [
                 'booking_id'        => $bookedRoom->booking_id,
@@ -1347,6 +1338,21 @@ class BookingController extends Controller
             ];
 
             (new TransactionController)->store($transactionData, $extraDaysAmount, 'debit');
+            $transactionSummary =   (new TransactionController)->getTransactionSummaryByBookingId($bookedRoom->booking_id);
+            Booking::find($bookedRoom->booking_id)->update([
+                'check_in'              => $request->start,
+                'check_out'             => $request->end,
+                'total_days'            => $nights,
+                'total_price'           => $all_room_Total_amount * $nights,
+
+                'grand_remaining_price' => $transactionSummary['balance'],
+                'balance'               => $transactionSummary['balance'],
+                'remaining_price'       => $transactionSummary['balance'],
+                'paid_amounts'       => $transactionSummary['sumCredit'],
+
+            ]);
+
+
 
             $period = CarbonPeriod::create($request->start, $this->checkOutDate(date('Y-m-d', strtotime($request->end))));
             OrderRoom::whereBookedRoomId($bookedRoom->id)->delete();
