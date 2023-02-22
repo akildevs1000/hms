@@ -315,7 +315,10 @@ class RoomController extends Controller
                 $q->where('booking_status', '<=', 4);
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_in', '<=', $request->check_in);
-            })->get();
+                $q->orderBy('id', 'ASC');
+            })
+            // ->orderBy('id', 'DESC')
+            ->get();
 
         // return Room::whereIn('id', $roomIds)->with('bookedRoom.booking:id')->get();
 

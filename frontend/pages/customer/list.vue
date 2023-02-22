@@ -63,7 +63,7 @@
             color="primary"
           >
             <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-            Add Customer
+            Add
           </v-btn>
         </v-toolbar>
         <table>

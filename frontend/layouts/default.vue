@@ -399,25 +399,25 @@ export default {
 
         {
           icon: "mdi mdi-human-male-female-child",
-          title: `Customer`,
+          title: `Guest`,
           open_menu: false,
           menu: "customer_access",
           hasChildren: [
             {
               icon: "fas fa-male",
-              title: "Individual",
+              title: "Guest",
               to: "/customer/list",
               menu: "reservation_access",
             },
             {
               icon: "mdi mdi-human-male-board-poll",
-              title: "Reservation from Agents",
+              title: "Source Guest",
               to: "/agents",
               menu: "agent_access",
             },
             {
               icon: "mdi mdi-human-male-board-poll",
-              title: "Agents",
+              title: "Source",
               to: "/source",
               menu: "agent_access",
             },

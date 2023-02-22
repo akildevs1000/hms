@@ -69,7 +69,7 @@
                           { id: 4, name: 'Bank' },
                           { id: 5, name: 'UPI' },
                           { id: 6, name: 'Cheque' },
-                          { id: 7, name: 'City Ledger' }
+                          { id: 7, name: 'City Ledger' },
                         ]"
                         item-text="name"
                         item-value="id"
@@ -117,7 +117,9 @@
             </v-col>
             <v-col md="5" class="mt-3">
               <table>
-                <tr style="font-size:13px;background-color:white;color:black">
+                <tr
+                  style="font-size: 13px; background-color: white; color: black"
+                >
                   <th>#</th>
                   <th>Date</th>
                   <th>Debit</th>
@@ -128,7 +130,7 @@
                 <tr
                   v-for="(item, index) in transactions"
                   :key="index"
-                  style="font-size:13px;background-color: white;color:black"
+                  style="font-size: 13px; background-color: white; color: black"
                 >
                   <td>
                     <b>{{ ++index }}</b>
@@ -142,7 +144,9 @@
                   </td>
                   <td class="text-right">{{ item.balance || "---" }}</td>
                 </tr>
-                <tr style="font-size:13px;background-color: white;color:black">
+                <tr
+                  style="font-size: 13px; background-color: white; color: black"
+                >
                   <th colspan="4" class="text-right">Balance</th>
                   <td class="text-right" style="background-color: white">
                     {{ totalTransactionAmount }}
@@ -193,7 +197,7 @@
       <table>
         <tr>
           <th
-            style="font-size:13px"
+            style="font-size: 13px"
             v-for="(item, index) in headers"
             :key="index"
           >
@@ -207,30 +211,52 @@
           absolute
           color="primary"
         ></v-progress-linear>
-        <tr style="font-size:13px" v-for="(item, index) in data" :key="index">
+        <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
             <b>{{ item.show_taxable_invoice_number || "---" }}</b>
           </td>
           <td class="ps-3">
-            <b>{{ item.id || "---" }}</b>
+            <b>{{ item.reservation_no || "---" }}</b>
           </td>
           <td>{{ (item && item.booking && item.booking.source) || "---" }}</td>
           <td>
-            {{ item.booking.customer.full_name || "---" }}
+            {{
+              (item &&
+                item.booking &&
+                item.booking.customer &&
+                item.booking.customer.full_name) ||
+              "---"
+            }}
           </td>
 
-          <td style="width:120px">
-            {{ convert_date_format(item.booking.check_in) }}
+          <td style="width: 120px">
+            {{
+              convert_date_format(item && item.booking && item.booking.check_in)
+            }}
           </td>
-          <td style="width:120px">
-            {{ convert_date_format(item.booking.check_out) }}
+          <td style="width: 120px">
+            {{
+              convert_date_format(
+                item && item.booking && item.booking.check_out
+              )
+            }}
           </td>
-          <td>{{ item.booking.total_price || "0" }}</td>
-          <td>{{ item.booking.total_posting_amount || 0 }}</td>
-          <td>{{ item.booking.paid_amounts || 0 }}</td>
-          <td>{{ item.booking.balance || 0 }}</td>
+          <td>
+            {{ (item && item.booking && item.booking.total_price) || "0" }}
+          </td>
+          <td>
+            {{
+              (item && item.booking && item.booking.total_posting_amount) || 0
+            }}
+          </td>
+          <td>
+            {{ (item && item.booking && item.booking.paid_amounts) || 0 }}
+          </td>
+          <td>{{ (item && item.booking && item.booking.balance) || 0 }}</td>
 
-          <td>{{ item.booking.booking_date || "---" }}</td>
+          <td>
+            {{ (item && item.booking && item.booking.booking_date) || "---" }}
+          </td>
           <!-- <td>
             <v-btn
               small
@@ -298,7 +324,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 30
+      per_page: 30,
     },
     options: {},
     endpoint: "taxable_invoice",
@@ -320,7 +346,7 @@ export default {
       { text: "Posting" },
       { text: "Paid Amount" },
       { text: "Balance" },
-      { text: "Booking Date" }
+      { text: "Booking Date" },
       // { text: "Reservation Status" }
       // { text: "View" },
       // { text: "Payment" },
@@ -332,7 +358,7 @@ export default {
     checkData: {},
     transactions: [],
     totalTransactionAmount: 0,
-    new_payment: 0
+    new_payment: 0,
   }),
 
   computed: {},
@@ -340,7 +366,7 @@ export default {
   watch: {
     search() {
       this.getDataFromApi();
-    }
+    },
   },
   created() {
     // this.loading = true;
@@ -352,7 +378,7 @@ export default {
       let user = this.$auth;
       return;
       return (
-        (user && user.permissions.some(e => e.permission == permission)) ||
+        (user && user.permissions.some((e) => e.permission == permission)) ||
         user.master
       );
     },
@@ -371,6 +397,7 @@ export default {
     },
 
     convert_date_format(val) {
+      if (!val) return "---";
       const date = new Date(val);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -383,7 +410,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
     onPageChange() {
@@ -425,8 +452,8 @@ export default {
       let id = bookingId;
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios
         .get(`get_transaction_by_booking_id/${id}`, payload)
@@ -449,7 +476,7 @@ export default {
         grand_remaining_price: this.checkData.grand_remaining_price,
         remaining_price: this.checkData.remaining_price,
         payment_mode_id: this.checkData.payment_mode_id,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       return;
       this.$axios
@@ -462,7 +489,7 @@ export default {
             this.get_transaction(data.bookingId);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     getDataFromApi(url = this.endpoint) {
@@ -473,8 +500,8 @@ export default {
         params: {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
-          search: this.search
-        }
+          search: this.search,
+        },
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -492,8 +519,8 @@ export default {
       } else if (this.search.length > 2) {
         this.getDataFromApi();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

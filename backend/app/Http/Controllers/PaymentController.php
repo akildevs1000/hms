@@ -27,6 +27,7 @@ class PaymentController extends Controller
         $model->whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', -1);
         });
+        $model->with("booking:id,reservation_no");
         $model->orderByDesc("id");
 
         if ($request->filled('from_date') && $request->filled('to_date')) {

@@ -232,7 +232,8 @@
         ></v-progress-linear>
         <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
-            <b>{{ item.id }}</b>
+            <!-- <b>{{ item.id }}</b> -->
+            <b>{{ item.reservation_no }}</b>
           </td>
           <td>{{ item.source || "---" }}</td>
           <td>{{ item.reference_no || "---" }}</td>

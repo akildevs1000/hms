@@ -126,8 +126,10 @@ class PostingController extends Controller
             $booking->save();
 
             $agent = Agent::whereBookingId($request->booking_id)->where('company_id', $request->company_id)->first();
-            $agent->posting_amount = (int) $agent->posting_amount + $posting->amount_with_tax;
-            $agent->save();
+            if ($agent) {
+                $agent->posting_amount = (int) $agent->posting_amount + $posting->amount_with_tax;
+                $agent->save();
+            }
 
             $payment = Payment::where('booking_id', $request->booking_id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
             $payment->amount = (int) $payment->amount + $posting->amount_with_tax;

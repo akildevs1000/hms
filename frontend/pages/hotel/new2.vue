@@ -921,6 +921,7 @@
                       Reference No
                     </span>
                     <input
+                      v-model="room.reference_number"
                       type="text"
                       class="form-control"
                       aria-label="Sizing example input"
@@ -1511,6 +1512,7 @@ export default {
         check_in: null,
         check_out: null,
         discount: 0,
+        reference_number: "",
         advance_price: 0,
         payment_mode_id: 1,
         total_days: 0,

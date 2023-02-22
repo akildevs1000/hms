@@ -70,7 +70,7 @@
                       { id: 3, name: 'Online' },
                       { id: 4, name: 'Bank' },
                       { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' }
+                      { id: 6, name: 'Cheque' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -80,6 +80,21 @@
                     :height="1"
                   ></v-select>
                 </td>
+                <tr v-if="booking.payment_mode_id != 1">
+              <th>
+                Reference Number
+                <span class="text-danger">*</span>
+              </th>
+              <td>
+                <v-text-field
+                  dense
+                  outlined
+                  type="text"
+                  v-model="reference"
+                  :hide-details="true"
+                ></v-text-field>
+              </td>
+            </tr>
               </tr>
               <tr>
                 <th>Total Amount</th>
@@ -202,7 +217,7 @@
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>
-          <tr style="font-size:13px">
+          <tr style="font-size: 13px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
@@ -214,11 +229,15 @@
             absolute
             color="primary"
           ></v-progress-linear>
-          <tr v-for="(item, index) in data" :key="index" style="font-size:14px">
+          <tr
+            v-for="(item, index) in data"
+            :key="index"
+            style="font-size: 14px"
+          >
             <td>
               <b>{{ ++index }}</b>
             </td>
-            <td>{{ item.id || "---" }}</td>
+            <td>{{ (item && item.reservation_no) || "---" }}</td>
             <td>{{ item.booking_date || "---" }}</td>
             <td>
               {{ (item && item.customer && item.customer.full_name) || "---" }}
@@ -298,7 +317,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
     },
     options: {},
     Model: "City Ledger",
@@ -324,57 +343,57 @@ export default {
       "Cleartrip",
       "in.hotels.com",
       "Booking.com",
-      "TripAdvisor.in"
+      "TripAdvisor.in",
     ],
 
     headers: [
       {
-        text: "#"
+        text: "#",
       },
       {
-        text: "Booking Number"
+        text: "Booking Number",
       },
       {
-        text: "Booking Date"
+        text: "Booking Date",
       },
       {
-        text: "Customer"
+        text: "Customer",
       },
       {
-        text: "Type"
+        text: "Type",
       },
       {
-        text: "Rooms"
+        text: "Rooms",
       },
       {
-        text: "Source"
+        text: "Source",
       },
       {
-        text: "Amount"
+        text: "Amount",
       },
       {
-        text: "Posting Amount"
+        text: "Posting Amount",
       },
       {
-        text: "Total Paid Amount"
+        text: "Total Paid Amount",
       },
       {
-        text: "Pending Payment"
+        text: "Pending Payment",
       },
       {
-        text: "Check In"
+        text: "Check In",
       },
       {
-        text: "Check Out"
-      },
-
-      {
-        text: "Payment Status"
+        text: "Check Out",
       },
 
       {
-        text: "Action"
-      }
+        text: "Payment Status",
+      },
+
+      {
+        text: "Action",
+      },
     ],
     editedIndex: -1,
     editedItem: { name: "" },
@@ -384,13 +403,13 @@ export default {
     booking: [],
     cityLedgerData: [],
     totalCredit: 0,
-    errors: []
+    errors: [],
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    }
+    },
   },
   created() {
     this.loading = true;
@@ -407,7 +426,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -417,8 +436,8 @@ export default {
       let payload = {
         params: {
           id: cityLedgerData.id,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
         if (data.status) {
@@ -449,8 +468,8 @@ export default {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
           from: this.from_date,
-          to: this.to_date
-        }
+          to: this.to_date,
+        },
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.city_ledgers.data;
@@ -472,7 +491,8 @@ export default {
         remaining_price: this.booking.remaining_price,
         full_payment: this.booking.full_payment,
         payment_mode_id: this.booking.payment_mode_id,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
+        reference: this.reference,
       };
       // return;
       this.$axios
@@ -487,7 +507,7 @@ export default {
             this.getDataFromApi();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     searchIt() {
@@ -498,8 +518,8 @@ export default {
       } else if (s > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${search}`);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

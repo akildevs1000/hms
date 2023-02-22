@@ -29,7 +29,7 @@
               ></v-progress-linear>
               <tr>
                 <th>Bill No</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   <v-text-field
                     dense
                     outlined
@@ -57,7 +57,7 @@
               </tr>
               <tr>
                 <th>Customer Name</th>
-                <td style="width:300px">
+                <td style="width: 300px">
                   {{ customer_name || "---" }}
                 </td>
               </tr>
@@ -68,7 +68,7 @@
                   {{ room_type || "---" }}
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Item
                   <span class="text-danger">*</span>
@@ -83,7 +83,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   QTY
                   <span class="text-danger">*</span>
@@ -98,7 +98,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Amount
                   <span class="text-danger">*</span>
@@ -113,7 +113,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Type
                   <span class="text-danger">*</span>
@@ -125,7 +125,7 @@
                       { id: -1, name: 'select..' },
                       { name: 'Food' },
                       { name: 'Mess' },
-                      { name: 'Bed' }
+                      { name: 'Bed' },
                     ]"
                     item-text="name"
                     item-value="id"
@@ -137,7 +137,7 @@
                   ></v-select>
                 </td>
               </tr>
-              <tr style="background-color:white">
+              <tr style="background-color: white">
                 <th>
                   Amount With Tax
                   <span class="text-danger">*</span>
@@ -228,7 +228,7 @@
         <tr v-for="(item, index) in data" :key="index">
           <td>{{ ++index }}</td>
           <td>{{ caps(item.bill_no) }}</td>
-          <td>{{ caps(item.booking && item.booking.id) }}</td>
+          <td>{{ caps(item.booking && item.booking.reservation_no) }}</td>
           <td>
             {{
               caps(
@@ -274,7 +274,7 @@ export default {
       current: 1,
       total: 0,
       per_page: 10,
-      room_no: ""
+      room_no: "",
     },
     options: {},
     endpoint: "posting",
@@ -302,7 +302,7 @@ export default {
       { text: "Tax" },
       { text: "SGST" },
       { text: "CGST" },
-      { text: "Date" }
+      { text: "Date" },
     ],
     editedIndex: -1,
     response: "",
@@ -320,8 +320,8 @@ export default {
       tax: 0,
       sgst: 0,
       cgst: 0,
-      tax_type: -1
-    }
+      tax_type: -1,
+    },
   }),
 
   created() {
@@ -336,7 +336,7 @@ export default {
       let user = this.$auth;
       return;
       return (
-        (user && user.permissions.some(e => e.permission == permission)) ||
+        (user && user.permissions.some((e) => e.permission == permission)) ||
         user.master
       );
     },
@@ -345,7 +345,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
     onPageChange() {
@@ -353,7 +353,7 @@ export default {
     },
 
     get_booked_room_details(id) {
-      let room = this.bookedRooms.find(e => e.id == id);
+      let room = this.bookedRooms.find((e) => e.id == id);
       this.posting.booked_room_id = room.id;
       this.posting.booking_id = room.booking_id;
       this.posting.room_id = room.room_id;
@@ -365,8 +365,8 @@ export default {
     booked_room_list() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_booked_rooms`, payload).then(({ data }) => {
         this.bookedRooms = data;
@@ -406,7 +406,7 @@ export default {
       let payload = {
         ...this.posting,
         company_id: this.$auth.user.company.id,
-        tax_type: per
+        tax_type: per,
       };
 
       this.$axios
@@ -421,7 +421,7 @@ export default {
             this.response = data.message;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     room_list() {
@@ -438,8 +438,8 @@ export default {
         params: {
           room_id: this.pagination.room_no,
           per_page: this.pagination.per_page,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -456,8 +456,8 @@ export default {
       } else if (e.length > 1) {
         this.getDataFromApi(`${this.endpoint}/search/${e}`);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

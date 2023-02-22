@@ -198,7 +198,7 @@
                       <v-col md="5" dense>
                         <v-text-field
                           label="Reservation Number"
-                          v-model="BookingData.id"
+                          v-model="BookingData.reservation_no"
                           :items="['Company', 'Regular', 'Corporate']"
                           dense
                           disabled
@@ -582,6 +582,7 @@
                       Reference No
                     </span>
                     <input
+                      v-model="reference_number"
                       type="text"
                       class="form-control"
                       aria-label="Sizing example input"
@@ -938,6 +939,7 @@ export default {
       // ---------booked data from parent-------------
       document: "",
       new_payment: 0,
+      reference_number: 0,
       imgView: 0,
       isImg: false,
       isPdf: false,
@@ -1129,7 +1131,6 @@ export default {
       if (this.checkIn.checkIn_document) {
         payload.append("document", this.checkIn.checkIn_document);
       }
-
       payload.append("title", this.customer.title);
       payload.append("first_name", this.customer.first_name);
       payload.append("last_name", this.customer.last_name);
@@ -1139,6 +1140,9 @@ export default {
       payload.append("address", this.customer.address);
       if (this.customer.dob) {
         payload.append("dob", this.customer.dob);
+      }
+      if (this.reference_number) {
+        payload.append("reference_number", this.reference_number);
       }
       payload.append("email", this.customer.email);
 

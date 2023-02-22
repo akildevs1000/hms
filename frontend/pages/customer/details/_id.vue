@@ -132,7 +132,7 @@
                   </tr>
                   <tr>
                     <td>Reservation No :</td>
-                    <td>{{ (booking && booking.id) || "---" }}</td>
+                    <td>{{ (booking && booking.reservation_no) || "---" }}</td>
                     <td>Number of Rooms :</td>
                     <td>{{ (bookedRooms && bookedRooms.length) || "---" }}</td>
                     <td>Booking Date :</td>
