@@ -1002,7 +1002,7 @@ class BookingController extends Controller
             $booking->advance_price = (int) $booking->advance_price + (int) $request->new_advance;
             $booking->save();
             $paymentsData = [
-                'booking_id'   => $booking->booking_id,
+                'booking_id'   => $booking->id,
                 'payment_mode' => $request->payment_mode_id,
                 'description'  => 'advance payment',
                 'amount'       => $request->new_advance,
