@@ -19,12 +19,6 @@
 
     <!-- dialogs -->
     <div>
-      <!-- check in dialog -->
-      <!-- max-width="80%"
-        sm-max-width="10%" -->
-      <!-- style="min-width: 80% !important;" -->
-      <!-- :width="1366" -->
-
       <v-dialog
         v-model="checkInDialog"
         persistent
@@ -38,13 +32,15 @@
             <v-icon dark class="pa-0" @click="close">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-card-text>
-            <check-in :BookingData="checkData"></check-in>
+            <check-in
+              :BookingData="checkData"
+              @close-dialog="closeDialogs"
+            ></check-in>
           </v-card-text>
           <v-container></v-container>
           <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
-
       <!-- end check in dialog -->
 
       <!-- posting dialog -->
@@ -53,207 +49,22 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="postingDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
+            <v-icon dark class="pa-0" @click="postingDialog = false">
+              mdi mdi-close-box
+            </v-icon>
           </v-toolbar>
           <v-card-text>
             <v-container>
-              <br />
-              <table>
-                <v-progress-linear
-                  v-if="false"
-                  :active="loading"
-                  :indeterminate="loading"
-                  absolute
-                  color="primary"
-                ></v-progress-linear>
-                <tr>
-                  <th>Bill No</th>
-                  <td style="width: 300px">
-                    <v-text-field
-                      dense
-                      outlined
-                      type="number"
-                      v-model="posting.bill_no"
-                      :hide-details="true"
-                    ></v-text-field>
-                  </td>
-                </tr>
-                <tr>
-                  <th>Customer Name</th>
-                  <td style="width: 300px">
-                    {{ checkData && checkData.title }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Room No</th>
-                  <td>
-                    {{ checkData.room_no }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Room Type</th>
-                  <td>
-                    {{ checkData.room_type }}
-                  </td>
-                </tr>
-                <tr style="background-color: white">
-                  <th>
-                    Item
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-text-field
-                      dense
-                      outlined
-                      type="text"
-                      v-model="posting.item"
-                      :hide-details="true"
-                    ></v-text-field>
-                  </td>
-                </tr>
-                <tr style="background-color: white">
-                  <th>
-                    QTY
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-text-field
-                      dense
-                      outlined
-                      type="number"
-                      v-model="posting.qty"
-                      :hide-details="true"
-                    ></v-text-field>
-                  </td>
-                </tr>
-                <tr style="background-color: white">
-                  <th>
-                    Amount
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-text-field
-                      dense
-                      outlined
-                      type="number"
-                      v-model="posting.single_amt"
-                      @keyup="get_multiple_amount(posting.single_amt)"
-                      :hide-details="true"
-                    ></v-text-field>
-                  </td>
-                </tr>
-                <tr style="background-color: white">
-                  <th>Total Amount</th>
-                  <td>
-                    <v-text-field
-                      dense
-                      outlined
-                      type="number"
-                      readonly
-                      v-model="posting.amount"
-                      :hide-details="true"
-                      @keyup="get_amount_with_tax(posting.tax_type)"
-                    ></v-text-field>
-                  </td>
-                </tr>
-                <tr style="background-color: white">
-                  <th>
-                    Type
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-select
-                      v-model="posting.tax_type"
-                      :items="[
-                        { id: -1, name: 'select..' },
-                        { name: 'Food' },
-                        { name: 'Others' },
-                        { name: 'Mesentery' },
-                        { name: 'ExtraBed' },
-                      ]"
-                      item-text="name"
-                      item-value="id"
-                      dense
-                      outlined
-                      :hide-details="true"
-                      :height="1"
-                      @change="get_amount_with_tax(posting.tax_type)"
-                    ></v-select>
-                  </td>
-                </tr>
-                <!-- <tr>
-                  <th>
-                    Payment Mode
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-select
-                      v-model="posting.payment_mode_id"
-                      :items="[
-                        { id: 1, name: 'Cash' },
-                        { id: 2, name: 'Card' },
-                        { id: 3, name: 'Online' },
-                        { id: 4, name: 'Bank' },
-                        { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
-                      ]"
-                      item-text="name"
-                      item-value="id"
-                      dense
-                      outlined
-                      :hide-details="true"
-                      :height="1"
-                    ></v-select>
-                  </td>
-                </tr> -->
-                <tr style="background-color: white">
-                  <th>
-                    Amount With Tax
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    {{ posting.amount_with_tax }}
-                  </td>
-                </tr>
-                <tr></tr>
-              </table>
+              <Posting
+                :BookingData="checkData"
+                :evenIid="evenIid"
+                @close-dialog="closeDialogs"
+              >
+              </Posting>
             </v-container>
           </v-card-text>
-
-          <v-card-actions>
-            <v-btn class="primary" small @click="store_posting" :loading="false"
-              >Post</v-btn
-            >
-            <v-btn class="error" small @click="closePosting"> Cancel </v-btn>
-          </v-card-actions>
         </v-card>
       </v-dialog>
-
-      <!-- <v-dialog v-model="postingDialog" persistent max-width="700px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="postingDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
-          </v-toolbar>
-          <posting />
-          <v-card-actions>
-            <v-btn
-              class="primary"
-              small
-              @click="store_posting"
-              :loading="false"
-            >
-              Post
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog> -->
-
       <!-- end posting dialog -->
 
       <!--  viewPosting dialog -->
@@ -306,111 +117,17 @@
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="payingAdvance = false"
+              >mdi mdi-close-box</v-icon
+            >
           </v-toolbar>
           <v-card-text>
-            <v-container>
-              <table>
-                <v-progress-linear
-                  v-if="false"
-                  :active="loading"
-                  :indeterminate="loading"
-                  absolute
-                  color="primary"
-                ></v-progress-linear>
-                <tr>
-                  <th>Customer Name</th>
-                  <td style="width: 300px">
-                    {{ checkData && checkData.title }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Room No</th>
-                  <td>
-                    {{ checkData.room_no }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Room Type</th>
-                  <td>
-                    {{ checkData.room_type }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Check In</th>
-                  <td>
-                    {{ checkData && checkData.check_in }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Check Out</th>
-                  <td>
-                    {{ checkData && checkData.check_out }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    Payment Mode
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-select
-                      v-model="checkData.payment_mode_id"
-                      :items="[
-                        { id: 1, name: 'Cash' },
-                        { id: 2, name: 'Card' },
-                        { id: 3, name: 'Online' },
-                        { id: 4, name: 'Bank' },
-                        { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' },
-                      ]"
-                      item-text="name"
-                      item-value="id"
-                      dense
-                      outlined
-                      :hide-details="true"
-                      :height="1"
-                    ></v-select>
-                  </td>
-                </tr>
-                <tr>
-                  <th>Total Amount</th>
-                  <td>{{ checkData && checkData.total_price }}</td>
-                </tr>
-                <tr>
-                  <th>Remaining Balance</th>
-                  <td>{{ checkData.grand_remaining_price }}</td>
-                </tr>
-
-                <tr style="background-color: white">
-                  <th>
-                    New Advance
-                    <span class="text-danger">*</span>
-                  </th>
-                  <td>
-                    <v-text-field
-                      dense
-                      outlined
-                      type="number"
-                      v-model="new_advance"
-                      :hide-details="true"
-                    ></v-text-field>
-                  </td>
-                </tr>
-                <tr></tr>
-              </table>
-            </v-container>
+            <PayAdvance
+              :BookingData="checkData"
+              @close-dialog="closeDialogs"
+            ></PayAdvance>
           </v-card-text>
-
-          <v-card-actions>
-            <v-btn
-              class="primary"
-              small
-              @click="store_advance(checkData)"
-              :loading="false"
-              >Pay</v-btn
-            >
-            <v-btn class="error" small @click="close"> Cancel </v-btn>
-          </v-card-actions>
         </v-card>
       </v-dialog>
       <!-- end pay advance  -->
@@ -421,210 +138,16 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="checkOutDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
+            <v-icon dark class="pa-0" @click="checkOutDialog = false">
+              mdi mdi-close-box
+            </v-icon>
           </v-toolbar>
           <v-card-text>
-            <check-out :BookingData="checkData" />
+            <check-out :BookingData="checkData" @close-dialog="closeDialogs" />
           </v-card-text>
-          <v-card-actions>
-            <!-- <v-btn class="primary" small @click="store_check_out">
-              Check Out
-            </v-btn> -->
-            <!-- <v-btn class="error" small @click="checkOutDialog = false">
-              Cancel
-            </v-btn> -->
-          </v-card-actions>
+          <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
-
-      <!-- <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-          </v-toolbar>
-          <v-card-text>
-            <v-row>
-              <v-col md="7">
-                <v-container>
-                  <table>
-                    <v-progress-linear
-                      v-if="false"
-                      :active="loading"
-                      :indeterminate="loading"
-                      absolute
-                      color="primary"
-                    ></v-progress-linear>
-                    <tr>
-                      <th>Customer Name</th>
-                      <td style="width: 300px">
-                        {{ checkData && checkData.title }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Room No</th>
-                      <td>
-                        {{ checkData.room_no }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Room Type</th>
-                      <td>
-                        {{ checkData.room_type }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Check In</th>
-                      <td>
-                        {{ checkData && checkData.check_in_date }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Check Out</th>
-                      <td>
-                        {{ checkData && checkData.check_out_date }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>
-                        Payment Mode
-                        <span class="text-danger">*</span>
-                      </th>
-                      <td>
-                        <v-select
-                          v-model="checkData.payment_mode_id"
-                          :items="[
-                            { id: 1, name: 'Cash' },
-                            { id: 2, name: 'Card' },
-                            { id: 3, name: 'Online' },
-                            { id: 4, name: 'Bank' },
-                            { id: 5, name: 'UPI' },
-                            { id: 6, name: 'Cheque' },
-                            { id: 7, name: 'City Ledger' },
-                          ]"
-                          item-text="name"
-                          item-value="id"
-                          dense
-                          outlined
-                          :hide-details="true"
-                          :height="1"
-                        ></v-select>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Total Amount</th>
-                      <td>{{ checkData && checkData.total_price }}</td>
-                    </tr>
-                    <tr>
-                      <th>Total Posting Amount</th>
-                      <td>{{ checkData && checkData.total_posting_amount }}</td>
-                    </tr>
-                    <tr>
-                      <th>Remaining Balance</th>
-                      <td>{{ checkData.remaining_price }}</td>
-                    </tr>
-                    <tr>
-                      <th>Remaining Balance With Posting</th>
-                      <td>{{ checkData.grand_remaining_price }}</td>
-                    </tr>
-                    <tr>
-                      <th>Print Invoice</th>
-                      <td>
-                        <v-checkbox
-                          v-model="isPrintInvoice"
-                          :hide-details="true"
-                          class="pt-0 py-1 chk-align"
-                        >
-                        </v-checkbox>
-                      </td>
-                    </tr>
-                    <tr
-                      style="background-color: white"
-                      v-if="checkData.paid_by != 2"
-                    >
-                      <th>
-                        Full Payment
-                        <span class="text-danger">*</span>
-                      </th>
-                      <td>
-                        <v-text-field
-                          dense
-                          outlined
-                          type="number"
-                          v-model="full_payment"
-                          :hide-details="true"
-                        ></v-text-field>
-                      </td>
-                    </tr>
-                    <tr></tr>
-                  </table>
-                </v-container>
-              </v-col>
-              <v-col md="5" class="mt-3">
-                <table>
-                  <tr
-                    style="
-                      font-size: 13px;
-                      background-color: white;
-                      color: black;
-                    "
-                  >
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Debit</th>
-                    <th>Credit</th>
-                    <th>Balance</th>
-                  </tr>
-
-                  <tr
-                    v-for="(item, index) in transactions"
-                    :key="index"
-                    style="
-                      font-size: 13px;
-                      background-color: white;
-                      color: black;
-                    "
-                  >
-                    <td>
-                      <b>{{ ++index }}</b>
-                    </td>
-                    <td>{{ item.created_at || "---" }}</td>
-                    <td class="text-right">
-                      {{ item && item.debit == 0 ? "---" : item.debit }}
-                    </td>
-                    <td class="text-right">
-                      {{ item && item.credit == 0 ? "---" : item.credit }}
-                    </td>
-                    <td class="text-right">{{ item.balance || "---" }}</td>
-                  </tr>
-                  <tr
-                    style="
-                      font-size: 13px;
-                      background-color: white;
-                      color: black;
-                    "
-                  >
-                    <th colspan="4" class="text-right">Balance</th>
-                    <td class="text-right" style="background-color: white">
-                      {{ totalTransactionAmount }}
-                    </td>
-                  </tr>
-                </table>
-              </v-col>
-            </v-row>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn class="primary" small @click="store_check_out"
-              >Check Out</v-btn
-            >
-            <v-btn class="error" small @click="checkOutDialog = false">
-              Cancel
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog> -->
-
       <!-- end check out  -->
 
       <!-- cancel room  -->
@@ -652,66 +175,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
       <!-- end cancel room -->
 
       <!-- New Booking room  -->
-
-      <!-- <v-dialog v-model="NewBooking" persistent>
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span> New Reservation</span>
-          </v-toolbar>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="NewBooking = false"
-            >mdi mdi-close-box</v-icon
-          >
-          <v-container>
-            <v-col cols="12" sm="12" md="12">
-              <label class="col-form-label">Check Out Date </label>
-              <v-menu
-                v-model="check_out_menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="check_out"
-                    readonly
-                    v-on="on"
-                    v-bind="attrs"
-                    :hide-details="true"
-                    dense
-                    outlined
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="check_out"
-                  @input="check_out_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-
-          </v-container>
-          <v-card-actions>
-            <v-btn
-              class="primary"
-              small
-              :loading="false"
-              @click="SubmitNewBooking"
-            >
-              Book
-            </v-btn>
-            <v-btn class="error" small @click="NewBooking = false">
-              Cancel
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog> -->
-
       <v-dialog v-model="NewBooking" persistent width="90%">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -722,47 +188,9 @@
             </v-icon>
           </v-toolbar>
           <v-card-text>
-            <!-- {{ newBookingRoom }} -->
-            <!-- <check-out :BookingData="checkData" /> -->
-
             <new-check-in :reservation="newBookingRoom" />
-
-            <!-- <v-col cols="12" sm="12" md="12">
-              <label class="col-form-label">Check Out Date </label>
-              <v-menu
-                v-model="check_out_menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="check_out"
-                    readonly
-                    v-on="on"
-                    v-bind="attrs"
-                    :hide-details="true"
-                    dense
-                    outlined
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="check_out"
-                  @input="check_out_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col> -->
           </v-card-text>
-          <v-card-actions>
-            <!-- <v-btn class="primary" small @click="store_check_out">
-              Check Out
-            </v-btn> -->
-            <!-- <v-btn class="error" small @click="checkOutDialog = false">
-              Cancel
-            </v-btn> -->
-          </v-card-actions>
+          <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
@@ -1012,7 +440,7 @@
                 <div class="card card-hover">
                   <div
                     class="box text-center"
-                    style="background-color: #f95c39"
+                    style="background-color: #800000"
                   >
                     <h1 class="font-light text-white">
                       <svg
@@ -1037,7 +465,10 @@
               </div>
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
                 <div class="card card-hover">
-                  <div class="box checkedOut text-center">
+                  <div
+                    class="box text-center"
+                    style="background-color: #74166d"
+                  >
                     <h1 class="font-light text-white">
                       <svg
                         viewBox="0 0 576 512"
@@ -1134,7 +565,8 @@
                               noAvailableRoom.booked_room.background) ||
                             ''
                           }`"
-                          ><div class="text-center">
+                        >
+                          <div class="text-center">
                             {{ caps(noAvailableRoom.room_type.name) }}
                           </div>
                           <div class="text-center">
@@ -1160,7 +592,8 @@
                           class="ma-0 px-md-1 py-md-2"
                           style="background-color: #32a15c"
                           dark
-                          ><div class="text-center">
+                        >
+                          <div class="text-center">
                             {{ caps(room.room_type.name) }}
                           </div>
                           <div class="text-center">
@@ -1186,12 +619,21 @@
   </div>
 </template>
 <script>
+import Posting from "../components/booking/Posting";
+import PayAdvance from "../components/booking/PayAdvance";
 import CheckIn from "../components/booking/CheckIn.vue";
 import CheckOut from "../components/booking/CheckOut.vue";
 import NewCheckIn from "../components/booking/NewCheckIn.vue";
 import ReservationList from "../components/reservation/ReservationList.vue";
 export default {
-  components: { ReservationList, CheckIn, CheckOut, NewCheckIn },
+  components: {
+    Posting,
+    PayAdvance,
+    ReservationList,
+    CheckIn,
+    CheckOut,
+    NewCheckIn,
+  },
   data() {
     return {
       chart: {
@@ -1270,6 +712,8 @@ export default {
       totalTransactionAmount: 0,
       new_payment: 0,
       new_advance: 0,
+      AdvancePayLoading: false,
+      reference: 0,
       full_payment: 0,
       isPrintInvoice: false,
       items: [],
@@ -1278,17 +722,7 @@ export default {
       customerId: "",
       bookingId: "",
       document: null,
-      posting: {
-        item: "",
-        qty: "",
-        amount: 0,
-        bill_no: "",
-        amount_with_tax: 0,
-        tax: 0,
-        sgst: 0,
-        cgst: 0,
-        tax_type: -1,
-      },
+
       isDbCLick: false,
       members: {
         adult: 0,
@@ -1355,7 +789,6 @@ export default {
   computed: {},
   mounted() {
     const screenResolution = window.innerWidth + " x " + window.innerHeight;
-    console.log(screenResolution);
   },
   methods: {
     renderChartData() {
@@ -1365,7 +798,6 @@ export default {
         this.notAvailableRooms.length,
         this.availableRooms.length,
       ];
-      // console.log(arr);
       return arr;
     },
 
@@ -1376,10 +808,6 @@ export default {
         let res = str.toString();
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
-    },
-
-    get_multiple_amount(val) {
-      this.posting.amount = val * this.posting.qty;
     },
 
     get_check_out() {
@@ -1409,7 +837,6 @@ export default {
 
     mouseOverForAvailable(newBookingRoom) {
       this.newBookingRoom = newBookingRoom;
-      // console.log(this.newBookingRoom);
     },
 
     get_data(jsEvent = null) {
@@ -1451,82 +878,6 @@ export default {
       });
     },
 
-    SubmitNewBooking() {
-      let room = this.newBookingRoom;
-      let bookingDetails = {};
-
-      //       {
-      //     "id": 51,
-      //     "room_type_id": 7,
-      //     "room_no": "103",
-      //     "status": "0",
-      //     "deleteStatus": 0,
-      //     "company_id": 2,
-      //     "created_at": null,
-      //     "background": "#8e4cf1",
-      //     "price": "3800.00",
-      //     "room_type": {
-      //         "id": 7,
-      //         "name": "castle",
-      //         "price": "3800.00"
-      //     }
-      // }
-
-      // this.reservation = room;
-      bookingDetails.room_id = room.id;
-      bookingDetails.room_no = room.room_no;
-      bookingDetails.room_type = room.room_type.name;
-      bookingDetails.price = room.price;
-      bookingDetails.check_in = "2023-01-20";
-
-      // bookingDetails.check_out = this.reservation.check_out;
-      // bookingDetails.room_tax = this.get_room_tax(this.reservation.price);
-      // bookingDetails.check_in = this.reservation.check_in;
-      // bookingDetails.check_out = this.reservation.check_out;
-
-      this.$store.commit("reservation", commitObj);
-      this.$router.push(`/hotel/new`);
-      return;
-
-      this.reservation.room_id = obj.room_type;
-      this.reservation.room_type = obj.room_type;
-      this.reservation.room_no = obj.room_no;
-      this.reservation.check_in = e.startStr;
-      this.reservation.check_out = this.convert_checkout_date_format(
-        new Date(e.endStr)
-      ); //this.convert_date_format(e.end);
-
-      //   this.reservation = this.$store.state.reservation;
-      //   this.temp.room_id = this.reservation.room_id;
-      //   this.temp.room_no = this.reservation.room_no;
-      //   this.temp.room_type = this.reservation.room_type;
-      //   this.temp.price = this.reservation.price;
-      //   this.temp.check_in = this.reservation.check_in;
-      //   this.temp.check_out = this.reservation.check_out;
-      //   this.temp.room_tax = this.get_room_tax(this.reservation.price);
-      //   this.room.check_in = this.reservation.check_in;
-      //   this.room.check_out = this.reservation.check_out;
-
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: obj.room_type,
-          room_no: obj.room_no,
-        },
-      };
-      return;
-      this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
-        this.reservation.room_id = data.id;
-        this.reservation.price = data.room_type.price;
-
-        let commitObj = {
-          ...this.reservation,
-        };
-        this.$store.commit("reservation", commitObj);
-        this.$router.push(`/hotel/new`);
-      });
-    },
-
     get_remaining(val) {
       let total = this.checkData.remaining_price;
       let advance_price = val;
@@ -1544,28 +895,6 @@ export default {
       });
     },
 
-    get_amount_with_tax(clause) {
-      // let per = clause == "Food" ? 5 : 12;
-      let per = 0;
-      if (clause == "Food") {
-        per = 5;
-      } else if (clause == "Mesentery" || clause == "ExtraBed") {
-        per = 12;
-      }
-      let res = this.getPercentage(this.posting.amount || 0, per);
-      let gst = parseFloat(res) / 2;
-      this.posting.sgst = gst;
-      this.posting.cgst = gst;
-      this.posting.tax = res;
-      let a = parseFloat(res) + parseFloat(this.posting.amount || 0);
-      this.posting.amount_with_tax = a.toFixed(2);
-    },
-
-    getPercentage(amount, clause) {
-      let res = (amount / 100) * clause;
-      return res;
-    },
-
     room_list() {
       let payload = {
         params: {
@@ -1575,7 +904,6 @@ export default {
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         this.rooms = data;
-        // this.onlyBreakfast = data.fooForCustomers.onlyBreakfast;
         this.onlyBreakfast = {
           ...data.fooForCustomers.breakfast,
         };
@@ -1596,7 +924,6 @@ export default {
         this.checkOut = data.checkOut;
 
         this.renderChartData();
-        console.log("from parent");
         this.members = {
           ...data.members,
         };
@@ -1663,84 +990,6 @@ export default {
           } else {
             this.succuss(data, true, false);
             data.document ? "" : this.store_document(bookingId);
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    store_posting() {
-      console.log(this.posting);
-      if (
-        this.posting.amount_with_tax == 0 ||
-        this.posting.item == "" ||
-        this.posting.bill_no == "" ||
-        this.posting.tax_type == -1
-      ) {
-        alert("Please enter required fields");
-        return;
-      }
-      this.loading = true;
-      let per = this.posting.tax_type == "Food" ? 5 : 12;
-      let payload = {
-        ...this.posting,
-        booked_room_id: this.evenIid,
-        company_id: this.$auth.user.company.id,
-        booking_id: this.checkData.id,
-        room_id: this.checkData.room_id,
-        room: this.checkData.room_no,
-        tax_type: per,
-      };
-
-      this.$axios
-        .post("/posting", payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.errors = data.errors;
-          } else {
-            this.reset_posting();
-            this.postingDialog = false;
-            this.snackbar = data.status;
-            this.response = data.message;
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    reset_posting() {
-      this.posting = {
-        item: "",
-        qty: "",
-        amount: 0,
-        single_amt: 0,
-        bill_no: "",
-        amount_with_tax: 0,
-        tax: 0,
-        sgst: 0,
-        cgst: 0,
-        tax_type: -1,
-      };
-    },
-
-    store_advance(data) {
-      if (this.new_advance == "") {
-        alert("Enter advance amount");
-        return;
-      }
-      // this.loading = true;
-      let payload = {
-        new_advance: this.new_advance,
-        booking_id: data.id,
-        remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id,
-        company_id: this.$auth.user.company.id,
-      };
-      this.$axios
-        .post("/paying_advance", payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.errors = data.errors;
-          } else {
-            this.succuss(data, false, false, false, true);
           }
         })
         .catch((e) => console.log(e));
@@ -1813,10 +1062,6 @@ export default {
     },
 
     store_check_out() {
-      // if (this.full_payment == "") {
-      //   alert("enter correct payment");
-      //   return true;
-      // }
       this.loading = true;
       let payload = {
         booking_id: this.checkData.id,
@@ -1861,10 +1106,10 @@ export default {
 
     succuss(
       data,
-      check_in = false,
-      posting = false,
-      check_out = false,
-      advance_payment = false
+      check_in = true,
+      posting = true,
+      check_out = true,
+      advance_payment = true
     ) {
       if (check_in) {
         this.checkData = {};
@@ -1882,6 +1127,7 @@ export default {
 
       if (advance_payment) {
         this.checkData = {};
+        this.new_advance = 0;
         this.payingAdvance = false;
       }
 
@@ -1898,108 +1144,15 @@ export default {
       this.new_advance = 0;
       this.payingAdvance = false;
       this.checkOutDialog = false;
-      this.checkOutDialog = false;
       this.document = null;
     },
 
-    closePosting() {
-      this.postingDialog = false;
-      this.posting = {
-        item: "",
-        qty: "",
-        amount: 0,
-        bill_no: "",
-        amount_with_tax: 0,
-        tax: 0,
-        sgst: 0,
-        cgst: 0,
-        tax_type: -1,
-      };
+    closeDialogs(res) {
+      this.succuss(res);
     },
   },
 };
 </script>
 <style src="@/assets/custom/check.css"></style>
+<style scoped src="@/assets/custom/dash.css"></style>
 <!-- <style scoped src="@/assets/dashtem.css"></style> -->
-<style scoped>
-.chart {
-  display: flex;
-  align-items: flex-end;
-}
-
-.bar {
-  width: 20px;
-  margin-right: 10px;
-  background-color: blue;
-  transition: height 0.5s;
-}
-
-.app {
-  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-  font-size: 14px;
-}
-
-.portrait.v-card {
-  margin: 0 auto;
-  max-width: 600px;
-  width: 100%;
-}
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid #e9e9e9;
-}
-td,
-th {
-  text-align: left;
-  padding: 8px;
-  border: 1px solid #e9e9e9;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
-.fc-license-message {
-  display: none !important;
-}
-.bg-background {
-  background-color: #34444c !important;
-}
-
-.bg-background th,
-td {
-  border-top: none !important;
-  border-right: none !important;
-  border-left: none !important;
-}
-
-.element {
-  height: 60px;
-  width: 100%;
-  margin: 0 auto;
-  background-color: lime;
-  animation-name: stretch;
-  animation-duration: 1s;
-  animation-timing-function: ease-out;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-  animation-play-state: running;
-}
-
-@keyframes stretch {
-  0% {
-    transform: scale(0.8);
-    background-color: orange;
-  }
-
-  50% {
-    background-color: orange;
-  }
-
-  100% {
-    transform: scale(1);
-    background-color: orange;
-  }
-}
-</style>

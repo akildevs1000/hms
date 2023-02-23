@@ -173,9 +173,7 @@
               absolute
               color="primary"
             ></v-progress-linear>
-            <!-- {{
-              incomeData
-            }} -->
+
             <tr v-for="(item, index) in incomeData" :key="index">
               <td>{{ ++index }}</td>
               <td>{{ item.created_at }}</td>

@@ -22,7 +22,7 @@ class InvoiceController extends Controller
             return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
         });
 
-        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter","numberOfCustomers"))
+        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers"))
             // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
@@ -38,10 +38,20 @@ class InvoiceController extends Controller
             ->stream();
     }
 
-    function amountToText($amount)
+    public function amountToText($amount)
     {
         $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
         $text = ucwords($formatter->format($amount));
         return $text;
+    }
+
+
+    public function grc($id)
+    {
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        return Pdf::loadView('grc.index', compact('booking', 'trans'))
+            ->setPaper('a4', 'portrait')
+            ->stream();
     }
 }

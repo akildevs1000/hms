@@ -298,6 +298,7 @@ class RoomController extends Controller
         $roomIds = $model
             ->whereDate('check_in', '<=', $request->check_in)
             ->whereHas('booking', function ($q) use ($company_id, $request) {
+                $q->where('booking_status', '!=', -1);
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '<=', 4);
                 $q->where('company_id', $company_id);

@@ -55,4 +55,24 @@ class TransactionController extends Controller
             'balance' => $transactionModel->sum('debit') - $transactionModel->sum('credit'),
         ];
     }
+
+
+    public function updateBookingByTransactions($bookingId, $amt = 0)
+    {
+        $transactionModel = Transaction::whereBookingId($bookingId);
+        $sumDebit = $transactionModel->sum('debit');
+        $sumCredit = $transactionModel->sum('credit');
+        $balance = $sumDebit - $sumCredit;
+
+        $model =  booking::find($bookingId);
+
+        $model->update([
+            'total_price' => $model->total_price + $amt,
+            'grand_remaining_price' => $balance,
+            'balance'               => $balance,
+            'remaining_price'       => $balance,
+            'paid_amounts'          => $sumDebit,
+
+        ]);
+    }
 }
