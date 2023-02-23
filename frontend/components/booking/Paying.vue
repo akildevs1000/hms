@@ -20,13 +20,7 @@
             <tr>
               <th>Room No</th>
               <td>
-                {{ BookingData.room_no }}
-              </td>
-            </tr>
-            <tr>
-              <th>Room Type</th>
-              <td>
-                {{ BookingData.room_type }}
+                {{ BookingData.rooms }}
               </td>
             </tr>
             <tr>
@@ -86,42 +80,21 @@
               <th>Total Amount</th>
               <td>{{ BookingData && BookingData.total_price }}</td>
             </tr>
-            <tr>
+            <!-- <tr>
               <th>Total Posting Amount</th>
-              <td>
-                {{ BookingData && BookingData.total_posting_amount }}
-              </td>
-            </tr>
+              <td>{{ BookingData && BookingData.total_posting_amount }}</td>
+            </tr> -->
             <tr>
               <th>Remaining Balance</th>
               <td>{{ BookingData.remaining_price }}</td>
             </tr>
-            <tr>
+            <!-- <tr>
               <th>Remaining Balance With Posting</th>
               <td>{{ BookingData.grand_remaining_price }}</td>
-            </tr>
-            <tr style="background-color: white" v-if="BookingData.paid_by != 2">
-              <th>Discount</th>
-              <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="number"
-                  v-model="discount"
-                  :hide-details="true"
-                  @keyup="get_after_discount_balance(discount)"
-                ></v-text-field>
-              </td>
-            </tr>
-            <tr style="background-color: white" v-if="BookingData.paid_by != 2">
-              <th>After Discount Balance</th>
-              <td>
-                {{ after_discount_balance }}
-              </td>
-            </tr>
-            <tr style="background-color: white" v-if="BookingData.paid_by != 2">
+            </tr> -->
+            <tr style="background-color: white">
               <th>
-                Full Payment
+                Payment
                 <span class="text-danger">*</span>
               </th>
               <td>
@@ -129,33 +102,13 @@
                   dense
                   outlined
                   type="number"
-                  v-model="full_payment"
+                  v-model="new_payment"
                   :hide-details="true"
                 ></v-text-field>
               </td>
             </tr>
-            <tr>
-              <th>Print Invoice</th>
-              <td>
-                <v-checkbox
-                  v-model="isPrintInvoice"
-                  :hide-details="true"
-                  class="pt-0 py-1 chk-align"
-                >
-                </v-checkbox>
-              </td>
-            </tr>
+            <tr></tr>
           </table>
-          <v-btn
-            class="primary mt-3"
-            height="40"
-            width="25%"
-            small
-            :loading="loading"
-            @click="store_check_out"
-          >
-            Check Out
-          </v-btn>
         </v-container>
       </v-col>
       <v-col md="5" class="mt-3">
@@ -194,6 +147,14 @@
         </table>
       </v-col>
     </v-row>
+    <v-btn
+      class="primary mt-3"
+      small
+      @click="store_advance(BookingData)"
+      :loading="loading"
+    >
+      Pay
+    </v-btn>
   </div>
 </template>
 <script>
@@ -203,45 +164,22 @@ export default {
     return {
       isDiscount: false,
       snackbar: false,
-      checkLoader: false,
       response: "",
       preloader: false,
       loading: false,
-      show_password: false,
-      show_password_confirm: false,
-      transactions: [],
-      totalTransactionAmount: 0,
-      full_payment: 0,
-      isPrintInvoice: false,
-      discount: 0,
+      new_payment: 0,
       reference: "",
-      customer: {
-        title: "",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-        exp_menu: false,
-        exp: null,
-      },
-      after_discount_balance: 0,
+      totalTransactionAmount: 0,
+      transactions: [],
       errors: [],
-
       checkOutDialog: false,
     };
+  },
+
+  watch: {
+    BookingData() {
+      this.get_transaction();
+    },
   },
 
   created() {
@@ -249,25 +187,14 @@ export default {
   },
 
   mounted() {
-    this.checkOutDialog = true;
-    this.after_discount_balance = this.BookingData.grand_remaining_price;
     this.get_transaction();
   },
 
   computed: {},
-  methods: {
-    get_after_discount_balance(amt = 0) {
-      let discount = amt || 0;
-      console.log(discount);
-      let blc =
-        parseFloat(this.BookingData.grand_remaining_price) -
-        parseFloat(discount);
-      this.after_discount_balance = blc.toFixed(2) || 0;
-    },
 
+  methods: {
     get_transaction() {
       let id = this.BookingData.id;
-      console.log(id);
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -281,32 +208,31 @@ export default {
         });
     },
 
-    store_check_out() {
+    store_advance(data) {
+      if (this.new_payment == "") {
+        alert("Enter payment amount");
+        return;
+      }
       this.loading = true;
       let payload = {
-        booking_id: this.BookingData.id,
-        grand_remaining_price: this.BookingData.grand_remaining_price,
-        remaining_price: this.BookingData.remaining_price,
-        full_payment: this.full_payment,
-        payment_mode_id: this.BookingData.payment_mode_id,
-        company_id: this.$auth.user.company.id,
-        isPrintInvoice: this.isPrintInvoice,
+        new_advance: this.new_payment,
         reference_number: this.reference,
-        discount: this.discount,
+        booking_id: data.id,
+        remaining_price: data.remaining_price,
+        payment_mode_id: data.payment_mode_id,
+        company_id: this.$auth.user.company.id,
       };
-
       this.$axios
-        .post("/check_out_room", payload)
+        .post("/paying_advance", payload)
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
             this.loading = false;
           } else {
+            this.new_payment = 0;
+            this.get_transaction();
             this.closeDialog(data);
-            this.alert("Success", "Successfully Checkout", "success");
-            if (this.isPrintInvoice) {
-              this.redirect_to_invoice(data.bookingId);
-            }
+            this.loading = false;
           }
         })
         .catch((e) => console.log(e));
@@ -314,14 +240,6 @@ export default {
 
     closeDialog(data) {
       this.$emit("close-dialog", data);
-    },
-
-    redirect_to_invoice(id) {
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}invoice/${id}`);
-      document.body.appendChild(element);
-      element.click();
     },
 
     can(per) {

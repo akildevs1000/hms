@@ -151,8 +151,11 @@ class ExpenseController extends Controller
                 'OverallTotal' => $income->clone()->sum('amount'),
             ],
 
-            'profit' =>  $profit > 0 ? $profit . '.00' : 0 . '.00',
+            'profit' =>  $profit > 0 ? $profit  : 0 . '.00',
             'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
+
+            // 'profit' =>  $profit > 0 ? $profit . '.00' : 0 . '.00',
+            // 'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
         ];
     }
 

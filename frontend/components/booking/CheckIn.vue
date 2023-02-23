@@ -1110,6 +1110,7 @@ export default {
     },
 
     store_check_in(data) {
+      let bookingId = data.id;
       this.loading = true;
       if (data.document ? "" : this.checkIn.checkIn_document == null) {
         alert("Enter required fields");
@@ -1152,15 +1153,28 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
           } else {
+            this.closeDialog(data);
             this.alert("Success!", "success check in", "success");
+            this.redirect_to_invoice(bookingId);
             if ($nuxt.$route.name == "hotel-calendar1") {
               this.$router.push(`/`);
-            } else {
-              location.reload();
             }
           }
         })
         .catch((e) => console.log(e));
+    },
+
+    redirect_to_invoice(id) {
+      console.log(id);
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${process.env.BACKEND_URL}grc/${id}`);
+      document.body.appendChild(element);
+      element.click();
+    },
+
+    closeDialog(data) {
+      this.$emit("close-dialog", data);
     },
 
     get_customer() {

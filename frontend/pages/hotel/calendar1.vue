@@ -6,22 +6,19 @@
       </v-snackbar>
     </div>
 
-    <v-dialog v-model="createReservationDialog" max-width="1200px">
-      <Reservation :reservation="reservation" />
-    </v-dialog>
-
     <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="checkOutDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="checkOutDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
-          <check-out :BookingData="checkData" />
+          <check-out :BookingData="checkData" @close-dialog="closeDialogs" />
         </v-card-text>
-        <v-card-actions>
-        </v-card-actions>
+        <v-card-actions> </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -31,7 +28,13 @@
           Are you sure you want to cancel this
         </v-card-title>
         <v-container grid-list-xs>
-          <v-textarea placeholder="Reason" rows="3" dense outlined v-model="reason"></v-textarea>
+          <v-textarea
+            placeholder="Reason"
+            rows="3"
+            dense
+            outlined
+            v-model="reason"
+          ></v-textarea>
         </v-container>
         <v-card-actions>
           <v-btn class="primary" small :loading="loading" @click="cancelItem">
@@ -55,7 +58,11 @@
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <Posting :BookingData="checkData" :evenIid="evenIid"></Posting>
+            <Posting
+              :BookingData="checkData"
+              :evenIid="evenIid"
+              @close-dialog="closeDialogs"
+            ></Posting>
           </v-container>
         </v-card-text>
       </v-card>
@@ -74,8 +81,13 @@
                   <span v-html="item.text"></span>
                 </th>
               </tr>
-              <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                color="primary"></v-progress-linear>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
               <tr v-for="(item, index) in postings" :key="index">
                 <td>{{ ++index }}</td>
                 <td>{{ caps(item.bill_no) }}</td>
@@ -98,7 +110,12 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="checkInDialog" persistent :width="1366" class="checkin-models">
+    <v-dialog
+      v-model="checkInDialog"
+      persistent
+      :width="1366"
+      class="checkin-models"
+    >
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
@@ -107,7 +124,7 @@
         </v-toolbar>
         <v-card-text>
           <!-- <check-in :BookingData="checkData"></check-in> -->
-          <check-in :BookingData="checkData" />
+          <check-in :BookingData="checkData" @close-dialog="closeDialogs" />
         </v-card-text>
         <v-container></v-container>
         <v-card-actions> </v-card-actions>
@@ -119,18 +136,31 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingAdvance = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="payingAdvance = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <PayAdvance :BookingData="checkData"></PayAdvance>
+            <PayAdvance
+              :BookingData="checkData"
+              @close-dialog="closeDialogs"
+            ></PayAdvance>
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <div>
-      <v-tooltip bottom color="background" :position-x="tx" :position-y="ty" absolute offset-y v-model="showTooltip">
+      <v-tooltip
+        bottom
+        color="background"
+        :position-x="tx"
+        :position-y="ty"
+        absolute
+        offset-y
+        v-model="showTooltip"
+      >
         <table style="border: none !important">
           <tr class="bg-background">
             <th>Customer Name</th>
@@ -178,14 +208,28 @@
         </table>
       </v-tooltip>
       <v-row class="flex" justify="center"> </v-row>
-      <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+      <v-menu
+        v-model="showMenu"
+        :position-x="x"
+        :position-y="y"
+        absolute
+        offset-y
+      >
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item v-if="bookingStatus == 1" link @click="checkInDialog = true">
+            <v-list-item
+              v-if="bookingStatus == 1"
+              link
+              @click="checkInDialog = true"
+            >
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
 
-            <v-list-item v-else-if="bookingStatus == 2" link @click="get_check_out">
+            <v-list-item
+              v-else-if="bookingStatus == 2"
+              link
+              @click="get_check_out"
+            >
               <v-list-item-title>Check Out</v-list-item-title>
             </v-list-item>
 
@@ -218,11 +262,19 @@
               </v-list-item>
             </div>
 
-            <v-list-item link @click="payingAdvance = true" v-if="bookingStatus <= 2 && checkData.paid_by != 2">
+            <v-list-item
+              link
+              @click="payingAdvance = true"
+              v-if="bookingStatus <= 2 && checkData.paid_by != 2"
+            >
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
 
-            <v-list-item link @click="cancelDialog = true" v-if="bookingStatus == 1">
+            <v-list-item
+              link
+              @click="cancelDialog = true"
+              v-if="bookingStatus == 1"
+            >
               <v-list-item-title>Cancel Room </v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -234,7 +286,11 @@
       <v-card color="primary" dark>
         <v-card-text class="py-3">
           Loading...
-          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -246,7 +302,7 @@
   </div>
 </template>
 <script>
-import Posting from '../../components/booking/Posting'
+import Posting from "../../components/booking/Posting";
 import FullCalendar from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -552,7 +608,6 @@ export default {
       });
     },
 
-
     get_check_out() {
       this.checkOutDialog = true;
       this.get_transaction();
@@ -739,7 +794,6 @@ export default {
         .catch((e) => console.log(e));
     },
 
-
     store_document(id) {
       let payload = new FormData();
       payload.append("document", this.document);
@@ -756,8 +810,7 @@ export default {
     },
 
     setAvailable() {
-      let payload = {
-      };
+      let payload = {};
 
       this.$axios
         .post(`set_available/${this.bookingId}`, payload)
@@ -868,13 +921,16 @@ export default {
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
     },
+    closeDialogs(res) {
+      this.succuss(res);
+    },
 
     succuss(
       data,
-      check_in = false,
-      posting = false,
-      check_out = false,
-      advance_payment = false
+      check_in = true,
+      posting = true,
+      check_out = true,
+      advance_payment = true
     ) {
       if (check_in) {
         this.checkData = {};
@@ -905,4 +961,3 @@ export default {
 </script>
 
 <style scoped src="@/assets/custom/calendar.css"></style>
-

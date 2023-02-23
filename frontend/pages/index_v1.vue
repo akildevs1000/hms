@@ -75,7 +75,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
+                        { id: 6, name: 'Cheque' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -288,7 +288,7 @@
                         { name: 'Food' },
                         { name: 'Others' },
                         { name: 'Mesentery' },
-                        { name: 'ExtraBed' }
+                        { name: 'ExtraBed' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -343,9 +343,7 @@
             <v-btn class="primary" small @click="store_posting" :loading="false"
               >Post</v-btn
             >
-            <v-btn class="error" small @click="closePosting">
-              Cancel
-            </v-btn>
+            <v-btn class="error" small @click="closePosting"> Cancel </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -456,7 +454,7 @@
                         { id: 3, name: 'Online' },
                         { id: 4, name: 'Bank' },
                         { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
+                        { id: 6, name: 'Cheque' },
                       ]"
                       item-text="name"
                       item-value="id"
@@ -504,9 +502,7 @@
               :loading="false"
               >Pay</v-btn
             >
-            <v-btn class="error" small @click="close">
-              Cancel
-            </v-btn>
+            <v-btn class="error" small @click="close"> Cancel </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -575,7 +571,7 @@
                             { id: 4, name: 'Bank' },
                             { id: 5, name: 'UPI' },
                             { id: 6, name: 'Cheque' },
-                            { id: 7, name: 'City Ledger' }
+                            { id: 7, name: 'City Ledger' },
                           ]"
                           item-text="name"
                           item-value="id"
@@ -637,7 +633,13 @@
               </v-col>
               <v-col md="5" class="mt-3">
                 <table>
-                  <tr style="font-size:13px;background-color:white;color:black">
+                  <tr
+                    style="
+                      font-size: 13px;
+                      background-color: white;
+                      color: black;
+                    "
+                  >
                     <th>#</th>
                     <th>Date</th>
                     <th>Debit</th>
@@ -648,7 +650,11 @@
                   <tr
                     v-for="(item, index) in transactions"
                     :key="index"
-                    style="font-size:13px;background-color: white;color:black"
+                    style="
+                      font-size: 13px;
+                      background-color: white;
+                      color: black;
+                    "
                   >
                     <td>
                       <b>{{ ++index }}</b>
@@ -663,7 +669,11 @@
                     <td class="text-right">{{ item.balance || "---" }}</td>
                   </tr>
                   <tr
-                    style="font-size:13px;background-color: white;color:black"
+                    style="
+                      font-size: 13px;
+                      background-color: white;
+                      color: black;
+                    "
                   >
                     <th colspan="4" class="text-right">Balance</th>
                     <td class="text-right" style="background-color: white">
@@ -721,7 +731,7 @@
             <span> New Reservation</span>
           </v-toolbar>
           <v-container grid-list-xs>
-            {{ newBookingRoom }}
+            <!-- {{ newBookingRoom }} -->
             <v-col cols="12" sm="12" md="12">
               <label class="col-form-label">Check Out Date </label>
               <v-menu
@@ -894,7 +904,7 @@
                         <h6>Lunch</h6>
                       </h1>
                       <h1 class="font-light text-white py-0 my-0">
-                        <i class=" fas fa-hamburger"></i>
+                        <i class="fas fa-hamburger"></i>
                         <h5>
                           {{ onlyDinner.adult }} | {{ onlyDinner.child }} |
                           {{ onlyDinner.baby }}
@@ -909,7 +919,7 @@
                 <div class="card card-hover">
                   <div
                     class="box text-center"
-                    style="background-color:#32A15C ;"
+                    style="background-color: #32a15c"
                   >
                     <h1 class="font-light text-white">
                       <i class="fas fa-door-open"></i>
@@ -923,7 +933,10 @@
               </div>
               <div class="col-md-12 col-lg-5 col-xlg-3 py-0">
                 <div class="card card-hover">
-                  <div class="box text-center" style="background-color:#FFBE00">
+                  <div
+                    class="box text-center"
+                    style="background-color: #ffbe00"
+                  >
                     <h1 class="font-light text-white">
                       <i class="fas fa-door-closed"></i>
                       <h5>
@@ -940,7 +953,13 @@
                 <div class="card card-hover">
                   <div
                     class="box text-center"
-                    style="background-image:linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)"
+                    style="
+                      background-image: linear-gradient(
+                        135deg,
+                        #02ada4 0,
+                        #02ada4 100%
+                      );
+                    "
                   >
                     <h1 class="font-light text-white">
                       <i class="fas fa-money-bill"></i>
@@ -956,7 +975,13 @@
                 <div class="card card-hover">
                   <div
                     class="box text-center"
-                    style="background-image:linear-gradient(135deg, #ff0000   0, #ff0000 100%)"
+                    style="
+                      background-image: linear-gradient(
+                        135deg,
+                        #ff0000 0,
+                        #ff0000 100%
+                      );
+                    "
                   >
                     <h1 class="font-light text-white">
                       <i class="fas fa-door-closed"></i>
@@ -972,12 +997,21 @@
                 <div class="card card-hover">
                   <div
                     class="box bg-primary text-center"
-                    style="background-image: linear-gradient(135deg, #18069E     0, #18069E 100%)"
+                    style="
+                      background-image: linear-gradient(
+                        135deg,
+                        #18069e 0,
+                        #18069e 100%
+                      );
+                    "
                   >
                     <h1 class="font-light text-white">
                       <i
                         class="fas fa-plane-arrival"
-                        style="-webkit-transform: scaleX(-1);transform: scaleX(-1);"
+                        style="
+                          -webkit-transform: scaleX(-1);
+                          transform: scaleX(-1);
+                        "
                       ></i>
                       <h5>
                         {{ expectCheckIn.length || 0 }}
@@ -991,7 +1025,13 @@
                 <div class="card card-hover">
                   <div
                     class="box text-center"
-                    style="background-image: linear-gradient(135deg, #4390FC      0, #4390FC 100%)"
+                    style="
+                      background-image: linear-gradient(
+                        135deg,
+                        #4390fc 0,
+                        #4390fc 100%
+                      );
+                    "
                   >
                     <h1 class="font-light text-white">
                       <i class="fas fa-plane-departure"></i>
@@ -1005,14 +1045,20 @@
               </div>
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
                 <div class="card card-hover">
-                  <div class="box text-center" style="background-color:#F95C39">
+                  <div
+                    class="box text-center"
+                    style="background-color: #f95c39"
+                  >
                     <h1 class="font-light text-white">
                       <svg
                         viewBox="0 0 576 512"
                         fill="#ffff"
                         width="50px"
                         height="40px"
-                        style="-webkit-transform: scaleX(-1); transform: scaleX(-1);"
+                        style="
+                          -webkit-transform: scaleX(-1);
+                          transform: scaleX(-1);
+                        "
                       >
                         <path
                           d="M432 96c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"
@@ -1048,7 +1094,7 @@
                 <div class="card card-hover p-0 m-0">
                   <div
                     class="text-center p-0 m-0"
-                    style="background-color: white;height: 120px !important;"
+                    style="background-color: white; height: 120px !important"
                   >
                     <h1 class="font-light p-0 m-0 text-black">
                       <NewPie :renderChartData="renderChartData()" />
@@ -1117,12 +1163,12 @@
                               : ''
                           "
                           dark
-                          :style="
-                            `background-image:${(noAvailableRoom &&
+                          :style="`background-image:${
+                            (noAvailableRoom &&
                               noAvailableRoom.booked_room &&
                               noAvailableRoom.booked_room.background) ||
-                              ''}`
-                          "
+                            ''
+                          }`"
                           ><div class="text-center">
                             {{ caps(noAvailableRoom.room_type.name) }}
                           </div>
@@ -1147,7 +1193,7 @@
                           @mouseover="mouseOverForAvailable(room)"
                           :elevation="0"
                           class="ma-0 px-md-1 py-md-2"
-                          style="background-color: #32A15C;"
+                          style="background-color: #32a15c"
                           dark
                           ><div class="text-center">
                             {{ caps(room.room_type.name) }}
@@ -1176,7 +1222,7 @@ export default {
   data() {
     return {
       chart: {
-        eco: 35
+        eco: 35,
       },
 
       check_out_menu: false,
@@ -1221,14 +1267,14 @@ export default {
           text: "Customer",
           align: "left",
           sortable: false,
-          value: "company_name"
+          value: "company_name",
         },
         {
           text: "Order Total",
           align: "left",
           sortable: false,
-          value: "order_total"
-        }
+          value: "order_total",
+        },
       ],
       orders: "",
       products: "",
@@ -1267,13 +1313,13 @@ export default {
         tax: 0,
         sgst: 0,
         cgst: 0,
-        tax_type: -1
+        tax_type: -1,
       },
       isDbCLick: false,
       members: {
         adult: 0,
         child: 0,
-        baby: 0
+        baby: 0,
       },
       onlyBreakfast: {},
       onlyLunch: {},
@@ -1290,9 +1336,9 @@ export default {
         { text: "Item" },
         { text: "QTY" },
         { text: "Amount" },
-        { text: "Date" }
+        { text: "Date" },
       ],
-      newBookingRoom: {}
+      newBookingRoom: {},
     };
   },
   watch: {
@@ -1319,7 +1365,7 @@ export default {
     payingAdvance() {
       this.formTitle = "Advance Payment";
       this.get_data();
-    }
+    },
   },
   created() {
     this.room_list();
@@ -1334,7 +1380,7 @@ export default {
         this.expectCheckIn.length,
         this.expectCheckOut.length,
         this.notAvailableRooms.length,
-        this.availableRooms.length
+        this.availableRooms.length,
       ];
       // console.log(arr);
       return arr;
@@ -1345,7 +1391,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
 
@@ -1358,8 +1404,8 @@ export default {
       let id = this.bookingId;
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios
         .get(`get_transaction_by_booking_id/${id}`, payload)
@@ -1383,8 +1429,8 @@ export default {
       let payload = {
         params: {
           id: this.evenIid,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
@@ -1478,8 +1524,8 @@ export default {
         params: {
           company_id: this.$auth.user.company.id,
           roomType: obj.room_type,
-          room_no: obj.room_no
-        }
+          room_no: obj.room_no,
+        },
       };
       return;
       this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
@@ -1487,7 +1533,7 @@ export default {
         this.reservation.price = data.room_type.price;
 
         let commitObj = {
-          ...this.reservation
+          ...this.reservation,
         };
         this.$store.commit("reservation", commitObj);
         this.$router.push(`/hotel/new`);
@@ -1503,8 +1549,8 @@ export default {
       let id = this.evenIid;
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
         this.postings = data;
@@ -1537,20 +1583,20 @@ export default {
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          check_in: new Date().toJSON().slice(0, 10)
-        }
+          check_in: new Date().toJSON().slice(0, 10),
+        },
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         this.rooms = data;
         // this.onlyBreakfast = data.fooForCustomers.onlyBreakfast;
         this.onlyBreakfast = {
-          ...data.fooForCustomers.breakfast
+          ...data.fooForCustomers.breakfast,
         };
         this.onlyLunch = {
-          ...data.fooForCustomers.lunch
+          ...data.fooForCustomers.lunch,
         };
         this.onlyDinner = {
-          ...data.fooForCustomers.dinner
+          ...data.fooForCustomers.dinner,
         };
         this.dirtyRooms = data.dirtyRooms;
         this.notAvailableRooms = data.notAvailableRooms;
@@ -1565,7 +1611,7 @@ export default {
         this.renderChartData();
         console.log("from parent");
         this.members = {
-          ...data.members
+          ...data.members,
         };
       });
     },
@@ -1616,7 +1662,7 @@ export default {
         new_payment: this.new_payment,
         booking_id: data.id,
         remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id
+        payment_mode_id: data.payment_mode_id,
       };
       this.$axios
         .post("/check_in_room", payload)
@@ -1628,7 +1674,7 @@ export default {
             data.document ? "" : this.store_document(bookingId);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_posting() {
@@ -1652,7 +1698,7 @@ export default {
         booking_id: this.checkData.id,
         room_id: this.checkData.room_id,
         room: this.checkData.room_no,
-        tax_type: per
+        tax_type: per,
       };
 
       this.$axios
@@ -1664,7 +1710,7 @@ export default {
             this.succuss(data, false, true);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_advance(data) {
@@ -1678,7 +1724,7 @@ export default {
         booking_id: data.id,
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       this.$axios
         .post("/paying_advance", payload)
@@ -1689,12 +1735,12 @@ export default {
             this.succuss(data, false, false, false, true);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     setAvailable() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`set_available/${this.bookingId}`, payload)
@@ -1709,12 +1755,12 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     setMaintenance() {
       let payload = {
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`set_maintenance/${this.bookingId}`, payload)
@@ -1729,7 +1775,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     cancelItem() {
@@ -1740,7 +1786,7 @@ export default {
 
       let payload = {
         reason: this.reason,
-        cancel_by: this.$auth.user.id
+        cancel_by: this.$auth.user.id,
       };
       this.$axios
         .post(`cancel_room/${this.evenIid}`, payload)
@@ -1755,7 +1801,7 @@ export default {
           this.snackbar = data.status;
           this.response = data.message;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     store_check_out() {
@@ -1771,7 +1817,7 @@ export default {
         full_payment: this.full_payment,
         payment_mode_id: this.checkData.payment_mode_id,
         company_id: this.$auth.user.company.id,
-        isPrintInvoice: this.isPrintInvoice
+        isPrintInvoice: this.isPrintInvoice,
       };
       this.$axios
         .post("/check_out_room", payload)
@@ -1785,7 +1831,7 @@ export default {
             }
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     redirect_to_invoice(id) {
@@ -1859,13 +1905,12 @@ export default {
         tax: 0,
         sgst: 0,
         cgst: 0,
-        tax_type: -1
+        tax_type: -1,
       };
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .chart {
