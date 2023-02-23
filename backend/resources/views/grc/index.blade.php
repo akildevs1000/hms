@@ -250,9 +250,9 @@
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
             <div style="text-align:left; margin-left:70px" class="header-txt-address">
-                <small> GST No: {{ $booking->company->mol_id ?? '---' }} </small><br>
+                <small> GST No: {{ $booking->company->mol_id ?? '33CKQPM1598B2ZZ' }} </small><br>
                 {{-- 04542-291888 --}}
-                <small> Telephone No: {{ $booking->company->contact->number ?? '---' }} </small><br>
+                <small> Telephone No: {{ $booking->company->contact->number ?? '04542291888' }} </small><br>
                 <small> Email: {{ $booking->company->user->email ?? '---' }}</small>
                 <small> Guest Registration Date : {{ date('Y/m/d') }}</small>
             </div>
@@ -333,7 +333,7 @@
             <label for="name" class="label-txt">Current Balance:</label>
         </div>
         <div class="col-3">
-            <input type="text" id="name" name="name" value="{{ $booking->reservation_no ?? '---' }}"
+            <input type="text" id="name" name="name" value="{{ numFormat($trans['balance']) }}"
                 class="form-input">
         </div>
     </div>
