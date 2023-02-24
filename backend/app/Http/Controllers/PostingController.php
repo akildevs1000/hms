@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agent;
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Posting;
-use App\Models\BookedRoom;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class PostingController extends Controller
 {
@@ -21,7 +21,6 @@ class PostingController extends Controller
     {
         $model = Posting::query();
         $model->where('company_id', $request->company_id);
-
 
         $model->with([
             'booking:id,customer_id,booking_status' => [
@@ -104,25 +103,27 @@ class PostingController extends Controller
     public function store(Request $request)
     {
         try {
-            $data = $request->except('room');
-            BookedRoom::find($data['booked_room_id'])->room_no;
+            $data                 = $request->except('room');
+            $room_no              = BookedRoom::find($data['booked_room_id'])->room_no;
+            $booking              = Booking::find($data['booking_id']);
             $data['posting_date'] = now();
-            $posting = Posting::create($data);
+            $posting              = Posting::create($data);
 
             $transactionData = [
-                'booking_id' => $data['booking_id'],
+                'booking_id'  => $data['booking_id'],
                 'customer_id' => 1 ?? '',
-                'date' => now(),
-                'desc' => "posting reservation no " . $data['booking_id'] . " and room no " . BookedRoom::find($data['booked_room_id'])->room_no ?? "",
-                'company_id' => $data['company_id'] ?? '',
+                'date'        => now(),
+                'desc'        => "posting reservation no " . $booking['reservation_no'] . " and room no " . $room_no ?? "",
+                'company_id'  => $data['company_id'] ?? '',
+                'is_posting'  => 1,
             ];
 
             $transaction = new TransactionController();
             $transaction->store($transactionData, $posting->amount_with_tax, 'debit');
 
-            $booking =  Booking::where('company_id', $request->company_id)->find($request->booking_id);
-            $booking->total_posting_amount = (int)$booking->total_posting_amount + $posting->amount_with_tax;
-            $booking->grand_remaining_price = (int)$posting->amount_with_tax + $booking->grand_remaining_price;
+            $booking                        = Booking::where('company_id', $request->company_id)->find($request->booking_id);
+            $booking->total_posting_amount  = (int) $booking->total_posting_amount + $posting->amount_with_tax;
+            $booking->grand_remaining_price = (int) $posting->amount_with_tax + $booking->grand_remaining_price;
             $booking->save();
 
             $agent = Agent::whereBookingId($request->booking_id)->where('company_id', $request->company_id)->first();
@@ -131,12 +132,12 @@ class PostingController extends Controller
                 $agent->save();
             }
 
-            $payment = Payment::where('booking_id', $request->booking_id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+            $payment         = Payment::where('booking_id', $request->booking_id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
             $payment->amount = (int) $payment->amount + $posting->amount_with_tax;
             $payment->save();
 
             return $this->response('Posting Successfully submitted.', $posting, true);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -157,7 +158,7 @@ class PostingController extends Controller
             'booking:id,customer_id,rooms' => [
                 'customer:id,email,first_name,last_name',
                 'room:id,room_type_id,room_no',
-            ]
+            ],
         ]);
 
         return $model->whereBookedRoomId($id)->get();
