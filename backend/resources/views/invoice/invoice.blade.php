@@ -137,7 +137,13 @@
         <tr>
             <td style="text-align: left;width: 200px; border :none; padding:15px; backgrozund-color: rded">
                 <div style=";">
-                    <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100">
+                    @if ($booking->company_id == 1)
+                        <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
+                            style="margin-left: 50px;margin-top: 0px">
+                    @elseif ($booking->company_id == 2)
+                        <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
+                            style="margin-left: 0px;margin-top: 0px">
+                    @endif
                 </div>
             </td>
             <td style="text-align: left;width: 200px; border :none; padding:15px; backgrozusnd-color:dblue">
@@ -154,7 +160,7 @@
                         <tr style="text-align: left; border :none;">
                             <td style="text-align: center; border :none">
                                 <span style="font-size: 9px">
-                                    <b> Booking ID</b> : {{ $booking->id }}
+                                    <b> Booking ID</b> : {{ $booking->reservation_no }}
                                     {{-- <br> <b>Meal Plan</b> : Room With BreakFast --}}
                                 </span>
                                 <hr style="width: 230px">
@@ -189,7 +195,14 @@
                     </tr>
                     <tr style="text-align: left; border :none;">
                         <td style="text-align: right; border :none;font-size:10px">
-                            <span style="margin-right: 0px"> {{ $company->user->email ?? '' }}</span>
+                            <span style="margin-right: 0px"> {{ strtolower($company->user->email) ?? '' }}</span>
+                            <br>
+                        </td>
+                    </tr>
+                    <tr style="text-align: left; border :none;">
+                        <td style="text-align: right; border :none;font-size:10px">
+                            <span style="margin-right: 0px">
+                                {{ strtolower($company->contact->number) ?? '' }}</span>
                             <br>
                         </td>
                     </tr>
@@ -465,7 +478,7 @@
             </tr> --}}
         <tr>
             <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
-                <p>Payment Mode : <b>CASH</b></p>
+                <p>Payment Mode : <b>{{ $paymentMode['payment_mode']['name'] }}</b></p>
                 <p>Total Rs : {{ $amtLatter }}</p>
             </td>
             <td style="width:200px;border :none;text-align: left">

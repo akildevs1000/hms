@@ -13,16 +13,23 @@ class InvoiceController extends Controller
 
     public function index($id)
     {
-        $booking = Booking::with('orderRooms', 'customer', 'company.user', 'transactions', 'bookedRooms')->find($id);
+
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
+            ->find($id);
+
         $orderRooms = $booking->orderRooms;
         $company = $booking->company;
         $transactions = $booking->transactions;
+
+        $paymentMode = $transactions->toArray();
+        $paymentMode = end($paymentMode);
+
         $amtLatter =  $this->amountToText($transactions->sum('debit') ?? 0);
         $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
             return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
         });
 
-        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers"))
+        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode"))
             // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
