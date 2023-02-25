@@ -64,7 +64,25 @@ class HolidayController extends Controller
 
         try {
 
-            $record = $model->where("id", $id)->update($request->validated());
+            $data = [
+                'description' => $request->description,
+                'company_id' => $request->company_id,
+            ];
+
+            $d1 =  strtotime($request->dates[0]);
+            $d2 = strtotime($request->dates[1]);
+
+
+            if ($d2 > $d1) {
+                $data["from"] = $request->dates[0];
+                $data["to"] = $request->dates[1];
+            } else {
+                $data["from"] = $request->dates[1];
+                $data["to"] = $request->dates[0];
+            }
+
+
+            $record = $model->where("id", $id)->update($data);
 
             if ($record) {
                 return $this->response($this->name . ' Successfully update.', $model->find($id), true);

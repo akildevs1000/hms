@@ -180,32 +180,20 @@ class CustomerController extends Controller
     public function viewBookingCustomerBill($id)
     {
         $booking =  Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer')->first();
-
-        $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
-
+        // $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
         $transaction = Transaction::with('paymentMode')->whereBookingId($id);
         $transactions = $transaction->clone()->orderBy('id', 'asc')->get();
         $totalTransactionAmount = $transaction->clone()->orderBy('id', 'desc')->first();
 
+        $transactionSummary = (new TransactionController)->getTransactionSummaryByBookingId($id);
+
         return response()->json([
             'booking' => $booking,
-            'totalPostingAmount' => $totalPostingAmount,
+            // 'totalPostingAmount' => $totalPostingAmount,
             'transaction' => $transactions,
-            'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0
+            'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0,
+            'transactionSummary' => $transactionSummary
         ]);
-
-
-        // return Customer::whereHas('booking', function ($q) {
-        //     $q->where('booking_status', '!=', 0)
-        //         ->where('booking_status', '<=', 3);
-        // })->with(
-        //     ['booking' => [
-        //         'bookedRooms',
-        //         'payments',
-        //     ]]
-        // )
-        //     ->find($id);
-
     }
 
     public function getCustomerHistory($id)

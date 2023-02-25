@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\BookedRoom;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 
@@ -52,7 +53,8 @@ class TransactionController extends Controller
         return [
             'sumDebit' => $transactionModel->sum('debit'),
             'sumCredit' => $transactionModel->sum('credit'),
-            'balance' => $transactionModel->sum('debit') - $transactionModel->sum('credit'),
+            'balance' => (float)$transactionModel->sum('debit') - (float)$transactionModel->sum('credit'),
+            'tot_posting' => $transactionModel->whereIsPosting(1)->sum('debit'),
         ];
     }
 
@@ -67,12 +69,12 @@ class TransactionController extends Controller
         $model =  booking::find($bookingId);
 
         $model->update([
-            'total_price' => $model->total_price + $amt,
+            // 'total_price' => $model->total_price + $amt,
+            'total_price' => $sumDebit,
             'grand_remaining_price' => $balance,
             'balance'               => $balance,
             'remaining_price'       => $balance,
-            'paid_amounts'          => $sumDebit,
-
+            'paid_amounts'          => $sumCredit,
         ]);
     }
 }

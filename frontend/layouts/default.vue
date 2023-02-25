@@ -389,7 +389,7 @@ export default {
               menu: "reservation_access",
             },
             {
-              icon: "mdi mdi-home-import-outline",
+              icon: "mdi mdi-home-export-outline",
               title: "Checkout",
               to: "/reservation/check_out",
               menu: "reservation_access",
@@ -416,7 +416,7 @@ export default {
               menu: "agent_access",
             },
             {
-              icon: "mdi mdi-human-male-board-poll",
+              icon: "mdi mdi-account-tie",
               title: "Source",
               to: "/source",
               menu: "agent_access",

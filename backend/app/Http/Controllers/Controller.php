@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Dompdf\Options;
+use App\Models\Booking;
 use App\Models\Company;
 use App\Models\Employee;
 use App\Models\Department;
@@ -197,203 +198,21 @@ class Controller extends BaseController
         return response()->stream($callback, 200, $headers);
     }
 
-
-    public function daily_html(Request $request)
+    public function getNumFormat($Num = null)
     {
-        // return view('pdf.html.daily.daily_summary');
-        return Pdf::loadView('pdf.html.daily.daily_summary')->stream();
+        if (!$Num) return "---";
+        return  number_format($Num, 2);
     }
 
-    public function chart_html(Request $request)
+    public function gerBookingModel($bookingId)
     {
-
-
-
-        // return view('pdf.chart');
-
-
-
-
-        $render = view('pdf.chart')->render();
-
-
-        return    $pdf = new wkh(view('pdf.chart'));
-
-        $pdf = new wkh;
-        $pdf->addPage($render);
-        $pdf->setOptions(['javascript-delay' => 5000]);
-        $pdf->saveAs(public_path('chart_my_report'));
-
-        return response()->download(public_path('chart_my_report'));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        $imgpath = '';
-        $company = Company::whereId($request->company_id)->with('contact')->first(["logo", "name", "company_code", "location", "p_o_box_no", "id"]);
-        $model = new ReportController;
-        $deptName = '';
-        $totEmployees = '';
-
-        if ($request->department_id && $request->department_id == -1) {
-            $deptName = 'All';
-            $totEmployees = Employee::whereCompanyId($request->company_id)->whereDate("created_at", "<", date("Y-m-d"))->count();
-        } else {
-            $deptName = DB::table('departments')->whereId($request->department_id)->first(["name"])->name ?? '';
-            $totEmployees = Employee::where("department_id", $request->department_id)->count();
-        }
-
-        $info = (object) [
-            'department_name' => $deptName,
-            'total_employee' => $totEmployees,
-            'total_absent' => $model->report($request)->where('status', 'A')->count(),
-            'total_present' => $model->report($request)->where('status', 'P')->count(),
-            'total_missing' => $model->report($request)->where('status', '---')->count(),
-            'total_early' => $model->report($request)->where('early_going', '!=', '---')->count(),
-            'total_late' => $model->report($request)->where('late_coming', '!=', '---')->count(),
-            'total_leave' => 2,
-            'department' => $request->department_id == -1 ? 'All' :  Department::find($request->department_id)->name ?? '',
-            "daily_date" => $request->daily_date,
-            "report_type" => $this->getStatusText($request->status)
-        ];
-
-        $str = '
-        <script type="text/javascript" src="' . asset('js/charts.js') . '"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-       <script type="text/javascript">
-         google.charts.load("current", {packages:["corechart"]});
-         google.charts.setOnLoadCallback(drawChart);
-         function drawChart() {
-            let data = google.visualization.arrayToDataTable([
-              ["Task", "Hours per Day"],
-              ["Employees",     ' . $totEmployees . '],
-              ["Absent",      ' . $info->total_absent . '],
-              ["Present",  ' . $info->total_present . '],
-              ["Missing", ' . $info->total_missing . '],
-              ["Leave",    ' . $info->total_leave . ']
-            ]);
-            let options = {
-                title: "Density of Precious Metals, in g/cm^3",
-                bar: {groupWidth: "95%"},
-                legend: "none",
-              };
-            let chart_div = document.getElementById("piechart");
-            let chart = new google.visualization.PieChart(chart_div);
-            google.visualization.events.addListener(chart, "ready", function () {
-                chart_div.innerHTML = "<img  src=" + chart.getImageURI() + ">";
-                document.getElementById("myText").value = chart.getImageURI();
-                console.log(chart.getImageURI());
-              });
-            chart.draw(data, options);
-          }
-          function saveDynamicDataToFile() {
-
-            let userInput = document.getElementById("myText").value;
-
-            let blob = new Blob([userInput], { type: "text/plain;charset=utf-8" });
-            saveAs(blob, "dynamic.txt");
-        }
-
-
-       </script>
-          <div id="piechart"></div>
-
-          <textarea type="text" oninput="saveDynamicDataToFile()" id="myText" style="width:3000px; height:100px" ></textarea>
-
-
-          ';
-
-
-        return  $str;
-
-
-
-
-
-
-
-
-
-        $pdf = App::make('dompdf.wrapper');
-        $options = new Options();
-        $options->set('isJavascriptEnabled', TRUE);
-        // $pdf->render();
-        return $pdf->loadHTML($str)->stream();
-
-
-        // $data = $model->report($request)->get();
-        // return Pdf::loadView('pdf.daily', compact("company", "info", "data"))->stream();
-
-
-
-
-
-
-
-        $str = '
-
-       <script type="text/javascript" src="' . asset('js/charts.js') . '"></script>
-
-      <script type="text/javascript">
-        google.charts.load("current", {packages:["corechart"]});
-        google.charts.setOnLoadCallback(drawChart);
-        function drawChart() {
-
-          let data = google.visualization.arrayToDataTable([
-            ["Element", "Density", { role: "style" }],
-            ["Copper", 8.94, "#b87333", ],
-            ["Silver", 10.49, "silver"],
-            ["Gold", 19.30, "gold"],
-            ["Platinum", 21.45, "color: #e5e4e2" ]
-          ]);
-
-          let options = {
-            title: "Density of Precious Metals, in g/cm^3",
-            bar: {groupWidth: "95%"},
-            legend: "none",
-          };
-
-          let chart_div = document.getElementById("content");
-          let chart = new google.visualization.ColumnChart(chart_div);
-
-          // Wait for the chart to finish drawing before calling the getImageURI() method.
-          google.visualization.events.addListener(chart, "ready", function () {
-
-            chart_div.innerHTML = "fahath";
-
-            console.log(chart_div.innerHTML);
-          });
-
-          chart.draw(data, options);
-
-      }
-      </script>
-
-         <div id="content"></div>
-
-         ';
-
-
-
-        // return $str;
-
-
-
-        $pdf = App::make('dompdf.wrapper');
-        $options = new Options();
-        $options->set('isJavascriptEnabled', TRUE);
-        // $pdf->render();
-        return $pdf->loadHTML($str)->stream();
+        return Booking::find($bookingId);
+    }
+
+    public function checkOutDate($date)
+    {
+        $date = date_create($date);
+        date_modify($date, "-1 days");
+        return date_format($date, "Y-m-d");
     }
 }
