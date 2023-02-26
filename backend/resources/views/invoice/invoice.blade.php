@@ -206,7 +206,7 @@
                     <tr style="text-align: left; border :none;">
                         <td style="text-align: right; border :none;font-size:10px">
                             <span style="margin-right: 0px">
-                                {{ strtolower($company->contact->number) ?? '' }}</span>
+                                {{ strtolower($company->contact->number ?? '') }}</span>
                             <br>
                         </td>
                     </tr>
@@ -222,8 +222,6 @@
             </td>
         </tr>
     </table>
-
-
 
 
     <table style="margin-top: 5px !important;background-color:#c1d4e2;padding-bottom:0px">

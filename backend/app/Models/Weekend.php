@@ -11,6 +11,10 @@ class Weekend extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'day' => 'array',
+    ];
+
     protected $hidden = [
         "created_at",
         "updated_at",

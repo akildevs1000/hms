@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Dompdf\Options;
+use App\Http\Controllers\Reports\ReportController;
 use App\Models\Booking;
 use App\Models\Company;
-use App\Models\Employee;
 use App\Models\Department;
-use Illuminate\Http\Request;
+use App\Models\Employee;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\App;
-use mikehaertl\wkhtmlto\Pdf as wkh;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use App\Http\Controllers\Reports\ReportController;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 
 class Controller extends BaseController
 {
@@ -44,12 +41,12 @@ class Controller extends BaseController
     public static function process($action, $job, $model, $id = null)
     {
         try {
-            $m = '\\App\\Models\\' . $model;
+            $m       = '\\App\\Models\\' . $model;
             $last_id = gettype($job) == 'object' ? $job->id : $id;
 
             $response = [
-                'status' => true,
-                'record' => $m::find($last_id),
+                'status'  => true,
+                'record'  => $m::find($last_id),
                 'message' => $model . ' has been ' . $action,
             ];
 
@@ -57,12 +54,12 @@ class Controller extends BaseController
                 return response()->json($response, 200);
             } else {
                 return response()->json([
-                    'status' => false,
-                    'record' => null,
+                    'status'  => false,
+                    'record'  => null,
                     'message' => $model . ' cannot ' . $action,
                 ], 200);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -109,31 +106,31 @@ class Controller extends BaseController
 
     public function processPDF($request)
     {
-        $company = Company::whereId($request->company_id)->with('contact')->first(["logo", "name", "company_code", "location", "p_o_box_no", "id"]);
-        $model = new ReportController;
-        $deptName = '';
+        $company      = Company::whereId($request->company_id)->with('contact')->first(["logo", "name", "company_code", "location", "p_o_box_no", "id"]);
+        $model        = new ReportController;
+        $deptName     = '';
         $totEmployees = '';
 
         if ($request->department_id && $request->department_id == -1) {
-            $deptName = 'All';
+            $deptName     = 'All';
             $totEmployees = Employee::whereCompanyId($request->company_id)->whereDate("created_at", "<", date("Y-m-d"))->count();
         } else {
-            $deptName = DB::table('departments')->whereId($request->department_id)->first(["name"])->name ?? '';
+            $deptName     = DB::table('departments')->whereId($request->department_id)->first(["name"])->name ?? '';
             $totEmployees = Employee::where("department_id", $request->department_id)->count();
         }
 
         $info = (object) [
             'department_name' => $deptName,
-            'total_employee' => $totEmployees,
-            'total_absent' => $model->report($request)->where('status', 'A')->count(),
-            'total_present' => $model->report($request)->where('status', 'P')->count(),
-            'total_missing' => $model->report($request)->where('status', '---')->count(),
-            'total_early' => $model->report($request)->where('early_going', '!=', '---')->count(),
-            'total_late' => $model->report($request)->where('late_coming', '!=', '---')->count(),
-            'total_leave' => 0,
-            'department' => $request->department_id == -1 ? 'All' :  Department::find($request->department_id)->name,
-            "daily_date" => $request->daily_date,
-            "report_type" => $this->getStatusText($request->status)
+            'total_employee'  => $totEmployees,
+            'total_absent'    => $model->report($request)->where('status', 'A')->count(),
+            'total_present'   => $model->report($request)->where('status', 'P')->count(),
+            'total_missing'   => $model->report($request)->where('status', '---')->count(),
+            'total_early'     => $model->report($request)->where('early_going', '!=', '---')->count(),
+            'total_late'      => $model->report($request)->where('late_coming', '!=', '---')->count(),
+            'total_leave'     => 0,
+            'department'      => $request->department_id == -1 ? 'All' : Department::find($request->department_id)->name,
+            "daily_date"      => $request->daily_date,
+            "report_type"     => $this->getStatusText($request->status),
         ];
 
         $data = $model->report($request)->get();
@@ -162,7 +159,7 @@ class Controller extends BaseController
             "Content-Disposition" => "attachment; filename=$fileName",
             "Pragma"              => "no-cache",
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            "Expires"             => "0",
         );
 
         $callback = function () use ($data) {
@@ -188,7 +185,7 @@ class Controller extends BaseController
                     $col["late_coming"] ?? "---",
                     $col["early_going"] ?? "---",
                     $col["device_in"]["short_name"] ?? "---",
-                    $col["device_out"]["short_name"] ?? "---"
+                    $col["device_out"]["short_name"] ?? "---",
                 ], ",");
             }
 
@@ -200,8 +197,11 @@ class Controller extends BaseController
 
     public function getNumFormat($Num = null)
     {
-        if (!$Num) return "---";
-        return  number_format($Num, 2);
+        if (!$Num) {
+            return "---";
+        }
+
+        return number_format($Num, 2);
     }
 
     public function gerBookingModel($bookingId)
@@ -209,10 +209,10 @@ class Controller extends BaseController
         return Booking::find($bookingId);
     }
 
-    public function checkOutDate($date)
-    {
-        $date = date_create($date);
-        date_modify($date, "-1 days");
-        return date_format($date, "Y-m-d");
-    }
+    // public function checkOutDate($date)
+    // {
+    //     $date = date_create($date);
+    //     date_modify($date, "-1 days");
+    //     return date_format($date, "Y-m-d");
+    // }
 }

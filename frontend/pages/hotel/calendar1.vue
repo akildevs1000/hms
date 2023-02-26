@@ -11,9 +11,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="checkOutDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="checkOutDialog = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-card-text>
           <check-out :BookingData="checkData" @close-dialog="closeDialogs" />
@@ -28,13 +26,7 @@
           Are you sure you want to cancel this
         </v-card-title>
         <v-container grid-list-xs>
-          <v-textarea
-            placeholder="Reason"
-            rows="3"
-            dense
-            outlined
-            v-model="reason"
-          ></v-textarea>
+          <v-textarea placeholder="Reason" rows="3" dense outlined v-model="reason"></v-textarea>
         </v-container>
         <v-card-actions>
           <v-btn class="primary" small :loading="loading" @click="cancelItem">
@@ -58,11 +50,7 @@
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <Posting
-              :BookingData="checkData"
-              :evenIid="evenIid"
-              @close-dialog="closeDialogs"
-            ></Posting>
+            <Posting :BookingData="checkData" :evenIid="evenIid" @close-dialog="closeDialogs"></Posting>
           </v-container>
         </v-card-text>
       </v-card>
@@ -81,13 +69,8 @@
                   <span v-html="item.text"></span>
                 </th>
               </tr>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
+              <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                color="primary"></v-progress-linear>
               <tr v-for="(item, index) in postings" :key="index">
                 <td>{{ ++index }}</td>
                 <td>{{ caps(item.bill_no) }}</td>
@@ -110,12 +93,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog
-      v-model="checkInDialog"
-      persistent
-      :width="1366"
-      class="checkin-models"
-    >
+    <v-dialog v-model="checkInDialog" persistent :width="1366" class="checkin-models">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
@@ -136,31 +114,18 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingAdvance = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="payingAdvance = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <PayAdvance
-              :BookingData="checkData"
-              @close-dialog="closeDialogs"
-            ></PayAdvance>
+            <PayAdvance :BookingData="checkData" @close-dialog="closeDialogs"></PayAdvance>
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <div>
-      <v-tooltip
-        bottom
-        color="background"
-        :position-x="tx"
-        :position-y="ty"
-        absolute
-        offset-y
-        v-model="showTooltip"
-      >
+      <v-tooltip bottom color="background" :position-x="tx" :position-y="ty" absolute offset-y v-model="showTooltip">
         <table style="border: none !important">
           <tr class="bg-background">
             <th>Customer Name</th>
@@ -208,28 +173,14 @@
         </table>
       </v-tooltip>
       <v-row class="flex" justify="center"> </v-row>
-      <v-menu
-        v-model="showMenu"
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-y
-      >
+      <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item
-              v-if="bookingStatus == 1"
-              link
-              @click="checkInDialog = true"
-            >
+            <v-list-item v-if="bookingStatus == 1" link @click="checkInDialog = true">
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
 
-            <v-list-item
-              v-else-if="bookingStatus == 2"
-              link
-              @click="get_check_out"
-            >
+            <v-list-item v-else-if="bookingStatus == 2" link @click="get_check_out">
               <v-list-item-title>Check Out</v-list-item-title>
             </v-list-item>
 
@@ -262,23 +213,15 @@
               </v-list-item>
             </div>
 
-            <v-list-item
-              link
-              @click="payingAdvance = true"
-              v-if="
-                bookingStatus <= 2 &&
-                bookingStatus != 0 &&
-                checkData.paid_by != 2
-              "
-            >
+            <v-list-item link @click="payingAdvance = true" v-if="
+              bookingStatus <= 2 &&
+              bookingStatus != 0 &&
+              checkData.paid_by != 2
+            ">
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
 
-            <v-list-item
-              link
-              @click="cancelDialog = true"
-              v-if="bookingStatus == 1"
-            >
+            <v-list-item link @click="cancelDialog = true" v-if="bookingStatus == 1">
               <v-list-item-title>Cancel Room </v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -290,11 +233,7 @@
       <v-card color="primary" dark>
         <v-card-text class="py-3">
           Loading...
-          <v-progress-linear
-            indeterminate
-            color="white"
-            class="mb-0"
-          ></v-progress-linear>
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -437,14 +376,14 @@ export default {
 
         select: (date, jsEvent, view, resourceObj, vv) => {
           let obj = date.resource.extendedProps;
-          if (date.startStr < this.currentDate) {
-            this.alert(
-              "Missing!",
-              "Please Select Current Date or Future Date",
-              "error"
-            );
-            return;
-          }
+          // if (date.startStr < this.currentDate) {
+          //   this.alert(
+          //     "Missing!",
+          //     "Please Select Current Date or Future Date",
+          //     "error"
+          //   );
+          //   return;
+          // }
           console.log(date);
           this.create_reservation(date, obj);
         },
@@ -456,6 +395,8 @@ export default {
             end: this.convert_date_format(arg.event.end),
             roomId: arg.event._def.resourceIds[0],
           };
+
+          console.log(obj);
           this.change_date_by_drag(obj);
         },
 
@@ -694,11 +635,13 @@ export default {
       };
       console.log(payload);
       this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
-        this.reservation.room_id = data.id;
-        this.reservation.price = data.room_type.price;
+        this.reservation.room_id = data.room.id;
+        this.reservation.price = data.total_price;
+        this.reservation.priceList = data.data;
         let commitObj = {
           ...this.reservation,
         };
+        console.log(commitObj);
         this.$store.commit("reservation", commitObj);
         this.$router.push(`/hotel/new2`);
       });

@@ -218,6 +218,8 @@ Route::get('/test_attachment', function () {
 });
 Route::get('/my_test', function () {
 
+    return BookedRoom::get();
+
     // All countries
     // length 252
 
@@ -311,6 +313,39 @@ Route::get('remove_booking/{id}', function ($id) {
     OrderRoom::whereBookingId($id)->delete();
     CancelRoom::whereBookingId($id)->delete();
     Food::whereBookingId($id)->delete();
+
+    return "removed booking";
+});
+
+Route::get('send', function ($id) {
+
+    $arr = [
+
+        "to"           => "971502848071",
+        "message"      => "
+    Dear Fahath,
+    Welcome to HYDERS PARK The Luxury Hotel, Kodaikanal,
+    Your booking reference number, 151,
+    Number of Rooms, 1,
+    Check In/Out , 06-Feb-23 to 07-Feb-23 11:00,
+    Your total bill is ₹3136
+    You paid advance ₹0
+    Your remaining amount is ₹3136
+    You must pay an advance within 48 hours to confirm your booking.
+    Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.
+
+    About us.
+    Location Find us at https://goo.gl/maps/bNznm2Z4pbxo2ZJw9.
+    More https://www.youtube.com/watch?v=tF-8q991Prw&ab_channel=HYDERSPARK-GroupOfHotels.
+    ",
+        "company"      => 2,
+        "instance_id"  => "THANJ_INSTANCE_ID",
+        "access_token" => "THANJ_ACCESS_TOKEN",
+    ];
+
+    $res = (new WhatsappController)->sentNotification($arr);
+
+    return $res;
 
     return "removed booking";
 });

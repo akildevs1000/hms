@@ -20,72 +20,6 @@ class RoomTypeController extends Controller
         return RoomType::get(['id', 'name', 'price']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
     public function getPriceList(Request $request)
     {
         return RoomType::where('company_id', $request->company_id)->get();
@@ -94,37 +28,93 @@ class RoomTypeController extends Controller
     public function getDataBySelect(Request $request)
     {
         $company_id = $request->company_id;
-        $prices = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)->first(['holiday_price', 'weekend_price', 'weekday_price']);
+        $discount   = $request->discount ?? 0;
+        $room       = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
+        $prices     = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
+            ->first(['holiday_price', 'weekend_price', 'weekday_price']);
 
         $weekends = ["Sat", "Sun"];
 
-        $arr = [];
+        $arr    = [];
         $period = CarbonPeriod::create($request->checkin, $this->checkOutDate($request->checkout));
         foreach ($period as $date) {
             $iteration_date = $date->format('Y-m-d');
-            $day = $date->format('D');
-            $isWeekend = in_array($day, $weekends);
-            $isHoliday = $this->checkHoliday($iteration_date, $company_id);
+            $day            = $date->format('D');
+            $isWeekend      = in_array($day, $weekends);
+            $isHoliday      = $this->checkHoliday($iteration_date, $company_id);
             if ($isHoliday) {
                 $arr[] = ["date" => $iteration_date, "price" => $prices->holiday_price, "day_type" => "holiday", "day" => $day];
             } elseif ($isWeekend) {
                 $arr[] = ["date" => $iteration_date, "price" => $prices->weekend_price, "day_type" => "weekend", "day" => $day];
             } else {
-                $arr[] = ["date" => $iteration_date, "price"  => $prices->weekday_price, "day_type" => "weekday", "day" => $day];
+                $arr[] = ["date" => $iteration_date, "price" => $prices->weekday_price, "day_type" => "weekday", "day" => $day];
             }
         }
 
-        // return [
-        //     'data' => $arr,
-        //     'total_price' => array_sum(array_column($arr, "price")),
-        // ];
-
+        return [
+            'room'        => $room,
+            'data'        => $arr,
+            'total_price' => array_sum(array_column($arr, "price")),
+        ];
 
         return Room::where('room_no', $request->room_no)
             ->where('company_id', $request->company_id)
             ->first();
     }
 
+    public function getDataBySelectWithTax(Request $request)
+    {
+        $company_id = $request->company_id;
+        $discount   = $request->discount ?? 0;
+        $room       = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
+        $prices     = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
+            ->first(['holiday_price', 'weekend_price', 'weekday_price']);
+
+        $weekends = ["Sat", "Sun"];
+
+        $arr    = [];
+        $period = CarbonPeriod::create($request->checkin, $this->checkOutDate($request->checkout));
+        foreach ($period as $date) {
+            $iteration_date = $date->format('Y-m-d');
+            $day            = $date->format('D');
+            $isWeekend      = in_array($day, $weekends);
+            $isHoliday      = $this->checkHoliday($iteration_date, $company_id);
+            if ($isHoliday) {
+                $arr[] = ["date" => $iteration_date, "price" => $this->getRoomTax($prices->holiday_price - $discount), "day_type" => "holiday", "day" => $day];
+            } elseif ($isWeekend) {
+                $arr[] = ["date" => $iteration_date, "price" => $this->getRoomTax($prices->weekend_price - $discount), "day_type" => "weekend", "day" => $day];
+            } else {
+                $arr[] = ["date" => $iteration_date, "price" => $this->getRoomTax($prices->weekday_price - $discount), "day_type" => "weekday", "day" => $day];
+            }
+        }
+
+        return [
+            'room'        => $room,
+            'data'        => $arr,
+            'total_price' => array_sum(array_column($arr, "price")),
+        ];
+
+        return Room::where('room_no', $request->room_no)
+            ->where('company_id', $request->company_id)
+            ->first();
+    }
+
+    private function getRoomTax($amount)
+    {
+        $temp             = [];
+        $per              = $amount < 3000 ? 12 : 18;
+        $tax              = ($amount / 100) * $per;
+        $temp['room_tax'] = $tax;
+
+        return (float) $amount + (float) $tax;
+
+        $temp['total_with_tax'] = (float) $amount + (float) $tax;
+        $temp['after_discount'] = $amount;
+        $gst                    = floatval($tax) / 2;
+        $temp['cgst']           = $gst;
+        $temp['sgst']           = $gst;
+        return $temp;
+    }
 
     public function checkHoliday($date, $company_id)
     {
@@ -147,8 +137,15 @@ class RoomTypeController extends Controller
             $model = RoomType::find($id);
             $model->update($request->all());
             return $this->response('Successfully update', null, true);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             return $this->response($th . ' Unsuccessfully update.', null, false);
         }
+    }
+
+    public function checkOutDate($date)
+    {
+        $date = date_create($date);
+        date_modify($date, "-1 days");
+        return date_format($date, "Y-m-d");
     }
 }
