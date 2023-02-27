@@ -338,7 +338,7 @@
             <th class="txt-inv-header">Room No</th>
             <th class="txt-inv-header" style="width: 100px">Description</th>
             <th class="txt-inv-header">Amount</th>
-            <th class="txt-inv-header">After Discount</th>
+            {{-- <th class="txt-inv-header">After Discount</th> --}}
             <th class="txt-inv-header">Food</th>
             <th class="txt-inv-header">SGST</th>
             <th class="txt-inv-header">CGST</th>
@@ -367,9 +367,9 @@
                     <td class="txt-inv" style="width:20px">{{ $room->room_type }}</td>
                     <td class="txt-inv-amount">
                         {{ number_format($room->price, 2) }} <br>
-                        (-{{ number_format($room->room_discount, 2) }})
+                        {{-- (-{{ number_format($room->room_discount, 2) }}) --}}
                     </td>
-                    <td class="txt-inv-amount">{{ number_format($room->after_discount, 2) }}</td>
+                    {{-- <td class="txt-inv-amount">{{ number_format($room->after_discount, 2) }}</td> --}}
                     <td class="txt-inv-amount">
                         {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food, 2) }}
                     </td>
@@ -413,7 +413,6 @@
                         <td class="txt-inv-amount">
                             {{ number_format($post->amount, 2) }} <br>
                         </td>
-                        <td class="txt-inv" style="width:10px">-</td>
 
                         <td class="txt-inv-amount">
                             {{ $post->sgst }} <br>
@@ -435,7 +434,6 @@
                 @endforeach
             @endforeach
             <tr>
-                <td> </td>
                 <td> </td>
                 <td> </td>
                 <td> </td>
@@ -480,7 +478,7 @@
                 </tr> --}}
         <tr>
             <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
-                <p>Payment Mode : <b>{{ $paymentMode['payment_mode']['name'] }}</b></p>
+                <p>Payment Mode : <b>{{ $paymentMode['payment_mode']['name'] ?? '' }}</b></p>
                 <p>Total Rs : {{ $amtLatter }}</p>
             </td>
             <td style="width:200px;border :none;text-align: left">
@@ -500,6 +498,10 @@
                     <tr>
                         <td class="tot-txt">Paid</td>
                         <td class="tot-txt-amount">{{ number_format($transactions->sum('credit'), 2) ?? 0 }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tot-txt">Discount</td>
+                        <td class="tot-txt-amount">{{ number_format($roomsDiscount, 2) ?? 0 }}</td>
                     </tr>
                     <tr>
                         <td class="tot-txt">Balance</td>

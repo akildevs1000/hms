@@ -163,24 +163,38 @@
                   <tr>
                     <td colspan="6"><hr /></td>
                   </tr>
-                  <tr class="bg-white">
-                    <td>Room Amount :</td>
-                    <td>{{ (booking && booking.total_price) || "0" }}</td>
-                  </tr>
+
                   <tr class="bg-white">
                     <td>Posting Amount :</td>
-                    <td>{{ totalPostingAmount || "0" }}</td>
+                    <td>
+                      {{ transactionSummary && transactionSummary.tot_posting }}
+                    </td>
+                  </tr>
+                  <tr class="bg-white">
+                    <td>Total Amount :</td>
+                    <td>
+                      {{ transactionSummary && transactionSummary.sumDebit }}
+                      <!-- transactionSummary && transactionSummary.sumDebit -->
+                    </td>
+                  </tr>
+                  <tr class="bg-white">
+                    <td>Paid Amount :</td>
+                    <td>
+                      {{ transactionSummary && transactionSummary.sumCredit }}
+                    </td>
                   </tr>
                   <tr class="bg-white">
                     <td>Remaining Amount :</td>
-                    <td>{{ (booking && booking.remaining_price) || "0" }}</td>
+                    <td class="red--text">
+                      {{ numFormat(transactionSummary.balance) }}
+                    </td>
                   </tr>
-                  <tr class="bg-white">
+                  <!-- <tr class="bg-white">
                     <td>Grand Remaining :</td>
                     <td class="red--text">
                       {{ (booking && booking.grand_remaining_price) || "0" }}
                     </td>
-                  </tr>
+                  </tr> -->
                   <tr class="bg-white">
                     <td colspan="6"><hr /></td>
                   </tr>
@@ -541,6 +555,7 @@ export default {
     booking: [],
     bookedRooms: [],
     transactions: [],
+    transactionSummary: [],
     errors: [],
     totalAmount: 0,
     totalPostingAmount: 0,
@@ -557,7 +572,6 @@ export default {
   methods: {
     getDate(dataTime) {
       return dataTime;
-      // return new Date(dataTime.toDateString());
     },
     can(per) {
       let u = this.$auth.user;
@@ -566,6 +580,21 @@ export default {
         u.is_master
       );
     },
+
+    numFormat(num) {
+      if (!num) return "0";
+
+      const number = num;
+      const res = number.toFixed(2);
+      return res;
+      const formatted = number.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      console.log("s" + formatted);
+      return formatted;
+    },
+
     preview(file) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
@@ -599,9 +628,10 @@ export default {
         this.totalPostingAmount = data.totalPostingAmount;
         this.totalTransactionAmount = data.totalTransactionAmount;
         this.transactions = data.transaction;
+        this.transactionSummary = data.transactionSummary;
+        console.log(this.transactionSummary);
         const booking = data.booking;
         this.customer = booking.customer;
-        console.log(booking);
         this.booking = booking;
         this.payments = booking.payments;
         this.bookedRooms = booking.booked_rooms;
