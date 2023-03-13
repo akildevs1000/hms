@@ -269,6 +269,7 @@
                       outlined
                       :items="agentList"
                       type="text"
+                      @change="get_gst(room.source, 'agent')"
                       item-value="name"
                       item-text="name"
                       v-model="room.source"
@@ -285,6 +286,7 @@
                       label="Source"
                       :items="sources"
                       dense
+                      @change="get_gst(room.source, 'online')"
                       outlined
                       item-value="name"
                       item-text="name"
@@ -295,7 +297,29 @@
                       "
                     ></v-select>
                   </v-col>
-                  <v-col md="3" cols="12" sm="12" v-if="isAgent || isOnline">
+                  <v-col md="3" sm="12" cols="12" dense v-if="isCorporate">
+                    <v-select
+                      v-model="room.source"
+                      label="Corporate"
+                      :items="CorporateList"
+                      dense
+                      outlined
+                      @change="get_gst(room.source, 'corporate')"
+                      item-value="name"
+                      item-text="name"
+                      :hide-details="errors && !errors.source"
+                      :error="errors && errors.source"
+                      :error-messages="
+                        errors && errors.source ? errors.source[0] : ''
+                      "
+                    ></v-select>
+                  </v-col>
+                  <v-col
+                    md="3"
+                    cols="12"
+                    sm="12"
+                    v-if="isAgent || isOnline || isCorporate"
+                  >
                     <v-text-field
                       label="Reference Number"
                       dense
@@ -316,7 +340,7 @@
                     sm="12"
                     cols="12"
                     dense
-                    v-if="isAgent || isOnline"
+                    v-if="isAgent || isOnline || isCorporate"
                   >
                     <v-select
                       v-model="room.paid_by"
@@ -1495,7 +1519,13 @@ export default {
       show_password: false,
       show_password_confirm: false,
       roomTypes: [],
-      types: ["Online", "Walking", "Travel Agency", "Complimentary"],
+      types: [
+        "Online",
+        "Walking",
+        "Travel Agency",
+        "Complimentary",
+        "Corporate",
+      ],
 
       search: {
         mobile: "",
@@ -1506,6 +1536,7 @@ export default {
       sources: [],
 
       agentList: [],
+      CorporateList: [],
 
       idCards: [],
       imgView: false,
@@ -1550,6 +1581,7 @@ export default {
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
+      isCorporate: false,
       isAgent: false,
       isDiff: false,
       search_available_room: "",
@@ -1683,6 +1715,7 @@ export default {
     this.get_countries();
     this.get_agents();
     this.get_online();
+    this.get_Corporate();
     // this.getImage();
     this.preloader = false;
   },
@@ -1986,12 +2019,20 @@ export default {
     getType(val) {
       if (val == "Online") {
         this.isOnline = true;
+        this.isCorporate = false;
         this.isAgent = false;
         return;
       }
       if (val == "Travel Agency") {
+        this.isCorporate = false;
         this.isOnline = false;
         this.isAgent = true;
+        return;
+      }
+      if (val == "Corporate") {
+        this.isOnline = false;
+        this.isAgent = false;
+        this.isCorporate = true;
         return;
       }
 
@@ -2018,6 +2059,35 @@ export default {
       });
     },
 
+    get_gst(item, type) {
+      // agent
+      // online
+      // corporate
+
+      console.log(item + type);
+      switch (type) {
+        case "agent":
+          this.customer.gst_number = this.agentList.find(
+            (e) => e.name == item
+          ).gst;
+          break;
+        case "online":
+          this.customer.gst_number = this.sources.find(
+            (e) => e.name == item
+          ).gst;
+          break;
+        case "corporate":
+          this.customer.gst_number = this.CorporateList.find(
+            (e) => e.name == item
+          ).gst;
+          console.log(this.customer.gst_number);
+          console.log(this.agentList.find((e) => e.name == item));
+          break;
+        default:
+          break;
+      }
+    },
+
     get_agents() {
       let payload = {
         params: {
@@ -2026,6 +2096,16 @@ export default {
       };
       this.$axios.get(`get_agent`, payload).then(({ data }) => {
         this.agentList = data;
+      });
+    },
+    get_Corporate() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`get_corporate`, payload).then(({ data }) => {
+        this.CorporateList = data;
       });
     },
 
@@ -2121,7 +2201,6 @@ export default {
           checkout: this.reservation.check_out,
         },
       };
-      console.log(payload);
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
@@ -2197,7 +2276,6 @@ export default {
       // });
 
       let priceList = this.temp.priceList;
-      console.log(priceList);
 
       // return;
 

@@ -59,7 +59,7 @@ class Controller extends BaseController
                     'message' => $model . ' cannot ' . $action,
                 ], 200);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -204,7 +204,7 @@ class Controller extends BaseController
         return number_format($Num, 2);
     }
 
-    public function gerBookingModel($bookingId)
+    public function getBookingModel($bookingId)
     {
         return Booking::find($bookingId);
     }

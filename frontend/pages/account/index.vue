@@ -55,7 +55,7 @@
             </div>
             <div class="card-content">
               <h4 class="card-title text-capitalize">Total Profit</h4>
-              <span class="data-1"> RS. {{ profit }}</span>
+              <span class="data-1"> RS. {{ convert_decimal(profit) }}</span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
                   <v-icon dark small>mdi-arrow-right</v-icon>
@@ -419,6 +419,14 @@ export default {
       } else {
         let res = str.toString();
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+    },
+
+    convert_decimal(n) {
+      if (n === +n && n !== (n | 0)) {
+        return n.toFixed(2);
+      } else {
+        return n + ".00";
       }
     },
 

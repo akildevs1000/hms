@@ -179,7 +179,8 @@ class CustomerController extends Controller
 
     public function viewBookingCustomerBill($id)
     {
-        $booking =  Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer')->first();
+        $booking =  Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'orderRooms')->first();
+        $postings =  Posting::with('room')->whereBookingId($id)->get();
         // $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
         $transaction = Transaction::with('paymentMode')->whereBookingId($id);
         $transactions = $transaction->clone()->orderBy('id', 'asc')->get();
@@ -192,7 +193,8 @@ class CustomerController extends Controller
             // 'totalPostingAmount' => $totalPostingAmount,
             'transaction' => $transactions,
             'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0,
-            'transactionSummary' => $transactionSummary
+            'transactionSummary' => $transactionSummary,
+            'postings' => $postings
         ]);
     }
 

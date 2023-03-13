@@ -1292,7 +1292,7 @@
                     {{ convert_decimal(item.room_tax) }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <!-- <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     T.R Rent
                   </span>
@@ -1305,7 +1305,7 @@
                   >
                     {{ convert_decimal(item.total_with_tax) }}
                   </div>
-                </div>
+                </div> -->
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Adult Food
@@ -1909,7 +1909,6 @@ export default {
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
       this.check_out_date = tomorrow.toISOString().substr(0, 10);
-      console.log("get_day" + this.check_out_date);
 
       this.get_reservation();
     },

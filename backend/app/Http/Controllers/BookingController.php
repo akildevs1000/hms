@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\RoomTypeController;
-use App\Http\Requests\Booking\BookingRequest;
-use App\Http\Requests\Booking\DocumentRequest;
-use App\Models\Agent;
-use App\Models\BookedRoom;
-use App\Models\Booking;
-use App\Models\CancelRoom;
-use App\Models\Customer;
-use App\Models\Food;
-use App\Models\IdCardType;
-use App\Models\OrderRoom;
-use App\Models\Payment;
-use App\Models\Room;
-use App\Models\RoomType;
-use App\Models\Transaction;
 use Carbon\Carbon;
+use App\Models\Food;
+use App\Models\Room;
+use App\Models\Agent;
+use App\Models\Booking;
+use App\Models\Payment;
+use App\Models\Weekend;
+use App\Models\Customer;
+use App\Models\RoomType;
 use Carbon\CarbonPeriod;
+use App\Models\OrderRoom;
+use App\Models\BookedRoom;
+use App\Models\CancelRoom;
+use App\Models\IdCardType;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\RoomTypeController;
+use App\Http\Requests\Booking\BookingRequest;
+use Illuminate\Support\Facades\Log as Logger;
+use App\Http\Requests\Booking\DocumentRequest;
 
 class BookingController extends Controller
 {
@@ -885,45 +886,6 @@ class BookingController extends Controller
         }
     }
 
-    public function check_out_room_old(Request $request)
-    {
-        try {
-
-            $booking_id = $request->booking_id;
-            $booking    = Booking::where('company_id', $request->company_id)->find($booking_id);
-
-            $transactionDataForDiscount = [
-                'booking_id'  => $booking->id,
-                'customer_id' => $booking->customer_id ?? '',
-                'date'        => now(),
-                'company_id'  => $booking->company_id ?? '',
-                'desc'        => 'discount',
-            ];
-
-            $trans = new TransactionController();
-            if ($request->discount > 0) {
-                $trans->store($transactionDataForDiscount, -abs($request->discount), 'debit');
-            }
-
-            $transactionData = [
-                'booking_id'        => $booking->id,
-                'customer_id'       => $booking->customer_id ?? '',
-                'date'              => now(),
-                'company_id'        => $booking->company_id ?? '',
-                'payment_method_id' => $booking->payment_mode_id,
-                'desc'              => 'paid by city ledger',
-            ];
-
-            $trans = new TransactionController();
-            if ($request->full_payment > 0) {
-                $trans->store($transactionData, $request->full_payment, 'credit');
-            }
-            return response()->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
-
     public function payingAdvance(Request $request)
     {
         try {
@@ -1071,6 +1033,7 @@ class BookingController extends Controller
                 $arr    = $bookedRoom->toArray();
                 $cancel = CancelRoom::create($arr);
                 if ($cancel) {
+                    OrderRoom::whereBookedRoomId($id)->delete();
                     $transactionData = [
                         'booking_id'        => $bookedRoom->booking_id,
                         'customer_id'       => $bookedRoom->customer_id ?? '',
@@ -1167,7 +1130,7 @@ class BookingController extends Controller
     {
         try {
             $oldRoom      = BookedRoom::without('postings', 'booking')->where('company_id', $request->company_id)->find($request->eventId);
-            $bookingModel = $this->gerBookingModel($oldRoom->booking_id);
+            $bookingModel = $this->getBookingModel($oldRoom->booking_id);
 
             if ($bookingModel->booking_status == 0) {
                 return $this->response('oops cant change already guest checkout.', null, true);
@@ -1248,24 +1211,23 @@ class BookingController extends Controller
     public function changeDateByDrag(Request $request)
     {
         try {
+
+            // return $request->all();
             $res           = [];
             $bookedRoom    = BookedRoom::find($request->eventId);
             $bookedRoomIds = BookedRoom::whereBookingId($bookedRoom->booking_id)->pluck('id');
-            $bookingModel  = $this->gerBookingModel($bookedRoom->booking_id);
+            $bookingModel  = $this->getBookingModel($bookedRoom->booking_id);
 
             if ($bookingModel->booking_status == 0) {
-                return $this->response('oops cant change already guest checkout.', null, true);
+                return   $this->response('oops cant change already guest checkout.', null, true);
             }
 
             foreach ($bookedRoomIds as $bookedRoomId) {
-                return $this->changeDateByDragProcess($bookingModel, $request, $bookedRoomId);
+                //   $this->changeDateByDragProcess($bookingModel, $request, $bookedRoomId);
                 $res[] = $this->changeDateByDragProcess($bookingModel, $request, $bookedRoomId);
             }
-            // return $res;
-            $all_room_Total_amount = array_sum(array_column($res, 'all_room_Total_amount'));
-            $nights                = $res[0]['nights'];
-            $paid_amounts          = $res[0]['paid_amounts'];
-            $extraDaysAmount       = $res[0]['extraDaysAmount'];
+
+            $extraDaysAmount = array_sum(array_column($res, 'extend_room_price'));
 
             $transactionData = [
                 'booking_id'        => $bookedRoom->booking_id,
@@ -1275,30 +1237,20 @@ class BookingController extends Controller
                 'payment_method_id' => 7,
                 'desc'              => 'room extends amount',
             ];
-
             (new TransactionController)->store($transactionData, $extraDaysAmount, 'debit');
             $transactionSummary = (new TransactionController)->getTransactionSummaryByBookingId($bookedRoom->booking_id);
+            OrderRoom::whereBookingId($bookedRoom->booking_id);
             Booking::find($bookedRoom->booking_id)->update([
                 'check_in'              => $request->start,
                 'check_out'             => $request->end,
-                'total_days'            => $nights,
+                'total_days'            => $res[0]['number_of_nights'],
                 // 'total_price'           => $all_room_Total_amount * $nights,
                 'total_price'           => $transactionSummary['sumDebit'],
-
                 'grand_remaining_price' => $transactionSummary['balance'],
                 'balance'               => $transactionSummary['balance'],
                 'remaining_price'       => $transactionSummary['balance'],
                 'paid_amounts'          => $transactionSummary['sumCredit'],
-
             ]);
-
-            $period = CarbonPeriod::create($request->start, $this->checkOutDate(date('Y-m-d', strtotime($request->end))));
-            OrderRoom::whereBookedRoomId($bookedRoom->id)->delete();
-            foreach ($period as $date) {
-                $bookedRoom['date']           = $date->format('Y-m-d');
-                $bookedRoom['booked_room_id'] = $bookedRoom->id;
-                OrderRoom::create($bookedRoom->toArray());
-            }
 
             $payment = Payment::whereBookingId($bookedRoom->booking_id)->where('company_id', $bookedRoom->company_id)->where('is_city_ledger', 1)->first();
             if ($payment) {
@@ -1320,109 +1272,116 @@ class BookingController extends Controller
     {
         try {
             $bookedRoom     = BookedRoom::find($bookedRoomId);
+            $total_price     = [];
+            $orderRooms     = [];
             $arr            = [];
+            $discount       = 0;
             $iteration_date = [];
             $period         = CarbonPeriod::create($bookingModel->check_out, $request->end);
+            $numberOfNights         = CarbonPeriod::create($bookingModel->check_in, $request->end);
 
-            $company_id = $request->company_id;
+
+            if (count($period) == 0) {
+                $period = CarbonPeriod::create($bookingModel->check_in, $request->end);
+                $dateArr =  $period->toArray();
+                $cancel_date =   OrderRoom::whereNotIn('date', $dateArr)->whereBookedRoomId($bookedRoomId)->get()->toArray();
+                OrderRoom::whereNotIn('date', $dateArr)->whereBookedRoomId($bookedRoomId)->delete();
+                $total_cancel_amount = array_sum(array_column($cancel_date, 'grand_total'));
+                $bookedRoom->update([
+                    'check_in'    => $request->start,
+                    'check_out'   => $request->end,
+                ]);
+                return [
+                    'extend_room_price' => -$total_cancel_amount,
+                    'number_of_nights' => count($numberOfNights),
+                ];
+            } else {
+                $period  = CarbonPeriod::create($bookingModel->check_out, $request->end);
+            }
+
+            // return count($numberOfNights);
             $room       = Room::where('room_no', $request->roomId)->where('company_id', $bookingModel->company_id)->first();
             $prices     = RoomType::whereCompanyId($bookingModel->company_id)->whereName($room->roomType->name)
                 ->first(['holiday_price', 'weekend_price', 'weekday_price']);
 
-            $weekends = ["Sat", "Sun"];
+            // $weekends = ["Sat", "Sun"];
+            $weekModel =  Weekend::where('company_id', $bookingModel->company_id)->first();
+            $weekends = $weekModel->day;
 
             foreach ($period as $date) {
-                $iteration_date[] = $date->format('Y-m-d');
+                $iteration_date = $date->format('Y-m-d');
                 $day              = $date->format('D');
                 $isWeekend        = in_array($day, $weekends);
-                $isHoliday        = (new RoomTypeController)->checkHoliday($iteration_date, $company_id);
+                $isHoliday        = (new RoomTypeController)->checkHoliday($iteration_date, $bookingModel->company_id);
+
                 if ($isHoliday) {
-                    $arr[] = ["date" => $iteration_date, "price" => $prices->holiday_price, "day_type" => "holiday", "day" => $day];
+                    $arr = [
+                        "date" => $iteration_date,
+                        "price" => $this->getRoomTax($prices->holiday_price - $discount)['total_with_tax'],
+                        "day_type" => "holiday",
+                        "day" => $day,
+                        "tax" =>  $this->getRoomTax($prices->holiday_price - $discount)['room_tax'],
+                        "room_price" =>  $prices->holiday_price,
+                    ];
                 } elseif ($isWeekend) {
-                    $arr[] = ["date" => $iteration_date, "price" => $prices->weekend_price, "day_type" => "weekend", "day" => $day];
+                    $arr = [
+                        "date" => $iteration_date,
+                        "price" => $this->getRoomTax($prices->weekend_price - $discount)['total_with_tax'],
+                        "tax" =>  $this->getRoomTax($prices->weekend_price - $discount)['room_tax'],
+                        "day_type" => "weekend",
+                        "day" => $day,
+                        "room_price" =>  $prices->weekend_price,
+                    ];
                 } else {
-                    $arr[] = ["date" => $iteration_date, "price" => $prices->weekday_price, "day_type" => "weekday", "day" => $day];
+                    $arr = [
+                        "date" => $iteration_date,
+                        "price" => $this->getRoomTax($prices->weekday_price - $discount)['total_with_tax'],
+                        "day_type" => "weekday",
+                        "day" => $day,
+                        "tax" =>  $this->getRoomTax($prices->weekday_price - $discount)['room_tax'],
+                        "room_price" =>  $prices->weekday_price,
+                    ];
                 }
+                $final_price =  $arr['price'];
+                $orderRooms['date']           = $arr['date'];
+                $orderRooms['room_price'] = $arr['room_price'];
+                $orderRooms['total_with_tax'] = $arr['price'];
+                $orderRooms['price'] = $arr['room_price'];
+                $orderRooms['after_discount'] = $arr['price'];
+                $orderRooms['days'] = 1;
+                $orderRooms['room_tax'] = $arr['tax'];
+                $orderRooms['sgst'] = $arr['tax'] / 2;
+                $orderRooms['cgst'] = $arr['tax'] / 2;
+                $orderRooms['check_in'] = $bookedRoom->check_in;
+                $orderRooms['check_out'] = $bookedRoom->check_out;
+                $orderRooms['room_id'] = $bookedRoom->room_id;
+                $orderRooms['room_no'] = $bookedRoom->room_no;
+                $orderRooms['room_type'] = $bookedRoom->room_type;
+                $orderRooms['booked_room_id'] = $bookedRoom->id;
+                $orderRooms['no_of_adult'] = $bookedRoom->no_of_adult;
+                $orderRooms['customer_id'] = $bookedRoom->customer_id;
+                $orderRooms['meal'] = $bookedRoom->meal;
+                $orderRooms['tot_child_food'] = $bookedRoom->tot_child_food / $bookedRoom->days;
+                $orderRooms['tot_adult_food'] = $bookedRoom->tot_adult_food / $bookedRoom->days;
+                $orderRooms['no_of_adult'] = $bookedRoom->no_of_adult;
+                $orderRooms['no_of_child'] = $bookedRoom->no_of_child;
+                $orderRooms['no_of_baby'] = $bookedRoom->no_of_baby;
+                $orderRooms['company_id'] = $bookedRoom->company_id;
+                $orderRooms['booking_id'] = $bookedRoom->booking_id;
+                $orderRooms['total'] = $orderRooms['tot_adult_food'] + $orderRooms['tot_child_food'] + $final_price;
+                $orderRooms['grand_total'] = $orderRooms['tot_adult_food'] + $orderRooms['tot_child_food'] + $final_price;
+                OrderRoom::create($orderRooms);
+                $total_price[] = $arr['price'];
             }
-            $extra_total_price = array_sum(array_column($arr, "price"));
-            return [
-                'currentCheckIn'             => $bookingModel->check_in,
-                'currentCheckOut'            => $bookingModel->check_out,
-                'newCheckout'                => $request->end,
-                'currentDay'                 => $bookingModel->total_days,
-                'extraDay'                   => Carbon::parse(date('Y-m-d', strtotime($bookingModel->check_out)))
-                    ->diffInDays(date('Y-m-d', strtotime($request->end))),
-                'iteration_date'             => $iteration_date,
-                // 'bookedRoom'                 => $bookedRoom,
-                'room_tax'                   => $bookedRoom->room_tax,
-                'arr'                        => $arr,
-                'extra_total_price'          => $extra_total_price,
-                'extra_total_price_with_tax' => $extra_total_price + $bookedRoom->room_tax,
 
-            ];
-            // ----------------------------------------
-            $end = $request->end;
-            // $end             = date('Y-m-d', strtotime($request->end . '+1day'));
-
-            $bookedRoom      = BookedRoom::find($bookedRoomId);
-            $booking         = Booking::find($bookedRoom->booking_id);
-            $nightsCal       = Carbon::parse(date('Y-m-d', strtotime($request->start)))->diffInDays(date('Y-m-d', strtotime($end)));
-            $nights          = $nightsCal; // - 1;
-            $bookingDays     = Carbon::parse(date('Y-m-d', strtotime($booking->check_in)))->diffInDays(date('Y-m-d', strtotime($booking->check_out)));
-            $extraDays       = $nights - $bookingDays;
-            $extraDaysAmount = $extraDays * $booking->all_room_Total_amount;
-
-            [
-                'request->start'               => $request->start,
-                'end'                          => $end,
-                'booking->total_days'          => $booking->total_days,
-                'nights'                       => $nights,
-                'extraDays'                    => $extraDays,
-                'bookedRoom->total *  $nights' => $bookedRoom->total * $nights,
-
-                'booking_check_in'             => $booking->check_in,
-                'booking_check_out'            => $booking->check_out,
-                'bookingdays'                  => ($nights - $bookingDays),
-                'roomamount'                   => $booking->all_room_Total_amount,
-                'extradateamount'              => ($nights - $bookingDays) * $booking->all_room_Total_amount,
-
-                'check_in'                     => $request->start,
-                'check_out'                    => $end,
-                'total_days'                   => $nights,
-                'total_price'                  => $booking->all_room_Total_amount * $nights,
-                'grand_remaining_price'        => ($booking->all_room_Total_amount * $nights) - $booking->paid_amounts,
-
-                'more'                         => $booking->total_days < $nights,
-                'less'                         => $booking->total_days > $nights,
-                '-abs($extraDays)'             => -abs($extraDays),
-                '$extraDays < 0'               => $extraDays < 0,
-                '$extraDaysAmount'             => $extraDaysAmount,
-            ];
-
-            $updated = $bookedRoom->update([
+            $bookedRoom->update([
                 'check_in'    => $request->start,
-                'check_out'   => $end,
-                'days'        => $nights,
-                'grand_total' => $bookedRoom->total * $nights,
+                'check_out'   => $request->end,
             ]);
 
-            $period = CarbonPeriod::create($request->start, $this->checkOutDate(date('Y-m-d', strtotime($end))));
-            if ($updated) {
-                OrderRoom::whereBookedRoomId($bookedRoom->id)->delete();
-                foreach ($period as $date) {
-                    $bookedRoom['date']           = $date->format('Y-m-d');
-                    $bookedRoom['booked_room_id'] = $bookedRoom->id;
-                    OrderRoom::create($bookedRoom->toArray());
-                }
-            }
-
             return [
-                'all_room_Total_amount' => $booking->all_room_Total_amount,
-                'extraDays'             => $extraDays,
-                'extraDaysAmount'       => $extraDaysAmount,
-                'nights'                => $nights,
-                'paid_amounts'          => $booking->paid_amounts,
-                'all_room_Total_amount' => $bookedRoom->total_with_tax,
+                'extend_room_price' => array_sum($total_price),
+                'number_of_nights' => count($numberOfNights),
             ];
         } catch (\Throwable $th) {
             return $th;

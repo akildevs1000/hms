@@ -68,14 +68,12 @@
 
       <v-col md="12">
         <v-card elevation="0">
-          <v-toolbar color="cyan" dark flat>
-            <v-app-bar-nav-icon></v-app-bar-nav-icon>
+          <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Reservation Details</v-toolbar-title>
             <v-spacer></v-spacer>
             <template v-slot:extension>
               <v-tabs v-model="tab1" align-with-title>
                 <v-tabs-slider color="yellow"></v-tabs-slider>
-
                 <v-tab v-for="item in itemsCustomer" :key="item">
                   {{ item }}
                 </v-tab>
@@ -220,7 +218,6 @@
                   </tr>
                 </table>
               </v-alert>
-
               <!-- <div>
                 <v-row>
                   <v-col cols="3"><b>Reservation No </b></v-col>
@@ -304,7 +301,9 @@
               </div> -->
             </v-tab-item>
             <v-tab-item class="px-3 py-4">
-              <table class="responsive-table">
+              <!--
+                  this is booked rooms
+                <table class="responsive-table">
                 <thead>
                   <tr class="table-header-text">
                     <th>No</th>
@@ -372,6 +371,130 @@
                     <td class="text-right">{{ postingItem.cgst || "---" }}</td>
                     <td class="text-right">
                       {{ postingItem.amount_with_tax || "---" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table> -->
+
+              <table class="responsive-table">
+                <thead>
+                  <tr class="table-header-text">
+                    <th>No</th>
+                    <th>Date</th>
+                    <th>Room</th>
+                    <th>Description</th>
+                    <th>Adults</th>
+                    <th>Child</th>
+                    <th>Babies</th>
+                    <th>Meal Plan</th>
+                    <th>Adult Food Amount</th>
+                    <th>Child Food Amount</th>
+                    <th class="text-right">Price</th>
+                    <th class="text-right">Discount</th>
+                    <th class="text-right">After Discount</th>
+                    <th class="text-right">Sgst</th>
+                    <th class="text-right">Cgst</th>
+                    <th class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody v-for="(item, index) in orderRooms" :key="index">
+                  <tr style="font-size: 13px">
+                    <td>{{ ++index || "---" }}</td>
+                    <td>{{ item.date || "---" }}</td>
+                    <td>{{ item.room_no || "---" }}</td>
+                    <td>{{ item.room_type || "---" }}</td>
+                    <td>{{ item.no_of_adult || "---" }}</td>
+                    <td>{{ item.no_of_child || "---" }}</td>
+                    <td>{{ item.no_of_baby || "---" }}</td>
+                    <td>{{ capsTitle(item.meal) || "---" }}</td>
+                    <td class="text-right">
+                      {{ item.tot_adult_food || "---" }}
+                    </td>
+                    <td class="text-right">
+                      {{ item.tot_child_food || "---" }}
+                    </td>
+                    <td class="text-right">{{ item.price || "---" }}</td>
+                    <td class="text-right">
+                      {{ item.room_discount || "---" }}
+                    </td>
+                    <td class="text-right">
+                      {{ item.after_discount || "---" }}
+                    </td>
+                    <td class="text-right">{{ item.sgst || "---" }}</td>
+                    <td class="text-right">{{ item.cgst || "---" }}</td>
+                    <td class="text-right">{{ item.total || "---" }}</td>
+                  </tr>
+                  <tr
+                    style="font-size: 13px"
+                    v-for="(postingItem, postingIndex) in item.postings"
+                    :key="postingIndex"
+                  >
+                    <td>{{ item.room_no || "---" }}</td>
+                    <td>(Posting) {{ postingItem.item || "---" }}</td>
+                    <td class="text-right"></td>
+                    <td class="text-right"></td>
+                    <td class="text-right"></td>
+                    <td class="text-right"></td>
+                    <td class="text-right"></td>
+                    <td class="text-right"></td>
+                    <td class="text-right"></td>
+                    <td class="text-right">
+                      {{ postingItem.amount || "---" }}
+                    </td>
+                    <td class="text-right">
+                      {{ postingItem.amount || "---" }}
+                    </td>
+                    <td class="text-right">{{ postingItem.sgst || "---" }}</td>
+                    <td class="text-right">{{ postingItem.cgst || "---" }}</td>
+                    <td class="text-right">
+                      {{ postingItem.amount_with_tax || "---" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </v-tab-item>
+            <v-tab-item class="px-3 py-4">
+              <table class="responsive-table">
+                <thead>
+                  <tr class="table-header-text">
+                    <th>No</th>
+                    <th>Bill</th>
+                    <th>Date</th>
+                    <th>Room Type</th>
+                    <th>Room</th>
+                    <th>Item</th>
+                    <th class="text-right">Amount</th>
+                    <th class="text-right">QTY</th>
+                    <th class="text-right">Sgst</th>
+                    <th class="text-right">Cgst</th>
+                    <th class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    style="font-size: 13px"
+                    v-for="(item, postingIndex) in postings"
+                    :key="postingIndex"
+                  >
+                    <td>{{ ++postingIndex }}</td>
+                    <td>{{ item.bill_no || "---" }}</td>
+                    <td>{{ item.posting_date || "---" }}</td>
+                    <td>
+                      {{
+                        (item.room &&
+                          item.room.room_type &&
+                          item.room.room_type.name) ||
+                        "---"
+                      }}
+                    </td>
+                    <td>{{ (item.room && item.room.room_no) || "---" }}</td>
+                    <td>{{ item.item || "---" }}</td>
+                    <td class="text-right">{{ item.single_amt || "---" }}</td>
+                    <td>{{ item.qty || "---" }}</td>
+                    <td class="text-right">{{ item.sgst || "---" }}</td>
+                    <td class="text-right">{{ item.cgst || "---" }}</td>
+                    <td class="text-right">
+                      {{ item.amount_with_tax || "---" }}
                     </td>
                   </tr>
                 </tbody>
@@ -520,7 +643,7 @@ export default {
     loading: false,
     response: "",
     customer: [],
-    itemsCustomer: ["Reservation", "Room", "Transaction"],
+    itemsCustomer: ["Reservation", "Room", "Postings", "Transaction"],
     tab1: null,
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 
@@ -554,6 +677,8 @@ export default {
     payments: [],
     booking: [],
     bookedRooms: [],
+    orderRooms: [],
+    postings: [],
     transactions: [],
     transactionSummary: [],
     errors: [],
@@ -635,6 +760,8 @@ export default {
         this.booking = booking;
         this.payments = booking.payments;
         this.bookedRooms = booking.booked_rooms;
+        this.orderRooms = booking.order_rooms;
+        this.postings = data.postings;
         //end booking
         this.loading = false;
         this.calTotalAmount(this.payments);

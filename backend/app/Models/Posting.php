@@ -35,4 +35,9 @@ class Posting extends Model
     {
         return $this->belongsTo(BookedRoom::class);
     }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
 }

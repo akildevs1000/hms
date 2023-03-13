@@ -437,14 +437,14 @@ export default {
 
         select: (date, jsEvent, view, resourceObj, vv) => {
           let obj = date.resource.extendedProps;
-          // if (date.startStr < this.currentDate) {
-          //   this.alert(
-          //     "Missing!",
-          //     "Please Select Current Date or Future Date",
-          //     "error"
-          //   );
-          //   return;
-          // }
+          if (date.startStr < this.currentDate) {
+            this.alert(
+              "Missing!",
+              "Please Select Current Date or Future Date",
+              "error"
+            );
+            return;
+          }
           console.log(date);
           this.create_reservation(date, obj);
         },

@@ -44,6 +44,13 @@ class SourceController extends Controller
         $model->where('type', 'agent');
         return $model->get();
     }
+    public function getCorporate(Request  $request)
+    {
+        $model = Source::query();
+        $model->where('company_id', $request->company_id);
+        $model->where('type', 'corporate');
+        return $model->get();
+    }
 
     public function store(StoreRequest $request)
     {

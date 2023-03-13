@@ -23,7 +23,7 @@ class PostingController extends Controller
         $model->where('company_id', $request->company_id);
 
         $model->with([
-            'booking:id,customer_id,booking_status' => [
+            'booking:id,reservation_no,customer_id,booking_status' => [
                 'customer:id,email,first_name,last_name',
             ],
             'bookedRoom',
@@ -137,7 +137,7 @@ class PostingController extends Controller
             $payment->save();
 
             return $this->response('Posting Successfully submitted.', $posting, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
