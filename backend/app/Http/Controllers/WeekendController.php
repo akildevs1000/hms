@@ -5,18 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Weekend\StoreRequest;
 use App\Http\Requests\Weekend\UpdateRequest;
 use App\Models\Weekend;
+use Illuminate\Http\Request;
 
 class WeekendController extends Controller
 {
     public $name = 'Weekend';
-    
-    public function index()
+
+    public function index(Request $request)
     {
-        return Weekend::get();
+        return Weekend::where('company_id', $request->company_id)->get();
     }
 
     public function store(StoreRequest $request)
     {
+        Weekend::where('company_id', $request->company_id)->delete();
+
         $model = Weekend::query();
 
         $model->where('company_id', $request->company_id)->where('day', $request->day);
@@ -34,7 +37,7 @@ class WeekendController extends Controller
             } else {
                 return $this->response($this->name . ' cannot create.', null, false);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -56,7 +59,7 @@ class WeekendController extends Controller
             } else {
                 return $this->response($this->name . ' cannot create.', null, false);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -72,7 +75,7 @@ class WeekendController extends Controller
             } else {
                 return $this->response($this->name . ' cannot create.', null, false);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }

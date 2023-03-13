@@ -359,6 +359,7 @@ export default {
 
         eventResizableFromStart: true, // enables resizing from the start of the event
         slotEventOverlap: false, // allows events to overlap time slots
+        eventResizable: true,
         navLinks: true,
         resourceAreaWidth: "12%",
 
@@ -445,7 +446,6 @@ export default {
             );
             return;
           }
-          console.log(date);
           this.create_reservation(date, obj);
         },
 
@@ -456,8 +456,6 @@ export default {
             end: this.convert_date_format(arg.event.end),
             roomId: arg.event._def.resourceIds[0],
           };
-
-          console.log(obj);
           this.change_date_by_drag(obj);
         },
 
@@ -676,39 +674,37 @@ export default {
 
     get_room_types(e, obj) {
       this.reservation.isCalculate = true;
+
       this.reservation.room_id = this.RoomList.find(
         (e) => e.room_no == obj.room_no
       ).id;
+
       this.reservation.room_type = obj.room_type;
       this.reservation.room_no = obj.room_no;
       this.reservation.check_in = e.startStr;
+      // this.reservation.check_out = this.convert_checkout_date_format(
+      //   new Date(e.endStr)
+      // ); //this.convert_date_format(e.end);
 
-      this.reservation.check_out = e.endStr;
+      this.reservation.check_out = e.endStr; //this.convert_date_format(e.end);
 
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
           roomType: obj.room_type,
           room_no: obj.room_no,
-          checkin: this.reservation.check_in,
-          checkout: this.reservation.check_out,
         },
       };
-      console.log(payload);
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          this.reservation.room_id = data.room.id;
-          this.reservation.price = data.total_price;
-          this.reservation.priceList = data.data;
-          this.reservation.total_tax = data.total_tax;
-          let commitObj = {
-            ...this.reservation,
-          };
-          console.log(commitObj);
-          this.$store.commit("reservation", commitObj);
-          this.$router.push(`/hotel/new2`);
-        });
+      this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
+        this.reservation.room_id = data.id;
+        this.reservation.price = data.room_type.price;
+
+        let commitObj = {
+          ...this.reservation,
+        };
+        this.$store.commit("reservation", commitObj);
+        this.$router.push(`/hotel/new2`);
+      });
     },
 
     convert_checkout_date_format(val) {
@@ -727,8 +723,10 @@ export default {
     },
 
     get_remaining(val) {
+      // let total = this.checkData.total_price;
       let total = this.checkData.remaining_price;
       let advance_price = val;
+      // this.checkData.remaining_price = total - advance_price;
     },
 
     room_list() {
@@ -780,6 +778,7 @@ export default {
         alert("Enter advance amount");
         return;
       }
+      // this.loading = true;
       let payload = {
         new_advance: this.new_advance,
         booking_id: data.id,

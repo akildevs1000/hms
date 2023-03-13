@@ -269,6 +269,7 @@
                       outlined
                       :items="agentList"
                       type="text"
+                      @change="get_gst(room.source, 'agent')"
                       item-value="name"
                       item-text="name"
                       v-model="room.source"
@@ -285,6 +286,7 @@
                       label="Source"
                       :items="sources"
                       dense
+                      @change="get_gst(room.source, 'online')"
                       outlined
                       item-value="name"
                       item-text="name"
@@ -295,7 +297,29 @@
                       "
                     ></v-select>
                   </v-col>
-                  <v-col md="3" cols="12" sm="12" v-if="isAgent || isOnline">
+                  <v-col md="3" sm="12" cols="12" dense v-if="isCorporate">
+                    <v-select
+                      v-model="room.source"
+                      label="Corporate"
+                      :items="CorporateList"
+                      dense
+                      outlined
+                      @change="get_gst(room.source, 'corporate')"
+                      item-value="name"
+                      item-text="name"
+                      :hide-details="errors && !errors.source"
+                      :error="errors && errors.source"
+                      :error-messages="
+                        errors && errors.source ? errors.source[0] : ''
+                      "
+                    ></v-select>
+                  </v-col>
+                  <v-col
+                    md="3"
+                    cols="12"
+                    sm="12"
+                    v-if="isAgent || isOnline || isCorporate"
+                  >
                     <v-text-field
                       label="Reference Number"
                       dense
@@ -316,7 +340,7 @@
                     sm="12"
                     cols="12"
                     dense
-                    v-if="isAgent || isOnline"
+                    v-if="isAgent || isOnline || isCorporate"
                   >
                     <v-select
                       v-model="room.paid_by"
@@ -637,11 +661,72 @@
                                   Room Price
                                 </th>
                                 <td colspan="2" style="text-align: right">
-                                  {{ temp.price }}
+                                  {{ convert_decimal(temp.price) }}
                                 </td>
                               </tr>
                             </table>
                           </v-col>
+                          <v-col md="6" cols="12">
+                            <table class="food-table">
+                              <tr
+                                class="food-table"
+                                style="background-color: #4390fc; color: white"
+                              >
+                                <th class="food-table" style="width: 100px">
+                                  Date
+                                </th>
+                                <td class="food-table" style="width: 100px">
+                                  Day
+                                </td>
+                                <td class="food-table" style="width: 100px">
+                                  Type
+                                </td>
+                                <td class="food-table" style="width: 100px">
+                                  Tax
+                                </td>
+                                <td class="food-table" style="width: 100px">
+                                  Amount
+                                </td>
+                              </tr>
+
+                              <tr
+                                class="food-table"
+                                v-for="(item, index) in temp.priceList"
+                                :key="index"
+                              >
+                                <td class="food-table">
+                                  {{ item.date }}
+                                </td>
+                                <td class="food-table">
+                                  {{ item.day }}
+                                </td>
+                                <td class="food-table">
+                                  {{ item.day_type }}
+                                </td>
+                                <td class="food-table">
+                                  {{ convert_decimal(item.tax) }}
+                                </td>
+                                <td class="food-table">
+                                  {{ convert_decimal(item.price) }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="5"><hr /></td>
+                              </tr>
+                              <tr>
+                                <td>Total</td>
+                                <td></td>
+                                <td></td>
+                                <td class="food-table">
+                                  {{ convert_decimal(temp.room_tax) }}
+                                </td>
+                                <td class="food-table">
+                                  {{ convert_decimal(temp.price) }}
+                                </td>
+                              </tr>
+                            </table>
+                          </v-col>
+                          <v-col md="6"> </v-col>
                           <v-col md="2" sm="12" cols="12" dense>
                             <label class="col-form-label"> Discount </label>
                             <v-checkbox
@@ -812,7 +897,7 @@
                     aria-describedby="inputGroup-sizing-sm"
                     disabled
                   >
-                    {{ temp.check_out || "---" }}
+                    {{ temp.check_out || "---" }} 11:00 AM
                   </div>
                 </div>
                 <div class="input-group input-group-sm px-5">
@@ -975,35 +1060,25 @@
                   </v-col>
                 </v-row>
 
-                <div class="input-group input-group-sm px-5">
+                <!-- <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Room Price
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(room.all_room_Total_amount) }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Sub Total ({{ getDays() }} x
                     {{ convert_decimal(room.all_room_Total_amount) }})
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(room.sub_total) }}
                   </div>
-                </div>
+                </div> -->
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
@@ -1133,7 +1208,7 @@
                     aria-describedby="inputGroup-sizing-sm"
                     disabled
                   >
-                    {{ item.price }}
+                    {{ convert_decimal(item.price) }}
                   </div>
                 </div>
 
@@ -1180,7 +1255,7 @@
                     {{ convert_decimal(item.room_tax) }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <!-- <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     T.R Rent
                   </span>
@@ -1193,7 +1268,7 @@
                   >
                     {{ convert_decimal(item.total_with_tax) }}
                   </div>
-                </div>
+                </div> -->
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Adult Food
@@ -1377,6 +1452,7 @@ export default {
       payments: "",
       bookedRooms: "",
       loading: false,
+      selectRoomLoading: false,
 
       headers: [
         {
@@ -1443,7 +1519,13 @@ export default {
       show_password: false,
       show_password_confirm: false,
       roomTypes: [],
-      types: ["Online", "Walking", "Travel Agency", "Complimentary"],
+      types: [
+        "Online",
+        "Walking",
+        "Travel Agency",
+        "Complimentary",
+        "Corporate",
+      ],
 
       search: {
         mobile: "",
@@ -1454,6 +1536,7 @@ export default {
       sources: [],
 
       agentList: [],
+      CorporateList: [],
 
       idCards: [],
       imgView: false,
@@ -1488,6 +1571,7 @@ export default {
         tot_adult_food: 0,
         tot_child_food: 0,
         discount_reason: "",
+        priceList: [],
       },
 
       check_in_menu: false,
@@ -1497,6 +1581,7 @@ export default {
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
+      isCorporate: false,
       isAgent: false,
       isDiff: false,
       search_available_room: "",
@@ -1527,7 +1612,8 @@ export default {
         rooms: "",
         reference_no: "",
         paid_by: "",
-        purpose: "Visiting",
+        purpose: "Tour",
+        // priceList: [],
       },
       reservation: {},
       countryList: [],
@@ -1629,6 +1715,7 @@ export default {
     this.get_countries();
     this.get_agents();
     this.get_online();
+    this.get_Corporate();
     // this.getImage();
     this.preloader = false;
   },
@@ -1720,9 +1807,11 @@ export default {
       this.temp.price = this.reservation.price;
       this.temp.check_in = this.reservation.check_in;
       this.temp.check_out = this.reservation.check_out;
-      this.temp.room_tax = this.get_room_tax(this.reservation.price);
+      this.temp.room_tax = this.reservation.total_tax;
       this.room.check_in = this.reservation.check_in;
       this.room.check_out = this.reservation.check_out;
+      this.temp.priceList = this.reservation.priceList;
+      this.get_cs_gst(this.temp.room_tax);
     },
 
     get_food_price() {
@@ -1920,20 +2009,30 @@ export default {
     },
 
     subTotal() {
-      return (this.room.sub_total =
-        parseFloat(this.room.all_room_Total_amount) *
-        parseFloat(this.getDays()));
+      return (this.room.sub_total = this.room.all_room_Total_amount);
+      // --------------old---------------
+      // return (this.room.sub_total =
+      // parseFloat(this.room.all_room_Total_amount) *
+      // parseFloat(this.getDays()));
     },
 
     getType(val) {
       if (val == "Online") {
         this.isOnline = true;
+        this.isCorporate = false;
         this.isAgent = false;
         return;
       }
       if (val == "Travel Agency") {
+        this.isCorporate = false;
         this.isOnline = false;
         this.isAgent = true;
+        return;
+      }
+      if (val == "Corporate") {
+        this.isOnline = false;
+        this.isAgent = false;
+        this.isCorporate = true;
         return;
       }
 
@@ -1960,6 +2059,35 @@ export default {
       });
     },
 
+    get_gst(item, type) {
+      // agent
+      // online
+      // corporate
+
+      console.log(item + type);
+      switch (type) {
+        case "agent":
+          this.customer.gst_number = this.agentList.find(
+            (e) => e.name == item
+          ).gst;
+          break;
+        case "online":
+          this.customer.gst_number = this.sources.find(
+            (e) => e.name == item
+          ).gst;
+          break;
+        case "corporate":
+          this.customer.gst_number = this.CorporateList.find(
+            (e) => e.name == item
+          ).gst;
+          console.log(this.customer.gst_number);
+          console.log(this.agentList.find((e) => e.name == item));
+          break;
+        default:
+          break;
+      }
+    },
+
     get_agents() {
       let payload = {
         params: {
@@ -1968,6 +2096,16 @@ export default {
       };
       this.$axios.get(`get_agent`, payload).then(({ data }) => {
         this.agentList = data;
+      });
+    },
+    get_Corporate() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`get_corporate`, payload).then(({ data }) => {
+        this.CorporateList = data;
       });
     },
 
@@ -2023,21 +2161,29 @@ export default {
       this.room.all_room_Total_amount = res;
     },
 
-    get_room_tax(amount) {
-      let per = amount < 3000 ? 12 : 18;
-      let tax = (amount / 100) * per;
-      this.temp.room_tax = tax;
-      this.temp.total_with_tax =
-        parseFloat(this.temp.after_discount) + parseFloat(tax);
-      let gst = parseFloat(tax) / 2;
+    // get_room_tax(amount) {
+    //   let per = amount < 3000 ? 12 : 18;
+    //   let tax = (amount / 100) * per;
+    //   this.temp.room_tax = tax;
+    //   this.temp.total_with_tax =
+    //     parseFloat(this.temp.after_discount) + parseFloat(tax);
+    //   let gst = parseFloat(tax) / 2;
+    //   this.temp.cgst = gst;
+    //   this.temp.sgst = gst;
+    //   return tax;
+    // },
+
+    get_cs_gst(amount) {
+      let gst = parseFloat(amount) / 2;
       this.temp.cgst = gst;
       this.temp.sgst = gst;
-      return tax;
     },
 
     selectRoom(item) {
+      this.selectRoomLoading = true;
       let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
       if (isSelect) {
+        this.selectRoomLoading = false;
         this.alert(
           "oops",
           "Already selected please choose another room",
@@ -2046,12 +2192,29 @@ export default {
         return;
       }
 
-      this.RoomDrawer = false;
-      this.temp.company_id = this.$auth.user.company.id;
-      this.temp.room_no = item.room_no;
-      this.temp.room_id = item.id;
-      this.temp.room_type = item.room_type.name;
-      this.temp.price = item.price;
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          roomType: item.room_type.name,
+          room_no: item.room_no,
+          checkin: this.reservation.check_in,
+          checkout: this.reservation.check_out,
+        },
+      };
+      this.$axios
+        .get(`get_data_by_select_with_tax`, payload)
+        .then(({ data }) => {
+          this.selectRoomLoading = false;
+          this.RoomDrawer = false;
+          this.temp.company_id = this.$auth.user.company.id;
+          this.temp.room_no = item.room_no;
+          this.temp.room_id = item.id;
+          this.temp.room_type = item.room_type.name;
+          this.temp.price = data.total_price;
+          this.temp.priceList = data.data;
+          this.temp.room_tax = this.reservation.total_tax;
+          this.get_cs_gst(this.temp.room_tax);
+        });
     },
 
     capsTitle(val) {
@@ -2088,11 +2251,40 @@ export default {
         return;
       }
 
+      // let payload = {
+      //   params: {
+      //     company_id: this.$auth.user.company.id,
+      //     roomType: this.temp.room_type,
+      //     room_no: this.temp.room_no,
+      //     checkin: this.reservation.check_in,
+      //     checkout: this.reservation.check_out,
+      //     discount: this.temp.room_discount,
+      //   },
+      // };
+      // console.log(payload);
+      // this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
+      //   this.selectRoomLoading = false;
+      //   this.RoomDrawer = false;
+      //   this.temp.company_id = this.$auth.user.company.id;
+      //   this.temp.room_no = data.room.room_no;
+      //   this.temp.room_id = data.room.id;
+      //   this.temp.room_type = data.room.room_type.name;
+      //   this.temp.price = data.total_price;
+      //   this.temp.priceList = data.data;
+
+      //   console.log(this.temp.priceList);
+      // });
+
+      let priceList = this.temp.priceList;
+
+      // return;
+
       this.temp.after_discount =
         parseFloat(this.temp.price) -
         parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
+
       this.temp.days = this.getDays();
-      this.get_room_tax(this.temp.after_discount);
+      // this.get_room_tax(this.temp.after_discount);
 
       let adult_f_tot = Object.values(this.tempAdult).reduce(
         (a, b) => a + b,
@@ -2103,16 +2295,16 @@ export default {
         0
       );
 
-      this.temp.tot_adult_food = adult_f_tot;
-      this.temp.tot_child_food = child_f_tot;
+      this.temp.tot_adult_food = adult_f_tot * this.getDays();
+      this.temp.tot_child_food = child_f_tot * this.getDays();
 
       this.temp.total =
-        parseFloat(this.temp.total_with_tax) +
-        parseFloat(adult_f_tot) +
-        parseFloat(child_f_tot);
+        parseFloat(this.temp.tot_adult_food) +
+        parseFloat(this.temp.after_discount) +
+        parseFloat(this.temp.tot_child_food);
+      // parseFloat(this.temp.total_with_tax) +
 
-      this.temp.grand_total =
-        parseFloat(this.temp.days) * parseFloat(this.temp.total);
+      this.temp.grand_total = parseFloat(this.temp.total);
 
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
@@ -2394,6 +2586,7 @@ export default {
   border-radius: 5px;
   border: 1px solid rgb(145, 140, 140);
 }
+
 .wrapper span {
   width: 100%;
   text-align: center;
@@ -2402,20 +2595,24 @@ export default {
   cursor: pointer;
   user-select: none;
 }
+
 .wrapper span.num {
   font-size: 20px;
   border-right: 2px solid rgba(0, 0, 0, 0.2);
   border-left: 2px solid rgba(0, 0, 0, 0.2);
   pointer-events: none;
 }
+
 fieldset {
   background-color: white !important;
 }
+
 .payment-table table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
+
 .payment-table td,
 th {
   text-align: left;

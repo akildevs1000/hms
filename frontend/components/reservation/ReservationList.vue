@@ -37,7 +37,7 @@
       <table>
         <tr>
           <th
-            style="font-size:13px"
+            style="font-size: 13px"
             v-for="(item, index) in headers"
             :key="index"
           >
@@ -51,9 +51,9 @@
           absolute
           color="primary"
         ></v-progress-linear>
-        <tr style="font-size:13px" v-for="(item, index) in data" :key="index">
+        <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
-            <b>{{ item.id }}</b>
+            <b>{{ item.reservation_no }}</b>
           </td>
           <td>{{ item && item.customer.full_name }}</td>
           <td>
@@ -63,10 +63,10 @@
             </span>
           </td>
 
-          <td style="width:150px">
+          <td style="width: 150px">
             {{ item.check_in_date }}
           </td>
-          <td style="width:150px">
+          <td style="width: 150px">
             {{ item.check_out_date }}
           </td>
           <td>{{ item.total_price || 0 }}</td>
@@ -99,7 +99,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
     },
     options: {},
     endpoint: "reservation_list_dash",
@@ -113,7 +113,7 @@ export default {
       { id: "", name: "Summary" },
       { id: 1, name: "Arrival For Today" },
       { id: 2, name: "Occupancy" },
-      { id: 3, name: "Departure For Today" }
+      { id: 3, name: "Departure For Today" },
     ],
     headers: [
       { text: "&nbsp RESERVATION NUMBER" },
@@ -125,12 +125,12 @@ export default {
       // { text: "Advance" },
       // { text: "Remaining" },
       { text: "Source" },
-      { text: "Booking Date" }
+      { text: "Booking Date" },
     ],
     editedIndex: -1,
     response: "",
     status: "",
-    errors: []
+    errors: [],
   }),
 
   computed: {},
@@ -138,7 +138,7 @@ export default {
   watch: {
     search() {
       this.getDataFromApi();
-    }
+    },
   },
   created() {
     // this.loading = true;
@@ -150,7 +150,7 @@ export default {
       let user = this.$auth;
       return;
       return (
-        (user && user.permissions.some(e => e.permission == permission)) ||
+        (user && user.permissions.some((e) => e.permission == permission)) ||
         user.master
       );
     },
@@ -179,7 +179,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
     onPageChange() {
@@ -195,8 +195,8 @@ export default {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
           status: this.status,
-          date: new Date().toJSON().slice(0, 10)
-        }
+          date: new Date().toJSON().slice(0, 10),
+        },
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
@@ -212,8 +212,8 @@ export default {
       } else if (this.search.length > 2) {
         this.getDataFromApi();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

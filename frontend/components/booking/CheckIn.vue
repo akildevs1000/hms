@@ -1120,7 +1120,7 @@ export default {
 
       let payload = new FormData();
       payload.append("customer_id", data.customer_id);
-      payload.append("new_payment", this.new_payment);
+      payload.append("new_payment", this.new_payment || 0);
       payload.append("booking_id", data.id);
       payload.append("remaining_price", data.remaining_price);
       payload.append("payment_mode_id", data.payment_mode_id);
@@ -1152,10 +1152,12 @@ export default {
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
+            this.loading = false;
           } else {
             this.closeDialog(data);
             this.alert("Success!", "success check in", "success");
             this.redirect_to_invoice(bookingId);
+            this.loading = false;
             if ($nuxt.$route.name == "hotel-calendar1") {
               this.$router.push(`/`);
             }

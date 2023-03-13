@@ -341,6 +341,10 @@ export default {
         name: "Travel Agent",
         value: "Agent",
       },
+      {
+        name: "Corporate",
+        value: "corporate",
+      },
     ],
     errors: [],
   }),
@@ -476,7 +480,7 @@ export default {
         mobile: this.editedItem.mobile,
         email: this.editedItem.email,
         landline: this.editedItem.landline,
-        contact_name: this.editedItem.contact_name.toLowerCase(),
+        contact_name: this.editedItem.contact_name,
         company_id: this.$auth.user.company.id,
       };
       if (this.editedIndex > -1) {

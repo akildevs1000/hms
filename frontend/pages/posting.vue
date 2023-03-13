@@ -164,7 +164,6 @@
     <v-row>
       <v-col xs="12" sm="12" md="3" cols="12">
         <v-select
-          class="form-control"
           @change="getDataFromApi(`posting`)"
           v-model="pagination.per_page"
           :items="[10, 25, 50, 100]"
@@ -176,7 +175,6 @@
       </v-col>
       <v-col xs="12" sm="12" md="3" cols="12">
         <v-select
-          class="form-control"
           @change="getDataFromApi(`posting`)"
           v-model="pagination.room_no"
           :items="rooms"
@@ -190,7 +188,6 @@
       </v-col>
       <v-col xs="12" sm="12" md="3" cols="12">
         <v-text-field
-          class="form-control py-0 custom-text-box floating shadow-none"
           placeholder="Bill No..."
           solo
           flat
@@ -200,7 +197,7 @@
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-card class="mb-5 rounded-md mt-3" elevation="0">
+    <v-card class="mb-5 rounded-md mt-6" elevation="0">
       <v-toolbar class="rounded-md" color="background" dense flat dark>
         <span> {{ Model }} List</span>
         <v-spacer></v-spacer>
@@ -214,7 +211,11 @@
       </v-toolbar>
       <table>
         <tr>
-          <th v-for="(item, index) in headers" :key="index">
+          <th
+            v-for="(item, index) in headers"
+            :key="index"
+            style="font-size: 13px"
+          >
             <span v-html="item.text"></span>
           </th>
         </tr>
@@ -225,10 +226,10 @@
           absolute
           color="primary"
         ></v-progress-linear>
-        <tr v-for="(item, index) in data" :key="index">
+        <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
           <td>{{ ++index }}</td>
           <td>{{ caps(item.bill_no) }}</td>
-          <td>{{ caps(item.booking && item.booking.reservation_no) }}</td>
+          <td>{{ item.booking && item.booking.reservation_no }}</td>
           <td>
             {{
               caps(
@@ -273,7 +274,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10,
+      per_page: 50,
       room_no: "",
     },
     options: {},

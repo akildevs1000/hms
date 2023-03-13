@@ -22,9 +22,9 @@
         }
 
         /* .inv-table tr:nth-child(even) {
-                    background-color: #c1d4e2;
-                    border: 1px solid #eeeeee;
-                } */
+                        background-color: #c1d4e2;
+                        border: 1px solid #eeeeee;
+                    } */
 
         th {
             font-size: 9px;
@@ -42,8 +42,8 @@
         }
 
         /* .page-break {
-                        page-break-after: always;
-                    } */
+                            page-break-after: always;
+                        } */
 
         .main-table {
             padding-bottom: 20px;
@@ -138,10 +138,14 @@
             <td style="text-align: left;width: 200px; border :none; padding:15px; backgrozund-color: rded">
                 <div style=";">
                     @if ($booking->company_id == 1)
-                        <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
+                        {{-- <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
+                        style="margin-left: 50px;margin-top: 0px"> --}}
+                        <img src="{{ public_path('upload/app-logo.jpg') }}" height="70px" width="100"
                             style="margin-left: 50px;margin-top: 0px">
                     @elseif ($booking->company_id == 2)
-                        <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
+                        {{-- <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
+                                style="margin-left: 0px;margin-top: 0px"> --}}
+                        <img src="https://backend.ezhms.com/upload/app-logo.jpeg" height="100px" width="100"
                             style="margin-left: 0px;margin-top: 0px">
                     @endif
                 </div>
@@ -202,7 +206,7 @@
                     <tr style="text-align: left; border :none;">
                         <td style="text-align: right; border :none;font-size:10px">
                             <span style="margin-right: 0px">
-                                {{ strtolower($company->contact->number) ?? '' }}</span>
+                                {{ strtolower($company->contact->number ?? '') }}</span>
                             <br>
                         </td>
                     </tr>
@@ -218,8 +222,6 @@
             </td>
         </tr>
     </table>
-
-
 
 
     <table style="margin-top: 5px !important;background-color:#c1d4e2;padding-bottom:0px">
@@ -284,14 +286,14 @@
                                 In </td>
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
                             <td style="width:20px; padding:0px 5px text-align:right;border:none;font-size:10px">
-                                {{ date('d/m/yy', strtotime($booking->check_in)) }}</td>
+                                {{ date('d/m/Y', strtotime($booking->check_in)) }}</td>
                         </tr>
                         <tr style="text-align: right;border:none;">
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> Check
                                 Out </td>
                             <td style="width:13px; padding:0px 5px text-align:right;border:none;font-size:10px"> : </td>
                             <td style="width:20px; padding:0px 5px text-align:right;border:none;font-size:10px">
-                                {{ date('d/m/yy', strtotime($booking->check_out)) }}</td>
+                                {{ date('d/m/Y', strtotime($booking->check_out)) }}</td>
                         </tr>
 
                         <tr style="text-align: right;border:none;">
@@ -318,13 +320,13 @@
 
 
     {{-- <div style="padding: 10px 0px ">
-            <table>
-                <tr>
-                    <td>Booking ID : {{ $booking->id }}</td>
-                    <td style="text-align: right">Meal Plan : Room With BreakFast</td>
-                </tr>
-            </table>
-        </div> --}}
+                <table>
+                    <tr>
+                        <td>Booking ID : {{ $booking->id }}</td>
+                        <td style="text-align: right">Meal Plan : Room With BreakFast</td>
+                    </tr>
+                </table>
+            </div> --}}
 
     <hr style="margin:0px;padding:0">
     @php
@@ -336,7 +338,7 @@
             <th class="txt-inv-header">Room No</th>
             <th class="txt-inv-header" style="width: 100px">Description</th>
             <th class="txt-inv-header">Amount</th>
-            <th class="txt-inv-header">After Discount</th>
+            {{-- <th class="txt-inv-header">After Discount</th> --}}
             <th class="txt-inv-header">Food</th>
             <th class="txt-inv-header">SGST</th>
             <th class="txt-inv-header">CGST</th>
@@ -365,9 +367,9 @@
                     <td class="txt-inv" style="width:20px">{{ $room->room_type }}</td>
                     <td class="txt-inv-amount">
                         {{ number_format($room->price, 2) }} <br>
-                        (-{{ number_format($room->room_discount, 2) }})
+                        {{-- (-{{ number_format($room->room_discount, 2) }}) --}}
                     </td>
-                    <td class="txt-inv-amount">{{ number_format($room->after_discount, 2) }}</td>
+                    {{-- <td class="txt-inv-amount">{{ number_format($room->after_discount, 2) }}</td> --}}
                     <td class="txt-inv-amount">
                         {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food, 2) }}
                     </td>
@@ -383,8 +385,8 @@
                         {{ number_format($room->total, 2) }}
                     </td>
                     {{-- <td class="txt-inv-amount" style="width:50px">
-                            {{ $room->grand_total }} <br>
-                        </td> --}}
+                                {{ $room->grand_total }} <br>
+                            </td> --}}
                     @php
                         $totalWithoutDiscounts += $room->after_discount;
                         $totalWithTax += $room->total;
@@ -411,7 +413,6 @@
                         <td class="txt-inv-amount">
                             {{ number_format($post->amount, 2) }} <br>
                         </td>
-                        <td class="txt-inv" style="width:10px">-</td>
 
                         <td class="txt-inv-amount">
                             {{ $post->sgst }} <br>
@@ -438,7 +439,6 @@
                 <td> </td>
                 <td> </td>
                 <td> </td>
-                <td> </td>
                 <td class="txt-inv-amount" style="background-color: rgb(19, 19, 75);color:white">
                     {{ number_format((float) $totalPostingsgst + (float) $totalsgst, 2) }}</td>
                 <td class="txt-inv-amount"style="background-color: rgb(19, 19, 75);color:white">
@@ -451,34 +451,34 @@
     </table>
     <table>
         {{-- <tr>
-                <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
-                </td>
-                <td style="width:200px;border :none;text-align: left">
-                    <table style="background-color: rgb(19, 19, 75);color:white">
-                        <tr>
-                            <td class="tot-txt">Total IRS (excl GST)</td>
-                            <td class="tot-txt-amount">{{ $totalWithoutDiscounts ?? '----' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="tot-txt">SGST</td>
-                            <td class="tot-txt-amount">{{ $totalsgst ?? '----' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="tot-txt">CGST</td>
-                            <td class="tot-txt-amount">{{ $totalcgst ?? '----' }}</td>
-                        </tr>
-                        <tr>
-                            <th class="tot-txt">Total Amount Incl.GST IRS</th>
-                            <td class="tot-txt-amount">
-                                {{ $totalWithoutDiscounts + $totalsgst + $totalcgst ?? '----' }}
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr> --}}
+                    <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
+                    </td>
+                    <td style="width:200px;border :none;text-align: left">
+                        <table style="background-color: rgb(19, 19, 75);color:white">
+                            <tr>
+                                <td class="tot-txt">Total IRS (excl GST)</td>
+                                <td class="tot-txt-amount">{{ $totalWithoutDiscounts ?? '----' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="tot-txt">SGST</td>
+                                <td class="tot-txt-amount">{{ $totalsgst ?? '----' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="tot-txt">CGST</td>
+                                <td class="tot-txt-amount">{{ $totalcgst ?? '----' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="tot-txt">Total Amount Incl.GST IRS</th>
+                                <td class="tot-txt-amount">
+                                    {{ $totalWithoutDiscounts + $totalsgst + $totalcgst ?? '----' }}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr> --}}
         <tr>
             <td style="text-align: left;width: 300px; border :none;width:400px;font-size:12px">
-                <p>Payment Mode : <b>{{ $paymentMode['payment_mode']['name'] }}</b></p>
+                <p>Payment Mode : <b>{{ $paymentMode['payment_mode']['name'] ?? '' }}</b></p>
                 <p>Total Rs : {{ $amtLatter }}</p>
             </td>
             <td style="width:200px;border :none;text-align: left">
@@ -498,6 +498,10 @@
                     <tr>
                         <td class="tot-txt">Paid</td>
                         <td class="tot-txt-amount">{{ number_format($transactions->sum('credit'), 2) ?? 0 }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tot-txt">Discount</td>
+                        <td class="tot-txt-amount">{{ number_format($roomsDiscount, 2) ?? 0 }}</td>
                     </tr>
                     <tr>
                         <td class="tot-txt">Balance</td>
