@@ -294,12 +294,12 @@
               <div class="col-md-12 col-12 col-lg-4 col-xlg-3 py-0">
                 <div class="card card-hover mx-0">
                   <div
-                    class="box text-center bg-cyan"
+                    class="box text-center bg-cyan ipad-font-food-grid"
                     style="padding: 7px 0; margin: 0px -5px"
                   >
                     <div class="d-flex justify-space-around py-0 my-0">
                       <h1 class="font-light text-white py-0 my-0">
-                        <i class="fas fa-male fx-1"></i>
+                        <i class="fas fa-male fx-1 food-icon-size"></i>
                         <h5>
                           {{ members.adult }} | {{ members.child }} |
                           {{ members.baby }}
@@ -307,7 +307,7 @@
                         <h6>Customers</h6>
                       </h1>
                       <h1 class="font-light text-white py-0 my-0">
-                        <i class="fas fa-coffee fx-1"></i>
+                        <i class="fas fa-coffee fx-1 food-icon-size"></i>
                         <h5>
                           {{ onlyBreakfast.adult }} |
                           {{ onlyBreakfast.child }} |
@@ -316,7 +316,7 @@
                         <h6>Breakfast</h6>
                       </h1>
                       <h1 class="font-light text-white py-0 my-0">
-                        <i class="fas fa-concierge-bell"></i>
+                        <i class="fas fa-concierge-bell food-icon-size"></i>
                         <h5>
                           {{ onlyLunch.adult }} | {{ onlyLunch.child }} |
                           {{ onlyLunch.baby }}
@@ -324,7 +324,7 @@
                         <h6>Lunch</h6>
                       </h1>
                       <h1 class="font-light text-white py-0 my-0">
-                        <i class="fas fa-hamburger"></i>
+                        <i class="fas fa-hamburger food-icon-size"></i>
                         <h5>
                           {{ onlyDinner.adult }} | {{ onlyDinner.child }} |
                           {{ onlyDinner.baby }}
@@ -345,14 +345,16 @@
                       <h1 class="font-light text-white">
                         <Available />
                         <h4
-                          class="text-white pb-0 mb-0 mt-4 mr-10 dash-font-size"
+                          class="text-white pb-0 mb-0 mt-4 text-left dash-font-size"
                         >
                           Available
                         </h4>
                       </h1>
                     </v-col>
                     <v-col md="6" class="p-0 m-0">
-                      <h1 class="text-white" style="font-size: 65px">
+                      <h1
+                        class="big-screen laptop-font-grid ipad-font-qty-grid"
+                      >
                         {{ (availableRooms && availableRooms.length) || 0 }}
                       </h1>
                     </v-col>
@@ -369,14 +371,16 @@
                       <h1 class="font-light text-white">
                         <Booked />
                         <h4
-                          class="text-white pb-0 mb-0 mt-4 mr-10 dash-font-size"
+                          class="text-white pb-0 mb-0 mt-4 text-left dash-font-size"
                         >
                           Booked
                         </h4>
                       </h1>
                     </v-col>
                     <v-col md="6" class="p-0 m-0">
-                      <h1 class="text-white" style="font-size: 65px">
+                      <h1
+                        class="big-screen laptop-font-grid ipad-font-qty-grid"
+                      >
                         {{
                           (notAvailableRooms && notAvailableRooms.length) || 0
                         }}
@@ -395,14 +399,17 @@
                       <h1 class="font-light text-white">
                         <PaidBookedSvg />
                         <h4
-                          class="text-white pb-0 mb-0 mt-1 pr-8 dash-font-size"
+                          class="pb-0 mb-0 text-left dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
                         >
                           Paid Booking
                         </h4>
                       </h1>
                     </v-col>
                     <v-col md="6" class="p-0 m-0">
-                      <h1 class="text-white" style="font-size: 65px">
+                      <h1
+                        class="big-screen laptop-font-grid ipad-font-qty-grid"
+                        style="font-size: 65px"
+                      >
                         {{ confirmedBooking || 0 }}
                       </h1>
                     </v-col>
@@ -419,14 +426,17 @@
                       <h1 class="font-light text-white">
                         <Dirty />
                         <h4
-                          class="text-white pb-0 mb-0 mt-3 mr-15 dash-font-size"
+                          class="text-white pb-0 mb-0 mt-3 text-left dash-font-size"
                         >
                           Dirty
                         </h4>
                       </h1>
                     </v-col>
                     <v-col md="6" class="p-0 m-0">
-                      <h1 class="text-white" style="font-size: 65px">
+                      <h1
+                        class="big-screen laptop-font-grid ipad-font-qty-grid"
+                        style="font-size: 65px"
+                      >
                         {{ dirtyRooms || 0 }}
                       </h1>
                     </v-col>
@@ -435,26 +445,6 @@
               </div>
 
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
-                <!-- <div class="card card-hover">
-                  <div
-                    class="box bg-primary text-center"
-                    style="background-color: #18069e"
-                  >
-                    <h1 class="font-light text-white">
-                      <i
-                        class="fas fa-plane-arrival"
-                        style="
-                          -webkit-transform: scaleX(-1);
-                          transform: scaleX(-1);
-                        "
-                      ></i>
-                      <h5>
-                        {{ expectCheckIn.length || 0 }}
-                      </h5>
-                    </h1>
-                    <h6 class="text-white">Expect Check In</h6>
-                  </div>
-                </div> -->
                 <div class="card card-hover mx-1">
                   <v-row
                     class="box text-center"
@@ -464,7 +454,7 @@
                       <h1 class="font-light text-white">
                         <ExpectCheckInSvg />
                         <h4
-                          class="text-white pb-0 mb-0 mt-0 mr-15 dash-font-size"
+                          class="text-white pb-0 mb-0 mt-2 text-left dash-font-size"
                         >
                           Expect Check In
                         </h4>
@@ -488,7 +478,7 @@
                       <h1 class="font-light text-white">
                         <ExpectCheckOutSvg />
                         <h4
-                          class="text-white pb-0 mb-0 mt-2 mr-15 dash-font-size"
+                          class="text-white pb-0 mb-0 mt-2 text-left dash-font-size"
                         >
                           Expect Check Out
                         </h4>
@@ -512,8 +502,7 @@
                       <h1 class="font-light text-white">
                         <CheckInSvg />
                         <h4
-                          class="text-white pb-0 mb-0 mt-5 dash-font-size"
-                          style="margin-right: 120px"
+                          class="text-white pb-0 mb-0 mt-5 dash-font-size text-left"
                         >
                           Check In
                         </h4>
@@ -537,8 +526,7 @@
                       <h1 class="font-light text-white">
                         <CheckOutSvg />
                         <h4
-                          class="text-white pb-0 mb-0 mt-5 dash-font-size"
-                          style="margin-right: 110px"
+                          class="text-white pb-0 mb-0 mt-5 dash-font-size text-left"
                         >
                           Check Out
                         </h4>
@@ -552,34 +540,8 @@
                   </v-row>
                 </div>
               </div>
-              <!-- <div class="col-md-12 col-lg-6 col-xlg-12 py-0">
-                <div class="card card-hover p-0 m-0">
-                  <div
-                    class="text-center p-0 m-0"
-                    style="background-color: white; height: 120px !important"
-                  >
-                    <h1 class="font-light p-0 m-0 text-black">
-                      <NewPie :renderChartData="renderChartData()" />
-                    </h1>
-                  </div>
-                </div>
-              </div> -->
             </div>
           </div>
-          <!-- <div class="col-12 col-md-3">
-            <div class="col-md-12 col-lg-12 col-xlg-12 py-0">
-              <div class="card card-hover p-0 m-0">
-                <div
-                  class="text-center p-0 m-0"
-                  style="background-color: white"
-                >
-                  <h1 class="font-light p-0 m-0 text-black">
-                    <NewPie :renderChartData="renderChartData" />
-                  </h1>
-                </div>
-              </div>
-            </div>
-          </div> -->
         </div>
         <div class="row">
           <div class="col-md-12">
@@ -599,6 +561,7 @@
                         md="4"
                         sm="12"
                         cols="12"
+                        class="available-room-list"
                         v-for="(noAvailableRoom, i) in notAvailableRooms"
                         :key="i"
                       >
@@ -660,6 +623,7 @@
                         md="4"
                         sm="12"
                         cols="12"
+                        class="available-room-list"
                         v-for="(room, index) in availableRooms"
                         :key="index"
                       >
@@ -1303,5 +1267,63 @@ export default {
 <style>
 .dash-font-size {
   font-size: 13px;
+}
+.big-screen {
+  font-size: 65px;
+  color: white;
+}
+.food-icon-size {
+  font-size: 30px !important;
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1199px) {
+  /* Adjust layout for iPad pro landscape mode */
+  .ipad-font-grid {
+    font-size: 12px !important;
+    color: white;
+    margin-top: 10px !important;
+  }
+}
+
+@media only screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
+  .laptop-font-grid {
+    font-size: 60px !important;
+    color: white !important;
+    margin-top: 7px !important;
+  }
+
+  .laptop-font-paid-grid {
+    font-size: 11px !important;
+    color: white;
+    margin-top: 17px !important;
+    font-weight: bold;
+  }
+
+  .available-room-list {
+    width: 13.333333% !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
+  /* ipad mini Air */
+  .ipad-font-qty-grid {
+    font-size: 55px !important;
+    color: white;
+  }
+
+  .ipad-font-paid-grid {
+    font-size: 11px !important;
+    color: white;
+    margin-top: 17px !important;
+    font-weight: bold;
+  }
+
+  .ipad-font-food-grid {
+    color: red !important;
+  }
+
+  .available-room-list {
+    width: 13.333333% !important;
+  }
 }
 </style>

@@ -90,6 +90,7 @@ class Customer extends Model
             'title',
             'whatsapp',
             'nationality',
+            'gst_number',
         ];
     }
 

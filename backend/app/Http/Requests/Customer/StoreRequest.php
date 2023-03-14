@@ -31,7 +31,7 @@ class StoreRequest extends FormRequest
             'first_name'      => 'required',
             'last_name'       => 'nullable',
             'contact_no'      => 'required|min:9|max:13',
-            'email'           => 'required',
+            'email'           => 'nullable',
             'id_card_type_id' => 'nullable',
             'id_card_no'      => 'nullable',
             'car_no'          => 'nullable',
@@ -42,6 +42,7 @@ class StoreRequest extends FormRequest
             'company_id'      => 'required',
             'customer_type'   => 'nullable',
             'dob'             => 'nullable',
+            'gst_number'      => 'nullable',
 
             'title'      => 'required',
             'whatsapp'   => 'required',

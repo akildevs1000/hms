@@ -1,55 +1,70 @@
 <template>
   <div>
-    <v-row>
-      <v-col md="4" class="text-uppercase">
-        <div class="card px-2 available">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large"></div>
-            <div class="card-content">
-              <h4 class="card-title text-capitalize py-1 white--text">
-                Total Revenue
-              </h4>
-              <span class="data-1 white--text"> Rs {{ revenue }} </span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2"> </span>
-              </p>
-            </div>
-          </div>
-        </div>
+    <v-row class="my-2 mx-0">
+      <v-col cols="12" lg="4" xl="4" class="py-0">
+        <v-card class="mx-1 elevation-0">
+          <v-row class="box text-center" style="background-color: #02ada4">
+            <v-col md="6">
+              <h1 class="font-light text-white">
+                <PaidBookedSvg />
+                <h4
+                  class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
+                >
+                  Total Revenue
+                </h4>
+              </h1>
+            </v-col>
+            <v-col md="6">
+              <h1 class="big-screen laptop-font-grid ipad-font-qty-grid mt-4">
+                {{ revenue }}
+              </h1>
+            </v-col>
+          </v-row>
+        </v-card>
       </v-col>
-      <v-col md="4" class="text-uppercase">
-        <div class="card px-2 available">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large"></div>
-            <div class="card-content">
-              <h4 class="card-title text-capitalize py-1 white--text">
-                Total City Ledger
-              </h4>
-              <span class="data-1 white--text"> Rs {{ city_ledger }} </span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2"> </span>
-              </p>
-            </div>
-          </div>
-        </div>
+
+      <v-col cols="12" lg="4" xl="4" class="py-0">
+        <v-card class="mx-1 elevation-0">
+          <v-row class="box text-center" style="background-color: #4390fc">
+            <v-col md="6">
+              <h1 class="font-light text-white">
+                <PaidBookedSvg />
+                <h4
+                  class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
+                >
+                  Total City Ledger
+                </h4>
+              </h1>
+            </v-col>
+            <v-col md="6">
+              <h1 class="big-screen laptop-font-grid ipad-font-qty-grid mt-4">
+                {{ city_ledger }}
+              </h1>
+            </v-col>
+          </v-row>
+        </v-card>
       </v-col>
-      <v-col md="4" class="text-uppercase">
-        <div class="card px-2 available">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large"></div>
-            <div class="card-content">
-              <h4 class="card-title text-capitalize py-1 white--text">
-                Number of Visit
-              </h4>
-              <span class="data-1 white--text">
-                {{ bookings.length || "---" }}
-              </span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2"> </span>
-              </p>
-            </div>
-          </div>
-        </div>
+
+      <v-col cols="12" lg="4" xl="4" class="py-0">
+        <v-card class="mx-1 elevation-0">
+          <v-row class="box text-center" style="background-color: #ffbe00">
+            <v-col md="6">
+              <h1 class="font-light text-white">
+                <Available />
+                <h4
+                  class="pb-0 mb-0 white--text text-left mt-3 dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
+                >
+                  Number of Visit
+                </h4>
+              </h1>
+            </v-col>
+            <v-col md="6">
+              <h1 class="big-screen laptop-font-grid ipad-font-qty-grid mt-4">
+                {{ bookings.length || "0" }}
+              </h1>
+            </v-col>
+          </v-row>
+        </v-card>
       </v-col>
     </v-row>
     <v-row>
@@ -98,7 +113,13 @@
 </template>
 
 <script>
+import PaidBookedSvg from "../svg/PaidBookedSvg.vue";
+import Available from "../svg/Available.vue";
 export default {
+  components: {
+    Available,
+    PaidBookedSvg,
+  },
   props: ["customerId"],
   data() {
     return {
@@ -179,5 +200,66 @@ th {
 
 tr:nth-child(even) {
   background-color: #e9e9e9;
+}
+.dash-font-size {
+  font-size: 13px;
+}
+.big-screen {
+  font-size: 35px;
+  color: white;
+}
+.food-icon-size {
+  font-size: 30px !important;
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1199px) {
+  /* Adjust layout for iPad pro landscape mode */
+  .ipad-font-grid {
+    font-size: 12px !important;
+    color: white;
+    margin-top: 10px !important;
+  }
+}
+
+@media only screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
+  .laptop-font-grid {
+    font-size: 60px !important;
+    color: white !important;
+    margin-top: 7px !important;
+  }
+
+  .laptop-font-paid-grid {
+    font-size: 11px !important;
+    color: white;
+    margin-top: 17px !important;
+    font-weight: bold;
+  }
+
+  .available-room-list {
+    width: 13.333333% !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
+  /* ipad mini Air */
+  .ipad-font-qty-grid {
+    font-size: 55px !important;
+    color: white;
+  }
+
+  .ipad-font-paid-grid {
+    font-size: 11px !important;
+    color: white;
+    margin-top: 17px !important;
+    font-weight: bold;
+  }
+
+  .ipad-font-food-grid {
+    color: red !important;
+  }
+
+  .available-room-list {
+    width: 13.333333% !important;
+  }
 }
 </style>
