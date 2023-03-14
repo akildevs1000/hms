@@ -10,7 +10,7 @@
                 <h4
                   class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
                 >
-                  Total Revenue
+                  Revenue
                 </h4>
               </h1>
             </v-col>
@@ -32,7 +32,7 @@
                 <h4
                   class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
                 >
-                  Total City Ledger
+                  City Ledger
                 </h4>
               </h1>
             </v-col>
@@ -52,7 +52,7 @@
               <h1 class="font-light text-white">
                 <Available />
                 <h4
-                  class="pb-0 mb-0 white--text text-left mt-3 dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
+                  class="pb-0 mb-0 white--text text-left mt-3 dash-font-size ipad-font-grid ipad-font-paid-grid no-of-visit"
                 >
                   Number of Visit
                 </h4>
@@ -205,7 +205,7 @@ tr:nth-child(even) {
   font-size: 13px;
 }
 .big-screen {
-  font-size: 35px;
+  font-size: 25px;
   color: white;
 }
 .food-icon-size {
@@ -223,9 +223,14 @@ tr:nth-child(even) {
 
 @media only screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
   .laptop-font-grid {
-    font-size: 60px !important;
+    font-size: 15px !important;
     color: white !important;
     margin-top: 7px !important;
+  }
+
+  .no-of-visit {
+    margin-top: 24px !important ;
+    font-size: 11px !important;
   }
 
   .laptop-font-paid-grid {
