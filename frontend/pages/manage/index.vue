@@ -22,14 +22,14 @@
           <v-divider class="py-0 my-0"></v-divider>
           <v-card-text>
             <v-container>
-              <v-row>
+              <!-- <v-row>
                 <v-col md="2" class="mt-2 pr-0 mr-0">
                   <h5>Weekdays</h5>
                 </v-col>
                 <v-col md="1" sm="4" class="py-0 my-0 ml-3" v-for="(day, index) in Weekdays" :key="index">
                   <v-checkbox v-model="selectedWeekDays" :label="day.name" :value="day.name"></v-checkbox>
                 </v-col>
-              </v-row>
+              </v-row> -->
 
               <!-- <v-row>
                 <v-col md="2" class="mt-2 pr-0 mr-0">
@@ -52,18 +52,37 @@
 
               <v-row class="mt-2">
                 <v-col cols="12" sm="12">
-                  <v-date-picker v-model="dates" full-width range></v-date-picker>
+                  <v-date-picker
+                    v-model="dates"
+                    full-width
+                    range
+                  ></v-date-picker>
                   <span v-if="errors && errors.dates" class="error--text">{{
                     errors.dates[0]
                   }}</span>
                 </v-col>
                 <v-col cols="12" sm="12">
-                  <v-textarea rows="3" v-model="description" label="Description" outlined dense
-                    :hide-details="true"></v-textarea>
-                  <span v-if="errors && errors.description" class="error--text">{{ errors.description[0] }}</span>
+                  <v-textarea
+                    rows="3"
+                    v-model="description"
+                    label="Description"
+                    outlined
+                    dense
+                    :hide-details="true"
+                  ></v-textarea>
+                  <span
+                    v-if="errors && errors.description"
+                    class="error--text"
+                    >{{ errors.description[0] }}</span
+                  >
                 </v-col>
                 <v-card-actions>
-                  <v-btn class="primary" @click="update_holidays" v-if="isUpdate">Update</v-btn>
+                  <v-btn
+                    class="primary"
+                    @click="update_holidays"
+                    v-if="isUpdate"
+                    >Update</v-btn
+                  >
                   <v-btn class="primary" @click="store_holidays" v-else>
                     Save
                   </v-btn>
@@ -79,24 +98,48 @@
         <v-card>
           <v-card-title> Edit </v-card-title>
           <v-divider></v-divider>
-          <h3 style=" text-transform: capitalize; margin: 11px 20px -25px 20px;color: #aaaaaa;">
+          <h3
+            style="
+              text-transform: capitalize;
+              margin: 11px 20px -25px 20px;
+              color: #aaaaaa;
+            "
+          >
             {{ editPriceList.name }}
           </h3>
           <v-card-text class="mt-8">
             <v-row>
               <v-col md="4">
-                <v-text-field v-model="editPriceList.weekday_price" label="Weekdays Amount" placeholder="Weekdays Amount"
-                  id="id" outlined dense>
+                <v-text-field
+                  v-model="editPriceList.weekday_price"
+                  label="Weekdays Amount"
+                  placeholder="Weekdays Amount"
+                  id="id"
+                  outlined
+                  dense
+                >
                 </v-text-field>
               </v-col>
               <v-col md="4">
-                <v-text-field v-model="editPriceList.weekend_price" label="	Weekend Amount" placeholder="Weekend Amount"
-                  id="id" outlined dense>
+                <v-text-field
+                  v-model="editPriceList.weekend_price"
+                  label="	Weekend Amount"
+                  placeholder="Weekend Amount"
+                  id="id"
+                  outlined
+                  dense
+                >
                 </v-text-field>
               </v-col>
               <v-col md="4">
-                <v-text-field v-model="editPriceList.holiday_price" label="Holiday Amount" placeholder="Holiday Amount"
-                  id="id" outlined dense>
+                <v-text-field
+                  v-model="editPriceList.holiday_price"
+                  label="Holiday Amount"
+                  placeholder="Holiday Amount"
+                  id="id"
+                  outlined
+                  dense
+                >
                 </v-text-field>
               </v-col>
             </v-row>
@@ -111,12 +154,17 @@
         </v-card>
       </v-dialog>
 
-
       <v-dialog v-model="weekendDialog" max-width="700px">
         <v-card>
           <v-card-title> Edit </v-card-title>
           <v-divider></v-divider>
-          <h3 style=" text-transform: capitalize; margin: 11px 20px -25px 20px;color: #aaaaaa;">
+          <h3
+            style="
+              text-transform: capitalize;
+              margin: 11px 20px -25px 20px;
+              color: #aaaaaa;
+            "
+          >
             {{ editPriceList.name }}
           </h3>
           <v-card-text class="mt-8">
@@ -124,8 +172,18 @@
               <v-col md="2" class="mt-2 pr-0 mr-0">
                 <h5>Weekdays</h5>
               </v-col>
-              <v-col md="1" sm="4" class="py-0 my-0 ml-3" v-for="(day, index) in Weekdays" :key="index">
-                <v-checkbox v-model="editWeekend.name" :label="day.name" :value="day.name">
+              <v-col
+                md="1"
+                sm="4"
+                class="py-0 my-0 ml-3"
+                v-for="(day, index) in Weekdays"
+                :key="index"
+              >
+                <v-checkbox
+                  v-model="editWeekend.name"
+                  :label="day.name"
+                  :value="day.name"
+                >
                 </v-checkbox>
               </v-col>
             </v-row>
@@ -133,13 +191,10 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-btn class="primary" @click="update_weekend"> Update </v-btn>
-            <v-btn color="accent" @click="weekendDialog = false">
-              Close
-            </v-btn>
+            <v-btn color="accent" @click="weekendDialog = false"> Close </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-
 
       <v-col md="7" sm="12" class="float-right">
         <v-card>
@@ -155,54 +210,6 @@
           </v-toolbar>
           <v-tabs-items v-model="tab">
             <!-- weekdays -->
-            <v-tab-item>
-              <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
-                <table>
-                  <tr style="font-size: 12px">
-                    <th>#</th>
-                    <th>Room Type</th>
-                    <th>Weekdays Amount</th>
-                    <th>Weekend Amount</th>
-                    <th>Holiday Amount</th>
-                    <th>Action</th>
-                  </tr>
-                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                    color="primary"></v-progress-linear>
-                  <tr style="font-size: 12px" v-for="(item, index) in priceList" :key="index">
-                    <td>{{ ++index }}</td>
-                    <td style="text-transform: uppercase">{{ item.name }}</td>
-                    <td>{{ item.weekday_price }}</td>
-                    <td>{{ item.weekend_price }}</td>
-                    <td>{{ item.holiday_price }}</td>
-                    <td class="text-left">
-                      <v-menu bottom left>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list width="120" dense>
-                          <v-list-item @click="priceEditItem(item)">
-                            <v-list-item-title style="cursor: pointer">
-                              <v-icon color="secondary" small>
-                                mdi-pencil
-                              </v-icon>
-                              Edit
-                            </v-list-item-title>
-                          </v-list-item>
-                          <!-- <v-list-item @click="priceDeleteItem(item)">
-                            <v-list-item-title style="cursor: pointer">
-                              <v-icon color="error" small> mdi-delete </v-icon>
-                              Delete
-                            </v-list-item-title>
-                          </v-list-item> -->
-                        </v-list>
-                      </v-menu>
-                    </td>
-                  </tr>
-                </table>
-              </v-card>
-            </v-tab-item>
 
             <!-- weekdays -->
             <v-tab-item>
@@ -213,9 +220,18 @@
                     <th>Weekend</th>
                     <th>Action</th>
                   </tr>
-                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                    color="primary"></v-progress-linear>
-                  <tr style="font-size: 12px" v-for="(item, index) in weekendList" :key="index">
+                  <v-progress-linear
+                    v-if="loading"
+                    :active="loading"
+                    :indeterminate="loading"
+                    absolute
+                    color="primary"
+                  ></v-progress-linear>
+                  <tr
+                    style="font-size: 12px"
+                    v-for="(item, index) in weekendList"
+                    :key="index"
+                  >
                     <td>{{ ++index }}</td>
                     <td>
                       <span v-for="(w, i) in item.day" :key="i">
@@ -252,13 +268,26 @@
               <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
                 <table>
                   <tr>
-                    <th style="font-size: 12px" v-for="(item, index) in headers" :key="index">
+                    <th
+                      style="font-size: 12px"
+                      v-for="(item, index) in headers"
+                      :key="index"
+                    >
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                    color="primary"></v-progress-linear>
-                  <tr style="font-size: 12px" v-for="(item, index) in data" :key="index">
+                  <v-progress-linear
+                    v-if="loading"
+                    :active="loading"
+                    :indeterminate="loading"
+                    absolute
+                    color="primary"
+                  ></v-progress-linear>
+                  <tr
+                    style="font-size: 12px"
+                    v-for="(item, index) in data"
+                    :key="index"
+                  >
                     <td>
                       {{
                         (pagination.current - 1) * pagination.per_page +
@@ -300,15 +329,19 @@
                 <v-row>
                   <v-col md="12" class="float-right">
                     <div class="float-right">
-                      <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-                        :total-visible="12"></v-pagination>
+                      <v-pagination
+                        v-model="pagination.current"
+                        :length="pagination.total"
+                        @input="onPageChange"
+                        :total-visible="12"
+                      ></v-pagination>
                     </div>
                   </v-col>
                 </v-row>
               </v-card>
             </v-tab-item>
-            <v-tab-item>
 
+            <v-tab-item>
               <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
                 <table>
                   <tr style="font-size: 12px">
@@ -319,9 +352,18 @@
                     <th>Holiday Amount</th>
                     <th>Action</th>
                   </tr>
-                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                    color="primary"></v-progress-linear>
-                  <tr style="font-size: 12px" v-for="(item, index) in priceList" :key="index">
+                  <v-progress-linear
+                    v-if="loading"
+                    :active="loading"
+                    :indeterminate="loading"
+                    absolute
+                    color="primary"
+                  ></v-progress-linear>
+                  <tr
+                    style="font-size: 12px"
+                    v-for="(item, index) in priceList"
+                    :key="index"
+                  >
                     <td>{{ ++index }}</td>
                     <td style="text-transform: uppercase">{{ item.name }}</td>
                     <td>{{ item.weekday_price }}</td>
@@ -360,7 +402,8 @@
 export default {
   data: () => ({
     tab: null,
-    items: ["Weekdays", "Weekend", "Holidays", "Prices"],
+    // items: ["Weekdays", "Weekend", "Holidays", "Prices"],
+    items: ["Weekend", "Holidays", "Prices"],
     Model: "Holidays Price",
     selectedWeekDays: [],
     dates: [],
@@ -374,7 +417,6 @@ export default {
       { name: "Fri" },
       { name: "Sat" },
       { name: "Sun" },
-
     ],
 
     pagination: {
@@ -394,7 +436,6 @@ export default {
     },
 
     weekendId: "",
-
 
     options: {},
     endpoint: "holiday",
@@ -483,7 +524,6 @@ export default {
       console.log(this.editWeekend.name);
       this.weekendDialog = true;
     },
-
 
     clear() {
       this.isUpdate = false;

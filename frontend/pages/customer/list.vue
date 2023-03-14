@@ -16,7 +16,26 @@
           >
         </v-toolbar>
         <v-container>
-          <CreateCustomer />
+          <CreateCustomer @close-dialog="closeDialogs" />
+        </v-container>
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="viewCustomerDialog" max-width="60%">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Edit Customer</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="viewCustomerDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
+        </v-toolbar>
+        <v-container class="mt-0 pt-0">
+          <customer-index
+            :customer_id="customer_id"
+            @close-dialog="closeDialogs"
+          />
         </v-container>
         <v-card-actions> </v-card-actions>
       </v-card>
@@ -96,6 +115,7 @@
             <td>{{ item.id_card_no || "---" }}</td>
             <td>{{ item.car_no || "---" }}</td>
 
+            <td>{{ item.gst_number || "---" }}</td>
             <td>{{ item.address || "---" }}</td>
             <td>
               <v-icon
@@ -104,7 +124,7 @@
                 @click="viewCustomerBilling(item)"
                 class="mr-2"
               >
-                mdi-eye
+                mdi-pencil
               </v-icon>
             </td>
           </tr>
@@ -131,8 +151,12 @@
 </template>
 <script>
 import CreateCustomer from "../../components/customer/CreateCustomer.vue";
+import CustomerIndex from "../../components/customer/CustomerIndex.vue";
 export default {
-  components: { CreateCustomer },
+  components: {
+    CustomerIndex,
+    CreateCustomer,
+  },
   data: () => ({
     pagination: {
       current: 1,
@@ -145,9 +169,11 @@ export default {
     search: "",
     snackbar: false,
     NewCustomerDialog: false,
+    viewCustomerDialog: false,
     dialog: false,
     ids: [],
     loading: false,
+    customer_id: "",
     total: 0,
     headers: [
       {
@@ -172,7 +198,9 @@ export default {
       {
         text: "Car No.",
       },
-
+      {
+        text: "GST",
+      },
       {
         text: "Address",
       },
@@ -205,6 +233,12 @@ export default {
       this.getDataFromApi();
     },
 
+    closeDialogs() {
+      this.getDataFromApi();
+      this.NewCustomerDialog = false;
+      this.viewCustomerDialog = false;
+    },
+
     can(per) {
       let u = this.$auth.user;
       return (
@@ -214,7 +248,9 @@ export default {
     },
 
     viewCustomerBilling(item) {
-      this.$router.push(`/customer/history/${item.id}`);
+      // this.$router.push(`/customer/history/${item.id}`);
+      this.customer_id = item.id;
+      this.viewCustomerDialog = true;
     },
 
     getDataFromApi(url = this.endpoint) {

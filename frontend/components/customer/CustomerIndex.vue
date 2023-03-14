@@ -341,7 +341,7 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col md="6" cols="12" sm="12">
+                  <v-col md="4" cols="12" sm="12">
                     <v-select
                       v-model="customer.nationality"
                       :items="countryList"
@@ -359,7 +359,7 @@
                       outlined
                     ></v-select>
                   </v-col>
-                  <v-col md="6" cols="12" sm="12">
+                  <v-col md="4" cols="12" sm="12">
                     <v-menu
                       v-model="customer.dob_menu"
                       :close-on-content-click="false"
@@ -384,6 +384,16 @@
                         @input="customer.dob_menu = false"
                       ></v-date-picker>
                     </v-menu>
+                  </v-col>
+                  <v-col md="4" cols="12" sm="12">
+                    <v-text-field
+                      dense
+                      outlined
+                      label="GST"
+                      type="text"
+                      v-model="customer.gst_number"
+                      :hide-details="true"
+                    ></v-text-field>
                   </v-col>
                 </v-row>
 
@@ -616,7 +626,6 @@ export default {
         };
         this.customer.id_card_type_id =
           parseInt(data.data.id_card_type_id) || "";
-        console.log(this.customer.id_card_type_id);
         this.get_id_cards();
       });
     },
@@ -632,11 +641,9 @@ export default {
       ];
       for (let x in this.customer) {
         if (arr.includes(x) && this.customer[x] != null) {
-          console.log(x);
           payload.append(x, this.customer[x]);
         }
       }
-      console.log(this.customer);
       this.$axios
         .post("/document_validate", payload)
         .then(({ data }) => {
@@ -660,7 +667,8 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
           } else {
-            this.alert("Success!", "success check in", "success");
+            this.closeDialog();
+            this.alert("Success!", "successfully guest updated", "success");
           }
         })
         .catch((e) => console.log(e));
@@ -670,7 +678,6 @@ export default {
       let payload = new FormData();
       for (let x in obj) {
         if (obj[x]) {
-          console.log(x + " " + obj[x]);
           payload.append(x, obj[x]);
         }
       }
@@ -678,28 +685,8 @@ export default {
       return payload;
     },
 
-    store_customer() {
-      let payload = {
-        ...this.customer,
-        document: document,
-        company_id: this.$auth.user.company.id,
-        id_card_type_id: this.id_card_type_id,
-      };
-      this.$axios
-        .post("/customer_update", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.alert("oops!", "Some fields are missing or invalid", "error");
-            this.subLoad = false;
-            this.errors = data.errors;
-          } else {
-            this.errors = [];
-            this.getData();
-            this.alert("Success!", "Successfully customer updated", "success");
-          }
-        })
-        .catch((e) => console.log(e));
+    closeDialog() {
+      this.$emit("close-dialog");
     },
 
     preview() {

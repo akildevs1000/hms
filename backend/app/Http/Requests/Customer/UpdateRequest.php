@@ -41,6 +41,7 @@ class UpdateRequest extends FormRequest
             'company_id'      => 'nullable',
             'passport_expiration' => 'nullable',
             'dob'             => 'nullable',
+            'gst_number'             => 'nullable',
 
             'title'      => 'required',
             'whatsapp'      => 'nullable',
