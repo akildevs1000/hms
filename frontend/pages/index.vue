@@ -166,7 +166,12 @@
             ></v-textarea>
           </v-container>
           <v-card-actions>
-            <v-btn class="primary" small :loading="false" @click="cancelItem">
+            <v-btn
+              class="primary"
+              small
+              :loading="cancelLoad"
+              @click="cancelItem"
+            >
               Yes
             </v-btn>
             <v-btn class="error" small @click="cancelDialog = false">
@@ -183,11 +188,11 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="NewBooking = false"
+            <v-icon dark class="pa-0" @click="closeNewCheckin"
               >mdi mdi-close-box
             </v-icon>
           </v-toolbar>
-          <v-card-text>
+          <v-card-text v-if="NewBooking">
             <new-check-in :reservation="newBookingRoom" />
           </v-card-text>
           <v-card-actions> </v-card-actions>
@@ -628,7 +633,7 @@
                         :key="index"
                       >
                         <v-card
-                          @contextmenu="makeNewBooking"
+                          @contextmenu="makeNewBooking($event, room)"
                           @mouseover="mouseOverForAvailable(room)"
                           @touchstart="makeNewBookingForTouch($event, room)"
                           :elevation="0"
@@ -708,6 +713,7 @@ export default {
       temp: "",
       isPageLoad: false,
       loading: false,
+      cancelLoad: false,
       snackbar: false,
       response: "",
       isDirty: true,
@@ -916,7 +922,14 @@ export default {
     },
 
     mouseOverForAvailable(newBookingRoom) {
-      this.newBookingRoom = newBookingRoom;
+      // this.newBookingRoom = newBookingRoom;
+      // console.log(newBookingRoom);
+    },
+
+    closeNewCheckin() {
+      console.log("closeNewCheckin");
+      this.newBookingRoom = false;
+      this.NewBooking = false;
     },
 
     get_data(jsEvent = null) {
@@ -977,7 +990,9 @@ export default {
       });
     },
 
-    makeNewBooking(e) {
+    makeNewBooking(e, newBookingRoom) {
+      this.newBookingRoom = newBookingRoom;
+
       e.preventDefault();
       this.x = e.clientX;
       this.y = e.clientY;
@@ -1149,6 +1164,8 @@ export default {
         return;
       }
 
+      this.cancelLoad = true;
+
       let payload = {
         reason: this.reason,
         cancel_by: this.$auth.user.id,
@@ -1159,9 +1176,12 @@ export default {
           if (!data.status) {
             this.snackbar = data.status;
             this.response = data.message;
+            this.cancelLoad = false;
             return;
           }
+          this.cancelLoad = false;
           this.room_list();
+          this.reason = "";
           this.cancelDialog = false;
           this.snackbar = data.status;
           this.response = data.message;

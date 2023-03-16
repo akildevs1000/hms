@@ -632,6 +632,9 @@ class BookingController extends Controller
 
     public function storeDocument(Request $request)
     {
+
+        // return $request->all();
+
         $booking  = Booking::find($request->booking_id);
         $customer = Customer::find($booking->customer_id);
         if ($request->hasFile('document')) {
@@ -656,6 +659,28 @@ class BookingController extends Controller
 
         $booking->save();
         $customer->save();
+        return $this->response('Room Booked Successfully.', null, true);
+    }
+
+    public function storeDocumentTest(Request $request)
+    {
+
+        // return $request->all();
+
+        if ($request->hasFile('document')) {
+            $file     = $request->file('document');
+            $ext      = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $ext;
+            $path     = $file->storeAs('public/test/doc', $fileName);
+        }
+
+        if ($request->hasFile('image')) {
+            $file            = $request->file('image');
+            $ext             = $file->getClientOriginalExtension();
+            $fileName        = time() . '.' . $ext;
+            $path            = $file->storeAs('public/test/img', $fileName);
+        }
+
         return $this->response('Room Booked Successfully.', null, true);
     }
 

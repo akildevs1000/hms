@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div class="text-center ma-2">
+      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
+        {{ response }}
+      </v-snackbar>
+    </div>
     <v-row>
       <!-- <v-col md="3">
         <div class="profile-view">
@@ -468,6 +473,7 @@
                     <th class="text-right">Sgst</th>
                     <th class="text-right">Cgst</th>
                     <th class="text-right">Total</th>
+                    <th class="text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -495,6 +501,16 @@
                     <td class="text-right">{{ item.cgst || "---" }}</td>
                     <td class="text-right">
                       {{ item.amount_with_tax || "---" }}
+                    </td>
+                    <td class="text-center">
+                      <v-icon
+                        x-small
+                        color="accent"
+                        @click="cancelPosting(item)"
+                        class="mr-2"
+                      >
+                        mdi-delete
+                      </v-icon>
                     </td>
                   </tr>
                 </tbody>
@@ -704,6 +720,20 @@ export default {
         (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    cancelPosting(item) {
+      confirm(
+        "Are you sure you wish to delete , to mitigate any inconvenience in future."
+      ) &&
+        this.$axios
+          .delete("posting_cancel/" + item.id)
+          .then(({ data }) => {
+            this.snackbar = data.status;
+            this.response = data.message;
+            this.getData();
+          })
+          .catch((err) => console.log(err));
     },
 
     numFormat(num) {

@@ -1,108 +1,6 @@
 <template>
   <div>
     <v-row>
-      <v-col style="margin-top: 12px" md="3">
-        <div class="profile-view">
-          <div class="cover-image" style="background-color: #5fafa3"></div>
-          <div class="profile-view-header">
-            <div class="avatar-container">
-              <img
-                alt="Avatar"
-                class="avatar"
-                :src="customer.image || previewImage"
-              />
-            </div>
-            <h1 class="name">
-              {{ customer.title || "---" }} {{ customer.full_name || "---" }}
-            </h1>
-            <div class=""></div>
-          </div>
-
-          <div class="profile-view-body">
-            <v-tabs v-model="tab" align-with-title>
-              <v-tabs-slider color="yellow"></v-tabs-slider>
-              <v-tab v-for="item in items" :key="item">
-                {{ item }}
-              </v-tab>
-            </v-tabs>
-            <v-tabs-items v-model="tab">
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <div class="contact-info-container">
-                      <ul class="contact-info">
-                        <li>
-                          <span class="label">Email:</span>
-                          <a href="mailto:john.doe@example.com">
-                            {{ customer.email || "---" }}
-                          </a>
-                        </li>
-                        <li>
-                          <span class="label">Phone:</span>
-                          {{ customer.contact_no || "---" }}
-                        </li>
-                        <li>
-                          <span class="label">Whatsapp:</span>
-                          {{ customer.whatsapp || "---" }}
-                        </li>
-                        <li>
-                          <span class="label">Address:</span>
-                          {{ customer.address || "---" }}
-                        </li>
-                      </ul>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <div class="contact-info-container">
-                      <ul class="contact-info">
-                        <li>
-                          <span class="label">Nationality:</span>
-                          {{ customer.nationality || "---" }}
-                        </li>
-
-                        <li>
-                          <span class="label">Car No:</span>
-                          {{ customer.car_no || "---" }}
-                        </li>
-
-                        <li>
-                          <span class="label">Date of Birth:</span>
-                          {{ customer.dob || "---" }}
-                        </li>
-
-                        <!-- <li v-if="customer.document">
-                          <span class="label">
-                            {{
-                              (customer &&
-                                customer.id_card_type &&
-                                customer.id_card_type.name) ||
-                              "---"
-                            }}
-                          </span>
-                          <v-btn
-                            x-small
-                            dark
-                            class="primary pt-4 pb-4"
-                            @click="preview(customer.document)"
-                          >
-                            Preview
-                            <v-icon right dark>mdi-file</v-icon>
-                          </v-btn>
-                        </li> -->
-                      </ul>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-            </v-tabs-items>
-          </div>
-        </div>
-      </v-col>
-
       <v-col md="9">
         <customer-index :customer_id="customer_id" />
       </v-col>
@@ -115,7 +13,6 @@ export default {
   components: { CustomerIndex },
   data: () => ({
     tab1: null,
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 
     tab: null,
     items: ["Contact", "Personal"],
@@ -167,13 +64,7 @@ export default {
     city_ledger: 0,
     errors: [],
     idCards: [],
-    // idCards: [
-    //   { id: -1, name: "select" },
-    //   { id: 1, name: "National Identity Card" },
-    //   { id: 2, name: "Voter Id Card" },
-    //   { id: 3, name: "Pan Card" },
-    //   { id: 4, name: "Driving License" }
-    // ],
+
     id_card_type_id: 2,
     countryList: [],
     customer: {

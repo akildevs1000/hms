@@ -1968,21 +1968,10 @@ export default {
         .then(({ data }) => {
           this.temp.price = data.total_price;
           this.temp.priceList = data.data;
-          this.temp.room_tax = this.get_room_tax(this.temp.price);
+          this.temp.room_tax = data.total_tax;
+          // this.temp.room_tax = this.get_room_tax(this.temp.price);
+          console.log(this.temp.room_tax);
         });
-    },
-
-    get_reservation1() {
-      // this.reservation = this.$store.state.reservation;
-      this.temp.room_id = this.reservation.room_id;
-      this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type;
-      this.temp.price = this.reservation.price;
-      this.temp.check_in = this.reservation.check_in;
-      this.temp.check_out = this.reservation.check_out;
-      this.temp.room_tax = this.get_room_tax(this.reservation.price);
-      this.room.check_in = this.reservation.check_in;
-      this.room.check_out = this.reservation.check_out;
     },
 
     get_food_price() {
@@ -2659,7 +2648,7 @@ export default {
             this.subLoad = false;
           } else {
             this.store_document(data.data);
-            this.$router.push(`/customer/details/${data.data}`);
+            this.$router.push(`/reservation/in_house`);
             // this.$router.push(`/customer/details/${260}`);
             this.alert("Success!", "Successfully room added", "success");
           }

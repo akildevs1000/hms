@@ -17,17 +17,17 @@ class SeasonTableSeeder extends Seeder
     {
         Weekend::truncate();
         Weekend::create([
-            'day' => ["sun,sat"],
+            'day' => ["Sun", "Sat"],
             'company_id' => 1
         ]);
 
         Weekend::create([
-            'day' => ["sun,sat"],
+            'day' => ["Sun", "Sat"],
             'company_id' => 2
         ]);
 
         Weekend::create([
-            'day' => ["sun,sat"],
+            'day' => ["Sun", "Sat"],
             'company_id' => 3
         ]);
     }

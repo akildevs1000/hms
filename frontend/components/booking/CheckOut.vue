@@ -302,6 +302,7 @@ export default {
             this.errors = data.errors;
             this.loading = false;
           } else {
+            this.loading = false;
             this.closeDialog(data);
             this.alert("Success", "Successfully Checkout", "success");
             if (this.isPrintInvoice) {
