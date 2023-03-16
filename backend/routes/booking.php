@@ -18,6 +18,7 @@
     Route::post('booking', [BookingController::class, 'store']);
     // Route::post('store_booked_rooms', [BookingController::class, 'storeBookedRooms']);
     Route::post('store_document', [BookingController::class, 'storeDocument']);
+    Route::post('store_document_test', [BookingController::class, 'storeDocumentTest']);
 
 
     Route::get('events_list', [BookingController::class, 'events_list']);

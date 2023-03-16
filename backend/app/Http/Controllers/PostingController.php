@@ -12,11 +12,7 @@ use Illuminate\Http\Request;
 
 class PostingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
         $model = Posting::query();
@@ -84,22 +80,6 @@ class PostingController extends Controller
         return $model->paginate($request->per_page ?? 50);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         try {
@@ -142,12 +122,6 @@ class PostingController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request, $id)
     {
         $model = Posting::query();
@@ -164,37 +138,48 @@ class PostingController extends Controller
         return $model->whereBookedRoomId($id)->get();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
+    }
+
+    public function cancel(Posting $posting)
+    {
+        try {
+            $room_no = BookedRoom::find($posting->booked_room_id)->room_no;
+            $transactionData = [
+                'booking_id'  => $posting->booking_id,
+                'customer_id' =>  '1',
+                'date'        => now(),
+                'desc'        => "cancel posting reservation no " . $posting->reservation_no . " and room no " . $room_no ?? "",
+                'company_id'  => $posting->company_id ?? '',
+                'is_posting'  => 1,
+            ];
+            (new TransactionController)->store($transactionData, -$posting->amount_with_tax, 'debit');
+            (new TransactionController)->updateBookingByTransactions($posting->booking_id, 0);
+            $agent = Agent::whereBookingId($posting->booking_id)->where('company_id', $posting->company_id)->first();
+            if ($agent) {
+                $agent->posting_amount = (int) $agent->posting_amount - $posting->amount_with_tax;
+                $agent->save();
+            }
+            $payment         = Payment::where('booking_id', $posting->booking_id)->where('company_id', $posting->company_id)->where('is_city_ledger', 1)->first();
+            $payment->amount = (int) $payment->amount - $posting->amount_with_tax;
+            $payment->save();
+            $posting->delete();
+
+            return $this->response('Posting Successfully canceled.', '', true);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

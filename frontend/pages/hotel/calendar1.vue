@@ -37,7 +37,12 @@
           ></v-textarea>
         </v-container>
         <v-card-actions>
-          <v-btn class="primary" small :loading="loading" @click="cancelItem">
+          <v-btn
+            class="primary"
+            small
+            :loading="cancelLoad"
+            @click="cancelItem"
+          >
             Yes
           </v-btn>
           <v-btn class="error" small @click="cancelDialog = false">
@@ -501,7 +506,7 @@ export default {
       reason: "",
       customerId: "",
       bookingId: "",
-
+      cancelLoad: false,
       document: null,
       new_payment: 0,
       new_advance: 0,
@@ -858,7 +863,8 @@ export default {
         alert("Enter reason");
         return;
       }
-      this.loading = true;
+      this.cancelLoad = true;
+
       let payload = {
         reason: this.reason,
         cancel_by: this.$auth.user.id,
@@ -869,12 +875,13 @@ export default {
           if (!data.status) {
             this.snackbar = data.status;
             this.response = data.message;
-            this.loading = false;
+            this.cancelLoad = false;
             return;
           }
           this.get_events();
-          this.loading = true;
+          this.cancelLoad = false;
           this.cancelDialog = false;
+          this.reason = "";
           this.snackbar = data.status;
           this.response = data.message;
         })
