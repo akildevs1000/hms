@@ -338,6 +338,7 @@
             <th class="txt-inv-header">Room No</th>
             <th class="txt-inv-header" style="width: 100px">Description</th>
             <th class="txt-inv-header">Amount</th>
+            <th class="txt-inv-header">Discount</th>
             {{-- <th class="txt-inv-header">After Discount</th> --}}
             <th class="txt-inv-header">Food</th>
             <th class="txt-inv-header">SGST</th>
@@ -369,7 +370,7 @@
                         {{ number_format($room->price, 2) }} <br>
                         {{-- (-{{ number_format($room->room_discount, 2) }}) --}}
                     </td>
-                    {{-- <td class="txt-inv-amount">{{ number_format($room->after_discount, 2) }}</td> --}}
+                    <td class="txt-inv-amount">{{ number_format($room->room_discount, 2) }}</td>
                     <td class="txt-inv-amount">
                         {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food, 2) }}
                     </td>
@@ -407,11 +408,14 @@
                         </td>
                         <td class="txt-inv" style="width:10px">{{ $room->room_no }}</td>
                         <td class="txt-inv" style="width:20px">{{ $post->item }}</td>
+                        <td class="txt-inv-amount">---</td>
                         <td class="txt-inv-amount">
-                            {{ number_format($post->amount, 2) }} <br>
+                            {{-- {{ number_format($post->amount, 2) }} <br> --}}
+                            ---
                         </td>
                         <td class="txt-inv-amount">
-                            {{ number_format($post->amount, 2) }} <br>
+                            {{-- {{ number_format($post->amount, 2) }} <br> --}}
+                            ---
                         </td>
 
                         <td class="txt-inv-amount">
@@ -434,6 +438,7 @@
                 @endforeach
             @endforeach
             <tr>
+                <td> </td>
                 <td> </td>
                 <td> </td>
                 <td> </td>

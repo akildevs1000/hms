@@ -36,3 +36,4 @@
     Route::post('generate_bill', [BookingController::class, 'generateBill']);
     Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);
     Route::put('update_room_price/{id}', [RoomTypeController::class, 'updatePrice']);
+    Route::post('set_room_status/{status}', [RoomController::class, 'setRoomStatus']);
