@@ -257,7 +257,7 @@
                                 <span style="margin-left: 29px">:</span>
                             </td>
                             <th style="text-align: left; border :none;font-size:10px;">
-                                {{ $booking->gst_number }}</th>
+                                {{ $booking->customer->gst_number ?? '' }}</th>
                         </tr>
                     </table>
                 </div>
@@ -362,7 +362,7 @@
             @endphp
             @foreach ($orderRooms as $room)
                 <tr>
-                    <td class="txt-inv"style="width:5px">{{ date('d/m/yy', strtotime($room->date)) }}</td>
+                    <td class="txt-inv"style="width:5px">{{ date('d/m/Y', strtotime($room->date)) }}</td>
                     <td class="txt-inv" style="width:10px">{{ $room->room_no }}</td>
                     <td class="txt-inv" style="width:20px">{{ $room->room_type }}</td>
                     <td class="txt-inv-amount">
