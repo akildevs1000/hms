@@ -18,7 +18,9 @@ class RoomController extends Controller
         if ($request->status != "-1") {
             $model->where('status', $request->status);
         }
-        return $model->where('company_id', $request->company_id)->orderByDesc("id")->paginate($request->per_page);
+        return $model->where('company_id', $request->company_id)
+            ->where('status', 0)
+            ->orderByDesc("id")->paginate($request->per_page);
     }
 
     public function search(Request $request, $key)
@@ -68,7 +70,9 @@ class RoomController extends Controller
     public function roomList(Request $request)
     {
         $arr  = [];
-        $data = Room::with('roomType')->whereCompanyId($request->company_id)->get();
+        $data = Room::with('roomType')
+            // ->where('status', 0)
+            ->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
             // $color =  $this->get_color($d->roomType->name);
             $arr[] = [
@@ -385,5 +389,16 @@ class RoomController extends Controller
         return  DB::table('food_prices')
             ->where('company_id', $request->company_id)
             ->get();
+    }
+
+    public function setRoomStatus($status, Request $request)
+    {
+        try {
+            $msg = $status == 1 ? 'blocked' : 'unblocked';
+            Room::whereCompanyId($request->company_id)->whereRoomNo($request->room_no)->update(['status' => $status]);
+            return $this->response('Room ' . $msg, null, true);
+        } catch (\Throwable $th) {
+            return $this->response('Something wrong.', $th, true);
+        }
     }
 }

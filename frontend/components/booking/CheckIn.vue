@@ -1123,7 +1123,7 @@ export default {
       payload.append("new_payment", this.new_payment || 0);
       payload.append("booking_id", data.id);
       payload.append("remaining_price", data.remaining_price);
-      payload.append("payment_mode_id", data.payment_mode_id);
+      payload.append("payment_mode_id", this.room.payment_mode_id);
       payload.append("company_id", this.$auth.user.company.id);
       payload.append("id_card_type_id", this.checkIn.id_card_type_id);
       payload.append("id_card_no", this.checkIn.id_card_no);

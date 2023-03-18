@@ -60,6 +60,7 @@ class RoomTypeController extends Controller
         ];
 
         return Room::where('room_no', $request->room_no)
+            ->where('status', 0)
             ->where('company_id', $request->company_id)
             ->first();
     }
@@ -120,6 +121,7 @@ class RoomTypeController extends Controller
         ];
 
         return Room::where('room_no', $request->room_no)
+            ->where('status', 0)
             ->where('company_id', $request->company_id)
             ->first();
     }
@@ -152,6 +154,7 @@ class RoomTypeController extends Controller
     public function getDataBySelect_old(Request $request)
     {
         return Room::where('room_no', $request->room_no)
+            ->where('status', 0)
             ->where('company_id', $request->company_id)
             ->first();
     }

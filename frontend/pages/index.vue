@@ -283,8 +283,27 @@
       >
         <v-list>
           <v-list-item-group>
-            <v-list-item link @click="NewBooking = true">
+            <!-- {{ newBookingRoom.status }} -->
+            <v-list-item
+              link
+              v-if="newBookingRoom.status == 0"
+              @click="NewBooking = true"
+            >
               <v-list-item-title>CheckIn</v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              link
+              v-if="newBookingRoom.status == 0"
+              @click="roomStatus('1')"
+            >
+              <v-list-item-title>Block</v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              link
+              v-if="newBookingRoom.status == 1"
+              @click="roomStatus('0')"
+            >
+              <v-list-item-title>Unblock</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -638,7 +657,11 @@
                           @touchstart="makeNewBookingForTouch($event, room)"
                           :elevation="0"
                           class="ma-0 px-md-1 py-md-2"
-                          style="background-color: #32a15c"
+                          :style="
+                            room.status == 1
+                              ? 'background-color: #D60078'
+                              : 'background-color: #32a15c'
+                          "
                           dark
                         >
                           <div class="text-center">
@@ -999,6 +1022,26 @@ export default {
       this.$nextTick(() => {
         this.showMenuForNewBooking = true;
       });
+    },
+
+    roomStatus(status) {
+      let payload = {
+        company_id: this.$auth.user.company.id,
+        room_no: this.newBookingRoom.room_no,
+      };
+      this.$axios
+        .post(`set_room_status/${status}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.snackbar = data.status;
+            this.response = data.message;
+            return;
+          }
+          this.room_list();
+          this.snackbar = data.status;
+          this.response = data.message;
+        })
+        .catch((err) => console.log(err));
     },
 
     get_remaining(val) {
