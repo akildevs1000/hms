@@ -207,6 +207,12 @@
                       {{ (booking && booking.request) || "---" }}
                     </td>
                   </tr>
+                  <tr class="bg-white">
+                    <td>Purpose :</td>
+                    <td>
+                      {{ (booking && booking.purpose) || "---" }}
+                    </td>
+                  </tr>
                   <tr class="bg-white" v-if="booking && booking.document">
                     <td>Document :</td>
                     <td class="red--text">
