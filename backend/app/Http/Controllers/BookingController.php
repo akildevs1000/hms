@@ -75,12 +75,32 @@ class BookingController extends Controller
                 $booked = Booking::create($data);
 
                 if ($booked) {
+                    $arr =  $request->allFoods;
+
+                    $final_arr =  [
+                        'breakfast' => [
+                            'adult' => array_sum(array_column(array_column($arr, 'breakfast'), 'adult')),
+                            'child' => array_sum(array_column(array_column($arr, 'breakfast'), 'child')),
+                            'baby' => array_sum(array_column(array_column($arr, 'breakfast'), 'baby')),
+                        ],
+                        'lunch' => [
+                            'adult' => array_sum(array_column(array_column($arr, 'lunch'), 'adult')),
+                            'child' => array_sum(array_column(array_column($arr, 'lunch'), 'child')),
+                            'baby' => array_sum(array_column(array_column($arr, 'lunch'), 'baby')),
+                        ],
+                        'dinner' => [
+                            'adult' => array_sum(array_column(array_column($arr, 'dinner'), 'adult')),
+                            'child' => array_sum(array_column(array_column($arr, 'dinner'), 'child')),
+                            'baby' => array_sum(array_column(array_column($arr, 'dinner'), 'baby')),
+                        ],
+                    ];
 
                     Food::create([
                         'booking_id' => $booked->id,
-                        'breakfast'  => $request->json('qty_breakfast'),
-                        'lunch'      => $request->json('qty_lunch'),
-                        'dinner'     => $request->json('qty_dinner'),
+                        'breakfast'  => $final_arr['breakfast'],
+                        'lunch'      => $final_arr['lunch'],
+                        'dinner'     => $final_arr['dinner'],
+                        'company_id'     => $request->company_id,
                     ]);
 
                     $transactionData = [

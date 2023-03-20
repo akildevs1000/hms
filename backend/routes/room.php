@@ -29,9 +29,7 @@
     Route::post('generate_bill', [BookingController::class, 'generateBill']);
     Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);
 
-
     Route::get('get_room_price_by_meal_plan', [RoomController::class, 'get_room_price_by_meal_plan']);
-
 
     Route::post('generate_bill', [BookingController::class, 'generateBill']);
     Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);
