@@ -381,12 +381,10 @@
                 </tbody>
               </table> -->
 
-              <table class="responsive-table">
+              <!-- <table class="responsive-table">
                 <thead>
                   <tr class="table-header-text">
                     <th>No</th>
-                    <th>Date</th>
-                    <th>Room</th>
                     <th>Description</th>
                     <th>Adults</th>
                     <th>Child</th>
@@ -402,10 +400,8 @@
                     <th class="text-right">Total</th>
                   </tr>
                 </thead>
-                <tbody v-for="(item, index) in orderRooms" :key="index">
+                <tbody v-for="(item, index) in bookedRooms" :key="index">
                   <tr style="font-size: 13px">
-                    <td>{{ ++index || "---" }}</td>
-                    <td>{{ item.date || "---" }}</td>
                     <td>{{ item.room_no || "---" }}</td>
                     <td>{{ item.room_type || "---" }}</td>
                     <td>{{ item.no_of_adult || "---" }}</td>
@@ -429,31 +425,56 @@
                     <td class="text-right">{{ item.cgst || "---" }}</td>
                     <td class="text-right">{{ item.total || "---" }}</td>
                   </tr>
-                  <tr
-                    style="font-size: 13px"
-                    v-for="(postingItem, postingIndex) in item.postings"
-                    :key="postingIndex"
-                  >
+                </tbody>
+              </table> -->
+
+              <table class="responsive-table">
+                <thead>
+                  <tr class="table-header-text">
+                    <th>No</th>
+                    <th>Date</th>
+                    <th>Room</th>
+                    <th>Description</th>
+                    <th>Adults</th>
+                    <th>Child</th>
+                    <th>Babies</th>
+                    <th>Meal Plan</th>
+                    <th>Adult Food Amount</th>
+                    <th>Child Food Amount</th>
+                    <!-- <th class="text-right">Price</th> -->
+                    <!-- <th class="text-right">Discount</th> -->
+                    <th class="text-right">Price</th>
+                    <!-- <th class="text-right">Sgst</th> -->
+                    <!-- <th class="text-right">Cgst</th> -->
+                    <th class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody v-for="(item, index) in orderRooms" :key="index">
+                  <tr style="font-size: 13px">
+                    <td>{{ ++index || "---" }}</td>
+                    <td>{{ item.date || "---" }}</td>
                     <td>{{ item.room_no || "---" }}</td>
-                    <td>(Posting) {{ postingItem.item || "---" }}</td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
+                    <td>{{ item.room_type || "---" }}</td>
+                    <td>{{ item.no_of_adult || "---" }}</td>
+                    <td>{{ item.no_of_child || "---" }}</td>
+                    <td>{{ item.no_of_baby || "---" }}</td>
+                    <td>{{ capsTitle(item.meal) || "---" }}</td>
                     <td class="text-right">
-                      {{ postingItem.amount || "---" }}
+                      {{ item.tot_adult_food || "---" }}
                     </td>
                     <td class="text-right">
-                      {{ postingItem.amount || "---" }}
+                      {{ item.tot_child_food || "---" }}
                     </td>
-                    <td class="text-right">{{ postingItem.sgst || "---" }}</td>
-                    <td class="text-right">{{ postingItem.cgst || "---" }}</td>
+                    <!-- <td class="text-right">{{ item.price || "---" }}</td>
                     <td class="text-right">
-                      {{ postingItem.amount_with_tax || "---" }}
+                      {{ item.room_discount || "---" }}
+                    </td> -->
+                    <td class="text-right">
+                      {{ item.after_discount || "---" }}
                     </td>
+                    <!-- <td class="text-right">{{ item.sgst || "---" }}</td> -->
+                    <!-- <td class="text-right">{{ item.cgst || "---" }}</td> -->
+                    <td class="text-right">{{ item.total || "---" }}</td>
                   </tr>
                 </tbody>
               </table>

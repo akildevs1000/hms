@@ -43,6 +43,23 @@
       </v-dialog>
       <!-- end check in dialog -->
 
+      <v-dialog v-model="FoodDialog" persistent max-width="700px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Food Order Rooms List</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="FoodDialog = false">
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms>
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
       <!-- posting dialog -->
       <v-dialog v-model="postingDialog" persistent max-width="700px">
         <v-card>
@@ -65,6 +82,7 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+
       <!-- end posting dialog -->
 
       <!--  viewPosting dialog -->
@@ -317,7 +335,8 @@
             <div class="row">
               <div class="col-md-12 col-12 col-lg-4 col-xlg-3 py-0">
                 <div class="card card-hover mx-0">
-                  <div
+                  <a
+                    @click="FoodDialog = true"
                     class="box text-center bg-cyan ipad-font-food-grid"
                     style="padding: 7px 0; margin: 0px -5px"
                   >
@@ -356,7 +375,7 @@
                         <h6>Dinner</h6>
                       </h1>
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
               <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
@@ -705,8 +724,10 @@ import PaidBookedSvg from "../components/svg/PaidBookedSvg.vue";
 import ExpectCheckInSvg from "../components/svg/ExpectCheckInSvg.vue";
 import ExpectCheckOutSvg from "../components/svg/ExpectCheckOutSvg.vue";
 import CheckInSvg from "../components/svg/CheckInSvg.vue";
+import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
 export default {
   components: {
+    FoodOrderRooms,
     CheckInSvg,
     ExpectCheckOutSvg,
     ExpectCheckInSvg,
@@ -742,6 +763,7 @@ export default {
       isDirty: true,
       payingAdvance: false,
 
+      FoodDialog: false,
       checkInDialog: false,
       checkOutDialog: false,
       postingDialog: false,

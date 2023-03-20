@@ -1719,6 +1719,8 @@ export default {
 
       previewImage: null,
 
+      allFood: [],
+
       breakfast: {
         adult: 0,
         child: 0,
@@ -2420,6 +2422,15 @@ export default {
       this.get_total_amounts();
       this.runAllFunctions();
 
+      this.allFood.push({ breakfast: this.breakfast });
+      this.allFood.push({ lunch: this.lunch });
+      this.allFood.push({ dinner: this.dinner });
+      console.log(this.allFood);
+
+      this.breakfast = {};
+      this.lunch = {};
+      this.dinner = {};
+
       this.clear_add_room();
       this.alert("Success!", "success selected room", "success");
       this.isSelectRoom = false;
@@ -2633,9 +2644,10 @@ export default {
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
-        qty_breakfast: this.breakfast,
-        qty_lunch: this.lunch,
-        qty_dinner: this.dinner,
+        // qty_breakfast: this.breakfast,
+        // qty_lunch: this.lunch,
+        // qty_dinner: this.dinner,
+        allFoods: this.allFood,
         selectedRooms: this.selectedRooms,
         ...this.customer,
       };

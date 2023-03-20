@@ -2,6 +2,7 @@
 
     use Illuminate\Support\Facades\Route;
     use App\Http\Controllers\BookingController;
+    use App\Http\Controllers\FoodController;
     use App\Http\Controllers\HolidayController;
     use App\Http\Controllers\TaxableController;
     use App\Http\Controllers\WeekdayController;
@@ -71,3 +72,6 @@
     Route::get('holiday/{id}', [HolidayController::class, "show"]);
     Route::put('holiday/{id}', [HolidayController::class, "update"]);
     Route::delete('holiday/{id}', [HolidayController::class, "destroy"]);
+
+
+    Route::resource('food', FoodController::class);
