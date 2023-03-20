@@ -27,9 +27,15 @@ class FoodController extends Controller
         $tem = [];
 
         foreach ($bookedRooms as $bookedRoom) {
+
             $breakfast = explode('|', $bookedRoom->meal)[0];
             $lunch = explode('|', $bookedRoom->meal)[1];
             $dinner = explode('|', $bookedRoom->meal)[2];
+
+            if ($breakfast == '--- ' && $lunch == ' --- ' && $dinner == ' ---') {
+                continue;
+            }
+
             if ($breakfast != '--- ') {
                 $bookedRoom['breakfast'] = [
                     'title' => 'BreakFast',
