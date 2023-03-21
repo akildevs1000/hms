@@ -43,6 +43,63 @@
       </v-dialog>
       <!-- end check in dialog -->
 
+      <v-dialog
+        v-model="ExpectCheckInReportDialog"
+        persistent
+        max-width="700px"
+      >
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Expect Checkin Report</span>
+            <v-spacer></v-spacer>
+            <v-icon
+              dark
+              class="pa-0"
+              @click="ExpectCheckInReportDialog = false"
+            >
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
+              <ExpectCheckInReport
+                :data="expectCheckIn"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <v-dialog
+        v-model="ExpectCheckOutReportDialog"
+        persistent
+        max-width="700px"
+      >
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Expect Checkout Report</span>
+            <v-spacer></v-spacer>
+            <v-icon
+              dark
+              class="pa-0"
+              @click="ExpectCheckOutReportDialog = false"
+            >
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
+              <ExpectCheckOutReport
+                :data="expectCheckOut"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
       <v-dialog v-model="FoodDialog" persistent max-width="700px">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -486,9 +543,11 @@
                   </v-row>
                 </div>
               </div>
-
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="ExpectCheckInReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #18069e"
@@ -509,10 +568,13 @@
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="ExpectCheckOutReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #4390fc"
@@ -533,7 +595,7 @@
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
                 <div class="card card-hover mx-1">
@@ -725,8 +787,12 @@ import ExpectCheckInSvg from "../components/svg/ExpectCheckInSvg.vue";
 import ExpectCheckOutSvg from "../components/svg/ExpectCheckOutSvg.vue";
 import CheckInSvg from "../components/svg/CheckInSvg.vue";
 import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
+import ExpectCheckInReport from "../components/summary_reports/ExpectCheckInReport.vue";
+import ExpectCheckOutReport from "../components/summary_reports/ExpectCheckOutReport.vue";
 export default {
   components: {
+    ExpectCheckOutReport,
+    ExpectCheckInReport,
     FoodOrderRooms,
     CheckInSvg,
     ExpectCheckOutSvg,
@@ -763,6 +829,8 @@ export default {
       isDirty: true,
       payingAdvance: false,
 
+      ExpectCheckOutReportDialog: false,
+      ExpectCheckInReportDialog: false,
       FoodDialog: false,
       checkInDialog: false,
       checkOutDialog: false,
