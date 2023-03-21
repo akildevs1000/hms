@@ -75,3 +75,5 @@
 
 
     Route::resource('food', FoodController::class);
+    Route::get('food_print', [FoodController::class, "print"]);
+    Route::get('food_download', [FoodController::class, "download"]);

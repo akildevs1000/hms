@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookedRoom;
 use App\Models\Food;
+use App\Models\Company;
+use App\Models\BookedRoom;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FoodController extends Controller
 {
@@ -15,15 +17,12 @@ class FoodController extends Controller
      */
     public function index(Request $request)
     {
-        $model = BookedRoom::query();
-        $model->whereCompanyId($request->company_id);
-        $model->without('booking');
-        $model->whereHas('booking', function ($q) use ($request) {
-            $q->where('booking_status', 2);
-            $q->whereCompanyId($request->company_id);
-        });
+        $model = $this->processCompany($request);
+        return $this->processFoodOrderList($model->get());
+    }
 
-        $bookedRooms =   $model->get();
+    public function processFoodOrderList($bookedRooms)
+    {
         $tem = [];
 
         foreach ($bookedRooms as $bookedRoom) {
@@ -32,9 +31,9 @@ class FoodController extends Controller
             $lunch = explode('|', $bookedRoom->meal)[1];
             $dinner = explode('|', $bookedRoom->meal)[2];
 
-            if ($breakfast == '--- ' && $lunch == ' --- ' && $dinner == ' ---') {
-                continue;
-            }
+            // if ($breakfast == '--- ' && $lunch == ' --- ' && $dinner == ' ---') {
+            //     continue;
+            // }
 
             if ($breakfast != '--- ') {
                 $bookedRoom['breakfast'] = [
@@ -65,6 +64,39 @@ class FoodController extends Controller
             $tem[] = $bookedRoom;
         }
         return $tem;
+    }
+
+
+    public function print(Request $request)
+    {
+        $model = $this->processCompany($request);
+        $item = $this->processFoodOrderList($model->get());
+        return Pdf::loadView('food.list', ['data' => $item, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function download(Request $request)
+    {
+        $model = $this->processCompany($request);
+        $item = $this->processFoodOrderList($model->get());
+        return Pdf::loadView('food.list', ['data' => $item, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+
+    public function processCompany($request)
+    {
+        $model = BookedRoom::query();
+        $model->whereCompanyId($request->company_id);
+        $model->without('booking');
+        $model->whereHas('booking', function ($q) use ($request) {
+            $q->where('booking_status', 2);
+            $q->whereCompanyId($request->company_id);
+        });
+
+        return $model;
     }
 
     /**
