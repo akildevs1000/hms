@@ -18,49 +18,122 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Payment</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="payingDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
-          <Paying :BookingData="checkData" @close-dialog="closeDialogs"></Paying>
+          <Paying
+            :BookingData="checkData"
+            @close-dialog="closeDialogs"
+          ></Paying>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <v-row>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
-          v-model="search" hide-details></v-text-field>
+        <v-text-field
+          class=""
+          label="Search..."
+          dense
+          outlined
+          flat
+          append-icon="mdi-magnify"
+          @input="searchIt"
+          v-model="search"
+          hide-details
+        ></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo flat
-          :hide-details="true"></v-select>
+        <v-select
+          class="custom-text-box shadow-none"
+          v-model="type"
+          :items="types"
+          dense
+          placeholder="Type"
+          solo
+          flat
+          :hide-details="true"
+          @change="getDataFromApi(endpoint)"
+        ></v-select>
       </v-col>
 
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="source" :items="type == 'Online' ? sources : agentList"
-          dense item-value="name" item-text="name" placeholder="Sources" solo flat :hide-details="true"
-          @change="getDataFromApi('agents')"></v-select>
+        <v-select
+          class="custom-text-box shadow-none"
+          v-model="source"
+          :items="type == 'Online' ? sources : agentList"
+          dense
+          item-value="name"
+          item-text="name"
+          placeholder="Sources"
+          solo
+          flat
+          :hide-details="true"
+          @change="getDataFromApi(endpoint)"
+        ></v-select>
       </v-col>
       <v-col md="3">
-        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-          offset-y min-width="auto">
+        <v-menu
+          v-model="from_menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
-              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
+            <v-text-field
+              v-model="from_date"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              dense
+              :hide-details="true"
+              class="custom-text-box shadow-none"
+              solo
+              flat
+              label="From"
+            ></v-text-field>
           </template>
-          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
+          <v-date-picker
+            v-model="from_date"
+            @input="from_menu = false"
+            @change="commonMethod"
+          ></v-date-picker>
         </v-menu>
       </v-col>
       <v-col md="3">
-        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
-          min-width="auto">
+        <v-menu
+          v-model="to_menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
-              solo flat label="To" :hide-details="true"></v-text-field>
+            <v-text-field
+              v-model="to_date"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              dense
+              class="custom-text-box shadow-none"
+              solo
+              flat
+              label="To"
+              :hide-details="true"
+            ></v-text-field>
           </template>
-          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
+          <v-date-picker
+            v-model="to_date"
+            @input="to_menu = false"
+            @change="commonMethod"
+          ></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
@@ -71,13 +144,25 @@
       </v-toolbar>
       <table>
         <tr>
-          <th style="font-size: 13px" v-for="(item, index) in headers" :key="index">
+          <th
+            style="font-size: 13px"
+            v-for="(item, index) in headers"
+            :key="index"
+          >
             <span v-html="item.text"></span>
           </th>
         </tr>
-        <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-          color="primary"></v-progress-linear>
+        <v-progress-linear
+          v-if="loading"
+          :active="loading"
+          :indeterminate="loading"
+          absolute
+          color="primary"
+        ></v-progress-linear>
         <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
+          <td class="ps-3">
+            <b>{{ ++index }}</b>
+          </td>
           <td class="ps-3">
             <b>{{ item.reservation_no }}</b>
           </td>
@@ -103,23 +188,44 @@
           <td>{{ item.booking_date }}</td>
           <td>
             <!-- v-if="item.payment_status == 1" -->
-            <v-btn small elevation="0" dark class="l-bg-green-dark" :class="getRelaventColor(item.booking_status)">
+            <v-btn
+              small
+              elevation="0"
+              dark
+              class="l-bg-green-dark"
+              :class="getRelaventColor(item.booking_status)"
+            >
               {{ getRelaventStatus(item.booking_status) }}
             </v-btn>
           </td>
 
           <td>
-            <v-icon @click="viewCustomerBilling(item)" x-small color="primary" class="mr-2">
+            <v-icon
+              @click="viewCustomerBilling(item)"
+              x-small
+              color="primary"
+              class="mr-2"
+            >
               mdi-eye
             </v-icon>
           </td>
           <td>
-            <v-icon @click="get_payment(item)" x-small color="primary" class="mr-2">
+            <v-icon
+              @click="get_payment(item)"
+              x-small
+              color="primary"
+              class="mr-2"
+            >
               mdi-cash-multiple
             </v-icon>
           </td>
           <td>
-            <v-icon @click="redirect_to_invoice(item.id)" x-small color="primary" class="mr-2">
+            <v-icon
+              @click="redirect_to_invoice(item.id)"
+              x-small
+              color="primary"
+              class="mr-2"
+            >
               mdi-cash-multiple
             </v-icon>
           </td>
@@ -129,8 +235,12 @@
     <v-row>
       <v-col md="12" class="float-right">
         <div class="float-right">
-          <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-            :total-visible="12"></v-pagination>
+          <v-pagination
+            v-model="pagination.current"
+            :length="pagination.total"
+            @input="onPageChange"
+            :total-visible="12"
+          ></v-pagination>
         </div>
       </v-col>
     </v-row>
@@ -139,10 +249,7 @@
 <script>
 import Paying from "../../components/booking/Paying.vue";
 export default {
-  props: [
-    'endpoint',
-    'Model',
-  ],
+  props: ["endpoint", "Model"],
   components: {
     Paying,
   },
@@ -164,7 +271,7 @@ export default {
     type: "",
     source: "",
     agentList: [],
-    types: ["Online", "Travel Agency"],
+    types: ["Select All", "Online", "Travel Agency", "Walking"],
     sources: [],
 
     options: {},
@@ -176,6 +283,7 @@ export default {
     loading: false,
     total: 0,
     headers: [
+      { text: "#" },
       { text: "Reser. No" },
       { text: "Source" },
       { text: "Reference" },
@@ -210,6 +318,8 @@ export default {
   created() {
     // this.loading = true;
     this.getDataFromApi();
+    this.get_agents();
+    this.get_online();
   },
 
   methods: {
@@ -237,7 +347,7 @@ export default {
         },
       };
       this.$axios.get(`get_agent`, payload).then(({ data }) => {
-        this.agentList = data;
+        this.agentList = [{ id: -1, name: "Select All" }].concat(data);
       });
     },
 
@@ -248,10 +358,11 @@ export default {
         },
       };
       this.$axios.get(`get_online`, payload).then(({ data }) => {
-        this.sources = data;
+        // this.sources = data;
+
+        this.sources = [{ id: -1, name: "Select All" }].concat(data);
       });
     },
-
 
     redirect_to_invoice(id) {
       let url = process.env.BACKEND_URL + "invoice";
@@ -294,7 +405,6 @@ export default {
     },
 
     getRelaventStatus(status) {
-      console.log(status);
       switch (parseInt(status)) {
         case 1:
           return "booked";
@@ -317,14 +427,31 @@ export default {
     },
 
     getDataFromApi(url = this.endpoint) {
+      // :items="type == 'Online' ? sources : agentList"
+
+      let newSource;
+
+      if (this.type == "Walking") {
+        newSource = "walking";
+      } else if (this.type == "Select All") {
+        newSource = "";
+      } else {
+        newSource = this.source;
+      }
+
+      console.log(this.type);
+      console.log(newSource);
+
       this.loading = true;
       let page = this.pagination.current;
-
       let options = {
         params: {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
           search: this.search,
+          from: this.from_date,
+          to: this.to_date,
+          source: newSource,
         },
       };
 

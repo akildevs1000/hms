@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
 use App\Models\Company;
 use App\Models\BookedRoom;
 use Illuminate\Http\Request;
@@ -72,5 +73,143 @@ class ReportController extends Controller
         return Pdf::loadView('report.expect_check_out', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
             ->download();
+    }
+
+    public function availableRoomsReportProcess($request)
+    {
+        $company_id = $request->company_id;
+        $model   = BookedRoom::query();
+        $roomIds = $model
+            ->whereDate('check_in', '<=', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id, $request) {
+                $q->where('booking_status', '!=', -1);
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '<=', 4);
+                $q->where('company_id', $company_id);
+                $q->whereDate('check_in', '<=', $request->date);
+            })
+            ->with('booking')
+            ->pluck('room_id');
+        $data =   Room::whereNotIn('id', $roomIds)->where('company_id', $company_id)->get();
+        return $data;
+    }
+
+    public function availableRoomsReport(Request $request)
+    {
+        $data = $this->availableRoomsReportProcess($request);
+        return Pdf::loadView('report.available_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function availableRoomsReportDownload(Request $request)
+    {
+        $data = $this->availableRoomsReportProcess($request);
+        return Pdf::loadView('report.available_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+
+    public function bookedRoomsReport(Request $request)
+    {
+        $data = $this->bookedRoomsReportProcess($request);
+
+        return Pdf::loadView('report.booked_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function bookedRoomsReportDownload(Request $request)
+    {
+        $data = $this->bookedRoomsReportProcess($request);
+        return Pdf::loadView('report.booked_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+    public function bookedRoomsReportProcess($request)
+    {
+        $company_id = $request->company_id;
+        $model   = BookedRoom::query();
+        $roomIds = $model
+            ->whereDate('check_in', '<=', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id, $request) {
+                $q->where('booking_status', '!=', -1);
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '<=', 4);
+                $q->where('company_id', $company_id);
+                $q->whereDate('check_in', '<=', $request->date);
+            })
+            ->with('booking')
+            ->pluck('room_id');
+
+        return  Room::whereIn('id', $roomIds)
+            ->with('bookedRoom', function ($q) use ($company_id, $request) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '<=', 4);
+                $q->where('company_id', $company_id);
+                $q->whereDate('check_in', '<=', $request->date);
+                $q->orderBy('id', 'ASC');
+            })
+            ->get();
+    }
+
+
+
+    public function paidRoomsReport(Request $request)
+    {
+        $data = $this->paidRoomsReportProcess($request);
+        return Pdf::loadView('report.paid_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function paidRoomsReportDownload(Request $request)
+    {
+        $data = $this->paidRoomsReportProcess($request);
+        return Pdf::loadView('report.paid_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+
+    public function paidRoomsReportProcess($request)
+    {
+        $company_id = $request->company_id;
+        return BookedRoom::whereHas('booking', function ($q)  use ($company_id) {
+            $q->where('booking_status', '!=', 0);
+            $q->where('booking_status', 1);
+            $q->where('advance_price', '!=', 0);
+            $q->where('company_id', $company_id);
+        })->get();
+    }
+
+
+    public function dirtyRoomsReport(Request $request)
+    {
+        $data = $this->dirtyRoomsReportProcess($request);
+        return Pdf::loadView('report.dirty_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function dirtyRoomsReportDownload(Request $request)
+    {
+        $data = $this->dirtyRoomsReportProcess($request);
+        return Pdf::loadView('report.dirty_rooms', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+
+    public function dirtyRoomsReportProcess($request)
+    {
+        $company_id = $request->company_id;
+        return  $dirtyRooms = BookedRoom::whereHas('booking', function ($q)  use ($company_id) {
+            $q->where('booking_status', '!=', 0);
+            $q->where('booking_status', 3);
+            $q->where('company_id', $company_id);
+        })->get();
     }
 }

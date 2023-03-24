@@ -237,7 +237,7 @@ class RoomController extends Controller
             $q->where('booking_status', '!=', 0);
             $q->where('booking_status', 3);
             $q->where('company_id', $company_id);
-        })->count();
+        });
 
         $expectCheckInModel = BookedRoom::query();
         $expectCheckIn      = $expectCheckInModel->whereDate('check_in', $request->check_in)
@@ -278,7 +278,9 @@ class RoomController extends Controller
             $q->where('booking_status', 1);
             $q->where('advance_price', '!=', 0);
             $q->where('company_id', $company_id);
-        })->count();
+        });
+
+
 
         $waitingBooking = BookedRoom::whereHas('booking', function ($q)  use ($company_id) {
             $q->where('booking_status', '!=', 0);
@@ -309,12 +311,9 @@ class RoomController extends Controller
                 $q->whereDate('check_in', '<=', $request->check_in);
             })
             ->with('booking')
-            // ->get();
             ->pluck('room_id');
 
         $notAvailableRooms = Room::whereIn('id', $roomIds)
-            // ->where('company_id', $company_id)
-
             ->with('bookedRoom', function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '<=', 4);
@@ -322,18 +321,17 @@ class RoomController extends Controller
                 $q->whereDate('check_in', '<=', $request->check_in);
                 $q->orderBy('id', 'ASC');
             })
-            // ->orderBy('id', 'DESC')
             ->get();
 
-        // return Room::whereIn('id', $roomIds)->with('bookedRoom.booking:id')->get();
-
         return [
-            'dirtyRooms'    => $dirtyRooms,
+            'dirtyRooms'    => $dirtyRooms->count(),
+            'dirtyRoomsList'    => $dirtyRooms->get(),
 
             'notAvailableRooms' => $notAvailableRooms,
             // 'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(), //$notAvailableRooms,
             'availableRooms'    => Room::whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
-            'confirmedBooking'  => $confirmedBooking,
+            'confirmedBooking'  => $confirmedBooking->count(),
+            'confirmedBookingList'  => $confirmedBooking->get(),
             'waitingBooking'    => $waitingBooking,
             'expectCheckIn'     => $expectCheckIn,
             'expectCheckOut'    => $expectCheckOut,

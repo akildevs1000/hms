@@ -50,7 +50,7 @@
       >
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Expect Checkin Report</span>
+            <span>Expect Checkin Rooms Report</span>
             <v-spacer></v-spacer>
             <v-icon
               dark
@@ -71,6 +71,7 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+
       <v-dialog
         v-model="ExpectCheckOutReportDialog"
         persistent
@@ -93,6 +94,139 @@
               <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
               <ExpectCheckOutReport
                 :data="expectCheckOut"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="BookedRoomReportDialog" persistent max-width="700px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Booked Room Report</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="BookedRoomReportDialog = false">
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
+              <BookedRoomsReport
+                :data="notAvailableRooms"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="PaidRoomReportDialog" persistent max-width="700px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Paid Room Report</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="PaidRoomReportDialog = false">
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
+              <PaidRoomsReport
+                :data="confirmedBookingList"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="CheckInReportDialog" persistent max-width="700px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Checkin Rooms Report</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="CheckInReportDialog = false">
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
+              <CheckInRoomsReport
+                :data="checkIn"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="CheckOutReportDialog" persistent max-width="700px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Checkout Rooms Report</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="CheckOutReportDialog = false">
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
+              <CheckOutRoomsReport
+                :data="checkOut"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="DirtyRoomsReportDialog" persistent max-width="700px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Dirty Rooms Report</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="DirtyRoomsReportDialog = false">
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
+              <DirtyRoomsReport
+                :data="dirtyRoomsList"
+                @close-dialog="closeDialogs"
+              />
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog
+        v-model="AvailableRoomsReportDialog"
+        persistent
+        max-width="700px"
+      >
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Expect Checkout Rooms Report</span>
+            <v-spacer></v-spacer>
+            <v-icon
+              dark
+              class="pa-0"
+              @click="AvailableRoomsReportDialog = false"
+            >
+              mdi mdi-close-box
+            </v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <v-container>
+              <AvailableRoomsReport
+                :data="availableRooms"
                 @close-dialog="closeDialogs"
               />
             </v-container>
@@ -436,7 +570,10 @@
                 </div>
               </div>
               <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="AvailableRoomsReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #32a15c"
@@ -455,14 +592,18 @@
                       <h1
                         class="big-screen laptop-font-grid ipad-font-qty-grid"
                       >
-                        {{ (availableRooms && availableRooms.length) || 0 }}
+                        <!-- (availableRooms && availableRooms.length) -->
+                        {{ get_availableRooms(availableRooms) || 0 }}
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
               <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="BookedRoomReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #ffbe00"
@@ -487,10 +628,13 @@
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
               <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="PaidRoomReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #02ada4"
@@ -514,10 +658,13 @@
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
               <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="DirtyRoomsReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #ff0000"
@@ -541,7 +688,7 @@
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
                 <a
@@ -598,7 +745,10 @@
                 </a>
               </div>
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="CheckInReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #800000"
@@ -619,10 +769,13 @@
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
               <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
-                <div class="card card-hover mx-1">
+                <a
+                  class="card card-hover mx-1"
+                  @click="CheckOutReportDialog = true"
+                >
                   <v-row
                     class="box text-center"
                     style="background-color: #74166d"
@@ -643,7 +796,7 @@
                       </h1>
                     </v-col>
                   </v-row>
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -789,8 +942,19 @@ import CheckInSvg from "../components/svg/CheckInSvg.vue";
 import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
 import ExpectCheckInReport from "../components/summary_reports/ExpectCheckInReport.vue";
 import ExpectCheckOutReport from "../components/summary_reports/ExpectCheckOutReport.vue";
+import AvailableRoomsReport from "../components/summary_reports/AvailableRoomsReport.vue";
+import CheckInRoomsReport from "../components/summary_reports/CheckInRoomsReport.vue";
+import BookedRoomsReport from "../components/summary_reports/BookedRoomsReport.vue";
+import PaidRoomsReport from "../components/summary_reports/PaidRoomsReport.vue";
+import CheckOutRoomsReport from "../components/summary_reports/CheckOutRoomsReport.vue";
+import DirtyRoomsReport from "../components/summary_reports/DirtyRoomsReport.vue";
 export default {
   components: {
+    DirtyRoomsReport,
+    CheckOutRoomsReport,
+    PaidRoomsReport,
+    BookedRoomsReport,
+    CheckInRoomsReport,
     ExpectCheckOutReport,
     ExpectCheckInReport,
     FoodOrderRooms,
@@ -808,6 +972,7 @@ export default {
     NewCheckIn,
     Dirty,
     PaidBookedSvg,
+    AvailableRoomsReport,
   },
   data() {
     return {
@@ -829,6 +994,12 @@ export default {
       isDirty: true,
       payingAdvance: false,
 
+      DirtyRoomsReportDialog: false,
+      PaidRoomReportDialog: false,
+      BookedRoomReportDialog: false,
+      CheckInReportDialog: false,
+      CheckOutReportDialog: false,
+      AvailableRoomsReportDialog: false,
       ExpectCheckOutReportDialog: false,
       ExpectCheckInReportDialog: false,
       FoodDialog: false,
@@ -881,6 +1052,8 @@ export default {
       eventStatus: "",
       rooms: [],
       postings: [],
+      dirtyRoomsList: [],
+      confirmedBookingList: [],
       notAvailableRooms: [],
       availableRooms: [],
       checkIn: [],
@@ -1045,6 +1218,12 @@ export default {
       this.NewBooking = false;
     },
 
+    get_availableRooms(rooms) {
+      let numberOfBlockedRooms = rooms.filter((e) => e.status == 1).length;
+      console.log(numberOfBlockedRooms);
+      return this.availableRooms.length - numberOfBlockedRooms;
+    },
+
     get_data(jsEvent = null) {
       let payload = {
         params: {
@@ -1178,6 +1357,8 @@ export default {
         this.expectCheckOut = data.expectCheckOut;
         this.checkIn = data.checkIn;
         this.checkOut = data.checkOut;
+        this.confirmedBookingList = data.confirmedBookingList;
+        this.dirtyRoomsList = data.dirtyRoomsList;
 
         this.renderChartData();
         this.members = {
