@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Paid Room List</title>
+    <title>Check Out Room List</title>
     <style>
         * {
             box-sizing: border-box;
@@ -312,6 +312,7 @@
 </head>
 
 <body>
+
     <div class="row">
         <div class="col-4">
             <p class="header-txt">HYDERS PARK</p>
@@ -343,7 +344,7 @@
         <div class="col-5">
         </div>
         <div class="col-4" style="margin: 0px">
-            Paid Rooms
+            Checkout Rooms
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
         </div>
@@ -352,7 +353,7 @@
 
     <table class="mt-3 w-100">
         <tr style="background-color: white; color: black" class="my-0 py-0">
-            <th class="my-0 py-0"># </th>
+            <th class="my-0 py-0">$ </th>
             <th class="my-0 py-0">Room No </th>
             <th class="my-0 py-0">Type</th>
             <th class="my-0 py-0">Guest</th>

@@ -12,48 +12,36 @@ class ReportController extends Controller
 {
     public function CHeckInReport(Request $request)
     {
-        $company_id = $request->company_id;
-        $expectCheckInModel = BookedRoom::query();
-        $data =  $expectCheckInModel->whereDate('check_in', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 1);
-                $q->where('company_id', $company_id);
-            })->get();
-
-        return Pdf::loadView('report.expect_check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
+        $data = $this->CHeckInReportProcess($request);
+        return Pdf::loadView('report.check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
             ->stream();
     }
 
     public function CHeckInReportDownload(Request $request)
     {
-        $company_id = $request->company_id;
-        $expectCheckInModel = BookedRoom::query();
-        $data =  $expectCheckInModel->whereDate('check_in', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 1);
-                $q->where('company_id', $company_id);
-            })->get();
-
-        return Pdf::loadView('report.expect_check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
+        $data = $this->CHeckInReportProcess($request);
+        return Pdf::loadView('report.check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
             ->download();
+    }
+
+    public function CHeckInReportProcess($request)
+    {
+        $company_id = $request->company_id;
+        $checkInModel = BookedRoom::query();
+        return $checkInModel->clone()
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+                $q->where('company_id', $company_id);
+            })->get();
     }
 
 
     public function CHeckOutReport(Request $request)
     {
-        $company_id = $request->company_id;
-        $expectCheckOutModel = BookedRoom::query();
-        $data =  $expectCheckOutModel->whereDate('check_out', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-            })->get();
-
+        $data = $this->CHeckOutReportDownload($request);
         return Pdf::loadView('report.expect_check_out', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
             ->stream();
@@ -73,6 +61,18 @@ class ReportController extends Controller
         return Pdf::loadView('report.expect_check_out', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
             ->download();
+    }
+
+    public function CHeckOutReportProcess($request)
+    {
+        $company_id = $request->company_id;
+        $checkOutModel = BookedRoom::query();
+        return $checkOutModel->clone()->whereDate('check_out', $request->check_in)
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 3);
+                $q->where('company_id', $company_id);
+            })->get();
     }
 
     public function availableRoomsReportProcess($request)
@@ -155,8 +155,6 @@ class ReportController extends Controller
             ->get();
     }
 
-
-
     public function paidRoomsReport(Request $request)
     {
         $data = $this->paidRoomsReportProcess($request);
@@ -211,5 +209,72 @@ class ReportController extends Controller
             $q->where('booking_status', 3);
             $q->where('company_id', $company_id);
         })->get();
+    }
+
+    // -----------------------
+
+
+    public function expectCHeckInReport(Request $request)
+    {
+        $company_id = $request->company_id;
+        $expectCheckInModel = BookedRoom::query();
+        $data =  $expectCheckInModel->whereDate('check_in', $request->date)
+            ->whereHas('booking', function ($q)  use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 1);
+                $q->where('company_id', $company_id);
+            })->get();
+
+        return Pdf::loadView('report.expect_check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function expectCHeckInReportDownload(Request $request)
+    {
+        $company_id = $request->company_id;
+        $expectCheckInModel = BookedRoom::query();
+        $data =  $expectCheckInModel->whereDate('check_in', $request->date)
+            ->whereHas('booking', function ($q)  use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 1);
+                $q->where('company_id', $company_id);
+            })->get();
+
+        return Pdf::loadView('report.expect_check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+    public function expectCHeckOutReport(Request $request)
+    {
+        $company_id = $request->company_id;
+        $expectCheckOutModel = BookedRoom::query();
+        $data =  $expectCheckOutModel->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q)  use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+                $q->where('company_id', $company_id);
+            })->get();
+
+        return Pdf::loadView('report.expect_check_out', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function expectCHeckOutReportDownload(Request $request)
+    {
+        $company_id = $request->company_id;
+        $expectCheckOutModel = BookedRoom::query();
+        $data =  $expectCheckOutModel->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q)  use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+                $q->where('company_id', $company_id);
+            })->get();
+
+        return Pdf::loadView('report.expect_check_out', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'portrait')
+            ->download();
     }
 }

@@ -5,7 +5,7 @@
         small
         class="pt-4 pb-4 mr-1 elevation-0"
         color="#ECF0F4"
-        @click="process('checkout_report_print')"
+        @click="process('expect_checkout_report_print')"
       >
         Print
         <v-icon right>mdi-printer</v-icon>
@@ -14,7 +14,7 @@
         small
         class="pt-4 pb-4 elevation-0"
         color="#ECF0F4"
-        @click="process('checkout_report_download')"
+        @click="process('expect_checkout_report_download')"
       >
         Download
         <v-icon right>mdi-file</v-icon>
