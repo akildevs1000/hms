@@ -145,7 +145,7 @@ class Booking extends Model
         $query->when($filter ?? false, fn ($query, $search) =>
         $query->where(
             fn ($query) => $query
-                ->orWhere('id', 'Like', '%' . $search . '%')
+                ->orWhere('reservation_no', 'Like', '%' . $search . '%')
                 ->orWhere('reference_no', 'Like', '%' . $search . '%')
                 ->orWhere('type', 'Like', '%' . $search . '%')
                 ->orWhereHas(

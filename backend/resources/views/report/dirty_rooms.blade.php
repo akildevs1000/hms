@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Food Order Room List</title>
+    <title>Dirty Room List</title>
     <style>
         * {
             box-sizing: border-box;
@@ -312,7 +312,6 @@
 </head>
 
 <body>
-
     <div class="row">
         <div class="col-4">
             <p class="header-txt">HYDERS PARK</p>
@@ -339,34 +338,30 @@
     </div>
     <hr>
 
-    @foreach ($data as $item)
-        <table class="mt-3 w-100">
-            <tr style="background-color: white; color: black" class="my-0 py-0">
-                <th class="my-0 py-0">Room No - {{ $item->room_no ?? '---' }}</th>
-                <th class="my-0 py-0">Adult</th>
-                <th class="my-0 py-0">Child</th>
-                <th class="my-0 py-0">Baby</th>
+
+    <div class="row">
+        <div class="col-5">
+        </div>
+        <div class="col-4" style="margin: 0px">
+            Dirty Rooms
+        </div>
+        <div class="col-4 header-txt-address" style="text-align:right">
+        </div>
+    </div>
+    </div>
+
+    <table class="mt-3 w-100">
+        <tr style="background-color: white; color: black" class="my-0 py-0">
+            <th class="my-0 py-0">Room No </th>
+            <th class="my-0 py-0">Type</th>
+        </tr>
+        @foreach ($data as $item)
+            <tr>
+                <td class="my-1 py-1">{{ $item->room_no ?? '---' }}</td>
+                <td class="my-1 py-1">{{ $item->room_type ?? '---' }}</td>
             </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-                <td class="my-0 py-0">{{ $item['breakfast']['title'] ?? 'Breakfast' }}</td>
-                <td class="my-0 py-0">{{ $item['breakfast']['no_of_adult'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['breakfast']['no_of_child'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['breakfast']['no_of_baby'] ?? '---' }}</td>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-                <td class="my-0 py-0">{{ $item['lunch']['title'] ?? 'Lunch' }}</td>
-                <td class="my-0 py-0">{{ $item['lunch']['no_of_adult'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['lunch']['no_of_child'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['lunch']['no_of_baby'] ?? '---' }}</td>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-                <td class="my-0 py-0">{{ $item['dinner']['title'] ?? 'Dinner' }}</td>
-                <td class="my-0 py-0">{{ $item['dinner']['no_of_adult'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['dinner']['no_of_child'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['dinner']['no_of_baby'] ?? '---' }}</td>
-            </tr>
-        </table>
-    @endforeach
+        @endforeach
+    </table>
 
 
     @php

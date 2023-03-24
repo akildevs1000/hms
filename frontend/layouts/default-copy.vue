@@ -107,7 +107,7 @@
 
           <v-btn icon color="yellow" v-bind="attrs" v-on="on">
             <v-avatar>
-              <img :src="getLogo || '/no-image.PNG'" />
+              <img :src="getLogo || '/no-profile-image.jpg'" />
             </v-avatar>
           </v-btn>
         </template>
@@ -174,9 +174,9 @@
       :clipped="true"
       :right="right"
       fixed
-      style="z-index:1000"
+      style="z-index: 1000"
     >
-      <v-row style="margin-top: 50px;">
+      <v-row style="margin-top: 50px">
         <v-col>
           <v-card class="pa-2" elevation="0">
             <v-col cols="12">
@@ -321,7 +321,7 @@ export default {
           icon: "mdi-calendar",
           title: "Calendar",
           to: "/hotel/calendar1",
-          menu: "reservation_access"
+          menu: "reservation_access",
         },
         {
           icon: "mdi-bed",
@@ -345,9 +345,9 @@ export default {
               icon: "mdi-bed",
               title: "List Reservation",
               to: "/reservation/list1",
-              menu: "reservation_access"
-            }
-          ]
+              menu: "reservation_access",
+            },
+          ],
         },
         // {
         //   icon: "mdi-bed",
@@ -359,28 +359,28 @@ export default {
           icon: "mdi-account",
           title: "Customers",
           to: "/customer/list",
-          menu: "reservation_access"
+          menu: "reservation_access",
         },
 
         {
           icon: "mdi-cash",
           title: "Posting",
           to: "/posting",
-          menu: "posting_access"
+          menu: "posting_access",
         },
 
         {
           icon: "mdi-account",
           title: "Agents",
           to: "/agents",
-          menu: "agent_access"
+          menu: "agent_access",
         },
 
         {
           icon: "mdi-account",
           title: "City Ledger",
           to: "/city_ledger",
-          menu: "city_ledger_access"
+          menu: "city_ledger_access",
         },
 
         {
@@ -399,13 +399,13 @@ export default {
               icon: "mdi-cash-multiple",
               title: "Income",
               to: "/account",
-              menu: "income_access"
+              menu: "income_access",
             },
             {
               icon: "mdi-cash",
               title: "Expense",
               to: "/expense",
-              menu: "expense_access"
+              menu: "expense_access",
             },
             // {
             //   icon: "mdi-cash",
@@ -417,16 +417,16 @@ export default {
               icon: "mdi-cash",
               title: "GST Bills",
               to: "/taxable",
-              menu: "transaction_access"
-            }
-          ]
+              menu: "transaction_access",
+            },
+          ],
         },
         {
           icon: "mdi-tools",
           title: "Setup",
           to: "/manage",
-          menu: "city_ledger_access"
-        }
+          menu: "city_ledger_access",
+        },
       ],
 
       // menus: [
@@ -572,7 +572,7 @@ export default {
       items: [],
       modules: {
         module_ids: [],
-        module_names: []
+        module_names: [],
       },
       clipped: true,
 
@@ -580,8 +580,8 @@ export default {
       title: "Hyder Park",
       logout_btn: {
         icon: "mdi-logout",
-        label: "Logout"
-      }
+        label: "Logout",
+      },
     };
   },
   created() {
@@ -589,7 +589,7 @@ export default {
       icon: "mdi-home",
       title: "Dashboard",
       to: "/",
-      menu: "dashboard"
+      menu: "dashboard",
     };
     let user = this.$auth.user;
     let permissions = user.permissions;
@@ -600,7 +600,7 @@ export default {
       return;
     }
 
-    this.menus.forEach(ele => {
+    this.menus.forEach((ele) => {
       if (permissions.includes(ele.menu)) {
         this.items.push(ele);
       }
@@ -619,7 +619,7 @@ export default {
 
     getLogo() {
       return this.$auth.user && this.$auth.user.company.logo;
-    }
+    },
   },
   methods: {
     changeTopBarColor(color) {
@@ -636,7 +636,7 @@ export default {
     },
 
     caps(str) {
-      return str.replace(/\b\w/g, c => c.toUpperCase());
+      return str.replace(/\b\w/g, (c) => c.toUpperCase());
     },
     goToSetting() {
       this.$router.push("/setting");
@@ -657,12 +657,12 @@ export default {
         if (modules !== null) {
           this.modules = {
             module_ids: modules.module_ids || [],
-            module_names: modules.module_names.map(e => ({
+            module_names: modules.module_names.map((e) => ({
               icon: "mdi-chart-bubble",
               title: this.caps(e),
               to: "/" + e + "_modules",
-              permission: true
-            }))
+              permission: true,
+            })),
           };
         }
       });
@@ -670,7 +670,7 @@ export default {
     can(per) {
       let user = this.$auth.user;
       return (
-        (user && user.permissions.some(e => e == per || per == "/")) ||
+        (user && user.permissions.some((e) => e == per || per == "/")) ||
         user.is_master
       );
     },
@@ -679,8 +679,8 @@ export default {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>

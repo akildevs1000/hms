@@ -76,6 +76,9 @@
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Reservation Details</v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="redirect">
+              mdi mdi-close-box
+            </v-icon>
             <template v-slot:extension>
               <v-tabs v-model="tab1" align-with-title>
                 <v-tabs-slider color="yellow"></v-tabs-slider>
@@ -800,6 +803,10 @@ export default {
         sum += parseFloat(item.amount);
       });
       this.totalAmount = sum;
+    },
+
+    redirect() {
+      this.$router.push("/");
     },
 
     getData() {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrderRoom extends Model
 {
@@ -84,5 +85,15 @@ class OrderRoom extends Model
             "booking_id",
             "customer_id",
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Order by name ASC
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('room_no', 'desc');
+        });
     }
 }

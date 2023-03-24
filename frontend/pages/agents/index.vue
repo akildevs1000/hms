@@ -707,6 +707,7 @@ tr:nth-child(even) {
   border-radius: 2px !important;
   border: 1px solid #dbdddf !important;
 }
+
 input[type="text"]:focus.custom-text-box {
   border: 2px solid #5fafa3 !important;
 }

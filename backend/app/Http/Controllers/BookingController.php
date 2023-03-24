@@ -1613,6 +1613,19 @@ class BookingController extends Controller
         $model = Booking::query()
             ->latest()
             ->filter(request('search'));
+
+        if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
+            $model->where('source', $request->source);
+        }
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereDate('check_in', '<=', $request->to);
+            $model->WhereDate('check_out', '>=', $request->from);
+        }
+        $model->orderBy('id', 'desc');
+
+
+
         switch ($status) {
             case 'upcoming':
                 $model->where('booking_status', '=', 1);
