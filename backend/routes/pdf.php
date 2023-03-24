@@ -18,6 +18,17 @@
     Route::get('checkout_report_print', [ReportController::class, 'CHeckOutReport']);
     Route::get('checkout_report_download', [ReportController::class, 'CHeckOutReportDownload']);
 
+
+
+    Route::get('expect_checkin_report_print', [ReportController::class, 'expectCHeckInReport']);
+    Route::get('expect_checkin_report_download', [ReportController::class, 'expectCHeckInReportDownload']);
+
+    Route::get('expect_checkout_report_print', [ReportController::class, 'expectCHeckOutReport']);
+    Route::get('expect_checkout_report_download', [ReportController::class, 'expectCHeckOutReportDownload']);
+
+
+
+
     Route::get('available_rooms_print', [ReportController::class, 'availableRoomsReport']);
     Route::get('available_rooms_download', [ReportController::class, 'availableRoomsReportDownload']);
 

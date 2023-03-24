@@ -792,7 +792,7 @@
                     </v-col>
                     <v-col md="6" class="p-0 m-0">
                       <h1 class="text-white" style="font-size: 65px">
-                        {{ checkOut.length || "0" }}
+                        {{ checkOut.length }}
                       </h1>
                     </v-col>
                   </v-row>

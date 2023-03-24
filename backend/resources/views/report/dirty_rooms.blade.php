@@ -349,14 +349,18 @@
         </div>
     </div>
     </div>
-
+    @php
+        $i = 1;
+    @endphp
     <table class="mt-3 w-100">
         <tr style="background-color: white; color: black" class="my-0 py-0">
+            <th class="my-0 py-0"># </th>
             <th class="my-0 py-0">Room No </th>
             <th class="my-0 py-0">Type</th>
         </tr>
         @foreach ($data as $item)
             <tr>
+                <td class="my-1 py-1">{{ $i++ }}</td>
                 <td class="my-1 py-1">{{ $item->room_no ?? '---' }}</td>
                 <td class="my-1 py-1">{{ $item->room_type ?? '---' }}</td>
             </tr>
