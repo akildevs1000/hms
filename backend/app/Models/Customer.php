@@ -94,19 +94,18 @@ class Customer extends Model
         ];
     }
 
-    public function scopeFilter($query,  $filter)
+    public function scopeFilter($query,  $search)
     {
-        $query->when($filter ?? false, fn ($query, $search) =>
+        $query->when($search ?? false, fn ($query, $search) =>
         $query->where(
             fn ($query) => $query
-                ->orWhere('name', 'Like', '%' . $search . '%')
+                ->orWhere('first_name', 'Like', '%' . $search . '%')
+                ->orWhere('last_name', 'Like', '%' . $search . '%')
                 ->orWhere('contact_no', 'Like', '%' . $search . '%')
                 ->orWhere('whatsapp', 'Like', '%' . $search . '%')
                 ->orWhere('email', 'Like', '%' . $search . '%')
-                ->orWhere('id_card_type_id', 'Like', '%' . $search . '%')
                 ->orWhere('id_card_no', 'Like', '%' . $search . '%')
                 ->orWhere('car_no', 'Like', '%' . $search . '%')
-                ->orWhere('no_of_adult', 'Like', '%' . $search . '%')
                 ->orWhere('address', 'Like', '%' . $search . '%')
         ));
     }

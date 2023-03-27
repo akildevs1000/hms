@@ -41,3 +41,9 @@
 
     Route::get('dirty_report_print', [ReportController::class, 'dirtyRoomsReport']);
     Route::get('dirty_report_download', [ReportController::class, 'dirtyRoomsReportDownload']);
+
+
+
+
+    Route::get('gst_invoice_report_print', [ReportController::class, 'gstInvoiceReport']);
+    Route::get('gst_invoice_report_download', [ReportController::class, 'gstInvoiceReportDownload']);
