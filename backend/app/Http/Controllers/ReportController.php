@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Company;
+use App\Models\Taxable;
 use App\Models\BookedRoom;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -275,6 +276,51 @@ class ReportController extends Controller
 
         return Pdf::loadView('report.expect_check_out', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+    public function gstInvoiceReportProcess($request)
+    {
+        $model = Taxable::query();
+
+        $model->whereCompanyId($request->company_id)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            });
+
+        if (($request->filled('search') && $request->search)) {
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->where('gst_number', 'Like', '%' . $request->search . '%');
+                $q->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+            });
+        }
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->whereDate('check_in', '<=', $request->to);
+                $q->WhereDate('check_out', '>=', $request->from);
+            });
+        }
+
+        $model->with('booking.customer');
+        $model->orderBy('id', 'asc');
+
+        return $model->get();
+    }
+
+    public function gstInvoiceReport(Request $request)
+    {
+        $data = $this->gstInvoiceReportProcess($request);
+        return Pdf::loadView('report.gst_invoice', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'landscape')
+            ->stream();
+    }
+
+    public function gstInvoiceReportDownload(Request $request)
+    {
+        $data = $this->gstInvoiceReportProcess($request);
+        return Pdf::loadView('report.gst_invoice', ['data' => $data, 'company' => Company::find($request->company_id)])
+            ->setPaper('a4', 'landscape')
             ->download();
     }
 }

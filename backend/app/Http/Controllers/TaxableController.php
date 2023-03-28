@@ -14,7 +14,30 @@ class TaxableController extends Controller
      */
     public function index(Request  $request)
     {
-        return Taxable::whereCompanyId($request->company_id)->with('booking.customer')->paginate($request->per_page ?? 30);
+        $model = Taxable::query();
+
+        $model->whereCompanyId($request->company_id)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            });
+
+
+        if (($request->filled('search') && $request->search)) {
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->where('gst_number', 'Like', '%' . $request->search . '%');
+                $q->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+            });
+        }
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->whereDate('check_in', '<=', $request->to);
+                $q->WhereDate('check_out', '>=', $request->from);
+            });
+        }
+
+        $model->with('booking.customer');
+        return $model->paginate($request->per_page ?? 30);
     }
 
     /**
