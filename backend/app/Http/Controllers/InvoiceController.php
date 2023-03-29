@@ -22,6 +22,8 @@ class InvoiceController extends Controller
         $transactions = $booking->transactions;
         $bookedRooms = $booking->bookedRooms;
 
+
+        $roomTypes =    array_column($booking->bookedRooms->toArray(), 'room_type');
         $paymentMode = $transactions->toArray();
         $paymentMode = end($paymentMode);
 
@@ -33,6 +35,8 @@ class InvoiceController extends Controller
         $roomsDiscount = $booking->bookedRooms->sum(function ($room) {
             return $room->room_discount;
         });
+
+        return view('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
 
         return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
             // ->setPaper('a4', 'landscape')

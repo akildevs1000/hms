@@ -862,6 +862,7 @@ class BookingController extends Controller
                 'company_id'        => $booking->company_id ?? '',
                 'payment_method_id' => $request->payment_mode_id,
                 'desc'              => 'check out payment',
+                'reference_number'  => $request->reference_number,
             ];
 
             $trans = new TransactionController();
