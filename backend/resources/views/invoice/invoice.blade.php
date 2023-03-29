@@ -20,7 +20,7 @@
                             <div class="tm_invoice_left">
                                 <div class="tm_logo">
                                     @if ($booking->company_id == 1)
-                                        <img src="{{ public_path('upload/app-logo.jpg') }}" alt="Logo"
+                                        <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
                                             style="max-height:100px!important">
                                     @elseif ($booking->company_id == 2)
                                         <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
