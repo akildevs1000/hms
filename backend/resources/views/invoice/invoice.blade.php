@@ -21,7 +21,7 @@
                                 <div class="tm_logo">
                                     @if ($booking->company_id == 1)
                                         <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
-                                            style="max-height:100px!important">
+                                            style="max-height:70px!important;margin-top:10px">
                                     @elseif ($booking->company_id == 2)
                                         <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
                                             style="max-height:100px!important">
@@ -44,7 +44,7 @@
                                         {{ strtolower($company->location) ?? '' }}
                                     </span><br>
                                     {{ strtolower($company->user->email) ?? '' }} <br>
-                                    {{ strtolower($company->contact->number ?? '') }}
+                                    {{ strtolower($company->contact->number ?? '') }}<br>
                                     {{ $company->mol_id ?? '' }}
                                     {{-- 84 Spilman Street, London <br>United Kingdom. <br>
                                     lowell@gmail.com <br>
