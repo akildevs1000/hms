@@ -137,7 +137,7 @@
               <v-icon class="">mdi-download-outline</v-icon>
             </v-btn>
           </template>
-          <span>DOWNLOAD</span>
+          <span> DOWNLOAD </span>
         </v-tooltip>
       </v-toolbar>
       <table>
@@ -348,7 +348,7 @@ export default {
     },
 
     process(type) {
-      let comId = this.$auth.user.company.id;
+      let comId = this.$auth.user.company.id; //company id
       let from = this.from_date;
       let to = this.to_date;
       let url =
