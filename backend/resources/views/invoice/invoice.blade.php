@@ -125,11 +125,11 @@
                                                 $totalWithTax = 0;
                                                 $totalcgst = 0;
                                                 $totalsgst = 0;
-                                                
+
                                                 $totalPostingWithTax = 0;
                                                 $totalPostingcgst = 0;
                                                 $totalPostingsgst = 0;
-                                                
+
                                                 $grandTotal = 0;
                                             @endphp
                                             @foreach ($orderRooms as $room)
@@ -167,7 +167,7 @@
                                                     $totalWithTax += $room->total;
                                                     $totalcgst += $room->cgst;
                                                     $totalsgst += $room->sgst;
-                                                    
+
                                                     $postings = App\Models\Posting::where('booked_room_id', $room->booked_room_id)
                                                         ->whereDate('posting_date', $room->date)
                                                         ->get();
