@@ -584,149 +584,194 @@
                               >
                             </div>
                           </v-col>
-                          <v-col md="6" sm="12" cols="12" dense>
-                            <label class="col-form-label"> Meals </label>
-                            <v-radio-group row dense>
-                              <v-checkbox
-                                v-model="temp.breakfast"
-                                label="Breakfast"
-                                value="breakfast"
-                                class="px-3"
-                                @change="meal_cal(temp.breakfast)"
-                              >
-                              </v-checkbox>
-                              <v-checkbox
-                                v-model="temp.lunch"
-                                label="Lunch"
-                                value="lunch"
-                                class="px-3"
-                                @change="meal_cal(temp.lunch)"
-                              >
-                              </v-checkbox>
-                              <v-checkbox
-                                v-model="temp.dinner"
-                                label="Dinner"
-                                value="dinner"
-                                class="px-3"
-                                @change="meal_cal(temp.dinner)"
-                              >
-                              </v-checkbox>
-                            </v-radio-group>
-                          </v-col>
-                          <v-col md="6" cols="12">
-                            <table class="food-table">
-                              <tr
-                                class="food-table"
-                                style="background-color: #4390fc; color: white"
-                              >
-                                <th class="food-table" style="width: 100px">
-                                  Type
-                                </th>
-                                <td class="food-table" style="width: 100px">
-                                  Breakfast
-                                </td>
-                                <td class="food-table" style="width: 100px">
-                                  Lunch
-                                </td>
-                                <td class="food-table" style="width: 100px">
-                                  Dinner
-                                </td>
-                              </tr>
-                              <tr class="food-table">
-                                <th class="food-table">Adult</th>
-                                <td class="food-table">
-                                  {{ tempAdult.tot_ab }}
-                                </td>
-                                <td class="food-table">
-                                  {{ tempAdult.tot_al }}
-                                </td>
-                                <td class="food-table">
-                                  {{ tempAdult.tot_ad }}
-                                </td>
-                              </tr>
-                              <tr class="food-table">
-                                <th class="food-table">Child</th>
-                                <td class="food-table">
-                                  {{ tempChild.tot_cb }}
-                                </td>
-                                <td class="food-table">
-                                  {{ tempChild.tot_cl }}
-                                </td>
-                                <td class="food-table">
-                                  {{ tempChild.tot_cd }}
-                                </td>
-                              </tr>
-                              <tr>
-                                <th colspan="2" style="text-align: left">
-                                  Room Price
-                                </th>
-                                <td colspan="2" style="text-align: right">
-                                  {{ convert_decimal(temp.price) }}
-                                </td>
-                              </tr>
-                            </table>
-                          </v-col>
-                          <v-col md="6" cols="12">
-                            <table class="food-table">
-                              <tr
-                                class="food-table"
-                                style="background-color: #4390fc; color: white"
-                              >
-                                <th class="food-table" style="width: 100px">
-                                  Date
-                                </th>
-                                <td class="food-table" style="width: 100px">
-                                  Day
-                                </td>
-                                <td class="food-table" style="width: 100px">
-                                  Type
-                                </td>
-                                <td class="food-table" style="width: 100px">
-                                  Tax
-                                </td>
-                                <td class="food-table" style="width: 100px">
-                                  Amount
-                                </td>
-                              </tr>
 
-                              <tr
-                                class="food-table"
-                                v-for="(item, index) in temp.priceList"
-                                :key="index"
+                          <v-col md="12">
+                            <v-card>
+                              <v-tabs
+                                v-model="roomTab"
+                                background-color="primary"
+                                centered
+                                dense
+                                dark
+                                icons-and-text
                               >
-                                <td class="food-table">
-                                  {{ item.date }}
-                                </td>
-                                <td class="food-table">
-                                  {{ item.day }}
-                                </td>
-                                <td class="food-table">
-                                  {{ item.day_type }}
-                                </td>
-                                <td class="food-table">
-                                  {{ convert_decimal(item.tax) }}
-                                </td>
-                                <td class="food-table">
-                                  {{ convert_decimal(item.price) }}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td colspan="5"><hr /></td>
-                              </tr>
-                              <tr>
-                                <td>Total</td>
-                                <td></td>
-                                <td></td>
-                                <td class="food-table">
-                                  {{ convert_decimal(temp.room_tax) }}
-                                </td>
-                                <td class="food-table">
-                                  {{ convert_decimal(temp.price) }}
-                                </td>
-                              </tr>
-                            </table>
+                                <v-tabs-slider></v-tabs-slider>
+
+                                <v-tab href="#tab-1">
+                                  Meals
+                                  <v-icon>mdi-food</v-icon>
+                                </v-tab>
+
+                                <v-tab href="#tab-2">
+                                  Price List
+                                  <v-icon>mdi mdi-currency-rupee</v-icon>
+                                </v-tab>
+                              </v-tabs>
+                              <v-tabs-items v-model="roomTab">
+                                <v-tab-item :value="'tab-1'">
+                                  <v-card flat>
+                                    <v-card-text>
+                                      <v-row class="d-flex justify-center">
+                                        <v-col
+                                          md="12"
+                                          sm="12"
+                                          cols="12"
+                                          dense
+                                          class="mb-0 pb-0 d-flex justify-center"
+                                        >
+                                          <v-radio-group row dense>
+                                            <v-checkbox
+                                              v-model="temp.breakfast"
+                                              label="Breakfast"
+                                              value="breakfast"
+                                              class="px-3 py-0 my-0"
+                                              @change="meal_cal(temp.breakfast)"
+                                            >
+                                            </v-checkbox>
+                                            <v-checkbox
+                                              v-model="temp.lunch"
+                                              label="Lunch"
+                                              value="lunch"
+                                              class="px-3 py-0 my-0"
+                                              @change="meal_cal(temp.lunch)"
+                                            >
+                                            </v-checkbox>
+                                            <v-checkbox
+                                              v-model="temp.dinner"
+                                              label="Dinner"
+                                              value="dinner"
+                                              class="px-3 py-0 my-0"
+                                              @change="meal_cal(temp.dinner)"
+                                            >
+                                            </v-checkbox>
+                                          </v-radio-group>
+                                        </v-col>
+                                        <v-col
+                                          md="12"
+                                          cols="12"
+                                          class="mt-0 pt-0 d-flex justify-center"
+                                        >
+                                          <table class="styled-table">
+                                            <thead>
+                                              <tr>
+                                                <th>Type</th>
+                                                <th>Breakfast</th>
+                                                <th>Lunch</th>
+                                                <th>Dinner</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <th>Adult</th>
+                                                <td>
+                                                  {{ tempAdult.tot_ab }}
+                                                </td>
+                                                <td>
+                                                  {{ tempAdult.tot_al }}
+                                                </td>
+                                                <td>
+                                                  {{ tempAdult.tot_ad }}
+                                                </td>
+                                              </tr>
+                                              <tr>
+                                                <th>Child</th>
+                                                <td>
+                                                  {{ tempChild.tot_cb }}
+                                                </td>
+                                                <td>
+                                                  {{ tempChild.tot_cl }}
+                                                </td>
+                                                <td>
+                                                  {{ tempChild.tot_cd }}
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </v-col>
+                                      </v-row>
+                                    </v-card-text>
+                                  </v-card>
+                                </v-tab-item>
+                                <v-tab-item :value="'tab-2'">
+                                  <v-card flat>
+                                    <v-card-text>
+                                      <v-row>
+                                        <v-col
+                                          md="12"
+                                          cols="12"
+                                          class="d-flex justify-center"
+                                        >
+                                          <table class="styled-table">
+                                            <thead>
+                                              <tr>
+                                                <th>Date</th>
+                                                <th>Day</th>
+                                                <th>Type</th>
+                                                <th>R/Amount</th>
+                                                <th>Tax</th>
+                                                <th>T/Amount</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr
+                                                v-for="(
+                                                  item, index
+                                                ) in temp.priceList"
+                                                :key="index"
+                                              >
+                                                <td>
+                                                  {{ item.date }}
+                                                </td>
+                                                <td>
+                                                  {{ item.day }}
+                                                </td>
+                                                <td>
+                                                  {{ item.day_type }}
+                                                </td>
+                                                <td>
+                                                  {{ item.room_price }}
+                                                </td>
+                                                <td>
+                                                  {{
+                                                    convert_decimal(item.tax)
+                                                  }}
+                                                </td>
+                                                <td>
+                                                  {{
+                                                    convert_decimal(item.price)
+                                                  }}
+                                                </td>
+                                              </tr>
+                                              <tr class="active-row">
+                                                <td>Total</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>
+                                                  {{
+                                                    convert_decimal(
+                                                      temp.room_tax
+                                                    )
+                                                  }}
+                                                </td>
+                                                <td class="season-table">
+                                                  {{
+                                                    convert_decimal(temp.price)
+                                                  }}
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                          <!-- ===================================== -->
+                                        </v-col>
+                                      </v-row>
+                                    </v-card-text>
+                                  </v-card>
+                                </v-tab-item>
+                              </v-tabs-items>
+                            </v-card>
                           </v-col>
-                          <v-col md="6"> </v-col>
+
                           <v-col md="2" sm="12" cols="12" dense>
                             <label class="col-form-label"> Discount </label>
                             <v-checkbox
@@ -1453,7 +1498,7 @@ export default {
       bookedRooms: "",
       loading: false,
       selectRoomLoading: false,
-
+      roomTab: null,
       headers: [
         {
           text: "#",
@@ -2505,6 +2550,8 @@ export default {
     },
 
     store() {
+      console.log(this.$auth.user);
+
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
@@ -2551,6 +2598,7 @@ export default {
         allFoods: this.allFood,
         selectedRooms: this.selectedRooms,
         ...this.customer,
+        user_id: this.$auth.user.id,
       };
       this.$axios
         .post("/booking", payload)
@@ -2732,5 +2780,39 @@ input[type="number"]:focus.form-control {
   /* border: 2px solid #5fafa3 !important; */
   border-color: #4390fc;
   outline: none;
+}
+
+/* ======================== */
+.styled-table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.styled-table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+}
+.styled-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+.styled-table tbody tr.active-row {
+  font-weight: bold;
+  color: #009879;
 }
 </style>

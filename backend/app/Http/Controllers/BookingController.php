@@ -111,6 +111,7 @@ class BookingController extends Controller
                         'payment_method_id' => $booked->payment_mode_id,
                         'desc'              => 'rooms booking amount',
                         'reference_number'  => $request->reference_number,
+                        'user_id'  => $request->user_id,
                     ];
 
                     //Transaction
@@ -732,6 +733,7 @@ class BookingController extends Controller
             'payment_method_id' => $request->payment_mode_id,
             'desc'              => $desc,
             'reference_number'  => $request->reference_number,
+            'user_id'  => $request->user_id,
         ];
         (new TransactionController)->store($transactionData, $amt, $mode);
         (new TransactionController)->updateBookingByTransactions($booking->id, 0);
@@ -863,6 +865,7 @@ class BookingController extends Controller
                 'payment_method_id' => $request->payment_mode_id,
                 'desc'              => 'check out payment',
                 'reference_number'  => $request->reference_number,
+                'user_id'  => $request->user_id,
             ];
 
             $trans = new TransactionController();
@@ -949,6 +952,7 @@ class BookingController extends Controller
                 'payment_method_id' => $request->payment_mode_id,
                 'desc'              => 'advance payment',
                 'reference_number'  => $request->reference_number,
+                'user_id'  => $request->user_id,
             ];
 
             (new TransactionController)->store($transactionData, $request->new_advance, 'credit');
@@ -1624,8 +1628,6 @@ class BookingController extends Controller
             $model->WhereDate('check_out', '>=', $request->from);
         }
         $model->orderBy('id', 'desc');
-
-
 
         switch ($status) {
             case 'upcoming':

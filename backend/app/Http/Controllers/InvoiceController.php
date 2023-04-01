@@ -11,8 +11,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class InvoiceController extends Controller
 {
 
-    public function index($id)
+    public function index($id, $inv = "")
     {
+
+        $invNo = $inv == "" ? "0000" . $id : $inv;
 
         $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
             ->find($id);
@@ -23,7 +25,7 @@ class InvoiceController extends Controller
         $bookedRooms = $booking->bookedRooms;
 
 
-        $roomTypes =    array_column($booking->bookedRooms->toArray(), 'room_type');
+        $roomTypes = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
         $paymentMode = $transactions->toArray();
         $paymentMode = end($paymentMode);
 
@@ -36,7 +38,7 @@ class InvoiceController extends Controller
             return $room->room_discount;
         });
 
-        return view('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+        return view('invoice.invoice', compact("invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
 
         return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
             // ->setPaper('a4', 'landscape')

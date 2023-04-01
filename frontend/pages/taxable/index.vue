@@ -212,6 +212,21 @@
           <td>
             {{ (item && item.booking && item.booking.booking_date) || "---" }}
           </td>
+          <td>
+            <v-icon
+              @click="
+                redirect_to_invoice(
+                  item && item.booking && item.booking.id,
+                  item.show_taxable_invoice_number
+                )
+              "
+              x-small
+              color="primary"
+              class="mr-2"
+            >
+              mdi-cash-multiple
+            </v-icon>
+          </td>
         </tr>
       </table>
     </v-card>
@@ -232,7 +247,7 @@
 <script>
 export default {
   data: () => ({
-    Model: "GST Bills",
+    Model: "GST Bill",
     checkOutDialog: false,
     pagination: {
       current: 1,
@@ -268,6 +283,7 @@ export default {
       { text: "Paid Amount" },
       { text: "Balance" },
       { text: "Booking Date" },
+      { text: "Invoice" },
       // { text: "Reservation Status" }
       // { text: "View" },
       // { text: "Payment" },
@@ -323,6 +339,15 @@ export default {
 
     commonMethod() {
       this.getDataFromApi();
+    },
+
+    redirect_to_invoice(id, inv) {
+      let url = process.env.BACKEND_URL + "invoice";
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${url}/${id}/${inv}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     getDataFromApi(url = this.endpoint) {

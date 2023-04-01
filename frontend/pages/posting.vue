@@ -292,11 +292,10 @@ export default {
     headers: [
       { text: "#" },
       { text: "Bill Number" },
-      { text: "Reservation Number" },
-      { text: "Customer" },
+      { text: "Rev. No" },
+      { text: "Guest" },
       { text: "Room No" },
       { text: "Room Type" },
-      // { text: "Customer" },
       { text: "Item" },
       { text: "QTY" },
       { text: "Amount" },
@@ -330,6 +329,12 @@ export default {
     this.room_list();
     this.getDataFromApi();
     this.booked_room_list();
+  },
+
+  watch: {
+    search() {
+      this.getDataFromApi();
+    },
   },
 
   methods: {
@@ -439,6 +444,7 @@ export default {
         params: {
           room_id: this.pagination.room_no,
           per_page: this.pagination.per_page,
+          search: this.search,
           company_id: this.$auth.user.company.id,
         },
       };
@@ -452,11 +458,11 @@ export default {
     },
 
     searchIt(e) {
-      if (e.length == 0) {
-        this.getDataFromApi(this.endpoint);
-      } else if (e.length > 1) {
-        this.getDataFromApi(`${this.endpoint}/search/${e}`);
-      }
+      // if (e.length == 0) {
+      //   this.getDataFromApi(this.endpoint);
+      // } else if (e.length > 1) {
+      //   this.getDataFromApi(`${this.endpoint}/search/${e}`);
+      // }
     },
   },
 };

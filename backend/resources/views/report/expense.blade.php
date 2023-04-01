@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GST Tax Invoice List</title>
+    <title>Expense</title>
     <style>
         * {
             box-sizing: border-box;
@@ -316,6 +316,10 @@
         th.fnt-size {
             font-size: 10px
         }
+
+        .total-font-size {
+            font-family: Arial, Helvetica, sans-serif
+        }
     </style>
 </head>
 
@@ -337,11 +341,16 @@
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
             <div style="text-align:left; margin-left:70px" class="header-txt-address">
-                <small> GST No: {{ $company->mol_id ?? '33CKQPM1598B2ZZ' }} </small><br>
+                <small> <b>GST No:</b> {{ $company->mol_id ?? '33CKQPM1598B2ZZ' }} </small><br>
                 {{-- 04542-291888 --}}
-                <small> Telephone No: {{ $company->contact->number ?? '04542291888' }} </small><br>
-                <small> Email: {{ $company->user->email ?? '---' }}</small><br>
-                <small> Date: {{ date('Y/m/d') }}</small>
+                <small> <b>Telephone No:</b> {{ $company->contact->number ?? '04542291888' }} </small><br>
+                <small> <b> Email:</b> {{ $company->user->email ?? '---' }}</small><br>
+                @if ($request->from)
+                    <small> <b> Date Range:</b> {{ $request->from }} - {{ $request->to }}</small><br>
+                @else
+                    <small> <b> Date Range:</b> All</small><br>
+                @endif
+                <small> <b>Date:</b> {{ date('Y/m/d') }}</small>
             </div>
         </div>
     </div>
@@ -352,41 +361,70 @@
         <div class="col-5">
         </div>
         <div class="col-4" style="margin: 0px">
-            Invoice Report
+            Expense Report
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
         </div>
     </div>
     </div>
-
     <table class="mt-3 w-100">
-        <tr style="background-color: white; color: black" class="my-0 py-0">
-            <th class="my-0 py-0 fnt-size"># </th>
-            <th class="my-0 py-0 fnt-size">Invoice Number </th>
-            <th class="my-0 py-0 fnt-size">Resr.No</th>
-            <th class="my-0 py-0 fnt-size">GST</th>
-            <th class="my-0 py-0 fnt-size">Source</th>
-            <th class="my-0 py-0 fnt-size">Customer</th>
-            <th class="my-0 py-0 fnt-size">Arrival Date</th>
-            <th class="my-0 py-0 fnt-size">Departure Date</th>
+        <tr>
+            <th class="my-0 py-0 fnt-size"> # </th>
+            <th class="my-0 py-0 fnt-size"> Date </th>
+            <th class="my-0 py-0 fnt-size"> Time </th>
+            <th class="my-0 py-0 fnt-size"> Item </th>
+            <th class="my-0 py-0 fnt-size"> Amount </th>
+            <th class="my-0 py-0 fnt-size"> QTY </th>
+            <th class="my-0 py-0 fnt-size"> Total </th>
+            <th class="my-0 py-0 fnt-size"> Cash </th>
+            <th class="my-0 py-0 fnt-size"> Card </th>
+            <th class="my-0 py-0 fnt-size"> Online </th>
+            <th class="my-0 py-0 fnt-size"> Bank </th>
+            <th class="my-0 py-0 fnt-size"> UPI </th>
+            <th class="my-0 py-0 fnt-size"> Cheque </th>
         </tr>
-        @php
-            $i = 1;
-        @endphp
-        @foreach ($data as $item)
-            {{-- @dd($item) --}}
-            <tr style="font-size:11px">
-                <td class="my-1 py-1 fnt-size">{{ $i++ }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->show_taxable_invoice_number ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->reservation_no ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->customer->gst_number ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->source ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->customer->full_name ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->check_in_date ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->check_out_date ?? '---' }}</td>
+        @foreach ($data as $index => $item)
+            <tr>
+                <td class="my-1 py-1 fnt-size">{{ ++$index }}</td>
+                <td class="my-1 py-1 fnt-size">{{ date('d-m-Y', strtotime($item['created_at'])) }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['time'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['item'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['amount'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['qty'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['total'] }}</td>
+                @for ($i = 1; $i <= 6; $i++)
+                    <td class="text-right my-1 py-1 fnt-size">
+                        @if ($item['paymentMode']['name'] == 'Cash' && $i == 1)
+                            {{ $item['total'] }}
+                        @elseif($item['paymentMode']['name'] == 'Card' && $i == 2)
+                            {{ $item['total'] }}
+                        @elseif($item['paymentMode']['name'] == 'Online' && $i == 3)
+                            {{ $item['total'] }}
+                        @elseif($item['paymentMode']['name'] == 'Bank' && $i == 4)
+                            {{ $item['total'] }}
+                        @elseif($item['paymentMode']['name'] == 'UPI' && $i == 5)
+                            {{ $item['total'] }}
+                        @elseif($item['paymentMode']['name'] == 'Cheque' && $i == 6)
+                            {{ $item['total'] }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                @endfor
             </tr>
         @endforeach
+        <tr class="text-right">
+            <th colspan="7">Total</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalExpenses['Cash'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalExpenses['Card'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalExpenses['Online'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalExpenses['Bank'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalExpenses['UPI'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalExpenses['Cheque'] }}</th>
+        </tr>
     </table>
+
+
 
 
     @php

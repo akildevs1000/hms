@@ -705,7 +705,7 @@
                               </tr>
                             </table>
                           </v-col>
-                          <v-col md="6" cols="12">
+                          <v-col md="12" cols="12">
                             <table class="food-table">
                               <tr
                                 class="food-table"
@@ -721,10 +721,13 @@
                                   Type
                                 </td>
                                 <td class="food-table" style="width: 100px">
+                                  R/Amount
+                                </td>
+                                <td class="food-table" style="width: 100px">
                                   Tax
                                 </td>
                                 <td class="food-table" style="width: 100px">
-                                  Amount
+                                  T/Amount
                                 </td>
                               </tr>
                               <tr
@@ -742,6 +745,9 @@
                                   {{ item.day_type }}
                                 </td>
                                 <td class="food-table">
+                                  {{ item.room_price }}
+                                </td>
+                                <td class="food-table">
                                   {{ convert_decimal(item.tax) }}
                                 </td>
                                 <td class="food-table">
@@ -749,10 +755,11 @@
                                 </td>
                               </tr>
                               <tr>
-                                <td colspan="5"><hr /></td>
+                                <td colspan="6"><hr /></td>
                               </tr>
                               <tr>
                                 <td>Total</td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td class="food-table">
@@ -2650,6 +2657,7 @@ export default {
         allFoods: this.allFood,
         selectedRooms: this.selectedRooms,
         ...this.customer,
+        user_id: this.$auth.user.id,
       };
       this.$axios
         .post("/booking", payload)

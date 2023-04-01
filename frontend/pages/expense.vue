@@ -10,7 +10,17 @@
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
       </v-col>
-      <v-col cols="6"> </v-col>
+      <v-col cols="6">
+        <v-spacer></v-spacer>
+        <v-btn
+          class="float-right py-3"
+          @click="expenseDialog = true"
+          color="primary"
+        >
+          <v-icon color="white" small class="py-5">mdi-plus</v-icon>
+          Add
+        </v-btn>
+      </v-col>
     </v-row>
 
     <v-row>
@@ -250,15 +260,38 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span> Today {{ Model }} List</span>
             <v-spacer></v-spacer>
-            <v-btn
-              class="float-right py-3"
-              @click="expenseDialog = true"
-              x-small
-              color="primary"
-            >
-              <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-              Add
-            </v-btn>
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="ma-0"
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_print')"
+                >
+                  <v-icon class="white--text">mdi-printer-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>PRINT</span>
+            </v-tooltip>
+
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_download')"
+                >
+                  <v-icon class="white--text">mdi-download-outline</v-icon>
+                </v-btn>
+              </template>
+              <span> DOWNLOAD </span>
+            </v-tooltip>
           </v-toolbar>
           <table>
             <tr>
@@ -431,6 +464,17 @@ export default {
         (user && user.permissions.some((e) => e.permission == permission)) ||
         user.master
       );
+    },
+
+    process(type) {
+      let comId = this.$auth.user.company.id; //company id
+      let url = process.env.BACKEND_URL + `${type}?company_id=${comId}`;
+      console.log(url);
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${url}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     close() {
