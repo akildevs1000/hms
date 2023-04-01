@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Reports\ReportController;
 use App\Models\Booking;
 use App\Models\Company;
-use App\Models\Department;
+use App\Models\Expense;
+use App\Models\Payment;
 use App\Models\Employee;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Models\Department;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use App\Http\Controllers\Reports\ReportController;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
@@ -104,96 +106,8 @@ class Controller extends BaseController
         return $report_type;
     }
 
-    public function processPDF($request)
-    {
-        $company      = Company::whereId($request->company_id)->with('contact')->first(["logo", "name", "company_code", "location", "p_o_box_no", "id"]);
-        $model        = new ReportController;
-        $deptName     = '';
-        $totEmployees = '';
 
-        if ($request->department_id && $request->department_id == -1) {
-            $deptName     = 'All';
-            $totEmployees = Employee::whereCompanyId($request->company_id)->whereDate("created_at", "<", date("Y-m-d"))->count();
-        } else {
-            $deptName     = DB::table('departments')->whereId($request->department_id)->first(["name"])->name ?? '';
-            $totEmployees = Employee::where("department_id", $request->department_id)->count();
-        }
 
-        $info = (object) [
-            'department_name' => $deptName,
-            'total_employee'  => $totEmployees,
-            'total_absent'    => $model->report($request)->where('status', 'A')->count(),
-            'total_present'   => $model->report($request)->where('status', 'P')->count(),
-            'total_missing'   => $model->report($request)->where('status', '---')->count(),
-            'total_early'     => $model->report($request)->where('early_going', '!=', '---')->count(),
-            'total_late'      => $model->report($request)->where('late_coming', '!=', '---')->count(),
-            'total_leave'     => 0,
-            'department'      => $request->department_id == -1 ? 'All' : Department::find($request->department_id)->name,
-            "daily_date"      => $request->daily_date,
-            "report_type"     => $this->getStatusText($request->status),
-        ];
-
-        $data = $model->report($request)->get();
-        return Pdf::loadView('pdf.daily', compact("company", "info", "data"));
-    }
-
-    public function daily(Request $request)
-    {
-        return $this->processPDF($request)->stream();
-    }
-    public function daily_download_pdf(Request $request)
-    {
-        return $this->processPDF($request)->download();
-    }
-
-    public function daily_download_csv(Request $request)
-    {
-        $model = new ReportController;
-
-        $data = $model->report($request)->get();
-
-        $fileName = 'report.csv';
-
-        $headers = array(
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0",
-        );
-
-        $callback = function () use ($data) {
-            $file = fopen('php://output', 'w');
-
-            $i = 0;
-
-            fputcsv($file, ["#", "Date", "E.ID", "Name", "Dept", "Shift Type", "Shift", "Status", "In", "Out", "Total Hrs", "OT", "Late coming", "Early Going", "D.In", "D.Out"]);
-            foreach ($data as $col) {
-                fputcsv($file, [
-                    ++$i,
-                    $col['date'],
-                    $col['employee_id'] ?? "---",
-                    $col['employee']["first_name"] ?? "---",
-                    $col['employee']["department"]["name"] ?? "---",
-                    $col['schedule']["shift_type"]["name"] ?? "---",
-                    $col['schedule']["shift"]["name"] ?? "---",
-                    $col["status"] ?? "---",
-                    $col["in"] ?? "---",
-                    $col["out"] ?? "---",
-                    $col["total_hrs"] ?? "---",
-                    $col["ot"] ?? "---",
-                    $col["late_coming"] ?? "---",
-                    $col["early_going"] ?? "---",
-                    $col["device_in"]["short_name"] ?? "---",
-                    $col["device_out"]["short_name"] ?? "---",
-                ], ",");
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
 
     public function getNumFormat($Num = null)
     {
@@ -209,10 +123,65 @@ class Controller extends BaseController
         return Booking::find($bookingId);
     }
 
-    // public function checkOutDate($date)
-    // {
-    //     $date = date_create($date);
-    //     date_modify($date, "-1 days");
-    //     return date_format($date, "Y-m-d");
-    // }
+    public function TransactionsCounts($request)
+    {
+
+        $expense = Expense::query()
+            ->where('company_id', $request->company_id)
+            ->orderByDesc("id");
+
+        $income = Payment::query()
+            ->where('company_id', $request->company_id)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            })
+            ->orderByDesc("id");
+
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = $request->from;
+            $to = $request->to;
+            $expense->whereDate('created_at', '>=', $from);
+            $expense->whereDate('created_at', '<=', $to);
+
+            $income->whereDate('created_at', '>=', $from);
+            $income->whereDate('created_at', '<=', $to);
+        }
+
+        $incomingWithoutCityLedger = $income->clone()->sum('amount') - $this->getSum($income, 7);
+        $loss =   $incomingWithoutCityLedger - $income->clone()->sum('amount');
+        $profit = $incomingWithoutCityLedger - $expense->clone()->sum('amount');
+
+        return [
+            'expense' => [
+                'Cash' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 1))->sum('total'),
+                'Card' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 2))->sum('total'),
+                'Online' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 3))->sum('total'),
+                'Bank' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 4))->sum('total'),
+                'UPI' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 5))->sum('total'),
+                'Cheque' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 6))->sum('total'),
+                'OverallTotal' => $expense->clone()->sum('total'),
+            ],
+            'income' => [
+                'Cash' => $this->getSum($income, 1),
+                'Card' => $this->getSum($income, 2),
+                'Online' => $this->getSum($income, 3),
+                'Bank' => $this->getSum($income, 4),
+                'UPI' => $this->getSum($income, 5),
+                'Cheque' => $this->getSum($income, 6),
+                'City_ledger' => $this->getSum($income, 7),
+                'OverallTotal' => $incomingWithoutCityLedger,
+            ],
+
+            'profit' =>  $profit > 0 ? $profit  : 0 . '.00',
+            'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
+
+            // 'profit' =>  $profit > 0 ? $profit . '.00' : 0 . '.00',
+            // 'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
+        ];
+    }
+
+    public function getSum($model, $id)
+    {
+        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
+    }
 }
