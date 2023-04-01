@@ -141,6 +141,39 @@
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
       <v-toolbar class="rounded-md" color="background" dense flat dark>
         <span> {{ Model }} List</span>
+        <v-spacer></v-spacer>
+        <v-tooltip top color="primary">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              class="ma-0"
+              x-small
+              :ripple="false"
+              text
+              v-bind="attrs"
+              v-on="on"
+              @click="process('reservation_report_print', endpoint)"
+            >
+              <v-icon class="white--text">mdi-printer-outline</v-icon>
+            </v-btn>
+          </template>
+          <span>PRINT</span>
+        </v-tooltip>
+
+        <v-tooltip top color="primary">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              x-small
+              :ripple="false"
+              text
+              v-bind="attrs"
+              v-on="on"
+              @click="process('reservation_report_download', endpoint)"
+            >
+              <v-icon class="white--text">mdi-download-outline</v-icon>
+            </v-btn>
+          </template>
+          <span> DOWNLOAD </span>
+        </v-tooltip>
       </v-toolbar>
       <table>
         <tr>
@@ -424,6 +457,35 @@ export default {
 
     closeDialogs() {
       this.payingDialog = false;
+    },
+
+    process(type, model) {
+      let newSource;
+
+      if (this.type == "Walking") {
+        newSource = "walking";
+      } else if (this.type == "Select All") {
+        newSource = "";
+      } else {
+        newSource = this.source;
+      }
+
+      let comId = this.$auth.user.company.id; //company id
+      let from = this.from_date;
+      let to = this.to_date;
+      let search = this.search;
+
+      // http://192.168.2.210:8000/api/up_coming_reservation_list?page=1&per_page=30&company_id=2&search=&from=&to=&source=
+
+      let url =
+        process.env.BACKEND_URL +
+        `${type}?company_id=${comId}&from=${from}&to=${to}&search${search}&source${newSource}&r_type=${model}`;
+      console.log(url);
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${url}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     getDataFromApi(url = this.endpoint) {

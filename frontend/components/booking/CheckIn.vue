@@ -1139,6 +1139,8 @@ export default {
       payload.append("whatsapp", this.customer.whatsapp);
       payload.append("nationality", this.customer.nationality);
       payload.append("address", this.customer.address);
+      payload.append("user_id", this.$auth.user.id);
+
       if (this.customer.dob) {
         payload.append("dob", this.customer.dob);
       }
@@ -1338,6 +1340,7 @@ export default {
         qty_dinner: this.dinner,
         selectedRooms: this.selectedRooms,
         ...this.customer,
+        user_id: this.$auth.user.id,
       };
       this.$axios
         .post("/booking", payload)

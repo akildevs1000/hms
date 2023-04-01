@@ -5,12 +5,12 @@
         <div class="card px-2 available">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
-              <i class="fas fa-door-open"></i>
+              <i class="fas fa-ddoor-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">Total Income</h4>
+              <h6 class="card-title text-capitalize">Income</h6>
               <span class="data-1">
-                RS. {{ totalIncomes.OverallTotal || 0 }}</span
+                RS. {{ convert_decimal(totalIncomes.OverallTotal) || 0 }}</span
               >
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -24,14 +24,14 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-3 col-lg-6 text-uppercase">
+      <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 booked">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
-              <i class="fas fa-door-open"></i>
+              <i class="fas fa-dosor-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">Total Expense</h4>
+              <h6 class="card-title text-capitalize">Expense</h6>
               <span class="data-1"
                 >RS. {{ totalExpenses.OverallTotal || 0 }}
               </span>
@@ -51,11 +51,12 @@
         <div class="card px-2 checkedIn">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
-              <i class="fas fa-door-open"></i>
+              <i class="fas fa-doosr-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">Total Profit</h4>
+              <h6 class="card-title text-capitalize">Profit</h6>
               <span class="data-1"> RS. {{ convert_decimal(profit) }}</span>
+              <!-- <span class="data-1"> RS. {{ profit }}</span> -->
               <p class="mb-0 text-sm">
                 <span class="mr-2">
                   <v-icon dark small>mdi-arrow-right</v-icon>
@@ -68,15 +69,38 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-3 col-lg-6 text-uppercase">
+      <div class="col-xl-2 col-lg-6 text-uppercase">
         <div class="card px-2 booked">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
-              <i class="fas fa-door-open"></i>
+              <i class="fas fa-doodr-open"></i>
             </div>
             <div class="card-content">
-              <h4 class="card-title text-capitalize">Total Loss</h4>
+              <h6 class="card-title text-capitalize">Loss</h6>
               <span class="data-1"> RS.{{ loss }}</span>
+              <p class="mb-0 text-sm">
+                <span class="mr-2">
+                  <v-icon dark small>mdi-arrow-right</v-icon>
+                </span>
+                <a class="text-nowrap text-white" target="_blank">
+                  <span class="text-nowrap">View Report</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-2 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #4390fc">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-door-ospen"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">City Ledger</h6>
+              <span class="data-1">
+                RS.{{ totalIncomes.City_ledger || 0 }}</span
+              >
               <p class="mb-0 text-sm">
                 <span class="mr-2">
                   <v-icon dark small>mdi-arrow-right</v-icon>
@@ -159,6 +183,39 @@
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <label class="white--text"> Income List</label>
+            <v-spacer></v-spacer>
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="ma-0"
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('income_report_print')"
+                >
+                  <v-icon class="">mdi-printer-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>PRINT</span>
+            </v-tooltip>
+
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('income_report_download')"
+                >
+                  <v-icon class="">mdi-download-outline</v-icon>
+                </v-btn>
+              </template>
+              <span> DOWNLOAD </span>
+            </v-tooltip>
           </v-toolbar>
           <table>
             <tr>
@@ -249,7 +306,41 @@
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat>
             <label class="white--text"> {{ Model }} List</label>
+            <v-spacer></v-spacer>
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="ma-0"
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_print')"
+                >
+                  <v-icon class="white--text">mdi-printer-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>PRINT</span>
+            </v-tooltip>
+
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_download')"
+                >
+                  <v-icon class="white--text">mdi-download-outline</v-icon>
+                </v-btn>
+              </template>
+              <span> DOWNLOAD </span>
+            </v-tooltip>
           </v-toolbar>
+
           <table>
             <tr>
               <th v-for="(item, index) in ExpenseHeaders" :key="index">
@@ -274,35 +365,35 @@
                 <span
                   v-if="(item && item.payment_mode.name) == 'Cash' && i == 1"
                 >
-                  {{ item.amount }}
+                  {{ item.total }}
                 </span>
                 <span
                   v-else-if="
                     (item && item.payment_mode.name) == 'Bank' && i == 4
                   "
                 >
-                  {{ item.amount }}
+                  {{ item.total }}
                 </span>
                 <span
                   v-else-if="
                     (item && item.payment_mode.name) == 'Online' && i == 3
                   "
                 >
-                  {{ item.amount }}
+                  {{ item.total }}
                 </span>
                 <span
                   v-else-if="
                     (item && item.payment_mode.name) == 'UPI' && i == 5
                   "
                 >
-                  {{ item.amount }}
+                  {{ item.total }}
                 </span>
                 <span
                   v-else-if="
                     (item && item.payment_mode.name) == 'Card' && i == 2
                   "
                 >
-                  {{ item.amount }}
+                  {{ item.total }}
                 </span>
 
                 <span v-else> --- </span>
@@ -438,6 +529,21 @@ export default {
       this.getExpenseData();
       this.getIncomeData();
       this.get_counts();
+    },
+
+    process(type) {
+      let comId = this.$auth.user.company.id; //company id
+      let from = this.from_date;
+      let to = this.to_date;
+      let url =
+        process.env.BACKEND_URL +
+        `${type}?company_id=${comId}&from=${from}&to=${to}`;
+      console.log(url);
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${url}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     getExpenseData(url = this.endpoint) {

@@ -538,7 +538,7 @@
                           {{ members.adult }} | {{ members.child }} |
                           {{ members.baby }}
                         </h5>
-                        <h6>Customers</h6>
+                        <h6>Guest</h6>
                       </h1>
                       <h1 class="font-light text-white py-0 my-0">
                         <i class="fas fa-coffee fx-1 food-icon-size"></i>
@@ -547,7 +547,7 @@
                           {{ onlyBreakfast.child }} |
                           {{ onlyBreakfast.baby }}
                         </h5>
-                        <h6>Breakfast</h6>
+                        <h6>B/fast</h6>
                       </h1>
                       <h1 class="font-light text-white py-0 my-0">
                         <i class="fas fa-concierge-bell food-icon-size"></i>
@@ -614,7 +614,7 @@
                         <h4
                           class="text-white pb-0 mb-0 mt-4 text-left dash-font-size"
                         >
-                          Booked
+                          Reserved
                         </h4>
                       </h1>
                     </v-col>
@@ -645,7 +645,7 @@
                         <h4
                           class="pb-0 mb-0 text-left dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
                         >
-                          Paid Booking
+                          Booked
                         </h4>
                       </h1>
                     </v-col>
@@ -705,7 +705,7 @@
                         <h4
                           class="text-white pb-0 mb-0 mt-2 text-left dash-font-size"
                         >
-                          Expect Check In
+                          Expect C/In
                         </h4>
                       </h1>
                     </v-col>
@@ -732,7 +732,7 @@
                         <h4
                           class="text-white pb-0 mb-0 mt-2 text-left dash-font-size"
                         >
-                          Expect Check Out
+                          Expect C/Out
                         </h4>
                       </h1>
                     </v-col>

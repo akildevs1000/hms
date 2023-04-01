@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GST Tax Invoice List</title>
+    <title>Income</title>
     <style>
         * {
             box-sizing: border-box;
@@ -316,6 +316,10 @@
         th.fnt-size {
             font-size: 10px
         }
+
+        .total-font-size {
+            font-family: Arial, Helvetica, sans-serif
+        }
     </style>
 </head>
 
@@ -337,11 +341,12 @@
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
             <div style="text-align:left; margin-left:70px" class="header-txt-address">
-                <small> GST No: {{ $company->mol_id ?? '33CKQPM1598B2ZZ' }} </small><br>
+                <small> <b>GST No:</b> {{ $company->mol_id ?? '33CKQPM1598B2ZZ' }} </small><br>
                 {{-- 04542-291888 --}}
-                <small> Telephone No: {{ $company->contact->number ?? '04542291888' }} </small><br>
-                <small> Email: {{ $company->user->email ?? '---' }}</small><br>
-                <small> Date: {{ date('Y/m/d') }}</small>
+                <small> <b>Telephone No:</b> {{ $company->contact->number ?? '04542291888' }} </small><br>
+                <small> <b> Email:</b> {{ $company->user->email ?? '---' }}</small><br>
+                <small> <b> Date Range:</b> {{ $request->from }} - {{ $request->to }}</small><br>
+                <small> <b>Date:</b> {{ date('Y/m/d') }}</small>
             </div>
         </div>
     </div>
@@ -352,41 +357,104 @@
         <div class="col-5">
         </div>
         <div class="col-4" style="margin: 0px">
-            Invoice Report
+            Income Report
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
         </div>
     </div>
     </div>
 
+    <div class="row" style="border: 1px solid rgb(190, 185, 185)">
+        <div class="col-3 mr-1" style="color: green">
+            <span class="total-font-size">Income :
+                <b>{{ number_format($totalIncomes['Cash'], 2) }}</b>
+            </span>
+        </div>
+
+        <div class="col-2 mr-1" style="color: orange">
+            <span class="total-font-size">Expense :
+                <b>{{ number_format($accounts['expense']['OverallTotal'], 2) }}</b>
+            </span>
+        </div>
+
+        <div class="col-2 mr-1" style="color: blue">
+            <span class="total-font-size">Profit : <b>{{ number_format($accounts['profit'], 2) }}</b></span>
+        </div>
+
+        <div class="col-2 mr-1" style="color: red">
+            <span class="total-font-size">Loss : <b>{{ number_format($accounts['loss'], 2) }}</b></span>
+        </div>
+
+        <div class="col-2 mr-1" style="color: rgb(219, 27, 162)">
+            <span class="total-font-size">Ledger :
+                <b>{{ number_format($totalIncomes['City_ledger'], 2) }}</b></span>
+        </div>
+
+    </div>
+
     <table class="mt-3 w-100">
-        <tr style="background-color: white; color: black" class="my-0 py-0">
-            <th class="my-0 py-0 fnt-size"># </th>
-            <th class="my-0 py-0 fnt-size">Invoice Number </th>
-            <th class="my-0 py-0 fnt-size">Resr.No</th>
-            <th class="my-0 py-0 fnt-size">GST</th>
-            <th class="my-0 py-0 fnt-size">Source</th>
-            <th class="my-0 py-0 fnt-size">Customer</th>
-            <th class="my-0 py-0 fnt-size">Arrival Date</th>
-            <th class="my-0 py-0 fnt-size">Departure Date</th>
+        <tr>
+            <th class="my-0 py-0 fnt-size"> # </th>
+            <th class="my-0 py-0 fnt-size"> Date </th>
+            <th class="my-0 py-0 fnt-size"> Time </th>
+            <th class="my-0 py-0 fnt-size"> Resr/No </th>
+            <th class="my-0 py-0 fnt-size"> Type </th>
+            <th class="my-0 py-0 fnt-size"> Rooms </th>
+            <th class="my-0 py-0 fnt-size"> Description </th>
+            <th class="my-0 py-0 fnt-size"> Cash </th>
+            <th class="my-0 py-0 fnt-size"> Card </th>
+            <th class="my-0 py-0 fnt-size"> Online </th>
+            <th class="my-0 py-0 fnt-size"> Bank </th>
+            <th class="my-0 py-0 fnt-size"> UPI </th>
+            <th class="my-0 py-0 fnt-size"> Cheque </th>
+            <th class="my-0 py-0 fnt-size"> City Ledger </th>
         </tr>
-        @php
-            $i = 1;
-        @endphp
-        @foreach ($data as $item)
-            {{-- @dd($item) --}}
-            <tr style="font-size:11px">
-                <td class="my-1 py-1 fnt-size">{{ $i++ }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->show_taxable_invoice_number ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->reservation_no ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->customer->gst_number ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->source ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->customer->full_name ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->check_in_date ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->check_out_date ?? '---' }}</td>
+
+        @foreach ($data as $index => $item)
+            <tr>
+                <td class="my-1 py-1 fnt-size">{{ ++$index }}</td>
+                <td class="my-1 py-1 fnt-size">{{ date('d-m-Y', strtotime($item['created_at'])) }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['time'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['booking']['reservation_no'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['type'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['room'] }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['description'] }}</td>
+                @for ($i = 1; $i <= 7; $i++)
+                    <td class="text-right my-1 py-1 fnt-size">
+                        @if ($item['paymentMode']['name'] == 'Cash' && $i == 1)
+                            {{ $item['amount'] }}
+                        @elseif($item['paymentMode']['name'] == 'Bank' && $i == 4)
+                            {{ $item['amount'] }}
+                        @elseif($item['paymentMode']['name'] == 'Online' && $i == 3)
+                            {{ $item['amount'] }}
+                        @elseif($item['paymentMode']['name'] == 'UPI' && $i == 5)
+                            {{ $item['amount'] }}
+                        @elseif($item['paymentMode']['name'] == 'Card' && $i == 2)
+                            {{ $item['amount'] }}
+                        @elseif($item['paymentMode']['name'] == 'Cheque' && $i == 6)
+                            {{ $item['amount'] }}
+                        @elseif($item['paymentMode']['name'] == 'City Ledger' && $i == 7)
+                            {{ $item['amount'] }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                @endfor
             </tr>
         @endforeach
+        <tr class="text-right">
+            <th colspan="7">Total</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalIncomes['Cash'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalIncomes['Card'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalIncomes['Online'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalIncomes['Bank'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalIncomes['UPI'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalIncomes['Cheque'] }}</th>
+            <th class="my-0 py-0 fnt-size"> {{ $totalIncomes['City_ledger'] }}</th>
+        </tr>
     </table>
+
+
 
 
     @php

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GST Tax Invoice List</title>
+    <title>{{ $reservationTYpe }}</title>
     <style>
         * {
             box-sizing: border-box;
@@ -352,7 +352,7 @@
         <div class="col-5">
         </div>
         <div class="col-4" style="margin: 0px">
-            Invoice Report
+            {{ $reservationTYpe }} Guest Report
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
         </div>
@@ -362,13 +362,17 @@
     <table class="mt-3 w-100">
         <tr style="background-color: white; color: black" class="my-0 py-0">
             <th class="my-0 py-0 fnt-size"># </th>
-            <th class="my-0 py-0 fnt-size">Invoice Number </th>
-            <th class="my-0 py-0 fnt-size">Resr.No</th>
-            <th class="my-0 py-0 fnt-size">GST</th>
+            <th class="my-0 py-0 fnt-size">Reser. No </th>
             <th class="my-0 py-0 fnt-size">Source</th>
+            <th class="my-0 py-0 fnt-size">Reference</th>
             <th class="my-0 py-0 fnt-size">Customer</th>
+            <th class="my-0 py-0 fnt-size">Rooms</th>
             <th class="my-0 py-0 fnt-size">Arrival Date</th>
             <th class="my-0 py-0 fnt-size">Departure Date</th>
+            <th class="my-0 py-0 fnt-size">Total</th>
+            <th class="my-0 py-0 fnt-size">Paid Amount</th>
+            <th class="my-0 py-0 fnt-size">Balance</th>
+            <th class="my-0 py-0 fnt-size">Booking Date </th>
         </tr>
         @php
             $i = 1;
@@ -377,13 +381,17 @@
             {{-- @dd($item) --}}
             <tr style="font-size:11px">
                 <td class="my-1 py-1 fnt-size">{{ $i++ }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->show_taxable_invoice_number ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->reservation_no ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->customer->gst_number ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->source ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->customer->full_name ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->check_in_date ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item->booking->check_out_date ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->reservation_no ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->source ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->reference_no ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->customer->first_name ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->rooms ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->check_in ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->check_out ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->total_price ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->paid_amounts ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item->balance ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ date('Y-d-m', strtotime($item->booking_date)) ?? '---' }}</td>
             </tr>
         @endforeach
     </table>

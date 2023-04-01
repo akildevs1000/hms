@@ -13,7 +13,7 @@
     <div class="tm_container" id="download_area">
         {{-- <link rel="stylesheet" href="{{ asset('css/invoice.css') }}"> --}}
         <div class="tm_invoice_wrap print_header_main">
-            <div class="tm_invoice tm_style2 print_header" id="tm_download_section" style="padding-top:0px">
+            <div class="tm_invoice tm_style2 print_header" id="tm_download_section" style="padding-top:10px">
                 <div class="tm_invoice_in">
                     <div class="tm_invoice_content">
                         <div class="tm_invoice_head tm_mb30">
@@ -29,12 +29,6 @@
                                 </div>
                             </div>
                             <div class="tm_invoice_right tm_text_right">
-                                <b class="tm_f30 tm_medium tm_primary_color">Tax Invoice</b>
-                                <p class="tm_m0">Invoice Number - 0000{{ $booking->reservation_no }}</p>
-                            </div>
-                        </div>
-                        <div class="tm_invoice_info tm_mb25">
-                            <div class="tm_invoice_info_left">
                                 <p class="tm_mb17">
                                     <b class="tm_f18 tm_primary_color">
                                         {{ $company->name ?? '' }}
@@ -46,10 +40,22 @@
                                     {{ strtolower($company->user->email) ?? '' }} <br>
                                     {{ strtolower($company->contact->number ?? '') }}<br>
                                     {{ $company->mol_id ?? '' }}
-                                    {{-- 84 Spilman Street, London <br>United Kingdom. <br>
-                                    lowell@gmail.com <br>
-                                    +44(0) 327 123 987 --}}
                                 </p>
+                            </div>
+                        </div>
+                        <div class="tm_invoice_info tm_mb25">
+                            <div class="tm_invoice_info_left">
+                                <p class="tm_mb17">
+                                    <b class="tm_f18 tm_primary_color">
+                                        Tax Invoice
+                                    </b>
+                                    <br>
+                                    Invoice Number - {{ $invNo }}
+                                </p>
+
+                                {{-- <b class="tm_f30 tm_medium tm_primary_color">Tax Invoice</b>
+                                <p class="tm_m0">Invoice Number - {{ $invNo }}</p> --}}
+
                             </div>
                             <div class="tm_invoice_info_right">
                                 <div
@@ -86,12 +92,12 @@
                         <div class="tm_grid_row tm_col_2 tm_invoice_info_in tm_round_border tm_mb30">
                             <div class="tm_border_right tm_border_none_sm">
                                 <b class="tm_primary_color">Guest Info</b>
-                                <p class="tm_m0">Name: {{ $booking->customer->full_name ?? '' }}
-                                    <br>Phone:
+                                <p class="tm_m0">{{ $booking->customer->full_name ?? '' }}
+                                    <br>
                                     {{ $booking->customer->contact_no ?? '' }}
-                                    <br>GST:
+                                    <br>
                                     {{ $booking->customer->gst_number ?? '' }}
-                                    <br>Address:
+                                    <br>
                                     {{ strtolower($booking->customer->address) ?? '' }}
                                 </p>
                             </div>

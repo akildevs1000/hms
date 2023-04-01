@@ -9,7 +9,7 @@
     // Route::get('report', [CustomerController::class, 'index']);
 
 
-    Route::get('invoice/{id}', [InvoiceController::class, 'index'])->name('pdf.invoice');
+    Route::get('invoice/{id}/{inv?}', [InvoiceController::class, 'index'])->name('pdf.invoice');
     Route::get('grc/{id}', [InvoiceController::class, 'grc']);
 
     Route::get('checkin_report_print', [ReportController::class, 'CHeckInReport']);
@@ -42,8 +42,14 @@
     Route::get('dirty_report_print', [ReportController::class, 'dirtyRoomsReport']);
     Route::get('dirty_report_download', [ReportController::class, 'dirtyRoomsReportDownload']);
 
-
-
-
     Route::get('gst_invoice_report_print', [ReportController::class, 'gstInvoiceReport']);
     Route::get('gst_invoice_report_download', [ReportController::class, 'gstInvoiceReportDownload']);
+
+    Route::get('income_report_print', [ReportController::class, 'incomingReport']);
+    Route::get('income_report_download', [ReportController::class, 'incomingReportDownload']);
+
+    Route::get('expense_report_print', [ReportController::class, 'expenseReport']);
+    Route::get('expense_report_download', [ReportController::class, 'expenseReportDownload']);
+
+    Route::get('reservation_report_print', [ReportController::class, 'reservationReport']);
+    Route::get('reservation_report_download', [ReportController::class, 'reservationReportDownload']);

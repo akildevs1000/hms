@@ -25,12 +25,22 @@ class PostingController extends Controller
             'bookedRoom',
         ]);
 
-        // filter base booking id (Reservation Number)
-        // $model->when($request->filled('booking_id'), function ($model) use ($request) {
-        //     $model->whereHas('booking', function (Builder $query) use ($request) {
-        //         $query->where('id', $request->booking_id);
-        //     });
-        // });
+        if ($request->search != "" && $request->filled('search')) {
+            $key = $request->search;
+            $model->Where(function ($q) use ($key) {
+                $q->orWhere('bill_no', $key);
+                $q->orWhere('item', 'Like', '%' . $key . '%');
+            });
+
+            $model->orWhereHas('booking', function (Builder $query) use ($key) {
+                $query->where('reservation_no', is_numeric($key) ? $key : 0);
+                // ->orWhereHas('customer', function (Builder $query) use ($key) {
+                //     $query->where('first_name', 'Like', '%' . $key . '%')
+                //         ->orWhere('last_name', 'Like', '%' . $key . '%')
+                //         ->orWhere('contact_no', 'Like', '%' . $key . '%');
+                // });
+            });
+        }
 
         // filter base room id
         $model->when($request->filled('room_id'), function ($model) use ($request) {
@@ -53,11 +63,6 @@ class PostingController extends Controller
     {
         $model = Posting::query();
         $model->where('company_id', $request->company_id);
-
-        // $fields = [
-        //     'bill_no',
-        // ];
-        // $model = $this->process_search($model, $key, $fields);
 
         $model->with([
             'booking:id,customer_id,room_id' => [

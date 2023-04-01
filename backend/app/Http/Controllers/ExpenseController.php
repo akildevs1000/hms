@@ -126,9 +126,9 @@ class ExpenseController extends Controller
             $income->whereDate('created_at', '<=', $to);
         }
 
-
-        $loss =   $expense->clone()->sum('amount') - $income->clone()->sum('amount');
-        $profit = $income->clone()->sum('amount') - $expense->clone()->sum('amount');
+        $incomingWithoutCityLedger = $income->clone()->sum('amount') - $this->getSumByModel($income, 7);
+        $loss =   $incomingWithoutCityLedger - $income->clone()->sum('amount');
+        $profit = $incomingWithoutCityLedger - $expense->clone()->sum('amount');
 
         return [
             'expense' => [
@@ -148,7 +148,7 @@ class ExpenseController extends Controller
                 'UPI' => $this->getSumByModel($income, 5),
                 'Cheque' => $this->getSumByModel($income, 6),
                 'City_ledger' => $this->getSumByModel($income, 7),
-                'OverallTotal' => $income->clone()->sum('amount'),
+                'OverallTotal' => $incomingWithoutCityLedger,
             ],
 
             'profit' =>  $profit > 0 ? $profit  : 0 . '.00',

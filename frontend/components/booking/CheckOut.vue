@@ -293,6 +293,7 @@ export default {
         isPrintInvoice: this.isPrintInvoice,
         reference_number: this.reference,
         discount: this.discount,
+        user_id: this.$auth.user.id,
       };
 
       this.$axios

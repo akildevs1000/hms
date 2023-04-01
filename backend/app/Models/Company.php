@@ -89,11 +89,11 @@ class Company extends Model
         });
     }
 
-    protected function companyCode(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value < 1000 ? 'AE000' . $value : 'AE' . $value,
-            set: fn ($value) => $value,
-        );
-    }
+    // protected function companyCode(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn ($value) => $value < 1000 ? 'AE000' . $value : 'AE' . $value,
+    //         set: fn ($value) => $value,
+    //     );
+    // }
 }

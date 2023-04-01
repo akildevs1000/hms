@@ -38,7 +38,6 @@
               >{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
             </v-icon>
           </v-list-item-icon>
-
           <v-list-item-title>{{ i.title }} </v-list-item-title>
           <v-icon small
             >{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
@@ -409,12 +408,7 @@ export default {
               to: "/customer/list",
               menu: "reservation_access",
             },
-            {
-              icon: "mdi mdi-human-male-board-poll",
-              title: "Source Guest",
-              to: "/agents",
-              menu: "agent_access",
-            },
+
             {
               icon: "mdi mdi-account-tie",
               title: "Source",
@@ -461,12 +455,7 @@ export default {
               to: "/expense",
               menu: "expense_access",
             },
-            {
-              icon: "mdi-account-cash",
-              title: "City Ledger",
-              to: "/city_ledger",
-              menu: "city_ledger_access",
-            },
+
             // {
             //   icon: "mdi-cash",
             //   title: "Transaction",
@@ -481,6 +470,28 @@ export default {
             },
           ],
         },
+
+        {
+          icon: "mdi-account-cash",
+          title: `Ledger`,
+          open_menu: false,
+          menu: "customer_access",
+          hasChildren: [
+            {
+              icon: "mdi mdi-human-male-board-poll",
+              title: "Agents",
+              to: "/agents",
+              menu: "agent_access",
+            },
+            {
+              icon: "mdi-account-cash",
+              title: "Guest",
+              to: "/city_ledger",
+              menu: "city_ledger_access",
+            },
+          ],
+        },
+
         {
           icon: "mdi-tools",
           title: "Setup",
@@ -496,7 +507,7 @@ export default {
       clipped: true,
 
       miniVariant: false,
-      title: "Hyder Park",
+      title: this.$auth.user.company.company_code,
       logout_btn: {
         icon: "mdi-logout",
         label: "Logout",
@@ -539,7 +550,12 @@ export default {
     },
 
     getUser() {
-      return this.$auth.user && this.$auth.user.company.name;
+      // console.log(this.$auth.user.user_type);
+      return this.$auth.user.user_type == "employee"
+        ? this.$auth.user.name
+        : this.$auth.user.company.name;
+
+      // return this.$auth.user && this.$auth.user.company.name;
     },
 
     getLogo() {
