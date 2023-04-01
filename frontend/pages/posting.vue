@@ -292,11 +292,10 @@ export default {
     headers: [
       { text: "#" },
       { text: "Bill Number" },
-      { text: "Reservation Number" },
-      { text: "Customer" },
+      { text: "Rev. No" },
+      { text: "Guest" },
       { text: "Room No" },
       { text: "Room Type" },
-      // { text: "Customer" },
       { text: "Item" },
       { text: "QTY" },
       { text: "Amount" },

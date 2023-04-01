@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Booking;
 use App\Models\Company;
+use App\Models\Expense;
+use App\Models\Payment;
 use App\Models\Taxable;
 use App\Models\BookedRoom;
 use Illuminate\Http\Request;
@@ -322,5 +325,138 @@ class ReportController extends Controller
         return Pdf::loadView('report.gst_invoice', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'landscape')
             ->download();
+    }
+
+    public function incomingReportProcess($request)
+    {
+        $model = Payment::query();
+        $model->where('company_id', $request->company_id);
+        $model->whereHas('booking', function ($q) {
+            $q->where('booking_status', '!=', -1);
+        });
+        $model->with("booking:id,reservation_no");
+        $model->orderByDesc("id");
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = $request->from;
+            $to = $request->to;
+            $model->whereDate('created_at', '>=', $from);
+            $model->whereDate('created_at', '<=', $to);
+        }
+        $totalIncomes = $this->TransactionsCounts($request);
+        return Pdf::loadView('report.income', [
+            'data' => $model->get(),
+            'request' => $request,
+            'totalIncomes' => $totalIncomes['income'],
+            'accounts' => $totalIncomes,
+            'company' => Company::find($request->company_id)
+        ])->setPaper('a4', 'landscape');
+    }
+
+    public function incomingReport(Request $request)
+    {
+        return $this->incomingReportProcess($request)->stream();
+    }
+
+    public function incomingReportDownload(Request $request)
+    {
+        return $this->incomingReportProcess($request)->download();
+    }
+
+    public function expenseReportProcess($request)
+    {
+        $model = Expense::query();
+        $model->where('company_id', $request->company_id);
+        $model->orderByDesc("id");
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = $request->from;
+            $to = $request->to;
+            $model->whereDate('created_at', '>=', $from);
+            $model->whereDate('created_at', '<=', $to);
+        }
+
+        $totalExpenses = $this->TransactionsCounts($request);
+        return Pdf::loadView('report.expense', [
+            'data' => $model->get(),
+            'request' => $request,
+            'totalExpenses' => $totalExpenses['expense'],
+            'accounts' => $totalExpenses,
+            'company' => Company::find($request->company_id)
+        ])->setPaper('a4', 'landscape');
+    }
+
+    public function expenseReport(Request $request)
+    {
+        // return $this->expenseReportProcess($request);
+        return $this->expenseReportProcess($request)->stream();
+    }
+
+    public function expenseReportDownload(Request $request)
+    {
+        return $this->expenseReportProcess($request)->download();
+    }
+
+
+
+    public function reservationReportProcess($request)
+    {
+        $status = $request->r_type;
+        $reservationTYpe = "";
+        $model = Booking::query()->latest()->filter(request('search'));
+
+        if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
+            $model->where('source', $request->source);
+        }
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereDate('check_in', '<=', $request->to);
+            $model->WhereDate('check_out', '>=', $request->from);
+        }
+        $model->orderBy('id', 'desc');
+
+        switch ($status) {
+            case 'up_coming_reservation_list':
+                $model->where('booking_status', '=', 1);
+                $reservationTYpe = 'UpComing';
+                break;
+            case 'check_out_reservation_list':
+                $model->where(function ($q) {
+                    $q->where('booking_status', '=', 3);
+                    $q->orWhere('booking_status', '=', 0);
+                });
+                $reservationTYpe = 'Checkout';
+                break;
+            case 'in_house_reservation_list':
+                $model->where('booking_status', '=', 2);
+                $reservationTYpe = 'In House';
+                break;
+            default:
+                abort(400, 'Invalid status');
+        }
+
+        $data = $model
+            ->with([
+                'bookedRooms:booking_id,id,room_no,room_type',
+                'customer:id,first_name,last_name,document',
+            ])
+            ->where('company_id', $request->company_id)
+            ->get();
+
+        return Pdf::loadView('report.reservation_list', [
+            'data' => $data,
+            'reservationTYpe' => $reservationTYpe,
+            'request' => $request,
+            'company' => Company::find($request->company_id)
+        ])->setPaper('a4', 'landscape');
+    }
+
+    public function reservationReport(Request $request)
+    {
+        // return $this->reservationReportProcess($request);
+        return $this->reservationReportProcess($request)->stream();
+    }
+
+    public function reservationReportDownload(Request $request)
+    {
+        return $this->reservationReportProcess($request)->download();
     }
 }

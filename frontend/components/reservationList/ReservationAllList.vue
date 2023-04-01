@@ -219,8 +219,7 @@
           <td>{{ item.balance || 0 }}</td>
 
           <td>{{ item.booking_date }}</td>
-          <td>
-            <!-- v-if="item.payment_status == 1" -->
+          <!-- <td>
             <v-btn
               small
               elevation="0"
@@ -230,7 +229,7 @@
             >
               {{ getRelaventStatus(item.booking_status) }}
             </v-btn>
-          </td>
+          </td> -->
 
           <td>
             <v-icon
@@ -317,10 +316,10 @@ export default {
     total: 0,
     headers: [
       { text: "#" },
-      { text: "Reser. No" },
+      { text: "Rev. No" },
       { text: "Source" },
       { text: "Reference" },
-      { text: "Customer" },
+      { text: "Guest" },
       { text: "Rooms" },
       { text: "Arrival  Date" },
       { text: "Departure  Date" },
@@ -329,7 +328,7 @@ export default {
       { text: "Paid Amount" },
       { text: "Balance" },
       { text: "Booking Date" },
-      { text: "Reservation Status" },
+      // { text: "Reservation Status" },
       { text: "View" },
       { text: "Payment" },
       { text: "Invoice" },
