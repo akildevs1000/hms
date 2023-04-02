@@ -93,12 +93,7 @@
             <v-tab-item class="px-3 py-4">
               <v-row>
                 <v-col md="2" cols="12">
-                  <v-img
-                    style=" max-width: 100%;
-                                                                                                                                                                          float:left;
-                                                                                                                                                                           margin: 0 auto;
-                                                                                                                                                                           border-radius: 50%;"
-                    :src="showImage">
+                  <v-img class="guest-avatar" :src="showImage">
                   </v-img><br><br>
                   <div v-if="booking && booking.document">
                     <v-btn style="width:100%" small dark class="primary pt-4 pb-4 mt-4 w-100 justify-center"
@@ -108,8 +103,6 @@
                     </v-btn>
                   </div>
                 </v-col>
-
-
 
                 <v-col md="9" cols="12">
                   <v-row class="mt-4">
@@ -210,8 +203,6 @@
                     </v-col>
                   </v-row>
 
-
-
                   <v-row class="my-0 py-0">
                     <v-col md="4">
                       <div class="text-box" style="float:left">
@@ -297,13 +288,7 @@
                     </v-col>
                   </v-row>
                 </v-col>
-
               </v-row>
-
-
-
-
-
 
               <!-- <v-alert border="left" colored-border color="deep-purple accent-4" elevation="1">
                 <table>
@@ -436,7 +421,6 @@
                   </tr>
                 </table>
               </v-alert> -->
-
 
               <!-- <div>
                 <v-row>
@@ -1030,6 +1014,13 @@ export default {
   background-color: white !important;
 }
 
+.guest-avatar {
+  max-width: 200px;
+  max-height: 200px;
+  float: left;
+  margin: 0 auto;
+  border-radius: 50%;
+}
 
 .text-box {
   border: 1px solid rgb(215, 211, 211);
