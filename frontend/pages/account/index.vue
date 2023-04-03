@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <div class="col-xl-3 col-lg-6 text-uppercase">
+      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
         <div class="card px-2 available">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-2 col-lg-6 text-uppercase">
+      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
         <div class="card px-2 booked">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -47,16 +47,17 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-3 col-lg-6 text-uppercase">
-        <div class="card px-2 checkedIn">
+      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #f29a9a">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
-              <i class="fas fa-doosr-open"></i>
+              <i class="fas fa-dosor-open"></i>
             </div>
             <div class="card-content">
-              <h6 class="card-title text-capitalize">Profit</h6>
-              <span class="data-1"> RS. {{ convert_decimal(profit) }}</span>
-              <!-- <span class="data-1"> RS. {{ profit }}</span> -->
+              <h6 class="card-title text-capitalize">Management Expense</h6>
+              <span class="data-1"
+                >RS. {{ totalExpenses.ManagementOverallTotal || 0 }}
+              </span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
                   <v-icon dark small>mdi-arrow-right</v-icon>
@@ -69,8 +70,36 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-2 col-lg-6 text-uppercase">
-        <div class="card px-2 booked">
+
+      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2 checkedIn">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-doosr-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Profit</h6>
+              <span class="data-1"> RS. {{ profit }}</span>
+              <!-- <span class="data-1"> RS. {{ convert_decimal(profit) }}</span> -->
+              <p class="mb-0 text-sm">
+                <span class="mr-2">
+                  <v-icon dark small>mdi-arrow-right</v-icon>
+                </span>
+                <a class="text-nowrap text-white" target="_blank">
+                  <span class="text-nowrap">View Report</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
+        <div
+          class="card px-2"
+          style="
+            background-image: linear-gradient(135deg, #b00000 0, #b00000 100%);
+          "
+        >
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-doodr-open"></i>
@@ -90,7 +119,7 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-2 col-lg-6 text-uppercase">
+      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
         <div class="card px-2" style="background-color: #4390fc">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -411,6 +440,115 @@
           </table>
         </v-card>
       </v-col>
+      <v-col md="12">
+        <v-card class="mb-5 rounded-md mt-3" elevation="0">
+          <v-toolbar class="rounded-md" color="background" dense flat>
+            <label class="white--text">Management {{ Model }} List</label>
+            <v-spacer></v-spacer>
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="ma-0"
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_print')"
+                >
+                  <v-icon class="white--text">mdi-printer-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>PRINT</span>
+            </v-tooltip>
+
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_download')"
+                >
+                  <v-icon class="white--text">mdi-download-outline</v-icon>
+                </v-btn>
+              </template>
+              <span> DOWNLOAD </span>
+            </v-tooltip>
+          </v-toolbar>
+
+          <table>
+            <tr>
+              <th v-for="(item, index) in ExpenseHeaders" :key="index">
+                <span v-html="item.text"></span>
+              </th>
+            </tr>
+            <v-progress-linear
+              v-if="loading"
+              :active="loading"
+              :indeterminate="loading"
+              absolute
+              color="primary"
+            ></v-progress-linear>
+            <tr v-for="(item, index) in managementExpenseData" :key="index">
+              <td>{{ ++index }}</td>
+              <td>{{ item.created_at }}</td>
+              <td>{{ item.time }}</td>
+              <td>{{ item.item }}</td>
+              <td>{{ item.qty }}</td>
+
+              <td v-for="i in 6" :key="i" class="text-right">
+                <span
+                  v-if="(item && item.payment_mode.name) == 'Cash' && i == 1"
+                >
+                  {{ item.total }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'Bank' && i == 4
+                  "
+                >
+                  {{ item.total }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'Online' && i == 3
+                  "
+                >
+                  {{ item.total }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'UPI' && i == 5
+                  "
+                >
+                  {{ item.total }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'Card' && i == 2
+                  "
+                >
+                  {{ item.total }}
+                </span>
+
+                <span v-else> --- </span>
+              </td>
+            </tr>
+            <tr class="text-right">
+              <th colspan="5">Total</th>
+              <th>{{ managementExpense.Cash }}</th>
+              <th>{{ managementExpense.Card }}</th>
+              <th>{{ managementExpense.Online }}</th>
+              <th>{{ managementExpense.Bank }}</th>
+              <th>{{ managementExpense.UPI }}</th>
+              <th>{{ managementExpense.Cheque }}</th>
+            </tr>
+          </table>
+        </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -438,6 +576,7 @@ export default {
     snackbar: false,
     dialog: false,
     expenseData: [],
+    managementExpenseData: [],
     incomeData: [],
     counts: [],
     loading: false,
@@ -482,12 +621,14 @@ export default {
       payment_modes: "CASH",
     },
     totalExpenses: {},
+    managementExpense: {},
     totalIncomes: {},
   }),
 
   created() {
     this.loading = true;
     this.getExpenseData();
+    this.getManagementExpenseData();
     this.getIncomeData();
     this.get_counts();
   },
@@ -519,10 +660,6 @@ export default {
       } else {
         return n + ".00";
       }
-    },
-
-    onPageChange() {
-      this.getExpenseData();
     },
 
     commonMethod() {
@@ -568,6 +705,28 @@ export default {
         this.loading = false;
       });
     },
+    getManagementExpenseData(url = "management_expense") {
+      this.loading = true;
+      let page = this.pagination.current;
+      let options = {
+        params: {
+          status: this.pagination.status,
+          per_page: this.pagination.per_page,
+          company_id: this.$auth.user.company.id,
+
+          from_date: this.from_date,
+          to_date: this.to_date,
+          is_account: true,
+        },
+      };
+
+      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+        this.managementExpenseData = data;
+        // this.pagination.current = data.current_page;
+        // this.pagination.total = data.last_page;
+        this.loading = false;
+      });
+    },
 
     getIncomeData(url = "payments") {
       this.loading = true;
@@ -603,6 +762,9 @@ export default {
         this.profit = data.profit;
         this.totalExpenses = {
           ...data.expense,
+        };
+        this.managementExpense = {
+          ...data.managementExpense,
         };
 
         this.totalIncomes = {

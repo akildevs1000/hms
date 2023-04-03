@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Booking;
 use App\Models\BookedRoom;
 use App\Models\Transaction;
@@ -76,5 +77,33 @@ class TransactionController extends Controller
             'remaining_price'       => $balance,
             'paid_amounts'          => $sumCredit,
         ]);
+    }
+
+    public function getTransactionByUsers(Request $request)
+    {
+        // return Transaction::where('company_id', $request->company_id)->get()->groupBy('user_id');
+
+        $model = User::query();
+        $model->where('company_id', $request->company_id);
+
+        $model->when($request->user_id && $request->filled('user_id'), function ($q) use ($request) {
+            $q->where('id',  $request->user_id);
+        });
+
+
+        $model->withSum('transactions', 'credit');
+
+        $model->with(['transactions' => function ($query) use ($request) {
+            $query->when($request->filled('from_date') && $request->filled('to_date'), function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->from_date);
+                $q->whereDate('created_at', '<=', $request->to_date);
+            });
+            $query->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            });
+            $query->with('paymentMode');
+        }]);
+
+        return $model->get();
     }
 }

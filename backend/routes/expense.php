@@ -6,6 +6,7 @@ use App\Http\Controllers\PaymentController;
 
 Route::resource('expense', ExpenseController::class);
 Route::get('expense/search/{key}', [ExpenseController::class, 'search']);
+Route::get('management_expense', [ExpenseController::class, 'managementExpense']);
 
 Route::get('account_count', [ExpenseController::class, 'counts']);
 

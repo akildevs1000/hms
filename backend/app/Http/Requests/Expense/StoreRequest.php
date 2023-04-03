@@ -38,6 +38,7 @@ class StoreRequest extends FormRequest
             'total' => 'nullable',
             'description' => 'nullable',
             'document' => 'nullable',
+            'is_management' => 'nullable',
 
         ];
     }

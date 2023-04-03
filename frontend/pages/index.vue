@@ -533,7 +533,7 @@
                   >
                     <div class="d-flex justify-space-around py-0 my-0">
                       <h1 class="font-light text-white py-0 my-0">
-                        <i class="fas fa-male fx-1 food-icon-size"></i>
+                        <i class="mdi mdi-human-male-female-child fx-1 food-icon-size"></i>
                         <h5>
                           {{ members.adult }} | {{ members.child }} |
                           {{ members.baby }}
