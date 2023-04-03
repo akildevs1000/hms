@@ -290,6 +290,23 @@
                 </v-col>
               </v-row>
 
+
+              <!-- <tr
+                    class="bg-white"
+                    v-if="
+                      booking && booking.customer && booking.customer.gst_number
+                    "
+                  >
+                    <td>GST :</td>
+                    <td>
+                      {{
+                        booking &&
+                        booking.customer &&
+                        booking.customer.gst_number
+                      }}
+                    </td>
+                  </tr> -->
+
               <!-- <v-alert border="left" colored-border color="deep-purple accent-4" elevation="1">
                 <table>
                   <tr>

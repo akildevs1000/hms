@@ -34,12 +34,39 @@ class ExpenseController extends Controller
             $model->whereDate('created_at', '<=', $to);
         }
 
+        if ($request->is_management == 1 && $request->has('is_management') && $request->filled('is_management')) {
+            $model->where('is_management', 1);
+        } else {
+            $model->where('is_management', 0);
+        }
+
         if ($request->is_account && $request->has('is_account') && $request->filled('is_account')) {
             return  $model->get();
         }
 
         return  $model->paginate($request->per_page ?? 20);
     }
+
+    public function managementExpense(Request $request)
+    {
+        $model = Expense::query();
+        $model->where('company_id', $request->company_id);
+        $model->orderByDesc("id");
+        $model->where('is_management', 1);
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $from = $request->from_date;
+            $to = $request->to_date;
+            $model->whereDate('created_at', '>=', $from);
+            $model->whereDate('created_at', '<=', $to);
+        }
+
+        if ($request->is_account && $request->has('is_account') && $request->filled('is_account')) {
+            return  $model->get();
+        }
+    }
+
+
+
 
     public function search(Request $request, $key)
     {
@@ -57,6 +84,7 @@ class ExpenseController extends Controller
     public function store(StoreRequest $request)
     {
         try {
+
             $record = Expense::create($request->validated());
             if ($record) {
                 $this->storeDocument($request, $record);
@@ -127,19 +155,36 @@ class ExpenseController extends Controller
         }
 
         $incomingWithoutCityLedger = $income->clone()->sum('amount') - $this->getSumByModel($income, 7);
-        $loss =   $incomingWithoutCityLedger - $income->clone()->sum('amount');
-        $profit = $incomingWithoutCityLedger - $expense->clone()->sum('amount');
+        $loss =   $expense->clone()->sum('total') - $incomingWithoutCityLedger; // $income->clone()->sum('amount');
+        $profit = $incomingWithoutCityLedger - $expense->clone()->sum('total');
+
+
+        // return [
+        //     'loss' =>   $expense->clone()->sum('total') - $incomingWithoutCityLedger,
+        //     'profit' => $incomingWithoutCityLedger - $expense->clone()->sum('total'),
+        // ];
 
         return [
             'expense' => [
-                'Cash' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 1))->sum('amount'),
-                'Card' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 2))->sum('amount'),
-                'Online' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 3))->sum('amount'),
-                'Bank' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 4))->sum('amount'),
-                'UPI' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 5))->sum('amount'),
-                'Cheque' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 6))->sum('amount'),
-                'OverallTotal' => $expense->clone()->sum('amount'),
+                'Cash' => $this->getSumByExpenseModel($expense, 1),
+                'Card' => $this->getSumByExpenseModel($expense, 2),
+                'Online' => $this->getSumByExpenseModel($expense, 3),
+                'Bank' => $this->getSumByExpenseModel($expense, 4),
+                'UPI' => $this->getSumByExpenseModel($expense, 5),
+                'Cheque' => $this->getSumByExpenseModel($expense, 6),
+                'OverallTotal' => $expense->clone()->where('is_management', 0)->sum('total'),
+                'ManagementOverallTotal' => $expense->clone()->where('is_management', 1)->sum('total'),
             ],
+            'managementExpense' => [
+                'Cash' => $this->getSumByExpenseModel($expense, 1, 1),
+                'Card' => $this->getSumByExpenseModel($expense, 2, 1),
+                'Online' => $this->getSumByExpenseModel($expense, 3, 1),
+                'Bank' => $this->getSumByExpenseModel($expense, 4, 1),
+                'UPI' => $this->getSumByExpenseModel($expense, 5, 1),
+                'Cheque' => $this->getSumByExpenseModel($expense, 6, 1),
+                'ManagementOverallTotal' => $expense->clone()->where('is_management', 1)->sum('total'),
+            ],
+
             'income' => [
                 'Cash' => $this->getSumByModel($income, 1),
                 'Card' => $this->getSumByModel($income, 2),
@@ -151,17 +196,19 @@ class ExpenseController extends Controller
                 'OverallTotal' => $incomingWithoutCityLedger,
             ],
 
-            'profit' =>  $profit > 0 ? $profit  : 0 . '.00',
-            'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
-
-            // 'profit' =>  $profit > 0 ? $profit . '.00' : 0 . '.00',
-            // 'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
+            'profit' => $profit != abs($profit) ? 0 : $profit,
+            'loss' => $loss != abs($loss) ? 0 : $loss,
         ];
     }
 
     public function getSumByModel($model, $id)
     {
         return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
+    }
+
+    public function getSumByExpenseModel($model, $id, $is_management = 0)
+    {
+        return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('total');
     }
 
 

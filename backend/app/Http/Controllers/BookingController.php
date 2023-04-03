@@ -108,9 +108,9 @@ class BookingController extends Controller
                         'customer_id'       => $booked->customer_id ?? '',
                         'date'              => now(),
                         'company_id'        => $request->company_id ?? '',
-                        'payment_method_id' => $booked->payment_mode_id,
                         'desc'              => 'rooms booking amount',
                         'reference_number'  => $request->reference_number,
+                        'payment_method_id'  => 7,
                         'user_id'  => $request->user_id,
                     ];
 
@@ -120,6 +120,9 @@ class BookingController extends Controller
 
                     if ($request->advance_price && $request->advance_price > 0) {
                         $transactionData['desc'] = 'advance payment';
+                        $transactionData['payment_method_id'] = $booked->payment_mode_id;
+
+
                         $payment->store($transactionData, $request->advance_price, 'credit');
                     }
                     //End Transaction

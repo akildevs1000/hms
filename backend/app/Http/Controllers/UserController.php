@@ -10,17 +10,16 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index(User $model, Request $request)
+    public function index(Request $request)
     {
-        $model = $this->FilterCompanyList($model, $request);
+        $model = User::query();
 
-        $model->whereHas("role",function($q){
-            return $q->where('name', '!=', "company");
-        });
+        if ($request->user_type == "employee") {
+            $model->where('id', $request->id);
+        }
 
-        $model->with("role");
-
-        return $model->paginate($request->per_page);
+        $model->where('company_id', $request->company_id);
+        return $model->get();
     }
     public function store(User $model, StoreRequest $request)
     {
@@ -39,8 +38,7 @@ class UserController extends Controller
             } else {
                 return $this->response('User cannot add.', null, false);
             }
-
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -61,7 +59,6 @@ class UserController extends Controller
             } else {
                 return $this->response('User cannot update.', null, false);
             }
-
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -82,7 +79,6 @@ class UserController extends Controller
             } else {
                 return $this->response('User cannot delete.', null, false);
             }
-
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -98,7 +94,6 @@ class UserController extends Controller
             } else {
                 return $this->response('Select record cannot delete.', null, false);
             }
-
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -115,7 +110,7 @@ class UserController extends Controller
 
         $model = $this->process_search($model, $key, $fields);
 
-        $model->whereHas("role",function($q){
+        $model->whereHas("role", function ($q) {
             return $q->where('name', '!=', "company");
         });
 

@@ -127,7 +127,18 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item @click="goToSetting()">
+            <v-list-item @click="goToReport()">
+              <v-list-item-icon>
+                <v-icon>mdi mdi-text-account</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="black--text"
+                  >Report</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
+
+            <!-- <v-list-item @click="goToSetting()">
               <v-list-item-icon>
                 <v-icon>mdi-cog</v-icon>
               </v-list-item-icon>
@@ -136,7 +147,7 @@
                   >Setting</v-list-item-title
                 >
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
 
             <v-list-item @click="logout">
               <v-list-item-icon>
@@ -493,6 +504,27 @@ export default {
         },
 
         {
+          icon: "mdi mdi-account-tie",
+          title: `Management`,
+          open_menu: false,
+          menu: "customer_access",
+          hasChildren: [
+            {
+              icon: "mdi mdi-bank-transfer-out",
+              title: "Expense",
+              to: "/management/expense",
+              menu: "agent_access",
+            },
+            {
+              icon: "mdi mdi-text-account",
+              title: "Payment By User Report",
+              to: "/management/report/user",
+              menu: "city_ledger_access",
+            },
+          ],
+        },
+
+        {
           icon: "mdi-tools",
           title: "Setup",
           to: "/manage",
@@ -589,9 +621,11 @@ export default {
     caps(str) {
       return str.replace(/\b\w/g, (c) => c.toUpperCase());
     },
+
     goToSetting() {
       this.$router.push("/setting");
     },
+
     goToCompany() {
       let u = this.$auth.user.user_type;
       // if(u){
@@ -599,6 +633,11 @@ export default {
       // }
       this.$router.push(`/companies/${this.$auth.user?.company?.id}`);
     },
+
+    goToReport() {
+      this.$router.push(`/management/report/user`);
+    },
+
     getCompanyDetails() {
       let user = this.$auth.user;
 
