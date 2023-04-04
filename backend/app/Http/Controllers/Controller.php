@@ -184,4 +184,9 @@ class Controller extends BaseController
     {
         return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
     }
+
+    public function getAmountFormat($amt = 0)
+    {
+        return number_format($amt, 2);
+    }
 }

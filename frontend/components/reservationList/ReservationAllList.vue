@@ -47,7 +47,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
+      <v-col xs="12" sm="12" md="2" cols="12">
         <v-select
           class="custom-text-box shadow-none"
           v-model="type"
@@ -61,7 +61,7 @@
         ></v-select>
       </v-col>
 
-      <v-col xs="12" sm="12" md="3" cols="12">
+      <v-col xs="12" sm="12" md="2" cols="12">
         <v-select
           class="custom-text-box shadow-none"
           v-model="source"
@@ -76,6 +76,21 @@
           @change="getDataFromApi(endpoint)"
         ></v-select>
       </v-col>
+
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <v-select
+          class="custom-text-box shadow-none"
+          v-model="guest_mode"
+          :items="['Select All', 'Arrival', 'Departure']"
+          dense
+          placeholder="Type"
+          solo
+          flat
+          :hide-details="true"
+          @change="getDataFromApi(endpoint)"
+        ></v-select>
+      </v-col>
+
       <v-col md="3">
         <v-menu
           v-model="from_menu"
@@ -293,7 +308,7 @@ export default {
       total: 0,
       per_page: 30,
     },
-
+    guest_mode: "",
     from_date: "",
     from_menu: false,
 
@@ -510,6 +525,7 @@ export default {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
           search: this.search,
+          guest_mode: this.guest_mode,
           from: this.from_date,
           to: this.to_date,
           source: newSource,

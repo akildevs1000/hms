@@ -382,13 +382,13 @@ export default {
 
         {
           icon: "mdi-bed",
-          title: `Reservation`,
+          title: `History`,
           open_menu: false,
           menu: "customer_access",
           hasChildren: [
             {
               icon: "mdi mdi-home-import-outline",
-              title: "Upcoming",
+              title: "Reservation",
               to: "/reservation/up_coming",
               menu: "reservation_access",
             },

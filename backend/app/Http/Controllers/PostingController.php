@@ -121,6 +121,11 @@ class PostingController extends Controller
             $payment->amount = (int) $payment->amount + $posting->amount_with_tax;
             $payment->save();
 
+            $data['room_no'] = $room_no;
+            $data['whatsapp'] = $booking->customer->whatsapp;
+            // return $data['item'];
+            (new WhatsappNotificationController)->postingNotification($data);
+
             return $this->response('Posting Successfully submitted.', $posting, true);
         } catch (\Throwable $th) {
             throw $th;
