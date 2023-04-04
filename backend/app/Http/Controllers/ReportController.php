@@ -292,10 +292,17 @@ class ReportController extends Controller
             });
         }
 
-        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->whereHas('booking', function ($q) use ($request) {
+                $q->WhereDate('check_in', '>=', $request->from);
                 $q->whereDate('check_in', '<=', $request->to);
+            });
+        }
+
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereHas('booking', function ($q) use ($request) {
                 $q->WhereDate('check_out', '>=', $request->from);
+                $q->whereDate('check_out', '<=', $request->to);
             });
         }
 
