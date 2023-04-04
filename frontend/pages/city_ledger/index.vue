@@ -338,7 +338,7 @@ export default {
         text: "#",
       },
       {
-        text: "Booking Number",
+        text: "Rev.No",
       },
       {
         text: "Booking Date",

@@ -367,8 +367,9 @@ class ReportController extends Controller
     {
         $model = Expense::query();
         $model->where('company_id', $request->company_id);
-        $model->orderByDesc("id");
+        $model->orderBy("id", 'asc');
         $type = "";
+
         // if ($request->filled('from') && $request->filled('to')) {
         //     $from = $request->from;
         //     $to   = $request->to;

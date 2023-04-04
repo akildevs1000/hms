@@ -129,7 +129,7 @@
 
             <v-col cols="12" v-if="is_management">
               <v-autocomplete v-model="editedItem.user" :items="['Ariff', 'Ansari']" item-text="name" item-value="id"
-                placeholder="Select Payment Mode" label="Select Payment Mode" outlined :hide-details="true" dense>
+                placeholder="Select User" label="Select Payment Mode" outlined :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
                 errors.department_id[0]

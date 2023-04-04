@@ -3,19 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Models\Company;
 use App\Models\Expense;
 use App\Models\Payment;
-use App\Models\Employee;
-use App\Models\Department;
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use App\Http\Controllers\Reports\ReportController;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
@@ -61,7 +54,7 @@ class Controller extends BaseController
                     'message' => $model . ' cannot ' . $action,
                 ], 200);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -106,9 +99,6 @@ class Controller extends BaseController
         return $report_type;
     }
 
-
-
-
     public function getNumFormat($Num = null)
     {
         if (!$Num) {
@@ -137,9 +127,15 @@ class Controller extends BaseController
             })
             ->orderByDesc("id");
 
+        if ($request->is_management == 1 && $request->has('is_management') && $request->filled('is_management')) {
+            $expense->where('is_management', 1);
+        } else {
+            $expense->where('is_management', 0);
+        }
+
         if ($request->filled('from') && $request->filled('to')) {
             $from = $request->from;
-            $to = $request->to;
+            $to   = $request->to;
             $expense->whereDate('created_at', '>=', $from);
             $expense->whereDate('created_at', '<=', $to);
 
@@ -148,32 +144,32 @@ class Controller extends BaseController
         }
 
         $incomingWithoutCityLedger = $income->clone()->sum('amount') - $this->getSum($income, 7);
-        $loss =   $incomingWithoutCityLedger - $income->clone()->sum('amount');
-        $profit = $incomingWithoutCityLedger - $expense->clone()->sum('amount');
+        $loss                      = $incomingWithoutCityLedger - $income->clone()->sum('amount');
+        $profit                    = $incomingWithoutCityLedger - $expense->clone()->sum('amount');
 
         return [
             'expense' => [
-                'Cash' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 1))->sum('total'),
-                'Card' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 2))->sum('total'),
-                'Online' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 3))->sum('total'),
-                'Bank' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 4))->sum('total'),
-                'UPI' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 5))->sum('total'),
-                'Cheque' => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 6))->sum('total'),
+                'Cash'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 1))->sum('total'),
+                'Card'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 2))->sum('total'),
+                'Online'       => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 3))->sum('total'),
+                'Bank'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 4))->sum('total'),
+                'UPI'          => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 5))->sum('total'),
+                'Cheque'       => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 6))->sum('total'),
                 'OverallTotal' => $expense->clone()->sum('total'),
             ],
-            'income' => [
-                'Cash' => $this->getSum($income, 1),
-                'Card' => $this->getSum($income, 2),
-                'Online' => $this->getSum($income, 3),
-                'Bank' => $this->getSum($income, 4),
-                'UPI' => $this->getSum($income, 5),
-                'Cheque' => $this->getSum($income, 6),
-                'City_ledger' => $this->getSum($income, 7),
+            'income'  => [
+                'Cash'         => $this->getSum($income, 1),
+                'Card'         => $this->getSum($income, 2),
+                'Online'       => $this->getSum($income, 3),
+                'Bank'         => $this->getSum($income, 4),
+                'UPI'          => $this->getSum($income, 5),
+                'Cheque'       => $this->getSum($income, 6),
+                'City_ledger'  => $this->getSum($income, 7),
                 'OverallTotal' => $incomingWithoutCityLedger,
             ],
 
-            'profit' =>  $profit > 0 ? $profit  : 0 . '.00',
-            'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
+            'profit'  => $profit > 0 ? $profit : 0 . '.00',
+            'loss'    => $loss > 0 ? $loss . '.00' : 0 . '.00',
 
             // 'profit' =>  $profit > 0 ? $profit . '.00' : 0 . '.00',
             // 'loss' =>  $loss > 0 ? $loss . '.00' : 0 . '.00',
@@ -182,7 +178,7 @@ class Controller extends BaseController
 
     public function getSum($model, $id)
     {
-        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
+        return $model->clone()->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('amount');
     }
 
     public function getAmountFormat($amt = 0)

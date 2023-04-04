@@ -10,8 +10,7 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">Income</h6>
               <span class="data-1">
-                RS. {{ convert_decimal(totalIncomes.OverallTotal) || 0 }}</span
-              >
+                RS. {{ convert_decimal(totalIncomes.OverallTotal) || 0 }}</span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
                   <v-icon dark small>mdi-arrow-right</v-icon>
@@ -32,8 +31,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Expense</h6>
-              <span class="data-1"
-                >RS. {{ totalExpenses.OverallTotal || 0 }}
+              <span class="data-1">RS. {{ totalExpenses.OverallTotal || 0 }}
               </span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -55,8 +53,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Management Expense</h6>
-              <span class="data-1"
-                >RS. {{ totalExpenses.ManagementOverallTotal || 0 }}
+              <span class="data-1">RS. {{ totalExpenses.ManagementOverallTotal || 0 }}
               </span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
@@ -94,12 +91,9 @@
         </div>
       </div>
       <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
-        <div
-          class="card px-2"
-          style="
-            background-image: linear-gradient(135deg, #b00000 0, #b00000 100%);
-          "
-        >
+        <div class="card px-2" style="
+              background-image: linear-gradient(135deg, #b00000 0, #b00000 100%);
+            ">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-doodr-open"></i>
@@ -128,8 +122,7 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">City Ledger</h6>
               <span class="data-1">
-                RS.{{ totalIncomes.City_ledger || 0 }}</span
-              >
+                RS.{{ totalIncomes.City_ledger || 0 }}</span>
               <p class="mb-0 text-sm">
                 <span class="mr-2">
                   <v-icon dark small>mdi-arrow-right</v-icon>
@@ -148,60 +141,26 @@
       <v-col md="3">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
-          <v-menu
-            v-model="from_menu"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
+          <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+            offset-y min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="from_date"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                outlined
-                dense
-                :hide-details="true"
-              ></v-text-field>
+              <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" outlined dense
+                :hide-details="true"></v-text-field>
             </template>
-            <v-date-picker
-              v-model="from_date"
-              @input="from_menu = false"
-              @change="commonMethod"
-            ></v-date-picker>
+            <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
           </v-menu>
         </v-col>
       </v-col>
       <v-col md="3">
         <div class="ml-4">To</div>
         <v-col cols="12" sm="12" md="12">
-          <v-menu
-            v-model="to_menu"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
+          <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+            offset-y min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="to_date"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                outlined
-                dense
-                :hide-details="true"
-              ></v-text-field>
+              <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" outlined dense
+                :hide-details="true"></v-text-field>
             </template>
-            <v-date-picker
-              v-model="to_date"
-              @input="to_menu = false"
-              @change="commonMethod"
-            ></v-date-picker>
+            <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
           </v-menu>
         </v-col>
       </v-col>
@@ -215,15 +174,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -232,14 +184,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -252,13 +197,8 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <v-progress-linear
-              v-if="loading"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
+            <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+              color="primary"></v-progress-linear>
 
             <tr v-for="(item, index) in incomeData" :key="index">
               <td>{{ ++index }}</td>
@@ -270,48 +210,36 @@
               <td>{{ item.description }}</td>
 
               <td v-for="i in 7" :key="i" class="text-right">
-                <span
-                  v-if="
-                    (item && item.payment_mode && item.payment_mode.name) ==
-                      'Cash' && i == 1
-                  "
-                >
+                <span v-if="
+                  (item && item.payment_mode && item.payment_mode.name) ==
+                  'Cash' && i == 1
+                ">
                   {{ item.amount }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Bank' && i == 4
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Bank' && i == 4
+                ">
                   {{ item.amount }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Online' && i == 3
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Online' && i == 3
+                ">
                   {{ item.amount }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'UPI' && i == 5
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'UPI' && i == 5
+                ">
                   {{ item.amount }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Card' && i == 2
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Card' && i == 2
+                ">
                   {{ item.amount }}
                 </span>
 
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'City Ledger' && i == 7
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'City Ledger' && i == 7
+                ">
                   {{ item.amount }}
                 </span>
 
@@ -338,15 +266,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('expense_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('expense_report_print')">
                   <v-icon class="white--text">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -355,14 +276,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('expense_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('expense_report_download')">
                   <v-icon class="white--text">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -376,13 +290,8 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <v-progress-linear
-              v-if="loading"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
+            <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+              color="primary"></v-progress-linear>
             <tr v-for="(item, index) in expenseData" :key="index">
               <td>{{ ++index }}</td>
               <td>{{ item.created_at }}</td>
@@ -391,37 +300,27 @@
               <td>{{ item.qty }}</td>
 
               <td v-for="i in 6" :key="i" class="text-right">
-                <span
-                  v-if="(item && item.payment_mode.name) == 'Cash' && i == 1"
-                >
+                <span v-if="(item && item.payment_mode.name) == 'Cash' && i == 1">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Bank' && i == 4
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Bank' && i == 4
+                ">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Online' && i == 3
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Online' && i == 3
+                ">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'UPI' && i == 5
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'UPI' && i == 5
+                ">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Card' && i == 2
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Card' && i == 2
+                ">
                   {{ item.total }}
                 </span>
 
@@ -447,15 +346,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('expense_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('expense_report_print')">
                   <v-icon class="white--text">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -464,14 +356,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('expense_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('expense_report_download')">
                   <v-icon class="white--text">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -485,13 +370,8 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <v-progress-linear
-              v-if="loading"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
+            <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+              color="primary"></v-progress-linear>
             <tr v-for="(item, index) in managementExpenseData" :key="index">
               <td>{{ ++index }}</td>
               <td>{{ item.created_at }}</td>
@@ -500,37 +380,27 @@
               <td>{{ item.qty }}</td>
 
               <td v-for="i in 6" :key="i" class="text-right">
-                <span
-                  v-if="(item && item.payment_mode.name) == 'Cash' && i == 1"
-                >
+                <span v-if="(item && item.payment_mode.name) == 'Cash' && i == 1">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Bank' && i == 4
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Bank' && i == 4
+                ">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Online' && i == 3
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Online' && i == 3
+                ">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'UPI' && i == 5
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'UPI' && i == 5
+                ">
                   {{ item.total }}
                 </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Card' && i == 2
-                  "
-                >
+                <span v-else-if="
+                  (item && item.payment_mode.name) == 'Card' && i == 2
+                ">
                   {{ item.total }}
                 </span>
 
@@ -692,8 +562,8 @@ export default {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
 
-          from_date: this.from_date,
-          to_date: this.to_date,
+          from: this.from_date,
+          to: this.to_date,
           is_account: true,
         },
       };
