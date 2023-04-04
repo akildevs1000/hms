@@ -361,7 +361,7 @@
         <div class="col-5">
         </div>
         <div class="col-4" style="margin: 0px">
-            Expense Report
+            {{ $type }} Expense Report
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
         </div>

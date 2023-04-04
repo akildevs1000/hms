@@ -134,11 +134,11 @@
 
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment" style="
-                                                                  width: 150px;
-                                                                  height: 150px;
-                                                                  margin: 0 auto;
-                                                                  border-radius: 50%;
-                                                                " :src="showImage"></v-img>
+                                                                      width: 150px;
+                                                                      height: 150px;
+                                                                      margin: 0 auto;
+                                                                      border-radius: 50%;
+                                                                    " :src="showImage"></v-img>
                     <input required type="file" @change="attachment" style="display: none" accept="image/*"
                       ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
@@ -529,6 +529,24 @@
                         </v-row>
 
                         <v-row>
+                          <v-col md="2" sm="12" cols="12" dense>
+                            <label class="col-form-label"> Extra Amount </label>
+                            <v-checkbox value="1" v-model="isExtra" :hide-details="true" class="pt-0 py-1 chk-align">
+                            </v-checkbox>
+                          </v-col>
+                          <v-col md="4" sm="12" cols="12" dense v-if="isExtra">
+                            <label class="col-form-label"> Amount </label>
+                            <v-text-field dense outlined type="number" v-model="temp.room_extra_amount"
+                              :hide-details="true"></v-text-field>
+                          </v-col>
+                          <v-col md="4" sm="12" cols="12" dense v-if="isExtra">
+                            <label class="col-form-label"> Reason </label>
+                            <v-text-field dense outlined type="text" v-model="temp.extra_amount_reason"
+                              :hide-details="true"></v-text-field>
+                          </v-col>
+                        </v-row>
+
+                        <v-row>
                           <v-col md="12">
                             <v-btn @click="add_room" class="float-right" color="primary">
                               <v-icon color="white" small>mdi-plus</v-icon>
@@ -878,6 +896,16 @@
 
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
+                    Extra Amount
+                  </span>
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
+                    {{ convert_decimal(item.room_extra_amount) }}
+                  </div>
+                </div>
+
+                <div class="input-group input-group-sm px-5">
+                  <span class="input-group-text" id="inputGroup-sizing-sm">
                     After Dis.
                   </span>
                   <div type="text" class="form-control" aria-label="Sizing example input"
@@ -894,20 +922,7 @@
                     {{ convert_decimal(item.room_tax) }}
                   </div>
                 </div>
-                <!-- <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    T.R Rent
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.total_with_tax) }}
-                  </div>
-                </div> -->
+
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Adult Food
@@ -954,6 +969,16 @@
                   <div type="text" class="form-control" aria-label="Sizing example input"
                     aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ item.discount_reason || "---" }}
+                  </div>
+                </div>
+
+                <div class="input-group input-group-sm px-5">
+                  <span class="input-group-text" id="inputGroup-sizing-sm">
+                    Amount Reason
+                  </span>
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
+                    {{ item.extra_amount_reason || "---" }}
                   </div>
                 </div>
               </section>
@@ -1105,6 +1130,7 @@ export default {
       isBed: false,
       subLoad: false,
       isDiscount: false,
+      isExtra: false,
       snackbar: false,
       checkLoader: false,
       response: "",
@@ -1141,6 +1167,8 @@ export default {
         check_out: "",
         // meal: [],
         bed_amount: 0,
+        room_extra_amount: 0,
+        extra_amount_reason: "",
         room_discount: 0,
         after_discount: 0, //(price - room_discount)
         room_tax: 0,
@@ -1924,9 +1952,19 @@ export default {
         return;
       }
 
-      this.temp.after_discount =
-        parseFloat(this.temp.price) -
-        parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
+      // this.temp.after_discount =
+      //   parseFloat(this.temp.price) -
+      //   parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
+
+
+      let roomDiscount = parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
+      let roomExtraAmount = parseFloat(this.temp.room_extra_amount == "" ? 0 : this.temp.room_extra_amount);
+
+      this.temp.after_discount = (parseFloat(this.temp.price) - roomDiscount) + roomExtraAmount;
+
+
+
+
       this.temp.days = this.getDays();
       this.get_room_tax(this.temp.after_discount);
 
@@ -2029,6 +2067,7 @@ export default {
         check_out: check_out_old,
         meal: "room_only_price",
         bed_amount: 0,
+        room_extra_amount: 0,
         room_discount: 0,
         after_discount: 0, //(price - room_discount)
         room_tax: 0,

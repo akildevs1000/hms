@@ -12,7 +12,7 @@ class TaxableController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request  $request)
+    public function index(Request $request)
     {
         $model = Taxable::query();
 
@@ -21,7 +21,6 @@ class TaxableController extends Controller
                 $q->where('booking_status', '!=', -1);
             });
 
-
         if (($request->filled('search') && $request->search)) {
             $model->whereHas('booking', function ($q) use ($request) {
                 $q->where('gst_number', 'Like', '%' . $request->search . '%');
@@ -29,10 +28,24 @@ class TaxableController extends Controller
             });
         }
 
-        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+        // if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+        //     $model->whereHas('booking', function ($q) use ($request) {
+        //         $q->whereDate('check_in', '<=', $request->to);
+        //         $q->WhereDate('check_out', '>=', $request->from);
+        //     });
+        // }
+
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->whereHas('booking', function ($q) use ($request) {
+                $q->WhereDate('check_in', '>=', $request->from);
                 $q->whereDate('check_in', '<=', $request->to);
+            });
+        }
+
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereHas('booking', function ($q) use ($request) {
                 $q->WhereDate('check_out', '>=', $request->from);
+                $q->whereDate('check_out', '<=', $request->to);
             });
         }
 
@@ -61,9 +74,9 @@ class TaxableController extends Controller
 
         if (!$exist) {
             $created = $model->create([
-                "booking_id" => $booking_id,
+                "booking_id"             => $booking_id,
                 "taxable_invoice_number" => ++$counter,
-                "company_id" => $company_id,
+                "company_id"             => $company_id,
             ]);
 
             return $created;
@@ -74,9 +87,9 @@ class TaxableController extends Controller
 
     public function storeTaxableInvoice($data)
     {
-        $booking_id = $data['id'];
+        $booking_id     = $data['id'];
         $reservation_no = $data['reservation_no'];
-        $company_id = $data['company_id'];
+        $company_id     = $data['company_id'];
 
         $starting_value = 1000;
 
@@ -88,10 +101,10 @@ class TaxableController extends Controller
 
         if (!$exist) {
             $created = $model->create([
-                "booking_id" => $booking_id,
+                "booking_id"             => $booking_id,
                 "taxable_invoice_number" => ++$counter,
-                "company_id" => $company_id,
-                "reservation_no" => $reservation_no,
+                "company_id"             => $company_id,
+                "reservation_no"         => $reservation_no,
             ]);
 
             return $created;
@@ -99,7 +112,6 @@ class TaxableController extends Controller
 
         return "exit";
     }
-
 
     /**
      * Display the specified resource.

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Company;
 use App\Models\Expense;
 use App\Models\Payment;
+use App\Models\Room;
 use App\Models\Taxable;
-use App\Models\BookedRoom;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -32,7 +32,7 @@ class ReportController extends Controller
 
     public function CHeckInReportProcess($request)
     {
-        $company_id = $request->company_id;
+        $company_id   = $request->company_id;
         $checkInModel = BookedRoom::query();
         return $checkInModel->clone()
             ->whereHas('booking', function ($q) use ($company_id) {
@@ -41,7 +41,6 @@ class ReportController extends Controller
                 $q->where('company_id', $company_id);
             })->get();
     }
-
 
     public function CHeckOutReport(Request $request)
     {
@@ -53,10 +52,10 @@ class ReportController extends Controller
 
     public function CHeckOutReportDownload(Request $request)
     {
-        $company_id = $request->company_id;
+        $company_id          = $request->company_id;
         $expectCheckOutModel = BookedRoom::query();
-        $data =  $expectCheckOutModel->whereDate('check_out', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
+        $data                = $expectCheckOutModel->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 2);
                 $q->where('company_id', $company_id);
@@ -69,7 +68,7 @@ class ReportController extends Controller
 
     public function CHeckOutReportProcess($request)
     {
-        $company_id = $request->company_id;
+        $company_id    = $request->company_id;
         $checkOutModel = BookedRoom::query();
         return $checkOutModel->clone()->whereDate('check_out', $request->check_in)
             ->whereHas('booking', function ($q) use ($company_id) {
@@ -82,8 +81,8 @@ class ReportController extends Controller
     public function availableRoomsReportProcess($request)
     {
         $company_id = $request->company_id;
-        $model   = BookedRoom::query();
-        $roomIds = $model
+        $model      = BookedRoom::query();
+        $roomIds    = $model
             ->whereDate('check_in', '<=', $request->date)
             ->whereHas('booking', function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', -1);
@@ -94,7 +93,7 @@ class ReportController extends Controller
             })
             ->with('booking')
             ->pluck('room_id');
-        $data =   Room::whereNotIn('id', $roomIds)->where('company_id', $company_id)->get();
+        $data = Room::whereNotIn('id', $roomIds)->where('company_id', $company_id)->get();
         return $data;
     }
 
@@ -113,7 +112,6 @@ class ReportController extends Controller
             ->setPaper('a4', 'portrait')
             ->download();
     }
-
 
     public function bookedRoomsReport(Request $request)
     {
@@ -135,8 +133,8 @@ class ReportController extends Controller
     public function bookedRoomsReportProcess($request)
     {
         $company_id = $request->company_id;
-        $model   = BookedRoom::query();
-        $roomIds = $model
+        $model      = BookedRoom::query();
+        $roomIds    = $model
             ->whereDate('check_in', '<=', $request->date)
             ->whereHas('booking', function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', -1);
@@ -148,7 +146,7 @@ class ReportController extends Controller
             ->with('booking')
             ->pluck('room_id');
 
-        return  Room::whereIn('id', $roomIds)
+        return Room::whereIn('id', $roomIds)
             ->with('bookedRoom', function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '<=', 4);
@@ -175,18 +173,16 @@ class ReportController extends Controller
             ->download();
     }
 
-
     public function paidRoomsReportProcess($request)
     {
         $company_id = $request->company_id;
-        return BookedRoom::whereHas('booking', function ($q)  use ($company_id) {
+        return BookedRoom::whereHas('booking', function ($q) use ($company_id) {
             $q->where('booking_status', '!=', 0);
             $q->where('booking_status', 1);
             $q->where('advance_price', '!=', 0);
             $q->where('company_id', $company_id);
         })->get();
     }
-
 
     public function dirtyRoomsReport(Request $request)
     {
@@ -204,11 +200,10 @@ class ReportController extends Controller
             ->download();
     }
 
-
     public function dirtyRoomsReportProcess($request)
     {
-        $company_id = $request->company_id;
-        return  $dirtyRooms = BookedRoom::whereHas('booking', function ($q)  use ($company_id) {
+        $company_id        = $request->company_id;
+        return $dirtyRooms = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
             $q->where('booking_status', '!=', 0);
             $q->where('booking_status', 3);
             $q->where('company_id', $company_id);
@@ -217,13 +212,12 @@ class ReportController extends Controller
 
     // -----------------------
 
-
     public function expectCHeckInReport(Request $request)
     {
-        $company_id = $request->company_id;
+        $company_id         = $request->company_id;
         $expectCheckInModel = BookedRoom::query();
-        $data =  $expectCheckInModel->whereDate('check_in', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
+        $data               = $expectCheckInModel->whereDate('check_in', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 1);
                 $q->where('company_id', $company_id);
@@ -236,10 +230,10 @@ class ReportController extends Controller
 
     public function expectCHeckInReportDownload(Request $request)
     {
-        $company_id = $request->company_id;
+        $company_id         = $request->company_id;
         $expectCheckInModel = BookedRoom::query();
-        $data =  $expectCheckInModel->whereDate('check_in', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
+        $data               = $expectCheckInModel->whereDate('check_in', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 1);
                 $q->where('company_id', $company_id);
@@ -252,10 +246,10 @@ class ReportController extends Controller
 
     public function expectCHeckOutReport(Request $request)
     {
-        $company_id = $request->company_id;
+        $company_id          = $request->company_id;
         $expectCheckOutModel = BookedRoom::query();
-        $data =  $expectCheckOutModel->whereDate('check_out', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
+        $data                = $expectCheckOutModel->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 2);
                 $q->where('company_id', $company_id);
@@ -268,10 +262,10 @@ class ReportController extends Controller
 
     public function expectCHeckOutReportDownload(Request $request)
     {
-        $company_id = $request->company_id;
+        $company_id          = $request->company_id;
         $expectCheckOutModel = BookedRoom::query();
-        $data =  $expectCheckOutModel->whereDate('check_out', $request->date)
-            ->whereHas('booking', function ($q)  use ($company_id) {
+        $data                = $expectCheckOutModel->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 2);
                 $q->where('company_id', $company_id);
@@ -298,10 +292,17 @@ class ReportController extends Controller
             });
         }
 
-        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->whereHas('booking', function ($q) use ($request) {
+                $q->WhereDate('check_in', '>=', $request->from);
                 $q->whereDate('check_in', '<=', $request->to);
+            });
+        }
+
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereHas('booking', function ($q) use ($request) {
                 $q->WhereDate('check_out', '>=', $request->from);
+                $q->whereDate('check_out', '<=', $request->to);
             });
         }
 
@@ -338,17 +339,17 @@ class ReportController extends Controller
         $model->orderByDesc("id");
         if ($request->filled('from') && $request->filled('to')) {
             $from = $request->from;
-            $to = $request->to;
+            $to   = $request->to;
             $model->whereDate('created_at', '>=', $from);
             $model->whereDate('created_at', '<=', $to);
         }
         $totalIncomes = $this->TransactionsCounts($request);
         return Pdf::loadView('report.income', [
-            'data' => $model->get(),
-            'request' => $request,
+            'data'         => $model->get(),
+            'request'      => $request,
             'totalIncomes' => $totalIncomes['income'],
-            'accounts' => $totalIncomes,
-            'company' => Company::find($request->company_id)
+            'accounts'     => $totalIncomes,
+            'company'      => Company::find($request->company_id),
         ])->setPaper('a4', 'landscape');
     }
 
@@ -367,20 +368,37 @@ class ReportController extends Controller
         $model = Expense::query();
         $model->where('company_id', $request->company_id);
         $model->orderByDesc("id");
+        $type = "";
+        // if ($request->filled('from') && $request->filled('to')) {
+        //     $from = $request->from;
+        //     $to   = $request->to;
+        //     $model->whereDate('created_at', '>=', $from);
+        //     $model->whereDate('created_at', '<=', $to);
+        // }
+
         if ($request->filled('from') && $request->filled('to')) {
-            $from = $request->from;
-            $to = $request->to;
-            $model->whereDate('created_at', '>=', $from);
-            $model->whereDate('created_at', '<=', $to);
+            $model->whereDate('created_at', '>=', $request->from);
+            $model->whereDate('created_at', '<=', $request->to);
+            $model->orderBy("created_at", 'asc');
+        } else {
+            $model->orderBy("created_at", 'desc');
+        }
+
+        if ($request->is_management == 1 && $request->has('is_management') && $request->filled('is_management')) {
+            $model->where('is_management', 1);
+            $type = "Management";
+        } else {
+            $model->where('is_management', 0);
         }
 
         $totalExpenses = $this->TransactionsCounts($request);
         return Pdf::loadView('report.expense', [
-            'data' => $model->get(),
-            'request' => $request,
+            'data'          => $model->get(),
+            'request'       => $request,
             'totalExpenses' => $totalExpenses['expense'],
-            'accounts' => $totalExpenses,
-            'company' => Company::find($request->company_id)
+            'accounts'      => $totalExpenses,
+            'type'          => $type,
+            'company'       => Company::find($request->company_id),
         ])->setPaper('a4', 'landscape');
     }
 
@@ -395,22 +413,26 @@ class ReportController extends Controller
         return $this->expenseReportProcess($request)->download();
     }
 
-
-
     public function reservationReportProcess($request)
     {
-        $status = $request->r_type;
+        $status          = $request->r_type;
         $reservationTYpe = "";
-        $model = Booking::query()->latest()->filter(request('search'));
+        $model           = Booking::query()->latest()->filter(request('search'));
+
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('check_in', '>=', $request->from);
+            $model->whereDate('check_in', '<=', $request->to);
+        }
+
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('check_out', '>=', $request->from);
+            $model->whereDate('check_out', '<=', $request->to);
+        }
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
             $model->where('source', $request->source);
         }
 
-        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->whereDate('check_in', '<=', $request->to);
-            $model->WhereDate('check_out', '>=', $request->from);
-        }
         $model->orderBy('id', 'desc');
 
         switch ($status) {
@@ -442,10 +464,10 @@ class ReportController extends Controller
             ->get();
 
         return Pdf::loadView('report.reservation_list', [
-            'data' => $data,
+            'data'            => $data,
             'reservationTYpe' => $reservationTYpe,
-            'request' => $request,
-            'company' => Company::find($request->company_id)
+            'request'         => $request,
+            'company'         => Company::find($request->company_id),
         ])->setPaper('a4', 'landscape');
     }
 

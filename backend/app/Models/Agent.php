@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Agent extends Model
 {
@@ -15,7 +15,6 @@ class Agent extends Model
     protected $casts = [
         'created_at' => 'datetime:d-M-y',
     ];
-
 
     /**
      * Get the customer that owns the Agent
@@ -37,8 +36,22 @@ class Agent extends Model
         return $this->belongsTo(Booking::class);
     }
 
-    // public function paymentMode()
+    // public function scopeFilter($query,  $filter)
     // {
-    //     return $this->belongsTo(paymentMode::class, 'payment_mode', 'id');
+    //     $query->when($filter ?? false, fn ($query, $search) =>
+    //     $query->where(
+    //         fn ($query) => $query
+    //             ->orWhere('reservation_no', 'Like', '%' . $search . '%')
+    //             ->orWhere('reference_no', 'Like', '%' . $search . '%')
+    //             ->orWhere('type', 'Like', '%' . $search . '%')
+    //             ->orWhereHas(
+    //                 'customer',
+    //                 fn ($query) =>
+    //                 $query->Where('first_name', 'Like', '%' . $search . '%')
+    //                     ->orWhere('last_name', 'Like', '%' . $search . '%')
+    //                     ->orWhere('whatsapp', 'Like', '%' . $search . '%')
+    //                     ->orWhere('contact_no', 'Like', '%' . $search . '%')
+    //             )
+    //     ));
     // }
 }
