@@ -23,16 +23,45 @@ class AgentsController extends Controller
         $model->where('type', '!=', 'Customer');
         $model->with('customer', 'booking:id,reservation_no,check_in,check_out,rooms');
 
+        $model->whereHas('booking', function ($q) use ($request) {
+            $q->where(function ($query) use ($request) {
+                $query->where('booking_status', '!=', -1);
+            });
+        });
+
+        if ($request->filled('search') && $request->search != "") {
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->where(function ($query) use ($request) {
+                    $query->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+                });
+            });
+            $model->orWhereHas('customer', function ($q) use ($request) {
+                $q->where(function ($query) use ($request) {
+                    $query->orWhere('first_name', 'Like', '%' . $request->search . '%');
+                    $query->orWhere('last_name', 'Like', '%' . $request->search . '%');
+                    $query->orWhere('contact_no', 'Like', '%' . $request->search . '%');
+                });
+            });
+        }
+
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
             $model->where('source', $request->source);
         }
 
-        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->whereHas('booking', function ($q) use ($request) {
+                $q->WhereDate('check_in', '>=', $request->from);
                 $q->whereDate('check_in', '<=', $request->to);
-                $q->WhereDate('check_out', '>=', $request->from);
             });
         }
+
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->WhereDate('check_out', '>=', $request->from);
+                $q->whereDate('check_out', '<=', $request->to);
+            });
+        }
+
         $model->orderBy('id', 'desc');
         return $model->paginate($request->per_page);
     }
@@ -49,25 +78,20 @@ class AgentsController extends Controller
             $q->orWhere('source', 'complimentary');
         });
 
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('check_in', '>=', $request->from);
+            $model->whereDate('check_in', '<=', $request->to);
+        }
 
-        // if ($request->filled('search') && $request->search != "") {
-        //     $model->whereHas('customer', function ($q) use ($request) {
-        //         $q->where('first_name', 'LIKE', "%$request->search%");
-        //         $q->orWhere('last_name', 'LIKE', "%$request->search%");
-        //     });
-        // }
-
-        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->where(function ($q) use ($request) {
-                $q->whereDate('check_in', '<=', $request->to);
-                $q->WhereDate('check_out', '>=', $request->from);
-            });
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('check_out', '>=', $request->from);
+            $model->whereDate('check_out', '<=', $request->to);
         }
 
         return response()->json([
             'city_ledgers' => $model->orderBy('id', 'DESC')->paginate($request->per_page ?? 20),
-            'message' => '',
-            'status' => true
+            'message'      => '',
+            'status'       => true,
 
         ]);
     }
@@ -137,11 +161,11 @@ class AgentsController extends Controller
         if ($booking->total_price <= $request->full_payment) {
             $booking->grand_remaining_price = (int) $booking->grand_remaining_price - (int) $request->full_payment;
             $booking->remaining_price       = 0;
-            $booking->payment_status       = 0;
+            $booking->payment_status        = 0;
         } else {
-            $booking->remaining_price = ((int) $booking->total_price - (int) $request->full_payment);
-            $booking->grand_remaining_price =  ((int) $booking->remaining_price + (int) $booking->total_posting_amount);
-            $booking->payment_status = 0;
+            $booking->remaining_price       = ((int) $booking->total_price - (int) $request->full_payment);
+            $booking->grand_remaining_price = ((int) $booking->remaining_price + (int) $booking->total_posting_amount);
+            $booking->payment_status        = 0;
         }
         return $booking->save();
     }
@@ -150,11 +174,11 @@ class AgentsController extends Controller
         if ($booking->total_posting_amount <= $request->full_payment) {
             $booking->grand_remaining_price = (int) $booking->grand_remaining_price - (int) $booking->total_posting_amount;
             $booking->total_posting_amount  = 0;
-            $booking->payment_status       = 0;
+            $booking->payment_status        = 0;
         } else {
-            $booking->total_posting_amount = ((int) $booking->total_posting_amount - (int) $request->full_payment);
-            $booking->grand_remaining_price =  ((int) $booking->remaining_price + (int) $booking->total_posting_amount);
-            $booking->payment_status = 0;
+            $booking->total_posting_amount  = ((int) $booking->total_posting_amount - (int) $request->full_payment);
+            $booking->grand_remaining_price = ((int) $booking->remaining_price + (int) $booking->total_posting_amount);
+            $booking->payment_status        = 0;
         }
         return $booking->save();
     }
@@ -165,11 +189,11 @@ class AgentsController extends Controller
             $booking->remaining_price       = 0;
             $booking->grand_remaining_price = 0;
             $booking->total_posting_amount  = 0;
-            $booking->payment_status = 1;
+            $booking->payment_status        = 1;
         } else {
-            $booking->remaining_price = ((int) $booking->total_price - (int) $request->full_payment);
-            $booking->grand_remaining_price =  ((int) $booking->remaining_price + (int) $booking->total_posting_amount);
-            $booking->payment_status = 0;
+            $booking->remaining_price       = ((int) $booking->total_price - (int) $request->full_payment);
+            $booking->grand_remaining_price = ((int) $booking->remaining_price + (int) $booking->total_posting_amount);
+            $booking->payment_status        = 0;
         }
         return $booking->save();
     }
@@ -183,7 +207,7 @@ class AgentsController extends Controller
         $isFullPayment = false;
         switch ($paid_status) {
             case 1:
-                $onlyRoom =  $this->paidOnlyRooms($booking, $request);
+                $onlyRoom = $this->paidOnlyRooms($booking, $request);
                 break;
             case 2:
                 $onlyPosting = $this->paidOnlyPosting($booking, $request);
@@ -226,14 +250,14 @@ class AgentsController extends Controller
 
         $totCredit = Transaction::whereBookingId($booking->id)->where('company_id', $booking->company_id)->sum('credit');
         Agent::find($agentId)->update([
-            'is_paid'      => true,
-            'paid_date'    => date('Y-m-d'),
-            'payment_mode' => $request->payment_mode_id,
-            'transaction'  => $request->transaction,
-            'agent_paid_amount'  => $totCredit,
-            'agent_paid_amount'  => $request->full_payment,
-            'is_paid_with_posting'  => $paid_status == 3 ? 1 : 0,
-            'is_full_payment'  => $booking->grand_remaining_price <= $request->full_payment ? 1 : 0,
+            'is_paid'              => true,
+            'paid_date'            => date('Y-m-d'),
+            'payment_mode'         => $request->payment_mode_id,
+            'transaction'          => $request->transaction,
+            'agent_paid_amount'    => $totCredit,
+            'agent_paid_amount'    => $request->full_payment,
+            'is_paid_with_posting' => $paid_status == 3 ? 1 : 0,
+            'is_full_payment'      => $booking->grand_remaining_price <= $request->full_payment ? 1 : 0,
         ]);
 
         return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
@@ -288,8 +312,6 @@ class AgentsController extends Controller
             // if ($found) {
             //     $found->update($paymentsData);
             // }
-
-
 
             Agent::find($agentId)->update(['is_paid' => true, 'paid_date' => date('Y-m-d'), 'payment_mode' => $request->payment_mode_id, 'transaction' => $request->transaction]);
             return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
@@ -307,7 +329,7 @@ class AgentsController extends Controller
         $isFullPayment = false;
         switch ($paid_status) {
             case 1:
-                $onlyRoom =  $this->paidOnlyRooms($booking, $request);
+                $onlyRoom = $this->paidOnlyRooms($booking, $request);
                 break;
             case 2:
                 $onlyPosting = $this->paidOnlyPosting($booking, $request);
@@ -350,14 +372,14 @@ class AgentsController extends Controller
 
         $totCredit = Transaction::whereBookingId($booking->id)->where('company_id', $booking->company_id)->sum('credit');
         Agent::find($agentId)->update([
-            'is_paid'      => true,
-            'paid_date'    => date('Y-m-d'),
-            'payment_mode' => $request->payment_mode_id,
-            'transaction'  => $request->transaction,
-            'agent_paid_amount'  => $totCredit,
-            'agent_paid_amount'  => $request->full_payment,
-            'is_paid_with_posting'  => $paid_status == 3 ? 1 : 0,
-            'is_full_payment'  => $booking->grand_remaining_price <= $request->full_payment ? 1 : 0,
+            'is_paid'              => true,
+            'paid_date'            => date('Y-m-d'),
+            'payment_mode'         => $request->payment_mode_id,
+            'transaction'          => $request->transaction,
+            'agent_paid_amount'    => $totCredit,
+            'agent_paid_amount'    => $request->full_payment,
+            'is_paid_with_posting' => $paid_status == 3 ? 1 : 0,
+            'is_full_payment'      => $booking->grand_remaining_price <= $request->full_payment ? 1 : 0,
         ]);
 
         return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
@@ -413,8 +435,6 @@ class AgentsController extends Controller
             //     $found->update($paymentsData);
             // }
 
-
-
             Agent::find($agentId)->update(['is_paid' => true, 'paid_date' => date('Y-m-d'), 'payment_mode' => $request->payment_mode_id, 'transaction' => $request->transaction]);
             return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
         }
@@ -426,7 +446,7 @@ class AgentsController extends Controller
     {
         $booking_id = $request->booking_id;
         $booking    = Booking::where('company_id', $request->company_id)->find($booking_id);
-        $booking = Booking::find($booking_id);
+        $booking    = Booking::find($booking_id);
 
         $transactionData = [
             'booking_id'        => $booking->id,
@@ -434,8 +454,8 @@ class AgentsController extends Controller
             'date'              => now(),
             'company_id'        => $booking->company_id ?? '',
             'payment_method_id' => $booking->payment_mode_id,
-            'reference_number' => $request->reference,
-            'desc' => 'paid by city ledger',
+            'reference_number'  => $request->reference,
+            'desc'              => 'paid by city ledger',
         ];
 
         $payment = new TransactionController();
@@ -445,18 +465,18 @@ class AgentsController extends Controller
 
         if ($booking) {
             $booking->update([
-                'total_price' => $transactionSummary['balance'],
+                'total_price'           => $transactionSummary['balance'],
                 'grand_remaining_price' => $transactionSummary['balance'],
                 'balance'               => $transactionSummary['balance'],
                 'remaining_price'       => $transactionSummary['balance'],
-                'paid_amounts'       => $transactionSummary['sumCredit'],
-                'payment_status'       => $transactionSummary['balance'] == 0 ? 1 : 0,
+                'paid_amounts'          => $transactionSummary['sumCredit'],
+                'payment_status'        => $transactionSummary['balance'] == 0 ? 1 : 0,
             ]);
 
             $paymentsData = [
                 'booking_id'     => $booking_id,
                 'payment_mode'   => $request->payment_mode_id,
-                'description'    =>  'payment by ' . $request->cityLedgerData['source'] ?? '',
+                'description'    => 'payment by ' . $request->cityLedgerData['source'] ?? '',
                 'amount'         => $request->full_payment,
                 'type'           => 'customer',
                 'room'           => $booking->rooms,
@@ -481,19 +501,14 @@ class AgentsController extends Controller
         $booking_id = $request->booking_id;
         $booking    = Booking::find($booking_id);
 
-
-
-
-
-
         $isFullPayment = false;
         if ($booking->grand_remaining_price <= $request->full_payment) {
-            $booking->payment_status  = 1;
-            $booking->full_payment    = $booking->total_price;
+            $booking->payment_status        = 1;
+            $booking->full_payment          = $booking->total_price;
             $booking->remaining_price       = 0;
             $booking->grand_remaining_price = 0;
             $booking->total_posting_amount  = 0;
-            $isFullPayment = true;
+            $isFullPayment                  = true;
         } else {
             $booking->grand_remaining_price = ((int) $booking->grand_remaining_price - (int) $request->full_payment);
         }
@@ -506,7 +521,7 @@ class AgentsController extends Controller
                 'date'              => now(),
                 'company_id'        => $booking->company_id ?? '',
                 'payment_method_id' => $booking->payment_mode_id,
-                'desc' => 'payment by city ledger',
+                'desc'              => 'payment by city ledger',
             ];
 
             $payment = new TransactionController();
@@ -515,7 +530,7 @@ class AgentsController extends Controller
             $paymentsData = [
                 'booking_id'     => $booking_id,
                 'payment_mode'   => $request->payment_mode_id,
-                'description'    =>  'payment by ' . $request->agentData['source'] ?? '',
+                'description'    => 'payment by ' . $request->agentData['source'] ?? '',
                 'amount'         => $request->full_payment,
                 'type'           => 'customer',
                 'room'           => $booking->rooms,
@@ -534,17 +549,15 @@ class AgentsController extends Controller
 
             $totCredit = Transaction::whereBookingId($booking->id)->where('company_id', $booking->company_id)->sum('credit');
             Agent::find($agentId)->update([
-                'is_paid'      => $isFullPayment ? 1 : 0,
-                'paid_date'    => $isFullPayment ? date('Y-m-d') : '',
-                'payment_mode' => $request->payment_mode_id,
-                'transaction'  => $request->transaction,
-                'agent_paid_amount'  => $totCredit,
-                'agent_paid_amount'  => $request->full_payment,
-                'is_paid_with_posting'  => 1,
-                'is_full_payment'  => $booking->grand_remaining_price <= $request->full_payment ? 1 : 0,
+                'is_paid'              => $isFullPayment ? 1 : 0,
+                'paid_date'            => $isFullPayment ? date('Y-m-d') : '',
+                'payment_mode'         => $request->payment_mode_id,
+                'transaction'          => $request->transaction,
+                'agent_paid_amount'    => $totCredit,
+                'agent_paid_amount'    => $request->full_payment,
+                'is_paid_with_posting' => 1,
+                'is_full_payment'      => $booking->grand_remaining_price <= $request->full_payment ? 1 : 0,
             ]);
-
-
 
             return response()->json(['data' => $booking_id, 'message' => 'Successfully check Out', 'status' => true]);
         }

@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 
 class OrderRoom extends Model
 {
     use HasFactory;
 
     // protected $guarded = [];
-
 
     protected $fillable = [
         "room_no",
@@ -84,6 +83,8 @@ class OrderRoom extends Model
             "meal",
             "booking_id",
             "customer_id",
+            "room_extra_amount",
+            "extra_amount_reason",
         ];
     }
 

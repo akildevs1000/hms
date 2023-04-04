@@ -255,6 +255,17 @@
 
                   </v-row>
 
+                  <v-row class="my-0 py-0">
+                    <v-col md="12">
+                      <div class="text-box" style="float:left">
+                        <h6>GST</h6>
+                        <p>
+                          {{
+                            (booking && booking.customer && booking.customer.gst_number) || "---"
+                          }}</p>
+                      </div>
+                    </v-col>
+                  </v-row>
 
 
                   <v-row>

@@ -27,18 +27,19 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'item' => 'required',
-            'amount' => 'required',
+            'item'          => 'required',
+            'amount'        => 'required',
             'payment_modes' => 'required',
-            'qty' => 'required',
-            'company_id' => 'required',
-            'voucher' => 'required',
+            'qty'           => 'required',
+            'company_id'    => 'required',
+            'voucher'       => 'required',
 
-            'reference' => 'nullable',
-            'total' => 'nullable',
-            'description' => 'nullable',
-            'document' => 'nullable',
+            'reference'     => 'nullable',
+            'total'         => 'nullable',
+            'description'   => 'nullable',
+            'document'      => 'nullable',
             'is_management' => 'nullable',
+            'user'          => 'nullable',
 
         ];
     }

@@ -367,7 +367,7 @@
     <div class="row" style="border: 1px solid rgb(190, 185, 185)">
         <div class="col-3 mr-1" style="color: green">
             <span class="total-font-size">Income :
-                <b>{{ number_format($totalIncomes['Cash'], 2) }}</b>
+                <b>{{ number_format($totalIncomes['OverallTotal'], 2) }}</b>
             </span>
         </div>
 

@@ -1,13 +1,7 @@
 <template>
   <div v-if="can(`agents_access`)">
     <div class="text-center ma-2">
-      <v-snackbar
-        v-model="snackbar"
-        top
-        absolute
-        color="secondary"
-        elevation="24"
-      >
+      <v-snackbar v-model="snackbar" top absolute color="secondary" elevation="24">
         {{ response }}
       </v-snackbar>
     </div>
@@ -19,13 +13,8 @@
         <v-card-text>
           <v-container>
             <table>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
+              <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                color="primary"></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
                 <td style="width: 300px">
@@ -62,39 +51,24 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-select
-                    v-model="booking.payment_mode_id"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' },
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                  ></v-select>
+                  <v-select v-model="booking.payment_mode_id" :items="[
+                    { id: 1, name: 'Cash' },
+                    { id: 2, name: 'Card' },
+                    { id: 3, name: 'Online' },
+                    { id: 4, name: 'Bank' },
+                    { id: 5, name: 'UPI' },
+                    { id: 6, name: 'Cheque' },
+                  ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-select>
                 </td>
-                <tr v-if="booking.payment_mode_id != 1">
-              <th>
-                Reference Number
-                <span class="text-danger">*</span>
-              </th>
-              <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="text"
-                  v-model="reference"
-                  :hide-details="true"
-                ></v-text-field>
-              </td>
-            </tr>
+              <tr v-if="booking.payment_mode_id != 1">
+                <th>
+                  Reference Number
+                  <span class="text-danger">*</span>
+                </th>
+                <td>
+                  <v-text-field dense outlined type="text" v-model="reference" :hide-details="true"></v-text-field>
+                </td>
+              </tr>
               </tr>
               <tr>
                 <th>Total Amount</th>
@@ -118,13 +92,8 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="booking.full_payment"
-                    :hide-details="true"
-                  ></v-text-field>
+                  <v-text-field dense outlined type="number" v-model="booking.full_payment"
+                    :hide-details="true"></v-text-field>
                 </td>
               </tr>
               <tr></tr>
@@ -132,9 +101,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="primary" small @click="store_customer_payment"
-            >Save</v-btn
-          >
+          <v-btn class="primary" small @click="store_customer_payment">Save</v-btn>
           <v-btn class="error" small @click="agentPaymentDialog = false">
             Cancel
           </v-btn>
@@ -148,7 +115,7 @@
         <div>Dashboard / {{ Model }}</div>
       </v-col>
     </v-row>
-    <v-row>
+    <!-- <v-row>
       <v-col md="3">
         <v-menu
           v-model="from_menu"
@@ -209,7 +176,44 @@
           ></v-date-picker>
         </v-menu>
       </v-col>
+    </v-row> -->
+
+
+    <v-row>
+      <v-col xs="12" sm="12" md="3" cols="12">
+        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
+          v-model="search" hide-details></v-text-field>
+      </v-col>
     </v-row>
+    <v-row>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
+          dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi()"></v-select>
+      </v-col>
+
+      <v-col md="3">
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
+              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
+          </template>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col md="3">
+        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
+              solo flat label="To" :hide-details="true"></v-text-field>
+          </template>
+          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
+        </v-menu>
+      </v-col>
+    </v-row>
+
+
 
     <div v-if="can(`agents_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
@@ -217,27 +221,22 @@
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>
-          <tr style="font-size: 13px">
+          <tr style="font-size: 12px">
             <th v-for="(item, index) in headers" :key="index">
               {{ item.text }}
             </th>
           </tr>
-          <v-progress-linear
-            v-if="loading"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
-          <tr
-            v-for="(item, index) in data"
-            :key="index"
-            style="font-size: 14px"
-          >
+          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+            color="primary"></v-progress-linear>
+          <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
             <td>
               <b>{{ ++index }}</b>
             </td>
-            <td>{{ (item && item.reservation_no) || "---" }}</td>
+            <td>
+              <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer;">
+                {{ (item && item.reservation_no) || "---" }}
+              </span>
+            </td>
             <td>{{ item.booking_date || "---" }}</td>
             <td>
               {{ (item && item.customer && item.customer.full_name) || "---" }}
@@ -252,11 +251,7 @@
             <td>{{ (item && item.check_in_date) || "---" }}</td>
             <td>{{ (item && item.check_out_date) || "---" }}</td>
             <td>
-              <v-chip
-                class="ma-2"
-                :color="item.is_paid == 1 ? 'green' : 'red'"
-                text-color="white"
-              >
+              <v-chip small class="ma-2" :color="item.is_paid == 1 ? 'green' : 'red'" text-color="white">
                 {{ item.is_paid == 1 ? "Paid" : "Pending" }}
               </v-chip>
             </td>
@@ -269,13 +264,7 @@
               >
                 mdi-eye
               </v-icon> -->
-              <v-icon
-                v-if="!item.is_paid"
-                x-small
-                color="primary"
-                @click="paidAmount(item)"
-                class="mr-2"
-              >
+              <v-icon v-if="!item.is_paid" x-small color="primary" @click="paidAmount(item)" class="mr-2">
                 mdi-cash-multiple
               </v-icon>
             </td>
@@ -286,12 +275,8 @@
         <v-row>
           <v-col md="12" class="float-right">
             <div class="float-right">
-              <v-pagination
-                v-model="pagination.current"
-                :length="pagination.total"
-                @input="onPageChange"
-                :total-visible="12"
-              ></v-pagination>
+              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                :total-visible="12"></v-pagination>
             </div>
           </v-col>
         </v-row>
@@ -322,6 +307,7 @@ export default {
     options: {},
     Model: "City Ledger",
     endpoint: "city_ledger",
+    reference: "",
     search: "",
     snackbar: false,
     dialog: false,
@@ -329,6 +315,7 @@ export default {
     loading: false,
     total: 0,
     type: "",
+    guest_mode: "",
     source: "",
     agentList: ["Select All", "agent1", "agent2", "agent3", "agent4", "agent5"],
     types: ["Online", "Travel Agency"],
@@ -442,7 +429,6 @@ export default {
       this.$axios.get(`get_agent_booking`, payload).then(({ data }) => {
         if (data.status) {
           this.totalCredit = data.totalCredit;
-          console.log(this.transaction);
           this.booking = data.data;
           this.booking.full_payment = "";
           this.bookingStatus = data.booking_status;
@@ -460,6 +446,11 @@ export default {
       this.getDataFromApi();
     },
 
+
+    goToRevView(item) {
+      this.$router.push(`/customer/details/${item.id}`);
+    },
+
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
@@ -469,11 +460,12 @@ export default {
           company_id: this.$auth.user.company.id,
           from: this.from_date,
           to: this.to_date,
+          guest_mode: this.guest_mode,
+          search: this.search,
         },
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.city_ledgers.data;
-        console.log(this.data);
         this.pagination.current = data.city_ledgers.current_page;
         this.pagination.total = data.city_ledgers.last_page;
         this.loading = false;
@@ -511,12 +503,10 @@ export default {
     },
 
     searchIt() {
-      let s = this.search.length;
-      let search = this.search;
-      if (s == 0) {
-        this.getDataFromApi(this.endpoint);
-      } else if (s > 2) {
-        this.getDataFromApi(`${this.endpoint}/search/${search}`);
+      if (this.search.length == 0) {
+        this.getDataFromApi();
+      } else if (this.search.length > 2) {
+        this.getDataFromApi();
       }
     },
   },
@@ -544,6 +534,7 @@ tr:nth-child(even) {
   border-radius: 2px !important;
   border: 1px solid #dbdddf !important;
 }
+
 input[type="text"]:focus.custom-text-box {
   border: 2px solid #5fafa3 !important;
 }

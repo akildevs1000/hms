@@ -27,78 +27,29 @@
         ></v-select>
       </v-col> -->
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-text-field
-          placeholder="Search..."
-          @input="searchIt"
-          v-model="search"
-          hide-details
-          label="Search..."
-          dense
-          outlined
-          flat
-          append-icon="mdi-magnify"
-        ></v-text-field>
+        <v-text-field placeholder="Search..." @input="searchIt" v-model="search" hide-details label="Search..." dense
+          outlined flat append-icon="mdi-magnify"></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
+              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col md="3">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
+            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
+              solo flat label="To" :hide-details="true"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
@@ -109,15 +60,8 @@
 
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              class="ma-0"
-              x-small
-              :ripple="false"
-              text
-              v-bind="attrs"
-              v-on="on"
-              @click="process('gst_invoice_report_print')"
-            >
+            <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+              @click="process('gst_invoice_report_print')">
               <v-icon class="">mdi-printer-outline</v-icon>
             </v-btn>
           </template>
@@ -126,14 +70,7 @@
 
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              x-small
-              :ripple="false"
-              text
-              v-bind="attrs"
-              v-on="on"
-              @click="process('gst_invoice_report_download')"
-            >
+            <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('gst_invoice_report_download')">
               <v-icon class="">mdi-download-outline</v-icon>
             </v-btn>
           </template>
@@ -142,27 +79,24 @@
       </v-toolbar>
       <table>
         <tr>
-          <th
-            style="font-size: 13px"
-            v-for="(item, index) in headers"
-            :key="index"
-          >
+          <th style="font-size: 13px" v-for="(item, index) in headers" :key="index">
             <span v-html="item.text"></span>
           </th>
         </tr>
-        <v-progress-linear
-          v-if="loading"
-          :active="loading"
-          :indeterminate="loading"
-          absolute
-          color="primary"
-        ></v-progress-linear>
+        <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+          color="primary"></v-progress-linear>
         <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
             <b>{{ item.show_taxable_invoice_number || "---" }}</b>
           </td>
           <td class="ps-3">
-            <b>{{ item.reservation_no || "---" }}</b>
+            <b>
+
+              <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer;">
+                {{ item.reservation_no || "---" }}
+              </span>
+
+            </b>
           </td>
           <td>
             {{
@@ -213,17 +147,12 @@
             {{ (item && item.booking && item.booking.booking_date) || "---" }}
           </td>
           <td>
-            <v-icon
-              @click="
-                redirect_to_invoice(
-                  item && item.booking && item.booking.id,
-                  item.show_taxable_invoice_number
-                )
-              "
-              x-small
-              color="primary"
-              class="mr-2"
-            >
+            <v-icon @click="
+              redirect_to_invoice(
+                item && item.booking && item.booking.id,
+                item.show_taxable_invoice_number
+              )
+            " x-small color="primary" class="mr-2">
               mdi-cash-multiple
             </v-icon>
           </td>
@@ -233,12 +162,8 @@
     <v-row>
       <v-col md="12" class="float-right">
         <div class="float-right">
-          <v-pagination
-            v-model="pagination.current"
-            :length="pagination.total"
-            @input="onPageChange"
-            :total-visible="12"
-          ></v-pagination>
+          <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+            :total-visible="12"></v-pagination>
         </div>
       </v-col>
     </v-row>
@@ -339,6 +264,10 @@ export default {
 
     commonMethod() {
       this.getDataFromApi();
+    },
+
+    goToRevView(item) {
+      this.$router.push(`/customer/details/${item.booking_id}`);
     },
 
     redirect_to_invoice(id, inv) {

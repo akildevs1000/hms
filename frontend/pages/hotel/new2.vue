@@ -39,11 +39,12 @@
                 <v-row>
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment" style="
-                                width: 150px;
-                                height: 150px;
-                                margin: 0 auto;
-                                border-radius: 50%;
-                              " :src="showImage"></v-img>
+                                                                                                            width: 150px;
+                                                                                                            height: 150px;
+                                                                                                            margin: 0 auto;
+                                                                                                            border-radius: 50%;
+                                                                                                          "
+                      :src="showImage"></v-img>
                     <input required type="file" @change="attachment" style="display: none" accept="image/*"
                       ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
@@ -422,9 +423,11 @@
                                               </tr>
                                             </thead>
                                             <tbody>
-                                              <tr v-for="(
-                                                          item, index
-                                                        ) in temp.priceList" :key="index">
+                                              <tr
+                                                v-for="(
+                                                                                                                                      item, index
+                                                                                                                                    ) in temp.priceList"
+                                                :key="index">
                                                 <td>
                                                   {{ item.date }}
                                                 </td>
@@ -494,6 +497,26 @@
                               :hide-details="true"></v-text-field>
                           </v-col>
                         </v-row>
+
+
+                        <v-row>
+                          <v-col md="2" sm="12" cols="12" dense>
+                            <label class="col-form-label"> Extra Amount </label>
+                            <v-checkbox value="1" v-model="isExtra" :hide-details="true" class="pt-0 py-1 chk-align">
+                            </v-checkbox>
+                          </v-col>
+                          <v-col md="4" sm="12" cols="12" dense v-if="isExtra">
+                            <label class="col-form-label"> Amount </label>
+                            <v-text-field dense outlined type="number" v-model="temp.room_extra_amount"
+                              :hide-details="true"></v-text-field>
+                          </v-col>
+                          <v-col md="4" sm="12" cols="12" dense v-if="isExtra">
+                            <label class="col-form-label"> Reason </label>
+                            <v-text-field dense outlined type="text" v-model="temp.extra_amount_reason"
+                              :hide-details="true"></v-text-field>
+                          </v-col>
+                        </v-row>
+
 
                         <v-row>
                           <v-col md="12">
@@ -845,6 +868,15 @@
 
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
+                    Extra Amount
+                  </span>
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
+                    {{ convert_decimal(item.room_extra_amount) }}
+                  </div>
+                </div>
+                <div class="input-group input-group-sm px-5">
+                  <span class="input-group-text" id="inputGroup-sizing-sm">
                     After Dis.
                   </span>
                   <div type="text" class="form-control" aria-label="Sizing example input"
@@ -923,6 +955,17 @@
                     {{ item.discount_reason || "---" }}
                   </div>
                 </div>
+
+                <div class="input-group input-group-sm px-5">
+                  <span class="input-group-text" id="inputGroup-sizing-sm">
+                    Amount Reason
+                  </span>
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
+                    {{ item.extra_amount_reason || "---" }}
+                  </div>
+                </div>
+
               </section>
             </v-card>
           </v-tab-item>
@@ -1061,6 +1104,7 @@ export default {
       isBed: false,
       subLoad: false,
       isDiscount: false,
+      isExtra: false,
       snackbar: false,
       checkLoader: false,
       response: "",
@@ -1087,7 +1131,7 @@ export default {
 
       agentList: [],
       CorporateList: [],
-
+      // room_extra_amount: 0,
       idCards: [],
       imgView: false,
       temp: {
@@ -1104,6 +1148,8 @@ export default {
         check_out: "",
         // meal: [],
         bed_amount: 0,
+        room_extra_amount: 0,
+        extra_amount_reason: "",
         room_discount: 0,
         after_discount: 0, //(price - room_discount)
         room_tax: 0,
@@ -1452,9 +1498,6 @@ export default {
         tot_ad: tax_tad + tad || 0,
       };
 
-      console.log(this.breakfast);
-      console.log(this.lunch);
-      console.log(this.dinner);
     },
 
     get_child_cal(e) {
@@ -1620,7 +1663,6 @@ export default {
       // online
       // corporate
 
-      console.log(item + type);
       switch (type) {
         case "agent":
           this.customer.gst_number = this.agentList.find(
@@ -1636,8 +1678,6 @@ export default {
           this.customer.gst_number = this.CorporateList.find(
             (e) => e.name == item
           ).gst;
-          console.log(this.customer.gst_number);
-          console.log(this.agentList.find((e) => e.name == item));
           break;
         default:
           break;
@@ -1807,40 +1847,17 @@ export default {
         return;
       }
 
-      // let payload = {
-      //   params: {
-      //     company_id: this.$auth.user.company.id,
-      //     roomType: this.temp.room_type,
-      //     room_no: this.temp.room_no,
-      //     checkin: this.reservation.check_in,
-      //     checkout: this.reservation.check_out,
-      //     discount: this.temp.room_discount,
-      //   },
-      // };
-      // console.log(payload);
-      // this.$axios.get(`get_data_by_select`, payload).then(({ data }) => {
-      //   this.selectRoomLoading = false;
-      //   this.RoomDrawer = false;
-      //   this.temp.company_id = this.$auth.user.company.id;
-      //   this.temp.room_no = data.room.room_no;
-      //   this.temp.room_id = data.room.id;
-      //   this.temp.room_type = data.room.room_type.name;
-      //   this.temp.price = data.total_price;
-      //   this.temp.priceList = data.data;
+      let roomDiscount = parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
+      let roomExtraAmount = parseFloat(this.temp.room_extra_amount == "" ? 0 : this.temp.room_extra_amount);
 
-      //   console.log(this.temp.priceList);
-      // });
+      this.temp.after_discount = (parseFloat(this.temp.price) - roomDiscount) + roomExtraAmount;
 
-      let priceList = this.temp.priceList;
+      console.log('roomDiscount' + roomDiscount);
+      console.log('roomExtraAmount' + roomExtraAmount);
+      console.log('after_discount' + this.temp.after_discount);
 
-      // return;
-
-      this.temp.after_discount =
-        parseFloat(this.temp.price) -
-        parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
 
       this.temp.days = this.getDays();
-      // this.get_room_tax(this.temp.after_discount);
 
       let adult_f_tot = Object.values(this.tempAdult).reduce(
         (a, b) => a + b,
@@ -1884,7 +1901,6 @@ export default {
       this.allFood.push({ breakfast: this.breakfast });
       this.allFood.push({ lunch: this.lunch });
       this.allFood.push({ dinner: this.dinner });
-      console.log(this.allFood);
 
       this.breakfast = {};
       this.lunch = {};
@@ -1926,7 +1942,6 @@ export default {
     clear_add_room() {
       let check_in_old = this.temp.check_in;
       let check_out_old = this.temp.check_out;
-
       this.temp = {
         check_in_menu: false,
         check_out_menu: false,
@@ -1942,6 +1957,7 @@ export default {
         meal: "room_only_price",
         bed_amount: 0,
         room_discount: 0,
+        room_extra_amount: 0,
         after_discount: 0, //(price - room_discount)
         room_tax: 0,
         total_with_tax: 0, //(after_discount * room_tax)
@@ -2054,7 +2070,6 @@ export default {
     },
 
     store() {
-      console.log(this.$auth.user);
 
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
