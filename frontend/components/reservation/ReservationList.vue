@@ -116,7 +116,7 @@ export default {
       { id: 3, name: "Departure For Today" },
     ],
     headers: [
-      { text: "&nbsp RESERVATION NUMBER" },
+      { text: "&nbsp Rev. No" },
       { text: "Customer" },
       { text: "Rooms" },
       { text: "Arrival  Date" },
