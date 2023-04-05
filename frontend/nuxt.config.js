@@ -7,31 +7,31 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: "",
-    title: "Admin Panel",
+    title: "EZHMS",
     meta: [
       {
-        charset: "utf-8"
+        charset: "utf-8",
       },
       {
         name: "viewport",
-        content: "width=device-width, initial-scale=1"
+        content: "width=device-width, initial-scale=1",
       },
       {
         hid: "description",
         name: "description",
-        content: ""
+        content: "",
       },
       {
         name: "format-detection",
-        content: "telephone=no"
-      }
+        content: "telephone=no",
+      },
     ],
 
     link: [
       {
         rel: "icon",
         type: "image/x-icon",
-        href: "/favicon.ico"
+        href: "/favicon.ico",
       },
 
       // {
@@ -44,14 +44,13 @@ export default {
       // },
       {
         rel: "stylesheet",
-        href:
-          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
-      }
+        href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
+      },
       // {
       //     rel: "stylesheet",
       //     href: "https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.4.95/css/materialdesignicons.min.css"
       // }
-    ]
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -60,16 +59,16 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     {
-      src: "~/plugins/axios.js"
+      src: "~/plugins/axios.js",
     },
     {
       src: "~/plugins/TiptapVuetify",
-      mode: "client"
+      mode: "client",
     },
     {
       src: "~/plugins/vue-apexchart.js",
-      ssr: false
-    }
+      ssr: false,
+    },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -79,7 +78,7 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     "@nuxtjs/vuetify",
-    "@nuxtjs/dotenv"
+    "@nuxtjs/dotenv",
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -89,13 +88,13 @@ export default {
     // https://go.nuxtjs.dev/pwa
     "@nuxtjs/pwa",
     "@nuxtjs/auth-next",
-    "nuxt-sweetalert2"
+    "nuxt-sweetalert2",
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // baseURL: "http://localhost:8001/api"
-    baseURL: process.env.BACKEND_URL
+    baseURL: process.env.BACKEND_URL,
   },
 
   auth: {
@@ -105,26 +104,26 @@ export default {
           login: {
             url: "login",
             method: "post",
-            propertyName: "token"
+            propertyName: "token",
           },
           logout: false,
           user: {
             url: "me",
             method: "get",
-            propertyName: "user"
-          }
+            propertyName: "user",
+          },
         },
-        maxAge: 86400 // 24 hours
-      }
+        maxAge: 86400, // 24 hours
+      },
     },
 
     redirect: {
-      logout: "/login"
-    }
+      logout: "/login",
+    },
   },
 
   router: {
-    middleware: ["auth"]
+    middleware: ["auth"],
   },
 
   // serverMiddleware: ['~middleware/verify.js'],
@@ -132,8 +131,11 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: "en"
-    }
+      lang: "en",
+    },
+    icon: {
+      fileName: "/favicon.ico",
+    },
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -152,8 +154,8 @@ export default {
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
           success: colors.green.accent3,
-          main_bg: "#ECF0F4"
-        }
+          main_bg: "#ECF0F4",
+        },
         // dark: {
         //     // primary: "#fffff",
         //     // accent: "#d8363a",
@@ -165,8 +167,8 @@ export default {
         //     // success: colors.green.accent3,
         //     // main_bg: "#ECF0F4"
         // }
-      }
-    }
+      },
+    },
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -175,12 +177,12 @@ export default {
       "vuetify/lib",
       "tiptap-vuetify",
       "vue-apexchart",
-      "@fullcalendar.*"
-    ]
+      "@fullcalendar.*",
+    ],
   },
 
   server: {
     host: process.env.LOCAL_IP,
-    port: process.env.LOCAL_PORT
-  }
+    port: process.env.LOCAL_PORT,
+  },
 };
