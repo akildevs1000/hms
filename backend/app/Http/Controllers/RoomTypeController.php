@@ -67,6 +67,7 @@ class RoomTypeController extends Controller
 
     public function getDataBySelectWithTax(Request $request)
     {
+        // return app()->isProduction();
         $company_id = $request->company_id;
         $discount   = $request->discount ?? 0;
         $room       = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();

@@ -503,26 +503,26 @@ export default {
           ],
         },
 
-        {
-          icon: "mdi mdi-account-tie",
-          title: `Management`,
-          open_menu: false,
-          menu: "customer_access",
-          hasChildren: [
-            {
-              icon: "mdi mdi-bank-transfer-out",
-              title: "Expense",
-              to: "/management/expense",
-              menu: "agent_access",
-            },
-            {
-              icon: "mdi mdi-text-account",
-              title: "Payment By User Report",
-              to: "/management/report/user",
-              menu: "city_ledger_access",
-            },
-          ],
-        },
+        // {
+        //   icon: "mdi mdi-account-tie",
+        //   title: `Management`,
+        //   open_menu: false,
+        //   menu: "customer_access",
+        //   hasChildren: [
+        //     {
+        //       icon: "mdi mdi-bank-transfer-out",
+        //       title: "Expense",
+        //       to: "/management/expense",
+        //       menu: "agent_access",
+        //     },
+        //     {
+        //       icon: "mdi mdi-text-account",
+        //       title: "Payment By User Report",
+        //       to: "/management/report/user",
+        //       menu: "city_ledger_access",
+        //     },
+        //   ],
+        // },
 
         {
           icon: "mdi-tools",
@@ -554,21 +554,38 @@ export default {
       to: "/",
       menu: "dashboard",
     };
+
+    let Management = {
+      icon: "mdi mdi-account-tie",
+      title: `Management`,
+      open_menu: false,
+      menu: "customer_access",
+      hasChildren: [
+        {
+          icon: "mdi mdi-bank-transfer-out",
+          title: "Expense",
+          to: "/management/expense",
+          menu: "agent_access",
+        },
+        {
+          icon: "mdi mdi-text-account",
+          title: "Payment By User Report",
+          to: "/management/report/user",
+          menu: "city_ledger_access",
+        },
+      ],
+    };
+
     let user = this.$auth.user;
-    let permissions = user.permissions;
 
-    if (user && user.is_master) {
-      this.items = this.menus;
-      this.items.unshift(das);
-      return;
-    }
-
+    this.items.push(das);
     this.menus.forEach((ele) => {
-      if (permissions.includes(ele.menu)) {
-        this.items.push(ele);
-      }
+      console.log(ele.title);
+      this.items.push(ele);
     });
-
+    if (this.$auth.user.user_type == "company") {
+      this.items.push(Management);
+    }
     this.getCompanyDetails();
   },
 
