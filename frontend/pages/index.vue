@@ -114,7 +114,7 @@
             <v-container>
               <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
               <BookedRoomsReport
-                :data="notAvailableRooms"
+                :data="reservedWithoutAdvance"
                 @close-dialog="closeDialogs"
               />
             </v-container>
@@ -533,7 +533,9 @@
                   >
                     <div class="d-flex justify-space-around py-0 my-0">
                       <h1 class="font-light text-white py-0 my-0">
-                        <i class="mdi mdi-human-male-female-child fx-1 food-icon-size"></i>
+                        <i
+                          class="mdi mdi-human-male-female-child fx-1 food-icon-size"
+                        ></i>
                         <h5>
                           {{ members.adult }} | {{ members.child }} |
                           {{ members.baby }}
@@ -623,7 +625,10 @@
                         class="big-screen laptop-font-grid ipad-font-qty-grid"
                       >
                         {{
-                          (notAvailableRooms && notAvailableRooms.length) || 0
+                          // (notAvailableRooms && notAvailableRooms.length) || 0
+                          (reservedWithoutAdvance &&
+                            reservedWithoutAdvance.length) ||
+                          0
                         }}
                       </h1>
                     </v-col>
@@ -1058,6 +1063,7 @@ export default {
       availableRooms: [],
       checkIn: [],
       checkOut: [],
+      reservedWithoutAdvance: [],
       confirmedBooking: "",
       waitingBooking: "",
       reason: "",
@@ -1359,6 +1365,7 @@ export default {
         this.checkOut = data.checkOut;
         this.confirmedBookingList = data.confirmedBookingList;
         this.dirtyRoomsList = data.dirtyRoomsList;
+        this.reservedWithoutAdvance = data.reservedWithoutAdvance;
 
         this.renderChartData();
         this.members = {

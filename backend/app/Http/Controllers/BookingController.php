@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Booking\BookingRequest;
-use App\Http\Requests\Booking\DocumentRequest;
-use App\Models\Agent;
-use App\Models\BookedRoom;
-use App\Models\Booking;
-use App\Models\CancelRoom;
-use App\Models\Customer;
 use App\Models\Food;
-use App\Models\IdCardType;
-use App\Models\OrderRoom;
-use App\Models\Payment;
 use App\Models\Room;
-use App\Models\RoomType;
-use App\Models\Transaction;
+use App\Models\Agent;
+use App\Models\Booking;
+use App\Models\Payment;
 use App\Models\Weekend;
+use App\Models\Customer;
+use App\Models\RoomType;
 use Carbon\CarbonPeriod;
+use App\Models\OrderRoom;
+use App\Models\BookedRoom;
+use App\Models\CancelRoom;
+use App\Models\IdCardType;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log as Logger;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Booking\BookingRequest;
+use Illuminate\Support\Facades\Log as Logger;
+use App\Http\Requests\Booking\DocumentRequest;
 
 class BookingController extends Controller
 {
@@ -48,12 +49,18 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         return DB::transaction(function () use ($request) {
-            $customer_id            = $this->customerStore($request->only(Customer::customerAttributes()));
-            $request['customer_id'] = $customer_id;
-            $booking                = $this->storeBooking($request);
-            if ($booking) {
-                $this->storeBookedRooms($request, $booking);
-                return response()->json(['data' => $booking->id, 'status' => true]);
+            try {
+                $customer_id            = $this->customerStore($request->only(Customer::customerAttributes()));
+                $request['customer_id'] = $customer_id;
+                $booking                = $this->storeBooking($request);
+                if ($booking) {
+                    $this->storeBookedRooms($request, $booking);
+                    return response()->json(['data' => $booking->id, 'status' => true]);
+                }
+            } catch (\Throwable $th) {
+                // return $th->getMessage();
+                Log::error($th->getMessage()); // log the error message
+                return response()->json(['error' => 'An error occurred. Please try again.']); // return a user-friendly error message
             }
         });
     }

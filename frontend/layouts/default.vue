@@ -573,6 +573,24 @@ export default {
           to: "/management/report/user",
           menu: "city_ledger_access",
         },
+        {
+          icon: "mdi mdi-text-account",
+          title: "Report",
+          to: "/management/report/report",
+          menu: "city_ledger_access",
+        },
+        {
+          icon: "mdi mdi-text-account",
+          title: "Monthly",
+          to: "/management/report/monthly",
+          menu: "city_ledger_access",
+        },
+        {
+          icon: "mdi mdi-text-account",
+          title: "day",
+          to: "/management/report/daily",
+          menu: "city_ledger_access",
+        },
       ],
     };
 
@@ -580,7 +598,6 @@ export default {
 
     this.items.push(das);
     this.menus.forEach((ele) => {
-      console.log(ele.title);
       this.items.push(ele);
     });
     if (this.$auth.user.user_type == "company") {

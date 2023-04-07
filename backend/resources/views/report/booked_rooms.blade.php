@@ -368,10 +368,10 @@
             <tr>
                 <td class="my-1 py-1">{{ $i++ }}</td>
                 <td class="my-1 py-1">{{ $item->room_no ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->room_type->name ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->bookedRoom->title ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->bookedRoom->check_in ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->bookedRoom->check_out ?? '---' }}</td>
+                <td class="my-1 py-1">{{ $item->room_type ?? '---' }}</td>
+                <td class="my-1 py-1">{{ $item->title ?? '---' }}</td>
+                <td class="my-1 py-1">{{ $item->check_in ?? '---' }}</td>
+                <td class="my-1 py-1">{{ $item->check_out ?? '---' }}</td>
             </tr>
         @endforeach
     </table>
