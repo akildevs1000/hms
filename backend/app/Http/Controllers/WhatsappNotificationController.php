@@ -48,6 +48,7 @@ class WhatsappNotificationController extends Controller
             'company'      => $company ?? false,
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
+            'type' => 'posting',
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -101,6 +102,7 @@ class WhatsappNotificationController extends Controller
             'company'      => $company ?? false,
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
+            'type' => 'checkin',
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -154,6 +156,7 @@ class WhatsappNotificationController extends Controller
             'company'      => $company ?? false,
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
+            'type' => 'checkout',
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -209,6 +212,7 @@ class WhatsappNotificationController extends Controller
             'company'      => $company ?? false,
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
+            'type' => 'booking',
         ];
         (new WhatsappController)->sentNotification($data);
     }

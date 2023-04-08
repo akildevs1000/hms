@@ -3,24 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WhatsappController extends Controller
 {
 
     public function sentNotification($data)
     {
-        if ($data['instance_id']) {
-            $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
-                'number' => $data['to'],
-                'type' => 'text',
-                'message' => $data['message'],
-                'instance_id' => $data['instance_id'],
-                'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
-            ]);
-
-            return $response->status();
+        try {
+            if ($data['instance_id']) {
+                $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
+                    'number' => $data['to'],
+                    'type' => 'text',
+                    'message' => $data['message'],
+                    'instance_id' => $data['instance_id'],
+                    'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+                ]);
+                Log::channel('whatsapp_logs')->info($data['type'] . ' from: ' . $data['to']);
+                return $response->status();
+            }
+        } catch (\Throwable $th) {
+            Log::channel("custom")->error("BookingController: " . $th);
         }
     }
 
