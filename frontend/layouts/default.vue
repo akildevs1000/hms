@@ -92,6 +92,10 @@
       </v-btn>
       {{ title }}
       <v-spacer></v-spacer>
+      <strong style="font-size: 18px">
+        {{ currentTime }} / {{ currentDate }}</strong
+      >
+      <v-spacer></v-spacer>
 
       <v-menu
         nudge-bottom="50"
@@ -326,7 +330,6 @@
 
 <script>
 export default {
-  mounted() {},
   data() {
     return {
       menuName: "",
@@ -537,7 +540,7 @@ export default {
         module_names: [],
       },
       clipped: true,
-
+      currentTime: "",
       miniVariant: false,
       title: this.$auth.user.company.company_code,
       logout_btn: {
@@ -614,11 +617,39 @@ export default {
 
   mounted() {
     document.addEventListener("mousemove", this.updateMouseLocation);
+    setInterval(() => {
+      const now = new Date();
+      this.currentTime = now.toLocaleTimeString();
+    }, 1000);
   },
 
   computed: {
     changeColor() {
       return this.$store.state.color;
+    },
+
+    currentDate() {
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      const now = new Date();
+      const day = now.getDate();
+      const monthIndex = now.getMonth();
+      const year = now.getFullYear();
+      const formattedDate = `${day} ${months[monthIndex]} ${year}`;
+      return formattedDate;
     },
 
     getUser() {
