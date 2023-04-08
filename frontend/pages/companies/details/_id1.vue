@@ -13,7 +13,9 @@
           <v-col cols="6" style="border-right: 1px dashed #808080">
             <v-list-item>
               <v-list-item-avatar tile size="120">
-                <v-img :src="company_payload.logo || '/no-image.PNG'"></v-img>
+                <v-img
+                  :src="company_payload.logo || '/no-profile-image.jpg'"
+                ></v-img>
               </v-list-item-avatar>
               <v-list-item-content>
                 <div class="text-overline mb-1">
@@ -202,7 +204,7 @@
                   <div>
                     <v-img
                       style="height: 125px; width: 50%; margin: 0 auto"
-                      :src="item.logo ? item.logo : '/no-image.PNG'"
+                      :src="item.logo ? item.logo : '/no-profile-image.jpg'"
                     >
                     </v-img>
                   </div>

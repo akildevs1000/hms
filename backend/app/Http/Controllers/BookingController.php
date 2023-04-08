@@ -791,6 +791,11 @@ class BookingController extends Controller
             $payment = new PaymentController();
             $payment->store($paymentsData);
 
+            if (app()->isProduction()) {
+                $customer = Customer::find($booking->customer_id);
+                (new WhatsappNotificationController)->advancePayingNotification($booking, $customer, $request->new_advance);
+            }
+
             return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
         } catch (\Throwable $th) {
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);

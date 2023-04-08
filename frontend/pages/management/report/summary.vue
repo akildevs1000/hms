@@ -1,15 +1,5 @@
 <template>
   <div>
-    <client-only>
-      <ApexCharts
-        :options="chartOptions"
-        :series="series"
-        :width="400"
-        :height="400"
-        chart-id="pieChart"
-      />
-    </client-only>
-
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -91,6 +81,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List</span>
         </v-toolbar>
+
         <table>
           <tr style="font-size: 12px">
             <th v-for="(item, index) in headers" :key="index">
@@ -114,25 +105,45 @@
               <b>{{ ++index }}</b>
             </td>
             <td style="width: 20%">{{ item.date || "---" }}</td>
-            <td style="width: 20%">
+            <td>
               <v-progress-linear
                 :value="item.sold"
                 color="teal"
-                height="10"
+                height="20"
                 width="20"
+                rounded
               >
+                <template v-slot:default="{ value }" style="position: relative">
+                  <strong
+                    :style="{
+                      left: value + 1 + '%',
+                      // left: (value * 100) / 100 + '%',
+                      transform: 'translateX(-50%)',
+                      position: 'absolute',
+                      top: '0',
+                    }"
+                    >{{ Math.ceil(value) }}%</strong
+                  >
+                  <strong
+                    :style="{
+                      // left: ((98 - value) * 100) / 100 + '%',
+                      right: 0 + '%',
+                      transform: 'translateX(-50%)',
+                      position: 'absolute',
+                      top: '0',
+                    }"
+                    >{{ Math.ceil(100 - value) }}%</strong
+                  >
+                </template>
+              </v-progress-linear>
+            </td>
+            <!-- <td style="width: 20%">
+              <v-progress-linear :value="item.unsold" color="red" height="20">
                 <template v-slot:default="{ value }">
                   <strong>{{ Math.ceil(value) }}%</strong>
                 </template>
               </v-progress-linear>
-            </td>
-            <td style="width: 20%">
-              <v-progress-linear :value="item.unsold" color="red" height="10">
-                <template v-slot:default="{ value }">
-                  <strong>{{ Math.ceil(value) }}%</strong>
-                </template>
-              </v-progress-linear>
-            </td>
+            </td> -->
           </tr>
         </table>
       </v-card>
@@ -208,9 +219,9 @@ export default {
         {
           text: "Sold (%)",
         },
-        {
-          text: "Unsold (%)",
-        },
+        // {
+        //   text: "Unsold (%)",
+        // },
       ],
     };
   },

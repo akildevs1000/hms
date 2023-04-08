@@ -25,19 +25,19 @@ class WhatsappNotificationController extends Controller
 
         $instance_id  = $company->whatsapp_instance_id;
 
-        $msg .= "*Room No:-*  $room_no, \n";
-        $msg .= "*Date:-*  $date, \n";
-        $msg .= "*Time:-*  $time, \n";
+        $msg .= "*Room No:-*  $room_no \n";
+        $msg .= "*Date:-*  $date \n";
+        $msg .= "*Time:-*  $time \n";
         $msg .= "\n";
         $msg .= "------------ \n";
         $msg .= "Your orders \n";
         $msg .= "------------ \n";
-        $msg .= "*Item  :*  $item, \n";
-        $msg .= "*Amount:*  $single_amt, \n";
-        $msg .= "*QTY   :*  $qty, \n";
-        $msg .= "*Total :*  $amount, \n";
-        $msg .= "*Tax   :*  $tax, \n";
-        $msg .= "*Total with Amount:-*  $amount_with_tax, \n";
+        $msg .= "*Item  :*  $item \n";
+        $msg .= "*Amount:*  $single_amt \n";
+        $msg .= "*QTY   :*  $qty \n";
+        $msg .= "*Total :*  $amount \n";
+        $msg .= "*Tax   :*  $tax \n";
+        $msg .= "*Total with Amount:*  $amount_with_tax \n";
         $msg .= "------------ \n";
         $msg .= "\n";
         $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
@@ -53,6 +53,55 @@ class WhatsappNotificationController extends Controller
         (new WhatsappController)->sentNotification($data);
     }
 
+    public function advancePayingNotification($booking, $customer, $amt)
+    {
+        $instance_id  = "";
+        $access_token = "";
+        $comName      = "";
+        $location     = "";
+        $video        = "";
+        $msg          = "";
+        $customerName = ucfirst($customer['first_name']) ?? 'Guest';
+        $checkIn     = date('d-M-y H:i', strtotime($booking->check_in));
+        $checkOut     = date('d-M-y H:i', strtotime($booking->check_out));
+        $company   = $booking->company;
+
+        $location  = $company->map;
+        $instance_id  = $company->whatsapp_instance_id;
+        $comName  = $company->company_code;
+        $video  = $company->video;
+
+
+        $msg .= "Dear $customerName, \n";
+
+
+
+
+        // "Congratulations! Your payment for your upcoming stay at [insert hotel name] has been received and your reservation for [insert reservation dates] is now confirmed. We're thrilled that you've chosen to stay with us, and we promise to make your stay a memorable one!
+
+
+        $msg .= "Welcome to  $comName, We are pleased to have you as our guest. Enjoy your stay \n";
+        $msg .= "\n";
+        $msg .= "Thank you for your payment of Rs. $amt.00\n";
+        $msg .= "Your payment for your upcoming stay at $comName, has been received and your reservation for $checkIn - $checkOut is now confirmed.\n";
+        $msg .= "If you have any questions or concerns, please don't hesitate to reach out to our staff, \n";
+        $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
+        $msg .= "\n";
+
+        $msg .=  is_null($location) ? '' :  "Google Map  $location\n";
+        $msg .= "\n";
+        $msg .=  is_null($video) ? '' :  "More  $video\n";
+
+        $data = [
+            'to'           => env('COUNTRY_CODE') . $customer['whatsapp'],
+            'message'      => $msg,
+            'company'      => $company ?? false,
+            'instance_id'  => $instance_id,
+            'access_token' => $access_token,
+            'type' => 'checkin',
+        ];
+        (new WhatsappController)->sentNotification($data);
+    }
     public function checkInNotification($booking, $customer)
     {
         $instance_id  = "";

@@ -85,27 +85,52 @@
 
     <div v-if="can(`agents_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span> {{ Model }} List</span>
-        </v-toolbar>
-        <client-only>
-          <!-- <ApexCharts
-            :options="chartOptions"
-            :series="series"
-            :width="400"
-            :height="400"
-            chart-id="pieChart"
-          /> -->
-          <!-- <pre>{{ barChartOptions.xaxis.categories }}</pre> -->
-          <!-- {{ barSeries }} -->
-          <ApexCharts
-            :options="barChartOptions"
-            :series="barSeries"
-            chart-id="bar"
-            :height="400"
-            :key="chartKey"
-          />
-        </client-only>
+        <v-tabs
+          v-model="activeTab"
+          :vertical="vertical"
+          background-color="primary"
+          dark
+          show-arrows
+        >
+          <v-tab active-class="active-link">
+            <v-icon> mdi mdi-chart-bar </v-icon>
+          </v-tab>
+          <v-tab active-class="active-link">
+            <v-icon> mdi mdi-chart-pie </v-icon>
+          </v-tab>
+          <v-tabs-slider color="#1259a7"></v-tabs-slider>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <client-only>
+                  <ApexCharts
+                    :options="barChartOptions"
+                    :series="barSeries"
+                    chart-id="bar"
+                    :height="400"
+                    :key="chartKey"
+                  />
+                </client-only>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <client-only>
+                  <ApexCharts
+                    :options="chartOptions"
+                    :series="series"
+                    :height="400"
+                    chart-id="pieChart"
+                    :key="chartKey"
+                  />
+                </client-only>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
       </v-card>
     </div>
   </div>
@@ -115,7 +140,7 @@
 export default {
   data() {
     return {
-      series: [44, 55],
+      series: [],
       chartOptions: {
         chart: {
           width: 380,
@@ -202,6 +227,9 @@ export default {
       loading: false,
       to_date: "",
       to_menu: false,
+
+      vertical: false,
+      activeTab: 0,
 
       chartKey: 0,
       month: 1,
@@ -290,6 +318,7 @@ export default {
 
     getDataFromApi(url = this.endpoint) {
       this.barSeries[0]["data"].splice(0, this.barSeries[0]["data"].length);
+      this.series.splice(0, this.series.length);
 
       this.loading = true;
       let options = {
@@ -300,9 +329,13 @@ export default {
       };
       this.$axios.get(`${url}`, options).then(({ data }) => {
         data.sold.forEach((item) => this.barSeries[0]["data"].push(item));
-        console.log(this.barSeries[0]["data"]);
-        this.forceChartRerender();
 
+        let totSold = eval(data.sold.join("+"));
+        let totUnsold = eval(data.unsold.join("+"));
+        console.log(totSold);
+        console.log(totUnsold);
+        this.series.push(...[totSold, totUnsold]);
+        this.forceChartRerender();
         this.loading = false;
       });
     },

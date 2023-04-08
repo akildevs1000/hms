@@ -139,9 +139,7 @@
             </v-row>
             <v-row class="px-10">
               <v-col md="3" dense>
-                <label class="col-form-label">
-                  Type
-                </label>
+                <label class="col-form-label"> Type </label>
                 <v-select
                   v-model="customer.customer_type"
                   :items="['Company', 'Regular', 'Corporate']"
@@ -296,7 +294,7 @@
                     prepend-icon="mdi-paperclip"
                     outlined
                     :show-size="1000"
-                    style="margin-top:150px"
+                    style="margin-top: 150px"
                   >
                     <template v-slot:selection="{ index, text }">
                       <v-chip v-if="index < 2" color="primary" dark label small>
@@ -351,10 +349,15 @@
 
               <v-col cols="6">
                 <label class="col-form-label">Photo</label>
-                <div class="pa-5" style="background-color:#E5E5E5">
+                <div class="pa-5" style="background-color: #e5e5e5">
                   <v-img
                     @click="onpick_attachment"
-                    style="width: 150px;height: 150px;margin: 0 auto;border-radius: 50%;"
+                    style="
+                      width: 150px;
+                      height: 150px;
+                      margin: 0 auto;
+                      border-radius: 50%;
+                    "
                     :src="showImage"
                   ></v-img>
                 </div>
@@ -1232,7 +1235,7 @@
                     { id: 3, name: 'Online' },
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' }
+                    { id: 6, name: 'Cheque' },
                   ]"
                   item-text="name"
                   item-value="id"
@@ -1369,7 +1372,7 @@ export default {
       RoomDrawer: null,
       items: [
         { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" }
+        { title: "About", icon: "mdi-forum" },
       ],
       val: 1,
       Model: "Reservation",
@@ -1388,7 +1391,7 @@ export default {
       types: ["Online", "Walking", "Travel Agency", "Complimentary"],
 
       search: {
-        mobile: ""
+        mobile: "",
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1428,13 +1431,13 @@ export default {
         lunch: "",
         dinner: "",
         tot_adult_food: 0,
-        tot_child_food: 0
+        tot_child_food: 0,
       },
 
       check_in_menu: false,
       check_out_menu: false,
       upload: {
-        name: ""
+        name: "",
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
@@ -1465,7 +1468,7 @@ export default {
         remark: "",
         rooms: "",
         reference_no: "",
-        paid_by: ""
+        paid_by: "",
       },
       reservation: {},
       countryList: [],
@@ -1477,7 +1480,7 @@ export default {
         { id: 2, name: "Mrs" },
         { id: 3, name: "Miss" },
         { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" }
+        { id: 5, name: "Dr" },
       ],
 
       meals: [
@@ -1485,7 +1488,7 @@ export default {
         { name: "Breakfast", slug: "Break_fast_price" },
         { name: "Breakfast and Dinner", slug: "Break_fast_with_dinner_price" },
         { name: "Breakfast and Lunch", slug: "Break_fast_with_lunch_price" },
-        { name: "Full Board", slug: "full_board_price" }
+        { name: "Full Board", slug: "full_board_price" },
         // { name: 5, slug: "lunch_with_dinner_price" },
       ],
 
@@ -1509,26 +1512,26 @@ export default {
         dob_menu: false,
         dob: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
           .toISOString()
-          .substr(0, 10)
+          .substr(0, 10),
       },
       id_card_type_id: 0,
       errors: [],
       tempAdult: {
         tot_ab: 0,
         tot_al: 0,
-        tot_ad: 0
+        tot_ad: 0,
       },
       tempChild: {
         tot_cb: 0,
         tot_cl: 0,
-        tot_cd: 0
+        tot_cd: 0,
       },
 
       imgPath: "",
       image: "",
 
       upload: {
-        name: ""
+        name: "",
       },
 
       previewImage: null,
@@ -1536,20 +1539,20 @@ export default {
       breakfast: {
         adult: 0,
         child: 0,
-        baby: 0
+        baby: 0,
       },
 
       lunch: {
         adult: 0,
         child: 0,
-        baby: 0
+        baby: 0,
       },
 
       dinner: {
         adult: 0,
         child: 0,
-        baby: 0
-      }
+        baby: 0,
+      },
     };
   },
   created() {
@@ -1567,13 +1570,13 @@ export default {
   computed: {
     showImage() {
       if (!this.customer.image && !this.previewImage) {
-        return "/no-image.PNG";
+        return "/no-profile-image.jpg";
       } else if (this.previewImage) {
         return this.previewImage;
       }
 
       return this.customer.image;
-    }
+    },
   },
   methods: {
     onpick_attachment() {
@@ -1587,7 +1590,7 @@ export default {
       let file = input.files;
       if (file && file[0]) {
         let reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
           this.previewImage = e.target.result;
         };
         reader.readAsDataURL(file[0]);
@@ -1632,8 +1635,8 @@ export default {
     get_food_price() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_food_prices`, payload).then(({ data }) => {
         this.foodPriceList = data;
@@ -1655,11 +1658,11 @@ export default {
       if (this.foodPriceList.length == 0) {
         return;
       }
-      let person = this.foodPriceList.find(e => e.type == person_type);
+      let person = this.foodPriceList.find((e) => e.type == person_type);
 
       person.qty = person_qty;
 
-      let index = this.person_type_arr.findIndex(e => e.type == person_type);
+      let index = this.person_type_arr.findIndex((e) => e.type == person_type);
 
       if (index == -1) {
         this.person_type_arr.push(person);
@@ -1672,7 +1675,7 @@ export default {
     meal_cal(meal_type) {
       // console.log(this.person_type_arr);
 
-      this.person_type_arr.find(e => {
+      this.person_type_arr.find((e) => {
         if (e.type == "adult") {
           this.get_adult_cal(e);
         }
@@ -1712,7 +1715,7 @@ export default {
       this.tempAdult = {
         tot_ab: tax_tab + tab || 0,
         tot_al: tax_tal + tal || 0,
-        tot_ad: tax_tad + tad || 0
+        tot_ad: tax_tad + tad || 0,
       };
       // console.log(this.tempAdult);
     },
@@ -1746,7 +1749,7 @@ export default {
       this.tempChild = {
         tot_cb: tax_tcb + tcb || 0,
         tot_cl: tax_tcl + tcl || 0,
-        tot_cd: tax_tcd + tcd || 0
+        tot_cd: tax_tcd + tcd || 0,
       };
     },
 
@@ -1858,8 +1861,8 @@ export default {
     get_room_types() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`room_type`, payload).then(({ data }) => {
         this.roomTypes = data;
@@ -1869,8 +1872,8 @@ export default {
     get_agents() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_agent`, payload).then(({ data }) => {
         this.agentList = data;
@@ -1880,8 +1883,8 @@ export default {
     get_online() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_online`, payload).then(({ data }) => {
         this.sources = data;
@@ -1891,8 +1894,8 @@ export default {
     get_id_cards() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
@@ -1911,7 +1914,7 @@ export default {
 
     searchAvailableRoom(val) {
       let arr = this.availableRooms;
-      let res = arr.filter(e => e.room_no == val);
+      let res = arr.filter((e) => e.room_no == val);
       if (val.length == 0) {
         this.get_available_rooms();
         return;
@@ -1924,7 +1927,7 @@ export default {
     get_all_room_Total_amount() {
       let sum = 0;
       let res = 0;
-      this.selectedRooms.map(e => (sum += parseFloat(e.total_with_tax)));
+      this.selectedRooms.map((e) => (sum += parseFloat(e.total_with_tax)));
       res = parseFloat(sum) + parseFloat(this.room.total_extra);
       this.room.all_room_Total_amount = res;
     },
@@ -1968,8 +1971,8 @@ export default {
         params: {
           room_type: this.temp.room_type,
           slug: mealType,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios
         .get(`get_room_price_by_meal_plan`, payload)
@@ -2016,8 +2019,9 @@ export default {
       this.temp.room_discount =
         this.temp.room_discount == "" ? 0 : this.temp.room_discount;
 
-      this.temp.meal = `${this.temp.breakfast || "---"} | ${this.temp.lunch ||
-        "---"} | ${this.temp.dinner || "---"}`;
+      this.temp.meal = `${this.temp.breakfast || "---"} | ${
+        this.temp.lunch || "---"
+      } | ${this.temp.dinner || "---"}`;
 
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
@@ -2046,14 +2050,14 @@ export default {
 
       let tot_total = 0;
       this.selectedRooms.map(
-        e =>
+        (e) =>
           (tot_bed_amount += e.bed_amount == "" ? 0 : parseFloat(e.bed_amount))
       );
 
       this.room.total_extra = tot_bed_amount;
 
       this.selectedRooms.map(
-        e => (tot_total += e.total == "" ? 0 : parseFloat(e.total))
+        (e) => (tot_total += e.total == "" ? 0 : parseFloat(e.total))
       );
       this.room.all_room_Total_amount = tot_total;
     },
@@ -2090,18 +2094,18 @@ export default {
 
         no_of_adult: 1,
         no_of_child: 0,
-        no_of_baby: 0
+        no_of_baby: 0,
       };
 
       this.tempAdult = {
         tot_ab: 0,
         tot_al: 0,
-        tot_ad: 0
+        tot_ad: 0,
       };
       this.tempChild = {
         tot_cb: 0,
         tot_cl: 0,
-        tot_cd: 0
+        tot_cd: 0,
       };
 
       return;
@@ -2132,8 +2136,8 @@ export default {
         params: {
           check_in: this.temp.check_in,
           check_out: this.temp.check_out,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.RoomDrawer = true;
       this.$axios
@@ -2155,8 +2159,8 @@ export default {
       }
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
 
       this.$axios
@@ -2173,7 +2177,7 @@ export default {
 
           this.customer = {
             ...data.data,
-            customer_id: data.data.id
+            customer_id: data.data.id,
           };
           // this.getImage();
           console.log(data.data);
@@ -2188,7 +2192,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e.name == per || per == "/")) ||
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
     },
@@ -2205,11 +2209,11 @@ export default {
         return;
       }
 
-      let rooms = this.selectedRooms.map(e => e.room_no);
+      let rooms = this.selectedRooms.map((e) => e.room_no);
       this.room.rooms = rooms.toString();
       let payload = {
         ...this.room,
-        ...this.customer
+        ...this.customer,
       };
 
       this.$axios
@@ -2229,13 +2233,13 @@ export default {
             this.store_customer();
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_customer() {
       let payload = {
         ...this.customer,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       this.$axios
         .post("/customer", payload)
@@ -2254,7 +2258,7 @@ export default {
             this.store_booking(data.record);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_booking(id) {
@@ -2264,7 +2268,7 @@ export default {
         customer_type: this.customer.customer_type,
         qty_breakfast: this.breakfast,
         qty_lunch: this.lunch,
-        qty_dinner: this.dinner
+        qty_dinner: this.dinner,
       };
       console.log(payload);
       // this.subLoad = false;
@@ -2281,7 +2285,7 @@ export default {
             this.store_document(data.record.id);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_document(id) {
@@ -2300,17 +2304,17 @@ export default {
             this.subLoad = false;
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     store_booked_rooms(id, customer_id) {
-      this.selectedRooms.forEach(key => {
+      this.selectedRooms.forEach((key) => {
         key.booking_id = id;
         key.customer_id = customer_id;
       });
 
       let payload = {
-        ...this.selectedRooms
+        ...this.selectedRooms,
       };
       this.$axios
         .post("/store_booked_rooms", payload)
@@ -2331,13 +2335,13 @@ export default {
             this.$router.push(`/`);
           }
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     },
 
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

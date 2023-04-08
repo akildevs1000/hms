@@ -48,9 +48,9 @@
         <ApexCharts
           :options="chartOptions"
           :series="series"
-          :width="400"
           :height="400"
           chart-id="pieChart"
+          :key="chartKey"
         />
       </client-only>
     </v-card>
@@ -144,6 +144,7 @@ export default {
 
       Model: "Report",
       endpoint: "get_single_day_occupancy_rate",
+      chartKey: 0,
 
       from_date: new Date().toJSON().slice(0, 10),
       from_menu: false,
@@ -215,9 +216,13 @@ export default {
         }
         const { sold, unsold } = data.record;
         this.series.push(...[sold, unsold]);
-        console.log(this.series);
+        this.forceChartRerender();
         this.loading = false;
       });
+    },
+
+    forceChartRerender() {
+      this.chartKey += 1;
     },
 
     searchIt() {

@@ -1,12 +1,23 @@
 <template>
   <div>
     <table>
-      <v-progress-linear v-if="false" :active="loading" :indeterminate="loading" absolute
-        color="primary"></v-progress-linear>
+      <v-progress-linear
+        v-if="false"
+        :active="loading"
+        :indeterminate="loading"
+        absolute
+        color="primary"
+      ></v-progress-linear>
       <tr>
         <th>Bill No</th>
         <td style="width: 300px">
-          <v-text-field dense outlined type="number" v-model="posting.bill_no" :hide-details="true"></v-text-field>
+          <v-text-field
+            dense
+            outlined
+            type="number"
+            v-model="posting.bill_no"
+            :hide-details="true"
+          ></v-text-field>
         </td>
       </tr>
       <tr>
@@ -33,7 +44,13 @@
           <span class="text-danger">*</span>
         </th>
         <td>
-          <v-text-field dense outlined type="text" v-model="posting.item" :hide-details="true"></v-text-field>
+          <v-text-field
+            dense
+            outlined
+            type="text"
+            v-model="posting.item"
+            :hide-details="true"
+          ></v-text-field>
         </td>
       </tr>
       <tr style="background-color: white">
@@ -42,7 +59,13 @@
           <span class="text-danger">*</span>
         </th>
         <td>
-          <v-text-field dense outlined type="number" v-model="posting.qty" :hide-details="true"></v-text-field>
+          <v-text-field
+            dense
+            outlined
+            type="number"
+            v-model="posting.qty"
+            :hide-details="true"
+          ></v-text-field>
         </td>
       </tr>
       <tr style="background-color: white">
@@ -51,15 +74,28 @@
           <span class="text-danger">*</span>
         </th>
         <td>
-          <v-text-field dense outlined type="number" v-model="posting.single_amt"
-            @keyup="get_multiple_amount(posting.single_amt)" :hide-details="true"></v-text-field>
+          <v-text-field
+            dense
+            outlined
+            type="number"
+            v-model="posting.single_amt"
+            @keyup="get_multiple_amount(posting.single_amt)"
+            :hide-details="true"
+          ></v-text-field>
         </td>
       </tr>
       <tr style="background-color: white">
         <th>Total Amount</th>
         <td>
-          <v-text-field dense outlined type="number" readonly v-model="posting.amount" :hide-details="true"
-            @keyup="get_amount_with_tax(posting.tax_type)"></v-text-field>
+          <v-text-field
+            dense
+            outlined
+            type="number"
+            readonly
+            v-model="posting.amount"
+            :hide-details="true"
+            @keyup="get_amount_with_tax(posting.tax_type)"
+          ></v-text-field>
         </td>
       </tr>
       <tr style="background-color: white">
@@ -68,14 +104,23 @@
           <span class="text-danger">*</span>
         </th>
         <td>
-          <v-select v-model="posting.tax_type" :items="[
-            { id: -1, name: 'select..' },
-            { name: 'Food' },
-            { name: 'Misc' },
-            { name: 'ExtraBed' },
-            { name: 'Others' },
-          ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"
-            @change="get_amount_with_tax(posting.tax_type)"></v-select>
+          <v-select
+            v-model="posting.tax_type"
+            :items="[
+              { id: -1, name: 'select..' },
+              { name: 'Food' },
+              { name: 'Misc' },
+              { name: 'ExtraBed' },
+              { name: 'Others' },
+            ]"
+            item-text="name"
+            item-value="id"
+            dense
+            outlined
+            :hide-details="true"
+            :height="1"
+            @change="get_amount_with_tax(posting.tax_type)"
+          ></v-select>
         </td>
       </tr>
       <tr style="background-color: white">
@@ -90,7 +135,9 @@
       <tr></tr>
     </table>
 
-    <v-btn class="primary mt-3" :loading="loading" small @click="store_posting">Post</v-btn>
+    <v-btn class="primary mt-3" :loading="loading" small @click="store_posting"
+      >Post</v-btn
+    >
   </div>
 </template>
 <script>
@@ -123,7 +170,7 @@ export default {
     this.preloader = false;
   },
 
-  mounted() { },
+  mounted() {},
 
   computed: {},
   methods: {
@@ -171,6 +218,7 @@ export default {
         booking_id: this.BookingData.id,
         room_id: this.BookingData.room_id,
         room: this.BookingData.room_no,
+        user_id: this.$auth.user.id,
         tax_type: per,
       };
       this.$axios

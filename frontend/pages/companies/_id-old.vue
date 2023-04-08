@@ -2,7 +2,12 @@
   <div v-if="can(`company_edit_access`)">
     <div v-if="company_payload && company_payload.id">
       <div class="text-center ma-2">
-        <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
+        <v-snackbar
+          v-model="snackbar"
+          top="top"
+          color="secondary"
+          elevation="24"
+        >
           {{ response }}
         </v-snackbar>
       </div>
@@ -13,8 +18,12 @@
         </v-col>
         <v-col cols="2">
           <div class="display-1 pa-2 text-right">
-            <v-btn v-if="can(`company_edit_access`)" small class="primary"
-              :to="`/companies/details/${$route.params.id}`">
+            <v-btn
+              v-if="can(`company_edit_access`)"
+              small
+              class="primary"
+              :to="`/companies/details/${$route.params.id}`"
+            >
               <v-icon small>mdi-arrow-left</v-icon>&nbsp;Back
             </v-btn>
           </div>
@@ -37,16 +46,22 @@
               <v-tab-item>
                 <v-card flat>
                   <v-card-text>
-
-
-
                     <div class="row">
                       <div class="col-sm-6">
                         <div class="form-group">
                           <label class="col-form-label">Company Name </label>
                           <span class="text-danger">*</span>
-                          <input readonly v-model="company_payload.name" class="form-control" type="" />
-                          <span v-if="errors && errors.name" class="text-danger mt-2">{{ errors.name[0] }}</span>
+                          <input
+                            readonly
+                            v-model="company_payload.name"
+                            class="form-control"
+                            type=""
+                          />
+                          <span
+                            v-if="errors && errors.name"
+                            class="text-danger mt-2"
+                            >{{ errors.name[0] }}</span
+                          >
                         </div>
                       </div>
 
@@ -72,10 +87,18 @@
                         <div class="form-group">
                           <label class="col-form-label">Member From </label>
                           <span class="text-danger">*</span>
-                          <input readonly v-model="company_payload.member_from" class="form-control" type="date" />
+                          <input
+                            readonly
+                            v-model="company_payload.member_from"
+                            class="form-control"
+                            type="date"
+                          />
 
-                          <span v-if="errors && errors.member_from" class="text-danger mt-2">{{ errors.member_from[0]
-                          }}</span>
+                          <span
+                            v-if="errors && errors.member_from"
+                            class="text-danger mt-2"
+                            >{{ errors.member_from[0] }}</span
+                          >
                         </div>
                       </div>
 
@@ -83,27 +106,56 @@
                         <div class="form-group">
                           <label class="col-form-label">Expiry Date </label>
                           <span class="text-danger">*</span>
-                          <input readonly v-model="company_payload.expiry" type="date" class="form-control" />
-                          <span v-if="errors && errors.expiry" class="text-danger mt-2">{{ errors.expiry[0] }}</span>
+                          <input
+                            readonly
+                            v-model="company_payload.expiry"
+                            type="date"
+                            class="form-control"
+                          />
+                          <span
+                            v-if="errors && errors.expiry"
+                            class="text-danger mt-2"
+                            >{{ errors.expiry[0] }}</span
+                          >
                         </div>
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Max customers
-                            <span class="text-danger">*</span></label>
-                          <input readonly v-model="company_payload.max_employee" type="number" class="form-control" />
-                          <span v-if="errors && errors.max_employee" class="text-danger mt-2">{{ errors.max_employee[0]
-                          }}</span>
+                          <label class="col-form-label"
+                            >Max customers
+                            <span class="text-danger">*</span></label
+                          >
+                          <input
+                            readonly
+                            v-model="company_payload.max_employee"
+                            type="number"
+                            class="form-control"
+                          />
+                          <span
+                            v-if="errors && errors.max_employee"
+                            class="text-danger mt-2"
+                            >{{ errors.max_employee[0] }}</span
+                          >
                         </div>
                       </div>
 
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Max Devices
-                            <span class="text-danger">*</span></label>
-                          <input readonly v-model="company_payload.max_devices" type="number" class="form-control" />
-                          <span v-if="errors && errors.max_devices" class="text-danger mt-2">{{ errors.max_devices[0]
-                          }}</span>
+                          <label class="col-form-label"
+                            >Max Devices
+                            <span class="text-danger">*</span></label
+                          >
+                          <input
+                            readonly
+                            v-model="company_payload.max_devices"
+                            type="number"
+                            class="form-control"
+                          />
+                          <span
+                            v-if="errors && errors.max_devices"
+                            class="text-danger mt-2"
+                            >{{ errors.max_devices[0] }}</span
+                          >
                         </div>
                       </div>
 
@@ -111,44 +163,69 @@
                         <div class="form-group">
                           <label class="col-form-label">Location </label>
                           <span class="text-danger">*</span>
-                          <textarea readonly v-model="company_payload.location" id="" cols="30" rows="3"
-                            class="form-control"></textarea>
-                          <span v-if="errors && errors.location" class="text-danger mt-2">{{ errors.location[0]
-                          }}</span>
+                          <textarea
+                            readonly
+                            v-model="company_payload.location"
+                            id=""
+                            cols="30"
+                            rows="3"
+                            class="form-control"
+                          ></textarea>
+                          <span
+                            v-if="errors && errors.location"
+                            class="text-danger mt-2"
+                            >{{ errors.location[0] }}</span
+                          >
                         </div>
                       </div>
                     </div>
-
 
                     <div class="row">
                       <div class="col-sm-3">
                         <div class="form-group">
                           <v-card class="ml-1 mr-1">
                             <div class="pa-5">
-                              <v-img @click="onpick_attachment" style="
+                              <v-img
+                                @click="onpick_attachment"
+                                style="
                                   width: 150px;
                                   height: 150px;
                                   margin: 0 auto;
                                   border-radius: 50%;
-                                " :src="
-                                  previewImage || imgPath || '/no-image.PNG'
-                                "></v-img>
+                                "
+                                :src="
+                                  previewImage ||
+                                  imgPath ||
+                                  '/no-profile-image.jpg'
+                                "
+                              ></v-img>
                             </div>
-                            <v-btn style="width: 100%" @click="onpick_attachment">
-                              {{ !upload.name ? "Upload Logo" : "File Uploaded" }}
+                            <v-btn
+                              style="width: 100%"
+                              @click="onpick_attachment"
+                            >
+                              {{
+                                !upload.name ? "Upload Logo" : "File Uploaded"
+                              }}
                               <v-icon right dark>mdi-cloud-upload</v-icon>
                             </v-btn>
                           </v-card>
-                          <input required type="file" @change="attachment" style="display: none" accept="image/*"
-                            ref="attachment_input" />
-                          <span v-if="errors && errors.logo" class="text-danger mt-2">{{ errors.logo[0] }}</span>
+                          <input
+                            required
+                            type="file"
+                            @change="attachment"
+                            style="display: none"
+                            accept="image/*"
+                            ref="attachment_input"
+                          />
+                          <span
+                            v-if="errors && errors.logo"
+                            class="text-danger mt-2"
+                            >{{ errors.logo[0] }}</span
+                          >
                         </div>
                       </div>
                     </div>
-
-
-
-
 
                     <!-- <v-row dense>
                     <v-col cols="12" sm="12" md="6" dense>
@@ -184,8 +261,13 @@
                     <v-row>
                       <v-col cols="12">
                         <div class="text-right">
-                          <v-btn v-if="can(`company_edit_access`)" small :loading="loading" color="primary"
-                            @click="update_company">
+                          <v-btn
+                            v-if="can(`company_edit_access`)"
+                            small
+                            :loading="loading"
+                            color="primary"
+                            @click="update_company"
+                          >
                             Submit
                           </v-btn>
                         </div>
@@ -200,49 +282,86 @@
                     <div class="row">
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Contact Person Name
+                          <label class="col-form-label"
+                            >Contact Person Name
                           </label>
                           <span class="text-danger">*</span>
-                          <input v-model="contact_payload.contact_name" class="form-control" type="text" />
-                          <span v-if="errors && errors.contact_name" class="text-danger mt-2">{{ errors.contact_name[0]
-                          }}</span>
+                          <input
+                            v-model="contact_payload.contact_name"
+                            class="form-control"
+                            type="text"
+                          />
+                          <span
+                            v-if="errors && errors.contact_name"
+                            class="text-danger mt-2"
+                            >{{ errors.contact_name[0] }}</span
+                          >
                         </div>
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Contact Person Number
+                          <label class="col-form-label"
+                            >Contact Person Number
                           </label>
                           <span class="text-danger">*</span>
-                          <input v-model="contact_payload.contact_no" class="form-control" type="number" />
-                          <span v-if="errors && errors.contact_no" class="text-danger mt-2">{{ errors.contact_no[0]
-                          }}</span>
+                          <input
+                            v-model="contact_payload.contact_no"
+                            class="form-control"
+                            type="number"
+                          />
+                          <span
+                            v-if="errors && errors.contact_no"
+                            class="text-danger mt-2"
+                            >{{ errors.contact_no[0] }}</span
+                          >
                         </div>
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Contact Person Position
+                          <label class="col-form-label"
+                            >Contact Person Position
                           </label>
                           <span class="text-danger">*</span>
-                          <input v-model="contact_payload.contact_position" class="form-control" type="text" />
-                          <span v-if="errors && errors.contact_position" class="text-danger mt-2">{{
-                          errors.contact_position[0] }}</span>
+                          <input
+                            v-model="contact_payload.contact_position"
+                            class="form-control"
+                            type="text"
+                          />
+                          <span
+                            v-if="errors && errors.contact_position"
+                            class="text-danger mt-2"
+                            >{{ errors.contact_position[0] }}</span
+                          >
                         </div>
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Contact Person Whatsapp
+                          <label class="col-form-label"
+                            >Contact Person Whatsapp
                           </label>
                           <span class="text-danger">*</span>
-                          <input v-model="contact_payload.contact_whatsapp" class="form-control" type="number" />
-                          <span v-if="errors && errors.contact_whatsapp" class="text-danger mt-2">{{
-                          errors.contact_whatsapp[0] }}</span>
+                          <input
+                            v-model="contact_payload.contact_whatsapp"
+                            class="form-control"
+                            type="number"
+                          />
+                          <span
+                            v-if="errors && errors.contact_whatsapp"
+                            class="text-danger mt-2"
+                            >{{ errors.contact_whatsapp[0] }}</span
+                          >
                         </div>
                       </div>
                     </div>
                     <v-row>
                       <v-col cols="12">
                         <div class="text-right">
-                          <v-btn small :loading="loading" color="primary" @click="update_contact">
+                          <v-btn
+                            small
+                            :loading="loading"
+                            color="primary"
+                            @click="update_contact"
+                          >
                             Submit
                           </v-btn>
                         </div>
@@ -257,49 +376,83 @@
                     <v-row dense>
                       <v-col md="6" cols="12" sm="12" dense>
                         <label class="col-form-label">Email </label>
-                        <v-text-field dense outlined type="text" v-model="login_payload.email"
-                          class="input-group--focused" :hide-details="!errors.email" :error="errors.email"
+                        <v-text-field
+                          dense
+                          outlined
+                          type="text"
+                          v-model="login_payload.email"
+                          class="input-group--focused"
+                          :hide-details="!errors.email"
+                          :error="errors.email"
                           :error-messages="
                             errors && errors.email ? errors.email[0] : ''
-                          "></v-text-field>
+                          "
+                        ></v-text-field>
                       </v-col>
                       <v-col md="6" cols="12" sm="12" dense> </v-col>
 
                       <v-col md="6" cols="12" sm="12" dense>
-                        <label class="col-form-label">Password (<small class="text-danger">leave empty if no
-                            change</small>)
+                        <label class="col-form-label"
+                          >Password (<small class="text-danger"
+                            >leave empty if no change</small
+                          >)
                         </label>
-                        <v-text-field dense outlined :append-icon="
-                          show_password ? 'mdi-eye' : 'mdi-eye-off'
-                        " :type="show_password ? 'text' : 'password'" v-model="login_payload.password"
-                          :hide-details="!errors.password" class="input-group--focused"
-                          @click:append="show_password = !show_password" :error="errors.password" :error-messages="
+                        <v-text-field
+                          dense
+                          outlined
+                          :append-icon="
+                            show_password ? 'mdi-eye' : 'mdi-eye-off'
+                          "
+                          :type="show_password ? 'text' : 'password'"
+                          v-model="login_payload.password"
+                          :hide-details="!errors.password"
+                          class="input-group--focused"
+                          @click:append="show_password = !show_password"
+                          :error="errors.password"
+                          :error-messages="
                             errors && errors.password ? errors.password[0] : ''
-                          "></v-text-field>
+                          "
+                        ></v-text-field>
                       </v-col>
 
                       <v-col md="6" cols="12" sm="12" dense>
-                        <label class="col-form-label">Confirm Password (<small class="text-danger">leave empty if no
-                            change</small>)
+                        <label class="col-form-label"
+                          >Confirm Password (<small class="text-danger"
+                            >leave empty if no change</small
+                          >)
                         </label>
-                        <v-text-field dense outlined :append-icon="
-                          show_password_confirm ? 'mdi-eye' : 'mdi-eye-off'
-                        " :hide-details="!errors.password_confirmation"
+                        <v-text-field
+                          dense
+                          outlined
+                          :append-icon="
+                            show_password_confirm ? 'mdi-eye' : 'mdi-eye-off'
+                          "
+                          :hide-details="!errors.password_confirmation"
                           :type="show_password_confirm ? 'text' : 'password'"
-                          v-model="login_payload.password_confirmation" class="input-group--focused" @click:append="
+                          v-model="login_payload.password_confirmation"
+                          class="input-group--focused"
+                          @click:append="
                             show_password_confirm = !show_password_confirm
-                          " :error="errors.show_password_confirm" :error-messages="
+                          "
+                          :error="errors.show_password_confirm"
+                          :error-messages="
                             errors && errors.show_password_confirm
                               ? errors.show_password_confirm[0]
                               : ''
-                          "></v-text-field>
+                          "
+                        ></v-text-field>
                       </v-col>
                     </v-row>
 
                     <v-row>
                       <v-col cols="12">
                         <div class="text-right">
-                          <v-btn small :loading="loading" color="primary" @click="update_user">
+                          <v-btn
+                            small
+                            :loading="loading"
+                            color="primary"
+                            @click="update_user"
+                          >
                             Submit
                           </v-btn>
                         </div>
