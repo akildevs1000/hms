@@ -88,7 +88,7 @@ class PostingController extends Controller
     public function store(Request $request)
     {
         try {
-            $data                 = $request->except('room');
+            $data                 = $request->except('room', 'user_id');
             $room_no              = BookedRoom::find($data['booked_room_id'])->room_no;
             $booking              = Booking::find($data['booking_id']);
             $data['posting_date'] = now();
@@ -101,6 +101,8 @@ class PostingController extends Controller
                 'desc'        => "posting reservation no " . $booking['reservation_no'] . " and room no " . $room_no ?? "",
                 'company_id'  => $data['company_id'] ?? '',
                 'is_posting'  => 1,
+                'user_id'     => $request->user_id,
+                'payment_method_id'     => 7,
             ];
 
             $transaction = new TransactionController();
@@ -175,6 +177,8 @@ class PostingController extends Controller
                 'desc'        => "cancel posting reservation no " . $posting->reservation_no . " and room no " . $room_no ?? "",
                 'company_id'  => $posting->company_id ?? '',
                 'is_posting'  => 1,
+                // 'user_id'     => $request->user_id,
+                'payment_method_id'     => 7,
             ];
             (new TransactionController)->store($transactionData, -$posting->amount_with_tax, 'debit');
             (new TransactionController)->updateBookingByTransactions($posting->booking_id, 0);

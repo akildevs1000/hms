@@ -1,10 +1,5 @@
 <template>
   <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
     <v-row>
       <!-- <v-col md="3">
         <div class="profile-view">
@@ -73,15 +68,14 @@
 
       <v-col md="12">
         <v-card elevation="0">
-          <v-toolbar color="primary" dark flat>
+          <v-toolbar color="cyan" dark flat>
+            <v-app-bar-nav-icon></v-app-bar-nav-icon>
             <v-toolbar-title>Reservation Details</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="redirect">
-              mdi mdi-close-box
-            </v-icon>
             <template v-slot:extension>
               <v-tabs v-model="tab1" align-with-title>
                 <v-tabs-slider color="yellow"></v-tabs-slider>
+
                 <v-tab v-for="item in itemsCustomer" :key="item">
                   {{ item }}
                 </v-tab>
@@ -91,247 +85,12 @@
 
           <v-tabs-items v-model="tab1">
             <v-tab-item class="px-3 py-4">
-              <v-row>
-                <v-col md="2" cols="12">
-                  <v-img class="guest-avatar" :src="showImage"> </v-img
-                  ><br /><br />
-                  <div v-if="booking && booking.document">
-                    <v-btn
-                      style="width: 100%"
-                      small
-                      dark
-                      class="primary pt-4 pb-4 mt-4 w-100 justify-center"
-                      @click="preview(booking && booking.document)"
-                    >
-                      Preview
-                      <v-icon right dark>mdi-file</v-icon>
-                    </v-btn>
-                  </div>
-                </v-col>
-
-                <v-col md="9" cols="12">
-                  <v-row class="mt-4">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Guest Name</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.title) ||
-                            ""
-                          }}.
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.full_name) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Mobile</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.contact_no) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Whatsapp</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.whatsapp) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-                  <v-row class="my-0 py-0">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Reservation No</h6>
-                        <p>
-                          {{ (booking && booking.reservation_no) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Number of Rooms</h6>
-                        <p>
-                          {{ (bookedRooms && bookedRooms.length) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Booking Date</h6>
-                        <p>
-                          {{ (booking && booking.booking_date) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Check In</h6>
-                        <p>{{ (booking && booking.check_in_date) || "---" }}</p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Check Out</h6>
-                        <p>
-                          {{ (booking && booking.check_out_date) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Days</h6>
-                        <p>
-                          {{ (booking && booking.total_days) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Pay Type</h6>
-                        <p>
-                          {{
-                            (booking && booking.paid_by == 2
-                              ? "Paid By Agent"
-                              : "Paid By Guest") || "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Source</h6>
-                        <p>
-                          {{ (booking && booking.source) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Reference Number</h6>
-                        <p>
-                          {{ (booking && booking.reference_no) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="6">
-                      <div class="text-box" style="float: left">
-                        <h6>Guest Request</h6>
-                        <p>
-                          {{ (booking && booking.request) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="6">
-                      <div class="text-box" style="float: left">
-                        <h6>Purpose</h6>
-                        <p>
-                          {{ (booking && booking.purpose) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="12">
-                      <div class="text-box" style="float: left">
-                        <h6>GST</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.gst_number) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row>
-                    <v-col>
-                      <div class="text-box" style="float: left">
-                        <tr class="bg-white">
-                          <td>Posting Amount :</td>
-                          <td>
-                            {{
-                              transactionSummary &&
-                              transactionSummary.tot_posting
-                            }}
-                          </td>
-                        </tr>
-                        <tr class="bg-white">
-                          <td>Total Amount :</td>
-                          <td>
-                            {{
-                              transactionSummary && transactionSummary.sumDebit
-                            }}
-                          </td>
-                        </tr>
-                        <tr class="bg-white">
-                          <td>Paid Amount :</td>
-                          <td>
-                            {{
-                              transactionSummary && transactionSummary.sumCredit
-                            }}
-                          </td>
-                        </tr>
-                        <tr class="bg-white">
-                          <td>Remaining Amount :</td>
-                          <td class="red--text">
-                            {{ numFormat(transactionSummary.balance) }}
-                          </td>
-                        </tr>
-                      </div>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-
-              <!-- <tr
-                    class="bg-white"
-                    v-if="
-                      booking && booking.customer && booking.customer.gst_number
-                    "
-                  >
-                    <td>GST :</td>
-                    <td>
-                      {{
-                        booking &&
-                        booking.customer &&
-                        booking.customer.gst_number
-                      }}
-                    </td>
-                  </tr> -->
-
-              <!-- <v-alert border="left" colored-border color="deep-purple accent-4" elevation="1">
+              <v-alert
+                border="left"
+                colored-border
+                color="deep-purple accent-4"
+                elevation="1"
+              >
                 <table>
                   <tr>
                     <td>Customer :</td>
@@ -369,9 +128,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="6">
-                      <hr />
-                    </td>
+                    <td colspan="6"><hr /></td>
                   </tr>
                   <tr>
                     <td>Reservation No :</td>
@@ -404,40 +161,28 @@
                     <td>{{ (booking && booking.total_days) || "---" }}</td>
                   </tr>
                   <tr>
-                    <td colspan="6">
-                      <hr />
-                    </td>
+                    <td colspan="6"><hr /></td>
                   </tr>
-
+                  <tr class="bg-white">
+                    <td>Room Amount :</td>
+                    <td>{{ (booking && booking.total_price) || "0" }}</td>
+                  </tr>
                   <tr class="bg-white">
                     <td>Posting Amount :</td>
-                    <td>
-                      {{ transactionSummary && transactionSummary.tot_posting }}
-                    </td>
-                  </tr>
-                  <tr class="bg-white">
-                    <td>Total Amount :</td>
-                    <td>
-                      {{ transactionSummary && transactionSummary.sumDebit }}
-                     </td>
-                  </tr>
-                  <tr class="bg-white">
-                    <td>Paid Amount :</td>
-                    <td>
-                      {{ transactionSummary && transactionSummary.sumCredit }}
-                    </td>
+                    <td>{{ totalPostingAmount || "0" }}</td>
                   </tr>
                   <tr class="bg-white">
                     <td>Remaining Amount :</td>
+                    <td>{{ (booking && booking.remaining_price) || "0" }}</td>
+                  </tr>
+                  <tr class="bg-white">
+                    <td>Grand Remaining :</td>
                     <td class="red--text">
-                      {{ numFormat(transactionSummary.balance) }}
+                      {{ (booking && booking.grand_remaining_price) || "0" }}
                     </td>
                   </tr>
-
                   <tr class="bg-white">
-                    <td colspan="6">
-                      <hr />
-                    </td>
+                    <td colspan="6"><hr /></td>
                   </tr>
                   <tr class="bg-white">
                     <td>Customer Request :</td>
@@ -445,23 +190,22 @@
                       {{ (booking && booking.request) || "---" }}
                     </td>
                   </tr>
-                  <tr class="bg-white">
-                    <td>Purpose :</td>
-                    <td>
-                      {{ (booking && booking.purpose) || "---" }}
-                    </td>
-                  </tr>
                   <tr class="bg-white" v-if="booking && booking.document">
                     <td>Document :</td>
                     <td class="red--text">
-                      <v-btn small dark class="primary pt-4 pb-4" @click="preview(booking && booking.document)">
+                      <v-btn
+                        small
+                        dark
+                        class="primary pt-4 pb-4"
+                        @click="preview(booking && booking.document)"
+                      >
                         Preview
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
                     </td>
                   </tr>
                 </table>
-              </v-alert> -->
+              </v-alert>
 
               <!-- <div>
                 <v-row>
@@ -546,9 +290,7 @@
               </div> -->
             </v-tab-item>
             <v-tab-item class="px-3 py-4">
-              <!--
-                  this is booked rooms
-                <table class="responsive-table">
+              <table class="responsive-table">
                 <thead>
                   <tr class="table-header-text">
                     <th>No</th>
@@ -616,162 +358,6 @@
                     <td class="text-right">{{ postingItem.cgst || "---" }}</td>
                     <td class="text-right">
                       {{ postingItem.amount_with_tax || "---" }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table> -->
-
-              <!-- <table class="responsive-table">
-                <thead>
-                  <tr class="table-header-text">
-                    <th>No</th>
-                    <th>Description</th>
-                    <th>Adults</th>
-                    <th>Child</th>
-                    <th>Babies</th>
-                    <th>Meal Plan</th>
-                    <th>Adult Food Amount</th>
-                    <th>Child Food Amount</th>
-                    <th class="text-right">Price</th>
-                    <th class="text-right">Discount</th>
-                    <th class="text-right">After Discount</th>
-                    <th class="text-right">Sgst</th>
-                    <th class="text-right">Cgst</th>
-                    <th class="text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody v-for="(item, index) in bookedRooms" :key="index">
-                  <tr style="font-size: 13px">
-                    <td>{{ item.room_no || "---" }}</td>
-                    <td>{{ item.room_type || "---" }}</td>
-                    <td>{{ item.no_of_adult || "---" }}</td>
-                    <td>{{ item.no_of_child || "---" }}</td>
-                    <td>{{ item.no_of_baby || "---" }}</td>
-                    <td>{{ capsTitle(item.meal) || "---" }}</td>
-                    <td class="text-right">
-                      {{ item.tot_adult_food || "---" }}
-                    </td>
-                    <td class="text-right">
-                      {{ item.tot_child_food || "---" }}
-                    </td>
-                    <td class="text-right">{{ item.price || "---" }}</td>
-                    <td class="text-right">
-                      {{ item.room_discount || "---" }}
-                    </td>
-                    <td class="text-right">
-                      {{ item.after_discount || "---" }}
-                    </td>
-                    <td class="text-right">{{ item.sgst || "---" }}</td>
-                    <td class="text-right">{{ item.cgst || "---" }}</td>
-                    <td class="text-right">{{ item.total || "---" }}</td>
-                  </tr>
-                </tbody>
-              </table> -->
-
-              <table class="responsive-table">
-                <thead>
-                  <tr class="table-header-text">
-                    <th>No</th>
-                    <th>Date</th>
-                    <th>Room</th>
-                    <th>Description</th>
-                    <th>Adults</th>
-                    <th>Child</th>
-                    <th>Babies</th>
-                    <th>Meal Plan</th>
-                    <th>Adult Food Amount</th>
-                    <th>Child Food Amount</th>
-                    <!-- <th class="text-right">Price</th> -->
-                    <!-- <th class="text-right">Discount</th> -->
-                    <th class="text-right">Price</th>
-                    <!-- <th class="text-right">Sgst</th> -->
-                    <!-- <th class="text-right">Cgst</th> -->
-                    <th class="text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody v-for="(item, index) in orderRooms" :key="index">
-                  <tr style="font-size: 13px">
-                    <td>{{ ++index || "---" }}</td>
-                    <td>{{ item.date || "---" }}</td>
-                    <td>{{ item.room_no || "---" }}</td>
-                    <td>{{ item.room_type || "---" }}</td>
-                    <td>{{ item.no_of_adult || "---" }}</td>
-                    <td>{{ item.no_of_child || "---" }}</td>
-                    <td>{{ item.no_of_baby || "---" }}</td>
-                    <td>{{ capsTitle(item.meal) || "---" }}</td>
-                    <td class="text-right">
-                      {{ item.tot_adult_food || "---" }}
-                    </td>
-                    <td class="text-right">
-                      {{ item.tot_child_food || "---" }}
-                    </td>
-                    <!-- <td class="text-right">{{ item.price || "---" }}</td>
-                    <td class="text-right">
-                      {{ item.room_discount || "---" }}
-                    </td> -->
-                    <td class="text-right">
-                      {{ item.after_discount || "---" }}
-                    </td>
-                    <!-- <td class="text-right">{{ item.sgst || "---" }}</td> -->
-                    <!-- <td class="text-right">{{ item.cgst || "---" }}</td> -->
-                    <td class="text-right">{{ item.total || "---" }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </v-tab-item>
-            <v-tab-item class="px-3 py-4">
-              <table class="responsive-table">
-                <thead>
-                  <tr class="table-header-text">
-                    <th>No</th>
-                    <th>Bill</th>
-                    <th>Date</th>
-                    <th>Room Type</th>
-                    <th>Room</th>
-                    <th>Item</th>
-                    <th class="text-right">Amount</th>
-                    <th class="text-right">QTY</th>
-                    <th class="text-right">Sgst</th>
-                    <th class="text-right">Cgst</th>
-                    <th class="text-right">Total</th>
-                    <th class="text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    style="font-size: 13px"
-                    v-for="(item, postingIndex) in postings"
-                    :key="postingIndex"
-                  >
-                    <td>{{ ++postingIndex }}</td>
-                    <td>{{ item.bill_no || "---" }}</td>
-                    <td>{{ item.posting_date || "---" }}</td>
-                    <td>
-                      {{
-                        (item.room &&
-                          item.room.room_type &&
-                          item.room.room_type.name) ||
-                        "---"
-                      }}
-                    </td>
-                    <td>{{ (item.room && item.room.room_no) || "---" }}</td>
-                    <td>{{ item.item || "---" }}</td>
-                    <td class="text-right">{{ item.single_amt || "---" }}</td>
-                    <td>{{ item.qty || "---" }}</td>
-                    <td class="text-right">{{ item.sgst || "---" }}</td>
-                    <td class="text-right">{{ item.cgst || "---" }}</td>
-                    <td class="text-right">
-                      {{ item.amount_with_tax || "---" }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        x-small
-                        color="accent"
-                        @click="cancelPosting(item)"
-                        class="mr-2"
-                      >
-                        mdi-delete
-                      </v-icon>
                     </td>
                   </tr>
                 </tbody>
@@ -912,7 +498,6 @@ export default {
       per_page: 10,
     },
     options: {},
-    showImage: "",
     Model: "Customer",
     search: "",
     snackbar: false,
@@ -921,7 +506,7 @@ export default {
     loading: false,
     response: "",
     customer: [],
-    itemsCustomer: ["Reservation", "Room", "Postings", "Transaction"],
+    itemsCustomer: ["Reservation", "Room", "Transaction"],
     tab1: null,
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 
@@ -955,10 +540,7 @@ export default {
     payments: [],
     booking: [],
     bookedRooms: [],
-    orderRooms: [],
-    postings: [],
     transactions: [],
-    transactionSummary: [],
     errors: [],
     totalAmount: 0,
     totalPostingAmount: 0,
@@ -975,6 +557,7 @@ export default {
   methods: {
     getDate(dataTime) {
       return dataTime;
+      // return new Date(dataTime.toDateString());
     },
     can(per) {
       let u = this.$auth.user;
@@ -983,35 +566,6 @@ export default {
         u.is_master
       );
     },
-
-    cancelPosting(item) {
-      confirm(
-        "Are you sure you wish to delete , to mitigate any inconvenience in future."
-      ) &&
-        this.$axios
-          .delete("posting_cancel/" + item.id)
-          .then(({ data }) => {
-            this.snackbar = data.status;
-            this.response = data.message;
-            this.getData();
-          })
-          .catch((err) => console.log(err));
-    },
-
-    numFormat(num) {
-      if (!num) return "0";
-
-      const number = num;
-      const res = number.toFixed(2);
-      return res;
-      const formatted = number.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-      console.log("s" + formatted);
-      return formatted;
-    },
-
     preview(file) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
@@ -1037,10 +591,6 @@ export default {
       this.totalAmount = sum;
     },
 
-    redirect() {
-      this.$router.push("/");
-    },
-
     getData() {
       let id = this.$route.params.id;
 
@@ -1049,18 +599,14 @@ export default {
         this.totalPostingAmount = data.totalPostingAmount;
         this.totalTransactionAmount = data.totalTransactionAmount;
         this.transactions = data.transaction;
-        this.transactionSummary = data.transactionSummary;
         const booking = data.booking;
         this.customer = booking.customer;
+        console.log(booking);
         this.booking = booking;
         this.payments = booking.payments;
         this.bookedRooms = booking.booked_rooms;
-        this.orderRooms = booking.order_rooms;
-        this.postings = data.postings;
         //end booking
         this.loading = false;
-        this.showImage = data.booking.customer.image;
-        console.log(data.booking.customer.image);
         this.calTotalAmount(this.payments);
       });
     },
@@ -1072,38 +618,6 @@ export default {
 <style scoped>
 .no-bg {
   background-color: white !important;
-}
-
-.guest-avatar {
-  max-width: 200px !important;
-  height: 200px !important;
-  float: left;
-  margin: 0 auto;
-  border-radius: 50%;
-}
-
-.text-box {
-  border: 1px solid rgb(215, 211, 211);
-  padding: 10px 0px 0px 10px;
-  margin: 10px 20px;
-  position: relative;
-  border-radius: 5px;
-  width: 100%;
-}
-
-.text-box p {
-  margin: 5px;
-}
-
-h6 {
-  position: absolute;
-  top: -12px;
-  left: 20px;
-  background-color: white;
-  padding: 0 10px;
-  color: rgb(154, 152, 152);
-  margin: 0;
-  font-size: 15px;
 }
 
 table {
@@ -1127,7 +641,6 @@ tr:nth-child(even) {
   border-radius: 2px !important;
   border: 1px solid #dbdddf !important;
 }
-
 input[type="text"]:focus.custom-text-box {
   border: 2px solid #5fafa3 !important;
 }
@@ -1141,7 +654,6 @@ select:focus {
   border-color: #5fafa3;
   box-shadow: 0 0 0px #5fafa3;
 }
-
 .table-header-text {
   font-size: 12px;
 }
