@@ -595,8 +595,8 @@ export default {
       let options = {
         params: {
           company_id: this.$auth.user.company.id,
-          date: "2023-04-09",
-          // date: new Date().toJSON().slice(0, 10),
+          // date: "2023-04-09",
+          date: new Date().toJSON().slice(0, 10),
         },
       };
       this.$axios.get(url, options).then(({ data }) => {
