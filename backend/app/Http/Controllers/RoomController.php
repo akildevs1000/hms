@@ -244,8 +244,23 @@ class RoomController extends Controller
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 1);
+                $q->where('advance_price', '>', 0); //new line
                 $q->where('company_id', $company_id);
             })->get();
+
+
+
+        $reservedWithoutAdvanceModel = BookedRoom::query();
+        $reservedWithoutAdvance     = $reservedWithoutAdvanceModel->whereDate('check_in', $request->check_in)
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', -1);
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 1);
+                $q->where('advance_price', '=', 0); //new line
+                $q->where('company_id', $company_id);
+            })->get();
+
+
 
         $expectCheckOutModel = BookedRoom::query();
         $expectCheckOut      = $expectCheckOutModel->clone()->whereDate('check_out', $request->check_in)
@@ -335,6 +350,7 @@ class RoomController extends Controller
             'waitingBooking'    => $waitingBooking,
             'expectCheckIn'     => $expectCheckIn,
             'expectCheckOut'    => $expectCheckOut,
+            'reservedWithoutAdvance'    => $reservedWithoutAdvance,
 
             'checkIn'    => $checkIn,
             'checkOut'    => $checkOut,

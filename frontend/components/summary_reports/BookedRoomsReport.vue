@@ -20,7 +20,6 @@
         <v-icon right>mdi-file</v-icon>
       </v-btn>
     </div>
-
     <table class="mt-4">
       <tr style="background-color: white; color: black" class="my-0 py-0">
         <th class="my-0 py-0">Room No</th>
@@ -42,18 +41,16 @@
           <pre>{{ item.room_no || "---" }}</pre>
         </td>
         <td class="my-1 py-1">
-          {{ (item && item.room_type && item.room_type.name) || "---" }}
+          {{ (item && item.room_type) || "---" }}
         </td>
         <td class="my-1 py-1">
-          {{ (item && item.booked_room && item.booked_room.title) || "---" }}
+          {{ (item && item.title) || "---" }}
         </td>
         <td class="my-1 py-1">
-          {{ (item && item.booked_room && item.booked_room.check_in) || "---" }}
+          {{ (item && item.check_in) || "---" }}
         </td>
         <td class="my-1 py-1">
-          {{
-            (item && item.booked_room && item.booked_room.check_out) || "---"
-          }}
+          {{ (item && item.check_out) || "---" }}
         </td>
       </tr>
     </table>

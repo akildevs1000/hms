@@ -133,28 +133,15 @@ class ReportController extends Controller
     public function bookedRoomsReportProcess($request)
     {
         $company_id = $request->company_id;
-        $model      = BookedRoom::query();
-        $roomIds    = $model
-            ->whereDate('check_in', '<=', $request->date)
-            ->whereHas('booking', function ($q) use ($company_id, $request) {
+        $reservedWithoutAdvanceModel = BookedRoom::query();
+        return  $reservedWithoutAdvance     = $reservedWithoutAdvanceModel->whereDate('check_in', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', -1);
                 $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '<=', 4);
+                $q->where('booking_status', '=', 1);
+                $q->where('advance_price', '=', 0); //new line
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_in', '<=', $request->date);
-            })
-            ->with('booking')
-            ->pluck('room_id');
-
-        return Room::whereIn('id', $roomIds)
-            ->with('bookedRoom', function ($q) use ($company_id, $request) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '<=', 4);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_in', '<=', $request->date);
-                $q->orderBy('id', 'ASC');
-            })
-            ->get();
+            })->get();
     }
 
     public function paidRoomsReport(Request $request)
@@ -220,6 +207,7 @@ class ReportController extends Controller
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 1);
+                $q->where('advance_price', '>', 0); //new line
                 $q->where('company_id', $company_id);
             })->get();
 
@@ -236,6 +224,7 @@ class ReportController extends Controller
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 1);
+                $q->where('advance_price', '>', 0); //new line
                 $q->where('company_id', $company_id);
             })->get();
 

@@ -35,7 +35,6 @@
     Route::get('booked_rooms_print', [ReportController::class, 'bookedRoomsReport']);
     Route::get('booked_rooms_download', [ReportController::class, 'bookedRoomsReportDownload']);
 
-
     Route::get('paid_report_print', [ReportController::class, 'paidRoomsReport']);
     Route::get('paid_report_download', [ReportController::class, 'paidRoomsReportDownload']);
 

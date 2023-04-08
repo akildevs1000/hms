@@ -11,16 +11,32 @@ class WhatsappController extends Controller
 
     public function sentNotification($data)
     {
-        if ($data['instance_id'] && $data['access_token']) {
+        if ($data['instance_id']) {
             $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
                 'number' => $data['to'],
                 'type' => 'text',
                 'message' => $data['message'],
-                'instance_id' => env($data['instance_id']),
-                'access_token' => env($data['access_token']),
+                'instance_id' => $data['instance_id'],
+                'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
             ]);
 
             return $response->status();
         }
     }
+
+
+    // public function sentNotification($data)
+    // {
+    //     if ($data['instance_id'] && $data['access_token']) {
+    //         $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
+    //             'number' => $data['to'],
+    //             'type' => 'text',
+    //             'message' => $data['message'],
+    //             'instance_id' => env($data['instance_id']),
+    //             'access_token' => env($data['access_token']),
+    //         ]);
+
+    //         return $response->status();
+    //     }
+    // }
 }
