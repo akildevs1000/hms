@@ -78,7 +78,7 @@ class ManagementController extends Controller
             $numberOfSoldRooms = $orderRoomModel->clone()->whereDate('date', $ocuDate)->whereCompanyId($request->company_id)->count();
             $soldRate = round(($numberOfSoldRooms / $totalRooms) * 100);
             $unsoldRate = 100 - $soldRate;
-            Report::whereDate('date', $date)->delete();
+            Report::whereDate('date', $date)->whereCompanyId($request->company_id)->delete();
             Report::create([
                 'company_id' => $request->company_id,
                 'date' => $date,
