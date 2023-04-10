@@ -16,7 +16,7 @@ class Room extends Model
     protected $with = ['room_type:id,name,price'];
 
     protected $appends = [
-        'background',
+        // 'background',
         // "room_type",
         "price",
     ];
@@ -61,27 +61,32 @@ class Room extends Model
         ]);
     }
 
-    public function GetBackgroundAttribute()
-    {
-        // return '#f48665';
+    // public function GetBackgroundAttribute()
+    // {
+    //     // return '#f48665';
 
-        $status = $this->room_type_id ?? '';
-        return match ($status) {
-            1 => '#f48665',
-            2 => '#8e4cf1',
-            3 => '#289cf5',
-            4 => '#23bdb8',
-            5 => '#23b8',
+    //     $status = $this->room_type_id ?? 0;
+    //     return match ($status) {
+    //         1 => '#f48665',
+    //         2 => '#8e4cf1',
+    //         3 => '#289cf5',
+    //         4 => '#23bdb8',
+    //         5 => '#23b8',
+    //         20 => '#E5B3F2', //hall
+    //         21 => '#E5B3F2', //hall
+    //         22 => '#E5B3F2', //hall
 
-            6 => '#f48665',
-            7 => '#8e4cf1',
-            8 => '#289cf5',
-            9 => '#23bdb8',
-            10 => '#F2D397',
-            11 => '#FF5994',
-            12 => '#E5B3F2',
-        };
-    }
+    //         6 => '#f48665',
+    //         7 => '#8e4cf1',
+    //         8 => '#289cf5',
+    //         9 => '#23bdb8',
+    //         10 => '#F2D397',
+    //         11 => '#FF5994',
+    //         12 => '#E5B3F2',
+
+    //         0 => '#E5B3F2',
+    //     };
+    // }
 
     // public function GetRoomTypeAttribute()
     // {

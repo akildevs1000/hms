@@ -125,6 +125,8 @@ class PostingController extends Controller
 
             $data['room_no'] = $room_no;
             $data['whatsapp'] = $booking->customer->whatsapp;
+            $data['title'] = $booking->customer->title;
+            $data['guest'] = $booking->customer->first_name;
             $data['company'] = $booking->company;
             // return $data['item'];
             (new WhatsappNotificationController)->postingNotification($data);

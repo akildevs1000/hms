@@ -590,7 +590,7 @@ export default {
         },
         {
           icon: "mdi mdi-chart-pie",
-          title: "Daily",
+          title: "Custom",
           to: "/management/report/daily",
           menu: "city_ledger_access",
         },

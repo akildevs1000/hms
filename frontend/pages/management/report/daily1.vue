@@ -7,7 +7,7 @@
       </v-col>
     </v-row>
 
-    <!-- <v-row>
+    <v-row>
       <v-col md="3">
         <v-menu
           v-model="from_menu"
@@ -36,108 +36,8 @@
           ></v-date-picker>
         </v-menu>
       </v-col>
-    </v-row> -->
-
-    <v-row>
-      <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="filterType"
-          :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-          item-text="name"
-          item-value="id"
-          @change="getDataFromApi()"
-        ></v-select>
-      </v-col>
-
-      <v-col md="3" v-if="filterType == 5">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col md="3" v-if="filterType == 5">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
     </v-row>
-
+    <!-- {{ data }} -->
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
       <v-toolbar class="rounded-md" color="background" dense flat dark>
         <span> Day Report</span>
@@ -250,14 +150,11 @@ export default {
       // -------------------end chart ----------------
 
       Model: "Report",
-      endpoint: "get_occupancy_rate_by_filter",
+      endpoint: "get_single_day_occupancy_rate",
       chartKey: 0,
 
-      from_date: "",
+      from_date: new Date().toJSON().slice(0, 10),
       from_menu: false,
-
-      to_date: "",
-      to_menu: false,
       loading: false,
 
       pagination: {
@@ -266,7 +163,6 @@ export default {
         per_page: 10,
       },
       options: {},
-      filterType: 1,
       data: [],
       headers: [
         {
@@ -293,6 +189,10 @@ export default {
   },
 
   methods: {
+    onPageChange() {
+      this.getDataFromApi();
+    },
+
     can(per) {
       let u = this.$auth.user;
       return (
@@ -302,27 +202,27 @@ export default {
     },
 
     commonMethod() {
-      if (this.from_date && this.to_date) {
-        this.getDataFromApi();
-      }
+      this.getDataFromApi();
     },
 
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       this.series = [];
+      let page = this.pagination.current;
       let options = {
         params: {
           company_id: this.$auth.user.company.id,
-          from: this.from_date,
-          to: this.to_date,
-          filterType: this.filterType,
+          date: this.from_date,
         },
       };
-      this.$axios.get(url, options).then(({ data }) => {
-        const { sold, unsold } = data;
-        let totSold = eval(sold.join("+"));
-        let totUnsold = eval(unsold.join("+"));
-        this.series.push(...[totSold, totUnsold]);
+      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+        this.data = data.record;
+        if (!this.data) {
+          alert("data not found");
+          return;
+        }
+        const { sold, unsold } = data.record;
+        this.series.push(...[sold, unsold]);
         this.forceChartRerender();
         this.loading = false;
       });
@@ -330,6 +230,14 @@ export default {
 
     forceChartRerender() {
       this.chartKey += 1;
+    },
+
+    searchIt() {
+      if (this.search.length == 0) {
+        this.getDataFromApi();
+      } else if (this.search.length > 2) {
+        this.getDataFromApi();
+      }
     },
   },
 };

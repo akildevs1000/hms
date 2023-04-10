@@ -196,10 +196,12 @@ export default {
       Model: "Report",
       endpoint: "get_occupancy_rate",
 
-      from_date: "",
+      from_date: new Date(new Date().getFullYear(), new Date().getMonth(), 2)
+        .toISOString()
+        .slice(0, 10),
       from_menu: false,
       loading: false,
-      to_date: "",
+      to_date: new Date().toJSON().slice(0, 10),
       to_menu: false,
 
       pagination: {

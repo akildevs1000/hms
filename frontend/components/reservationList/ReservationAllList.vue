@@ -18,55 +18,137 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Payment</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="payingDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
-          <Paying :BookingData="checkData" @close-dialog="closeDialogs"></Paying>
+          <Paying
+            :BookingData="checkData"
+            @close-dialog="closeDialogs"
+          ></Paying>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <v-row>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
-          v-model="search" hide-details></v-text-field>
+        <v-text-field
+          class=""
+          label="Search..."
+          dense
+          outlined
+          flat
+          append-icon="mdi-magnify"
+          @input="searchIt"
+          v-model="search"
+          hide-details
+        ></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo flat
-          :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
+        <v-select
+          class="custom-text-box shadow-none"
+          v-model="type"
+          :items="types"
+          dense
+          placeholder="Type"
+          solo
+          flat
+          :hide-details="true"
+          @change="getDataFromApi(endpoint)"
+        ></v-select>
       </v-col>
 
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="source" :items="type == 'Online' ? sources : agentList"
-          dense item-value="name" item-text="name" placeholder="Sources" solo flat :hide-details="true"
-          @change="getDataFromApi(endpoint)"></v-select>
+        <v-select
+          class="custom-text-box shadow-none"
+          v-model="source"
+          :items="type == 'Online' ? sources : agentList"
+          dense
+          item-value="name"
+          item-text="name"
+          placeholder="Sources"
+          solo
+          flat
+          :hide-details="true"
+          @change="getDataFromApi(endpoint)"
+        ></v-select>
       </v-col>
 
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
-          dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
+        <v-select
+          class="custom-text-box shadow-none"
+          v-model="guest_mode"
+          :items="['Select All', 'Arrival', 'Departure']"
+          dense
+          placeholder="Type"
+          solo
+          flat
+          :hide-details="true"
+          @change="getDataFromApi(endpoint)"
+        ></v-select>
       </v-col>
 
       <v-col md="3">
-        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-          offset-y min-width="auto">
+        <v-menu
+          v-model="from_menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
-              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
+            <v-text-field
+              v-model="from_date"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              dense
+              :hide-details="true"
+              class="custom-text-box shadow-none"
+              solo
+              flat
+              label="From"
+            ></v-text-field>
           </template>
-          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
+          <v-date-picker
+            v-model="from_date"
+            @input="from_menu = false"
+            @change="commonMethod"
+          ></v-date-picker>
         </v-menu>
       </v-col>
       <v-col md="3">
-        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
-          min-width="auto">
+        <v-menu
+          v-model="to_menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
-              solo flat label="To" :hide-details="true"></v-text-field>
+            <v-text-field
+              v-model="to_date"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              dense
+              class="custom-text-box shadow-none"
+              solo
+              flat
+              label="To"
+              :hide-details="true"
+            ></v-text-field>
           </template>
-          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
+          <v-date-picker
+            v-model="to_date"
+            @input="to_menu = false"
+            @change="commonMethod"
+          ></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
@@ -77,8 +159,15 @@
         <v-spacer></v-spacer>
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
-              @click="process('reservation_report_print', endpoint)">
+            <v-btn
+              class="ma-0"
+              x-small
+              :ripple="false"
+              text
+              v-bind="attrs"
+              v-on="on"
+              @click="process('reservation_report_print', endpoint)"
+            >
               <v-icon class="white--text">mdi-printer-outline</v-icon>
             </v-btn>
           </template>
@@ -87,8 +176,14 @@
 
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
-              @click="process('reservation_report_download', endpoint)">
+            <v-btn
+              x-small
+              :ripple="false"
+              text
+              v-bind="attrs"
+              v-on="on"
+              @click="process('reservation_report_download', endpoint)"
+            >
               <v-icon class="white--text">mdi-download-outline</v-icon>
             </v-btn>
           </template>
@@ -97,18 +192,35 @@
       </v-toolbar>
       <table>
         <tr>
-          <th style="font-size: 13px" v-for="(item, index) in headers" :key="index">
+          <th
+            style="font-size: 13px"
+            v-for="(item, index) in headers"
+            :key="index"
+          >
             <span v-html="item.text"></span>
           </th>
         </tr>
-        <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-          color="primary"></v-progress-linear>
+        <v-progress-linear
+          v-if="loading"
+          :active="loading"
+          :indeterminate="loading"
+          absolute
+          color="primary"
+        ></v-progress-linear>
         <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
             <b>{{ ++index }}</b>
           </td>
           <td class="ps-3">
-            <b>{{ item.reservation_no }}</b>
+            <b>
+              <span
+                class="blue--text"
+                @click="goToRevView(item)"
+                style="cursor: pointer"
+              >
+                {{ item.reservation_no || "---" }}
+              </span>
+            </b>
           </td>
           <td>{{ item.source }}</td>
           <td>{{ item.reference_no || "---" }}</td>
@@ -143,17 +255,32 @@
           </td> -->
 
           <td>
-            <v-icon @click="viewCustomerBilling(item)" x-small color="primary" class="mr-2">
+            <v-icon
+              @click="viewCustomerBilling(item)"
+              x-small
+              color="primary"
+              class="mr-2"
+            >
               mdi-eye
             </v-icon>
           </td>
           <td>
-            <v-icon @click="get_payment(item)" x-small color="primary" class="mr-2">
+            <v-icon
+              @click="get_payment(item)"
+              x-small
+              color="primary"
+              class="mr-2"
+            >
               mdi-cash-multiple
             </v-icon>
           </td>
           <td>
-            <v-icon @click="redirect_to_invoice(item.id)" x-small color="primary" class="mr-2">
+            <v-icon
+              @click="redirect_to_invoice(item.id)"
+              x-small
+              color="primary"
+              class="mr-2"
+            >
               mdi-cash-multiple
             </v-icon>
           </td>
@@ -163,8 +290,12 @@
     <v-row>
       <v-col md="12" class="float-right">
         <div class="float-right">
-          <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-            :total-visible="12"></v-pagination>
+          <v-pagination
+            v-model="pagination.current"
+            :length="pagination.total"
+            @input="onPageChange"
+            :total-visible="12"
+          ></v-pagination>
         </div>
       </v-col>
     </v-row>
@@ -263,6 +394,10 @@ export default {
 
     commonMethod() {
       this.getDataFromApi();
+    },
+
+    goToRevView(item) {
+      this.$router.push(`/customer/details/${item.id}`);
     },
 
     get_agents() {

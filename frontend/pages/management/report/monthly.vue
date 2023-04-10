@@ -147,7 +147,24 @@ export default {
           type: "pie",
         },
         labels: ["Sold", "Unsold"],
+        colors: ["#228B22", "#D71921"], // set custom colors
 
+        plotOptions: {
+          pie: {
+            dataLabels: {
+              offset: -5,
+            },
+          },
+        },
+        legend: {
+          show: false,
+        },
+        dataLabels: {
+          formatter(val, opts) {
+            const name = opts.w.globals.labels[opts.seriesIndex];
+            return [name, val.toFixed(1) + "%"];
+          },
+        },
         responsive: [
           {
             breakpoint: 480,
@@ -183,6 +200,7 @@ export default {
             endingShape: "rounded",
           },
         },
+        colors: ["#228B22", "#D71921"], // set custom colors
         dataLabels: {
           enabled: false,
         },
