@@ -10,3 +10,4 @@
     Route::get('get_occupancy_rate_by_month', [ManagementController::class, 'getOccupancyRateByMonth']);
 
     Route::get('get_audit_report', [ManagementController::class, 'getAuditReport']);
+    Route::get('get_occupancy_rate_by_filter', [ManagementController::class, 'getOccupancyRateByFilter']);

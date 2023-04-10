@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookedRoom;
-use App\Models\Booking;
-use App\Models\OrderRoom;
-use App\Models\Report;
+use Carbon\Carbon;
 use App\Models\Room;
+use App\Models\Report;
+use App\Models\Booking;
 use Carbon\CarbonPeriod;
+use App\Models\OrderRoom;
+use App\Models\BookedRoom;
 use Illuminate\Http\Request;
 
 class ManagementController extends Controller
@@ -60,6 +61,46 @@ class ManagementController extends Controller
         }
         return $arr;
     }
+
+    public function getOccupancyRateByFilter(Request $request)
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        $reportModel = Report::query();
+        $arr         = [];
+        $reportModel->select('sold', 'unsold', 'date')->whereCompanyId($request->company_id);
+
+        if ($request->filterType == 1) {
+            $reportModel->whereDate('date', date('Y-m-d')); //today
+        }
+
+        if ($request->filterType == 2) {
+            $reportModel->whereDate('date', date('Y-m-d', strtotime('-1 day'))); //Yesterday
+        }
+
+        if ($request->filterType == 3) {
+            $reportModel->whereBetween('date', [$startOfWeek, $endOfWeek]); //This Week
+        }
+
+        if ($request->filterType == 4) {
+            $reportModel->whereMonth('date', date('m')); //This month
+        }
+
+        if ($request->filterType == 5) {
+            $reportModel->whereBetween('date', [$request->from, $request->to]); //custom
+        }
+
+        $data =  $reportModel->orderBy('id', 'asc')->get()->toArray();
+
+        foreach ($data as $data) {
+            $arr['date'][]   = $data['date'];
+            $arr['sold'][]   = $data['sold'];
+            $arr['unsold'][] = $data['unsold'];
+        }
+        return $arr;
+    }
+
 
     public function generateOccupancyRate(Request $request)
     {
@@ -117,8 +158,12 @@ class ManagementController extends Controller
                 $q->whereDate('check_in', $request->date);
             })
             ->with('customer:id,first_name')
-            ->with('transactions', function ($q) use ($request) {
+            ->withSum(['transactions' => function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+            }], 'credit')->with('transactions', function ($q) use ($request) {
                 $q->where('is_posting', 0);
+                $q->where('credit', '>', 0);
+                $q->whereDate('date', $request->date);
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
@@ -130,8 +175,12 @@ class ManagementController extends Controller
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_in', '<', $request->date);
             })
-            ->with('customer:id,first_name')
+            ->withSum(['transactions' => function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+            }], 'credit')->with('customer:id,first_name')
             ->with('transactions', function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+                $q->where('credit', '>', 0);
                 $q->where('is_posting', 0);
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
@@ -144,8 +193,13 @@ class ManagementController extends Controller
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_out', $request->date);
             })
+            ->withSum(['transactions' => function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+            }], 'credit')
             ->with('customer:id,first_name')
             ->with('transactions', function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+                $q->where('credit', '>', 0);
                 $q->where('is_posting', 0);
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
