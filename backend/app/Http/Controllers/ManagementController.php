@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Room;
 use App\Models\Report;
 use App\Models\Booking;
+use App\Models\Expense;
 use Carbon\CarbonPeriod;
 use App\Models\OrderRoom;
 use App\Models\BookedRoom;
@@ -206,10 +207,37 @@ class ManagementController extends Controller
                     ->with('paymentMode');
             })->get();
 
+
+        $todayPayments = Booking::query()
+            ->where(function ($q) use ($company_id, $request) {
+                $q->where('booking_status', 1);
+                $q->where('paid_amounts', '>', 0);
+                $q->where('company_id', $company_id);
+                $q->whereDate('booking_date', $request->date);
+            })
+            ->withSum(['transactions' => function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+            }], 'credit')
+            ->with('customer:id,first_name')
+            ->with('transactions', function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+                $q->where('credit', '>', 0);
+                $q->where('is_posting', 0);
+                $q->where('payment_method_id', '!=', 7);
+                $q->where('company_id', $request->company_id)
+                    ->with('paymentMode');
+            })->get();
+
+
+        $totExpense = Expense::whereCompanyId($request->company_id)->where('is_management', 1)->whereDate('created_at', $request->date)->sum('total');
+
+
         return [
             'todayCheckIn'  => $todayCheckin,
             'todayCheckOut' => $todayCheckOut,
             'continueRooms' => $continueRooms,
+            'todayPayments' => $todayPayments,
+            'totExpense' => number_format($totExpense, 2, '.', '')
         ];
     }
 
