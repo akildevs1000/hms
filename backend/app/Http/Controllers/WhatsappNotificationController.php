@@ -115,21 +115,21 @@ class WhatsappNotificationController extends Controller
         $msg .= "Welcome to  $comName\n";
 
         $msg .= "\n";
-        $msg .= "---------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "Free WiFi \n";
-        $msg .= "---------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "Username -  HYDERSPARK \n";
         $msg .= "PASSWORD -  Park@1234 \n";
-        $msg .= "---------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "Intercom \n";
-        $msg .= "---------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "Reception  :  100 \n";
         $msg .= "Restaurant  :  222 \n";
         $msg .= "House keeping : 100 \n";
-        $msg .= "---------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "Manager on Duty  \n";
         $msg .= "Mr. Ansari / 89402 30003  \n";
-        $msg .= "---------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "\n";
         $msg .= "Have a pleasant Stay with us !\n";
 
@@ -170,22 +170,28 @@ class WhatsappNotificationController extends Controller
         $video       = $company->video;
         $review      = $company->review;
 
-        $msg .= "Dear $title $customerName, \n";
-        $msg .= "\n";
-        $msg .= "Thank you for your stay \n";
-        $msg .= "We hope that your experience with us was great, \n";
-        $msg .= "We had a great time serving you, \n";
-        $msg .= "we look forward to having you back with us soon, \n";
-        $msg .= "Safe Travels, \n";
-        $msg .= "\n";
 
-        $msg .= "Further information can be obtained by Hotel Manager Mr. Ansari, 89402 30003.\n";
-        $msg .= "\n";
-        $msg .= "please make your review $review";
-        $msg .= "\n";
-        $msg .= "\n";
 
-        $msg .= is_null($location) ? '' : "Google Map  $location\n";
+
+        $msg .= "Dear $title. $customerName, \n";
+        $msg .= " Thank you  for your stay with us \n";
+
+        $msg .= "\n";
+        $msg .= "--------------- \n";
+        $msg .= "Rev. No : $booking->reservation_no \n";
+        $msg .= "No. of Rooms : $booking->rooms \n";
+        $msg .= "No. of Days : $booking->total_days \n";
+        $msg .= "Check In : $booking->check_in \n";
+        $msg .= "Check Out : $booking->check_out \n";
+        $msg .= "--------------- \n";
+        $msg .= "Your Bill Amount :  ₹$booking->total_price \n";
+        $msg .= "You paid advance :  ₹$booking->paid_amounts \n";
+        $msg .= "Your Balance Amount :  ₹$booking->balance \n";
+        $msg .= "--------------- \n";
+
+        $msg .= "Please write your review \n";
+        $msg .= is_null($review) ? '' : "More  $review\n";
+
         $msg .= "\n";
         $msg .= is_null($video) ? '' : "More  $video\n";
 
@@ -226,17 +232,17 @@ class WhatsappNotificationController extends Controller
         $msg .= " Thank you  for your room reservation \n";
 
         $msg .= "\n";
-        $msg .= "----------------------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "Rev. No : $booking->id \n";
         $msg .= "No. of Rooms : $booking->total_days \n";
         $msg .= "No. of Days : $numberOfRooms \n";
         $msg .= "Check In : $checkIn \n";
         $msg .= "Check Out : $checkOut \n";
-        $msg .= "----------------------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "Your Bill Amount :  ₹$totalAmount \n";
         $msg .= "You paid advance :  ₹$advanceAmount \n";
         $msg .= "Your Balance Amount :  ₹$remainingAmount \n";
-        $msg .= "----------------------------------- \n";
+        $msg .= "--------------- \n";
         $msg .= "\n";
         if ($advanceAmount <= 0) {
             $msg .= "Please pay Advance to confirm your booking\n";

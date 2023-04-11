@@ -101,7 +101,7 @@ class TransactionController extends Controller
             $query->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             });
-            $query->with('paymentMode');
+            $query->with('paymentMode', 'booking:id,reservation_no,rooms');
         }]);
 
         return $model->get();

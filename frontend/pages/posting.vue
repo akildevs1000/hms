@@ -161,42 +161,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          @change="getDataFromApi(`posting`)"
-          v-model="pagination.per_page"
-          :items="[10, 25, 50, 100]"
-          placeholder="Per Page Records"
-          solo
-          hide-details
-          flat
-        ></v-select>
-      </v-col>
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          @change="getDataFromApi(`posting`)"
-          v-model="pagination.room_no"
-          :items="rooms"
-          item-text="room_no"
-          item-value="id"
-          placeholder="Room No"
-          solo
-          hide-details
-          flat
-        ></v-select>
-      </v-col>
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-text-field
-          placeholder="Bill No..."
-          solo
-          flat
-          @input="searchIt"
-          v-model="search"
-          hide-details
-        ></v-text-field>
-      </v-col>
-    </v-row>
+
+    <CustomFilter @filter-attr="filterAttr" />
     <v-card class="mb-5 rounded-md mt-6" elevation="0">
       <v-toolbar class="rounded-md" color="background" dense flat dark>
         <span> {{ Model }} List</span>
@@ -229,7 +195,15 @@
         <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
           <td>{{ ++index }}</td>
           <td>{{ caps(item.bill_no) }}</td>
-          <td>{{ item.booking && item.booking.reservation_no }}</td>
+          <td>
+            <span
+              class="blue--text"
+              @click="goToRevView(item)"
+              style="cursor: pointer"
+            >
+              {{ (item.booking && item.booking.reservation_no) || "---" }}
+            </span>
+          </td>
           <td>
             {{
               caps(
@@ -268,7 +242,11 @@
   </div>
 </template>
 <script>
+import CustomFilter from "../components/filter/CustomFilter.vue";
 export default {
+  components: {
+    CustomFilter,
+  },
   data: () => ({
     Model: "Posting",
     pagination: {
@@ -283,6 +261,9 @@ export default {
     customer_name: "",
     room_no: "",
     search: "",
+    from: "",
+    to: "",
+    filterType: "",
     snackbar: false,
     postingDialog: false,
     data: [],
@@ -356,6 +337,41 @@ export default {
     },
     onPageChange() {
       this.getDataFromApi();
+    },
+
+    filterAttr(data) {
+      this.from = data.from;
+      this.to = data.to;
+      this.filterType = data.type;
+      this.search = data.search;
+      this.getDataFromApi();
+    },
+
+    goToRevView(item) {
+      this.$router.push(`/customer/details/${item.id}`);
+    },
+
+    getDataFromApi(url = this.endpoint) {
+      this.loading = true;
+      let page = this.pagination.current;
+      let options = {
+        params: {
+          room_id: this.pagination.room_no,
+          per_page: this.pagination.per_page,
+          search: this.search,
+          company_id: this.$auth.user.company.id,
+          from: this.from,
+          to: this.to,
+          filterType: this.filterType,
+        },
+      };
+
+      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+        this.data = data.data;
+        this.pagination.current = data.current_page;
+        this.pagination.total = data.last_page;
+        this.loading = false;
+      });
     },
 
     get_booked_room_details(id) {
@@ -434,26 +450,6 @@ export default {
       this.$axios.get(`room_list_menu`).then(({ data }) => {
         this.rooms = data;
         this.rooms.unshift({ id: "", room_no: "Select All" });
-      });
-    },
-
-    getDataFromApi(url = this.endpoint) {
-      this.loading = true;
-      let page = this.pagination.current;
-      let options = {
-        params: {
-          room_id: this.pagination.room_no,
-          per_page: this.pagination.per_page,
-          search: this.search,
-          company_id: this.$auth.user.company.id,
-        },
-      };
-
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        this.data = data.data;
-        this.pagination.current = data.current_page;
-        this.pagination.total = data.last_page;
-        this.loading = false;
       });
     },
 

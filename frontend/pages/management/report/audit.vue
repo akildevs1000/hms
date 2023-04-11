@@ -7,45 +7,109 @@
       </v-col>
     </v-row> -->
     <v-row>
-      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
-        <div class="card px-2 available">
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #800000">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-ddoor-open"></i>
             </div>
             <div class="card-content">
-              <h6 class="card-title text-capitalize">Checkin</h6>
-              <span class="data-1"> RS. {{ GrandTotalCheckin || 0 }}</span>
+              <h6 class="card-title text-capitalize">Cash</h6>
+              <span class="data-1">₹{{ GrandTotalCash || 0 }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
-        <div class="card px-2" style="background-color: #f29a9a">
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #ffbe00">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-dosor-open"></i>
             </div>
             <div class="card-content">
-              <h6 class="card-title text-capitalize">Continue</h6>
-              <span class="data-1"
-                >RS. {{ GrandTotalContinue || 0 }} <br />
-              </span>
+              <h6 class="card-title text-capitalize">Card</h6>
+              <span class="data-1">₹{{ GrandTotalCard || 0 }} <br /> </span>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase">
-        <div class="card px-2 booked">
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #74166d">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-dosor-open"></i>
             </div>
             <div class="card-content">
-              <h6 class="card-title text-capitalize">CheckOut</h6>
-              <span class="data-1">RS. {{ GrandTotalCheckout || 0 }} </span>
+              <h6 class="card-title text-capitalize">Bank</h6>
+              <span class="data-1">₹{{ GrandTotalBank || 0 }} </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #00b300">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-dosor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Online</h6>
+              <span class="data-1">₹{{ GrandTotalTodayOnline || 0 }} </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #18069e">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-dosor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">UPI</h6>
+              <span class="data-1">₹{{ GrandTotalTodayUPI || 0 }} </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #4390fc">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-dosor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Balance</h6>
+              <span class="data-1">₹{{ GrandTotalBalance || 0 }} </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #02ada4">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-dosor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Expenses</h6>
+              <span class="data-1">₹{{ totExpense || 0 }} </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #ce008e">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-dosor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Income</h6>
+              <span class="data-1">₹{{ GrandTotal || 0 }} </span>
             </div>
           </div>
         </div>
@@ -484,6 +548,140 @@
           </table>
         </v-card>
       </v-col>
+      <v-col md="12">
+        <v-card class="mb-5 rounded-md mt-3" elevation="0">
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <label class="white--text">Today Booking Report</label>
+            <v-spacer></v-spacer>
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="ma-0"
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('income_report_print')"
+                >
+                  <v-icon class="">mdi-printer-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>PRINT</span>
+            </v-tooltip>
+
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('income_report_download')"
+                >
+                  <v-icon class="">mdi-download-outline</v-icon>
+                </v-btn>
+              </template>
+              <span> DOWNLOAD </span>
+            </v-tooltip>
+          </v-toolbar>
+          <table>
+            <tr>
+              <th v-for="(item, index) in incomeHeaders" :key="index">
+                <span v-html="item.text"></span>
+              </th>
+            </tr>
+            <tr
+              v-for="(item, index) in todayPayments"
+              :key="index"
+              style="background-color: #90d24d"
+            >
+              <td>{{ ++index }}</td>
+              <td>{{ item && item.customer && item.customer.first_name }}</td>
+              <td>
+                <span
+                  class="blue--text"
+                  @click="goToRevView(item)"
+                  style="cursor: pointer"
+                >
+                  {{ item.rooms }}
+                </span>
+              </td>
+
+              <td>{{ item && item.source }}</td>
+              <td>{{ item && item.check_in }}</td>
+              <td>{{ item && item.check_out }}</td>
+              <td class="text-right">{{ item.total_price }}</td>
+              <td class="text-right">{{ item.advance_price }}</td>
+
+              <td v-for="i in 5" :key="i" class="text-right">
+                <span
+                  v-if="
+                    getPaymentMode(item) == 'Cash' &&
+                    item.transactions_sum_credit > 0 &&
+                    i == 1
+                  "
+                >
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span
+                  v-else-if="
+                    getPaymentMode(item) == 'Card' &&
+                    item.transactions_sum_credit > 0 &&
+                    i == 2
+                  "
+                >
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span
+                  v-else-if="
+                    getPaymentMode(item) == 'Online' &&
+                    item.transactions_sum_credit > 0 &&
+                    i == 3
+                  "
+                >
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span
+                  v-else-if="
+                    getPaymentMode(item) == 'Bank' &&
+                    item.transactions_sum_credit > 0 &&
+                    i == 4
+                  "
+                >
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span
+                  v-else-if="
+                    getPaymentMode(item) == 'UPI' &&
+                    item.transactions_sum_credit > 0 &&
+                    i == 5
+                  "
+                >
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else> --- </span>
+              </td>
+              <td class="text-right">
+                {{ item.balance }}
+              </td>
+              <td>
+                {{ item.balance > 0 ? "Payment pending" : "Payment close" }}
+              </td>
+            </tr>
+            <tr class="text-right">
+              <th class="text-right" colspan="8">Total</th>
+              <th class="text-right">{{ todayPaymentTotalCash }}</th>
+              <th class="text-right">{{ todayPaymentTotalCard }}</th>
+              <th class="text-right">{{ todayPaymentTotalOnline }}</th>
+              <th class="text-right">{{ todayPaymentTotalBank }}</th>
+              <th class="text-right">{{ todayPaymentTotalUPI }}</th>
+              <th class="text-right">{{ todayPaymentTotalBalance }}</th>
+            </tr>
+          </table>
+        </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -502,9 +700,11 @@ export default {
     todayCheckIn: [],
     todayCheckOut: [],
     continueRooms: [],
+    todayPayments: [],
     counts: [],
     loading: false,
     total: 0,
+    totExpense: 0,
 
     incomeHeaders: [
       { text: "#" },
@@ -604,33 +804,89 @@ export default {
       return this.getSum(this.todayCheckOut, 5);
     },
 
-    GrandTotalCheckin() {
+    todayPaymentTotalBalance() {
+      let sum = 0;
+      this.todayPayments.map((e) => (sum += parseFloat(e.balance)));
+      return sum.toFixed(2);
+    },
+    todayPaymentTotalCash() {
+      return this.getSum(this.todayPayments, 1);
+    },
+    todayPaymentTotalCard() {
+      return this.getSum(this.todayPayments, 2);
+    },
+    todayPaymentTotalBank() {
+      return this.getSum(this.todayPayments, 4);
+    },
+    todayPaymentTotalOnline() {
+      return this.getSum(this.todayPayments, 3);
+    },
+    todayPaymentTotalUPI() {
+      return this.getSum(this.todayPayments, 5);
+    },
+
+    GrandTotal() {
+      let tot =
+        parseFloat(this.GrandTotalCash) +
+        parseFloat(this.GrandTotalCard) +
+        parseFloat(this.GrandTotalBank) +
+        parseFloat(this.GrandTotalTodayOnline) +
+        parseFloat(this.GrandTotalTodayUPI);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalCash() {
       let tot =
         parseFloat(this.totalCash) +
+        parseFloat(this.totalUPI) +
+        parseFloat(this.checkoutTotalCash) +
+        parseFloat(this.continueTotalCash) +
+        parseFloat(this.todayPaymentTotalCash);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalCard() {
+      let tot =
         parseFloat(this.totalCard) +
-        parseFloat(this.totalBank) +
-        parseFloat(this.totalOnline) +
+        parseFloat(this.checkoutTotalCard) +
+        parseFloat(this.continueTotalCard) +
+        parseFloat(this.todayPaymentTotalCard);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalBank() {
+      let tot =
+        parseFloat(this.continueTotalBank) +
+        parseFloat(this.todayPaymentTotalBank) +
+        parseFloat(this.checkoutTotalBank) +
+        parseFloat(this.totalBank);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalTodayOnline() {
+      let tot =
+        parseFloat(this.continueTotalOnline) +
+        parseFloat(this.todayPaymentTotalOnline) +
+        parseFloat(this.checkoutTotalOnline) +
+        parseFloat(this.totalOnline);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalTodayUPI() {
+      let tot =
+        parseFloat(this.continueTotalUPI) +
+        parseFloat(this.todayPaymentTotalUPI) +
+        parseFloat(this.checkoutTotalUPI) +
         parseFloat(this.totalUPI);
       return tot.toFixed(2);
     },
 
-    GrandTotalCheckout() {
+    GrandTotalBalance() {
       let tot =
-        parseFloat(this.checkoutTotalCash) +
-        parseFloat(this.checkoutTotalCard) +
-        parseFloat(this.checkoutTotalBank) +
-        parseFloat(this.checkoutTotalOnline) +
-        parseFloat(this.checkoutTotalUPI);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalContinue() {
-      let tot =
-        parseFloat(this.continueTotalCash) +
-        parseFloat(this.continueTotalCard) +
-        parseFloat(this.continueTotalBank) +
-        parseFloat(this.continueTotalOnline) +
-        parseFloat(this.continueTotalUPI);
+        parseFloat(this.totalBalance) +
+        parseFloat(this.continueTotalBalance) +
+        parseFloat(this.checkoutTotalBalance) +
+        parseFloat(this.todayPaymentTotalBalance);
       return tot.toFixed(2);
     },
   },
@@ -697,7 +953,6 @@ export default {
       const lastTransaction = item.transactions[item.transactions.length - 1];
       let creditTrans = item.transactions.filter((e) => e.credit > 0);
       let lastcredit = creditTrans[creditTrans.length - 1];
-      console.log(lastcredit);
       if (lastcredit != undefined) {
         return lastcredit.payment_mode.name;
       }
@@ -720,6 +975,8 @@ export default {
         this.todayCheckIn = data.todayCheckIn;
         this.continueRooms = data.continueRooms;
         this.todayCheckOut = data.todayCheckOut;
+        this.todayPayments = data.todayPayments;
+        this.totExpense = data.totExpense;
       });
     },
   },

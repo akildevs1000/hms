@@ -10,16 +10,8 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">Income</h6>
               <span class="data-1">
-                RS. {{ convert_decimal(totalIncomes.OverallTotal) || 0 }}</span
+                ₹{{ convert_decimal(totalIncomes.OverallTotal) || 0 }}</span
               >
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
             </div>
           </div>
         </div>
@@ -34,16 +26,8 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">Expense</h6>
               <span class="data-1"
-                >RS. {{ totalExpenses.OverallTotal || 0 }}
+                >₹{{ totalExpenses.OverallTotal || "0.00" }}
               </span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
             </div>
           </div>
         </div>
@@ -53,7 +37,7 @@
         class="col-xl-4 my-0 py-0 col-lg-6 text-uppercase"
         v-if="can('company')"
       >
-        <div class="card px-2" style="background-color: #f29a9a">
+        <div class="card px-2" style="background-color: #ce008e">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-dosor-open"></i>
@@ -61,16 +45,8 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">Management Expense</h6>
               <span class="data-1"
-                >RS. {{ totalExpenses.ManagementOverallTotal || 0 }}
+                >₹{{ totalExpenses.ManagementOverallTotal || 0 }}
               </span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
             </div>
           </div>
         </div>
@@ -88,15 +64,7 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">Profit</h6>
               <!-- <span class="data-1"> RS. {{ profit }}</span> -->
-              <span class="data-1"> RS. {{ convert_decimal(profit) }}</span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
+              <span class="data-1">₹{{ convert_decimal(profit) }}</span>
             </div>
           </div>
         </div>
@@ -118,15 +86,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Loss</h6>
-              <span class="data-1"> RS.{{ loss }}</span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
+              <span class="data-1">₹{{ loss }}</span>
             </div>
           </div>
         </div>
@@ -140,17 +100,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">City Ledger</h6>
-              <span class="data-1">
-                RS.{{ totalIncomes.City_ledger || 0 }}</span
-              >
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
+              <span class="data-1"> ₹{{ totalIncomes.City_ledger || 0 }}</span>
             </div>
           </div>
         </div>
@@ -159,6 +109,44 @@
 
     <v-row>
       <v-col md="3">
+        <div class="ml-4">Filter</div>
+        <v-col md="12">
+          <v-select
+            v-model="filterType"
+            :items="[
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]"
+            dense
+            placeholder="Type"
+            outlined
+            :hide-details="true"
+            item-text="name"
+            item-value="id"
+            @change="commonMethod"
+          ></v-select
+        ></v-col>
+      </v-col>
+
+      <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
           <v-menu
@@ -188,7 +176,7 @@
           </v-menu>
         </v-col>
       </v-col>
-      <v-col md="3">
+      <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">To</div>
         <v-col cols="12" sm="12" md="12">
           <v-menu
@@ -600,6 +588,7 @@ export default {
     },
     options: {},
     endpoint: "expense",
+    filterType: 1,
     search: "",
     snackbar: false,
     dialog: false,
@@ -661,6 +650,28 @@ export default {
     this.get_counts();
   },
 
+  computed: {
+    week() {
+      const today = new Date();
+      const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+      const startOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - dayOfWeek
+      );
+      const endOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        startOfWeek.getDate() + 6
+      );
+
+      return [
+        startOfWeek.toISOString().slice(0, 10),
+        endOfWeek.toISOString().slice(0, 10),
+      ];
+    },
+  },
+
   methods: {
     onPageChange() {
       this.getExpenseData();
@@ -690,6 +701,35 @@ export default {
     },
 
     commonMethod() {
+      const today = new Date();
+      switch (this.filterType) {
+        case 1:
+          this.from_date = new Date().toJSON().slice(0, 10);
+          this.to_date = new Date().toJSON().slice(0, 10);
+          break;
+        case 2:
+          this.from_date = new Date(Date.now() - 86400000)
+            .toISOString()
+            .slice(0, 10);
+          this.to_date = new Date(Date.now() - 86400000)
+            .toISOString()
+            .slice(0, 10);
+          break;
+        case 3:
+          this.from_date = this.week[0];
+          this.to_date = this.week[1];
+          break;
+        case 4:
+          this.from_date = new Date(today.getFullYear(), today.getMonth(), 1);
+          this.to_date = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+          break;
+
+        // default:
+        //   this.from_date = new Date().toJSON().slice(0, 10);
+        //   this.to_date = new Date().toJSON().slice(0, 10);
+        //   break;
+      }
+
       this.getExpenseData();
       this.getIncomeData();
       this.get_counts();
@@ -722,7 +762,6 @@ export default {
           status: this.pagination.status,
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
-
           from: this.from_date,
           to: this.to_date,
           is_account: true,
@@ -778,6 +817,44 @@ export default {
       });
     },
 
+    // commonMethod() {
+    //   const today = new Date();
+
+    //   switch (this.filterType) {
+    //     case 1:
+    //       this.from_date = new Date().toJSON().slice(0, 10);
+    //       this.to_date = new Date().toJSON().slice(0, 10);
+    //       break;
+    //     case 2:
+    //       this.from_date = new Date(Date.now() - 86400000)
+    //         .toISOString()
+    //         .slice(0, 10);
+    //       this.to_date = new Date(Date.now() - 86400000)
+    //         .toISOString()
+    //         .slice(0, 10);
+    //       break;
+    //     case 3:
+    //       this.from_date = this.week[0];
+    //       this.to_date = this.week[1];
+    //       break;
+    //     case 4:
+    //       this.from_date = new Date(today.getFullYear(), today.getMonth(), 1);
+    //       this.to_date = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    //       break;
+
+    //     default:
+    //       this.from_date = new Date().toJSON().slice(0, 10);
+    //       this.to_date = new Date().toJSON().slice(0, 10);
+    //       break;
+    //   }
+
+    //   console.log(this.from_date + "from");
+    //   console.log(this.to_date + "to");
+    //   console.log(this.filterType + "type");
+
+    //   this.getPaymentReportsByUser();
+    // },
+
     get_counts() {
       let payload = {
         params: {
@@ -789,7 +866,7 @@ export default {
       };
       this.$axios.get(`account_count`, payload).then(({ data }) => {
         this.counts = data;
-        this.loss = data.loss;
+        this.loss = data.loss.toFixed(2);
         this.profit = data.profit;
         this.totalExpenses = {
           ...data.expense,

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Agent;
-use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Posting;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\BookedRoom;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostingController extends Controller
 {
@@ -24,6 +25,32 @@ class PostingController extends Controller
             ],
             'bookedRoom',
         ]);
+
+
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        if ($request->filterType == 1) {
+            $model->whereDate('posting_date', date('Y-m-d')); //today
+        }
+
+        if ($request->filterType == 2) {
+            $model->whereDate('posting_date', date('Y-m-d', strtotime('-1 day'))); //Yesterday
+        }
+
+        if ($request->filterType == 3) {
+            $model->whereBetween('posting_date', [$startOfWeek, $endOfWeek]); //This Week
+        }
+
+        if ($request->filterType == 4) {
+            $model->whereMonth('posting_date', date('m')); //This month
+        }
+
+        if ($request->filterType == 5) {
+            $model->whereBetween('created_at', [$request->from . ' 00:00:00', $request->to . ' 23:59:59']);
+        }
+
+
 
         if ($request->search != "" && $request->filled('search')) {
             $key = $request->search;

@@ -596,7 +596,7 @@ export default {
         },
         {
           icon: "mdi mdi-file-chart-outline",
-          title: "Audit",
+          title: "Night Audit",
           to: "/management/report/audit",
           menu: "city_ledger_access",
         },

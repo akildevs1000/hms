@@ -116,6 +116,43 @@
 
     <v-row>
       <v-col md="3">
+        <div class="ml-4">Filter</div>
+        <v-col md="12">
+          <v-select
+            v-model="filterType"
+            :items="[
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]"
+            dense
+            placeholder="Type"
+            outlined
+            :hide-details="true"
+            item-text="name"
+            item-value="id"
+            @change="commonMethod"
+          ></v-select>
+        </v-col>
+      </v-col>
+      <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
           <v-menu
@@ -145,7 +182,7 @@
           </v-menu>
         </v-col>
       </v-col>
-      <v-col md="3">
+      <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">To</div>
         <v-col cols="12" sm="12" md="12">
           <v-menu
@@ -255,6 +292,21 @@
 
             <tr v-for="(trans, index) in user.transactions" :key="index">
               <td>{{ ++index }}</td>
+              <td>
+                <span
+                  class="blue--text"
+                  @click="goToRevView(trans)"
+                  style="cursor: pointer"
+                >
+                  {{
+                    (trans && trans.booking && trans.booking.reservation_no) ||
+                    "---"
+                  }}
+                </span>
+              </td>
+              <td>
+                {{ (trans && trans.booking && trans.booking.rooms) || "---" }}
+              </td>
               <td>{{ trans.desc }}</td>
               <td>{{ trans.created_at }}</td>
               <td>{{ trans.time }}</td>
@@ -316,7 +368,7 @@
               </td>
             </tr>
             <tr class="text-right">
-              <th colspan="6">Total</th>
+              <th colspan="8">Total</th>
               <th>{{ user.cash_sum }}</th>
               <th>{{ user.card_sum }}</th>
               <th>{{ user.online_sum }}</th>
@@ -342,7 +394,7 @@ export default {
 
     to_date: new Date().toJSON().slice(0, 10),
     to_menu: false,
-
+    filterType: 1,
     pagination: {
       current: 1,
       total: 0,
@@ -362,6 +414,8 @@ export default {
 
     Header: [
       { text: "#" },
+      { text: "Rev. No." },
+      { text: "Rooms" },
       { text: "Desc." },
       { text: "Date" },
       { text: "Time" },
@@ -397,6 +451,28 @@ export default {
     this.getPaymentReportsByUser();
   },
 
+  computed: {
+    week() {
+      const today = new Date();
+      const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+      const startOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - dayOfWeek
+      );
+      const endOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        startOfWeek.getDate() + 6
+      );
+
+      return [
+        startOfWeek.toISOString().slice(0, 10),
+        endOfWeek.toISOString().slice(0, 10),
+      ];
+    },
+  },
+
   methods: {
     onPageChange() {
       this.getExpenseData();
@@ -430,7 +506,45 @@ export default {
       this.getExpenseData();
     },
 
+    goToRevView(item) {
+      this.$router.push(`/customer/details/${item.booking_id}`);
+    },
+
     commonMethod() {
+      const today = new Date();
+
+      switch (this.filterType) {
+        case 1:
+          this.from_date = new Date().toJSON().slice(0, 10);
+          this.to_date = new Date().toJSON().slice(0, 10);
+          break;
+        case 2:
+          this.from_date = new Date(Date.now() - 86400000)
+            .toISOString()
+            .slice(0, 10);
+          this.to_date = new Date(Date.now() - 86400000)
+            .toISOString()
+            .slice(0, 10);
+          break;
+        case 3:
+          this.from_date = this.week[0];
+          this.to_date = this.week[1];
+          break;
+        case 4:
+          this.from_date = new Date(today.getFullYear(), today.getMonth(), 1);
+          this.to_date = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+          break;
+
+        default:
+          this.from_date = new Date().toJSON().slice(0, 10);
+          this.to_date = new Date().toJSON().slice(0, 10);
+          break;
+      }
+
+      console.log(this.from_date + "from");
+      console.log(this.to_date + "to");
+      console.log(this.filterType + "type");
+
       this.getPaymentReportsByUser();
     },
 

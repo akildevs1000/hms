@@ -5,7 +5,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row class="mt-5 mb-5">
+    <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
@@ -24,75 +24,133 @@
     </v-row>
 
     <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-text-field
-          dense
-          outlined
-          placeholder="Search..."
-          solo
-          flat
-          @input="searchIt"
-          v-model="search"
-          hide-details
-        ></v-text-field>
-      </v-col>
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #800000">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-ddoor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Total</h6>
+              <span class="data-1"> RS. {{ totalAmount || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </v-row>
+
+    <v-row>
       <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
+        <div class="ml-4">Search</div>
+        <v-col md="12">
+          <v-text-field
+            dense
+            outlined
+            placeholder="Search..."
+            @input="commonMethod"
+            v-model="search"
+            hide-details
+          ></v-text-field>
+        </v-col>
+      </v-col>
+
+      <v-col md="3">
+        <div class="ml-4">Filter</div>
+        <v-col md="12">
+          <v-select
+            v-model="filterType"
+            :items="[
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]"
+            dense
+            placeholder="Type"
+            outlined
+            :hide-details="true"
+            item-text="name"
+            item-value="id"
+            @change="commonMethod"
+          ></v-select
+        ></v-col>
+      </v-col>
+
+      <v-col md="3" v-if="filterType == 5">
+        <div class="ml-4">From</div>
+        <v-col cols="12" sm="12" md="12">
+          <v-menu
+            v-model="from_menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="from_date"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                outlined
+                dense
+                :hide-details="true"
+              ></v-text-field>
+            </template>
+            <v-date-picker
               v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              outlined
-              :hide-details="true"
-              flat
-              label="From"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
+              @input="from_menu = false"
+              @change="commonMethod"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
       </v-col>
-      <v-col md="3">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
+      <v-col md="3" v-if="filterType == 5">
+        <div class="ml-4">To</div>
+        <v-col cols="12" sm="12" md="12">
+          <v-menu
+            v-model="to_menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="to_date"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                outlined
+                dense
+                :hide-details="true"
+              ></v-text-field>
+            </template>
+            <v-date-picker
               v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              outlined
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
+              @input="to_menu = false"
+              @change="commonMethod"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
       </v-col>
     </v-row>
 
@@ -455,9 +513,11 @@
 </template>
 <script>
 import ImagePreview from "../images/ImagePreview.vue";
+import CustomFilter from "../filter/CustomFilter.vue";
 export default {
   props: ["is_management"],
   components: {
+    CustomFilter,
     ImagePreview,
   },
   data: () => ({
@@ -468,7 +528,7 @@ export default {
 
     to_date: "",
     to_menu: false,
-
+    filterType: 1,
     pagination: {
       current: 1,
       total: 0,
@@ -484,6 +544,7 @@ export default {
     data: [],
     loading: false,
     imgView: false,
+    search: "",
     documentObj: {
       fileExtension: null,
       file: null,
@@ -530,16 +591,40 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
     },
+    totalAmount() {
+      let sum = 0;
+      this.data.map((e) => (sum += parseFloat(e.total)));
+      return sum.toFixed(2);
+    },
+    week() {
+      const today = new Date();
+      const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+      const startOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - dayOfWeek
+      );
+      const endOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        startOfWeek.getDate() + 6
+      );
+
+      return [
+        startOfWeek.toISOString().slice(0, 10),
+        endOfWeek.toISOString().slice(0, 10),
+      ];
+    },
   },
 
   created() {
     this.loading = true;
-    this.getDataFromApi();
+    this.commonMethod();
   },
 
   methods: {
     onPageChange() {
-      this.getDataFromApi();
+      this.commonMethod();
     },
     can(permission) {
       let user = this.$auth;
@@ -586,7 +671,7 @@ export default {
       }
     },
     onPageChange() {
-      this.getDataFromApi();
+      this.commonMethod();
     },
 
     getDocType(doc) {
@@ -614,6 +699,37 @@ export default {
     },
 
     commonMethod() {
+      const today = new Date();
+      switch (this.filterType) {
+        case 1:
+          this.from_date = new Date().toJSON().slice(0, 10);
+          this.to_date = new Date().toJSON().slice(0, 10);
+          break;
+        case 2:
+          this.from_date = new Date(Date.now() - 86400000)
+            .toISOString()
+            .slice(0, 10);
+          this.to_date = new Date(Date.now() - 86400000)
+            .toISOString()
+            .slice(0, 10);
+          break;
+        case 3:
+          this.from_date = this.week[0];
+          this.to_date = this.week[1];
+          break;
+        case 4:
+          this.from_date = new Date(today.getFullYear(), today.getMonth(), 1);
+          this.to_date = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+          break;
+
+        // default:
+        //   this.from_date = new Date().toJSON().slice(0, 10);
+        //   this.to_date = new Date().toJSON().slice(0, 10);
+        //   break;
+      }
+      console.log(this.filterType);
+      console.log(this.from_date);
+      console.log(this.to_date);
       this.getDataFromApi();
     },
 
@@ -627,6 +743,7 @@ export default {
           company_id: this.$auth.user.company.id,
           from: this.from_date,
           to: this.to_date,
+          search: this.search,
           is_management: this.is_management,
         },
       };
@@ -639,13 +756,13 @@ export default {
       });
     },
 
-    searchIt(e) {
-      if (e.length == 0) {
-        this.getDataFromApi(this.endpoint);
-      } else if (e.length > 2) {
-        this.getDataFromApi(`${this.endpoint}/search/${e}`);
-      }
-    },
+    // searchIt(e) {
+    //   if (e.length == 0) {
+    //     this.getDataFromApi(this.endpoint);
+    //   } else if (e.length > 2) {
+    //     this.getDataFromApi(`${this.endpoint}/search/${e}`);
+    //   }
+    // },
 
     mapper(obj) {
       let payload = new FormData();
@@ -714,7 +831,7 @@ export default {
   },
 };
 </script>
-
+<style scoped src="@/assets/dashtem.css"></style>
 <style scoped>
 table {
   font-family: arial, sans-serif;

@@ -1,16 +1,20 @@
 <template>
   <div>
-    <v-row class="mt-5 mb-5">
-      <v-col cols="6">
-        <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
-      </v-col>
-    </v-row>
-
     <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
+        <v-text-field
+          class=""
+          label="Search..."
+          dense
+          outlined
+          flat
+          append-icon="mdi-magnify"
+          v-model="search"
+          hide-details
+        ></v-text-field>
+      </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
         <v-select
-          class="custom-text-box shadow-none"
           v-model="filterType"
           :items="[
             {
@@ -36,12 +40,10 @@
           ]"
           dense
           placeholder="Type"
-          solo
-          flat
+          outlined
           :hide-details="true"
           item-text="name"
           item-value="id"
-          @change="getDataFromApi()"
         ></v-select>
       </v-col>
 
@@ -106,21 +108,6 @@
         </v-menu>
       </v-col>
     </v-row>
-
-    <v-card class="mb-5 rounded-md mt-3" elevation="0">
-      <v-toolbar class="rounded-md" color="background" dense flat dark>
-        <span> Day Report</span>
-      </v-toolbar>
-      <client-only>
-        <ApexCharts
-          :options="chartOptions"
-          :series="series"
-          :height="400"
-          chart-id="pieChart"
-          :key="chartKey"
-        />
-      </client-only>
-    </v-card>
   </div>
 </template>
 
@@ -128,42 +115,7 @@
 export default {
   data() {
     return {
-      series: [],
-      chartOptions: {
-        chart: {
-          width: 380,
-          type: "pie",
-        },
-        labels: ["Sold", "Unsold"],
-        colors: ["#00b300", "#ff3333"], // set custom colors
-        legend: {
-          show: false,
-        },
-        dataLabels: {
-          formatter(val, opts) {
-            const name = opts.w.globals.labels[opts.seriesIndex];
-            return [name, val.toFixed(1) + "%"];
-          },
-        },
-        responsive: [
-          {
-            breakpoint: 480,
-            options: {
-              chart: {
-                width: 200,
-              },
-              legend: {
-                position: "bottom",
-              },
-            },
-          },
-        ],
-      },
       // -------------------end chart ----------------
-
-      Model: "Report",
-      endpoint: "get_occupancy_rate_by_filter",
-      chartKey: 0,
 
       from_date: "",
       from_menu: false,
@@ -172,76 +124,42 @@ export default {
       to_menu: false,
       loading: false,
 
-      pagination: {
-        current: 1,
-        total: 0,
-        per_page: 10,
-      },
-      options: {},
       filterType: 1,
-      data: [],
-      headers: [
-        {
-          text: "#",
-        },
-        {
-          text: "Date",
-        },
-        {
-          text: "Booking Date",
-        },
-        {
-          text: "Booking Date",
-        },
-      ],
+      search: "",
     };
   },
 
-  created() {
-    this.loading = true;
+  watch: {
+    filterType() {
+      this.FilterData();
+    },
+    search() {
+      this.FilterData();
+    },
+    from_date() {
+      this.FilterData();
+    },
+    to_date() {
+      this.FilterData();
+    },
   },
-  mounted() {
-    this.getDataFromApi();
-  },
+
+  mounted() {},
 
   methods: {
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
-      );
-    },
-
     commonMethod() {
       if (this.from_date && this.to_date) {
-        this.getDataFromApi();
       }
     },
 
-    getDataFromApi(url = this.endpoint) {
-      this.loading = true;
-      this.series = [];
-      let options = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          from: this.from_date,
-          to: this.to_date,
-          filterType: this.filterType,
-        },
+    FilterData() {
+      let data = {
+        from: this.from_date,
+        to: this.to_date,
+        type: this.filterType,
+        search: this.search,
       };
-      this.$axios.get(url, options).then(({ data }) => {
-        const { sold, unsold } = data;
-        let totSold = eval(sold.join("+"));
-        let totUnsold = eval(unsold.join("+"));
-        this.series.push(...[totSold, totUnsold]);
-        this.forceChartRerender();
-        this.loading = false;
-      });
-    },
-
-    forceChartRerender() {
-      this.chartKey += 1;
+      this.$emit("filter-attr", data);
     },
   },
 };
