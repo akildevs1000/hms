@@ -20,9 +20,9 @@ class WhatsappNotificationController extends Controller
         $qty             = $data['qty'];
         $room_no         = $data['room_no'];
         $company         = $data['company'];
-        $title         = $data['title'];
-        $guest = ucfirst($data['guest']) ?? 'Guest';
-        $instance_id = $company->whatsapp_instance_id;
+        $title           = $data['title'];
+        $guest           = ucfirst($data['guest']) ?? 'Guest';
+        $instance_id     = $company->whatsapp_instance_id;
 
         $msg .= "Dear $title. $guest, \n";
         $msg .= "\n";
@@ -91,6 +91,7 @@ class WhatsappNotificationController extends Controller
             'access_token' => $access_token,
             'type'         => 'checkin',
         ];
+
         (new WhatsappController)->sentNotification($data);
     }
     public function checkInNotification($booking, $customer)
@@ -102,7 +103,7 @@ class WhatsappNotificationController extends Controller
         $video        = "";
         $msg          = "";
         $customerName = ucfirst($customer['first_name']) ?? 'Guest';
-        $title = ucfirst($customer['title']) ?? 'Mr';
+        $title        = ucfirst($customer['title']) ?? 'Mr';
         $checkOut     = date('d-M-y H:i', strtotime($booking->check_out));
         $company      = $booking->company;
 
@@ -170,9 +171,6 @@ class WhatsappNotificationController extends Controller
         $video       = $company->video;
         $review      = $company->review;
 
-
-
-
         $msg .= "Dear $title. $customerName, \n";
         $msg .= " Thank you  for your stay with us \n";
 
@@ -190,6 +188,7 @@ class WhatsappNotificationController extends Controller
         $msg .= "--------------- \n";
 
         $msg .= "Please write your review \n";
+        $msg .= "\n";
         $msg .= is_null($review) ? '' : "More  $review\n";
 
         $msg .= "\n";
@@ -226,14 +225,13 @@ class WhatsappNotificationController extends Controller
         $comName     = $company->company_code;
         $video       = $company->video;
 
-
         $msg .= "Dear $title. $customerName, \n";
         $msg .= "Welcome to  $comName\n";
         $msg .= " Thank you  for your room reservation \n";
 
         $msg .= "\n";
         $msg .= "--------------- \n";
-        $msg .= "Rev. No : $booking->id \n";
+        $msg .= "Rev. No : $booking->reservation_no \n";
         $msg .= "No. of Rooms : $booking->total_days \n";
         $msg .= "No. of Days : $numberOfRooms \n";
         $msg .= "Check In : $checkIn \n";
@@ -265,10 +263,9 @@ class WhatsappNotificationController extends Controller
         (new WhatsappController)->sentNotification($data);
     }
 
-
     public function getPayMode($mode = "")
     {
-        return match ($mode) {
+        return match($mode) {
             1 => 'Cash',
             2 => 'Card',
             3 => 'Online',

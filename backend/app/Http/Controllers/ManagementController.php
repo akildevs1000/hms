@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Room;
-use App\Models\Report;
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Expense;
-use Carbon\CarbonPeriod;
 use App\Models\OrderRoom;
-use App\Models\BookedRoom;
+use App\Models\Report;
+use App\Models\Room;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
 class ManagementController extends Controller
@@ -66,7 +66,7 @@ class ManagementController extends Controller
     public function getOccupancyRateByFilter(Request $request)
     {
         $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
+        $endOfWeek   = Carbon::now()->endOfWeek();
 
         $reportModel = Report::query();
         $arr         = [];
@@ -92,7 +92,7 @@ class ManagementController extends Controller
             $reportModel->whereBetween('date', [$request->from, $request->to]); //custom
         }
 
-        $data =  $reportModel->orderBy('id', 'asc')->get()->toArray();
+        $data = $reportModel->orderBy('id', 'asc')->get()->toArray();
 
         foreach ($data as $data) {
             $arr['date'][]   = $data['date'];
@@ -101,7 +101,6 @@ class ManagementController extends Controller
         }
         return $arr;
     }
-
 
     public function generateOccupancyRate(Request $request)
     {
@@ -162,13 +161,13 @@ class ManagementController extends Controller
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')->with('transactions', function ($q) use ($request) {
-                $q->where('is_posting', 0);
-                $q->where('credit', '>', 0);
-                $q->whereDate('date', $request->date);
-                $q->where('payment_method_id', '!=', 7);
-                $q->where('company_id', $request->company_id)
-                    ->with('paymentMode');
-            })->get();
+            $q->where('is_posting', 0);
+            $q->where('credit', '>', 0);
+            $q->whereDate('date', $request->date);
+            $q->where('payment_method_id', '!=', 7);
+            $q->where('company_id', $request->company_id)
+                ->with('paymentMode');
+        })->get();
 
         $continueRooms = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
@@ -207,7 +206,6 @@ class ManagementController extends Controller
                     ->with('paymentMode');
             })->get();
 
-
         $todayPayments = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
                 $q->where('booking_status', 1);
@@ -228,16 +226,17 @@ class ManagementController extends Controller
                     ->with('paymentMode');
             })->get();
 
-
-        $totExpense = Expense::whereCompanyId($request->company_id)->where('is_management', 1)->whereDate('created_at', $request->date)->sum('total');
-
+        $totExpense = Expense::whereCompanyId($request->company_id)
+            ->where('is_management', 0)
+            ->whereDate('created_at', $request->date)
+            ->sum('total');
 
         return [
             'todayCheckIn'  => $todayCheckin,
             'todayCheckOut' => $todayCheckOut,
             'continueRooms' => $continueRooms,
             'todayPayments' => $todayPayments,
-            'totExpense' => number_format($totExpense, 2, '.', '')
+            'totExpense'    => number_format($totExpense, 2, '.', ''),
         ];
     }
 
