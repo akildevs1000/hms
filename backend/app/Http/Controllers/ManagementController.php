@@ -153,6 +153,7 @@ class ManagementController extends Controller
         $todayCheckin = $model
             ->where(function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '!=', -1);
                 $q->where('booking_status', '=', 2);
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_in', $request->date);
@@ -171,6 +172,7 @@ class ManagementController extends Controller
 
         $continueRooms = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
+                $q->where('booking_status', '!=', -1);
                 $q->where('booking_status', '=', 2);
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_in', '<', $request->date);
@@ -190,6 +192,7 @@ class ManagementController extends Controller
         $todayCheckOut = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
                 $q->whereIn('booking_status', [0, 3, 4]);
+                $q->where('booking_status', '!=', -1);
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_out', $request->date);
             })
@@ -208,10 +211,14 @@ class ManagementController extends Controller
 
         $todayPayments = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
-                $q->where('booking_status', 1);
+                $q->whereIn('booking_status', [1, 0]);
+                $q->where('booking_status', '!=', -1);
                 $q->where('paid_amounts', '>', 0);
                 $q->where('company_id', $company_id);
-                $q->whereDate('booking_date', $request->date);
+                // $q->whereDate('booking_date', $request->date);
+            })
+            ->whereHas('transactions', function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
             })
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);

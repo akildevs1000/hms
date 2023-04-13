@@ -1,11 +1,148 @@
 <template>
   <div>
-    {{ data }}
+    <v-row>
+      <v-col md="4">
+        <h5>HYDERS PARK</h5>
+        <span class="dheader-txt-span">{{ data && data.company && data.company.company_code || '---' }}</span>
+      </v-col>
+      <v-col md="4">
+        <img :src="data && data.company && data.company.logo" height="100px" width="100" />
+      </v-col>
+      <v-col md="4">
+        <div style="text-align:left; margin-left:70px" class="header-txt-address">
+          <small> GST No: {{ data && data.company && data.company.mol_id || '---' }} </small><br>
+          <small> Telephone No: {{
+            data && data.company && data.company && data.company.contact && data.company.contact.number || '---'
+          }} </small><br>
+          <small> Email: {{
+            data && data.company && data.company && data.company.user && data.company.user.email || '---'
+          }}</small><br>
+          <small> Guest Registration Date : {{ currentDate }}</small>
+        </div>
+      </v-col>
+    </v-row>
+    <v-divider></v-divider>
+    <v-row class="row mt-3">
+      <v-col md="3">
+        <label for="name" class="label-txt">Reservation Number:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box" style="float: left">
+          <p> {{ data.reservation_no || '---' }} </p>
+        </div>
+      </v-col>
+      <v-col md="3" class="text-right">
+        <label for="name" class="text-right">Rooms:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box" style="float: left">
+          <p> {{ data.rooms || '---' }} </p>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="row mt-3">
+      <v-col md="3">
+        <label for="name" class="label-txt">First Name:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box">
+          <p> {{ data && data.customer && data.customer.first_name }} </p>
+        </div>
+      </v-col>
+      <v-col md="3" class="text-right">
+        <label for="name" class="label-txt">Last Name:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box pr-2 mr-2">
+          <p> {{ data && data.customer && data.customer.last_name || '---' }} </p>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="row mt-3">
+      <v-col md="3">
+        <label for="name" class="label-txt">Arrival Date:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box">
+          <p> {{ data && data.check_in || '---' }} </p>
+        </div>
+      </v-col>
+      <v-col md="3" class="text-right">
+        <label for="name" class="label-txt">Departure Name:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box pr-2 mr-2">
+          <p> {{ data && data.check_out || '---' }} </p>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="row mt-3">
+      <v-col md="3">
+        <label for="name" class="label-txt">Room Type:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box">
+          <p> {{ data && data.booked_rooms && data.booked_rooms[0].room_type || '---' }} </p>
+        </div>
+      </v-col>
+      <v-col md="3" class="text-right">
+        <label for="name" class="label-txt">Current Balance:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box pr-2 mr-2">
+          <p> {{ trans['balance'] || '---' }} </p>
+          <!-- <pre>{{ data }}</pre> -->
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="row mt-3">
+      <v-col md="3">
+        <label for="name" class="label-txt">Room/Tagged
+          Advance:</label>
+      </v-col>
+      <v-col md="9">
+        <div class="text-box">
+          <p> {{ trans['sumCredit'] || '---' }} </p>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="row mt-3">
+      <v-col md="3">
+        <label for="name" class="label-txt">Approach Stay Cost:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box">
+          <p> {{ trans['sumDebit'] || '---' }} </p>
+        </div>
+      </v-col>
+      <v-col md="3" class="text-right">
+        <label for="name" class="label-txt">Remaining Balance
+          Due:</label>
+      </v-col>
+      <v-col md="3">
+        <div class="text-box pr-2 mr-2">
+          <p> {{ trans['balance'] || '---' }} </p>
+          <!-- <pre>{{ data }}</pre> -->
+        </div>
+      </v-col>
+    </v-row>
+    <v-divider></v-divider>
+    <div class="d-flex justify-center mt-4">
+      <v-btn small class="pt-4 pb-4 mr-1 elevation-0" color="#ECF0F4" @click="process('grc_report_print')">
+        Print
+        <v-icon right>mdi-printer</v-icon>
+      </v-btn>
+      <v-btn small class="pt-4 pb-4 elevation-0" color="#ECF0F4" @click="process('grc_report_download')">
+        Download
+        <v-icon right>mdi-file</v-icon>
+      </v-btn>
+    </div>
+
   </div>
 </template>
 <script>
 export default {
-  props: ["BookingData"],
+  props: ["bookingId"],
   data() {
     return {
       isDiscount: false,
@@ -17,6 +154,7 @@ export default {
       reference: "",
       totalTransactionAmount: 0,
       data: [],
+      trans: [],
       errors: [],
       checkOutDialog: false,
     };
@@ -36,11 +174,15 @@ export default {
     this.get_booking();
   },
 
-  computed: {},
+  computed: {
+    currentDate() {
+      return (new Date().toJSON().slice(0, 10));
+    },
+  },
 
   methods: {
     get_booking() {
-      let id = this.BookingData.id;
+      let id = this.bookingId;
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -50,38 +192,18 @@ export default {
         .get(`grc_by_checkin/${id}`, payload)
         .then(({ data }) => {
           this.data = data.booking;
+          this.trans = data.trans;
           console.log(this.data);
         });
     },
 
-    store_advance(data) {
-      if (this.new_payment == "") {
-        alert("Enter payment amount");
-        return;
-      }
-      this.loading = true;
-      let payload = {
-        new_advance: this.new_payment,
-        reference_number: this.reference,
-        booking_id: data.id,
-        remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id,
-        company_id: this.$auth.user.company.id,
-      };
-      this.$axios
-        .post("/paying_advance", payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.errors = data.errors;
-            this.loading = false;
-          } else {
-            this.new_payment = 0;
-            this.get_transaction();
-            this.closeDialog(data);
-            this.loading = false;
-          }
-        })
-        .catch((e) => console.log(e));
+    process(url) {
+      let id = this.bookingId;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${process.env.BACKEND_URL}${url}/${id}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     closeDialog(data) {
@@ -104,226 +226,17 @@ export default {
 </script>
 
 <style scoped>
-* {
-  box-sizing: border-box;
-}
-
-.m-1 {
-  margin: 0.25rem;
-}
-
-.m-2 {
-  margin: 0.5rem;
-}
-
-.m-3 {
-  margin: 1rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.mt-3 {
-  margin-top: 1rem;
-}
-
-.mr-1 {
-  margin-right: 0.25rem;
-}
-
-.ml-3 {
-  margin-left: 1rem;
-}
-
-.mx-4 {
-  margin-right: 1.5rem;
-  margin-left: 1.5rem;
-}
-
-.my-5 {
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
-}
-
-.pr-1 {
-  padding-right: 0.25rem;
-}
-
-.pt-2 {
-  padding-top: 0.5rem;
-}
-
-.pl-3 {
-  padding-left: 1rem;
-}
-
-.px-4 {
-  padding-right: 1.5rem;
-  padding-left: 1.5rem;
-}
-
-.py-5 {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
-}
-
-.row::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-.col {
-  width: 5%;
-  float: left;
-  padding: 5px;
-}
-
-
-.col-1 {
-  width: 8.33%;
-  float: left;
-  padding: 5px;
-}
-
-.col-2 {
-  width: 16.66%;
-  float: left;
-  padding: 5px;
-}
-
-.col-3 {
-  width: 24.99%;
-  float: left;
-  padding: 5px;
-}
-
-.col-4 {
-  width: 33.32%;
-  float: left;
-  padding: 5px;
-}
-
-.col-5 {
-  width: 41.65%;
-  float: left;
-  padding: 5px;
-}
-
-.col-6 {
-  width: 49.98%;
-  float: left;
-  padding: 5px;
-}
-
-.col-7 {
-  width: 58.31%;
-  float: left;
-  padding: 5px;
-}
-
-.col-8 {
-  width: 66.64%;
-  float: left;
-  padding: 5px;
-}
-
-.col-9 {
-  width: 74.97%;
-  float: left;
-  padding: 5px;
-}
-
-.col-10 {
-  width: 83.3%;
-  float: left;
-  padding: 5px;
-}
-
-.col-11 {
-  width: 91.63%;
-  float: left;
-  padding: 5px;
-}
-
-.col-12 {
-  width: 100%;
-  float: left;
-  padding: 5px;
-}
-
-.form-input {
-  width: 100%;
-  padding: 2px 5px;
-  border-radius: 0px;
-  resize: vertical;
-  outline: 0;
-}
-
-.label-txt {
-  font-size: 14px
-}
-
-input {
-  /* border: none; */
-  /* border-bottom: 1px solid black; */
-  padding: 5px 10px;
-  outline: none;
-  font-size: 13px
-}
-
-hr {
+.text-box {
+  border: 1px solid rgb(215, 211, 211);
+  /* padding: 0px 10px 0px 10px; */
+  /* margin: 0px 20px; */
   position: relative;
-  border: none;
-  height: 1px;
-  background: rgb(167, 164, 164);
-}
-
-.terms {
-  font-size: 12px;
-  font-family: Arial, Helvetica, sans-serif
-}
-
-.header-txt {
-  font-size: 20px;
-  font-weight: bolder;
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-.header-txt-span {
-  font-size: 12px;
-  font-weight: bolder;
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-
-.header-txt-address {
-  font-size: 12px;
-  font-weight: bolder;
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0px;
-  padding: 0px;
-}
-
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
+  border-radius: 5px;
   width: 100%;
-  border: 1px solid #e9e9e9;
-  width: 50%;
-  margin: auto;
 }
 
-td,
-th {
-  font-size: 12px;
-  text-align: left;
-  padding: 2px 2px;
-  border: 1px solid #e9e9e9;
+.text-box p {
+  margin: 5px;
 }
 </style>
+

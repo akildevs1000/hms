@@ -46,3 +46,6 @@ Route::get('reservation_report_print', [ReportController::class, 'reservationRep
 Route::get('reservation_report_download', [ReportController::class, 'reservationReportDownload']);
 
 Route::get('grc_by_checkin/{id}', [InvoiceController::class, 'grcByCheckin']);
+
+Route::get('grc_report_print/{id}', [InvoiceController::class, 'grcPrint']);
+Route::get('grc_report_download/{id}', [InvoiceController::class, 'grcDownload']);

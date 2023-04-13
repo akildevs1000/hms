@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Agent;
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Posting;
-use App\Models\BookedRoom;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class PostingController extends Controller
 {
@@ -26,9 +26,8 @@ class PostingController extends Controller
             'bookedRoom',
         ]);
 
-
         $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
+        $endOfWeek   = Carbon::now()->endOfWeek();
 
         if ($request->filterType == 1) {
             $model->whereDate('posting_date', date('Y-m-d')); //today
@@ -50,13 +49,11 @@ class PostingController extends Controller
             $model->whereBetween('created_at', [$request->from . ' 00:00:00', $request->to . ' 23:59:59']);
         }
 
-
-
         if ($request->search != "" && $request->filled('search')) {
             $key = $request->search;
             $model->Where(function ($q) use ($key) {
                 $q->orWhere('bill_no', $key);
-                $q->orWhere('item', 'Like', '%' . $key . '%');
+                $q->orWhere('item', 'ILIKE', '%' . $key . '%');
             });
 
             $model->orWhereHas('booking', function (Builder $query) use ($key) {
@@ -103,8 +100,8 @@ class PostingController extends Controller
             $model->orWhereHas('booking', function (Builder $query) use ($key) {
                 $query->where('id', is_numeric($key) ? $key : 0)
                     ->orWhereHas('customer', function (Builder $query) use ($key) {
-                        $query->where('first_name', 'Like', '%' . $key . '%')
-                            ->orWhere('last_name', 'Like', '%' . $key . '%');
+                        $query->where('first_name', 'ILIKE', '%' . $key . '%')
+                            ->orWhere('last_name', 'ILIKE', '%' . $key . '%');
                     });
             });
         });
@@ -122,14 +119,14 @@ class PostingController extends Controller
             $posting              = Posting::create($data);
 
             $transactionData = [
-                'booking_id'  => $data['booking_id'],
-                'customer_id' => 1 ?? '',
-                'date'        => now(),
-                'desc'        => "posting reservation no " . $booking['reservation_no'] . " and room no " . $room_no ?? "",
-                'company_id'  => $data['company_id'] ?? '',
-                'is_posting'  => 1,
-                'user_id'     => $request->user_id,
-                'payment_method_id'     => 7,
+                'booking_id'        => $data['booking_id'],
+                'customer_id'       => 1 ?? '',
+                'date'              => now(),
+                'desc'              => "posting reservation no " . $booking['reservation_no'] . " and room no " . $room_no ?? "",
+                'company_id'        => $data['company_id'] ?? '',
+                'is_posting'        => 1,
+                'user_id'           => $request->user_id,
+                'payment_method_id' => 7,
             ];
 
             $transaction = new TransactionController();
@@ -150,16 +147,16 @@ class PostingController extends Controller
             $payment->amount = (int) $payment->amount + $posting->amount_with_tax;
             $payment->save();
 
-            $data['room_no'] = $room_no;
+            $data['room_no']  = $room_no;
             $data['whatsapp'] = $booking->customer->whatsapp;
-            $data['title'] = $booking->customer->title;
-            $data['guest'] = $booking->customer->first_name;
-            $data['company'] = $booking->company;
+            $data['title']    = $booking->customer->title;
+            $data['guest']    = $booking->customer->first_name;
+            $data['company']  = $booking->company;
             // return $data['item'];
             (new WhatsappNotificationController)->postingNotification($data);
 
             return $this->response('Posting Successfully submitted.', $posting, true);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -198,16 +195,16 @@ class PostingController extends Controller
     public function cancel(Posting $posting)
     {
         try {
-            $room_no = BookedRoom::find($posting->booked_room_id)->room_no;
+            $room_no         = BookedRoom::find($posting->booked_room_id)->room_no;
             $transactionData = [
-                'booking_id'  => $posting->booking_id,
-                'customer_id' =>  '1',
-                'date'        => now(),
-                'desc'        => "cancel posting reservation no " . $posting->reservation_no . " and room no " . $room_no ?? "",
-                'company_id'  => $posting->company_id ?? '',
-                'is_posting'  => 1,
+                'booking_id'        => $posting->booking_id,
+                'customer_id'       => '1',
+                'date'              => now(),
+                'desc'              => "cancel posting reservation no " . $posting->reservation_no . " and room no " . $room_no ?? "",
+                'company_id'        => $posting->company_id ?? '',
+                'is_posting'        => 1,
                 // 'user_id'     => $request->user_id,
-                'payment_method_id'     => 7,
+                'payment_method_id' => 7,
             ];
             (new TransactionController)->store($transactionData, -$posting->amount_with_tax, 'debit');
             (new TransactionController)->updateBookingByTransactions($posting->booking_id, 0);
@@ -222,7 +219,7 @@ class PostingController extends Controller
             $posting->delete();
 
             return $this->response('Posting Successfully canceled.', '', true);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }

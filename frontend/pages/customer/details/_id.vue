@@ -93,17 +93,18 @@
             <v-tab-item class="px-3 py-4">
               <v-row>
                 <v-col md="2" cols="12">
-                  <v-img class="guest-avatar" :src="showImage"> </v-img
-                  ><br /><br />
+                  <v-img class="guest-avatar" :src="showImage"> </v-img><br /><br />
                   <div v-if="booking && booking.document">
-                    <v-btn
-                      style="width: 100%"
-                      small
-                      dark
-                      class="primary pt-4 pb-4 mt-4 w-100 justify-center"
-                      @click="preview(booking && booking.document)"
-                    >
+                    <v-btn style="width: 100%" small dark class="primary pt-4 pb-4 mt-4 w-100 justify-center"
+                      @click="preview(booking && booking.document)">
                       Preview
+                      <v-icon right dark>mdi-file</v-icon>
+                    </v-btn>
+                  </div>
+                  <div>
+                    <v-btn style="width: 100%" small dark class="primary pt-4 pb-4 mt-4 w-100 justify-center"
+                      @click="process_grc(booking.id)">
+                      Download GRC
                       <v-icon right dark>mdi-file</v-icon>
                     </v-btn>
                   </div>
@@ -738,11 +739,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    style="font-size: 13px"
-                    v-for="(item, postingIndex) in postings"
-                    :key="postingIndex"
-                  >
+                  <tr style="font-size: 13px" v-for="(item, postingIndex) in postings" :key="postingIndex">
                     <td>{{ ++postingIndex }}</td>
                     <td>{{ item.bill_no || "---" }}</td>
                     <td>{{ item.posting_date || "---" }}</td>
@@ -764,12 +761,7 @@
                       {{ item.amount_with_tax || "---" }}
                     </td>
                     <td class="text-center">
-                      <v-icon
-                        x-small
-                        color="accent"
-                        @click="cancelPosting(item)"
-                        class="mr-2"
-                      >
+                      <v-icon x-small color="accent" @click="cancelPosting(item)" class="mr-2">
                         mdi-delete
                       </v-icon>
                     </td>
@@ -795,20 +787,10 @@
                           <th>Balance</th>
                         </tr>
                       </thead>
-                      <v-progress-linear
-                        v-if="loading"
-                        :active="loading"
-                        :indeterminate="loading"
-                        absolute
-                        color="primary"
-                      ></v-progress-linear>
+                      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                        color="primary"></v-progress-linear>
                       <tbody>
-                        <tr
-                          v-for="(item, index) in transactions"
-                          :key="index"
-                          style="font-size: 13px"
-                          class="no-bg"
-                        >
+                        <tr v-for="(item, index) in transactions" :key="index" style="font-size: 13px" class="no-bg">
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
@@ -970,7 +952,7 @@ export default {
     this.loading = true;
     this.getData();
   },
-  mounted() {},
+  mounted() { },
 
   methods: {
     getDate(dataTime) {
@@ -1010,6 +992,16 @@ export default {
       });
       console.log("s" + formatted);
       return formatted;
+    },
+
+
+    process_grc(id) {
+      let url = 'grc_report_download';
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${process.env.BACKEND_URL}${url}/${id}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     preview(file) {

@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use App\Models\Room;
 use App\Models\Company;
-use App\Models\Payment;
 use App\Models\Customer;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Payment;
+use App\Models\Room;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Booking extends Model
 {
@@ -27,8 +25,8 @@ class Booking extends Model
         'check_out_date',
     ];
     protected $casts = [
-        'booking_date' => 'datetime:Y-m-d',
-        'check_in_date' => 'datetime:d-M-y H:i',
+        'booking_date'   => 'datetime:Y-m-d',
+        'check_in_date'  => 'datetime:d-M-y H:i',
         'check_out_date' => 'datetime:d-M-y H:i',
     ];
 
@@ -49,28 +47,28 @@ class Booking extends Model
 
     public function GetResourceIdAttribute()
     {
-        return  Room::find($this->room_id)->room_no ?? '';
+        return Room::find($this->room_id)->room_no ?? '';
     }
 
     public function getCheckInDateAttribute()
     {
-        return  date('Y-m-d H:i', strtotime($this->check_in));
+        return date('Y-m-d H:i', strtotime($this->check_in));
     }
 
     public function getCheckOutDateAttribute()
     {
-        return  date('Y-m-d H:i', strtotime($this->check_out));
+        return date('Y-m-d H:i', strtotime($this->check_out));
     }
 
     public function GetTitleAttribute()
     {
-        return  Customer::find($this->customer_id)->full_name ?? '';
+        return Customer::find($this->customer_id)->full_name ?? '';
     }
 
     public function GetBackgroundAttribute()
     {
-        $status =   Room::find($this->room_id)->status ?? '0';
-        return    match ($status) {
+        $status = Room::find($this->room_id)->status ?? '0';
+        return match($status) {
             '0' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
             '1' => 'linear-gradient(135deg, #f48665 0, #d68e41 100%)',
             '2' => 'linear-gradient(135deg, #8e4cf1 0, #c554bc 100%)',
@@ -88,7 +86,7 @@ class Booking extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class)->withDefault([
-            "name" => "---"
+            "name" => "---",
         ]);
     }
 
@@ -100,7 +98,6 @@ class Booking extends Model
         // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
         $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
     }
-
 
     public function SetReferenceNoAttribute($value)
     {
@@ -140,23 +137,23 @@ class Booking extends Model
         return asset('storage/documents/booking/' . $value);
     }
 
-    public function scopeFilter($query,  $filter)
+    public function scopeFilter($query, $filter)
     {
-        $query->when($filter ?? false, fn ($query, $search) =>
-        $query->where(
-            fn ($query) => $query
-                ->orWhere('reservation_no', 'Like', '%' . $search . '%')
-                ->orWhere('reference_no', 'Like', '%' . $search . '%')
-                ->orWhere('type', 'Like', '%' . $search . '%')
-                ->orWhereHas(
-                    'customer',
-                    fn ($query) =>
-                    $query->Where('first_name', 'Like', '%' . $search . '%')
-                        ->orWhere('last_name', 'Like', '%' . $search . '%')
-                        ->orWhere('whatsapp', 'Like', '%' . $search . '%')
-                        ->orWhere('contact_no', 'Like', '%' . $search . '%')
-                )
-        ));
+        $query->when($filter ?? false, fn($query, $search) =>
+            $query->where(
+                fn($query) => $query
+                    ->orWhere('reservation_no', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('reference_no', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('type', 'ILIKE', '%' . $search . '%')
+                    ->orWhereHas(
+                        'customer',
+                        fn($query) =>
+                        $query->Where('first_name', 'ILIKE', '%' . $search . '%')
+                            ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
+                            ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
+                            ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
+                    )
+            ));
     }
 
     public function payments()
