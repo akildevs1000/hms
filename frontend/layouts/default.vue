@@ -398,12 +398,7 @@ export default {
           to: "/management/report/audit",
           menu: "city_ledger_access",
         },
-        {
-          icon: "mdi-tools",
-          title: "Setup",
-          to: "/manage",
-          menu: "city_ledger_access",
-        },
+
       ],
       items: [],
       modules: {
@@ -465,7 +460,12 @@ export default {
           to: "/management/report/daily",
           menu: "city_ledger_access",
         },
-
+        {
+          icon: "mdi-tools",
+          title: "Price Setup",
+          to: "/manage",
+          menu: "city_ledger_access",
+        },
       ],
     };
 

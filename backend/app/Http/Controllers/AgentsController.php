@@ -222,8 +222,14 @@ class AgentsController extends Controller
             'customer_id'       => $booking->customer_id ?? '',
             'date'              => now(),
             'company_id'        => $booking->company_id ?? '',
-            'payment_method_id' => $booking->payment_mode_id,
+            'payment_method_id' => $request->payment_mode_id,
+            'user_id'           => $request->user_id,
+
+            'reference_number'  => $request->transaction,
+            'desc'              => 'payment by ' . $request->agentData['source'] ?? '',
+
         ];
+
         $transaction = new TransactionController();
         $transaction->store($transactionData, $request->full_payment, 'credit');
 
@@ -453,9 +459,10 @@ class AgentsController extends Controller
             'customer_id'       => $booking->customer_id ?? '',
             'date'              => now(),
             'company_id'        => $booking->company_id ?? '',
-            'payment_method_id' => $booking->payment_mode_id,
+            'payment_method_id' => $request->payment_mode_id,
             'reference_number'  => $request->reference,
             'desc'              => 'paid by city ledger',
+            'user_id'           => $request->user_id,
         ];
 
         $payment = new TransactionController();
