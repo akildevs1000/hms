@@ -24,7 +24,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="GRCDialog" persistent :width="1366" class="checkin-models">
+      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
@@ -36,14 +36,16 @@
               :BookingData="checkData"
               @close-dialog="closeCheckInAndOpenGRC"
             ></check-in> -->
-
-            <Grc :BookingData="checkData">
+            <!-- {{ checkData }} -->
+            <Grc :bookingId="checkData.id">
             </Grc>
           </v-card-text>
           <v-container></v-container>
           <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <!-- <v-btn color="success" @click="GRCDialog = true">text</v-btn> -->
 
       <!-- end check in dialog -->
 
@@ -416,8 +418,8 @@
             <div class="row">
               <div class="col-md-12 col-12 col-lg-4 col-xlg-3 py-0">
                 <div class="card card-hover mx-0">
-                  <a @click="FoodDialog = true" class="box text-center bg-cyan ipad-font-food-grid"
-                    style="padding: 7px 0; margin: 0px -5px">
+                  <a @click="FoodDialog = true" class="box text-center ipad-font-food-grid"
+                    style="padding: 7px 0; margin: 0px -5px;background-color: #6722B9;">
                     <div class="d-flex justify-space-around py-0 my-0">
                       <h1 class="font-light text-white py-0 my-0">
                         <i class="mdi mdi-human-male-female-child fx-1 food-icon-size"></i>
@@ -1383,7 +1385,7 @@ export default {
     },
 
     closeCheckInAndOpenGRC() {
-      // this.checkInDialog = false;
+      this.checkInDialog = false;
       this.GRCDialog = true;
     },
   },

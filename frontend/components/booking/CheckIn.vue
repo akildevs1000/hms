@@ -92,11 +92,11 @@
                 <v-row>
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment" style="
-                            width: 150px;
-                            height: 150px;
-                            margin: 0 auto;
-                            border-radius: 50%;
-                          " :src="showImage"></v-img>
+                              width: 150px;
+                              height: 150px;
+                              margin: 0 auto;
+                              border-radius: 50%;
+                            " :src="showImage"></v-img>
                     <input required type="file" @change="attachment" style="display: none" accept="image/*"
                       ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
@@ -331,10 +331,10 @@
                     </span>
                     <input v-model="reference_number" type="text" class="form-control" aria-label="Sizing example input"
                       aria-describedby="inputGroup-sizing-sm" style="
-                            height: 44px;
-                            text-align: left !important;
-                            text-transform: lowercase !important ;
-                          " />
+                              height: 44px;
+                              text-align: left !important;
+                              text-transform: lowercase !important ;
+                            " />
                     <!-- v-model="room.reference_no" -->
                   </div>
                 </v-row>
@@ -812,7 +812,7 @@ export default {
           } else {
             this.closeDialog(data);
             this.alert("Success!", "success check in", "success");
-            this.redirect_to_invoice(bookingId);
+            // this.redirect_to_invoice(bookingId);
             this.loading = false;
             if ($nuxt.$route.name == "hotel-calendar1") {
               this.$router.push(`/`);

@@ -32,14 +32,14 @@ class AgentsController extends Controller
         if ($request->filled('search') && $request->search != "") {
             $model->whereHas('booking', function ($q) use ($request) {
                 $q->where(function ($query) use ($request) {
-                    $query->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+                    $query->orWhere('reservation_no', 'ILIKE', '%' . $request->search . '%');
                 });
             });
             $model->orWhereHas('customer', function ($q) use ($request) {
                 $q->where(function ($query) use ($request) {
-                    $query->orWhere('first_name', 'Like', '%' . $request->search . '%');
-                    $query->orWhere('last_name', 'Like', '%' . $request->search . '%');
-                    $query->orWhere('contact_no', 'Like', '%' . $request->search . '%');
+                    $query->orWhere('first_name', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('last_name', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('contact_no', 'ILIKE', '%' . $request->search . '%');
                 });
             });
         }
@@ -77,6 +77,16 @@ class AgentsController extends Controller
             $q->where('source', 'walking');
             $q->orWhere('source', 'complimentary');
         });
+
+        if ($request->filled('search') && $request->search != "") {
+            $model->whereHas('customer', function ($q) use ($request) {
+                $q->where('first_name', 'ILIKE', "%$request->search%");
+                $q->orWhere('last_name', 'ILIKE', "%$request->search%");
+            });
+            if (is_numeric($request->search)) {
+                $model->orWhere('id', $request->search);
+            }
+        }
 
         if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->WhereDate('check_in', '>=', $request->from);

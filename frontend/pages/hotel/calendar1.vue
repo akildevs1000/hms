@@ -176,8 +176,9 @@
       <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item v-if="bookingStatus == 1" link @click="checkInDialog = true">
-              <v-list-item-title>Check In</v-list-item-title>
+            <v-list-item v-if="bookingStatus == 1 && getDateOnly(checkInDate) === currentDate" link
+              @click="checkInDialog = true">
+              <v-list-item-title>Check In </v-list-item-title>
             </v-list-item>
 
             <v-list-item v-else-if="bookingStatus == 2" link @click="get_check_out">
@@ -435,6 +436,7 @@ export default {
       checkData: {},
       evenIid: "",
       bookingStatus: "",
+      checkInDate: "",
       reason: "",
       customerId: "",
       bookingId: "",
@@ -523,6 +525,11 @@ export default {
       }
     },
 
+    getDateOnly(date) {
+      let [dateOnly] = date.split(' ');
+      return dateOnly;
+    },
+
     show(id, jsEvent) {
       this.LoadingDialog = true;
       this.evenIid = id;
@@ -585,6 +592,7 @@ export default {
         this.bookingId = data.id;
         this.checkData.full_payment = "";
         this.bookingStatus = data.booking_status;
+        this.checkInDate = data.check_in;
         this.customerId = data.customer_id;
         this.show_context_menu(jsEvent);
         if (this.isDbCLick) {

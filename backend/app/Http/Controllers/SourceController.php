@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Source;
-use Illuminate\Http\Request;
 use App\Http\Requests\Source\StoreRequest;
 use App\Http\Requests\Source\UpdateRequest;
+use App\Models\Source;
+use Illuminate\Http\Request;
 
 class SourceController extends Controller
 {
 
-
-    public function index(Request  $request)
+    public function index(Request $request)
     {
         $request->company_id;
         $model = Source::query();
@@ -19,32 +18,32 @@ class SourceController extends Controller
 
         if ($request->filled('search') && $request->search) {
             $model->where(function ($q) use ($request) {
-                $q->orWhere('name', 'LIKE', "%$request->search%");
-                $q->orWhere('contact_name', 'LIKE', "%$request->search%");
-                $q->orWhere('mobile', 'LIKE', "%$request->search%");
-                $q->orWhere('gst', 'LIKE', "%$request->search%");
-                $q->orWhere('type', 'LIKE', "%$request->search%");
+                $q->orWhere('name', 'ILIKE', "%$request->search%");
+                $q->orWhere('contact_name', 'ILIKE', "%$request->search%");
+                $q->orWhere('mobile', 'ILIKE', "%$request->search%");
+                $q->orWhere('gst', 'ILIKE', "%$request->search%");
+                $q->orWhere('type', 'ILIKE', "%$request->search%");
             });
         }
         return $model->paginate(10 ?? $request->perPage);
         return response()->json(['sources' => $model->paginate(10 ?? $request->perPage), null, 'status' => true]);
     }
 
-    public function getOnline(Request  $request)
+    public function getOnline(Request $request)
     {
         $model = Source::query();
         $model->where('company_id', $request->company_id);
         $model->where('type', 'online');
         return $model->get();
     }
-    public function getAgent(Request  $request)
+    public function getAgent(Request $request)
     {
         $model = Source::query();
         $model->where('company_id', $request->company_id);
         $model->where('type', 'agent');
         return $model->get();
     }
-    public function getCorporate(Request  $request)
+    public function getCorporate(Request $request)
     {
         $model = Source::query();
         $model->where('company_id', $request->company_id);
@@ -55,7 +54,7 @@ class SourceController extends Controller
     public function store(StoreRequest $request)
     {
         $model = Source::query();
-        $data = $request->validated();
+        $data  = $request->validated();
 
         try {
             $record = $model->create($data);
@@ -65,7 +64,7 @@ class SourceController extends Controller
             } else {
                 return $this->response('Source cannot add.', null, false);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -79,7 +78,7 @@ class SourceController extends Controller
             } else {
                 return $this->response('Source cannot update.', null, false);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             throw $th;
         }
     }
@@ -87,9 +86,9 @@ class SourceController extends Controller
     public function search(Request $request, $key)
     {
         $model = Source::query();
-        $model->where('id', 'LIKE', "%$key%");
+        $model->where('id', 'ILIKE', "%$key%");
         $model->where('company_id', $request->company_id);
-        $model->orWhere('name', 'LIKE', "%$key%");
+        $model->orWhere('name', 'ILIKE', "%$key%");
         return $model->paginate($request->per_page);
     }
 

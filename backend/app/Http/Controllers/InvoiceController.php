@@ -83,4 +83,24 @@ class InvoiceController extends Controller
             ->setPaper('a4', 'portrait')
             ->stream();
     }
+
+    public function grcPrint($id)
+    {
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
+        $trans   = (new TransactionController)->getTransactionSummaryByBookingId($id);
+
+        return Pdf::loadView('grc.index', compact('booking', 'trans'))
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function grcDownload($id)
+    {
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
+        $trans   = (new TransactionController)->getTransactionSummaryByBookingId($id);
+
+        return Pdf::loadView('grc.index', compact('booking', 'trans'))
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
 }

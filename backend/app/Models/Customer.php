@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Models\IdCardType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Customer extends Model
 {
@@ -18,13 +18,10 @@ class Customer extends Model
         'document_name',
     ];
 
-
-
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
     }
-
 
     /**
      * Get the booking that owns the Customer
@@ -94,19 +91,19 @@ class Customer extends Model
         ];
     }
 
-    public function scopeFilter($query,  $search)
+    public function scopeFilter($query, $search)
     {
-        $query->when($search ?? false, fn ($query, $search) =>
-        $query->where(
-            fn ($query) => $query
-                ->orWhere('first_name', 'Like', '%' . $search . '%')
-                ->orWhere('last_name', 'Like', '%' . $search . '%')
-                ->orWhere('contact_no', 'Like', '%' . $search . '%')
-                ->orWhere('whatsapp', 'Like', '%' . $search . '%')
-                ->orWhere('email', 'Like', '%' . $search . '%')
-                ->orWhere('id_card_no', 'Like', '%' . $search . '%')
-                ->orWhere('car_no', 'Like', '%' . $search . '%')
-                ->orWhere('address', 'Like', '%' . $search . '%')
-        ));
+        $query->when($search ?? false, fn($query, $search) =>
+            $query->where(
+                fn($query) => $query
+                    ->orWhere('first_name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('email', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('id_card_no', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('car_no', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('address', 'ILIKE', '%' . $search . '%')
+            ));
     }
 }

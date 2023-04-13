@@ -20,39 +20,20 @@
         <v-card-text>
           <v-container>
             <table>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
+              <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                color="primary"></v-progress-linear>
               <tr>
                 <th>Bill No</th>
                 <td style="width: 300px">
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="posting.bill_no"
-                    :hide-details="true"
-                  ></v-text-field>
+                  <v-text-field dense outlined type="number" v-model="posting.bill_no"
+                    :hide-details="true"></v-text-field>
                 </td>
               </tr>
               <tr>
                 <th>Room No</th>
                 <td>
-                  <v-select
-                    v-model="room_no"
-                    :items="bookedRooms"
-                    item-text="resourceId"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                    @change="get_booked_room_details(room_no)"
-                  ></v-select>
+                  <v-select v-model="room_no" :items="bookedRooms" item-text="resourceId" item-value="id" dense outlined
+                    :hide-details="true" :height="1" @change="get_booked_room_details(room_no)"></v-select>
                 </td>
               </tr>
               <tr>
@@ -74,13 +55,7 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="text"
-                    v-model="posting.item"
-                    :hide-details="true"
-                  ></v-text-field>
+                  <v-text-field dense outlined type="text" v-model="posting.item" :hide-details="true"></v-text-field>
                 </td>
               </tr>
               <tr style="background-color: white">
@@ -89,13 +64,7 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="posting.qty"
-                    :hide-details="true"
-                  ></v-text-field>
+                  <v-text-field dense outlined type="number" v-model="posting.qty" :hide-details="true"></v-text-field>
                 </td>
               </tr>
               <tr style="background-color: white">
@@ -104,13 +73,7 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="posting.amount"
-                    :hide-details="true"
-                  ></v-text-field>
+                  <v-text-field dense outlined type="number" v-model="posting.amount" :hide-details="true"></v-text-field>
                 </td>
               </tr>
               <tr style="background-color: white">
@@ -119,22 +82,13 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-select
-                    v-model="posting.tax_type"
-                    :items="[
-                      { id: -1, name: 'select..' },
-                      { name: 'Food' },
-                      { name: 'Mess' },
-                      { name: 'Bed' },
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                    @change="get_amount_with_tax(posting.tax_type)"
-                  ></v-select>
+                  <v-select v-model="posting.tax_type" :items="[
+                    { id: -1, name: 'select..' },
+                    { name: 'Food' },
+                    { name: 'Mess' },
+                    { name: 'Bed' },
+                  ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"
+                    @change="get_amount_with_tax(posting.tax_type)"></v-select>
                 </td>
               </tr>
               <tr style="background-color: white">
@@ -152,16 +106,28 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn class="primary" small @click="store_posting" :loading="loading"
-            >submit</v-btn
-          >
+          <v-btn class="primary" small @click="store_posting" :loading="loading">submit</v-btn>
           <v-btn class="error" small @click="postingDialog = false">
             Cancel
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
+    <v-row>
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #800000">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-ddoor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Total</h6>
+              <span class="data-1"> RS. {{ totalAmount || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </v-row>
     <CustomFilter @filter-attr="filterAttr" />
     <v-card class="mb-5 rounded-md mt-6" elevation="0">
       <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -177,30 +143,17 @@
       </v-toolbar>
       <table>
         <tr>
-          <th
-            v-for="(item, index) in headers"
-            :key="index"
-            style="font-size: 13px"
-          >
+          <th v-for="(item, index) in headers" :key="index" style="font-size: 13px">
             <span v-html="item.text"></span>
           </th>
         </tr>
-        <v-progress-linear
-          v-if="loading"
-          :active="loading"
-          :indeterminate="loading"
-          absolute
-          color="primary"
-        ></v-progress-linear>
+        <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+          color="primary"></v-progress-linear>
         <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
           <td>{{ ++index }}</td>
           <td>{{ caps(item.bill_no) }}</td>
           <td>
-            <span
-              class="blue--text"
-              @click="goToRevView(item)"
-              style="cursor: pointer"
-            >
+            <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
               {{ (item.booking && item.booking.reservation_no) || "---" }}
             </span>
           </td>
@@ -208,8 +161,8 @@
             {{
               caps(
                 item.booking &&
-                  item.booking.customer &&
-                  item.booking.customer.full_name
+                item.booking.customer &&
+                item.booking.customer.full_name
               )
             }}
           </td>
@@ -230,12 +183,8 @@
     <v-row>
       <v-col md="12" class="float-right">
         <div class="float-right">
-          <v-pagination
-            v-model="pagination.current"
-            :length="pagination.total"
-            @input="onPageChange"
-            :total-visible="12"
-          ></v-pagination>
+          <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+            :total-visible="12"></v-pagination>
         </div>
       </v-col>
     </v-row>
@@ -263,7 +212,7 @@ export default {
     search: "",
     from: "",
     to: "",
-    filterType: "",
+    filterType: 1,
     snackbar: false,
     postingDialog: false,
     data: [],
@@ -312,6 +261,14 @@ export default {
     this.booked_room_list();
   },
 
+  computed: {
+    totalAmount() {
+      let sum = 0;
+      this.data.map((e) => (sum += parseFloat(e.amount_with_tax)));
+      return sum.toFixed(2);
+    },
+  },
+
   watch: {
     search() {
       this.getDataFromApi();
@@ -348,7 +305,7 @@ export default {
     },
 
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      this.$router.push(`/customer/details/${item.booking_id}`);
     },
 
     getDataFromApi(url = this.endpoint) {
@@ -463,7 +420,7 @@ export default {
   },
 };
 </script>
-
+<style scoped src="@/assets/dashtem.css"></style>
 <style scoped>
 table {
   font-family: arial, sans-serif;
@@ -487,6 +444,7 @@ table {
   width: 100%;
   border: 1px solid #e9e9e9;
 }
+
 td,
 th {
   text-align: left;
@@ -497,9 +455,11 @@ th {
 tr:nth-child(even) {
   background-color: #e9e9e9;
 }
+
 .fc-license-message {
   display: none !important;
 }
+
 .bg-background {
   background-color: #34444c !important;
 }
