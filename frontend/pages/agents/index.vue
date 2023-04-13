@@ -21,18 +21,7 @@
                   {{ booking && booking.title }}
                 </td>
               </tr>
-              <!-- <tr>
-                <th>Room No</th>
-                <td>
-                  {{ booking.room_no }}
-                </td>
-              </tr>
-              <tr>
-                <th>Room Type</th>
-                <td>
-                  {{ booking.room_type }}
-                </td>
-              </tr> -->
+
               <tr>
                 <th>Check In</th>
                 <td>
@@ -581,6 +570,8 @@ export default {
         payment_mode_id: this.booking.payment_mode_id,
         transaction: this.booking.transaction,
         paid_status: this.paid_status,
+        user_id: this.$auth.user.id,
+
       };
       // return;
       console.log(payload);

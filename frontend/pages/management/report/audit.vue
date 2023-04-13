@@ -82,7 +82,7 @@
               <i class="fas fa-dosor-open"></i>
             </div>
             <div class="card-content">
-              <h6 class="card-title text-capitalize">Balance</h6>
+              <h6 class="card-title text-capitalize">City Ledger</h6>
               <span class="data-1">₹{{ GrandTotalBalance || 0 }} </span>
             </div>
           </div>
@@ -117,31 +117,13 @@
     </v-row>
     <v-row>
       <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              outlined
-              label="Date"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true" outlined
+              label="Date"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
@@ -153,15 +135,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -170,14 +145,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -190,19 +158,11 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in todayCheckIn"
-              :key="index"
-              style="background-color: yellow"
-            >
+            <tr v-for="(item, index) in todayCheckIn" :key="index" style="background-color: yellow">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -214,49 +174,39 @@
               <td class="text-right">{{ item.advance_price }}</td>
 
               <td v-for="i in 5" :key="i" class="text-right">
-                <span
-                  v-if="
-                    getPaymentMode(item) == 'Cash' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 1
-                  "
-                >
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Card' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 2
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Online' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 3
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Bank' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 4
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'UPI' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 5
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
                 <span v-else> --- </span>
@@ -287,15 +237,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -304,14 +247,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -324,19 +260,11 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in continueRooms"
-              :key="index"
-              style="background-color: #9bc1e6"
-            >
+            <tr v-for="(item, index) in continueRooms" :key="index" style="background-color: #9bc1e6">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -348,49 +276,39 @@
               <td class="text-right">{{ item.advance_price }}</td>
 
               <td v-for="i in 5" :key="i" class="text-right">
-                <span
-                  v-if="
-                    getPaymentMode(item) == 'Cash' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 1
-                  "
-                >
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Card' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 2
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Online' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 3
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Bank' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 4
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'UPI' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 5
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
                 <span v-else> --- </span>
@@ -421,15 +339,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -438,14 +349,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -458,19 +362,11 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in todayCheckOut"
-              :key="index"
-              style="background-color: #90d24d"
-            >
+            <tr v-for="(item, index) in todayCheckOut" :key="index" style="background-color: #90d24d">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -482,49 +378,39 @@
               <td class="text-right">{{ item.advance_price }}</td>
 
               <td v-for="i in 5" :key="i" class="text-right">
-                <span
-                  v-if="
-                    getPaymentMode(item) == 'Cash' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 1
-                  "
-                >
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Card' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 2
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Online' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 3
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Bank' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 4
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'UPI' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 5
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
                 <span v-else> --- </span>
@@ -555,15 +441,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -572,14 +451,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -592,19 +464,11 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in todayPayments"
-              :key="index"
-              style="background-color: #90d24d"
-            >
+            <tr v-for="(item, index) in todayPayments" :key="index" style="background-color: #90d24d">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -616,49 +480,39 @@
               <td class="text-right">{{ item.advance_price }}</td>
 
               <td v-for="i in 5" :key="i" class="text-right">
-                <span
-                  v-if="
-                    getPaymentMode(item) == 'Cash' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 1
-                  "
-                >
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Card' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 2
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Online' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 3
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'Bank' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 4
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
-                <span
-                  v-else-if="
-                    getPaymentMode(item) == 'UPI' &&
-                    item.transactions_sum_credit > 0 &&
-                    i == 5
-                  "
-                >
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
                   {{ item.transactions_sum_credit }}
                 </span>
                 <span v-else> --- </span>

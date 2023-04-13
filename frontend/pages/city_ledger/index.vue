@@ -485,6 +485,7 @@ export default {
         payment_mode_id: this.booking.payment_mode_id,
         company_id: this.$auth.user.company.id,
         reference: this.reference,
+        user_id: this.$auth.user.id,
       };
       // return;
       this.$axios
