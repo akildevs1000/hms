@@ -32,11 +32,6 @@
             <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-card-text>
-            <!-- <check-in
-              :BookingData="checkData"
-              @close-dialog="closeCheckInAndOpenGRC"
-            ></check-in> -->
-            <!-- {{ checkData }} -->
             <Grc :bookingId="checkData.id">
             </Grc>
           </v-card-text>

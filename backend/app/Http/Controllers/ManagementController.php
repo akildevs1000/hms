@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Expense;
 use App\Models\OrderRoom;
@@ -147,10 +146,33 @@ class ManagementController extends Controller
 
     public function getAuditReport(Request $request)
     {
-        $company_id = $request->company_id;
-        $model      = Booking::query();
+        $model = Booking::query();
 
-        $todayCheckin = $model
+        $todayCheckin            = $this->todayCheckinAudit($model, $request);
+        $continueRooms           = $this->continueAudit($model, $request);
+        $todayCheckOut           = $this->todayCheckOutAudit($model, $request);
+        $todayPayments           = $this->todayPaymentsAudit($model, $request);
+        $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($model, $request);
+
+        $totExpense = Expense::whereCompanyId($request->company_id)
+            ->where('is_management', 0)
+            ->whereDate('created_at', $request->date)
+            ->sum('total');
+
+        return [
+            'cityLedgerPaymentsAudit' => $cityLedgerPaymentsAudit,
+            'todayCheckIn'            => $todayCheckin,
+            'todayCheckOut'           => $todayCheckOut,
+            'continueRooms'           => $continueRooms,
+            'todayPayments'           => $todayPayments,
+            'totExpense'              => number_format($totExpense, 2, '.', ''),
+        ];
+    }
+
+    private function todayCheckinAudit($model, $request)
+    {
+        $company_id = $request->company_id;
+        return $model
             ->where(function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '!=', -1);
@@ -169,8 +191,12 @@ class ManagementController extends Controller
             $q->where('company_id', $request->company_id)
                 ->with('paymentMode');
         })->get();
+    }
 
-        $continueRooms = Booking::query()
+    private function continueAudit($model, $request)
+    {
+        $company_id           = $request->company_id;
+        return $continueRooms = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', -1);
                 $q->where('booking_status', '=', 2);
@@ -188,8 +214,12 @@ class ManagementController extends Controller
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
             })->get();
+    }
 
-        $todayCheckOut = Booking::query()
+    private function todayCheckOutAudit($model, $request)
+    {
+        $company_id           = $request->company_id;
+        return $todayCheckOut = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
                 $q->whereIn('booking_status', [0, 3, 4]);
                 $q->where('booking_status', '!=', -1);
@@ -208,17 +238,22 @@ class ManagementController extends Controller
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
             })->get();
+    }
 
-        $todayPayments = Booking::query()
+    private function todayPaymentsAudit($model, $request)
+    {
+        $company_id           = $request->company_id;
+        return $todayPayments = Booking::query()
             ->where(function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [1, 0]);
+                $q->whereIn('booking_status', [1]);
                 $q->where('booking_status', '!=', -1);
                 $q->where('paid_amounts', '>', 0);
                 $q->where('company_id', $company_id);
-                // $q->whereDate('booking_date', $request->date);
             })
             ->whereHas('transactions', function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
+                $q->where('credit', '>', 0);
+                $q->where('payment_method_id', '!=', 7);
             })
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
@@ -232,53 +267,32 @@ class ManagementController extends Controller
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
             })->get();
-
-        $totExpense = Expense::whereCompanyId($request->company_id)
-            ->where('is_management', 0)
-            ->whereDate('created_at', $request->date)
-            ->sum('total');
-
-        return [
-            'todayCheckIn'  => $todayCheckin,
-            'todayCheckOut' => $todayCheckOut,
-            'continueRooms' => $continueRooms,
-            'todayPayments' => $todayPayments,
-            'totExpense'    => number_format($totExpense, 2, '.', ''),
-        ];
     }
 
-    public function getAuditReportWait(Request $request)
+    private function cityLedgerPaymentsAudit($model, $request)
     {
-        $company_id   = $request->company_id;
-        $Model        = BookedRoom::query();
-        $todayCheckin = $Model
-            ->whereHas('booking', function ($q) use ($company_id, $request) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 2);
+        $company_id           = $request->company_id;
+        return $todayPayments = Booking::query()
+            ->where(function ($q) use ($company_id, $request) {
+                $q->whereIn('booking_status', [0]);
+                $q->where('booking_status', '!=', -1);
+                $q->where('paid_amounts', '>', 0);
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_in', $request->date);
-            })->get();
-
-        $continueRooms = BookedRoom::query()
-            ->whereHas('booking', function ($q) use ($company_id, $request) {
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_in', '<', $request->date);
-            })->with('booking.transactions')->get();
-
-        $todayCheckOut = BookedRoom::query()
-            ->whereHas('booking', function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [0, 3, 4]);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $request->date);
-            })->with('booking.transactions')->get();
-
-        return [
-            // 'todayCheckIn' => $todayCheckin,
-            // 'todayCheckOut' => $todayCheckOut,
-            'continueRooms' => $continueRooms,
-        ];
-
-        return response()->json(['record' => $todayCheckin, 'message' => '', 'status' => true]);
+            })
+            ->whereHas('transactions', function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+                $q->where('credit', '>', 0);
+                $q->where('payment_method_id', '!=', 7);
+            })
+            ->with('customer:id,first_name')
+            ->with('transactions', function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+                $q->where('credit', '>', 0);
+                $q->where('is_posting', 0);
+                $q->where('payment_method_id', '!=', 7);
+                $q->where('company_id', $request->company_id)
+                    ->with('paymentMode');
+            })
+            ->get();
     }
 }

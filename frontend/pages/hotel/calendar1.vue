@@ -394,6 +394,7 @@ export default {
             start: this.convert_date_format(arg.event.start),
             end: this.convert_date_format(arg.event.end),
             roomId: arg.event._def.resourceIds[0],
+            user_id: this.$auth.user.id,
           };
 
           this.change_date_by_drag(obj);

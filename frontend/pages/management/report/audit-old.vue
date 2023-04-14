@@ -166,17 +166,51 @@
                   {{ item.rooms }}
                 </span>
               </td>
+
               <td>{{ item && item.source }}</td>
               <td>{{ item && item.check_in }}</td>
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
               <td class="text-right">{{ item.advance_price }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
 
+              <td v-for="i in 5" :key="i" class="text-right">
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else> --- </span>
+              </td>
               <td class="text-right">
                 {{ item.balance }}
               </td>
@@ -240,11 +274,45 @@
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
               <td class="text-right">{{ item.advance_price }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
+
+              <td v-for="i in 5" :key="i" class="text-right">
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else> --- </span>
+              </td>
               <td class="text-right">
                 {{ item.balance }}
               </td>
@@ -308,12 +376,45 @@
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
               <td class="text-right">{{ item.advance_price }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
 
+              <td v-for="i in 5" :key="i" class="text-right">
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else> --- </span>
+              </td>
               <td class="text-right">
                 {{ item.balance }}
               </td>
@@ -363,7 +464,7 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr v-for="(item, index) in todayPayments" :key="index" style="background-color: #29B9CA">
+            <tr v-for="(item, index) in todayPayments" :key="index" style="background-color: #90d24d">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
@@ -377,12 +478,45 @@
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
               <td class="text-right">{{ item.advance_price }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
 
+              <td v-for="i in 5" :key="i" class="text-right">
+                <span v-if="
+                  getPaymentMode(item) == 'Cash' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 1
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Card' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 2
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Online' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 3
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'Bank' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 4
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else-if="
+                  getPaymentMode(item) == 'UPI' &&
+                  item.transactions_sum_credit > 0 &&
+                  i == 5
+                ">
+                  {{ item.transactions_sum_credit }}
+                </span>
+                <span v-else> --- </span>
+              </td>
               <td class="text-right">
                 {{ item.balance }}
               </td>
@@ -402,85 +536,12 @@
           </table>
         </v-card>
       </v-col>
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">City Ledger Report</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
-                  @click="process('income_report_print')">
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table>
-            <tr>
-              <th v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </th>
-            </tr>
-            <tr v-for="(item, index) in cityLedgerPaymentsAudit" :key="index" style="background-color: #D64635">
-              <td>{{ ++index }}</td>
-              <td>{{ item && item.customer && item.customer.first_name }}</td>
-              <td>
-                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
-                  {{ item.rooms }}
-                </span>
-              </td>
-
-              <td>{{ item && item.source }}</td>
-              <td>{{ item && item.check_in }}</td>
-              <td>{{ item && item.check_out }}</td>
-              <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">{{ item.advance_price }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-              <td class="text-right">
-                {{ item.balance }}
-              </td>
-              <td>
-                {{ item.balance > 0 ? "Payment pending" : "Payment close" }}
-              </td>
-            </tr>
-            <tr class="text-right">
-              <th class="text-right" colspan="8">Total</th>
-              <th class="text-right">{{ cityLedgerTotalCash }}</th>
-              <th class="text-right">{{ cityLedgerTotalCard }}</th>
-              <th class="text-right">{{ cityLedgerTotalOnline }}</th>
-              <th class="text-right">{{ cityLedgerTotalBank }}</th>
-              <th class="text-right">{{ cityLedgerTotalUPI }}</th>
-              <th class="text-right">{{ cityLedgerTotalBalance }}</th>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import CheckinAudit from '../../../components/audit/CheckinAudit.vue';
 export default {
-  components: {
-    CheckinAudit,
-  },
   data: () => ({
     Model: "Audit Report",
     from_date: new Date().toJSON().slice(0, 10),
@@ -494,7 +555,6 @@ export default {
     todayCheckOut: [],
     continueRooms: [],
     todayPayments: [],
-    cityLedgerPaymentsAudit: [],
     counts: [],
     loading: false,
     total: 0,
@@ -619,27 +679,6 @@ export default {
       return this.getSum(this.todayPayments, 5);
     },
 
-    cityLedgerTotalBalance() {
-      let sum = 0;
-      this.todayPayments.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    cityLedgerTotalCash() {
-      return this.getSum(this.todayPayments, 1);
-    },
-    cityLedgerTotalCard() {
-      return this.getSum(this.todayPayments, 2);
-    },
-    cityLedgerTotalBank() {
-      return this.getSum(this.todayPayments, 4);
-    },
-    cityLedgerTotalOnline() {
-      return this.getSum(this.todayPayments, 3);
-    },
-    cityLedgerTotalUPI() {
-      return this.getSum(this.todayPayments, 5);
-    },
-
     GrandTotal() {
       let tot =
         parseFloat(this.GrandTotalCash) +
@@ -652,7 +691,6 @@ export default {
 
     GrandTotalCash() {
       let tot =
-        parseFloat(this.cityLedgerTotalCash) +
         parseFloat(this.totalCash) +
         parseFloat(this.totalUPI) +
         parseFloat(this.checkoutTotalCash) +
@@ -667,7 +705,6 @@ export default {
         parseFloat(this.checkoutTotalCard) +
         parseFloat(this.continueTotalCard) +
         parseFloat(this.todayPaymentTotalCard);
-      parseFloat(this.cityLedgerTotalCard);
       return tot.toFixed(2);
     },
 
@@ -676,7 +713,6 @@ export default {
         parseFloat(this.continueTotalBank) +
         parseFloat(this.todayPaymentTotalBank) +
         parseFloat(this.checkoutTotalBank) +
-        parseFloat(this.cityLedgerTotalBank) +
         parseFloat(this.totalBank);
       return tot.toFixed(2);
     },
@@ -686,7 +722,6 @@ export default {
         parseFloat(this.continueTotalOnline) +
         parseFloat(this.todayPaymentTotalOnline) +
         parseFloat(this.checkoutTotalOnline) +
-        parseFloat(this.cityLedgerTotalOnline) +
         parseFloat(this.totalOnline);
       return tot.toFixed(2);
     },
@@ -696,7 +731,6 @@ export default {
         parseFloat(this.continueTotalUPI) +
         parseFloat(this.todayPaymentTotalUPI) +
         parseFloat(this.checkoutTotalUPI) +
-        parseFloat(this.cityLedgerTotalUPI) +
         parseFloat(this.totalUPI);
       return tot.toFixed(2);
     },
@@ -706,7 +740,6 @@ export default {
         parseFloat(this.totalBalance) +
         parseFloat(this.continueTotalBalance) +
         parseFloat(this.checkoutTotalBalance) +
-        parseFloat(this.cityLedgerTotalBalance) +
         parseFloat(this.todayPaymentTotalBalance);
       return tot.toFixed(2);
     },
@@ -770,32 +803,13 @@ export default {
       element.click();
     },
 
-    getPaymentMode(item, mode) {
+    getPaymentMode(item) {
+      const lastTransaction = item.transactions[item.transactions.length - 1];
       let creditTrans = item.transactions.filter((e) => e.credit > 0);
-      switch (mode) {
-        case 1:
-          return this.getPaySum(creditTrans, 1)
-        case 2:
-          return this.getPaySum(creditTrans, 2)
-        case 3:
-          return this.getPaySum(creditTrans, 3)
-        case 4:
-          return this.getPaySum(creditTrans, 4)
-        case 5:
-          return this.getPaySum(creditTrans, 5)
-        default:
-          break;
+      let lastcredit = creditTrans[creditTrans.length - 1];
+      if (lastcredit != undefined) {
+        return lastcredit.payment_mode.name;
       }
-    },
-
-    getPaySum(payload, mode) {
-      let sum = 0;
-      payload.map((e) => {
-        if (e.payment_method_id == mode) {
-          sum += parseFloat(e.credit)
-        }
-      });
-      return sum.toFixed(2);
     },
 
     commonMethod() {
@@ -816,7 +830,6 @@ export default {
         this.continueRooms = data.continueRooms;
         this.todayCheckOut = data.todayCheckOut;
         this.todayPayments = data.todayPayments;
-        this.cityLedgerPaymentsAudit = data.cityLedgerPaymentsAudit;
         this.totExpense = data.totExpense;
       });
     },

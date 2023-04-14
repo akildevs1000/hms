@@ -1236,6 +1236,7 @@ class BookingController extends Controller
                 'company_id'        => $bookedRoom->company_id ?? '',
                 'payment_method_id' => 7,
                 'desc'              => 'room extends amount',
+                'user_id'           => $request->user_id ?? '',
             ];
             (new TransactionController)->store($transactionData, $extraDaysAmount, 'debit');
             $transactionSummary = (new TransactionController)->getTransactionSummaryByBookingId($bookedRoom->booking_id);
