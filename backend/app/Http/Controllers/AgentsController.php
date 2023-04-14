@@ -84,7 +84,11 @@ class AgentsController extends Controller
                 $q->orWhere('last_name', 'ILIKE', "%$request->search%");
             });
             if (is_numeric($request->search)) {
-                $model->orWhere('id', $request->search);
+                $model->orWhere(function ($q) use ($request) {
+                    $q->orWhere('reservation_no', $request->search);
+                    $q->where('company_id', $request->company_id);
+                    $q->where('balance', '>', 0);
+                });
             }
         }
 
@@ -482,7 +486,7 @@ class AgentsController extends Controller
 
         if ($booking) {
             $booking->update([
-                'total_price'           => $transactionSummary['balance'],
+                // 'total_price'           => $transactionSummary['balance'],
                 'grand_remaining_price' => $transactionSummary['balance'],
                 'balance'               => $transactionSummary['balance'],
                 'remaining_price'       => $transactionSummary['balance'],

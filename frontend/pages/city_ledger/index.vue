@@ -251,8 +251,8 @@
             <td>{{ (item && item.check_in_date) || "---" }}</td>
             <td>{{ (item && item.check_out_date) || "---" }}</td>
             <td>
-              <v-chip small class="ma-2" :color="item.is_paid == 1 ? 'green' : 'red'" text-color="white">
-                {{ item.is_paid == 1 ? "Paid" : "Pending" }}
+              <v-chip small class="ma-2" :color="item.balance > 0 ? 'red' : 'green'" text-color="white">
+                {{ item.balance > 0 ? "Pending" : "Paid" }}
               </v-chip>
             </td>
             <td>
