@@ -6,70 +6,23 @@
       </v-snackbar>
     </div>
     <v-row>
-      <!-- <v-col md="3">
-        <div class="profile-view">
-          <div class="cover-image" style="background-color: #5fafa3"></div>
-          <div class="profile-view-header">
-            <div class="avatar-container">
-              <img
-                alt="Avatar"
-                class="avatar"
-                :src="customer.image || '/no-profile-image.jpg'"
-              />
-            </div>
-            <h1 class="name">
-              {{ customer.title || "---" }} {{ customer.full_name || "---" }}
-            </h1>
-            <div class=""></div>
-          </div>
 
-          <div class="profile-view-body">
-            <v-card flat>
-              <v-card-text>
-                <div class="contact-info-container">
-                  <ul class="contact-info">
-                    <li>
-                      <b class="label mr-3">Email :</b>
-                      <a>
-                        {{ (customer && customer.email) || "---" }}
-                      </a>
-                    </li>
-                    <li>
-                      <span class="label mr-3">Phone :</span>
-                      {{ customer.contact_no || "---" }}
-                    </li>
-                    <li>
-                      <span class="label mr-3">Whatsapp :</span>
-                      {{ customer.whatsapp || "---" }}
-                    </li>
-                  </ul>
-                  <ul class="contact-info">
-                    <li>
-                      <span class="label mr-3">Nationality :</span>
-                      {{ customer.nationality || "---" }}
-                    </li>
-
-                    <li>
-                      <span class="label mr-3">Car No :</span>
-                      {{ customer.car_no || "---" }}
-                    </li>
-                    <li>
-                      <span class="label mr-3">Date of Birth :</span>
-                      {{ customer.dob || "---" }}
-                    </li>
-                    <li>
-                      <span class="label mr-3">Address : </span>
-                    </li>
-                    {{
-                      customer.address || "---"
-                    }}
-                  </ul>
-                </div>
-              </v-card-text>
-            </v-card>
-          </div>
-        </div>
-      </v-col> -->
+      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>{{ 'GRC' }}</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
+          </v-toolbar>
+          <v-card-text>
+            {{ this.$route.params.id }}
+            <Grc :bookingId="this.$route.params.id">
+            </Grc>
+          </v-card-text>
+          <v-container></v-container>
+          <v-card-actions> </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <v-col md="12">
         <v-card elevation="0">
@@ -886,7 +839,11 @@
   </div>
 </template>
 <script>
+import Grc from './../../../components/booking/GRC.vue';
 export default {
+  components: {
+    Grc
+  },
   data: () => ({
     pagination: {
       current: 1,
@@ -897,6 +854,7 @@ export default {
     showImage: "",
     Model: "Customer",
     search: "",
+    GRCDialog: false,
     snackbar: false,
     dialog: false,
     ids: [],
@@ -996,12 +954,14 @@ export default {
 
 
     process_grc(id) {
-      let url = 'grc_report_download';
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}${url}/${id}`);
-      document.body.appendChild(element);
-      element.click();
+      this.GRCDialog = true;
+
+      // let url = 'grc_report_download';
+      // let element = document.createElement("a");
+      // element.setAttribute("target", "_blank");
+      // element.setAttribute("href", `${process.env.BACKEND_URL}${url}/${id}`);
+      // document.body.appendChild(element);
+      // element.click();
     },
 
     preview(file) {

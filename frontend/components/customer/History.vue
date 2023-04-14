@@ -8,8 +8,7 @@
               <h1 class="font-light text-white">
                 <PaidBookedSvg />
                 <h4
-                  class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
-                >
+                  class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid">
                   Revenue
                 </h4>
               </h1>
@@ -30,8 +29,7 @@
               <h1 class="font-light text-white">
                 <PaidBookedSvg />
                 <h4
-                  class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
-                >
+                  class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid">
                   City Ledger
                 </h4>
               </h1>
@@ -52,8 +50,7 @@
               <h1 class="font-light text-white">
                 <Available />
                 <h4
-                  class="pb-0 mb-0 white--text text-left mt-3 dash-font-size ipad-font-grid ipad-font-paid-grid no-of-visit"
-                >
+                  class="pb-0 mb-0 white--text text-left mt-3 dash-font-size ipad-font-grid ipad-font-paid-grid no-of-visit">
                   Number of Visit
                 </h4>
               </h1>
@@ -82,6 +79,11 @@
               <th scope="row">
                 <b>{{ ++index }}</b>
               </th>
+              <td scope="row">
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer;">
+                  {{ (item.reservation_no) || "---" }}
+                </span>
+              </td>
               <td scope="row">{{ item.type || "---" }}</td>
               <td data-title="Released">
                 {{ item.source || "---" }}
@@ -136,6 +138,9 @@ export default {
           text: "#",
         },
         {
+          text: "Rev. No",
+        },
+        {
           text: "Type",
         },
         {
@@ -167,8 +172,11 @@ export default {
   mounted() {
     this.get_customer_history();
   },
-
   methods: {
+    goToRevView(item) {
+      this.$router.push(`/customer/details/${item.id}`);
+    },
+
     get_customer_history() {
       this.$axios
         .get(`get_customer_history/${this.customerId}`)
@@ -191,6 +199,7 @@ table {
   width: 100%;
   border: 1px solid #e9e9e9;
 }
+
 td,
 th {
   text-align: left;
@@ -201,18 +210,22 @@ th {
 tr:nth-child(even) {
   background-color: #e9e9e9;
 }
+
 .dash-font-size {
   font-size: 13px;
 }
+
 .big-screen {
   font-size: 25px;
   color: white;
 }
+
 .food-icon-size {
   font-size: 30px !important;
 }
 
 @media only screen and (min-width: 1025px) and (max-width: 1199px) {
+
   /* Adjust layout for iPad pro landscape mode */
   .ipad-font-grid {
     font-size: 12px !important;
@@ -229,7 +242,7 @@ tr:nth-child(even) {
   }
 
   .no-of-visit {
-    margin-top: 24px !important ;
+    margin-top: 24px !important;
     font-size: 11px !important;
   }
 
@@ -246,6 +259,7 @@ tr:nth-child(even) {
 }
 
 @media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
+
   /* ipad mini Air */
   .ipad-font-qty-grid {
     font-size: 55px !important;
