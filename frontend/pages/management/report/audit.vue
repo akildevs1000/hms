@@ -432,7 +432,7 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr v-for="(item, index) in cityLedgerPaymentsAudit" :key="index" style="background-color: #D64635">
+            <tr v-for="(item, index) in cityLedgerPaymentsAudit" :key="index" style="background-color: #E4DC94">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
@@ -621,23 +621,23 @@ export default {
 
     cityLedgerTotalBalance() {
       let sum = 0;
-      this.todayPayments.map((e) => (sum += parseFloat(e.balance)));
+      this.cityLedgerPaymentsAudit.map((e) => (sum += parseFloat(e.balance)));
       return sum.toFixed(2);
     },
     cityLedgerTotalCash() {
-      return this.getSum(this.todayPayments, 1);
+      return this.getSum(this.cityLedgerPaymentsAudit, 1);
     },
     cityLedgerTotalCard() {
-      return this.getSum(this.todayPayments, 2);
+      return this.getSum(this.cityLedgerPaymentsAudit, 2);
     },
     cityLedgerTotalBank() {
-      return this.getSum(this.todayPayments, 4);
+      return this.getSum(this.cityLedgerPaymentsAudit, 4);
     },
     cityLedgerTotalOnline() {
-      return this.getSum(this.todayPayments, 3);
+      return this.getSum(this.cityLedgerPaymentsAudit, 3);
     },
     cityLedgerTotalUPI() {
-      return this.getSum(this.todayPayments, 5);
+      return this.getSum(this.cityLedgerPaymentsAudit, 5);
     },
 
     GrandTotal() {
