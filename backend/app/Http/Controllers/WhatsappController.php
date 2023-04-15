@@ -20,7 +20,8 @@ class WhatsappController extends Controller
                     'instance_id' => $data['instance_id'],
                     'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
                 ]);
-                Log::channel('whatsapp_logs')->info($data['type'] . ' from: ' . $data['to']);
+                $msg  = 'company Id: ' . $data['company']['id'] . ' Rev. No: ' . $data['revNo']  . ' ' . $data['type'] . ' from: ' . $data['to'];
+                Log::channel('whatsapp_logs')->info($msg);
                 return $response->status();
             }
         } catch (\Throwable $th) {
