@@ -1,22 +1,50 @@
 <template>
   <div>
-    <v-row>
+    <v-row class="mt-2">
       <v-col md="4">
         <h5>HYDERS PARK</h5>
-        <span class="dheader-txt-span">{{ data && data.company && data.company.company_code || '---' }}</span>
+        <span class="dheader-txt-span">{{
+          (data && data.company && data.company.company_code) || "---"
+        }}</span>
+      </v-col>
+      <v-col md="4" class="text-center">
+        <img
+          :src="data && data.company && data.company.logo"
+          height="90px"
+          width="100px"
+        />
       </v-col>
       <v-col md="4">
-        <img :src="data && data.company && data.company.logo" height="100px" width="100" />
-      </v-col>
-      <v-col md="4">
-        <div style="text-align:left; margin-left:70px" class="header-txt-address">
-          <small> GST No: {{ data && data.company && data.company.mol_id || '---' }} </small><br>
-          <small> Telephone No: {{
-            data && data.company && data.company && data.company.contact && data.company.contact.number || '---'
-          }} </small><br>
-          <small> Email: {{
-            data && data.company && data.company && data.company.user && data.company.user.email || '---'
-          }}</small><br>
+        <div
+          style="text-align: left; margin-left: 70px"
+          class="header-txt-address"
+        >
+          <small>
+            GST No:
+            {{ (data && data.company && data.company.mol_id) || "---" }} </small
+          ><br />
+          <small>
+            Telephone No:
+            {{
+              (data &&
+                data.company &&
+                data.company &&
+                data.company.contact &&
+                data.company.contact.number) ||
+              "---"
+            }} </small
+          ><br />
+          <small>
+            Email:
+            {{
+              (data &&
+                data.company &&
+                data.company &&
+                data.company.user &&
+                data.company.user.email) ||
+              "---"
+            }}</small
+          ><br />
           <small> Guest Registration Date : {{ currentDate }}</small>
         </div>
       </v-col>
@@ -28,7 +56,7 @@
       </v-col>
       <v-col md="3">
         <div class="text-box" style="float: left">
-          <p> {{ data.reservation_no || '---' }} </p>
+          <p>{{ data.reservation_no || "---" }}</p>
         </div>
       </v-col>
       <v-col md="3" class="text-right">
@@ -36,7 +64,7 @@
       </v-col>
       <v-col md="3">
         <div class="text-box" style="float: left">
-          <p> {{ data.rooms || '---' }} </p>
+          <p>{{ data.rooms || "---" }}</p>
         </div>
       </v-col>
     </v-row>
@@ -46,7 +74,7 @@
       </v-col>
       <v-col md="3">
         <div class="text-box">
-          <p> {{ data && data.customer && data.customer.first_name }} </p>
+          <p>{{ data && data.customer && data.customer.first_name }}</p>
         </div>
       </v-col>
       <v-col md="3" class="text-right">
@@ -54,7 +82,9 @@
       </v-col>
       <v-col md="3">
         <div class="text-box pr-2 mr-2">
-          <p> {{ data && data.customer && data.customer.last_name || '---' }} </p>
+          <p>
+            {{ (data && data.customer && data.customer.last_name) || "---" }}
+          </p>
         </div>
       </v-col>
     </v-row>
@@ -64,7 +94,7 @@
       </v-col>
       <v-col md="3">
         <div class="text-box">
-          <p> {{ data && data.check_in || '---' }} </p>
+          <p>{{ (data && data.check_in) || "---" }}</p>
         </div>
       </v-col>
       <v-col md="3" class="text-right">
@@ -72,7 +102,7 @@
       </v-col>
       <v-col md="3">
         <div class="text-box pr-2 mr-2">
-          <p> {{ data && data.check_out || '---' }} </p>
+          <p>{{ (data && data.check_out) || "---" }}</p>
         </div>
       </v-col>
     </v-row>
@@ -82,7 +112,12 @@
       </v-col>
       <v-col md="3">
         <div class="text-box">
-          <p> {{ data && data.booked_rooms && data.booked_rooms[0].room_type || '---' }} </p>
+          <p>
+            {{
+              (data && data.booked_rooms && data.booked_rooms[0].room_type) ||
+              "---"
+            }}
+          </p>
         </div>
       </v-col>
       <v-col md="3" class="text-right">
@@ -90,19 +125,18 @@
       </v-col>
       <v-col md="3">
         <div class="text-box pr-2 mr-2">
-          <p> {{ trans['balance'] || '---' }} </p>
+          <p>{{ trans["balance"] || "---" }}</p>
           <!-- <pre>{{ data }}</pre> -->
         </div>
       </v-col>
     </v-row>
     <v-row class="row mt-3">
       <v-col md="3">
-        <label for="name" class="label-txt">Room/Tagged
-          Advance:</label>
+        <label for="name" class="label-txt">Room/Tagged Advance:</label>
       </v-col>
       <v-col md="9">
         <div class="text-box">
-          <p> {{ trans['sumCredit'] || '---' }} </p>
+          <p>{{ trans["sumCredit"] || "---" }}</p>
         </div>
       </v-col>
     </v-row>
@@ -112,32 +146,40 @@
       </v-col>
       <v-col md="3">
         <div class="text-box">
-          <p> {{ trans['sumDebit'] || '---' }} </p>
+          <p>{{ trans["sumDebit"] || "---" }}</p>
         </div>
       </v-col>
       <v-col md="3" class="text-right">
-        <label for="name" class="label-txt">Remaining Balance
-          Due:</label>
+        <label for="name" class="label-txt">Remaining Balance Due:</label>
       </v-col>
       <v-col md="3">
         <div class="text-box pr-2 mr-2">
-          <p> {{ trans['balance'] || '---' }} </p>
+          <p>{{ trans["balance"] || "---" }}</p>
           <!-- <pre>{{ data }}</pre> -->
         </div>
       </v-col>
     </v-row>
-    <v-divider></v-divider>
+    <v-divider class="my-2"></v-divider>
     <div class="d-flex justify-center mt-4">
-      <v-btn small class="pt-4 pb-4 mr-1 elevation-0" color="#ECF0F4" @click="process('grc_report_print')">
+      <v-btn
+        small
+        class="pt-4 pb-4 mr-1 elevation-0"
+        color="#ECF0F4"
+        @click="process('grc_report_print')"
+      >
         Print
         <v-icon right>mdi-printer</v-icon>
       </v-btn>
-      <v-btn small class="pt-4 pb-4 elevation-0" color="#ECF0F4" @click="process('grc_report_download')">
+      <v-btn
+        small
+        class="pt-4 pb-4 elevation-0"
+        color="#ECF0F4"
+        @click="process('grc_report_download')"
+      >
         Download
         <v-icon right>mdi-file</v-icon>
       </v-btn>
     </div>
-
   </div>
 </template>
 <script>
@@ -176,7 +218,7 @@ export default {
 
   computed: {
     currentDate() {
-      return (new Date().toJSON().slice(0, 10));
+      return new Date().toJSON().slice(0, 10);
     },
   },
 
@@ -188,13 +230,11 @@ export default {
           company_id: this.$auth.user.company.id,
         },
       };
-      this.$axios
-        .get(`grc_by_checkin/${id}`, payload)
-        .then(({ data }) => {
-          this.data = data.booking;
-          this.trans = data.trans;
-          console.log(this.data);
-        });
+      this.$axios.get(`grc_by_checkin/${id}`, payload).then(({ data }) => {
+        this.data = data.booking;
+        this.trans = data.trans;
+        console.log(this.data);
+      });
     },
 
     process(url) {
@@ -239,4 +279,3 @@ export default {
   margin: 5px;
 }
 </style>
-

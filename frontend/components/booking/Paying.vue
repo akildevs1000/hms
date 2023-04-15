@@ -50,7 +50,6 @@
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
                     { id: 6, name: 'Cheque' },
-                    { id: 7, name: 'City Ledger' },
                   ]"
                   item-text="name"
                   item-value="id"
@@ -221,6 +220,7 @@ export default {
         remaining_price: data.remaining_price,
         payment_mode_id: data.payment_mode_id,
         company_id: this.$auth.user.company.id,
+        user_id: this.$auth.user.id,
       };
       this.$axios
         .post("/paying_advance", payload)

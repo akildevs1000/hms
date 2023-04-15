@@ -24,7 +24,7 @@
     </v-row>
 
     <v-row>
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <!-- <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
         <div class="card px-2" style="background-color: #800000">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -36,7 +36,15 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
+      <v-col cols="12" md="6" xl="3">
+        <v-card class="px-2" color="#800000">
+          <v-card-text class="text-center white--text">
+            <h6 class="text-uppercase">Total</h6>
+            <div class="display-1 mb-2">₹{{ totalAmount || 0 }}</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
 
     <v-row>
@@ -432,6 +440,7 @@
               <th>Total</th>
               <th>Mode</th>
               <th>Reference</th>
+              <th>Description</th>
               <th>Document</th>
             </tr>
             <v-progress-linear
@@ -456,6 +465,16 @@
               <td>{{ item.total || "---" }}</td>
               <td>{{ (item && item.payment_mode.name) || "---" }}</td>
               <td>{{ (item && item.reference) || "---" }}</td>
+              <td>
+                <v-tooltip bottom color="primary">
+                  <template v-slot:activator="{ on, attrs }">
+                    <span v-bind="attrs" v-on="on">{{
+                      limitedStr(item && item.description) || "---"
+                    }}</span>
+                  </template>
+                  <span>{{ (item && item.description) || "---" }}</span>
+                </v-tooltip>
+              </td>
               <td>
                 <v-btn
                   v-if="item.document"
@@ -560,6 +579,7 @@ export default {
       { text: "Total" },
       { text: "Mode" },
       { text: "Reference" },
+      { text: "Description" },
       { text: "Document" },
     ],
     editedIndex: -1,
@@ -623,6 +643,11 @@ export default {
   },
 
   methods: {
+    limitedStr(str) {
+      if (!str) return "---";
+      return str.slice(0, 10) + "...";
+    },
+
     onPageChange() {
       this.commonMethod();
     },
@@ -831,7 +856,7 @@ export default {
   },
 };
 </script>
-<style scoped src="@/assets/dashtem.css"></style>
+<!-- <style scoped src="@/assets/dashtem.css"></style> -->
 <style scoped>
 table {
   font-family: arial, sans-serif;
