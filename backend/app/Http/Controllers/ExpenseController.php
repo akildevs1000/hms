@@ -92,7 +92,7 @@ class ExpenseController extends Controller
             } else {
                 return $this->response($this->name . ' cannot create.', null, false);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -107,7 +107,7 @@ class ExpenseController extends Controller
             } else {
                 return $this->response($this->name . ' cannot update.', null, false);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -197,12 +197,12 @@ class ExpenseController extends Controller
 
     public function getSumByModel($model, $id)
     {
-        return $model->clone()->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('amount');
+        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
     }
 
     public function getSumByExpenseModel($model, $id, $is_management = 0)
     {
-        return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('total');
+        return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('total');
     }
 
     public function storeDocument($request, $model)

@@ -58,6 +58,7 @@ class WhatsappNotificationController extends Controller
 
     public function advancePayingNotification($booking, $customer, $amt, $payMode = 0)
     {
+
         $instance_id  = "";
         $access_token = "";
         $msg          = "";
@@ -128,9 +129,9 @@ class WhatsappNotificationController extends Controller
         $msg .= "--------------- \n";
         $msg .= "Intercom \n";
         $msg .= "--------------- \n";
-        $msg .= "Reception  :  100 \n";
-        $msg .= "Restaurant  :  222 \n";
-        $msg .= "House keeping : 100 \n";
+        $msg .= "Reception  :  0 \n";
+        $msg .= "Restaurant  :  111 \n";
+        $msg .= "House keeping : 200 \n";
         $msg .= "--------------- \n";
         $msg .= "Manager on Duty  \n";
         $msg .= "Mr. Ansari / 89402 30003  \n";
@@ -251,6 +252,9 @@ class WhatsappNotificationController extends Controller
         if ($advanceAmount <= 0) {
             $msg .= "Please pay Advance to confirm your booking\n";
         }
+
+        $msg .= "(~ If you booked by agent please ignore advance payment. ~)\n";
+
         $msg .= "\n";
         $msg .= is_null($location) ? '' : "Google Map  $location\n";
         $msg .= "\n";

@@ -6,18 +6,22 @@
       </v-snackbar>
     </div>
     <v-row>
-
-      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
+      <v-dialog
+        v-model="GRCDialog"
+        persistent
+        :width="900"
+        class="checkin-models"
+      >
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ 'GRC' }}</span>
+            <span>{{ "GRC" }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="GRCDialog = false"
+              >mdi mdi-close-box</v-icon
+            >
           </v-toolbar>
           <v-card-text>
-            {{ this.$route.params.id }}
-            <Grc :bookingId="this.$route.params.id">
-            </Grc>
+            <Grc :bookingId="this.$route.params.id"> </Grc>
           </v-card-text>
           <v-container></v-container>
           <v-card-actions> </v-card-actions>
@@ -46,17 +50,28 @@
             <v-tab-item class="px-3 py-4">
               <v-row>
                 <v-col md="2" cols="12">
-                  <v-img class="guest-avatar" :src="showImage"> </v-img><br /><br />
+                  <v-img class="guest-avatar" :src="showImage"> </v-img
+                  ><br /><br />
                   <div v-if="booking && booking.document">
-                    <v-btn style="width: 100%" small dark class="primary pt-4 pb-4 mt-4 w-100 justify-center"
-                      @click="preview(booking && booking.document)">
+                    <v-btn
+                      style="width: 100%"
+                      small
+                      dark
+                      class="primary pt-4 pb-4 mt-4 w-100 justify-center"
+                      @click="preview(booking && booking.document)"
+                    >
                       Preview
                       <v-icon right dark>mdi-file</v-icon>
                     </v-btn>
                   </div>
                   <div>
-                    <v-btn style="width: 100%" small dark class="primary pt-4 pb-4 mt-4 w-100 justify-center"
-                      @click="process_grc(booking.id)">
+                    <v-btn
+                      style="width: 100%"
+                      small
+                      dark
+                      class="primary pt-4 pb-4 mt-4 w-100 justify-center"
+                      @click="process_grc(booking.id)"
+                    >
                       Download GRC
                       <v-icon right dark>mdi-file</v-icon>
                     </v-btn>
@@ -692,7 +707,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style="font-size: 13px" v-for="(item, postingIndex) in postings" :key="postingIndex">
+                  <tr
+                    style="font-size: 13px"
+                    v-for="(item, postingIndex) in postings"
+                    :key="postingIndex"
+                  >
                     <td>{{ ++postingIndex }}</td>
                     <td>{{ item.bill_no || "---" }}</td>
                     <td>{{ item.posting_date || "---" }}</td>
@@ -714,7 +733,12 @@
                       {{ item.amount_with_tax || "---" }}
                     </td>
                     <td class="text-center">
-                      <v-icon x-small color="accent" @click="cancelPosting(item)" class="mr-2">
+                      <v-icon
+                        x-small
+                        color="accent"
+                        @click="cancelPosting(item)"
+                        class="mr-2"
+                      >
                         mdi-delete
                       </v-icon>
                     </td>
@@ -740,10 +764,20 @@
                           <th>Balance</th>
                         </tr>
                       </thead>
-                      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                        color="primary"></v-progress-linear>
+                      <v-progress-linear
+                        v-if="loading"
+                        :active="loading"
+                        :indeterminate="loading"
+                        absolute
+                        color="primary"
+                      ></v-progress-linear>
                       <tbody>
-                        <tr v-for="(item, index) in transactions" :key="index" style="font-size: 13px" class="no-bg">
+                        <tr
+                          v-for="(item, index) in transactions"
+                          :key="index"
+                          style="font-size: 13px"
+                          class="no-bg"
+                        >
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
@@ -839,10 +873,10 @@
   </div>
 </template>
 <script>
-import Grc from './../../../components/booking/GRC.vue';
+import Grc from "./../../../components/booking/GRC.vue";
 export default {
   components: {
-    Grc
+    Grc,
   },
   data: () => ({
     pagination: {
@@ -910,7 +944,7 @@ export default {
     this.loading = true;
     this.getData();
   },
-  mounted() { },
+  mounted() {},
 
   methods: {
     getDate(dataTime) {
@@ -951,7 +985,6 @@ export default {
       console.log("s" + formatted);
       return formatted;
     },
-
 
     process_grc(id) {
       this.GRCDialog = true;
