@@ -184,13 +184,13 @@ class ManagementController extends Controller
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')->with('transactions', function ($q) use ($request) {
-            $q->where('is_posting', 0);
-            $q->where('credit', '>', 0);
-            $q->whereDate('date', $request->date);
-            $q->where('payment_method_id', '!=', 7);
-            $q->where('company_id', $request->company_id)
-                ->with('paymentMode');
-        })->get();
+                $q->where('is_posting', 0);
+                $q->where('credit', '>', 0);
+                $q->whereDate('date', $request->date);
+                $q->where('payment_method_id', '!=', 7);
+                $q->where('company_id', $request->company_id)
+                    ->with('paymentMode');
+            })->get();
     }
 
     private function continueAudit($model, $request)
@@ -278,6 +278,8 @@ class ManagementController extends Controller
                 $q->where('booking_status', '!=', -1);
                 $q->where('paid_amounts', '>', 0);
                 $q->where('company_id', $company_id);
+                $q->whereDate('check_out', '<', $request->date);
+                // $q->whereDate('check_out', '!=', $request->date);
             })
             ->whereHas('transactions', function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
