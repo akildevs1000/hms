@@ -152,11 +152,12 @@ class PostingController extends Controller
             $data['title']    = $booking->customer->title;
             $data['guest']    = $booking->customer->first_name;
             $data['company']  = $booking->company;
+            $data['revNo']  = $booking->reservation_no;
             // return $data['item'];
             (new WhatsappNotificationController)->postingNotification($data);
 
             return $this->response('Posting Successfully submitted.', $posting, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -219,7 +220,7 @@ class PostingController extends Controller
             $posting->delete();
 
             return $this->response('Posting Successfully canceled.', '', true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }

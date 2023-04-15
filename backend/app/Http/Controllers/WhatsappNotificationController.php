@@ -7,6 +7,7 @@ class WhatsappNotificationController extends Controller
     public function PostingNotification($data)
     {
         $company_id      = $data['company_id'];
+
         $instance_id     = "";
         $access_token    = "";
         $msg             = "";
@@ -50,6 +51,7 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'posting',
+            'revNo'         => $data['revNo'],
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -89,11 +91,13 @@ class WhatsappNotificationController extends Controller
             'company'      => $company ?? false,
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
-            'type'         => 'checkin',
+            'type'         => 'advance Paying',
+            'revNo'         => $booking->reservation_no,
         ];
 
         (new WhatsappController)->sentNotification($data);
     }
+
     public function checkInNotification($booking, $customer)
     {
         $instance_id  = "";
@@ -145,6 +149,7 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'checkin',
+            'revNo'         => $booking->reservation_no,
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -201,6 +206,7 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'checkout',
+            'revNo'         => $booking->reservation_no,
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -259,13 +265,14 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'booking',
+            'revNo'         => $booking->reservation_no,
         ];
         (new WhatsappController)->sentNotification($data);
     }
 
     public function getPayMode($mode = "")
     {
-        return match($mode) {
+        return match ($mode) {
             1 => 'Cash',
             2 => 'Card',
             3 => 'Online',
