@@ -6,19 +6,12 @@
       </v-snackbar>
     </div>
     <v-row>
-      <v-dialog
-        v-model="GRCDialog"
-        persistent
-        :width="900"
-        class="checkin-models"
-      >
+      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ "GRC" }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
+            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-card-text>
             <Grc :bookingId="this.$route.params.id"> </Grc>
@@ -28,9 +21,23 @@
         </v-card>
       </v-dialog>
 
+      <v-dialog v-model="imgView" max-width="80%">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Preview</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
+          </v-toolbar>
+          <v-container>
+            <ImagePreview :docObj="documentObj"></ImagePreview>
+          </v-container>
+          <v-card-actions> </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-col md="12">
         <v-card elevation="0">
-          <v-toolbar color="primary" dark flat>
+          <v-toolbar color="primary" dark flat dense>
             <v-toolbar-title>Reservation Details</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="redirect">
@@ -45,37 +52,65 @@
               </v-tabs>
             </template>
           </v-toolbar>
-
           <v-tabs-items v-model="tab1">
             <v-tab-item class="px-3 py-4">
               <v-row>
                 <v-col md="2" cols="12">
-                  <v-img class="guest-avatar" :src="showImage"> </v-img
-                  ><br /><br />
-                  <div v-if="booking && booking.document">
-                    <v-btn
-                      style="width: 100%"
-                      small
-                      dark
-                      class="primary pt-4 pb-4 mt-4 w-100 justify-center"
-                      @click="preview(booking && booking.document)"
-                    >
-                      Preview
-                      <v-icon right dark>mdi-file</v-icon>
-                    </v-btn>
-                  </div>
-                  <div>
-                    <v-btn
-                      style="width: 100%"
-                      small
-                      dark
-                      class="primary pt-4 pb-4 mt-4 w-100 justify-center"
-                      @click="process_grc(booking.id)"
-                    >
-                      Download GRC
-                      <v-icon right dark>mdi-file</v-icon>
-                    </v-btn>
-                  </div>
+                  <v-row>
+                    <v-col md="12">
+                      <v-img class="guest-avatar" :src="showImage"> </v-img>
+                    </v-col>
+                    <v-col md="12">
+                      <div class="d-flex justify-space-between">
+                        <v-btn v-if="booking && booking.document" style="width: 50%" small dark
+                          class="primary pt-4 pb-4 mt-4 mr-1 w-50" @click="preview(booking && booking.document)">
+                          ID
+                          <v-icon right dark>mdi-file</v-icon>
+                        </v-btn>
+                        <v-btn style="width: 50%" small dark class="primary pt-4 pb-4 mt-4 w-50"
+                          @click="process_grc(booking.id)">
+                          GRC
+                          <v-icon right dark>mdi-file</v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                    <v-col md="12">
+                      <div class="text-box-amt">
+                        <tr class="bg-white">
+                          <td>Room:</td>
+                          <td>
+                            ₹{{
+                              transactionSummary && transactionSummary.sumDebit
+                            }}
+                          </td>
+                        </tr>
+                        <tr class="bg-white">
+                          <td>Posting :</td>
+                          <td>
+                            ₹{{
+                              transactionSummary &&
+                              transactionSummary.tot_posting
+                            }}
+                          </td>
+                        </tr>
+                        <tr class="bg-white">
+                          <td>Paid :</td>
+                          <td>
+                            ₹{{
+                              transactionSummary && transactionSummary.sumCredit
+                            }}
+                          </td>
+                        </tr>
+                        <tr class="bg-white">
+                          <td>Balance :</td>
+                          <td class="red--text">
+                            ₹{{ numFormat(transactionSummary.balance) }}
+                          </td>
+                        </tr>
+                      </div>
+                    </v-col>
+                  </v-row>
+
                 </v-col>
 
                 <v-col md="9" cols="12">
@@ -244,7 +279,7 @@
                     </v-col>
                   </v-row>
 
-                  <v-row>
+                  <!-- <v-row>
                     <v-col>
                       <div class="text-box" style="float: left">
                         <tr class="bg-white">
@@ -280,7 +315,7 @@
                         </tr>
                       </div>
                     </v-col>
-                  </v-row>
+                  </v-row> -->
                 </v-col>
               </v-row>
 
@@ -707,11 +742,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    style="font-size: 13px"
-                    v-for="(item, postingIndex) in postings"
-                    :key="postingIndex"
-                  >
+                  <tr style="font-size: 13px" v-for="(item, postingIndex) in postings" :key="postingIndex">
                     <td>{{ ++postingIndex }}</td>
                     <td>{{ item.bill_no || "---" }}</td>
                     <td>{{ item.posting_date || "---" }}</td>
@@ -733,12 +764,7 @@
                       {{ item.amount_with_tax || "---" }}
                     </td>
                     <td class="text-center">
-                      <v-icon
-                        x-small
-                        color="accent"
-                        @click="cancelPosting(item)"
-                        class="mr-2"
-                      >
+                      <v-icon x-small color="accent" @click="cancelPosting(item)" class="mr-2">
                         mdi-delete
                       </v-icon>
                     </td>
@@ -764,20 +790,10 @@
                           <th>Balance</th>
                         </tr>
                       </thead>
-                      <v-progress-linear
-                        v-if="loading"
-                        :active="loading"
-                        :indeterminate="loading"
-                        absolute
-                        color="primary"
-                      ></v-progress-linear>
+                      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                        color="primary"></v-progress-linear>
                       <tbody>
-                        <tr
-                          v-for="(item, index) in transactions"
-                          :key="index"
-                          style="font-size: 13px"
-                          class="no-bg"
-                        >
+                        <tr v-for="(item, index) in transactions" :key="index" style="font-size: 13px" class="no-bg">
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
@@ -874,8 +890,10 @@
 </template>
 <script>
 import Grc from "./../../../components/booking/GRC.vue";
+import ImagePreview from '../../../components/images/ImagePreview.vue';
 export default {
   components: {
+    ImagePreview,
     Grc,
   },
   data: () => ({
@@ -884,7 +902,12 @@ export default {
       total: 0,
       per_page: 10,
     },
+    documentObj: {
+      fileExtension: null,
+      file: null,
+    },
     options: {},
+    imgView: false,
     showImage: "",
     Model: "Customer",
     search: "",
@@ -944,7 +967,7 @@ export default {
     this.loading = true;
     this.getData();
   },
-  mounted() {},
+  mounted() { },
 
   methods: {
     getDate(dataTime) {
@@ -997,13 +1020,23 @@ export default {
       // element.click();
     },
 
+    // preview(file) {
+    //   let element = document.createElement("a");
+    //   element.setAttribute("target", "_blank");
+    //   element.setAttribute("href", file);
+    //   document.body.appendChild(element);
+    //   element.click();
+    //   // document.body.removeChild(element);
+    // },
+
     preview(file) {
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", file);
-      document.body.appendChild(element);
-      element.click();
-      // document.body.removeChild(element);
+      const fileExtension = file.split(".").pop().toLowerCase();
+      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
+      this.documentObj = {
+        fileExtension: fileExtension,
+        file: file,
+      };
+      this.imgView = true;
     },
 
     capsTitle(val) {
@@ -1071,6 +1104,15 @@ export default {
   border: 1px solid rgb(215, 211, 211);
   padding: 10px 0px 0px 10px;
   margin: 10px 20px;
+  position: relative;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.text-box-amt {
+  border: 1px solid rgb(215, 211, 211);
+  padding: 00px 0px 0px 00px;
+  margin: 00px 00px;
   position: relative;
   border-radius: 5px;
   width: 100%;

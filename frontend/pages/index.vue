@@ -453,7 +453,7 @@
                   </a>
                 </div>
               </div>
-              <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="AvailableRoomsReportDialog = true">
                   <v-row class="box text-center" style="background-color: #32a15c">
                     <v-col md="6" class="p-0 m-0">
@@ -473,7 +473,7 @@
                   </v-row>
                 </a>
               </div>
-              <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="BookedRoomReportDialog = true">
                   <v-row class="box text-center" style="background-color: #ffbe00">
                     <v-col md="6" class="p-0 m-0">
@@ -497,7 +497,7 @@
                   </v-row>
                 </a>
               </div>
-              <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="PaidRoomReportDialog = true">
                   <v-row class="box text-center" style="background-color: #02ada4">
                     <v-col md="6" class="p-0 m-0">
@@ -517,7 +517,7 @@
                   </v-row>
                 </a>
               </div>
-              <div class="col-md-12 col-lg-2 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="DirtyRoomsReportDialog = true">
                   <v-row class="box text-center" style="background-color: #ff0000">
                     <v-col md="6" class="p-0 m-0">
@@ -536,7 +536,7 @@
                   </v-row>
                 </a>
               </div>
-              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="ExpectCheckInReportDialog = true">
                   <v-row class="box text-center" style="background-color: #18069e">
                     <v-col md="6" class="p-0 m-0">
@@ -555,7 +555,7 @@
                   </v-row>
                 </a>
               </div>
-              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="ExpectCheckOutReportDialog = true">
                   <v-row class="box text-center" style="background-color: #4390fc">
                     <v-col md="6" class="p-0 m-0">
@@ -574,7 +574,7 @@
                   </v-row>
                 </a>
               </div>
-              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="CheckInReportDialog = true">
                   <v-row class="box text-center" style="background-color: #800000">
                     <v-col md="6" class="p-0 m-0">
@@ -593,7 +593,7 @@
                   </v-row>
                 </a>
               </div>
-              <div class="col-md-12 col-lg-3 col-xlg-3 py-0">
+              <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
                 <a class="card card-hover mx-1" @click="CheckOutReportDialog = true">
                   <v-row class="box text-center" style="background-color: #74166d">
                     <v-col md="6" class="p-0 m-0">

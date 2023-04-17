@@ -7,7 +7,7 @@
       </v-col>
     </v-row> -->
     <v-row>
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
         <div class="card px-2" style="background-color: #800000">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
         <div class="card px-2" style="background-color: #ffbe00">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
         <div class="card px-2" style="background-color: #74166d">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
         <div class="card px-2" style="background-color: #00b300">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -62,7 +62,7 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
         <div class="card px-2" style="background-color: #18069e">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -75,7 +75,7 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
         <div class="card px-2" style="background-color: #4390fc">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -88,7 +88,7 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-6 text-uppercase">
         <div class="card px-2" style="background-color: #02ada4">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -101,7 +101,7 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-6 text-uppercase">
         <div class="card px-2" style="background-color: #ce008e">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -117,31 +117,13 @@
     </v-row>
     <v-row>
       <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              outlined
-              label="Date"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true" outlined
+              label="Date"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
@@ -153,15 +135,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -170,14 +145,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -190,28 +158,16 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in todayCheckIn"
-              :key="index"
-              style="background-color: yellow"
-            >
+            <tr v-for="(item, index) in todayCheckIn" :key="index" style="background-color: yellow">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.reservation_no }}
                 </span>
               </td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -252,15 +208,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -269,14 +218,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -289,28 +231,16 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in continueRooms"
-              :key="index"
-              style="background-color: #9bc1e6"
-            >
+            <tr v-for="(item, index) in continueRooms" :key="index" style="background-color: #9bc1e6">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.reservation_no }}
                 </span>
               </td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -351,15 +281,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -368,14 +291,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -388,28 +304,16 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in todayCheckOut"
-              :key="index"
-              style="background-color: #90d24d"
-            >
+            <tr v-for="(item, index) in todayCheckOut" :key="index" style="background-color: #90d24d">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.reservation_no }}
                 </span>
               </td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -451,15 +355,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -468,14 +365,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -488,28 +378,16 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in todayPayments"
-              :key="index"
-              style="background-color: #29b9ca"
-            >
+            <tr v-for="(item, index) in todayPayments" :key="index" style="background-color: #29b9ca">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.reservation_no }}
                 </span>
               </td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -551,15 +429,8 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -568,14 +439,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -588,28 +452,16 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <tr
-              v-for="(item, index) in cityLedgerPaymentsAudit"
-              :key="index"
-              style="background-color: #e4dc94"
-            >
+            <tr v-for="(item, index) in cityLedgerPaymentsAudit" :key="index" style="background-color: #e4dc94">
               <td>{{ ++index }}</td>
               <td>{{ item && item.customer && item.customer.first_name }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.reservation_no }}
                 </span>
               </td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>

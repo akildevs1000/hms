@@ -3,23 +3,21 @@
 namespace App\Models;
 
 use App\Models\PaymentMode;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
-    protected $with = ['paymentMode'];
-
+    protected $with    = ['paymentMode'];
 
     protected $appends = ['time'];
 
     protected $casts = [
         'created_at' => 'datetime:d-M-y',
     ];
-
 
     public function paymentMode()
     {

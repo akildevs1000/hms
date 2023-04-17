@@ -1,214 +1,58 @@
 <template>
   <div>
-    <!-- <v-row>
-      <div class="col-xl-3 col-lg-6 text-uppercase">
-        <div class="card px-2 available">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-ddoor-open"></i>
-            </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Income</h6>
-              <span class="data-1">
-                RS. {{ convert_decimal(totalIncomes.OverallTotal) || 0 }}</span
-              >
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-2 col-lg-6 text-uppercase">
-        <div class="card px-2 booked">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
-            </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Expense</h6>
-              <span class="data-1"
-                >RS. {{ totalExpenses.OverallTotal || 0 }}
-              </span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-lg-6 text-uppercase">
-        <div class="card px-2 checkedIn">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-doosr-open"></i>
-            </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Profit</h6>
-              <span class="data-1"> RS. {{ profit }}</span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-2 col-lg-6 text-uppercase">
-        <div class="card px-2 booked">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-doodr-open"></i>
-            </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Loss</h6>
-              <span class="data-1"> RS.{{ loss }}</span>
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-2 col-lg-6 text-uppercase">
-        <div class="card px-2" style="background-color: #4390fc">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-door-ospen"></i>
-            </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">City Ledger</h6>
-              <span class="data-1">
-                RS.{{ totalIncomes.City_ledger || 0 }}</span
-              >
-              <p class="mb-0 text-sm">
-                <span class="mr-2">
-                  <v-icon dark small>mdi-arrow-right</v-icon>
-                </span>
-                <a class="text-nowrap text-white" target="_blank">
-                  <span class="text-nowrap">View Report</span>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </v-row> -->
 
     <v-row>
       <v-col md="3">
         <div class="ml-4">Filter</div>
         <v-col md="12">
-          <v-select
-            v-model="filterType"
-            :items="[
-              {
-                id: 1,
-                name: 'Today',
-              },
-              {
-                id: 2,
-                name: 'Yesterday',
-              },
-              {
-                id: 3,
-                name: 'This Week',
-              },
-              {
-                id: 4,
-                name: 'This Month',
-              },
-              {
-                id: 5,
-                name: 'Custom',
-              },
-            ]"
-            dense
-            placeholder="Type"
-            outlined
-            :hide-details="true"
-            item-text="name"
-            item-value="id"
-            @change="commonMethod"
-          ></v-select>
+          <v-select v-model="filterType" :items="[
+            {
+              id: 1,
+              name: 'Today',
+            },
+            {
+              id: 2,
+              name: 'Yesterday',
+            },
+            {
+              id: 3,
+              name: 'This Week',
+            },
+            {
+              id: 4,
+              name: 'This Month',
+            },
+            {
+              id: 5,
+              name: 'Custom',
+            },
+          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+            @change="commonMethod"></v-select>
         </v-col>
       </v-col>
       <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
-          <v-menu
-            v-model="from_menu"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
+          <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+            offset-y min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="from_date"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                outlined
-                dense
-                :hide-details="true"
-              ></v-text-field>
+              <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" outlined dense
+                :hide-details="true"></v-text-field>
             </template>
-            <v-date-picker
-              v-model="from_date"
-              @input="from_menu = false"
-              @change="commonMethod"
-            ></v-date-picker>
+            <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
           </v-menu>
         </v-col>
       </v-col>
       <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">To</div>
         <v-col cols="12" sm="12" md="12">
-          <v-menu
-            v-model="to_menu"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
+          <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+            offset-y min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="to_date"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                outlined
-                dense
-                :hide-details="true"
-              ></v-text-field>
+              <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" outlined dense
+                :hide-details="true"></v-text-field>
             </template>
-            <v-date-picker
-              v-model="to_date"
-              @input="to_menu = false"
-              @change="commonMethod"
-            ></v-date-picker>
+            <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
           </v-menu>
         </v-col>
       </v-col>
@@ -216,44 +60,22 @@
       <v-col md="3" v-if="userList.length > 0">
         <div class="ml-4">Users</div>
         <v-col cols="12" sm="12" md="12">
-          <v-select
-            @change="getPaymentReportsByUser()"
-            v-model="user_id"
-            :items="userList"
-            item-text="name"
-            item-value="id"
-            outlined
-            dense
-            placeholder="User List"
-            :hide-details="true"
-            flat
-          ></v-select>
+          <v-select @change="getPaymentReportsByUser()" v-model="user_id" :items="userList" item-text="name"
+            item-value="id" outlined dense placeholder="User List" :hide-details="true" flat></v-select>
         </v-col>
       </v-col>
     </v-row>
 
     <v-row class="mt-0 mt-0">
       <v-col md="12">
-        <v-card
-          class="mb-5 rounded-md mt-3"
-          elevation="0"
-          v-for="(user, index) in paymentReportsByUser"
-          :key="index"
-        >
+        <v-card class="mb-5 rounded-md mt-3" elevation="0" v-for="(user, index) in paymentReportsByUser" :key="index">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <label class="white--text">{{ user.name }}</label>
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
+                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_print')">
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -262,14 +84,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -282,22 +97,13 @@
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <v-progress-linear
-              v-if="loading"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
+            <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+              color="primary"></v-progress-linear>
 
             <tr v-for="(trans, index) in user.transactions" :key="index">
               <td>{{ ++index }}</td>
               <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(trans)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(trans)" style="cursor: pointer">
                   {{
                     (trans && trans.booking && trans.booking.reservation_no) ||
                     "---"
@@ -313,54 +119,42 @@
               <td>{{ trans.credit }}</td>
               <td>{{ trans.debit }}</td>
               <td v-for="i in 7" :key="i" class="text-right">
-                <span
-                  v-if="
-                    (trans && trans.payment_mode && trans.payment_mode.name) ==
-                      'Cash' && i == 1
-                  "
-                >
+                <span v-if="
+                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                  'Cash' && i == 1
+                ">
                   {{ trans.credit }}
                 </span>
-                <span
-                  v-else-if="
-                    (trans && trans.payment_mode && trans.payment_mode.name) ==
-                      'Card' && i == 2
-                  "
-                >
+                <span v-else-if="
+                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                  'Card' && i == 2
+                ">
                   {{ trans.credit }}
                 </span>
-                <span
-                  v-else-if="
-                    (trans && trans.payment_mode && trans.payment_mode.name) ==
-                      'Online' && i == 3
-                  "
-                >
+                <span v-else-if="
+                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                  'Online' && i == 3
+                ">
                   {{ trans.credit }}
                 </span>
-                <span
-                  v-else-if="
-                    (trans && trans.payment_mode && trans.payment_mode.name) ==
-                      'Bank' && i == 4
-                  "
-                >
+                <span v-else-if="
+                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                  'Bank' && i == 4
+                ">
                   {{ trans.credit }}
                 </span>
 
-                <span
-                  v-else-if="
-                    (trans && trans.payment_mode && trans.payment_mode.name) ==
-                      'UPI' && i == 5
-                  "
-                >
+                <span v-else-if="
+                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                  'UPI' && i == 5
+                ">
                   {{ trans.credit }}
                 </span>
 
-                <span
-                  v-else-if="
-                    (trans && trans.payment_mode && trans.payment_mode.name) ==
-                      'City Ledger' && i == 7
-                  "
-                >
+                <span v-else-if="
+                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                  'City Ledger' && i == 7
+                ">
                   {{ trans.debit }}
                 </span>
 
@@ -389,10 +183,14 @@ export default {
   data: () => ({
     Model: "Expense",
 
-    from_date: new Date().toJSON().slice(0, 10),
+    from_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
     from_menu: false,
 
-    to_date: new Date().toJSON().slice(0, 10),
+    to_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
     to_menu: false,
     filterType: 1,
     pagination: {
@@ -452,6 +250,12 @@ export default {
   },
 
   computed: {
+    currentDate() {
+      return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10);
+    },
+
     week() {
       const today = new Date();
       const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
@@ -512,11 +316,11 @@ export default {
 
     commonMethod() {
       const today = new Date();
-
+      console.log(this.currentDate);
       switch (this.filterType) {
         case 1:
-          this.from_date = new Date().toJSON().slice(0, 10);
-          this.to_date = new Date().toJSON().slice(0, 10);
+          this.from_date = this.currentDate;
+          this.to_date = this.currentDate;
           break;
         case 2:
           this.from_date = new Date(Date.now() - 86400000)
