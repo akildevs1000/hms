@@ -134,11 +134,11 @@
 
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment" style="
-                                                                      width: 150px;
-                                                                      height: 150px;
-                                                                      margin: 0 auto;
-                                                                      border-radius: 50%;
-                                                                    " :src="showImage"></v-img>
+                                                                                            width: 150px;
+                                                                                            height: 150px;
+                                                                                            margin: 0 auto;
+                                                                                            border-radius: 50%;
+                                                                                          " :src="showImage"></v-img>
                     <input required type="file" @change="attachment" style="display: none" accept="image/*"
                       ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
@@ -659,128 +659,9 @@
                   </div>
                 </div>
               </section>
-              <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
-                Payment
-              </p> -->
               <v-divider class="px-5 py-0"></v-divider>
               <section class="payment-section pt-0">
-                <v-row class="px-5 mt-0">
-                  <div class="input-group input-group-sm px-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">
-                      <!-- <v-select
-                      elevation="0"
-                        v-model="room.payment_mode_id"
-                        :items="[
-                          { id: 1, name: 'Cash' },
-                          { id: 2, name: 'Card' },
-                          { id: 3, name: 'Online' },
-                          { id: 4, name: 'Bank' },
-                          { id: 5, name: 'UPI' },
-                          { id: 6, name: 'Cheque' },
-                        ]"
-                        item-text="name"
-                        item-value="id"
-                        :outlined="false"
-                        dense
-                        solo
-                        :disabled="room.paid_by == '2' ? true : false"
-                        @change="getType(room.type)"
-                        :hide-details="errors && !errors.payment_mode_id"
-                        :error="errors && errors.payment_mode_id"
-                        :error-messages="
-                          errors && errors.payment_mode_id
-                            ? errors.payment_mode_id[0]
-                            : ''
-                        "
-                      ></v-select> -->
 
-                      <v-autocomplete v-model="room.payment_mode_id" :items="[
-                        { id: 1, name: 'Cash' },
-                        { id: 2, name: 'Card' },
-                        { id: 3, name: 'Online' },
-                        { id: 4, name: 'Bank' },
-                        { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' },
-                      ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data
-                        hide-details solo-inverted background-color="#E9ECEF"></v-autocomplete>
-                    </span>
-                    <input type="number" class="form-control" aria-label="Sizing example input"
-                      aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
-                      :disabled="room.paid_by == '2' ? true : false" v-model="room.advance_price" />
-                  </div>
-
-                  <div class="input-group input-group-sm px-3" v-if="room.payment_mode_id != 1">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">
-                      Reference No
-                    </span>
-                    <input type="text" class="form-control" aria-label="Sizing example input"
-                      aria-describedby="inputGroup-sizing-sm" style="height: 39px" />
-                    <!-- v-model="room.reference_no" -->
-                  </div>
-
-                  <!-- <v-col md="12" cols="12" sm="12">
-                    <v-text-field
-                      label="Advance Amount"
-                      @keyup="runAllFunctions"
-                      dense
-                      :hide-details="true"
-                      :disabled="room.paid_by == '2' ? true : false"
-                      outlined
-                      type="number"
-                      v-model="room.advance_price"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col md="12" cols="12" sm="12">
-                    <v-select
-                      label="Payment Mode"
-                      v-model="room.payment_mode_id"
-                      :items="[
-                        { id: 1, name: 'Cash' },
-                        { id: 2, name: 'Card' },
-                        { id: 3, name: 'Online' },
-                        { id: 4, name: 'Bank' },
-                        { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' }
-                      ]"
-                      item-text="name"
-                      item-value="id"
-                      dense
-                      :disabled="room.paid_by == '2' ? true : false"
-                      outlined
-                      @change="getType(room.type)"
-                      :hide-details="errors && !errors.payment_mode_id"
-                      :error="errors && errors.payment_mode_id"
-                      :error-messages="
-                        errors && errors.typpayment_mode_ide
-                          ? errors.payment_mode_id[0]
-                          : ''
-                      "
-                    ></v-select>
-                  </v-col> -->
-                  <v-col md="12">
-                    <v-divider></v-divider>
-                  </v-col>
-                </v-row>
-
-                <!-- <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Room Price
-                  </span>
-                  <div type="text" class="form-control" aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm" disabled>
-                    {{ convert_decimal(room.all_room_Total_amount) }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Sub Total ({{ getDays() }} x
-                    {{ convert_decimal(room.all_room_Total_amount) }})
-                  </span>
-                  <div type="text" class="form-control" aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm" disabled>
-                    {{ convert_decimal(room.sub_total) }}
-                  </div>
-                </div> -->
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
@@ -809,7 +690,11 @@
                   </div>
                 </div>
                 <div class="input-group input-group-sm px-3 mb-5">
-                  <v-btn style="background-color: #5fafa3" width="100%" height="60" @click="store" :loading="subLoad"
+                  <v-btn style="background-color: #4390FC;margin-right:5px" width="50%" height="60"
+                    @click="advanceDialog = true" dark>
+                    Pay
+                  </v-btn>
+                  <v-btn style="background-color: #5fafa3" width="50%" height="60" @click="store" :loading="subLoad"
                     dark>Book</v-btn>
                 </div>
               </section>
@@ -989,6 +874,52 @@
     </v-row>
 
     <!---------------------------------------------------------------->
+    <v-dialog v-model="advanceDialog" width="600">
+      <v-card>
+        <v-card-title class="text-h6 grey lighten-2" dense> Payment </v-card-title>
+        <v-card-text>
+          <v-row class="px-5 mt-2">
+            <div class="input-group input-group-sm px-3">
+              <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
+                <v-autocomplete v-model="room.payment_mode_id" :items="[
+                  { id: 1, name: 'Cash' },
+                  { id: 2, name: 'Card' },
+                  { id: 3, name: 'Online' },
+                  { id: 4, name: 'Bank' },
+                  { id: 5, name: 'UPI' },
+                  { id: 6, name: 'Cheque' },
+                ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
+                  solo-inverted background-color="#E9ECEF"></v-autocomplete>
+              </span>
+              <input type="number" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
+                :disabled="room.paid_by == '2' ? true : false" v-model="room.advance_price" />
+            </div>
+
+            <div class="input-group input-group-sm px-3" v-if="room.payment_mode_id != 1">
+              <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
+                Reference No
+              </span>
+              <input v-model="room.reference_number" type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="height: 39px" />
+            </div>
+            <v-col md="12">
+              <v-divider></v-divider>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="e => {
+            selectedRooms.length > 0 ? advanceDialog = false : alert('oops', 'Select room')
+          }">
+            Pay
+            <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-dialog v-model="searchDialog" width="500">
       <v-card>
@@ -1063,6 +994,7 @@ export default {
       bookedRooms: "",
       loading: false,
       documentDialog: false,
+      advanceDialog: false,
       check_out_date_menu: false,
       check_out_date: null,
 
@@ -1483,11 +1415,19 @@ export default {
     },
 
     get_next_day() {
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      this.check_out_date = tomorrow.toISOString().substr(0, 10);
+      // const today = new Date();
+      // const tomorrow = new Date(today);
+      // tomorrow.setDate(tomorrow.getDate() + 1);
+      // this.check_out_date = tomorrow.toISOString().substr(0, 10);
 
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const year = tomorrow.getFullYear();
+      const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const day = String(tomorrow.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+
+      this.check_out_date = formattedDate;
       this.get_reservation();
     },
 

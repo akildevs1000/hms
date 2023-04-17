@@ -918,6 +918,7 @@ class BookingController extends Controller
                         'company_id'        => $bookedRoom->company_id ?? '',
                         'payment_method_id' => 7,
                         'desc'              => "room $model->room_no canceled",
+                        'user_id'           => $request->cancel_by,
                     ];
                     (new TransactionController)->store($transactionData, -$model->grand_total, 'debit');
                     (new TransactionController)->updateBookingByTransactions($model->booking_id, -$model->grand_total);
@@ -1007,7 +1008,8 @@ class BookingController extends Controller
     {
         try {
             // return $request->all();
-            $oldRoom      = BookedRoom::without('postings', 'booking')->where('company_id', $request->company_id)->find($request->eventId);
+            $oldRoom = BookedRoom::without('postings', 'booking')
+                ->where('company_id', $request->company_id)->find($request->eventId);
             $newRoom      = Room::where('company_id', $request->company_id)->whereRoomNo($request->roomId)->first();
             $bookingModel = $this->getBookingModel($oldRoom->booking_id);
 
@@ -1026,7 +1028,11 @@ class BookingController extends Controller
             if ($newRoom->room_type->name == $oldRoom->room_type) {
                 $checkIn  = date('Y-m-d', strtotime($request->start));
                 $checkOut = date('Y-m-d', strtotime($request->end));
-                $oldRoom->update(['room_id' => $newRoom->id, 'room_no' => $newRoom->room_no, 'room_type' => $newRoom->room_type->name]);
+                $oldRoom->update([
+                    'room_id'   => $newRoom->id,
+                    'room_no'   => $newRoom->room_no,
+                    'room_type' => $newRoom->room_type->name,
+                ]);
                 BookedRoom::whereBookingId($oldRoom->booking_id)->update([
                     'check_in'  => date('Y-m-d 11:00', strtotime($checkIn)),
                     'check_out' => date('Y-m-d 11:00', strtotime($checkOut)),
