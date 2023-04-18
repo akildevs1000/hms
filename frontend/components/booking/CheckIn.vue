@@ -79,6 +79,7 @@
     <v-row class="m-0 p-0 mt-1">
       <v-col md="8">
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
+          <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-account-tie </v-icon>
           </v-tab>
@@ -91,18 +92,20 @@
               <v-card-text>
                 <v-row>
                   <v-col md="2" cols="12">
-                    <v-img @click="onpick_attachment" style="
-                              width: 150px;
-                              height: 150px;
-                              margin: 0 auto;
-                              border-radius: 50%;
-                            " :src="showImage"></v-img>
+                    <!-- style="
+                    width: 150px;
+                    height: 150px;
+                    margin: 0 auto;
+                    border-radius: 50%;
+                    " -->
+                    <v-img @click="onpick_attachment" class="guest-avatar" :src="showImage"></v-img>
                     <input required type="file" @change="attachment" style="display: none" accept="image/*"
                       ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
                       {{ errors.image[0] }}</span>
                     <div class="mt-2 ml-4" v-if="BookingData.document">
-                      <v-btn small dark class="pridmary lg-pt-4 lg-pb-4 doc-btn" @click="preview(BookingData.document)">
+                      <v-btn small dark class="primary ipad-preview lg-pt-4 lg-pb-4 doc-btn"
+                        @click="preview(BookingData.document)">
                         Preview
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
@@ -228,6 +231,7 @@
       <v-col md="4">
         <v-tabs color="primary" v-model="activeSummaryTab" :vertical="vertical" background-color="primary" dark
           show-arrows>
+          <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-list-box-outline </v-icon>
           </v-tab>
@@ -331,11 +335,10 @@
                     </span>
                     <input v-model="reference_number" type="text" class="form-control" aria-label="Sizing example input"
                       aria-describedby="inputGroup-sizing-sm" style="
-                              height: 44px;
-                              text-align: left !important;
-                              text-transform: lowercase !important ;
-                            " />
-                    <!-- v-model="room.reference_no" -->
+                                                                                  height: 44px;
+                                                                                  text-align: left !important;
+                                                                                  text-transform: lowercase !important ;
+                                                                                " />
                   </div>
                 </v-row>
 
@@ -376,8 +379,17 @@
                   </div>
                 </div>
                 <v-card-actions class="pl-0 pr-2">
-                  <v-btn class="primary" small width="100%" height="60" @click="store_check_in(BookingData)"
-                    :loading="loading">Check In</v-btn>
+                  <!-- <v-btn class="primary" small width="100%" height="60" @click="store_check_in(BookingData)"
+                    :loading="loading">Check In</v-btn> -->
+
+
+                  <v-btn style="background-color: #4390FC;margin-right:5px" width="50%" height="60"
+                    @click="advanceDialog = true" dark>
+                    Pay
+                  </v-btn>
+                  <v-btn style="background-color: #5fafa3" width="50%" height="60" @click="store_check_in(BookingData)"
+                    :loading="loading" dark>Book</v-btn>
+
                 </v-card-actions>
               </section>
             </v-card>
@@ -541,6 +553,101 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="advanceDialog" width="600">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Payment</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="advanceDialog = false">
+            mdi mdi-close-box
+          </v-icon>
+        </v-toolbar>
+        <v-card-text>
+          <!-- <v-row class="px-5 mt-2">
+            <div class="input-group input-group-sm px-3">
+              <span class="input-group-text" id="inputGroup-sizing-sm"
+                style="width: 220px !important; color: black !important;">
+                <v-autocomplete v-model="room.payment_mode_id" :items="[
+                  { id: 1, name: 'Cash' },
+                  { id: 2, name: 'Card' },
+                  { id: 3, name: 'Online' },
+                  { id: 4, name: 'Bank' },
+                  { id: 5, name: 'UPI' },
+                  { id: 6, name: 'Cheque' },
+                ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
+                  solo elevation="0" background-color="#E9ECEF" style="color: black !important;">
+                </v-autocomplete>
+              </span>
+              <input type="number" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
+                :disabled="room.paid_by == '2' ? true : false" v-model="room.advance_price" />
+            </div>
+
+            <div class="input-group input-group-sm px-3" v-if="room.payment_mode_id != 1">
+              <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
+                Reference No
+              </span>
+              <input v-model="room.reference_number" type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="height: 39px" />
+            </div>
+            <v-col md="12">
+              <v-divider></v-divider>
+            </v-col>
+          </v-row> -->
+
+          <v-row class="px-5 mt-2">
+            <div class="input-group input-group-sm px-1">
+              <span class="input-group-text" id="inputGroup-sizing-sm" style="height: 44px; width: 215px;">
+                <v-select v-model="room.payment_mode_id" :items="[
+                  { id: 1, name: 'Cash' },
+                  { id: 2, name: 'Card' },
+                  { id: 3, name: 'Online' },
+                  { id: 4, name: 'Bank' },
+                  { id: 5, name: 'UPI' },
+                  { id: 6, name: 'Cheque' },
+                ]" item-text="name" item-value="id" :outlined="false" cache-items dense flat hide-no-data solo
+                  elevation="0" background-color="#E9ECEF" :disabled="room.paid_by == '2' ? true : false"
+                  :hide-details="errors && !errors.payment_mode_id" :error="errors && errors.payment_mode_id"
+                  :error-messages="
+                    errors && errors.payment_mode_id
+                      ? errors.payment_mode_id[0]
+                      : ''
+                  " style="font-size: 13px"></v-select>
+              </span>
+              <input type="number" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="height: 44px" v-model="new_payment" />
+            </div>
+            <div class="input-group input-group-sm px-1" v-if="room.payment_mode_id != 1">
+              <span class="input-group-text" id="inputGroup-sizing-sm" style="height: 44px; width: 215px;">
+                Reference No
+              </span>
+              <input v-model="reference_number" type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="
+                                                                                        height: 44px;
+                                                                                        text-align: left !important;
+                                                                                        text-transform: lowercase !important ;
+                                                                                      " />
+            </div>
+          </v-row>
+
+
+
+
+
+
+
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="advanceDialog = false">
+            Pay
+            <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -631,6 +738,7 @@ export default {
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
+      advanceDialog: false,
       isAgent: false,
       isDiff: false,
       search_available_room: "",
@@ -1041,3 +1149,20 @@ export default {
 </script>
 
 <style src="@/assets/custom/check.css"></style>
+
+<style scoped>
+.guest-avatar {
+  /* max-width: 120px !important;
+  height: 120px !important;
+  float: left;
+  margin: 0 auto;
+  border-radius: 50%;
+  ---------------------
+  */
+  max-width: 150px;
+  /* width: 150px; */
+  /* height: 150px; */
+  margin: 0 auto;
+  border-radius: 50%;
+}
+</style>

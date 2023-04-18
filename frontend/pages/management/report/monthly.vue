@@ -8,66 +8,6 @@
     </v-row>
 
     <v-row>
-      <!-- <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col md="3">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
-      </v-col> -->
 
       <v-col md="3">
         <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
@@ -78,6 +18,7 @@
     <div v-if="can(`agents_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
+          <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-chart-bar </v-icon>
           </v-tab>

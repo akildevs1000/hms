@@ -18,6 +18,7 @@
       </v-dialog>
       <v-col md="8">
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
+          <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-account-tie </v-icon>
           </v-tab>
@@ -27,7 +28,6 @@
           <v-tab active-class="active-link" v-if="customer.id > 0">
             <v-icon> mdi mdi-clipboard-text-clock </v-icon>
           </v-tab>
-          <v-spacer></v-spacer>
           <v-icon dark class="pa-2" @click="redirect">
             mdi mdi-close-box
           </v-icon>
@@ -40,11 +40,11 @@
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment"
                       style="
-                                                                                                                                                                                width: 150px;
-                                                                                                                                                                                height: 150px;
-                                                                                                                                                                                margin: 0 auto;
-                                                                                                                                                                                border-radius: 50%;
-                                                                                                                                                                              "
+                                                                                                                                                                                                                                                  width: 150px;
+                                                                                                                                                                                                                                                  height: 150px;
+                                                                                                                                                                                                                                                  margin: 0 auto;
+                                                                                                                                                                                                                                                  border-radius: 50%;
+                                                                                                                                                                                                                                                "
                       :src="showImage"></v-img>
                     <input required type="file" @change="attachment" style="display: none" accept="image/*"
                       ref="attachment_input" />
@@ -141,6 +141,44 @@
                       outlined></v-select>
                   </v-col>
                 </v-row>
+
+                <v-row>
+                  <v-col md="3" sm="12" cols="12" dense>
+                    <v-select v-model="customer.id_card_type_id" :items="idCards" dense label="ID Card Type" outlined
+                      item-text="name" item-value="id" :hide-details="errors && !errors.id_card_type_id"
+                      :error="errors && errors.id_card_type_id" :error-messages="
+                        errors && errors.id_card_type_id
+                          ? errors.id_card_type_id[0]
+                          : ''
+                      "></v-select>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-text-field dense label="ID Card" outlined type="text" v-model="customer.id_card_no"
+                      :hide-details="errors && !errors.id_card_no" :error="errors && errors.id_card_no" :error-messages="
+                        errors && errors.id_card_no ? errors.id_card_no[0] : ''
+                      "></v-text-field>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-text-field dense outlined label="GST" type="text" v-model="customer.gst_number"
+                      :hide-details="errors && !errors.gst_number" :error="errors && errors.gst_number" :error-messages="
+                        errors && errors.gst_number ? errors.gst_number[0] : ''
+                      "></v-text-field>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-text-field dense label="Car Number" outlined :hide-details="true" type="text"
+                      v-model="customer.car_no"></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col md="6" cols="12" sm="12">
+                    <v-textarea rows="3" label="Address" v-model="customer.address" outlined
+                      :hide-details="true"></v-textarea>
+                  </v-col>
+                  <v-col md="6">
+                    <v-textarea rows="3" label="Customer Request" v-model="room.request" :hide-details="true"
+                      outlined></v-textarea>
+                  </v-col>
+                </v-row>
                 <v-row>
                   <v-col md="3" sm="12" cols="12" dense>
                     <v-select v-model="room.type" label="Source Type *" :items="types" dense outlined
@@ -187,43 +225,6 @@
                       :error="errors && errors.paid_by" :error-messages="
                         errors && errors.paid_by ? errors.paid_by[0] : ''
                       "></v-select>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col md="3" sm="12" cols="12" dense>
-                    <v-select v-model="customer.id_card_type_id" :items="idCards" dense label="ID Card Type" outlined
-                      item-text="name" item-value="id" :hide-details="errors && !errors.id_card_type_id"
-                      :error="errors && errors.id_card_type_id" :error-messages="
-                        errors && errors.id_card_type_id
-                          ? errors.id_card_type_id[0]
-                          : ''
-                      "></v-select>
-                  </v-col>
-                  <v-col md="3" cols="12" sm="12">
-                    <v-text-field dense label="ID Card" outlined type="text" v-model="customer.id_card_no"
-                      :hide-details="errors && !errors.id_card_no" :error="errors && errors.id_card_no" :error-messages="
-                        errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                      "></v-text-field>
-                  </v-col>
-                  <v-col md="3" cols="12" sm="12">
-                    <v-text-field dense outlined label="GST" type="text" v-model="customer.gst_number"
-                      :hide-details="errors && !errors.gst_number" :error="errors && errors.gst_number" :error-messages="
-                        errors && errors.gst_number ? errors.gst_number[0] : ''
-                      "></v-text-field>
-                  </v-col>
-                  <v-col md="3" cols="12" sm="12">
-                    <v-text-field dense label="Car Number" outlined :hide-details="true" type="text"
-                      v-model="customer.car_no"></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col md="12">
-                    <v-textarea rows="3" label="Customer Request" v-model="room.request" :hide-details="true"
-                      outlined></v-textarea>
-                  </v-col>
-                  <v-col md="12" cols="12" sm="12">
-                    <v-textarea rows="3" label="Address" v-model="customer.address" outlined
-                      :hide-details="true"></v-textarea>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -426,8 +427,8 @@
                                             <tbody>
                                               <tr
                                                 v-for="(
-                                                                                                                                                                                                          item, index
-                                                                                                                                                                                                        ) in temp.priceList"
+                                                                                                                                                                                                                                                                            item, index
+                                                                                                                                                                                                                                                                          ) in temp.priceList"
                                                 :key="index">
                                                 <td>
                                                   {{ item.date }}
@@ -937,11 +938,18 @@
     </v-dialog>
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-card-title class="text-h6 grey lighten-2" dense> Payment </v-card-title>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Payment</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="advanceDialog = false">
+            mdi mdi-close-box
+          </v-icon>
+        </v-toolbar>
         <v-card-text>
           <v-row class="px-5 mt-2">
             <div class="input-group input-group-sm px-3">
-              <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
+              <span class="input-group-text" id="inputGroup-sizing-sm"
+                style="width: 220px !important; color: black !important;">
                 <v-autocomplete v-model="room.payment_mode_id" :items="[
                   { id: 1, name: 'Cash' },
                   { id: 2, name: 'Card' },
@@ -950,7 +958,8 @@
                   { id: 5, name: 'UPI' },
                   { id: 6, name: 'Cheque' },
                 ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
-                  solo-inverted background-color="#E9ECEF"></v-autocomplete>
+                  solo elevation="0" background-color="#E9ECEF" style="color: black !important;">
+                </v-autocomplete>
               </span>
               <input type="number" class="form-control" aria-label="Sizing example input"
                 aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
@@ -2142,6 +2151,9 @@ export default {
   },
 };
 </script>
+
+
+
 <style>
 .wrapper {
   height: 40px;

@@ -83,6 +83,7 @@
 
       <v-col md="8">
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
+          <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-account-tie </v-icon>
           </v-tab>
@@ -134,11 +135,12 @@
 
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment" style="
-                                                                                            width: 150px;
-                                                                                            height: 150px;
-                                                                                            margin: 0 auto;
-                                                                                            border-radius: 50%;
-                                                                                          " :src="showImage"></v-img>
+                                                                                                      width: 150px;
+                                                                                                      height: 150px;
+                                                                                                      margin: 0 auto;
+                                                                                                      border-radius: 50%;
+                                                                                                    "
+                      :src="showImage"></v-img>
                     <input required type="file" @change="attachment" style="display: none" accept="image/*"
                       ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
@@ -265,15 +267,14 @@
                       v-model="customer.car_no"></v-text-field>
                   </v-col>
                 </v-row>
-
                 <v-row>
-                  <v-col md="12">
-                    <v-textarea rows="3" label="Customer Request" v-model="room.request" :hide-details="true"
-                      outlined></v-textarea>
-                  </v-col>
-                  <v-col md="12" cols="12" sm="12">
+                  <v-col md="6" cols="12" sm="12">
                     <v-textarea rows="3" label="Address" v-model="customer.address" outlined
                       :hide-details="true"></v-textarea>
+                  </v-col>
+                  <v-col md="6">
+                    <v-textarea rows="3" label="Customer Request" v-model="room.request" :hide-details="true"
+                      outlined></v-textarea>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -589,6 +590,7 @@
       <v-col md="4">
         <v-tabs color="primary" v-model="activeSummaryTab" :vertical="vertical" background-color="primary" dark
           show-arrows>
+          <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-list-box-outline </v-icon>
           </v-tab>
@@ -876,11 +878,17 @@
     <!---------------------------------------------------------------->
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-card-title class="text-h6 grey lighten-2" dense> Payment </v-card-title>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Payment</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="advanceDialog = false">
+            mdi mdi-close-box
+          </v-icon>
+        </v-toolbar>
         <v-card-text>
           <v-row class="px-5 mt-2">
             <div class="input-group input-group-sm px-3">
-              <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
+              <!-- <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
                 <v-autocomplete v-model="room.payment_mode_id" :items="[
                   { id: 1, name: 'Cash' },
                   { id: 2, name: 'Card' },
@@ -890,6 +898,19 @@
                   { id: 6, name: 'Cheque' },
                 ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
                   solo-inverted background-color="#E9ECEF"></v-autocomplete>
+              </span> -->
+              <span class="input-group-text" id="inputGroup-sizing-sm"
+                style="width: 220px !important; color: black !important;">
+                <v-autocomplete v-model="room.payment_mode_id" :items="[
+                  { id: 1, name: 'Cash' },
+                  { id: 2, name: 'Card' },
+                  { id: 3, name: 'Online' },
+                  { id: 4, name: 'Bank' },
+                  { id: 5, name: 'UPI' },
+                  { id: 6, name: 'Cheque' },
+                ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
+                  solo elevation="0" background-color="#E9ECEF" style="color: black !important;">
+                </v-autocomplete>
               </span>
               <input type="number" class="form-control" aria-label="Sizing example input"
                 aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
