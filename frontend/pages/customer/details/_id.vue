@@ -36,23 +36,21 @@
       </v-dialog>
 
       <v-col md="12">
-        <v-card elevation="0">
+        <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar color="primary" dark flat dense>
-            <v-toolbar-title>Reservation Details</v-toolbar-title>
-            <v-spacer></v-spacer>
+            <v-tabs v-model="activeTab" align-with-title>
+              <span class="py-3 ml-2">Reservation Details</span>
+              <v-spacer></v-spacer>
+              <v-tab active-class="active-link" v-for="item in itemsCustomer" :key="item">
+                {{ item }}
+              </v-tab>
+              <v-tabs-slider color="#1259a7"></v-tabs-slider>
+            </v-tabs>
             <v-icon dark class="pa-0" @click="redirect">
               mdi mdi-close-box
             </v-icon>
-            <template v-slot:extension>
-              <v-tabs v-model="tab1" align-with-title>
-                <v-tabs-slider color="yellow"></v-tabs-slider>
-                <v-tab v-for="item in itemsCustomer" :key="item">
-                  {{ item }}
-                </v-tab>
-              </v-tabs>
-            </template>
           </v-toolbar>
-          <v-tabs-items v-model="tab1">
+          <v-tabs-items v-model="activeTab">
             <v-tab-item class="px-3 py-4">
               <v-row>
                 <v-col md="2" cols="12">
@@ -63,7 +61,8 @@
                     <v-col md="12">
                       <div class="d-flex justify-space-between">
                         <v-btn v-if="booking && booking.document" style="width: 50%" small dark
-                          class="primary pt-4 pb-4 mt-4 mr-1 w-50" @click="preview(booking && booking.document)">
+                          class="primary pt-4 pb-4 mt-4 mr-1 w-50 ipad-preview"
+                          @click="preview(booking && booking.document)">
                           ID
                           <v-icon right dark>mdi-file</v-icon>
                         </v-btn>
@@ -74,39 +73,41 @@
                         </v-btn>
                       </div>
                     </v-col>
-                    <v-col md="12">
+                    <v-col md="12" class="pr-0 mr-0">
                       <div class="text-box-amt">
-                        <tr class="bg-white">
-                          <td>Room:</td>
-                          <td>
-                            ₹{{
-                              transactionSummary && transactionSummary.sumDebit
-                            }}
-                          </td>
-                        </tr>
-                        <tr class="bg-white">
-                          <td>Posting :</td>
-                          <td>
-                            ₹{{
-                              transactionSummary &&
-                              transactionSummary.tot_posting
-                            }}
-                          </td>
-                        </tr>
-                        <tr class="bg-white">
-                          <td>Paid :</td>
-                          <td>
-                            ₹{{
-                              transactionSummary && transactionSummary.sumCredit
-                            }}
-                          </td>
-                        </tr>
-                        <tr class="bg-white">
-                          <td>Balance :</td>
-                          <td class="red--text">
-                            ₹{{ numFormat(transactionSummary.balance) }}
-                          </td>
-                        </tr>
+                        <table>
+                          <tr class="bg-white amt-border-full">
+                            <td>Room:</td>
+                            <td class="text-right">
+                              ₹{{
+                                transactionSummary && transactionSummary.sumDebit
+                              }}
+                            </td>
+                          </tr>
+                          <tr class="bg-white amt-border">
+                            <td>Posting :</td>
+                            <td class="text-right">
+                              ₹{{
+                                transactionSummary &&
+                                transactionSummary.tot_posting
+                              }}
+                            </td>
+                          </tr>
+                          <tr class="bg-white amt-border">
+                            <td>Paid :</td>
+                            <td class="text-right">
+                              ₹{{
+                                transactionSummary && transactionSummary.sumCredit
+                              }}
+                            </td>
+                          </tr>
+                          <tr class="bg-white amt-border">
+                            <td>Balance :</td>
+                            <td class="red--text text-right">
+                              ₹{{ numFormat(transactionSummary.balance) }}
+                            </td>
+                          </tr>
+                        </table>
                       </div>
                     </v-col>
                   </v-row>
@@ -920,6 +921,8 @@ export default {
     customer: [],
     itemsCustomer: ["Reservation", "Room", "Postings", "Transaction"],
     tab1: null,
+    activeTab: 0,
+
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 
     tab: null,
@@ -1110,12 +1113,21 @@ export default {
 }
 
 .text-box-amt {
-  border: 1px solid rgb(215, 211, 211);
-  padding: 00px 0px 0px 00px;
-  margin: 00px 00px;
+  border: 0px solid rgb(215, 211, 211);
+  padding: 0px 0px 0px 0px;
+  margin: 0px 00px;
   position: relative;
   border-radius: 5px;
   width: 100%;
+}
+
+.amt-border {
+  border-bottom: 1px solid;
+}
+
+.amt-border-full {
+  border-bottom: 1px solid;
+  border-top: 1px solid;
 }
 
 .text-box p {
