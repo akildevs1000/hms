@@ -305,7 +305,7 @@
 
               <!-- <v-divider class="px-5 py-0"></v-divider> -->
               <section class="payment-section pt-0">
-                <v-row class="pl-0 pr-2 mt-0">
+                <!-- <v-row class="pl-0 pr-2 mt-0">
                   <div class="input-group input-group-sm px-1">
                     <span class="input-group-text" id="inputGroup-sizing-sm"
                       style="height: 44px; padding: 2px 41px 39px 8px">
@@ -340,7 +340,7 @@
                                                                                   text-transform: lowercase !important ;
                                                                                 " />
                   </div>
-                </v-row>
+                </v-row> -->
 
                 <div class="input-group input-group-sm px-0 mt-3">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
@@ -624,10 +624,10 @@
               </span>
               <input v-model="reference_number" type="text" class="form-control" aria-label="Sizing example input"
                 aria-describedby="inputGroup-sizing-sm" style="
-                                                                                        height: 44px;
-                                                                                        text-align: left !important;
-                                                                                        text-transform: lowercase !important ;
-                                                                                      " />
+                                                                                          height: 44px;
+                                                                                          text-align: left !important;
+                                                                                          text-transform: lowercase !important ;
+                                                                                        " />
             </div>
           </v-row>
 
