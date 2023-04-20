@@ -6,12 +6,19 @@
       </v-snackbar>
     </div>
     <v-row>
-      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
+      <v-dialog
+        v-model="GRCDialog"
+        persistent
+        :width="900"
+        class="checkin-models"
+      >
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ "GRC" }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="GRCDialog = false"
+              >mdi mdi-close-box</v-icon
+            >
           </v-toolbar>
           <v-card-text>
             <Grc :bookingId="this.$route.params.id"> </Grc>
@@ -26,7 +33,9 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Preview</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="imgView = false"
+              >mdi mdi-close-box</v-icon
+            >
           </v-toolbar>
           <v-container>
             <ImagePreview :docObj="documentObj"></ImagePreview>
@@ -39,9 +48,17 @@
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar color="primary" dark flat dense>
             <v-tabs v-model="activeTab" align-with-title>
-              <span class="py-3 ml-2">Reservation Details</span>
+              <span class="py-3 ml-2">
+                {{
+                  getRelaventStatus(booking && booking.booking_status)
+                }}Guest</span
+              >
               <v-spacer></v-spacer>
-              <v-tab active-class="active-link" v-for="item in itemsCustomer" :key="item">
+              <v-tab
+                active-class="active-link"
+                v-for="item in itemsCustomer"
+                :key="item"
+              >
                 {{ item }}
               </v-tab>
               <v-tabs-slider color="#1259a7"></v-tabs-slider>
@@ -60,14 +77,24 @@
                     </v-col>
                     <v-col md="12">
                       <div class="d-flex justify-space-between">
-                        <v-btn v-if="booking && booking.document" style="width: 50%" small dark
+                        <v-btn
+                          v-if="booking && booking.document"
+                          style="width: 50%"
+                          small
+                          dark
                           class="primary pt-4 pb-4 mt-4 mr-1 w-50 ipad-preview"
-                          @click="preview(booking && booking.document)">
+                          @click="preview(booking && booking.document)"
+                        >
                           ID
                           <v-icon right dark>mdi-file</v-icon>
                         </v-btn>
-                        <v-btn style="width: 50%" small dark class="primary pt-4 pb-4 mt-4 w-50"
-                          @click="process_grc(booking.id)">
+                        <v-btn
+                          style="width: 50%"
+                          small
+                          dark
+                          class="primary pt-4 pb-4 mt-4 w-50"
+                          @click="process_grc(booking.id)"
+                        >
                           GRC
                           <v-icon right dark>mdi-file</v-icon>
                         </v-btn>
@@ -80,7 +107,8 @@
                             <td>Room:</td>
                             <td class="text-right">
                               ₹{{
-                                transactionSummary && transactionSummary.sumDebit
+                                transactionSummary &&
+                                transactionSummary.sumDebit
                               }}
                             </td>
                           </tr>
@@ -97,7 +125,8 @@
                             <td>Paid :</td>
                             <td class="text-right">
                               ₹{{
-                                transactionSummary && transactionSummary.sumCredit
+                                transactionSummary &&
+                                transactionSummary.sumCredit
                               }}
                             </td>
                           </tr>
@@ -111,7 +140,6 @@
                       </div>
                     </v-col>
                   </v-row>
-
                 </v-col>
 
                 <v-col md="9" cols="12">
@@ -265,7 +293,7 @@
                   </v-row>
 
                   <v-row class="my-0 py-0">
-                    <v-col md="12">
+                    <v-col md="6">
                       <div class="text-box" style="float: left">
                         <h6>GST</h6>
                         <p>
@@ -273,6 +301,19 @@
                             (booking &&
                               booking.customer &&
                               booking.customer.gst_number) ||
+                            "---"
+                          }}
+                        </p>
+                      </div>
+                    </v-col>
+                    <v-col md="6">
+                      <div class="text-box" style="float: left">
+                        <h6>Address</h6>
+                        <p>
+                          {{
+                            (booking &&
+                              booking.customer &&
+                              booking.customer.address) ||
                             "---"
                           }}
                         </p>
@@ -743,7 +784,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style="font-size: 13px" v-for="(item, postingIndex) in postings" :key="postingIndex">
+                  <tr
+                    style="font-size: 13px"
+                    v-for="(item, postingIndex) in postings"
+                    :key="postingIndex"
+                  >
                     <td>{{ ++postingIndex }}</td>
                     <td>{{ item.bill_no || "---" }}</td>
                     <td>{{ item.posting_date || "---" }}</td>
@@ -765,7 +810,12 @@
                       {{ item.amount_with_tax || "---" }}
                     </td>
                     <td class="text-center">
-                      <v-icon x-small color="accent" @click="cancelPosting(item)" class="mr-2">
+                      <v-icon
+                        x-small
+                        color="accent"
+                        @click="cancelPosting(item)"
+                        class="mr-2"
+                      >
                         mdi-delete
                       </v-icon>
                     </td>
@@ -791,10 +841,20 @@
                           <th>Balance</th>
                         </tr>
                       </thead>
-                      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                        color="primary"></v-progress-linear>
+                      <v-progress-linear
+                        v-if="loading"
+                        :active="loading"
+                        :indeterminate="loading"
+                        absolute
+                        color="primary"
+                      ></v-progress-linear>
                       <tbody>
-                        <tr v-for="(item, index) in transactions" :key="index" style="font-size: 13px" class="no-bg">
+                        <tr
+                          v-for="(item, index) in transactions"
+                          :key="index"
+                          style="font-size: 13px"
+                          class="no-bg"
+                        >
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
@@ -891,7 +951,7 @@
 </template>
 <script>
 import Grc from "./../../../components/booking/GRC.vue";
-import ImagePreview from '../../../components/images/ImagePreview.vue';
+import ImagePreview from "../../../components/images/ImagePreview.vue";
 export default {
   components: {
     ImagePreview,
@@ -970,7 +1030,7 @@ export default {
     this.loading = true;
     this.getData();
   },
-  mounted() { },
+  mounted() {},
 
   methods: {
     getDate(dataTime) {
@@ -982,6 +1042,19 @@ export default {
         (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    getRelaventStatus(status) {
+      switch (parseInt(status)) {
+        case 1:
+          return "Reservation ";
+        case 2:
+          return "In House ";
+        case 3:
+          return "C/Out ";
+        default:
+          return "C/Out ";
+      }
     },
 
     cancelPosting(item) {
@@ -1008,7 +1081,6 @@ export default {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });
-      console.log("s" + formatted);
       return formatted;
     },
 
@@ -1064,7 +1136,7 @@ export default {
 
     getData() {
       let id = this.$route.params.id;
-
+      console.log(id);
       this.$axios.get(`booking_customer/${id}`).then(({ data }) => {
         //assign booking
         this.totalPostingAmount = data.totalPostingAmount;
@@ -1081,7 +1153,6 @@ export default {
         //end booking
         this.loading = false;
         this.showImage = data.booking.customer.image;
-        console.log(data.booking.customer.image);
         this.calTotalAmount(this.payments);
       });
     },

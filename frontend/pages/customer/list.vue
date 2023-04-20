@@ -48,7 +48,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
+      <!-- <v-col xs="12" sm="12" md="3" cols="12">
         <v-select
           class="custom-text-box shadow-none"
           @change="getDataFromApi(`customer`)"
@@ -59,7 +59,7 @@
           flat
           :hide-details="true"
         ></v-select>
-      </v-col>
+      </v-col> -->
       <v-col xs="12" sm="12" md="3" cols="12">
         <input
           class="form-control py-3 custom-text-box shadow-none"

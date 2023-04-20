@@ -82,6 +82,7 @@ class AgentsController extends Controller
             $model->whereHas('customer', function ($q) use ($request) {
                 $q->where('first_name', 'ILIKE', "%$request->search%");
                 $q->orWhere('last_name', 'ILIKE', "%$request->search%");
+                $q->orWhere('contact_no', 'ILIKE', "%$request->search%");
             });
             if (is_numeric($request->search)) {
                 $model->orWhere(function ($q) use ($request) {
