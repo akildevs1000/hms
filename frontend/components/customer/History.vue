@@ -1,6 +1,37 @@
 <template>
   <div>
-    <v-row class="my-2 mx-0">
+    <v-row>
+      <v-col cols="12" md="4" xl="4">
+        <v-card class="px-2" color="#800000">
+          <v-card-text class="text-center white--text">
+            <h6 class="text-uppercase">Revenue</h6>
+            <div class="mb-0" style="font-size: 20px">₹{{ revenue || 0 }}</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="4" xl="4">
+        <v-card class="px-2" color="#4390fc">
+          <v-card-text class="text-center white--text">
+            <h6 class="text-uppercase">City Ledger</h6>
+            <div class="mb-0" style="font-size: 20px">
+              ₹{{ city_ledger || 0 }}
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="4" xl="4">
+        <v-card class="px-2" color="#ffbe00">
+          <v-card-text class="text-center white--text">
+            <h6 class="text-uppercase">Number of Visit</h6>
+            <div class="mb-0" style="font-size: 20px">
+              {{ bookings.length || 0 }}
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- <v-row class="my-2 mx-0">
       <v-col cols="12" md="6" lg="4" xl="4" class="py-0">
         <v-card class="mx-1 elevation-0">
           <v-row class="box text-center no-of-visit-txt" style="background-color: #02ada4;height: 81px;">
@@ -23,18 +54,6 @@
           </v-row>
         </v-card>
       </v-col>
-
-
-      <!-- <v-col cols="12" md="6" xl="3">
-        <v-card class="px-2" color="#800000">
-          <v-card-text class="text-center white--text">
-            <h6 class="text-uppercase">evenue</h6>
-            <div class="display-1 mb-2">₹{{ revenue || 0 }}</div>
-          </v-card-text>
-        </v-card>
-      </v-col> -->
-
-
 
       <v-col cols="12" lg="4" md="6" xl="4" class="py-0">
         <v-card class="mx-1 elevation-0">
@@ -79,7 +98,7 @@
           </v-row>
         </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
       <v-col md="12">
         <table class="responsive-table">
@@ -96,8 +115,12 @@
                 <b>{{ ++index }}</b>
               </th>
               <td scope="row">
-                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer;">
-                  {{ (item.reservation_no) || "---" }}
+                <span
+                  class="blue--text"
+                  @click="goToRevView(item)"
+                  style="cursor: pointer"
+                >
+                  {{ item.reservation_no || "---" }}
                 </span>
               </td>
               <td scope="row">{{ item.type || "---" }}</td>
@@ -189,16 +212,13 @@ export default {
   mounted() {
     this.get_customer_history();
 
-
-
     this.viewportWidth = window.innerWidth;
     this.viewportHeight = window.innerHeight;
 
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       this.viewportWidth = window.innerWidth;
       this.viewportHeight = window.innerHeight;
     });
-
   },
   methods: {
     goToRevView(item) {
@@ -253,7 +273,6 @@ tr:nth-child(even) {
 }
 
 @media only screen and (min-width: 1025px) and (max-width: 1199px) {
-
   /* Adjust layout for iPad pro landscape mode */
   .ipad-font-grid {
     font-size: 12px !important;
@@ -287,7 +306,6 @@ tr:nth-child(even) {
 }
 
 @media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
-
   /* ipad mini Air */
   .ipad-font-qty-grid {
     font-size: 55px !important;
@@ -310,15 +328,13 @@ tr:nth-child(even) {
   }
 
   .no-of-visit-div {
-    margin-top: 100px
+    margin-top: 100px;
   }
 }
 
-
-
 @media only screen and (min-width: 1112px) and (max-width: 1112px) and (min-height: 764px) and (max-height: 764px) {
   .no-of-visit-div {
-    margin-top: 30px
+    margin-top: 30px;
   }
 
   .no-of-visit-txt {

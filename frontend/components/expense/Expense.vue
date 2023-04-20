@@ -12,7 +12,11 @@
       </v-col>
       <v-col cols="6">
         <v-spacer></v-spacer>
-        <v-btn class="float-right py-3" @click="expenseDialog = true" color="primary">
+        <v-btn
+          class="float-right py-3"
+          @click="expenseDialog = true"
+          color="primary"
+        >
           <v-icon color="white" small class="py-5">mdi-plus</v-icon>
           Add
         </v-btn>
@@ -47,62 +51,112 @@
       <v-col md="3">
         <div class="ml-4">Search</div>
         <v-col md="12">
-          <v-text-field dense outlined placeholder="Search..." @input="commonMethod" v-model="search"
-            hide-details></v-text-field>
+          <v-text-field
+            dense
+            outlined
+            placeholder="Search..."
+            @input="commonMethod"
+            v-model="search"
+            hide-details
+          ></v-text-field>
         </v-col>
       </v-col>
 
       <v-col md="3">
         <div class="ml-4">Filter</div>
         <v-col md="12">
-          <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
-            @change="commonMethod"></v-select></v-col>
+          <v-select
+            v-model="filterType"
+            :items="[
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]"
+            dense
+            placeholder="Type"
+            outlined
+            :hide-details="true"
+            item-text="name"
+            item-value="id"
+            @change="commonMethod"
+          ></v-select
+        ></v-col>
       </v-col>
 
       <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
-          <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-            offset-y min-width="auto">
+          <v-menu
+            v-model="from_menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" outlined dense
-                :hide-details="true"></v-text-field>
+              <v-text-field
+                v-model="from_date"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                outlined
+                dense
+                :hide-details="true"
+              ></v-text-field>
             </template>
-            <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
+            <v-date-picker
+              v-model="from_date"
+              @input="from_menu = false"
+              @change="commonMethod"
+            ></v-date-picker>
           </v-menu>
         </v-col>
       </v-col>
       <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">To</div>
         <v-col cols="12" sm="12" md="12">
-          <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-            offset-y min-width="auto">
+          <v-menu
+            v-model="to_menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" outlined dense
-                :hide-details="true"></v-text-field>
+              <v-text-field
+                v-model="to_date"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                outlined
+                dense
+                :hide-details="true"
+              ></v-text-field>
             </template>
-            <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
+            <v-date-picker
+              v-model="to_date"
+              @input="to_menu = false"
+              @change="commonMethod"
+            ></v-date-picker>
           </v-menu>
         </v-col>
       </v-col>
@@ -113,7 +167,9 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Preview</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="imgView = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-container>
           <!-- <ImagePreview :docObj="documentObj"></ImagePreview> -->
@@ -137,51 +193,96 @@
         <v-container>
           <v-row class="mt-0 px-2">
             <v-col cols="6">
-              <v-text-field v-model="editedItem.voucher" placeholder="Voucher" label="Voucher" outlined
-                :hide-details="true" dense>
+              <v-text-field
+                v-model="editedItem.voucher"
+                placeholder="Voucher"
+                label="Voucher"
+                outlined
+                :hide-details="true"
+                dense
+              >
               </v-text-field>
               <span v-if="errors && errors.voucher" class="error--text">
                 {{ errors.voucher[0] }}
               </span>
             </v-col>
             <v-col cols="6" class="m-0 p-0">
-              <v-text-field v-model="editedItem.item" placeholder="Item" label="Item" outlined :hide-details="true"
-                dense></v-text-field>
+              <v-text-field
+                v-model="editedItem.item"
+                placeholder="Item"
+                label="Item"
+                outlined
+                :hide-details="true"
+                dense
+              ></v-text-field>
               <span v-if="errors && errors.item" class="error--text">
                 {{ errors.item[0] }}
               </span>
             </v-col>
             <v-col cols="6" class="m-0 p-0">
-              <v-text-field v-model="editedItem.amount" placeholder="Amount" label="Amount" :hide-details="true"
-                @keyup="calSum" outlined dense type="number"></v-text-field>
+              <v-text-field
+                v-model="editedItem.amount"
+                placeholder="Amount"
+                label="Amount"
+                :hide-details="true"
+                @keyup="calSum"
+                outlined
+                dense
+                type="number"
+              ></v-text-field>
               <span v-if="errors && errors.amount" class="error--text">
                 {{ errors.amount[0] }}
               </span>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="editedItem.qty" placeholder="QTY" label="QTY" :hide-details="true" outlined dense
-                @keyup="calSum" type="number"></v-text-field>
+              <v-text-field
+                v-model="editedItem.qty"
+                placeholder="QTY"
+                label="QTY"
+                :hide-details="true"
+                outlined
+                dense
+                @keyup="calSum"
+                type="number"
+              ></v-text-field>
               <span v-if="errors && errors.qty" class="error--text">{{
                 errors.qty[0]
               }}</span>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="editedItem.total" placeholder="Total Amount" label="Total Amount" readonly
-                :hide-details="true" outlined dense type="number"></v-text-field>
+              <v-text-field
+                v-model="editedItem.total"
+                placeholder="Total Amount"
+                label="Total Amount"
+                readonly
+                :hide-details="true"
+                outlined
+                dense
+                type="number"
+              ></v-text-field>
               <span v-if="errors && errors.amount" class="error--text">{{
                 errors.amount[0]
               }}</span>
             </v-col>
             <v-col cols="6">
-              <v-autocomplete v-model="editedItem.payment_modes" :items="[
-                { id: 1, name: 'Cash' },
-                { id: 2, name: 'Card' },
-                { id: 3, name: 'Online' },
-                { id: 4, name: 'Bank' },
-                { id: 5, name: 'UPI' },
-                { id: 6, name: 'Cheque' },
-              ]" item-text="name" item-value="id" placeholder="Select Payment Mode" label="Select Payment Mode"
-                outlined :hide-details="true" dense>
+              <v-autocomplete
+                v-model="editedItem.payment_modes"
+                :items="[
+                  { id: 1, name: 'Cash' },
+                  { id: 2, name: 'Card' },
+                  { id: 3, name: 'Online' },
+                  { id: 4, name: 'Bank' },
+                  { id: 5, name: 'UPI' },
+                  { id: 6, name: 'Cheque' },
+                ]"
+                item-text="name"
+                item-value="id"
+                placeholder="Select Payment Mode"
+                label="Select Payment Mode"
+                outlined
+                :hide-details="true"
+                dense
+              >
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
                 errors.department_id[0]
@@ -189,8 +290,17 @@
             </v-col>
 
             <v-col cols="12" v-if="is_management">
-              <v-autocomplete v-model="editedItem.user" :items="['Ariff', 'Ansari']" item-text="name" item-value="id"
-                placeholder="Select User" label="Select User" outlined :hide-details="true" dense>
+              <v-autocomplete
+                v-model="editedItem.user"
+                :items="['Ariff', 'Ansari']"
+                item-text="name"
+                item-value="id"
+                placeholder="Select User"
+                label="Select User"
+                outlined
+                :hide-details="true"
+                dense
+              >
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
                 errors.department_id[0]
@@ -198,21 +308,38 @@
             </v-col>
 
             <v-col cols="6" v-if="editedItem.payment_modes != 1">
-              <v-text-field v-model="editedItem.reference" placeholder="Reference" label="Reference" :hide-details="true"
-                outlined dense type="text"></v-text-field>
+              <v-text-field
+                v-model="editedItem.reference"
+                placeholder="Reference"
+                label="Reference"
+                :hide-details="true"
+                outlined
+                dense
+                type="text"
+              ></v-text-field>
               <span v-if="errors && errors.amount" class="error--text">{{
                 errors.amount[0]
               }}</span>
             </v-col>
             <v-col :md="formTitle === 'New' ? 12 : 12">
-              <v-file-input v-model="editedItem.document" color="primary" counter placeholder="Select your files"
-                :hide-details="true" outlined :show-size="1000">
+              <v-file-input
+                v-model="editedItem.document"
+                color="primary"
+                counter
+                placeholder="Select your files"
+                :hide-details="true"
+                outlined
+                :show-size="1000"
+              >
                 <template v-slot:selection="{ index, text }">
                   <v-chip v-if="index < 2" color="primary" dark label small>
                     {{ text }}
                   </v-chip>
 
-                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
+                  <span
+                    v-else-if="index === 2"
+                    class="text-overline grey--text text--darken-3 mx-2"
+                  >
                     +{{ editedItem.document.length - 2 }} File(s)
                   </span>
                 </template>
@@ -233,14 +360,25 @@
               </v-btn>
             </div> -->
             <v-col cols="12">
-              <v-textarea filled placeholder="Description" label="Description" :hide-details="true"
-                v-model="editedItem.description" outlined dense rows="4" row-height="15"></v-textarea>
+              <v-textarea
+                filled
+                placeholder="Description"
+                label="Description"
+                :hide-details="true"
+                v-model="editedItem.description"
+                outlined
+                dense
+                rows="4"
+                row-height="15"
+              ></v-textarea>
               <span v-if="errors && errors.description" class="error--text">{{
                 errors.description[0]
               }}</span>
             </v-col>
             <v-card-actions>
-              <v-btn class="primary" :loading="loading" @click="save">Save</v-btn>
+              <v-btn class="primary" :loading="loading" @click="save"
+                >Save</v-btn
+              >
             </v-card-actions>
           </v-row>
         </v-container>
@@ -256,8 +394,15 @@
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
-                  @click="process('expense_report_print')">
+                <v-btn
+                  class="ma-0"
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_print')"
+                >
                   <v-icon class="white--text">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -266,7 +411,14 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('expense_report_download')">
+                <v-btn
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('expense_report_download')"
+                >
                   <v-icon class="white--text">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -291,9 +443,18 @@
               <th>Description</th>
               <th>Document</th>
             </tr>
-            <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-              color="primary"></v-progress-linear>
-            <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
+            <v-progress-linear
+              v-if="loading"
+              :active="loading"
+              :indeterminate="loading"
+              absolute
+              color="primary"
+            ></v-progress-linear>
+            <tr
+              v-for="(item, index) in data"
+              :key="index"
+              style="font-size: 12px"
+            >
               <td>{{ ++index }}</td>
               <td>{{ item.created_at }}</td>
               <td>{{ item.voucher || "" }}</td>
@@ -315,8 +476,13 @@
                 </v-tooltip>
               </td>
               <td>
-                <v-btn v-if="item.document" small dark class="primary lg-pt-4 lg-pb-4 doc-btn"
-                  @click="preview(item.document)">
+                <v-btn
+                  v-if="item.document"
+                  small
+                  dark
+                  class="primary lg-pt-4 lg-pb-4 doc-btn"
+                  @click="preview(item.document)"
+                >
                   Preview
                   <v-icon right dark>mdi-file</v-icon>
                 </v-btn>
@@ -353,8 +519,12 @@
     <v-row>
       <v-col md="12" class="float-right">
         <div class="float-right">
-          <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-            :total-visible="12"></v-pagination>
+          <v-pagination
+            v-model="pagination.current"
+            :length="pagination.total"
+            @input="onPageChange"
+            :total-visible="12"
+          ></v-pagination>
         </div>
       </v-col>
     </v-row>

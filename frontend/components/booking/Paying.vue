@@ -12,7 +12,7 @@
               color="primary"
             ></v-progress-linear>
             <tr>
-              <th>Customer Name</th>
+              <th>Guest Name</th>
               <td style="width: 300px">
                 {{ BookingData && BookingData.title }}
               </td>
@@ -37,7 +37,7 @@
             </tr>
             <tr>
               <th>
-                Payment Mode
+                Pay Mode
                 <span class="text-danger">*</span>
               </th>
               <td>
@@ -84,7 +84,7 @@
               <td>{{ BookingData && BookingData.total_posting_amount }}</td>
             </tr> -->
             <tr>
-              <th>Remaining Balance</th>
+              <th>Balance Due</th>
               <td>{{ BookingData.remaining_price }}</td>
             </tr>
             <!-- <tr>
