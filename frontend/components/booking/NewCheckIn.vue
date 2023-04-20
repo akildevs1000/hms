@@ -20,7 +20,7 @@
       <v-dialog v-model="documentDialog" max-width="30%">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Add Document</span>
+            <span>Add ID</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="documentDialog = false"
               >mdi mdi-close-box</v-icon
@@ -220,7 +220,7 @@
                         class="pridmary lg-pt-4 lg-pb-4 doc-btn"
                         @click="preview(customer.document)"
                       >
-                        Preview
+                        ID
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
                     </div>
@@ -231,7 +231,7 @@
                         class="primary pt-4 pb-4"
                         @click="documentDialog = true"
                       >
-                        <small>Document</small>
+                        <small>ID</small>
                         <v-icon right dark>mdi-plus</v-icon>
                       </v-btn>
                     </div>
@@ -495,12 +495,10 @@
               <v-card-text>
                 <v-row>
                   <v-col md="12" cols="12">
-                    <v-alert
-                      border="left"
-                      colored-border
-                      color="deep-purple accent-4"
-                      elevation="2"
-                    >
+                    <!-- border="left"
+                      color="deep-purple accent-4" -->
+
+                    <v-alert colored-border elevation="2">
                       <div class="d-flex justify-space-between">
                         <h4 class="px-2 mt-3">
                           {{ temp.room_no || "---" }} -
@@ -954,9 +952,7 @@
                           </v-col> -->
                           <v-col md="12" class="my-0 py-0">
                             <v-divider color="#4390FC"></v-divider>
-                            <div
-                              class="d-flex justify-xl-space-around py-3 my-0"
-                            >
+                            <div class="d-flex justify-space-around py-3 my-0">
                               <span>
                                 <b>Sub Total</b>:
                                 {{ convert_decimal(temp.price) }}
@@ -983,7 +979,7 @@
                             <v-divider color="#4390FC"></v-divider>
                           </v-col>
 
-                          <v-col md="2" sm="12" cols="12" dense>
+                          <v-col md="3" sm="12" cols="12" dense>
                             <label class="col-form-label">
                               Discount/Extra
                             </label>
@@ -1069,7 +1065,6 @@
                               class="float-right"
                               color="primary"
                             >
-                              <v-icon color="white" small>mdi-plus</v-icon>
                               Confirm Room
                             </v-btn>
                           </v-col>
@@ -1239,7 +1234,7 @@
                 </div>
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Advance Payment
+                    Advance
                   </span>
                   <div
                     type="text"
@@ -1253,7 +1248,7 @@
                 </div>
                 <div class="input-group input-group-sm px-5 mb-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
-                    <strong>Balance Amount</strong>
+                    <strong>Balance</strong>
                   </span>
                   <div
                     type="text"

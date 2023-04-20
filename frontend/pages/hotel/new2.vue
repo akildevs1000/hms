@@ -75,7 +75,7 @@
                         class="primary pt-4 pb-4"
                         @click="preview(customer.document)"
                       >
-                        Preview
+                        ID
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
                     </div>
@@ -457,10 +457,10 @@
               <v-card-text>
                 <v-row>
                   <v-col md="12" cols="12">
+                    <!-- border="left"
+                      color="deep-purple accent-4" -->
                     <v-alert
-                      border="left"
                       colored-border
-                      color="deep-purple accent-4"
                       elevation="2"
                     >
                       <div class="d-flex justify-space-between">
@@ -485,109 +485,117 @@
                       <v-divider class="p-0 m-0" dense></v-divider>
                       <div class="mt-3">
                         <v-row>
-                          <v-col md="4" sm="12" cols="12" dense>
-                            <label class="col-form-label"
-                              >Adult <span class="text-danger">*</span>
-                            </label>
+                            <v-col md="4" sm="12" cols="12" dense>
+                              <label class="col-form-label"
+                                >Adult <span class="text-danger">*</span>
+                              </label>
 
-                            <div class="wrapper">
-                              <span
-                                class="minus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'adult',
-                                    temp.no_of_adult == 0
-                                      ? 0
-                                      : --temp.no_of_adult
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_adult < 1 || temp.no_of_adult
-                                "
-                                >-</span
-                              >
-                              <span class="num">{{ temp.no_of_adult }}</span>
-                              <span
-                                class="plus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'adult',
-                                    temp.no_of_adult < 4
-                                      ? ++temp.no_of_adult
-                                      : 4
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_adult > 3 || temp.no_of_adult
-                                "
-                                >+</span
-                              >
-                            </div>
-                          </v-col>
-                          <v-col md="4" sm="12" cols="12" dense>
-                            <label class="col-form-label">Child </label>
-                            <div class="wrapper">
-                              <span
-                                class="minus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'child',
-                                    temp.no_of_child == 0
-                                      ? 0
-                                      : --temp.no_of_child
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_child < 1 || temp.no_of_child
-                                "
-                                >-</span
-                              >
-                              <span class="num">{{ temp.no_of_child }}</span>
-                              <span
-                                class="plus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'child',
-                                    temp.no_of_child < 3
-                                      ? ++temp.no_of_child
-                                      : 3
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_child > 1 || temp.no_of_child
-                                "
-                                >+</span
-                              >
-                            </div>
-                          </v-col>
-                          <v-col md="4" sm="12" cols="12" dense>
-                            <label class="col-form-label">Baby </label>
-                            <div class="wrapper">
-                              <span
-                                class="minus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'baby',
-                                    temp.no_of_baby == 0 ? 0 : --temp.no_of_baby
-                                  )
-                                "
-                                @click="temp.no_of_baby < 1 || temp.no_of_baby"
-                                >-</span
-                              >
-                              <span class="num">{{ temp.no_of_baby }}</span>
-                              <span
-                                class="plus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'baby',
-                                    temp.no_of_baby < 1 ? ++temp.no_of_baby : 1
-                                  )
-                                "
-                                @click="temp.no_of_baby > 1 || temp.no_of_baby"
-                                >+</span
-                              >
-                            </div>
-                          </v-col>
+                              <div class="wrapper">
+                                <span
+                                  class="minus"
+                                  @mouseup="
+                                    get_food_price_cal(
+                                      'adult',
+                                      temp.no_of_adult == 0
+                                        ? 0
+                                        : --temp.no_of_adult
+                                    )
+                                  "
+                                  @click="
+                                    temp.no_of_adult < 1 || temp.no_of_adult
+                                  "
+                                  >-</span
+                                >
+                                <span class="num">{{ temp.no_of_adult }}</span>
+                                <span
+                                  class="plus"
+                                  @mouseup="
+                                    get_food_price_cal(
+                                      'adult',
+                                      temp.no_of_adult < 4
+                                        ? ++temp.no_of_adult
+                                        : 4
+                                    )
+                                  "
+                                  @click="
+                                    temp.no_of_adult > 3 || temp.no_of_adult
+                                  "
+                                  >+</span
+                                >
+                              </div>
+                            </v-col>
+                            <v-col md="4" sm="12" cols="12" dense>
+                              <label class="col-form-label">Child </label>
+                              <div class="wrapper">
+                                <span
+                                  class="minus"
+                                  @mouseup="
+                                    get_food_price_cal(
+                                      'child',
+                                      temp.no_of_child == 0
+                                        ? 0
+                                        : --temp.no_of_child
+                                    )
+                                  "
+                                  @click="
+                                    temp.no_of_child < 1 || temp.no_of_child
+                                  "
+                                  >-</span
+                                >
+                                <span class="num">{{ temp.no_of_child }}</span>
+                                <span
+                                  class="plus"
+                                  @mouseup="
+                                    get_food_price_cal(
+                                      'child',
+                                      temp.no_of_child < 3
+                                        ? ++temp.no_of_child
+                                        : 3
+                                    )
+                                  "
+                                  @click="
+                                    temp.no_of_child > 1 || temp.no_of_child
+                                  "
+                                  >+</span
+                                >
+                              </div>
+                            </v-col>
+                            <v-col md="4" sm="12" cols="12" dense>
+                              <label class="col-form-label">Baby </label>
+                              <div class="wrapper">
+                                <span
+                                  class="minus"
+                                  @mouseup="
+                                    get_food_price_cal(
+                                      'baby',
+                                      temp.no_of_baby == 0
+                                        ? 0
+                                        : --temp.no_of_baby
+                                    )
+                                  "
+                                  @click="
+                                    temp.no_of_baby < 1 || temp.no_of_baby
+                                  "
+                                  >-</span
+                                >
+                                <span class="num">{{ temp.no_of_baby }}</span>
+                                <span
+                                  class="plus"
+                                  @mouseup="
+                                    get_food_price_cal(
+                                      'baby',
+                                      temp.no_of_baby < 1
+                                        ? ++temp.no_of_baby
+                                        : 1
+                                    )
+                                  "
+                                  @click="
+                                    temp.no_of_baby > 1 || temp.no_of_baby
+                                  "
+                                  >+</span
+                                >
+                              </div>
+                            </v-col>
 
                           <v-col
                             md="12"
@@ -729,7 +737,7 @@
                           </v-col>
                           <v-col md="12">
                             <v-divider color="#4390FC"></v-divider>
-                            <div class="d-flex justify-xl-space-around py-3">
+                            <div class="d-flex justify-space-around py-3">
                               <span>
                                 <b>Sub Total</b>:
                                 {{ convert_decimal(temp.price) }}
@@ -951,7 +959,7 @@
                             </v-card>
                           </v-col> -->
 
-                          <v-col md="2" sm="12" cols="12" dense>
+                          <v-col md="3" sm="12" cols="12" dense>
                             <label class="col-form-label">
                               Discount/Extra
                             </label>
@@ -1038,7 +1046,6 @@
                               class="float-right"
                               color="primary"
                             >
-                              <v-icon color="white" small>mdi-plus</v-icon>
                               Confirm Room
                             </v-btn>
                           </v-col>
