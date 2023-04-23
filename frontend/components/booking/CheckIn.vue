@@ -3,7 +3,7 @@
     <v-dialog v-model="imgView" max-width="80%">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Preview</span>
+          <span>ID</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView = false"
             >mdi mdi-close-box</v-icon
@@ -18,7 +18,7 @@
     <v-dialog v-model="documentDialog" max-width="30%">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Add Document</span>
+          <span>Add ID</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="documentDialog = false"
             >mdi mdi-close-box</v-icon
@@ -182,7 +182,7 @@
                         class="primary ipad-preview lg-pt-4 lg-pb-4 doc-btn"
                         @click="preview(BookingData.document)"
                       >
-                        Preview
+                        ID
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
                     </div>

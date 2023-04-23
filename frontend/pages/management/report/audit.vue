@@ -166,8 +166,8 @@
                   {{ item.reservation_no }}
                 </span>
               </td>
-              <td>
-                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+              <td class="room-width">
+                <span class="blue--text " @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
               </td>
@@ -239,7 +239,7 @@
                   {{ item.reservation_no }}
                 </span>
               </td>
-              <td>
+              <td class="room-width">
                 <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
@@ -312,7 +312,7 @@
                   {{ item.reservation_no }}
                 </span>
               </td>
-              <td>
+              <td class="room-width">
                 <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
@@ -386,7 +386,7 @@
                   {{ item.reservation_no }}
                 </span>
               </td>
-              <td>
+              <td class="room-width">
                 <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
@@ -460,7 +460,7 @@
                   {{ item.reservation_no }}
                 </span>
               </td>
-              <td>
+              <td class="room-width">
                 <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.rooms }}
                 </span>
@@ -508,7 +508,10 @@ export default {
   },
   data: () => ({
     Model: "Audit Report",
-    from_date: new Date().toJSON().slice(0, 10),
+    // from_date: new Date().toJSON().slice(0, 10),
+    from_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
     from_menu: false,
     options: {},
     endpoint: "expense",
@@ -797,7 +800,8 @@ export default {
     },
 
     getPaymentMode(item, mode) {
-      let creditTrans = item.transactions.filter((e) => e.credit > 0);
+      // let creditTrans = item.transactions.filter((e) => e.credit > 0);
+      let creditTrans = item.transactions;
       switch (mode) {
         case 1:
           return this.getPaySum(creditTrans, 1);
@@ -877,5 +881,9 @@ td {
   background-color: #fff;
   border-radius: 5px;
   padding: 5px 20px;
+}
+
+.room-width {
+  max-width: 20px !important;
 }
 </style>

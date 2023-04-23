@@ -513,7 +513,10 @@ export default {
     },
 
     currentDate() {
-      return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
+      // return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
+      return this.calendarOptions.now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10);
     },
   },
   methods: {

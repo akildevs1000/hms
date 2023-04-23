@@ -6,19 +6,12 @@
       </v-snackbar>
     </div>
     <v-row>
-      <v-dialog
-        v-model="GRCDialog"
-        persistent
-        :width="900"
-        class="checkin-models"
-      >
+      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ "GRC" }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
+            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-card-text>
             <Grc :bookingId="this.$route.params.id"> </Grc>
@@ -33,14 +26,25 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Preview</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="imgView = false"
-              >mdi mdi-close-box</v-icon
-            >
+            <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-container>
             <ImagePreview :docObj="documentObj"></ImagePreview>
           </v-container>
           <v-card-actions> </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="payingDialog" persistent max-width="1000px">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <span>Payment</span>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="payingDialog = false">mdi mdi-close-box</v-icon>
+          </v-toolbar>
+          <v-card-text>
+            <Paying :BookingData="payData" @close-dialog="closeDialogs"></Paying>
+          </v-card-text>
         </v-card>
       </v-dialog>
 
@@ -51,14 +55,9 @@
               <span class="py-3 ml-2">
                 {{
                   getRelaventStatus(booking && booking.booking_status)
-                }}Guest</span
-              >
+                }}Guest</span>
               <v-spacer></v-spacer>
-              <v-tab
-                active-class="active-link"
-                v-for="item in itemsCustomer"
-                :key="item"
-              >
+              <v-tab active-class="active-link" v-for="item in itemsCustomer" :key="item">
                 {{ item }}
               </v-tab>
               <v-tabs-slider color="#1259a7"></v-tabs-slider>
@@ -77,24 +76,14 @@
                     </v-col>
                     <v-col md="12">
                       <div class="d-flex justify-space-between">
-                        <v-btn
-                          v-if="booking && booking.document"
-                          style="width: 50%"
-                          small
-                          dark
+                        <v-btn v-if="booking && booking.document" style="width: 50%" small dark
                           class="primary pt-4 pb-4 mt-4 mr-1 w-50 ipad-preview"
-                          @click="preview(booking && booking.document)"
-                        >
+                          @click="preview(booking && booking.document)">
                           ID
                           <v-icon right dark>mdi-file</v-icon>
                         </v-btn>
-                        <v-btn
-                          style="width: 50%"
-                          small
-                          dark
-                          class="primary pt-4 pb-4 mt-4 w-50"
-                          @click="process_grc(booking.id)"
-                        >
+                        <v-btn style="width: 50%" small dark class="primary pt-4 pb-4 mt-4 w-50"
+                          @click="process_grc(booking.id)">
                           GRC
                           <v-icon right dark>mdi-file</v-icon>
                         </v-btn>
@@ -784,11 +773,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    style="font-size: 13px"
-                    v-for="(item, postingIndex) in postings"
-                    :key="postingIndex"
-                  >
+                  <tr style="font-size: 13px" v-for="(item, postingIndex) in postings" :key="postingIndex">
                     <td>{{ ++postingIndex }}</td>
                     <td>{{ item.bill_no || "---" }}</td>
                     <td>{{ item.posting_date || "---" }}</td>
@@ -810,12 +795,7 @@
                       {{ item.amount_with_tax || "---" }}
                     </td>
                     <td class="text-center">
-                      <v-icon
-                        x-small
-                        color="accent"
-                        @click="cancelPosting(item)"
-                        class="mr-2"
-                      >
+                      <v-icon x-small color="accent" @click="cancelPosting(item)" class="mr-2">
                         mdi-delete
                       </v-icon>
                     </td>
@@ -826,8 +806,14 @@
             <v-tab-item class="px-3">
               <v-card flat>
                 <v-row>
+                  <v-col md="12" class="mt-2 text-right">
+                    <v-btn small class="elevation-0" color="#ECF0F4" @click="get_payment()" v-if="can()">
+                      Transaction
+                      <v-icon right>mdi mdi-cash-sync</v-icon>
+                    </v-btn>
+                  </v-col>
                   <v-col cols="12">
-                    <table class="responsive-table mt-3">
+                    <table class="responsive-table mt-0">
                       <thead>
                         <tr class="table-header-text">
                           <th>#</th>
@@ -841,20 +827,10 @@
                           <th>Balance</th>
                         </tr>
                       </thead>
-                      <v-progress-linear
-                        v-if="loading"
-                        :active="loading"
-                        :indeterminate="loading"
-                        absolute
-                        color="primary"
-                      ></v-progress-linear>
+                      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                        color="primary"></v-progress-linear>
                       <tbody>
-                        <tr
-                          v-for="(item, index) in transactions"
-                          :key="index"
-                          style="font-size: 13px"
-                          class="no-bg"
-                        >
+                        <tr v-for="(item, index) in transactions" :key="index" style="font-size: 13px" class="no-bg">
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
@@ -906,45 +882,7 @@
 
     <v-row>
       <v-col md="7">
-        <!-- <v-card class="mb-5 rounded-md" elevation="0">
-          <table>
-            <tr style="font-size:13px;background-color:#5FAFA3;color:white">
-              <th>#</th>
-              <th>Date</th>
-              <th>Room</th>
-              <th>Type</th>
-              <th>Payment Mode</th>
-              <th>Description</th>
-              <th>Amount</th>
-            </tr>
-            <v-progress-linear
-              v-if="loading"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
-            <tr
-              v-for="(item, index) in payments"
-              :key="index"
-              style="font-size:13px;"
-            >
-              <td>
-                <b>{{ ++index }}</b>
-              </td>
-              <td>{{ item.created_at || "---" }}</td>
-              <td>{{ item.room || "---" }}</td>
-              <td>{{ item.type || "---" }}</td>
-              <td>{{ (item && item.payment_mode.name) || "---" }}</td>
-              <td>{{ item.description || "---" }}</td>
-              <td class="text-right">{{ item.amount || "---" }}</td>
-            </tr>
-            <tr style="background-color:white"></tr>
-            <tr style="background-color:white">
-              <th colspan="7" class="text-right">{{ totalAmount }}</th>
-            </tr>
-          </table>
-        </v-card> -->
+
       </v-col>
     </v-row>
   </div>
@@ -952,8 +890,10 @@
 <script>
 import Grc from "./../../../components/booking/GRC.vue";
 import ImagePreview from "../../../components/images/ImagePreview.vue";
+import Paying from '../../../components/booking/Paying.vue';
 export default {
   components: {
+    Paying,
     ImagePreview,
     Grc,
   },
@@ -975,7 +915,9 @@ export default {
     GRCDialog: false,
     snackbar: false,
     dialog: false,
+    payingDialog: false,
     ids: [],
+    payData: {},
     loading: false,
     response: "",
     customer: [],
@@ -1030,18 +972,26 @@ export default {
     this.loading = true;
     this.getData();
   },
-  mounted() {},
+  mounted() { },
 
   methods: {
     getDate(dataTime) {
       return dataTime;
     },
-    can(per) {
+
+    can() {
+      return this.$auth.user.user_type == "company" ? true : false;
+
       let u = this.$auth.user;
       return (
         (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    closeDialogs() {
+      this.getData();
+      this.payingDialog = false;
     },
 
     getRelaventStatus(status) {
@@ -1132,6 +1082,15 @@ export default {
 
     redirect() {
       this.$router.push("/");
+    },
+
+    get_payment() {
+      this.payData = this.booking
+
+      // {
+      //   id: this.$route.params.id,
+      // };
+      this.payingDialog = true;
     },
 
     getData() {

@@ -11,9 +11,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Create Customer</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="NewCustomerDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="NewCustomerDialog = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-container>
           <CreateCustomer @close-dialog="closeDialogs" />
@@ -27,48 +25,25 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Edit Customer</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="viewCustomerDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-container class="mt-0 pt-0">
-          <customer-index
-            :customer_id="customer_id"
-            @close-dialog="closeDialogs"
-          />
+          <customer-index :customer_id="customer_id" @close-dialog="closeDialogs" />
         </v-container>
         <v-card-actions> </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-row class="mt-5 mb-5">
+    <v-row class="mt-1 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
       </v-col>
     </v-row>
-    <v-row>
-      <!-- <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          @change="getDataFromApi(`customer`)"
-          v-model="pagination.per_page"
-          :items="[50, 100, 500, 1000]"
-          placeholder="Per Page Records"
-          solo
-          flat
-          :hide-details="true"
-        ></v-select>
-      </v-col> -->
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <input
-          class="form-control py-3 custom-text-box shadow-none"
-          placeholder="Search..."
-          @input="searchIt"
-          v-model="search"
-          type="text"
-          style="text-transform: none"
-        />
+    <v-row class="mt-0 pt-0">
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
+          v-model="search" hide-details></v-text-field>
       </v-col>
     </v-row>
     <div v-if="can(`customer_view`)">
@@ -76,12 +51,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List </span>
           <v-spacer></v-spacer>
-          <v-btn
-            class="float-right py-3"
-            @click="NewCustomerDialog = true"
-            x-small
-            color="primary"
-          >
+          <v-btn class="float-right py-3" @click="NewCustomerDialog = true" x-small color="primary">
             <v-icon color="white" small class="py-5">mdi-plus</v-icon>
             Add
           </v-btn>
@@ -92,18 +62,9 @@
               {{ item.text }}
             </th>
           </tr>
-          <v-progress-linear
-            v-if="loading"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
-          <tr
-            v-for="(item, index) in data"
-            :key="index"
-            style="font-size: 13px"
-          >
+          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+            color="primary"></v-progress-linear>
+          <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
             <td>
               <b>{{ ++index }}</b>
             </td>
@@ -119,12 +80,7 @@
             <td>{{ item.gst_number || "---" }}</td>
             <td>{{ item.address || "---" }}</td>
             <td>
-              <v-icon
-                x-small
-                color="primary"
-                @click="viewCustomerBilling(item)"
-                class="mr-2"
-              >
+              <v-icon x-small color="primary" @click="viewCustomerBilling(item)" class="mr-2">
                 mdi-pencil
               </v-icon>
             </td>
@@ -135,12 +91,8 @@
         <v-row>
           <v-col md="12" class="float-right">
             <div class="float-right">
-              <v-pagination
-                v-model="pagination.current"
-                :length="pagination.total"
-                @input="onPageChange"
-                :total-visible="12"
-              ></v-pagination>
+              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                :total-visible="12"></v-pagination>
             </div>
           </v-col>
         </v-row>
@@ -307,6 +259,7 @@ tr:nth-child(even) {
   border: 1px solid #dbdddf !important;
   height: 50px;
 }
+
 input[type="text"]:focus.custom-text-box {
   border: 2px solid #5fafa3 !important;
 }

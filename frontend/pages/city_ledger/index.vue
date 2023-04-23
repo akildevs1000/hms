@@ -109,83 +109,18 @@
       </v-card>
     </v-dialog>
 
-    <v-row class="mt-5 mb-5">
+    <v-row class="mt-5 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
       </v-col>
     </v-row>
-    <!-- <v-row>
-      <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col md="3">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
-    </v-row> -->
 
-
-    <v-row>
+    <v-row class="mt-0 pt-0">
       <v-col xs="12" sm="12" md="3" cols="12">
         <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
           v-model="search" hide-details></v-text-field>
       </v-col>
-    </v-row>
-    <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
         <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
           dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi()"></v-select>
@@ -242,7 +177,7 @@
               {{ (item && item.customer && item.customer.full_name) || "---" }}
             </td>
             <td>{{ item.type || "---" }}</td>
-            <td>{{ (item && item.rooms) || "---" }}</td>
+            <td style="max-width: 80px;">{{ (item && item.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.total_price || "---" }}</td>
             <td>{{ item.total_posting_amount || 0 }}</td>
@@ -341,7 +276,7 @@ export default {
         text: "Rev.No",
       },
       {
-        text: "Booking Date",
+        text: "Rev. Date",
       },
       {
         text: "Customer",
@@ -359,7 +294,7 @@ export default {
         text: "Amount",
       },
       {
-        text: "Posting Amount",
+        text: "Amount",
       },
       {
         text: "Total Paid Amount",
@@ -368,14 +303,14 @@ export default {
         text: "Pending Payment",
       },
       {
-        text: "Check In",
+        text: "C/In",
       },
       {
-        text: "Check Out",
+        text: "C/Out",
       },
 
       {
-        text: "Payment Status",
+        text: "Paid/Status",
       },
 
       {

@@ -26,13 +26,12 @@
       </v-card>
     </v-dialog>
 
+
     <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
+      <v-col xs="12" sm="12" md="2" cols="12">
         <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
           v-model="search" hide-details></v-text-field>
       </v-col>
-    </v-row>
-    <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
         <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo flat
           :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
@@ -49,7 +48,7 @@
           dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
       </v-col>
 
-      <v-col md="3">
+      <v-col md="2">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
           offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -59,7 +58,7 @@
           <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
-      <v-col md="3">
+      <v-col md="2">
         <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
           min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -114,7 +113,7 @@
               </span>
             </b>
           </td>
-          <td>
+          <td style="width: 10%;">
             <span v-for="(room, index) in item.booked_rooms" :key="index">
               {{ room.room_no }}
               {{ item.booked_rooms.length - 1 == index ? "" : "," }}
