@@ -1119,7 +1119,10 @@ export default {
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          check_in: new Date().toJSON().slice(0, 10),
+          // check_in: new Date().toJSON().slice(0, 10),
+          check_in: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+            .toISOString()
+            .substr(0, 10),
         },
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
@@ -1380,6 +1383,7 @@ export default {
     },
 
     closeCheckInAndOpenGRC() {
+      this.room_list();
       this.checkInDialog = false;
       this.GRCDialog = true;
     },

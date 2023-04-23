@@ -118,53 +118,18 @@
       </v-card>
     </v-dialog>
 
-    <v-row class="mt-5 mb-5">
+    <v-row class="mt-5 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
       </v-col>
     </v-row>
 
-    <!-- <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo flat
-          :hide-details="true"></v-select>
-      </v-col>
-
-      <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="source" :items="type == 'Online' ? sources : agentList"
-          dense item-value="name" item-text="name" placeholder="Sources" solo flat :hide-details="true"
-          @change="getDataFromApi('agents')"></v-select>
-      </v-col>
-      <v-col md="3">
-        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-          offset-y min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
-              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
-          </template>
-          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col md="3">
-        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
-          min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
-              solo flat label="To" :hide-details="true"></v-text-field>
-          </template>
-          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
-        </v-menu>
-      </v-col>
-    </v-row> -->
-
-    <v-row>
-      <v-col xs="12" sm="12" md="3" cols="12">
+    <v-row class="pt-0 mt-0">
+      <v-col xs="12" sm="12" md="2" cols="12">
         <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
           v-model="search" hide-details></v-text-field>
       </v-col>
-    </v-row>
-    <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
         <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo flat
           :hide-details="true" @change="getDataFromApi('agents')"></v-select>
@@ -181,7 +146,7 @@
           dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi('agents')"></v-select>
       </v-col>
 
-      <v-col md="3">
+      <v-col md="2">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
           offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -191,7 +156,7 @@
           <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
-      <v-col md="3">
+      <v-col md="2">
         <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
           min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -228,13 +193,13 @@
                 {{ (item.booking && item.booking.reservation_no) || "---" }}
               </span>
             </td>
+            <td style="max-width: 80px;">{{ (item && item.booking && item.booking.rooms) || "---" }}</td>
             <td>{{ item.booking_date || "---" }}</td>
             <td>{{ item.reference_no || "---" }}</td>
             <td>
               {{ (item && item.customer && item.customer.first_name) || "---" }}
             </td>
             <td>{{ item.type || "---" }}</td>
-            <td>{{ (item && item.booking && item.booking.rooms) || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.amount || "0" }}</td>
             <td>{{ item.posting_amount || "0" }}</td>
@@ -260,8 +225,8 @@
               </v-chip>
             </td>
             <td>{{ item.agent_paid_amount || "---" }}</td>
-            <td>{{ item.transaction || "---" }}</td>
-            <td>{{ item.paid_date || "---" }}</td>
+            <!-- <td>{{ item.transaction || "---" }}</td> -->
+            <!-- <td>{{ item.paid_date || "---" }}</td> -->
             <td>
               <!-- <v-icon
                 x-small
@@ -339,7 +304,10 @@ export default {
         text: "Rev.No",
       },
       {
-        text: "Booking Date",
+        text: "Rooms",
+      },
+      {
+        text: "Rev. Date",
       },
       {
         text: "Reference Number",
@@ -350,40 +318,38 @@ export default {
       {
         text: "Type",
       },
-      {
-        text: "Rooms",
-      },
+
       {
         text: "Source",
       },
       {
-        text: "Booking Amount",
+        text: "Amount",
       },
       {
-        text: "Posting Amount",
+        text: "Posting",
       },
       {
-        text: "Total (Booking+Posting)",
+        text: "Total",
       },
       {
-        text: "Check In",
+        text: "C/In",
       },
       {
-        text: "Check Out",
+        text: "C/Out",
       },
 
       {
-        text: "Payment Status",
+        text: "Paid/Status",
       },
       {
         text: "Paid Amount",
       },
-      {
-        text: "Transaction",
-      },
-      {
-        text: "Paid Date",
-      },
+      // {
+      //   text: "Transaction",
+      // },
+      // {
+      //   text: "Paid Date",
+      // },
       {
         text: "Action",
       },

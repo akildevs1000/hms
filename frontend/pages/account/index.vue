@@ -63,8 +63,8 @@
 
       <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('company')">
         <div class="card px-2" style="
-                          background-image: linear-gradient(135deg, #b00000 0, #b00000 100%);
-                        ">
+                                        background-image: linear-gradient(135deg, #b00000 0, #b00000 100%);
+                                      ">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-doodr-open"></i>
@@ -192,6 +192,7 @@
                   {{ item.booking.reservation_no || "---" }}
                 </span>
               </td>
+              <td style="max-width: 20px !important">{{ item.room }}</td>
               <td>
                 {{
                   item &&
@@ -200,7 +201,6 @@
                   item.booking.customer.first_name
                 }}
               </td>
-              <td>{{ item.room }}</td>
               <td>{{ item.description }}</td>
 
               <td v-for="i in 7" :key="i" class="text-right">
@@ -468,8 +468,8 @@ export default {
       { text: "Date" },
       { text: "Time" },
       { text: "Rev. No" },
-      { text: "Guest" },
       { text: "Rooms" },
+      { text: "Guest" },
       { text: "Description" },
       { text: "Cash" },
       { text: "Card" },

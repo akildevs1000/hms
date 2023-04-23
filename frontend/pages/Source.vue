@@ -5,7 +5,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row class="mt- mb-">
+    <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
@@ -19,9 +19,7 @@
               <span>{{ formTitle }} {{ Model }}</span>
             </v-toolbar>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="agentDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
+            <v-icon dark class="pa-0" @click="agentDialog = false">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-container>
             <v-row>
@@ -31,129 +29,45 @@
                     <v-container>
                       <v-row>
                         <v-col md="6" cols="12">
-                          <v-text-field
-                            v-model="editedItem.contact_name"
-                            placeholder="Name"
-                            label="Name"
-                            outlined
-                            :hide-details="true"
-                            dense
-                          ></v-text-field>
-                          <span
-                            v-if="errors && errors.contact_name"
-                            class="error--text"
-                            >{{ errors.contact_name[0] }}</span
-                          >
+                          <v-text-field v-model="editedItem.contact_name" placeholder="Name" label="Name" outlined
+                            :hide-details="true" dense></v-text-field>
+                          <span v-if="errors && errors.contact_name" class="error--text">{{ errors.contact_name[0]
+                          }}</span>
                         </v-col>
                         <v-col md="6" cols="12">
-                          <v-text-field
-                            v-model="editedItem.name"
-                            placeholder="Company"
-                            :hide-details="true"
-                            outlined
-                            label="Company"
-                            dense
-                          ></v-text-field>
-                          <span
-                            v-if="errors && errors.name"
-                            class="error--text"
-                            >{{ errors.name[0] }}</span
-                          >
+                          <v-text-field v-model="editedItem.name" placeholder="Company" :hide-details="true" outlined
+                            label="Company" dense></v-text-field>
+                          <span v-if="errors && errors.name" class="error--text">{{ errors.name[0] }}</span>
                         </v-col>
                         <v-col md="12" cols="12">
-                          <v-select
-                            v-model="editedItem.type"
-                            :items="sourceTypeList"
-                            placeholder="Type"
-                            dense
-                            label="Type"
-                            item-text="name"
-                            item-value="value"
-                            outlined
-                            :hide-details="true"
-                          ></v-select>
-                          <span
-                            v-if="errors && errors.type"
-                            class="error--text"
-                            >{{ errors.type[0] }}</span
-                          >
+                          <v-select v-model="editedItem.type" :items="sourceTypeList" placeholder="Type" dense
+                            label="Type" item-text="name" item-value="value" outlined :hide-details="true"></v-select>
+                          <span v-if="errors && errors.type" class="error--text">{{ errors.type[0] }}</span>
                         </v-col>
                         <v-col md="6" cols="6">
-                          <v-text-field
-                            v-model="editedItem.mobile"
-                            placeholder="Mobile"
-                            label="Mobile"
-                            outlined
-                            dense
-                            :hide-details="true"
-                            type="number"
-                          ></v-text-field>
-                          <span
-                            v-if="errors && errors.mobile"
-                            class="error--text"
-                            >{{ errors.mobile[0] }}</span
-                          >
+                          <v-text-field v-model="editedItem.mobile" placeholder="Mobile" label="Mobile" outlined dense
+                            :hide-details="true" type="number"></v-text-field>
+                          <span v-if="errors && errors.mobile" class="error--text">{{ errors.mobile[0] }}</span>
                         </v-col>
                         <v-col md="6" cols="12">
-                          <v-text-field
-                            v-model="editedItem.landline"
-                            placeholder="Landline"
-                            outlined
-                            label="Landline"
-                            dense
-                            :hide-details="true"
-                            type="number"
-                          ></v-text-field>
-                          <span
-                            v-if="errors && errors.mobile"
-                            class="error--text"
-                            >{{ errors.mobile[0] }}</span
-                          >
+                          <v-text-field v-model="editedItem.landline" placeholder="Landline" outlined label="Landline"
+                            dense :hide-details="true" type="number"></v-text-field>
+                          <span v-if="errors && errors.mobile" class="error--text">{{ errors.mobile[0] }}</span>
                         </v-col>
                         <v-col md="6" cols="12">
-                          <v-text-field
-                            v-model="editedItem.email"
-                            placeholder="Email"
-                            outlined
-                            label="Email"
-                            dense
-                            :hide-details="true"
-                            type="email"
-                          ></v-text-field>
-                          <span
-                            v-if="errors && errors.email"
-                            class="error--text"
-                            >{{ errors.email[0] }}</span
-                          >
+                          <v-text-field v-model="editedItem.email" placeholder="Email" outlined label="Email" dense
+                            :hide-details="true" type="email"></v-text-field>
+                          <span v-if="errors && errors.email" class="error--text">{{ errors.email[0] }}</span>
                         </v-col>
                         <v-col md="6" cols="12">
-                          <v-text-field
-                            v-model="editedItem.gst"
-                            placeholder="GST"
-                            label="GST"
-                            :hide-details="true"
-                            outlined
-                            dense
-                          ></v-text-field>
-                          <span
-                            v-if="errors && errors.gst"
-                            class="error--text"
-                            >{{ errors.gst[0] }}</span
-                          >
+                          <v-text-field v-model="editedItem.gst" placeholder="GST" label="GST" :hide-details="true"
+                            outlined dense></v-text-field>
+                          <span v-if="errors && errors.gst" class="error--text">{{ errors.gst[0] }}</span>
                         </v-col>
                         <v-col md="12" cols="12">
-                          <v-text-field
-                            v-model="editedItem.address"
-                            placeholder="Address"
-                            outlined
-                            label="Address"
-                            textarea
-                          ></v-text-field>
-                          <span
-                            v-if="errors && errors.address"
-                            class="error--text"
-                            >{{ errors.gst[0] }}</span
-                          >
+                          <v-text-field v-model="editedItem.address" placeholder="Address" outlined label="Address"
+                            textarea></v-text-field>
+                          <span v-if="errors && errors.address" class="error--text">{{ errors.gst[0] }}</span>
                         </v-col>
                         <v-card-actions>
                           <v-btn class="error" @click="agentDialog = false">
@@ -174,30 +88,17 @@
 
       <div>
         <v-row>
-          <v-col md="6">
-            <v-text-field
-              class="px-0 ma-0"
-              placeholder="Search..."
-              flat
-              dense
-              outlined
-              @input="searchIt"
-              v-model="search"
-              :hide-details="true"
-              style="width: 250px"
-            ></v-text-field>
+          <v-col xs="12" sm="12" md="2" cols="12">
+            <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
+              v-model="search" hide-details></v-text-field>
           </v-col>
+
           <v-col md="12" lg="12" class="pt-0">
             <v-card class="mb-5 rounded-md" elevation="0">
               <v-toolbar class="rounded-md" color="background" dense flat dark>
                 <span> {{ Model }} List</span>
                 <v-spacer></v-spacer>
-                <v-btn
-                  class="float-right py-3"
-                  @click="agentDialog = true"
-                  x-small
-                  color="primary"
-                >
+                <v-btn class="float-right py-3" @click="agentDialog = true" x-small color="primary">
                   <v-icon color="white" small class="py-5">mdi-plus</v-icon>
                   Add
                 </v-btn>
@@ -216,18 +117,9 @@
                   <th>Date</th>
                   <th class="text-center">Action</th>
                 </tr>
-                <v-progress-linear
-                  v-if="loading"
-                  :active="loading"
-                  :indeterminate="loading"
-                  absolute
-                  color="primary"
-                ></v-progress-linear>
-                <tr
-                  v-for="(item, index) in data"
-                  :key="index"
-                  style="font-size: 13px"
-                >
+                <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                  color="primary"></v-progress-linear>
+                <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
                   <!-- <td>{{ caps(item.id) }}</td> -->
                   <td>
                     {{
@@ -239,10 +131,10 @@
                   <td>{{ caps(item.type) }}</td>
                   <td>{{ caps(item.mobile) }}</td>
                   <td>{{ caps(item.landline) }}</td>
-                  <td>{{ caps(item.email) }}</td>
+                  <td style="max-width: 100px;">{{ caps(item.email) }}</td>
                   <td>{{ caps(item.gst) }}</td>
-                  <td>{{ caps(item.address) }}</td>
-                  <td>
+                  <td style="max-width: 100px;">{{ caps(item.address) }}</td>
+                  <td style="width: 8%;">
                     {{ item.created_at }}
                   </td>
                   <td class="text-center">
@@ -276,12 +168,8 @@
           </v-col>
           <v-col md="12" class="float-right">
             <div class="float-right">
-              <v-pagination
-                v-model="pagination.current"
-                :length="pagination.total"
-                @input="onPageChange"
-                :total-visible="12"
-              ></v-pagination>
+              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                :total-visible="12"></v-pagination>
             </div>
           </v-col>
         </v-row>

@@ -11,7 +11,6 @@ class BookedRoom extends Model
 
     protected $guarded = [];
 
-
     // protected $fillable = [
     //     "room_no",
     //     "room_type",
@@ -125,11 +124,13 @@ class BookedRoom extends Model
             (int) $status = 6;
         } else if (($model->booking_status == 2) && (date('Y-m-d', strtotime($model->check_out)) <= date('Y-m-d'))) {
             (int) $status = 7;
+        } else if (($model->booking_status > 3 || $model->booking_status == 0) && $model->balance > 0) {
+            (int) $status = 8;
         } else {
             (int) $status = $model->booking_status ?? 0;
         }
 
-        return match ($status) {
+        return match($status) {
 
             1 => 'linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
@@ -142,6 +143,7 @@ class BookedRoom extends Model
             5 => 'green',
             6 => 'linear-gradient(135deg, #FFBE00 0, #FFBE00 100%)', //only booking
             7 => 'linear-gradient(135deg, #4390FC      0, #4390FC 100%)', //expect check out
+            8 => 'linear-gradient(135deg, #680081      0, #680081 100%)', //city ledger
         };
     }
 
