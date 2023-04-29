@@ -1,135 +1,6 @@
 <template>
-  <div>
+  <div class="ma-3">
     <v-row class="mt-3">
-      <v-dialog v-model="imgView" max-width="80%">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Preview</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="imgView = false">
-              mdi mdi-close-box
-            </v-icon>
-          </v-toolbar>
-          <v-container>
-            <ImagePreview :docObj="documentObj"></ImagePreview>
-          </v-container>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog v-model="documentDialog" max-width="30%">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Add ID</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="documentDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
-          </v-toolbar>
-          <v-container class="pa-5">
-            <v-row>
-              <v-col md="12" sm="12" cols="12" dense>
-                <v-select
-                  v-model="checkIn.id_card_type_id"
-                  :items="idCards"
-                  dense
-                  label="ID Card Type"
-                  outlined
-                  item-text="name"
-                  item-value="id"
-                  :hide-details="errors && !errors.id_card_type_id"
-                  :error="errors && errors.id_card_type_id"
-                  :error-messages="
-                    errors && errors.id_card_type_id
-                      ? errors.id_card_type_id[0]
-                      : ''
-                  "
-                ></v-select>
-              </v-col>
-              <v-col md="12" cols="12" sm="12">
-                <v-text-field
-                  dense
-                  label="ID Card"
-                  outlined
-                  type="text"
-                  v-model="customer.id_card_no"
-                  :hide-details="errors && !errors.id_card_no"
-                  :error="errors && errors.id_card_no"
-                  :error-messages="
-                    errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                  "
-                ></v-text-field>
-              </v-col>
-              <v-col md="12" cols="12" sm="12">
-                <v-menu
-                  v-model="customer.passport_expiration_menu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="customer.passport_expiration"
-                      readonly
-                      label="Expired"
-                      v-on="on"
-                      v-bind="attrs"
-                      :hide-details="true"
-                      dense
-                      outlined
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="customer.passport_expiration"
-                    @input="customer.passport_expiration_menu = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col md="12">
-                <v-file-input
-                  v-model="customer.document"
-                  color="primary"
-                  counter
-                  placeholder="Select your files"
-                  outlined
-                  :show-size="1000"
-                >
-                  <template v-slot:selection="{ index, text }">
-                    <v-chip v-if="index < 2" color="primary" dark label small>
-                      {{ text }}
-                    </v-chip>
-
-                    <span
-                      v-else-if="index === 2"
-                      class="text-overline grey--text text--darken-3 mx-2"
-                    >
-                      +{{ customer.document.length - 2 }} File(s)
-                    </span>
-                  </template>
-                </v-file-input>
-              </v-col>
-              <v-divider></v-divider>
-              <v-col md="12">
-                <!-- @click="documentDialog = false" -->
-
-                <v-btn
-                  small
-                  dark
-                  class="primary pt-4 pb-4"
-                  @click="store_document_new()"
-                >
-                  Submit
-                  <v-icon right dark>mdi-file</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
-
       <v-col md="8">
         <v-tabs
           v-model="activeTab"
@@ -143,361 +14,14 @@
           </div>
           <v-spacer></v-spacer>
           <v-tab active-class="active-link">
-            <v-icon> mdi mdi-account-tie </v-icon>
-          </v-tab>
-          <v-tab active-class="active-link">
             <v-icon> mdi mdi-bed </v-icon>
-          </v-tab>
-          <v-tab active-class="active-link" v-if="customer.id > 0">
-            <v-icon> mdi mdi-clipboard-text-clock </v-icon>
           </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
           <v-tab-item>
             <v-card flat>
               <v-card-text>
                 <v-row>
-                  <!-- <v-col md="2" cols="12">
-                    <v-img
-                      @click="onpick_attachment"
-                      style="
-                        width: 150px;
-                        height: 150px;
-                        margin: 0 auto;
-                        border-radius: 50%;
-                      "
-                      :src="showImage"
-                    ></v-img>
-                    <input
-                      required
-                      type="file"
-                      @change="attachment"
-                      style="display: none"
-                      accept="image/*"
-                      ref="attachment_input"
-                    />
-                    <span v-if="errors && errors.image" class="red--text mt-2">
-                      {{ errors.image[0] }}</span
-                    >
-                    <div class="mt-2 ml-4" v-if="customer.document">
-                      <v-btn
-                        small
-                        dark
-                        class="primary pt-4 pb-4"
-                        @click="preview(customer.document)"
-                      >
-                        Preview
-                        <v-icon right dark>mdi-file</v-icon>
-                      </v-btn>
-                    </div>
-                  </v-col> -->
-
-                  <v-col md="2" cols="12">
-                    <v-img
-                      @click="onpick_attachment"
-                      style="
-                        width: 150px;
-                        height: 150px;
-                        margin: 0 auto;
-                        border-radius: 50%;
-                      "
-                      :src="showImage"
-                    ></v-img>
-                    <input
-                      required
-                      type="file"
-                      @change="attachment"
-                      style="display: none"
-                      accept="image/*"
-                      ref="attachment_input"
-                    />
-                    <span v-if="errors && errors.image" class="red--text mt-2">
-                      {{ errors.image[0] }}</span
-                    >
-                    <div class="mt-2 ml-4" v-if="getDocType(customer.document)">
-                      <v-btn
-                        small
-                        dark
-                        class="pridmary lg-pt-4 lg-pb-4 doc-btn"
-                        @click="preview(customer.document)"
-                      >
-                        ID
-                        <v-icon right dark>mdi-file</v-icon>
-                      </v-btn>
-                    </div>
-                    <div class="mt-2 ml-2" v-else>
-                      <v-btn
-                        small
-                        dark
-                        class="primary pt-4 pb-4"
-                        @click="documentDialog = true"
-                      >
-                        <small>ID</small>
-                        <v-icon right dark>mdi-plus</v-icon>
-                      </v-btn>
-                    </div>
-                  </v-col>
-
-                  <v-col md="10" cols="12">
-                    <v-row>
-                      <v-col md="2" class="mt-0">
-                        <v-btn color="primary" @click="searchDialog = true">
-                          Search
-                          <v-icon right dark>mdi mdi-magnify</v-icon>
-                        </v-btn>
-                      </v-col>
-                      <v-col md="5" dense> </v-col>
-                      <v-col md="5" dense>
-                        <v-select
-                          label="Type"
-                          v-model="customer.customer_type"
-                          :items="['Company', 'Regular', 'Corporate']"
-                          dense
-                          item-text="name"
-                          item-value="id"
-                          outlined
-                          :hide-details="true"
-                        ></v-select>
-                      </v-col>
-                      <v-col md="3" cols="12" sm="12">
-                        <v-select
-                          v-model="customer.title"
-                          :items="titleItems"
-                          label="Tittle *"
-                          dense
-                          item-text="name"
-                          item-value="name"
-                          :hide-details="errors && !errors.title"
-                          :error="errors && errors.title"
-                          :error-messages="
-                            errors && errors.title ? errors.title[0] : ''
-                          "
-                          outlined
-                        ></v-select>
-                      </v-col>
-                      <v-col md="5" cols="12" sm="12">
-                        <v-text-field
-                          label="First Name *"
-                          dense
-                          outlined
-                          type="text"
-                          v-model="customer.first_name"
-                          :hide-details="errors && !errors.first_name"
-                          :error="errors && errors.first_name"
-                          :error-messages="
-                            errors && errors.first_name
-                              ? errors.first_name[0]
-                              : ''
-                          "
-                        ></v-text-field>
-                      </v-col>
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          label="Last Name"
-                          dense
-                          :hide-details="true"
-                          outlined
-                          type="text"
-                          v-model="customer.last_name"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Contact No *"
-                          outlined
-                          type="number"
-                          v-model="customer.contact_no"
-                          :hide-details="errors && !errors.contact_no"
-                          :error="errors && errors.contact_no"
-                          :error-messages="
-                            errors && errors.contact_no
-                              ? errors.contact_no[0]
-                              : ''
-                          "
-                          @keyup="mergeContact"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Whatsapp No"
-                          outlined
-                          type="number"
-                          v-model="customer.whatsapp"
-                          :hide-details="errors && !errors.whatsapp"
-                          :error="errors && errors.whatsapp"
-                          :error-messages="
-                            errors && errors.whatsapp ? errors.whatsapp[0] : ''
-                          "
-                        ></v-text-field>
-                      </v-col>
-
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Email *"
-                          outlined
-                          type="email"
-                          v-model="customer.email"
-                          :hide-details="errors && !errors.email"
-                          :error="errors && errors.email"
-                          :error-messages="
-                            errors && errors.email ? errors.email[0] : ''
-                          "
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
-
-                <v-row>
-                  <v-col md="4" cols="12" sm="12">
-                    <v-select
-                      v-model="customer.nationality"
-                      :items="countryList"
-                      label="Nationality"
-                      item-text="name"
-                      item-value="name"
-                      :hide-details="errors && !errors.nationality"
-                      :error="errors && errors.nationality"
-                      :error-messages="
-                        errors && errors.nationality
-                          ? errors.nationality[0]
-                          : ''
-                      "
-                      dense
-                      outlined
-                    ></v-select>
-                  </v-col>
-                  <v-col md="4" cols="12" sm="12">
-                    <v-menu
-                      v-model="customer.dob_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="customer.dob"
-                          readonly
-                          label="DOB"
-                          v-on="on"
-                          v-bind="attrs"
-                          :hide-details="true"
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="customer.dob"
-                        @input="customer.dob_menu = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col md="4">
-                    <v-select
-                      label="Purpose"
-                      v-model="room.purpose"
-                      :items="purposes"
-                      dense
-                      :hide-details="true"
-                      outlined
-                    ></v-select>
-                  </v-col>
-                </v-row>
-
-                <v-row>
-                  <v-col md="4" sm="12" cols="12" dense>
-                    <v-menu
-                      v-model="check_out_date_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="check_out_date"
-                          readonly
-                          v-on="on"
-                          label="Checkout Date"
-                          v-bind="attrs"
-                          :hide-details="true"
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="check_out_date"
-                        @input="check_out_date_menu = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col md="4" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      outlined
-                      label="GST"
-                      type="text"
-                      v-model="customer.gst_number"
-                      :hide-details="errors && !errors.gst_number"
-                      :error="errors && errors.gst_number"
-                      :error-messages="
-                        errors && errors.gst_number ? errors.gst_number[0] : ''
-                      "
-                    ></v-text-field>
-                  </v-col>
-                  <v-col md="4" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      label="Car Number"
-                      outlined
-                      :hide-details="true"
-                      type="text"
-                      v-model="customer.car_no"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col md="6" cols="12" sm="12">
-                    <v-textarea
-                      rows="3"
-                      label="Address"
-                      v-model="customer.address"
-                      outlined
-                      :hide-details="true"
-                    ></v-textarea>
-                  </v-col>
-                  <v-col md="6">
-                    <v-textarea
-                      rows="3"
-                      label="Customer Request"
-                      v-model="room.request"
-                      :hide-details="true"
-                      outlined
-                    ></v-textarea>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12" class="text-right">
-                    <v-btn x-small @click="nextTab" color="primary">Next</v-btn>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-card flat>
-              <v-card-text>
-                <v-row>
                   <v-col md="12" cols="12">
-                    <!-- border="left"
-                      color="deep-purple accent-4" -->
-
                     <v-alert colored-border elevation="2">
                       <div class="d-flex justify-space-between">
                         <h4 class="px-2 mt-3">
@@ -755,201 +279,6 @@
                             </table>
                           </v-col>
 
-                          <!-- <v-col md="12">
-                            <v-card>
-                              <v-tabs
-                                v-model="roomTab"
-                                background-color="primary"
-                                centered
-                                dense
-                                dark
-                                icons-and-text
-                              >
-                                <v-tabs-slider></v-tabs-slider>
-
-                                <v-tab href="#tab-1">
-                                  Meals
-                                  <v-icon>mdi-food</v-icon>
-                                </v-tab>
-
-                                <v-tab href="#tab-2">
-                                  Price List
-                                  <v-icon>mdi mdi-currency-rupee</v-icon>
-                                </v-tab>
-                              </v-tabs>
-                              <v-tabs-items v-model="roomTab">
-                                <v-tab-item :value="'tab-1'">
-                                  <v-card flat>
-                                    <v-card-text>
-                                      <v-row
-                                        class="d-flex justify-center py-0 my-0"
-                                      >
-                                        <v-col
-                                          md="12"
-                                          sm="12"
-                                          cols="12"
-                                          dense
-                                          class="mb-0 py-0 my-0 pb-0 d-flex justify-center"
-                                        >
-                                          <v-radio-group
-                                            row
-                                            dense
-                                            class="py-0 my-0"
-                                          >
-                                            <v-checkbox
-                                              v-model="temp.breakfast"
-                                              label="Breakfast"
-                                              value="breakfast"
-                                              class="px-3"
-                                              @change="meal_cal(temp.breakfast)"
-                                            >
-                                            </v-checkbox>
-                                            <v-checkbox
-                                              v-model="temp.lunch"
-                                              label="Lunch"
-                                              value="lunch"
-                                              class="px-3"
-                                              @change="meal_cal(temp.lunch)"
-                                            >
-                                            </v-checkbox>
-                                            <v-checkbox
-                                              v-model="temp.dinner"
-                                              label="Dinner"
-                                              value="dinner"
-                                              class="px-3"
-                                              @change="meal_cal(temp.dinner)"
-                                            >
-                                            </v-checkbox>
-                                          </v-radio-group>
-                                        </v-col>
-                                        <v-col
-                                          md="12"
-                                          cols="12"
-                                          class="mt-0 pt-0 py-0 my-0 d-flex justify-center"
-                                        >
-                                          <table
-                                            class="styled-table py-0 my-0"
-                                            style="width: 100%"
-                                          >
-                                            <thead>
-                                              <tr>
-                                                <th>Type</th>
-                                                <td>Breakfast</td>
-                                                <td>Lunch</td>
-                                                <td>Dinner</td>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr class="food-table">
-                                                <th class="food-table">
-                                                  Adult
-                                                </th>
-                                                <td class="food-table">
-                                                  {{ tempAdult.tot_ab }}
-                                                </td>
-                                                <td class="food-table">
-                                                  {{ tempAdult.tot_al }}
-                                                </td>
-                                                <td class="food-table">
-                                                  {{ tempAdult.tot_ad }}
-                                                </td>
-                                              </tr>
-                                              <tr class="food-table">
-                                                <th class="food-table">
-                                                  Child
-                                                </th>
-                                                <td class="food-table">
-                                                  {{ tempChild.tot_cb }}
-                                                </td>
-                                                <td class="food-table">
-                                                  {{ tempChild.tot_cl }}
-                                                </td>
-                                                <td class="food-table">
-                                                  {{ tempChild.tot_cd }}
-                                                </td>
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </v-col>
-                                      </v-row>
-                                    </v-card-text>
-                                  </v-card>
-                                </v-tab-item>
-                                <v-tab-item :value="'tab-2'">
-                                  <v-card flat>
-                                    <v-card-text>
-                                      <v-row>
-                                        <v-col
-                                          md="12"
-                                          cols="12"
-                                          class="d-flex justify-center"
-                                        >
-                                          <table
-                                            class="styled-table"
-                                            style="width: 100%"
-                                          >
-                                            <thead>
-                                              <tr>
-                                                <th>Date</th>
-                                                <td>Day</td>
-                                                <td>Type</td>
-                                                <td>R/Amount</td>
-                                                <td>Tax</td>
-                                                <td>T/Amount</td>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr
-                                                v-for="(
-                                                  item, index
-                                                ) in temp.priceList"
-                                                :key="index"
-                                              >
-                                                <td>{{ item.date }}</td>
-                                                <td>{{ item.day }}</td>
-                                                <td>{{ item.day_type }}</td>
-                                                <td>
-                                                  {{ item.room_price }}
-                                                </td>
-                                                <td>
-                                                  {{
-                                                    convert_decimal(item.tax)
-                                                  }}
-                                                </td>
-                                                <td>
-                                                  {{
-                                                    convert_decimal(item.price)
-                                                  }}
-                                                </td>
-                                              </tr>
-                                              <tr class="active-row">
-                                                <td>Total</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                  {{
-                                                    convert_decimal(
-                                                      temp.room_tax
-                                                    )
-                                                  }}
-                                                </td>
-                                                <td>
-                                                  {{
-                                                    convert_decimal(temp.price)
-                                                  }}
-                                                </td>
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </v-col>
-                                      </v-row>
-                                    </v-card-text>
-                                  </v-card>
-                                </v-tab-item>
-                              </v-tabs-items>
-                            </v-card>
-                          </v-col> -->
                           <v-col md="12" class="my-0 py-0">
                             <v-divider color="#4390FC"></v-divider>
                             <div class="d-flex justify-space-around py-3 my-0">
@@ -1073,28 +402,6 @@
                     </v-alert>
                   </v-col>
                 </v-row>
-                <v-row>
-                  <v-col cols="12" class="text-right">
-                    <v-btn x-small @click="prevTab" dark color="background">
-                      Back
-                    </v-btn>
-                    <!-- <v-btn
-                      x-small
-                      @click="store"
-                      :loading="subLoad"
-                      color="primary"
-                      >Submit</v-btn
-                    > -->
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-card flat>
-              <v-card-text>
-                <History :customerId="customer.id"></History>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -1321,30 +628,6 @@
                   </v-card>
                 </div>
 
-                <!-- <div class="input-group input-group-sm px-5 pt-2 text-center">
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ item.no_of_adult }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ item.no_of_child }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ item.no_of_baby }}
-                  </v-card>
-                </div>
-
-                <div class="input-group input-group-sm px-5 pt-2 text-center">
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ getMealSeparate(item.meal)[0] }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ getMealSeparate(item.meal)[1] }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ getMealSeparate(item.meal)[2] }}
-                  </v-card>
-                </div> -->
-
                 <div class="input-group input-group-sm px-5 pt-2">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Amount
@@ -1527,17 +810,6 @@
         <v-card-text>
           <v-row class="px-5 mt-2">
             <div class="input-group input-group-sm px-3">
-              <!-- <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
-                <v-autocomplete v-model="room.payment_mode_id" :items="[
-                  { id: 1, name: 'Cash' },
-                  { id: 2, name: 'Card' },
-                  { id: 3, name: 'Online' },
-                  { id: 4, name: 'Bank' },
-                  { id: 5, name: 'UPI' },
-                  { id: 6, name: 'Cheque' },
-                ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
-                  solo-inverted background-color="#E9ECEF"></v-autocomplete>
-              </span> -->
               <span
                 class="input-group-text"
                 id="inputGroup-sizing-sm"
@@ -1616,42 +888,11 @@
             "
           >
             Pay
-            <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="searchDialog" width="500">
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col md="12" cols="12" sm="12">
-              <label class="col-form-label"
-                >Search By Mobile Number
-                <span class="text-danger">*</span>
-              </label>
-              <v-text-field
-                dense
-                outlined
-                type="text"
-                v-model="search.mobile"
-                :hide-details="true"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="get_customer" :loading="checkLoader">
-            Search
-            <v-icon right dark>mdi mdi-magnify</v-icon>
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-navigation-drawer
       v-model="RoomDrawer"
       temporary
@@ -1674,7 +915,6 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <!-- :color="item.background" -->
       <v-alert
         style="border-bottom: 1px solid rgba(0, 0, 0, 0.2)"
         :style="index == 1 ? 'border-top:1px solid rgba(0, 0, 0, 0.2);' : ''"
@@ -1708,7 +948,7 @@ import History from "../../components/customer/History.vue";
 import ImagePreview from "../../components/images/ImagePreview.vue";
 
 export default {
-  props: ["reservation"],
+  props: ["reservation", "changeRoomOptions"],
   components: {
     History,
     ImagePreview,
@@ -1867,8 +1107,8 @@ export default {
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
-        type: "Walking",
-        source: "walking",
+        type: "",
+        source: "",
         agent_name: "",
         check_in: null,
         check_out: null,
@@ -1877,7 +1117,7 @@ export default {
         payment_mode_id: 1,
         total_days: 0,
         sub_total: 0,
-        booking_status: 2,
+        booking_status: 1,
         after_discount: 0,
         sales_tax: 0,
         total_price: 0,
@@ -2002,17 +1242,13 @@ export default {
   created() {
     this.get_next_day();
     this.get_food_price();
-    this.get_room_types();
-    this.get_id_cards();
     this.runAllFunctions();
-    this.get_countries();
-    this.get_agents();
-    this.get_online();
     this.preloader = false;
   },
 
   mounted() {
     this.get_next_day();
+    this.get_customer();
   },
 
   computed: {
@@ -2022,60 +1258,14 @@ export default {
       } else if (this.previewImage) {
         return this.previewImage;
       }
-
       return this.customer.image;
     },
 
     currentDate() {
-      return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10);
+      return this.changeRoomOptions.checkIn;
     },
   },
   methods: {
-    nextTab() {
-      this.activeTab += 1;
-    },
-
-    prevTab() {
-      if (this.activeTab > 0) {
-        this.activeTab -= 1;
-      }
-    },
-
-    getDocType(doc) {
-      return typeof doc == "string" ? true : false;
-    },
-
-    onpick_attachment() {
-      this.$refs.attachment_input.click();
-    },
-
-    attachment(e) {
-      this.customer.image = e.target.files[0] || "";
-
-      let input = this.$refs.attachment_input;
-      let file = input.files;
-      if (file && file[0]) {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          this.previewImage = e.target.result;
-        };
-        reader.readAsDataURL(file[0]);
-        this.$emit("input", file[0]);
-      }
-    },
-
-    preview(file) {
-      const fileExtension = file.split(".").pop().toLowerCase();
-      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
-      this.documentObj = {
-        fileExtension: fileExtension,
-        file: file,
-      };
-      this.imgView = true;
-    },
-
     getMealSeparate(meal) {
       const mealsString = this.capsTitle(meal);
       const mealsArray = mealsString.split("|");
@@ -2093,47 +1283,6 @@ export default {
       // this.convert_decimal(this.room.advance_price);
     },
 
-    get_each_date_price() {
-      //       {
-      //     "id": 37,
-      //     "room_type_id": 6,
-      //     "room_no": "102",
-      //     "status": "0",
-      //     "deleteStatus": 0,
-      //     "company_id": 2,
-      //     "created_at": null,
-      //     "background": "#f48665",
-      //     "price": "2800.00",
-      //     "room_type": {
-      //         "id": 6,
-      //         "name": "queen",
-      //         "price": "2800.00"
-      //     }
-      // }
-      this.reservation;
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: this.reservation.room_type.name,
-          room_no: this.reservation.obj.room_no,
-          checkin: this.reservation.check_in,
-          checkout: this.reservation.check_out,
-        },
-      };
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          this.reservation.room_id = data.room.id;
-          this.reservation.price = data.total_price;
-          this.reservation.priceList = data.data;
-          let commitObj = {
-            ...this.reservation,
-          };
-          this.$store.commit("reservation", commitObj);
-          this.$router.push(`/hotel/new2`);
-        });
-    },
-
     getDays() {
       let ci = new Date(this.temp.check_in);
       let co = new Date(this.temp.check_out);
@@ -2145,11 +1294,6 @@ export default {
     },
 
     get_next_day() {
-      // const today = new Date();
-      // const tomorrow = new Date(today);
-      // tomorrow.setDate(tomorrow.getDate() + 1);
-      // this.check_out_date = tomorrow.toISOString().substr(0, 10);
-
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const year = tomorrow.getFullYear();
@@ -2157,7 +1301,8 @@ export default {
       const day = String(tomorrow.getDate()).padStart(2, "0");
       const formattedDate = `${year}-${month}-${day}`;
 
-      this.check_out_date = formattedDate;
+      // this.check_out_date = formattedDate;
+      this.check_out_date = this.changeRoomOptions.checkOut;
       this.get_reservation();
     },
 
@@ -2230,19 +1375,6 @@ export default {
         this.foodPriceList = data;
         this.get_food_price_cal("adult", 1);
       });
-    },
-
-    // preview(file) {
-    //   let element = document.createElement("a");
-    //   element.setAttribute("target", "_blank");
-    //   element.setAttribute("href", file);
-    //   document.body.appendChild(element);
-    //   element.click();
-    //   // document.body.removeChild(element);
-    // },
-
-    redirect() {
-      this.$router.push("/");
     },
 
     get_food_price_cal(person_type, person_qty) {
@@ -2371,32 +1503,12 @@ export default {
       return res;
     },
 
-    mergeContact() {
-      if (!this.isDiff) {
-        this.customer.whatsapp = this.customer.contact_no;
-      }
-    },
-
-    newWhatsapp() {
-      if (!this.isDiff) {
-        this.customer.whatsapp = this.customer.contact_no;
-      } else {
-        this.customer.whatsapp = "";
-      }
-    },
-
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
         return n + ".00";
       }
-    },
-
-    get_countries() {
-      this.$axios.get(`get_countries`).then(({ data }) => {
-        this.countryList = data;
-      });
     },
 
     getTotal() {
@@ -2418,74 +1530,6 @@ export default {
       return (this.room.sub_total = this.room.all_room_Total_amount);
       // parseFloat(this.room.all_room_Total_amount) *
       // parseFloat(this.getDays()));
-    },
-
-    getType(val) {
-      if (val == "Online") {
-        this.isOnline = true;
-        this.isAgent = false;
-        return;
-      }
-      if (val == "Travel Agency") {
-        this.isOnline = false;
-        this.isAgent = true;
-        return;
-      }
-
-      if (val == "Walking") {
-        this.room.source = "walking";
-      }
-
-      if (val == "Complimentary") {
-        this.room.source = "complimentary";
-      }
-
-      this.isOnline = false;
-      this.isAgent = false;
-    },
-
-    get_room_types() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`room_type`, payload).then(({ data }) => {
-        this.roomTypes = data;
-      });
-    },
-
-    get_agents() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_agent`, payload).then(({ data }) => {
-        this.agentList = data;
-      });
-    },
-
-    get_online() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_online`, payload).then(({ data }) => {
-        this.sources = data;
-      });
-    },
-
-    get_id_cards() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
-        this.idCards = data;
-      });
     },
 
     remove_select_room(index) {
@@ -2529,25 +1573,6 @@ export default {
       this.temp.sgst = gst;
       return tax;
     },
-
-    // selectRoom(item) {
-    //   let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
-    //   if (isSelect) {
-    //     this.alert(
-    //       "oops",
-    //       "Already selected please choose another room",
-    //       "error"
-    //     );
-    //     return;
-    //   }
-
-    //   this.RoomDrawer = false;
-    //   this.temp.company_id = this.$auth.user.company.id;
-    //   this.temp.room_no = item.room_no;
-    //   this.temp.room_id = item.id;
-    //   this.temp.room_type = item.room_type.name;
-    //   this.temp.price = item.price;
-    // },
 
     selectRoom(item) {
       this.selectRoomLoading = true;
@@ -2670,6 +1695,8 @@ export default {
       delete this.temp.breakfast;
       delete this.temp.lunch;
       delete this.temp.dinner;
+
+      console.log(this.temp);
       this.selectedRooms.push(this.temp);
 
       this.get_total_amounts();
@@ -2688,12 +1715,6 @@ export default {
       this.isSelectRoom = false;
       return;
     },
-
-    // get_bed_with_tax_amount() {
-    //   let sum = this.temp.bed_amount || 0;
-    //   let tax = (sum / 100) * 12;
-    //   this.temp.bed_amount = parseInt(tax) + parseInt(sum);
-    // },
 
     get_total_amounts() {
       let tot_bed_amount = 0;
@@ -2800,43 +1821,11 @@ export default {
     },
 
     get_customer() {
-      this.errors = [];
-      this.checkLoader = true;
-      let contact_no = this.search.mobile;
-      if (contact_no == undefined || contact_no == "") {
-        alert("Enter contact number");
-        this.checkLoader = false;
-        return;
-      }
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
+      this.customer = {
+        ...this.changeRoomOptions.customer,
+        customer_id: this.changeRoomOptions.customer.id,
       };
-
-      this.$axios
-        .get(`get_customer/${contact_no}`, payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.checkLoader = false;
-            // this.customer = {};
-            this.customer.contact_no = contact_no;
-            this.customer.whatsapp = contact_no;
-            alert("Customer not found");
-            return;
-          }
-
-          this.customer = {
-            ...data.data,
-            customer_id: data.data.id,
-          };
-          this.customer.id_card_type_id = parseInt(
-            this.customer.id_card_type_id
-          );
-
-          this.searchDialog = false;
-          this.checkLoader = false;
-        });
+      this.customer.id_card_type_id = parseInt(this.customer.id_card_type_id);
     },
 
     can(per) {
@@ -2851,14 +1840,7 @@ export default {
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
-      if (
-        this.customer.document == null ||
-        this.customer.document == undefined
-      ) {
-        this.alert("Missing!", "Select document", "error");
-        this.subLoad = false;
-        return;
-      }
+
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");
@@ -2866,8 +1848,13 @@ export default {
         return;
       }
 
+      this.customer.document = this.changeRoomOptions.booking.document;
+      this.customer.document = this.changeRoomOptions.booking.document;
+
       let rooms = this.selectedRooms.map((e) => e.room_no);
       this.room.rooms = rooms.toString();
+      this.room.type = this.changeRoomOptions.booking.type;
+      this.room.source = this.changeRoomOptions.booking.source;
       let payload = {
         ...this.room,
         ...this.customer,
@@ -2896,14 +1883,15 @@ export default {
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
-        // qty_breakfast: this.breakfast,
-        // qty_lunch: this.lunch,
-        // qty_dinner: this.dinner,
         allFoods: this.allFood,
         selectedRooms: this.selectedRooms,
         ...this.customer,
         user_id: this.$auth.user.id,
       };
+
+      console.log(payload);
+      // return;
+
       this.$axios
         .post("/booking", payload)
         .then(({ data }) => {
@@ -2912,30 +1900,30 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.store_document(data.data);
-            this.$router.push(`/reservation/in_house`);
-            // this.$router.push(`/customer/details/${260}`);
+            // this.$router.push(`/reservation/in_house`);
+            this.subLoad = false;
+            console.log(data);
+            this.cancelItem(this.changeRoomOptions.oldRoom);
             this.alert("Success!", "Successfully room added", "success");
           }
         })
         .catch((e) => console.log(e));
     },
 
-    store_document(id) {
-      let payload = new FormData();
-      payload.append("document", this.customer.document);
-      payload.append("image", this.customer.image);
-      payload.append("booking_id", id);
+    cancelItem(oldRoom) {
+      let payload = {
+        reason: oldRoom.room_no + " changed as new room",
+        cancel_by: this.$auth.user.id,
+      };
       this.$axios
-        .post("/store_document", payload)
+        .post(`cancel_room/${oldRoom.id}`, payload)
         .then(({ data }) => {
-          this.loading = false;
           if (!data.status) {
-            this.errors = data.errors;
-            this.subLoad = false;
+            return;
           }
+          this.$emit("close-dialog", data);
         })
-        .catch((e) => console.log(e));
+        .catch((err) => console.log(err));
     },
 
     alert(title = "Success!", message = "hello", type = "error") {
@@ -2988,28 +1976,6 @@ th {
   padding: 7px;
 }
 
-/* .food-table table {
-  border: 1px solid #a0a0a0 !important;
-  border-collapse: collapse;
-  padding: 100px;
-  text-align: right;
-}
-
-.food-table th,
-td {
-  border: 1px solid #a0a0a0 !important;
-  padding: 8px 50px;
-  text-align: right;
-} */
-
-/* .food-table {
-  border: 1px solid #a0a0a0 !important;
-  border-collapse: collapse;
-  width: 250px;
-  text-align: right;
-  padding: 0 5px;
-} */
-
 .input-group {
   display: flex;
   align-items: center;
@@ -3027,7 +1993,6 @@ td {
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.9;
-  /* border-radius: 0.25rem; */
   text-align: left;
   width: 150px;
 }
@@ -3056,7 +2021,6 @@ td {
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.9;
-  /* border-radius: 0.25rem; */
   text-align: left;
   width: 350px;
 }
@@ -3082,7 +2046,6 @@ td {
 }
 
 input[type="number"]:focus.form-control {
-  /* border: 2px solid #5fafa3 !important; */
   border-color: #4390fc;
   outline: none;
 }

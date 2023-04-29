@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row class="mt-3">
+    <v-row>
       <v-dialog v-model="imgView" max-width="80%">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -16,120 +16,6 @@
           <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
-
-      <v-dialog v-model="documentDialog" max-width="30%">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Add ID</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="documentDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
-          </v-toolbar>
-          <v-container class="pa-5">
-            <v-row>
-              <v-col md="12" sm="12" cols="12" dense>
-                <v-select
-                  v-model="checkIn.id_card_type_id"
-                  :items="idCards"
-                  dense
-                  label="ID Card Type"
-                  outlined
-                  item-text="name"
-                  item-value="id"
-                  :hide-details="errors && !errors.id_card_type_id"
-                  :error="errors && errors.id_card_type_id"
-                  :error-messages="
-                    errors && errors.id_card_type_id
-                      ? errors.id_card_type_id[0]
-                      : ''
-                  "
-                ></v-select>
-              </v-col>
-              <v-col md="12" cols="12" sm="12">
-                <v-text-field
-                  dense
-                  label="ID Card"
-                  outlined
-                  type="text"
-                  v-model="customer.id_card_no"
-                  :hide-details="errors && !errors.id_card_no"
-                  :error="errors && errors.id_card_no"
-                  :error-messages="
-                    errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                  "
-                ></v-text-field>
-              </v-col>
-              <v-col md="12" cols="12" sm="12">
-                <v-menu
-                  v-model="customer.passport_expiration_menu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="customer.passport_expiration"
-                      readonly
-                      label="Expired"
-                      v-on="on"
-                      v-bind="attrs"
-                      :hide-details="true"
-                      dense
-                      outlined
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="customer.passport_expiration"
-                    @input="customer.passport_expiration_menu = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col md="12">
-                <v-file-input
-                  v-model="customer.document"
-                  color="primary"
-                  counter
-                  placeholder="Select your files"
-                  outlined
-                  :show-size="1000"
-                >
-                  <template v-slot:selection="{ index, text }">
-                    <v-chip v-if="index < 2" color="primary" dark label small>
-                      {{ text }}
-                    </v-chip>
-
-                    <span
-                      v-else-if="index === 2"
-                      class="text-overline grey--text text--darken-3 mx-2"
-                    >
-                      +{{ customer.document.length - 2 }} File(s)
-                    </span>
-                  </template>
-                </v-file-input>
-              </v-col>
-              <v-divider></v-divider>
-              <v-col md="12">
-                <!-- @click="documentDialog = false" -->
-
-                <v-btn
-                  small
-                  dark
-                  class="primary pt-4 pb-4"
-                  @click="store_document_new()"
-                >
-                  Submit
-                  <v-icon right dark>mdi-file</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
-
       <v-col md="8">
         <v-tabs
           v-model="activeTab"
@@ -151,12 +37,16 @@
           <v-tab active-class="active-link" v-if="customer.id > 0">
             <v-icon> mdi mdi-clipboard-text-clock </v-icon>
           </v-tab>
+          <v-icon dark class="pa-2" @click="redirect">
+            mdi mdi-close-box
+          </v-icon>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
           <v-tab-item>
             <v-card flat>
               <v-card-text>
+                {{ bookings }}
                 <v-row>
-                  <!-- <v-col md="2" cols="12">
+                  <v-col md="2" cols="12">
                     <v-img
                       @click="onpick_attachment"
                       style="
@@ -185,58 +75,11 @@
                         class="primary pt-4 pb-4"
                         @click="preview(customer.document)"
                       >
-                        Preview
-                        <v-icon right dark>mdi-file</v-icon>
-                      </v-btn>
-                    </div>
-                  </v-col> -->
-
-                  <v-col md="2" cols="12">
-                    <v-img
-                      @click="onpick_attachment"
-                      style="
-                        width: 150px;
-                        height: 150px;
-                        margin: 0 auto;
-                        border-radius: 50%;
-                      "
-                      :src="showImage"
-                    ></v-img>
-                    <input
-                      required
-                      type="file"
-                      @change="attachment"
-                      style="display: none"
-                      accept="image/*"
-                      ref="attachment_input"
-                    />
-                    <span v-if="errors && errors.image" class="red--text mt-2">
-                      {{ errors.image[0] }}</span
-                    >
-                    <div class="mt-2 ml-4" v-if="getDocType(customer.document)">
-                      <v-btn
-                        small
-                        dark
-                        class="pridmary lg-pt-4 lg-pb-4 doc-btn"
-                        @click="preview(customer.document)"
-                      >
                         ID
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
                     </div>
-                    <div class="mt-2 ml-2" v-else>
-                      <v-btn
-                        small
-                        dark
-                        class="primary pt-4 pb-4"
-                        @click="documentDialog = true"
-                      >
-                        <small>ID</small>
-                        <v-icon right dark>mdi-plus</v-icon>
-                      </v-btn>
-                    </div>
                   </v-col>
-
                   <v-col md="10" cols="12">
                     <v-row>
                       <v-col md="2" class="mt-0">
@@ -349,7 +192,6 @@
                     </v-row>
                   </v-col>
                 </v-row>
-
                 <v-row>
                   <v-col md="4" cols="12" sm="12">
                     <v-select
@@ -409,34 +251,39 @@
                 </v-row>
 
                 <v-row>
-                  <v-col md="4" sm="12" cols="12" dense>
-                    <v-menu
-                      v-model="check_out_date_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="check_out_date"
-                          readonly
-                          v-on="on"
-                          label="Checkout Date"
-                          v-bind="attrs"
-                          :hide-details="true"
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="check_out_date"
-                        @input="check_out_date_menu = false"
-                      ></v-date-picker>
-                    </v-menu>
+                  <v-col md="3" sm="12" cols="12" dense>
+                    <v-select
+                      v-model="customer.id_card_type_id"
+                      :items="idCards"
+                      dense
+                      label="ID Card Type"
+                      outlined
+                      item-text="name"
+                      item-value="id"
+                      :hide-details="errors && !errors.id_card_type_id"
+                      :error="errors && errors.id_card_type_id"
+                      :error-messages="
+                        errors && errors.id_card_type_id
+                          ? errors.id_card_type_id[0]
+                          : ''
+                      "
+                    ></v-select>
                   </v-col>
-                  <v-col md="4" cols="12" sm="12">
+                  <v-col md="3" cols="12" sm="12">
+                    <v-text-field
+                      dense
+                      label="ID Card"
+                      outlined
+                      type="text"
+                      v-model="customer.id_card_no"
+                      :hide-details="errors && !errors.id_card_no"
+                      :error="errors && errors.id_card_no"
+                      :error-messages="
+                        errors && errors.id_card_no ? errors.id_card_no[0] : ''
+                      "
+                    ></v-text-field>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12">
                     <v-text-field
                       dense
                       outlined
@@ -450,7 +297,7 @@
                       "
                     ></v-text-field>
                   </v-col>
-                  <v-col md="4" cols="12" sm="12">
+                  <v-col md="3" cols="12" sm="12">
                     <v-text-field
                       dense
                       label="Car Number"
@@ -482,6 +329,121 @@
                   </v-col>
                 </v-row>
                 <v-row>
+                  <v-col md="3" sm="12" cols="12" dense>
+                    <v-select
+                      v-model="room.type"
+                      label="Source Type *"
+                      :items="types"
+                      dense
+                      outlined
+                      @change="getType(room.type)"
+                      :hide-details="errors && !errors.type"
+                      :error="errors && errors.type"
+                      :error-messages="
+                        errors && errors.type ? errors.type[0] : ''
+                      "
+                    ></v-select>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12" v-if="isAgent">
+                    <v-select
+                      dense
+                      label="Agent Name"
+                      outlined
+                      :items="agentList"
+                      type="text"
+                      @change="get_gst(room.source, 'agent')"
+                      item-value="name"
+                      item-text="name"
+                      v-model="room.source"
+                      :hide-details="errors && !errors.source"
+                      :error="errors && errors.source"
+                      :error-messages="
+                        errors && errors.source ? errors.source[0] : ''
+                      "
+                    ></v-select>
+                  </v-col>
+                  <v-col md="3" sm="12" cols="12" dense v-if="isOnline">
+                    <v-select
+                      v-model="room.source"
+                      label="Source"
+                      :items="sources"
+                      dense
+                      @change="get_gst(room.source, 'online')"
+                      outlined
+                      item-value="name"
+                      item-text="name"
+                      :hide-details="errors && !errors.source"
+                      :error="errors && errors.source"
+                      :error-messages="
+                        errors && errors.source ? errors.source[0] : ''
+                      "
+                    ></v-select>
+                  </v-col>
+                  <v-col md="3" sm="12" cols="12" dense v-if="isCorporate">
+                    <v-select
+                      v-model="room.source"
+                      label="Corporate"
+                      :items="CorporateList"
+                      dense
+                      outlined
+                      @change="get_gst(room.source, 'corporate')"
+                      item-value="name"
+                      item-text="name"
+                      :hide-details="errors && !errors.source"
+                      :error="errors && errors.source"
+                      :error-messages="
+                        errors && errors.source ? errors.source[0] : ''
+                      "
+                    ></v-select>
+                  </v-col>
+                  <v-col
+                    md="3"
+                    cols="12"
+                    sm="12"
+                    v-if="isAgent || isOnline || isCorporate"
+                  >
+                    <v-text-field
+                      label="Reference Number"
+                      dense
+                      outlined
+                      type="text"
+                      v-model="room.reference_no"
+                      :hide-details="errors && !errors.reference_no"
+                      :error="errors && errors.reference_no"
+                      :error-messages="
+                        errors && errors.reference_no
+                          ? errors.reference_no[0]
+                          : ''
+                      "
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    md="3"
+                    sm="12"
+                    cols="12"
+                    dense
+                    v-if="isAgent || isOnline || isCorporate"
+                  >
+                    <v-select
+                      v-model="room.paid_by"
+                      label="Paid Type"
+                      :items="[
+                        { name: 'Paid at Hotel', value: '1' },
+                        { name: 'Paid by Agents', value: '2' },
+                      ]"
+                      dense
+                      outlined
+                      item-value="value"
+                      item-text="name"
+                      :hide-details="errors && !errors.paid_by"
+                      :error="errors && errors.paid_by"
+                      :error-messages="
+                        errors && errors.paid_by ? errors.paid_by[0] : ''
+                      "
+                    ></v-select>
+                  </v-col>
+                </v-row>
+                <v-row>
                   <v-col cols="12" class="text-right">
                     <v-btn x-small @click="nextTab" color="primary">Next</v-btn>
                   </v-col>
@@ -497,7 +459,6 @@
                   <v-col md="12" cols="12">
                     <!-- border="left"
                       color="deep-purple accent-4" -->
-
                     <v-alert colored-border elevation="2">
                       <div class="d-flex justify-space-between">
                         <h4 class="px-2 mt-3">
@@ -630,31 +591,34 @@
                             sm="12"
                             cols="12"
                             dense
-                            class="mb-0 py-0 my-0 pb-0 d-flex justify-center"
+                            class="mb-0 pb-0 d-flex justify-center"
                           >
                             <v-radio-group row dense class="py-0 my-0">
                               <v-checkbox
                                 v-model="temp.breakfast"
                                 label="Breakfast"
                                 value="breakfast"
-                                class="px-3"
+                                class="px-3 py-0 my-0"
                                 @change="meal_cal(temp.breakfast)"
+                                :hide-details="true"
                               >
                               </v-checkbox>
                               <v-checkbox
                                 v-model="temp.lunch"
                                 label="Lunch"
                                 value="lunch"
-                                class="px-3"
+                                class="px-3 py-0 my-0"
                                 @change="meal_cal(temp.lunch)"
+                                :hide-details="true"
                               >
                               </v-checkbox>
                               <v-checkbox
                                 v-model="temp.dinner"
                                 label="Dinner"
                                 value="dinner"
-                                class="px-3"
+                                class="px-3 py-0 my-0"
                                 @change="meal_cal(temp.dinner)"
+                                :hide-details="true"
                               >
                               </v-checkbox>
                             </v-radio-group>
@@ -662,7 +626,50 @@
                           <v-col
                             md="12"
                             cols="12"
-                            class="mt-0 pt-0 py-0 my-0 d-flex justify-center"
+                            class="mt-0 pt-0 d-flex justify-center"
+                          >
+                            <table class="styled-table" style="width: 100%">
+                              <thead>
+                                <tr>
+                                  <th>Type</th>
+                                  <th>Breakfast</th>
+                                  <th>Lunch</th>
+                                  <th>Dinner</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>Adult</th>
+                                  <td>
+                                    {{ tempAdult.tot_ab }}
+                                  </td>
+                                  <td>
+                                    {{ tempAdult.tot_al }}
+                                  </td>
+                                  <td>
+                                    {{ tempAdult.tot_ad }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>Child</th>
+                                  <td>
+                                    {{ tempChild.tot_cb }}
+                                  </td>
+                                  <td>
+                                    {{ tempChild.tot_cl }}
+                                  </td>
+                                  <td>
+                                    {{ tempChild.tot_cd }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </v-col>
+                          <!-- </v-row> -->
+                          <v-col
+                            md="12"
+                            cols="12"
+                            class="d-flex py-0 my-0 justify-center"
                           >
                             <table
                               class="styled-table py-0 my-0"
@@ -670,55 +677,12 @@
                             >
                               <thead>
                                 <tr>
-                                  <th>Type</th>
-                                  <td>Breakfast</td>
-                                  <td>Lunch</td>
-                                  <td>Dinner</td>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr class="food-table">
-                                  <th class="food-table">Adult</th>
-                                  <td class="food-table">
-                                    {{ tempAdult.tot_ab }}
-                                  </td>
-                                  <td class="food-table">
-                                    {{ tempAdult.tot_al }}
-                                  </td>
-                                  <td class="food-table">
-                                    {{ tempAdult.tot_ad }}
-                                  </td>
-                                </tr>
-                                <tr class="food-table">
-                                  <th class="food-table">Child</th>
-                                  <td class="food-table">
-                                    {{ tempChild.tot_cb }}
-                                  </td>
-                                  <td class="food-table">
-                                    {{ tempChild.tot_cl }}
-                                  </td>
-                                  <td class="food-table">
-                                    {{ tempChild.tot_cd }}
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </v-col>
-
-                          <v-col
-                            md="12"
-                            cols="12"
-                            class="d-flex justify-center py-0 my-0"
-                          >
-                            <table class="styled-table" style="width: 100%">
-                              <thead>
-                                <tr>
                                   <th>Date</th>
-                                  <td>Day</td>
-                                  <td>Type</td>
-                                  <td>R/Amount</td>
-                                  <td>Tax</td>
-                                  <td>T/Amount</td>
+                                  <th>Day</th>
+                                  <th>Type</th>
+                                  <th>Tariff</th>
+                                  <th>Tax</th>
+                                  <th>T/Amount</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -726,9 +690,15 @@
                                   v-for="(item, index) in temp.priceList"
                                   :key="index"
                                 >
-                                  <td>{{ item.date }}</td>
-                                  <td>{{ item.day }}</td>
-                                  <td>{{ item.day_type }}</td>
+                                  <td>
+                                    {{ item.date }}
+                                  </td>
+                                  <td>
+                                    {{ item.day }}
+                                  </td>
+                                  <td>
+                                    {{ item.day_type }}
+                                  </td>
                                   <td>
                                     {{ item.room_price }}
                                   </td>
@@ -747,14 +717,41 @@
                                   <td>
                                     {{ convert_decimal(temp.room_tax) }}
                                   </td>
-                                  <td>
+                                  <td class="season-table">
                                     {{ convert_decimal(temp.price) }}
                                   </td>
                                 </tr>
                               </tbody>
                             </table>
                           </v-col>
-
+                          <v-col md="12">
+                            <v-divider color="#4390FC"></v-divider>
+                            <div class="d-flex justify-space-around py-3">
+                              <span>
+                                <b>Sub Total</b>:
+                                {{ convert_decimal(temp.price) }}
+                              </span>
+                              <span>
+                                <b>Discount</b>:
+                                {{ convert_decimal(temp.room_discount) }}
+                              </span>
+                              <span>
+                                <b>Add</b>:
+                                {{ convert_decimal(temp.room_extra_amount) }}
+                              </span>
+                              <span>
+                                <b>Total</b>:
+                                {{
+                                  convert_decimal(
+                                    parseFloat(temp.room_extra_amount) +
+                                      parseFloat(temp.price) +
+                                      parseFloat(-temp.room_discount)
+                                  )
+                                }}
+                              </span>
+                            </div>
+                            <v-divider color="#4390FC"></v-divider>
+                          </v-col>
                           <!-- <v-col md="12">
                             <v-card>
                               <v-tabs
@@ -766,12 +763,10 @@
                                 icons-and-text
                               >
                                 <v-tabs-slider></v-tabs-slider>
-
                                 <v-tab href="#tab-1">
                                   Meals
                                   <v-icon>mdi-food</v-icon>
                                 </v-tab>
-
                                 <v-tab href="#tab-2">
                                   Price List
                                   <v-icon>mdi mdi-currency-rupee</v-icon>
@@ -789,7 +784,7 @@
                                           sm="12"
                                           cols="12"
                                           dense
-                                          class="mb-0 py-0 my-0 pb-0 d-flex justify-center"
+                                          class="mb-0 pb-0 d-flex justify-center"
                                         >
                                           <v-radio-group
                                             row
@@ -800,7 +795,7 @@
                                               v-model="temp.breakfast"
                                               label="Breakfast"
                                               value="breakfast"
-                                              class="px-3"
+                                              class="px-3 py-0 my-0"
                                               @change="meal_cal(temp.breakfast)"
                                             >
                                             </v-checkbox>
@@ -808,7 +803,7 @@
                                               v-model="temp.lunch"
                                               label="Lunch"
                                               value="lunch"
-                                              class="px-3"
+                                              class="px-3 py-0 my-0"
                                               @change="meal_cal(temp.lunch)"
                                             >
                                             </v-checkbox>
@@ -816,7 +811,7 @@
                                               v-model="temp.dinner"
                                               label="Dinner"
                                               value="dinner"
-                                              class="px-3"
+                                              class="px-3 py-0 my-0"
                                               @change="meal_cal(temp.dinner)"
                                             >
                                             </v-checkbox>
@@ -825,46 +820,42 @@
                                         <v-col
                                           md="12"
                                           cols="12"
-                                          class="mt-0 pt-0 py-0 my-0 d-flex justify-center"
+                                          class="mt-0 pt-0 d-flex justify-center"
                                         >
                                           <table
-                                            class="styled-table py-0 my-0"
+                                            class="styled-table"
                                             style="width: 100%"
                                           >
                                             <thead>
                                               <tr>
                                                 <th>Type</th>
-                                                <td>Breakfast</td>
-                                                <td>Lunch</td>
-                                                <td>Dinner</td>
+                                                <th>Breakfast</th>
+                                                <th>Lunch</th>
+                                                <th>Dinner</th>
                                               </tr>
                                             </thead>
                                             <tbody>
-                                              <tr class="food-table">
-                                                <th class="food-table">
-                                                  Adult
-                                                </th>
-                                                <td class="food-table">
+                                              <tr>
+                                                <th>Adult</th>
+                                                <td>
                                                   {{ tempAdult.tot_ab }}
                                                 </td>
-                                                <td class="food-table">
+                                                <td>
                                                   {{ tempAdult.tot_al }}
                                                 </td>
-                                                <td class="food-table">
+                                                <td>
                                                   {{ tempAdult.tot_ad }}
                                                 </td>
                                               </tr>
-                                              <tr class="food-table">
-                                                <th class="food-table">
-                                                  Child
-                                                </th>
-                                                <td class="food-table">
+                                              <tr>
+                                                <th>Child</th>
+                                                <td>
                                                   {{ tempChild.tot_cb }}
                                                 </td>
-                                                <td class="food-table">
+                                                <td>
                                                   {{ tempChild.tot_cl }}
                                                 </td>
-                                                <td class="food-table">
+                                                <td>
                                                   {{ tempChild.tot_cd }}
                                                 </td>
                                               </tr>
@@ -882,20 +873,20 @@
                                         <v-col
                                           md="12"
                                           cols="12"
-                                          class="d-flex justify-center"
+                                          class="d-flex py-0 my-0 justify-center"
                                         >
                                           <table
-                                            class="styled-table"
+                                            class="styled-table py-0 my-0"
                                             style="width: 100%"
                                           >
                                             <thead>
                                               <tr>
                                                 <th>Date</th>
-                                                <td>Day</td>
-                                                <td>Type</td>
-                                                <td>R/Amount</td>
-                                                <td>Tax</td>
-                                                <td>T/Amount</td>
+                                                <th>Day</th>
+                                                <th>Type</th>
+                                                <th>R/Amount</th>
+                                                <th>Tax</th>
+                                                <th>T/Amount</th>
                                               </tr>
                                             </thead>
                                             <tbody>
@@ -905,9 +896,15 @@
                                                 ) in temp.priceList"
                                                 :key="index"
                                               >
-                                                <td>{{ item.date }}</td>
-                                                <td>{{ item.day }}</td>
-                                                <td>{{ item.day_type }}</td>
+                                                <td>
+                                                  {{ item.date }}
+                                                </td>
+                                                <td>
+                                                  {{ item.day }}
+                                                </td>
+                                                <td>
+                                                  {{ item.day_type }}
+                                                </td>
                                                 <td>
                                                   {{ item.room_price }}
                                                 </td>
@@ -934,7 +931,7 @@
                                                     )
                                                   }}
                                                 </td>
-                                                <td>
+                                                <td class="season-table">
                                                   {{
                                                     convert_decimal(temp.price)
                                                   }}
@@ -942,7 +939,7 @@
                                               </tr>
                                             </tbody>
                                           </table>
-                                        </v-col>
+                                         </v-col>
                                       </v-row>
                                     </v-card-text>
                                   </v-card>
@@ -950,34 +947,6 @@
                               </v-tabs-items>
                             </v-card>
                           </v-col> -->
-                          <v-col md="12" class="my-0 py-0">
-                            <v-divider color="#4390FC"></v-divider>
-                            <div class="d-flex justify-space-around py-3 my-0">
-                              <span>
-                                <b>Sub Total</b>:
-                                {{ convert_decimal(temp.price) }}
-                              </span>
-                              <span>
-                                <b>Discount</b>:
-                                {{ convert_decimal(temp.room_discount) }}
-                              </span>
-                              <span>
-                                <b>Add</b>:
-                                {{ convert_decimal(temp.room_extra_amount) }}
-                              </span>
-                              <span>
-                                <b>Total</b>:
-                                {{
-                                  convert_decimal(
-                                    parseFloat(temp.room_extra_amount) +
-                                      parseFloat(temp.price) +
-                                      parseFloat(-temp.room_discount)
-                                  )
-                                }}
-                              </span>
-                            </div>
-                            <v-divider color="#4390FC"></v-divider>
-                          </v-col>
 
                           <v-col md="3" sm="12" cols="12" dense>
                             <label class="col-form-label">
@@ -1058,6 +1027,7 @@
                             ></v-text-field>
                           </v-col>
                         </v-row>
+
                         <v-row>
                           <v-col md="12">
                             <v-btn
@@ -1110,7 +1080,6 @@
           dark
           show-arrows
         >
-          <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-list-box-outline </v-icon>
           </v-tab>
@@ -1184,7 +1153,7 @@
                     aria-describedby="inputGroup-sizing-sm"
                     disabled
                   >
-                    {{ temp.check_out || "---" }}
+                    {{ temp.check_out || "---" }} 11:00 AM
                   </div>
                 </div>
                 <div class="input-group input-group-sm px-5">
@@ -1216,8 +1185,60 @@
                   </div>
                 </div>
               </section>
+              <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
+                Payment
+              </p> -->
               <v-divider class="px-5 py-0"></v-divider>
-              <section class="payment-section pt-0">
+              <section class="payment-section pt-0 mt-1">
+                <!-- <v-row class="px-5 mt-0">
+                  <div class="input-group input-group-sm px-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">
+                      <v-autocomplete v-model="room.payment_mode_id" :items="[
+                        { id: 1, name: 'Cash' },
+                        { id: 2, name: 'Card' },
+                        { id: 3, name: 'Online' },
+                        { id: 4, name: 'Bank' },
+                        { id: 5, name: 'UPI' },
+                        { id: 6, name: 'Cheque' },
+                      ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data
+                        hide-details solo-inverted background-color="#E9ECEF"></v-autocomplete>
+                    </span>
+                    <input type="number" class="form-control" aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
+                      :disabled="room.paid_by == '2' ? true : false" v-model="room.advance_price" />
+                  </div>
+
+                  <div class="input-group input-group-sm px-3" v-if="room.payment_mode_id != 1">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">
+                      Reference No
+                    </span>
+                    <input v-model="room.reference_number" type="text" class="form-control"
+                      aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" style="height: 39px" />
+                  </div>
+                  <v-col md="12">
+                    <v-divider></v-divider>
+                  </v-col>
+                </v-row> -->
+
+                <!-- <div class="input-group input-group-sm px-5">
+                  <span class="input-group-text" id="inputGroup-sizing-sm">
+                    Room Price
+                  </span>
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
+                    {{ convert_decimal(room.all_room_Total_amount) }}
+                  </div>
+                </div>
+                 <div class="input-group input-group-sm px-5">
+                  <span class="input-group-text" id="inputGroup-sizing-sm">
+                    Sub Total ({{ getDays() }} x
+                    {{ convert_decimal(room.all_room_Total_amount) }})
+                  </span>
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
+                    {{ convert_decimal(room.sub_total) }}
+                  </div>
+                </div> -->
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
@@ -1234,7 +1255,7 @@
                 </div>
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Advance
+                    Advance Payment
                   </span>
                   <div
                     type="text"
@@ -1248,7 +1269,7 @@
                 </div>
                 <div class="input-group input-group-sm px-5 mb-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
-                    <strong>Balance</strong>
+                    <strong>Balance Amount</strong>
                   </span>
                   <div
                     type="text"
@@ -1356,7 +1377,7 @@
                     aria-describedby="inputGroup-sizing-sm"
                     disabled
                   >
-                    {{ item.price }}
+                    {{ convert_decimal(item.price) }}
                   </div>
                 </div>
 
@@ -1389,7 +1410,6 @@
                     {{ convert_decimal(item.room_extra_amount) }}
                   </div>
                 </div>
-
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     After Dis.
@@ -1418,7 +1438,20 @@
                     {{ convert_decimal(item.room_tax) }}
                   </div>
                 </div>
-
+                <!-- <div class="input-group input-group-sm px-5">
+                  <span class="input-group-text" id="inputGroup-sizing-sm">
+                    T.R Rent
+                  </span>
+                  <div
+                    type="text"
+                    class="form-control"
+                    aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm"
+                    disabled
+                  >
+                    {{ convert_decimal(item.total_with_tax) }}
+                  </div>
+                </div> -->
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Adult Food
@@ -1515,6 +1548,37 @@
     </v-row>
 
     <!---------------------------------------------------------------->
+
+    <v-dialog v-model="searchDialog" width="500">
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col md="12" cols="12" sm="12">
+              <label class="col-form-label"
+                >Search By Mobile Number
+                <span class="text-danger">*</span>
+              </label>
+              <v-text-field
+                dense
+                outlined
+                type="text"
+                v-model="search.mobile"
+                :hide-details="true"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="get_customer" :loading="checkLoader">
+            Search
+            <v-icon right dark>mdi mdi-magnify</v-icon>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -1527,17 +1591,6 @@
         <v-card-text>
           <v-row class="px-5 mt-2">
             <div class="input-group input-group-sm px-3">
-              <!-- <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important;">
-                <v-autocomplete v-model="room.payment_mode_id" :items="[
-                  { id: 1, name: 'Cash' },
-                  { id: 2, name: 'Card' },
-                  { id: 3, name: 'Online' },
-                  { id: 4, name: 'Bank' },
-                  { id: 5, name: 'UPI' },
-                  { id: 6, name: 'Cheque' },
-                ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
-                  solo-inverted background-color="#E9ECEF"></v-autocomplete>
-              </span> -->
               <span
                 class="input-group-text"
                 id="inputGroup-sizing-sm"
@@ -1621,43 +1674,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-dialog v-model="searchDialog" width="500">
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col md="12" cols="12" sm="12">
-              <label class="col-form-label"
-                >Search By Mobile Number
-                <span class="text-danger">*</span>
-              </label>
-              <v-text-field
-                dense
-                outlined
-                type="text"
-                v-model="search.mobile"
-                :hide-details="true"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="get_customer" :loading="checkLoader">
-            Search
-            <v-icon right dark>mdi mdi-magnify</v-icon>
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-navigation-drawer
       v-model="RoomDrawer"
       temporary
       right
       :fixed="true"
       :clipped="true"
+      style="z-index: 1000"
     >
       <v-list-item>
         <v-list-item-content>
@@ -1708,7 +1731,6 @@ import History from "../../components/customer/History.vue";
 import ImagePreview from "../../components/images/ImagePreview.vue";
 
 export default {
-  props: ["reservation"],
   components: {
     History,
     ImagePreview,
@@ -1716,7 +1738,6 @@ export default {
   data() {
     return {
       // -------customer history---------------
-      roomTab: null,
       customer: "",
       bookings: "",
       revenue: "",
@@ -1724,18 +1745,9 @@ export default {
       payments: "",
       bookedRooms: "",
       loading: false,
-      documentDialog: false,
       advanceDialog: false,
-      check_out_date_menu: false,
-      check_out_date: null,
-
-      checkIn: {
-        id_card_type_id: "",
-        id_card_no: "",
-        exp: "",
-        checkIn_document: null,
-      },
-
+      selectRoomLoading: false,
+      roomTab: null,
       headers: [
         {
           text: "#",
@@ -1802,7 +1814,13 @@ export default {
       show_password: false,
       show_password_confirm: false,
       roomTypes: [],
-      types: ["Online", "Walking", "Travel Agency", "Complimentary"],
+      types: [
+        "Online",
+        "Walking",
+        "Travel Agency",
+        "Complimentary",
+        "Corporate",
+      ],
 
       search: {
         mobile: "",
@@ -1813,7 +1831,8 @@ export default {
       sources: [],
 
       agentList: [],
-
+      CorporateList: [],
+      // room_extra_amount: 0,
       idCards: [],
       imgView: false,
       temp: {
@@ -1849,6 +1868,7 @@ export default {
         tot_adult_food: 0,
         tot_child_food: 0,
         discount_reason: "",
+        priceList: [],
       },
 
       check_in_menu: false,
@@ -1858,8 +1878,8 @@ export default {
       },
       member_numbers: [1, 2, 3, 4],
       isOnline: false,
+      isCorporate: false,
       isAgent: false,
-      extraPayType: "",
       isDiff: false,
       search_available_room: "",
       room: {
@@ -1867,17 +1887,18 @@ export default {
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
-        type: "Walking",
-        source: "walking",
+        type: "",
+        source: "",
         agent_name: "",
+        booking_status: 1,
         check_in: null,
         check_out: null,
         discount: 0,
+        reference_number: "",
         advance_price: 0,
         payment_mode_id: 1,
         total_days: 0,
         sub_total: 0,
-        booking_status: 2,
         after_discount: 0,
         sales_tax: 0,
         total_price: 0,
@@ -1888,9 +1909,10 @@ export default {
         rooms: "",
         reference_no: "",
         paid_by: "",
-        purpose: "Visiting",
+        purpose: "Tour",
+        // priceList: [],
       },
-      // reservation: {},
+      reservation: {},
       countryList: [],
       foodPriceList: [],
       person_type_arr: [],
@@ -1924,11 +1946,9 @@ export default {
         id_card_no: "",
         car_no: "",
         no_of_adult: 1,
-        passport_expiration_menu: false,
         no_of_child: 0,
         no_of_baby: 0,
         address: "",
-        passport_expiration: null,
         image: "",
         company_id: this.$auth.user.company.id,
         dob_menu: false,
@@ -1958,7 +1978,7 @@ export default {
       },
 
       previewImage: null,
-
+      extraPayType: "",
       allFood: [],
 
       breakfast: {
@@ -1985,36 +2005,19 @@ export default {
       },
     };
   },
-
-  watch: {
-    reservation() {
-      this.get_next_day();
-    },
-    check_out_date() {
-      this.selectedRooms = [];
-      this.get_reservation();
-      this.get_total_amounts();
-      this.get_all_room_Total_amount();
-      this.runAllFunctions();
-    },
-  },
-
   created() {
-    this.get_next_day();
     this.get_food_price();
+    this.get_reservation();
     this.get_room_types();
     this.get_id_cards();
     this.runAllFunctions();
     this.get_countries();
     this.get_agents();
     this.get_online();
+    this.get_Corporate();
+    // this.getImage();
     this.preloader = false;
   },
-
-  mounted() {
-    this.get_next_day();
-  },
-
   computed: {
     showImage() {
       if (!this.customer.image && !this.previewImage) {
@@ -2025,26 +2028,18 @@ export default {
 
       return this.customer.image;
     },
-
-    currentDate() {
-      return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10);
-    },
   },
   methods: {
     nextTab() {
+      // if (this.activeTab) {
       this.activeTab += 1;
+      // }
     },
 
     prevTab() {
       if (this.activeTab > 0) {
         this.activeTab -= 1;
       }
-    },
-
-    getDocType(doc) {
-      return typeof doc == "string" ? true : false;
     },
 
     onpick_attachment() {
@@ -2093,47 +2088,6 @@ export default {
       // this.convert_decimal(this.room.advance_price);
     },
 
-    get_each_date_price() {
-      //       {
-      //     "id": 37,
-      //     "room_type_id": 6,
-      //     "room_no": "102",
-      //     "status": "0",
-      //     "deleteStatus": 0,
-      //     "company_id": 2,
-      //     "created_at": null,
-      //     "background": "#f48665",
-      //     "price": "2800.00",
-      //     "room_type": {
-      //         "id": 6,
-      //         "name": "queen",
-      //         "price": "2800.00"
-      //     }
-      // }
-      this.reservation;
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: this.reservation.room_type.name,
-          room_no: this.reservation.obj.room_no,
-          checkin: this.reservation.check_in,
-          checkout: this.reservation.check_out,
-        },
-      };
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          this.reservation.room_id = data.room.id;
-          this.reservation.price = data.total_price;
-          this.reservation.priceList = data.data;
-          let commitObj = {
-            ...this.reservation,
-          };
-          this.$store.commit("reservation", commitObj);
-          this.$router.push(`/hotel/new2`);
-        });
-    },
-
     getDays() {
       let ci = new Date(this.temp.check_in);
       let co = new Date(this.temp.check_out);
@@ -2144,80 +2098,19 @@ export default {
       }
     },
 
-    get_next_day() {
-      // const today = new Date();
-      // const tomorrow = new Date(today);
-      // tomorrow.setDate(tomorrow.getDate() + 1);
-      // this.check_out_date = tomorrow.toISOString().substr(0, 10);
-
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const year = tomorrow.getFullYear();
-      const month = String(tomorrow.getMonth() + 1).padStart(2, "0");
-      const day = String(tomorrow.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-
-      this.check_out_date = formattedDate;
-      this.get_reservation();
-    },
-
-    store_document_new() {
-      this.documentDialog = false;
-      return;
-
-      let payload = new FormData();
-      // payload.append("document", this.room.document);
-      payload.append("document", this.checkIn.checkIn_document);
-      payload.append("image", this.customer.image);
-      // payload.append("booking_id", id);
-
-      this.$axios
-        .post("/store_document", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.documentDialog = false;
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    get_cs_gst(amount) {
-      let gst = parseFloat(amount) / 2;
-      this.temp.cgst = gst;
-      this.temp.sgst = gst;
-    },
-
     get_reservation() {
-      this.temp.room_id = this.reservation.id;
+      this.reservation = this.$store.state.reservation;
+      this.temp.room_id = this.reservation.room_id;
       this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type.name;
-      this.temp.check_in = this.currentDate;
-      this.temp.check_out = this.check_out_date;
-      this.room.check_in = this.currentDate;
-      this.room.check_out = this.check_out_date;
+      this.temp.room_type = this.reservation.room_type;
+      this.temp.price = this.reservation.price;
+      this.temp.check_in = this.reservation.check_in;
+      this.temp.check_out = this.reservation.check_out;
+      this.temp.room_tax = this.reservation.total_tax;
+      this.room.check_in = this.reservation.check_in;
+      this.room.check_out = this.reservation.check_out;
+      this.temp.priceList = this.reservation.priceList;
       this.get_cs_gst(this.temp.room_tax);
-
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: this.reservation.room_type.name,
-          room_no: this.reservation.room_no,
-          checkin: this.currentDate,
-          checkout: this.check_out_date,
-        },
-      };
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          this.temp.price = data.total_price;
-          this.temp.priceList = data.data;
-          this.temp.room_tax = data.total_tax;
-          // this.temp.room_tax = this.get_room_tax(this.temp.price);
-        });
     },
 
     get_food_price() {
@@ -2416,6 +2309,8 @@ export default {
 
     subTotal() {
       return (this.room.sub_total = this.room.all_room_Total_amount);
+      // --------------old---------------
+      // return (this.room.sub_total =
       // parseFloat(this.room.all_room_Total_amount) *
       // parseFloat(this.getDays()));
     },
@@ -2423,12 +2318,20 @@ export default {
     getType(val) {
       if (val == "Online") {
         this.isOnline = true;
+        this.isCorporate = false;
         this.isAgent = false;
         return;
       }
       if (val == "Travel Agency") {
+        this.isCorporate = false;
         this.isOnline = false;
         this.isAgent = true;
+        return;
+      }
+      if (val == "Corporate") {
+        this.isOnline = false;
+        this.isAgent = false;
+        this.isCorporate = true;
         return;
       }
 
@@ -2455,6 +2358,32 @@ export default {
       });
     },
 
+    get_gst(item, type) {
+      // agent
+      // online
+      // corporate
+
+      switch (type) {
+        case "agent":
+          this.customer.gst_number = this.agentList.find(
+            (e) => e.name == item
+          ).gst;
+          break;
+        case "online":
+          this.customer.gst_number = this.sources.find(
+            (e) => e.name == item
+          ).gst;
+          break;
+        case "corporate":
+          this.customer.gst_number = this.CorporateList.find(
+            (e) => e.name == item
+          ).gst;
+          break;
+        default:
+          break;
+      }
+    },
+
     get_agents() {
       let payload = {
         params: {
@@ -2463,6 +2392,16 @@ export default {
       };
       this.$axios.get(`get_agent`, payload).then(({ data }) => {
         this.agentList = data;
+      });
+    },
+    get_Corporate() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`get_corporate`, payload).then(({ data }) => {
+        this.CorporateList = data;
       });
     },
 
@@ -2518,36 +2457,23 @@ export default {
       this.room.all_room_Total_amount = res;
     },
 
-    get_room_tax(amount) {
-      let per = amount < 3000 ? 12 : 18;
-      let tax = (amount / 100) * per;
-      this.temp.room_tax = tax;
-      this.temp.total_with_tax =
-        parseFloat(this.temp.after_discount) + parseFloat(tax);
-      let gst = parseFloat(tax) / 2;
+    // get_room_tax(amount) {
+    //   let per = amount < 3000 ? 12 : 18;
+    //   let tax = (amount / 100) * per;
+    //   this.temp.room_tax = tax;
+    //   this.temp.total_with_tax =
+    //     parseFloat(this.temp.after_discount) + parseFloat(tax);
+    //   let gst = parseFloat(tax) / 2;
+    //   this.temp.cgst = gst;
+    //   this.temp.sgst = gst;
+    //   return tax;
+    // },
+
+    get_cs_gst(amount) {
+      let gst = parseFloat(amount) / 2;
       this.temp.cgst = gst;
       this.temp.sgst = gst;
-      return tax;
     },
-
-    // selectRoom(item) {
-    //   let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
-    //   if (isSelect) {
-    //     this.alert(
-    //       "oops",
-    //       "Already selected please choose another room",
-    //       "error"
-    //     );
-    //     return;
-    //   }
-
-    //   this.RoomDrawer = false;
-    //   this.temp.company_id = this.$auth.user.company.id;
-    //   this.temp.room_no = item.room_no;
-    //   this.temp.room_id = item.id;
-    //   this.temp.room_type = item.room_type.name;
-    //   this.temp.price = item.price;
-    // },
 
     selectRoom(item) {
       this.selectRoomLoading = true;
@@ -2567,8 +2493,8 @@ export default {
           company_id: this.$auth.user.company.id,
           roomType: item.room_type.name,
           room_no: item.room_no,
-          checkin: this.currentDate,
-          checkout: this.check_out_date,
+          checkin: this.reservation.check_in,
+          checkout: this.reservation.check_out,
         },
       };
       this.$axios
@@ -2582,6 +2508,8 @@ export default {
           this.temp.room_type = item.room_type.name;
           this.temp.price = data.total_price;
           this.temp.priceList = data.data;
+          this.temp.room_tax = this.reservation.total_tax;
+          this.get_cs_gst(this.temp.room_tax);
         });
     },
 
@@ -2619,10 +2547,6 @@ export default {
         return;
       }
 
-      // this.temp.after_discount =
-      //   parseFloat(this.temp.price) -
-      //   parseFloat(this.temp.room_discount == "" ? 0 : this.temp.room_discount);
-
       let roomDiscount = parseFloat(
         this.temp.room_discount == "" ? 0 : this.temp.room_discount
       );
@@ -2633,8 +2557,11 @@ export default {
       this.temp.after_discount =
         parseFloat(this.temp.price) - roomDiscount + roomExtraAmount;
 
+      console.log("roomDiscount" + roomDiscount);
+      console.log("roomExtraAmount" + roomExtraAmount);
+      console.log("after_discount" + this.temp.after_discount);
+
       this.temp.days = this.getDays();
-      // this.get_room_tax(this.temp.after_discount);
 
       let adult_f_tot = Object.values(this.tempAdult).reduce(
         (a, b) => a + b,
@@ -2649,9 +2576,10 @@ export default {
       this.temp.tot_child_food = child_f_tot * this.getDays();
 
       this.temp.total =
-        parseFloat(this.temp.after_discount) +
         parseFloat(this.temp.tot_adult_food) +
+        parseFloat(this.temp.after_discount) +
         parseFloat(this.temp.tot_child_food);
+      // parseFloat(this.temp.total_with_tax) +
 
       this.temp.grand_total = parseFloat(this.temp.total);
 
@@ -2719,7 +2647,6 @@ export default {
     clear_add_room() {
       let check_in_old = this.temp.check_in;
       let check_out_old = this.temp.check_out;
-
       this.temp = {
         check_in_menu: false,
         check_out_menu: false,
@@ -2734,8 +2661,8 @@ export default {
         check_out: check_out_old,
         meal: "room_only_price",
         bed_amount: 0,
-        room_extra_amount: 0,
         room_discount: 0,
+        room_extra_amount: 0,
         after_discount: 0, //(price - room_discount)
         room_tax: 0,
         total_with_tax: 0, //(after_discount * room_tax)
@@ -2851,14 +2778,6 @@ export default {
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
-      if (
-        this.customer.document == null ||
-        this.customer.document == undefined
-      ) {
-        this.alert("Missing!", "Select document", "error");
-        this.subLoad = false;
-        return;
-      }
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");
@@ -2896,7 +2815,7 @@ export default {
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
-        // qty_breakfast: this.breakfast,
+        // allFoods: this.breakfast,
         // qty_lunch: this.lunch,
         // qty_dinner: this.dinner,
         allFoods: this.allFood,
@@ -2913,9 +2832,8 @@ export default {
             this.subLoad = false;
           } else {
             this.store_document(data.data);
-            this.$router.push(`/reservation/in_house`);
-            // this.$router.push(`/customer/details/${260}`);
             this.alert("Success!", "Successfully room added", "success");
+            this.$router.push(`/`);
           }
         })
         .catch((e) => console.log(e));
@@ -2923,7 +2841,7 @@ export default {
 
     store_document(id) {
       let payload = new FormData();
-      payload.append("document", this.customer.document);
+      payload.append("document", this.room.document);
       payload.append("image", this.customer.image);
       payload.append("booking_id", id);
       this.$axios
@@ -2944,6 +2862,7 @@ export default {
   },
 };
 </script>
+
 <style>
 .wrapper {
   height: 40px;
@@ -3087,15 +3006,13 @@ input[type="number"]:focus.form-control {
   outline: none;
 }
 
-/* =========================== */
-
+/* ======================== */
 .styled-table {
   border-collapse: collapse;
   margin: 25px 0;
   font-size: 0.9em;
   font-family: sans-serif;
   min-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
 .styled-table thead tr {
