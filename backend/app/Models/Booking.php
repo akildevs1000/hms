@@ -106,7 +106,14 @@ class Booking extends Model
 
     public function SetCheckOutAttribute($value)
     {
-        $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
+        if (session('isCheckoutSes')) {
+            $cod = $this->attributes['check_out'] = date('Y-m-d H:i', strtotime($value));
+            BookedRoom::whereBookingId($this->attributes['id'])->update(['check_out' => $cod]);
+        } else {
+            $cod = $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
+        }
+
+        // dd($cod);
 
         // $date = Carbon::parse($value);
         // $date->addDays(1);

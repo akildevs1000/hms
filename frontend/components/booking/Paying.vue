@@ -183,6 +183,11 @@ export default {
         return;
       }
 
+      if (!this.can() && this.new_payment < 0) {
+        alert("The number cannot be negative.");
+        return;
+      }
+
       if (this.can()) {
         console.log('1');
         if (this.desc == "") {

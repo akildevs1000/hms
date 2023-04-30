@@ -42,6 +42,8 @@ class StoreRequest extends FormRequest
             'position' => ['required', 'min:3', 'max:100'],
             'whatsapp' => ['required', 'min:8', 'max:15'],
 
+            'whatsapp_instance_id' => ['required'],
+
         ];
     }
 }
