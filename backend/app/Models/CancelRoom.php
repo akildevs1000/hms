@@ -39,4 +39,15 @@ class CancelRoom extends Model
         "booking_id",
         "customer_id",
     ];
+
+
+    /**
+     * Get the user that owns the CancelRoom
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'cancel_by');
+    }
 }

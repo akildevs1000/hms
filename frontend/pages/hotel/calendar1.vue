@@ -11,7 +11,9 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="checkOutDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="checkOutDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
           <check-out :BookingData="checkData" @close-dialog="closeDialogs" />
@@ -26,10 +28,21 @@
           Are you sure you want to cancel this
         </v-card-title>
         <v-container grid-list-xs>
-          <v-textarea placeholder="Reason" rows="3" dense outlined v-model="reason"></v-textarea>
+          <v-textarea
+            placeholder="Reason"
+            rows="3"
+            dense
+            outlined
+            v-model="reason"
+          ></v-textarea>
         </v-container>
         <v-card-actions>
-          <v-btn class="primary" small :loading="cancelLoad" @click="cancelItem">
+          <v-btn
+            class="primary"
+            small
+            :loading="cancelLoad"
+            @click="cancelItem"
+          >
             Yes
           </v-btn>
           <v-btn class="error" small @click="cancelDialog = false">
@@ -50,7 +63,11 @@
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <Posting :BookingData="checkData" :evenIid="evenIid" @close-dialog="closeDialogs"></Posting>
+            <Posting
+              :BookingData="checkData"
+              :evenIid="evenIid"
+              @close-dialog="closeDialogs"
+            ></Posting>
           </v-container>
         </v-card-text>
       </v-card>
@@ -69,8 +86,13 @@
                   <span v-html="item.text"></span>
                 </th>
               </tr>
-              <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                color="primary"></v-progress-linear>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
               <tr v-for="(item, index) in postings" :key="index">
                 <td>{{ ++index }}</td>
                 <td>{{ caps(item.bill_no) }}</td>
@@ -93,7 +115,12 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="checkInDialog" persistent :width="1366" class="checkin-models">
+    <v-dialog
+      v-model="checkInDialog"
+      persistent
+      :width="1366"
+      class="checkin-models"
+    >
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
@@ -114,18 +141,56 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingAdvance = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="payingAdvance = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <PayAdvance :BookingData="checkData" @close-dialog="closeDialogs"></PayAdvance>
+            <PayAdvance
+              :BookingData="checkData"
+              @close-dialog="closeDialogs"
+            ></PayAdvance>
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="changeRoomDialog" persistent width="90%">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Change Room</span>
+          <v-spacer></v-spacer>
+          <v-icon
+            dark
+            class="pa-0"
+            @click="changeRoomDialog = closeChangeRoom()"
+            >mdi mdi-close-box
+          </v-icon>
+        </v-toolbar>
+        <!-- <v-card-text v-if="NewBooking"> -->
+        <!-- <new-check-in :reservation="newBookingRoom" /> -->
+        <!-- {{ changeRoomOptions }} -->
+        <ChangeRoom
+          :reservation="newBookingRoom"
+          :changeRoomOptions="changeRoomOptions"
+          @close-dialog="closeChangeRoom"
+        />
+        <!-- </v-card-text> -->
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <div>
-      <v-tooltip bottom color="background" :position-x="tx" :position-y="ty" absolute offset-y v-model="showTooltip">
+      <v-tooltip
+        bottom
+        color="background"
+        :position-x="tx"
+        :position-y="ty"
+        absolute
+        offset-y
+        v-model="showTooltip"
+      >
         <table style="border: none !important">
           <tr class="bg-background">
             <th>Customer Name</th>
@@ -173,15 +238,30 @@
         </table>
       </v-tooltip>
       <v-row class="flex" justify="center"> </v-row>
-      <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+      <v-menu
+        v-model="showMenu"
+        :position-x="x"
+        :position-y="y"
+        absolute
+        offset-y
+      >
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item v-if="bookingStatus == 1 && getDateOnly(checkInDate) === currentDate" link
-              @click="checkInDialog = true">
+            <v-list-item
+              v-if="
+                bookingStatus == 1 && getDateOnly(checkInDate) === currentDate
+              "
+              link
+              @click="checkInDialog = true"
+            >
               <v-list-item-title>Check In </v-list-item-title>
             </v-list-item>
 
-            <v-list-item v-else-if="bookingStatus == 2" link @click="get_check_out">
+            <v-list-item
+              v-else-if="bookingStatus == 2"
+              link
+              @click="get_check_out"
+            >
               <v-list-item-title>Check Out</v-list-item-title>
             </v-list-item>
 
@@ -214,15 +294,23 @@
               </v-list-item>
             </div>
 
-            <v-list-item link @click="payingAdvance = true" v-if="
-              bookingStatus <= 2 &&
-              bookingStatus != 0 &&
-              checkData.paid_by != 2
-            ">
+            <v-list-item
+              link
+              @click="payingAdvance = true"
+              v-if="
+                bookingStatus <= 2 &&
+                bookingStatus != 0 &&
+                checkData.paid_by != 2
+              "
+            >
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
 
-            <v-list-item link @click="cancelDialog = true" v-if="bookingStatus == 1">
+            <v-list-item
+              link
+              @click="cancelDialog = true"
+              v-if="bookingStatus == 1"
+            >
               <v-list-item-title>Cancel Room </v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -234,7 +322,11 @@
       <v-card color="primary" dark>
         <v-card-text class="py-3">
           Loading...
-          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -254,9 +346,11 @@ import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import CheckIn from "../../components/booking/CheckIn.vue";
 import CheckOut from "../../components/booking/CheckOut.vue";
 import PayAdvance from "../../components/booking/PayAdvance.vue";
+import ChangeRoom from "../../components/booking/ChangeRoom.vue";
 
 export default {
   components: {
+    ChangeRoom,
     Posting,
     PayAdvance,
     FullCalendar,
@@ -265,6 +359,7 @@ export default {
   },
   data() {
     return {
+      changeRoomDialog: false,
       dateConfirmationDialog: false,
       LoadingDialog: false,
       loading: false,
@@ -461,6 +556,8 @@ export default {
       isDbCLick: false,
       totalTransactionAmount: 0,
       transactions: [],
+      newBookingRoom: [],
+      changeRoomOptions: [],
     };
   },
 
@@ -514,9 +611,11 @@ export default {
 
     currentDate() {
       // return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
-      return this.calendarOptions.now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      return (this.calendarOptions.now = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
         .toISOString()
-        .substr(0, 10);
+        .substr(0, 10));
     },
   },
   methods: {
@@ -530,7 +629,7 @@ export default {
     },
 
     getDateOnly(date) {
-      let [dateOnly] = date.split(' ');
+      let [dateOnly] = date.split(" ");
       return dateOnly;
     },
 
@@ -835,17 +934,28 @@ export default {
         .post("/change_room_by_drag", obj)
         .then(({ data }) => {
           this.loading = false;
-
           if (!data.status) {
             this.errors = data.errors;
           } else {
             this.errors = [];
             this.snackbar = data.message;
             this.response = data.message;
-            this.get_events();
+            // this.get_events();
+            this.getChangeRoomMethod(data);
           }
         })
         .catch((e) => console.log(e));
+    },
+
+    closeChangeRoom() {
+      this.get_events();
+      this.changeRoomDialog = false;
+    },
+
+    getChangeRoomMethod(data) {
+      this.newBookingRoom = data.newRoom;
+      this.changeRoomOptions = data.options;
+      this.changeRoomDialog = true;
     },
 
     change_date_by_drag(obj) {

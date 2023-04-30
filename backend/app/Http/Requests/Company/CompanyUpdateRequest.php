@@ -42,6 +42,7 @@ class CompanyUpdateRequest extends FormRequest
             'logo' => ['image', 'mimes:jpeg,png,jpg,svg', 'max:2048', 'sometimes', 'nullable'],
             'mol_id' => ['nullable', 'max:15'], 'min:2',
             'p_o_box_no' => ['nullable', 'max:15', 'min:2'],
+            'whatsapp_instance_id' => ['nullable'],
 
         ];
     }

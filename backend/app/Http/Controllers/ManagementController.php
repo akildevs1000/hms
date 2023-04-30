@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\CancelRoom;
 use App\Models\Expense;
 use App\Models\OrderRoom;
 use App\Models\Report;
@@ -153,6 +154,7 @@ class ManagementController extends Controller
         $todayCheckOut           = $this->todayCheckOutAudit($model, $request);
         $todayPayments           = $this->todayPaymentsAudit($model, $request);
         $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($model, $request);
+        $cancelRooms = $this->cancelRooms($request);
 
         $totExpense = Expense::whereCompanyId($request->company_id)
             ->where('is_management', 0)
@@ -165,6 +167,8 @@ class ManagementController extends Controller
             'todayCheckOut'           => $todayCheckOut,
             'continueRooms'           => $continueRooms,
             'todayPayments'           => $todayPayments,
+            'cancelRooms'             => $cancelRooms,
+
             'totExpense'              => number_format($totExpense, 2, '.', ''),
         ];
     }
@@ -184,13 +188,13 @@ class ManagementController extends Controller
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')->with('transactions', function ($q) use ($request) {
-            $q->where('is_posting', 0);
-            // $q->where('credit', '>', 0);
-            $q->whereDate('date', $request->date);
-            $q->where('payment_method_id', '!=', 7);
-            $q->where('company_id', $request->company_id)
-                ->with('paymentMode');
-        })->get();
+                $q->where('is_posting', 0);
+                // $q->where('credit', '>', 0);
+                $q->whereDate('date', $request->date);
+                $q->where('payment_method_id', '!=', 7);
+                $q->where('company_id', $request->company_id)
+                    ->with('paymentMode');
+            })->get();
     }
 
     private function continueAudit($model, $request)
@@ -267,6 +271,16 @@ class ManagementController extends Controller
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
             })->get();
+    }
+
+    private function cancelRooms($request)
+    {
+        $company_id  = $request->company_id;
+        return  CancelRoom::query()
+            ->with('user')
+            ->whereDate('created_at', $request->date)
+            ->where('company_id', $company_id)
+            ->get(['room_no', 'room_type', 'grand_total', 'reason', 'cancel_by']);
     }
 
     private function cityLedgerPaymentsAudit($model, $request)

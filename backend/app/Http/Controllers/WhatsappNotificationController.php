@@ -6,7 +6,7 @@ class WhatsappNotificationController extends Controller
 {
     public function PostingNotification($data)
     {
-        $company_id      = $data['company_id'];
+        $company_id = $data['company_id'];
 
         $instance_id     = "";
         $access_token    = "";
@@ -51,7 +51,7 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'posting',
-            'revNo'         => $data['revNo'],
+            'revNo'        => $data['revNo'],
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -93,7 +93,7 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'advance Paying',
-            'revNo'         => $booking->reservation_no,
+            'revNo'        => $booking->reservation_no,
         ];
 
         (new WhatsappController)->sentNotification($data);
@@ -150,7 +150,7 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'checkin',
-            'revNo'         => $booking->reservation_no,
+            'revNo'        => $booking->reservation_no,
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -207,7 +207,7 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'checkout',
-            'revNo'         => $booking->reservation_no,
+            'revNo'        => $booking->reservation_no,
         ];
         (new WhatsappController)->sentNotification($data);
     }
@@ -239,8 +239,8 @@ class WhatsappNotificationController extends Controller
         $msg .= "\n";
         $msg .= "--------------- \n";
         $msg .= "Rev. No : $booking->reservation_no \n";
-        $msg .= "No. of Rooms : $booking->total_days \n";
-        $msg .= "No. of Days : $numberOfRooms \n";
+        $msg .= "No. of Rooms : $numberOfRooms \n";
+        $msg .= "No. of Days :  $booking->total_days \n";
         $msg .= "Check In : $checkIn \n";
         $msg .= "Check Out : $checkOut \n";
         $msg .= "--------------- \n";
@@ -269,14 +269,14 @@ class WhatsappNotificationController extends Controller
             'instance_id'  => $instance_id,
             'access_token' => $access_token,
             'type'         => 'booking',
-            'revNo'         => $booking->reservation_no,
+            'revNo'        => $booking->reservation_no,
         ];
         (new WhatsappController)->sentNotification($data);
     }
 
     public function getPayMode($mode = "")
     {
-        return match ($mode) {
+        return match($mode) {
             1 => 'Cash',
             2 => 'Card',
             3 => 'Online',
