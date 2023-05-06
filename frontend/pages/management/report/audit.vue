@@ -889,7 +889,7 @@ export default {
       let tot =
         parseFloat(this.cityLedgerTotalCash) +
         parseFloat(this.totalCash) +
-        parseFloat(this.totalUPI) +
+        // parseFloat(this.totalUPI) +
         parseFloat(this.checkoutTotalCash) +
         parseFloat(this.continueTotalCash) +
         parseFloat(this.todayPaymentTotalCash);

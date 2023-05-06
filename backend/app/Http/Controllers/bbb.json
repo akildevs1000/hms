@@ -1,0 +1,36 @@
+{
+    "room_no": "104",
+    "room_type": "queen",
+    "room_id": 38,
+    "price": 8400,
+    "days": 4,
+    "sgst": 360,
+    "cgst": 360,
+    "check_in": "2023-02-01",
+    "check_out": "2023-02-05",
+    "bed_amount": 0,
+    "room_discount": 0,
+    "after_discount": 8400,
+    "room_tax": 720,
+    "total_with_tax": 0,
+    "total": 9712.5,
+    "grand_total": 9712.5,
+    "company_id": 2,
+    "no_of_adult": 1,
+    "no_of_child": 0,
+    "no_of_baby": 0,
+    "tot_adult_food": 1312.5,
+    "tot_child_food": 0,
+    "discount_reason": null,
+    "meal": "breakfast | lunch | dinner",
+    "booking_id": 19,
+    "customer_id": 135
+},
+
+{
+"date": "2023-02-04",
+"price": 1680,
+"tax": 180,
+"day_type": "weekend",
+"day": "Sat"
+}

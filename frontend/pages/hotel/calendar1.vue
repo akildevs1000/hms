@@ -269,9 +269,9 @@
               <v-list-item link @click="setAvailable">
                 <v-list-item-title>Make Available</v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="setMaintenance">
+              <!-- <v-list-item link @click="setMaintenance">
                 <v-list-item-title>Make Maintenance</v-list-item-title>
-              </v-list-item>
+              </v-list-item> -->
             </div>
 
             <div v-if="bookingStatus == 4">
@@ -404,7 +404,7 @@ export default {
             width: "3%",
           },
           {
-            headerContent: "Room Type",
+            headerContent: "Room Type1",
             field: "room_type",
             width: "5%",
           },
@@ -475,7 +475,7 @@ export default {
           if (date.startStr < this.currentDate) {
             this.alert(
               "Missing!",
-              "Please Select Current Date or Future Date",
+              "Please Select Current Date or Future Date1",
               "error"
             );
             return;
@@ -496,10 +496,15 @@ export default {
         },
 
         eventDrop: (arg, delta) => {
+          // console.log("Start date ", arg.event.start);
+          //console.log("Start date end", arg.event.end);
+
           let obj = {
             eventId: arg.event.id,
             start: this.convert_date_format(arg.event.start),
             end: this.convert_end_date_format(arg.event.start, arg.event.end),
+            // start: "2023-02-20 11:00:00",
+            //  end: "2023-02-21 23:00:00",
             company_id: this.$auth.user.company.id,
             roomId: arg.event._def.resourceIds[0],
           };
@@ -724,11 +729,14 @@ export default {
 
     get_room_types(e, obj) {
       this.reservation.isCalculate = true;
+      console.log("room list", this.reservation);
+      console.log("room list", this.RoomList);
       this.reservation.room_id = this.RoomList.find(
         (e) => e.room_no == obj.room_no
       ).id;
       this.reservation.room_type = obj.room_type;
       this.reservation.room_no = obj.room_no;
+      console.log("start time", e.startStr);
       this.reservation.check_in = e.startStr;
 
       this.reservation.check_out = e.endStr;
@@ -861,7 +869,9 @@ export default {
     },
 
     setAvailable() {
-      let payload = {};
+      let payload = {
+        bookedRoomId: this.evenIid,
+      };
 
       this.$axios
         .post(`set_available/${this.bookingId}`, payload)
@@ -1025,3 +1035,10 @@ export default {
 </script>
 
 <style scoped src="@/assets/custom/calendar.css"></style>
+
+<!-- <style>
+.fc-timeline-event-harness {
+  margin-left: 30px;
+  margin-right: -20px;
+}
+</style> -->

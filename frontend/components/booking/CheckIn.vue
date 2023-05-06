@@ -642,7 +642,7 @@
                     @click="store_check_in(BookingData)"
                     :loading="loading"
                     dark
-                    >Book</v-btn
+                    >CheckIn</v-btn
                   >
                 </v-card-actions>
               </section>

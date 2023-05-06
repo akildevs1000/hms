@@ -1139,7 +1139,7 @@
                     aria-describedby="inputGroup-sizing-sm"
                     disabled
                   >
-                    {{ temp.check_in || "---" }}
+                    {{ temp.check_in || "---" }} 12:00 PM
                   </div>
                 </div>
                 <div class="input-group input-group-sm px-5">

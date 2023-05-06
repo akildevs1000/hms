@@ -52,7 +52,7 @@ class RoomController extends Controller
             } else {
                 return $this->response('Room cannot add.', null, 'Database error');
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -71,7 +71,7 @@ class RoomController extends Controller
     {
         $arr  = [];
         $data = Room::with('roomType')
-        // ->where('status', 0)
+            // ->where('status', 0)
             ->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
             // $color =  $this->get_color($d->roomType->name);
@@ -232,12 +232,10 @@ class RoomController extends Controller
 
         // ======================
 
-        $dirtyRooms = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
-            $q->where('booking_status', '!=', 0);
-            $q->where('booking_status', 3);
-            $q->where('company_id', $company_id);
-            $q->orderBy('id', 'ASC');
-        });
+        $dirtyRooms = BookedRoom::where('booking_status', '!=', 0)
+            ->where('booking_status', 3)
+            ->where('company_id', $company_id)
+            ->orderBy('id', 'ASC');
 
         $expectCheckInModel = BookedRoom::query();
         $expectCheckIn      = $expectCheckInModel->whereDate('check_in', $request->check_in)
@@ -275,10 +273,11 @@ class RoomController extends Controller
             })->get();
 
         $checkOutModel = BookedRoom::query();
-        $checkOut      = $checkOutModel->clone()->whereDate('check_out', $request->check_in)
+        $checkOut  = $checkOutModel->clone()->whereDate('check_out', $request->check_in)
             ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 3);
+                $q->whereIn('booking_status', [0, 3, 4, 5]);
+                // $q->where('booking_status', '>=', 3);
+                // $q->whereDate('check_in', '<=', $request->check_in);
                 $q->where('company_id', $company_id);
             })->get();
 
@@ -310,15 +309,19 @@ class RoomController extends Controller
         $model   = BookedRoom::query();
         $roomIds = $model
             ->whereDate('check_in', '<=', $request->check_in)
+            ->where('booking_status', '!=', 0)
+            ->where('booking_status', '<=', 3)
             ->whereHas('booking', function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', -1);
                 $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '<=', 4);
+                $q->where('booking_status', '<=', 3);
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_in', '<=', $request->check_in);
             })
             ->with('booking')
             ->pluck('room_id');
+
+        $roomIds = array_merge($dirtyRooms->pluck('room_id')->toArray(), $roomIds->toArray());
 
         $notAvailableRooms = Room::whereIn('id', $roomIds)
             ->with('bookedRoom', function ($q) use ($company_id, $request) {
@@ -329,6 +332,8 @@ class RoomController extends Controller
                 $q->orderBy('id', 'ASC');
             })
             ->get();
+
+        // return  $dirtyRooms->get();
 
         return [
             'dirtyRooms'             => $dirtyRooms->count(),
@@ -375,7 +380,7 @@ class RoomController extends Controller
 
     public function get_color($val)
     {
-        return match($val) {
+        return match ($val) {
             'queen' => 'red',
             'king' => 'green',
             'castle' => '#9966CC',
@@ -403,7 +408,7 @@ class RoomController extends Controller
             $msg = $status == 1 ? 'blocked' : 'unblocked';
             Room::whereCompanyId($request->company_id)->whereRoomNo($request->room_no)->update(['status' => $status]);
             return $this->response('Room ' . $msg, null, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $this->response('Something wrong.', $th, true);
         }
     }

@@ -481,6 +481,7 @@ export default {
     onPageChange() {
       this.commonMethod();
     },
+
     can(permission) {
       let user = this.$auth;
       return;

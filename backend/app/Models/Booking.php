@@ -68,7 +68,7 @@ class Booking extends Model
     public function GetBackgroundAttribute()
     {
         $status = Room::find($this->room_id)->status ?? '0';
-        return match($status) {
+        return match ($status) {
             '0' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
             '1' => 'linear-gradient(135deg, #f48665 0, #d68e41 100%)',
             '2' => 'linear-gradient(135deg, #8e4cf1 0, #c554bc 100%)',
@@ -108,7 +108,7 @@ class Booking extends Model
     {
         if (session('isCheckoutSes')) {
             $cod = $this->attributes['check_out'] = date('Y-m-d H:i', strtotime($value));
-            BookedRoom::whereBookingId($this->attributes['id'])->update(['check_out' => $cod]);
+            BookedRoom::whereBookingId($this->attributes['id'])->update(['check_out' => $cod, 'booking_status' => 3]);
         } else {
             $cod = $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
         }
@@ -146,21 +146,21 @@ class Booking extends Model
 
     public function scopeFilter($query, $filter)
     {
-        $query->when($filter ?? false, fn($query, $search) =>
-            $query->where(
-                fn($query) => $query
-                    ->orWhere('reservation_no', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('reference_no', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('type', 'ILIKE', '%' . $search . '%')
-                    ->orWhereHas(
-                        'customer',
-                        fn($query) =>
-                        $query->Where('first_name', 'ILIKE', '%' . $search . '%')
-                            ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
-                            ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
-                            ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
-                    )
-            ));
+        $query->when($filter ?? false, fn ($query, $search) =>
+        $query->where(
+            fn ($query) => $query
+                ->orWhere('reservation_no', 'ILIKE', '%' . $search . '%')
+                ->orWhere('reference_no', 'ILIKE', '%' . $search . '%')
+                ->orWhere('type', 'ILIKE', '%' . $search . '%')
+                ->orWhereHas(
+                    'customer',
+                    fn ($query) =>
+                    $query->Where('first_name', 'ILIKE', '%' . $search . '%')
+                        ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
+                        ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
+                        ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
+                )
+        ));
     }
 
     public function payments()

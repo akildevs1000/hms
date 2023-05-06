@@ -175,7 +175,7 @@
             </td>
           </tr>
           <tr class="bg-background">
-            <th>Room Type</th>
+            <th>Room Type1</th>
             <td>
               {{ checkData.room_type }}
             </td>
