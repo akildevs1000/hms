@@ -564,6 +564,7 @@
                         padding: 7px 0;
                         margin: 0px -5px;
                         background-color: #6722b9;
+                        border-radius: 7px;
                       "
                     >
                       <div class="d-flex justify-space-around py-0 my-0">
@@ -613,7 +614,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #32a15c"
+                      style="background-color: #32a15c; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
@@ -643,7 +644,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #ffbe00"
+                      style="background-color: #ffbe00; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
@@ -677,7 +678,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #02ada4"
+                      style="background-color: #02ada4; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
@@ -707,7 +708,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #ff0000"
+                      style="background-color: #ff0000; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
@@ -737,7 +738,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #18069e"
+                      style="background-color: #18069e; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
@@ -764,7 +765,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #4390fc"
+                      style="background-color: #4390fc; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
@@ -791,7 +792,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #800000"
+                      style="background-color: #800000; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
@@ -818,7 +819,7 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #74166d"
+                      style="background-color: #74166d; border-radius: 7px"
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
