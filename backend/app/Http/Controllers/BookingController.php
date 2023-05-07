@@ -1052,51 +1052,9 @@ class BookingController extends Controller
                 ]
             );
 
-            // return [
-            //     'newRoom' => $newRoom,
-            // ];
-
-            // {
-            //     "id": 39,
-            //     "room_type_id": 6,
-            //     "room_no": "105",
-            //     "status": "0",
-            //     "deleteStatus": 0,
-            //     "company_id": 2,
-            //     "created_at": null,
-            //     "price": "2800.00",
-            //     "room_type": {
-            //         "id": 6,
-            //         "name": "Queen",
-            //         "price": "2800.00"
-            //     }
-            // }
-
-            // {
-            //     "newRoom": {
-            //         "id": 50,
-            //         "room_type_id": 7,
-            //         "room_no": "101",
-            //         "status": "0",
-            //         "deleteStatus": 0,
-            //         "company_id": 2,
-            //         "created_at": null,
-            //         "price": "3800.00",
-            //         "room_type": {
-            //             "id": 7,
-            //             "name": "Castle",
-            //             "price": "3800.00"
-            //         }
-            //     }
-            // }
 
             return $this->response(' Under the working!', null, true);
 
-            // return $newRoom;
-            // return [
-            //     'new' =>  $newRoom->room_type->name,
-            //     'old' =>  $oldRoom->room_type,
-            // ];
 
             if ($newRoom->room_type->name == $oldRoom->room_type) {
                 $checkIn  = date('Y-m-d', strtotime($request->start));

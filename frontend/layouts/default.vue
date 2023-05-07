@@ -108,7 +108,7 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <label class="px-2" v-bind="attrs" v-on="on">
-            {{ getUser }}
+            {{ getUser || "" }}
           </label>
 
           <v-btn icon color="yellow" v-bind="attrs" v-on="on">
@@ -429,6 +429,13 @@ export default {
               to: "/source",
               menu: "agent_access",
             },
+
+            {
+              icon: "mdi mdi-file-document-edit-outline",
+              title: "inquiries",
+              to: "/inquiry",
+              menu: "agent_access",
+            },
           ],
         },
 
@@ -674,12 +681,12 @@ export default {
     },
 
     getUser() {
-      // console.log(this.$auth.user.user_type);
+      if (!this.$auth.user) {
+        return "";
+      }
       return this.$auth.user.user_type == "employee"
         ? this.$auth.user.name
         : this.$auth.user.company.name;
-
-      // return this.$auth.user && this.$auth.user.company.name;
     },
 
     getLogo() {

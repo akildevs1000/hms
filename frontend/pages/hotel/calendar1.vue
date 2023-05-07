@@ -496,15 +496,10 @@ export default {
         },
 
         eventDrop: (arg, delta) => {
-          // console.log("Start date ", arg.event.start);
-          //console.log("Start date end", arg.event.end);
-
           let obj = {
             eventId: arg.event.id,
             start: this.convert_date_format(arg.event.start),
             end: this.convert_end_date_format(arg.event.start, arg.event.end),
-            // start: "2023-02-20 11:00:00",
-            //  end: "2023-02-21 23:00:00",
             company_id: this.$auth.user.company.id,
             roomId: arg.event._def.resourceIds[0],
           };
@@ -729,14 +724,11 @@ export default {
 
     get_room_types(e, obj) {
       this.reservation.isCalculate = true;
-      console.log("room list", this.reservation);
-      console.log("room list", this.RoomList);
       this.reservation.room_id = this.RoomList.find(
         (e) => e.room_no == obj.room_no
       ).id;
       this.reservation.room_type = obj.room_type;
       this.reservation.room_no = obj.room_no;
-      console.log("start time", e.startStr);
       this.reservation.check_in = e.startStr;
 
       this.reservation.check_out = e.endStr;

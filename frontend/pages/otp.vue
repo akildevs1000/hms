@@ -44,6 +44,11 @@
                         class="d-flex align-items-center justify-content-center pb-4"
                       ></div>
                     </v-form>
+                    <div class="text-right">
+                      <nuxt-link class="text-muted text-right" to="/login"
+                        >login again
+                      </nuxt-link>
+                    </div>
                   </div>
                 </div>
                 <div class="col-lg-6 d-flex align-items-center primary">
@@ -98,10 +103,17 @@ export default {
           if (!data.status) {
             alert("Invalid OTP. Please try again");
             this.logout();
-            this.$router.push(`/login`);
-            return;
+            setTimeout(() => {
+              this.$router.push(`login`);
+            }, 1000);
           } else {
-            this.$router.push(`/`);
+            const updatedUser = Object.assign({}, this.$auth.user, {
+              is_verified: data.record.is_verified,
+            });
+            this.$auth.setUser(updatedUser);
+            setTimeout(() => {
+              this.$router.push(`/`);
+            }, 1000);
           }
         })
         .catch((err) => console.log(err));

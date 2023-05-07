@@ -604,6 +604,7 @@ export default {
 
     store_customer() {
       let payload = this.mapper(this.customer);
+      console.log(payload);
       this.$axios
         .post("/store_customer", payload)
         .then(({ data }) => {
@@ -614,7 +615,7 @@ export default {
           } else {
             this.errors = [];
             this.alert("Success!", "successfully added customer", "success");
-            this.closeDialog()
+            this.closeDialog();
           }
         })
         .catch((e) => console.log(e));
@@ -624,7 +625,6 @@ export default {
       let payload = new FormData();
       for (let x in obj) {
         if (obj[x]) {
-          console.log(x);
           payload.append(x, obj[x]);
         }
       }

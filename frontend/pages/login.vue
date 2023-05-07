@@ -158,15 +158,12 @@ export default {
       let payload = {
         cancel_by: this.$auth.user.id,
       };
-      console.log(1);
       this.$axios
         .post(`generate_otp/${useId}`, payload)
         .then(({ data }) => {
           if (!data.status) {
-            console.log(2);
             return;
           }
-          console.log(3);
         })
         .catch((err) => console.log(err));
     },
@@ -189,7 +186,6 @@ export default {
           )
           .then(({ data }) => {
             if (this.$auth.user.user_type != "company") {
-              console.log(this.$auth.user.id);
               this.set_otp(this.$auth.user.id);
               this.$router.push(`/otp`);
               return;

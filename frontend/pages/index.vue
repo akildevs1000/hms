@@ -906,6 +906,9 @@
                             }`"
                           >
                             <div class="text-center">
+                              <v-icon dark class="pa-0">mdi mdi-bed</v-icon>
+                            </div>
+                            <div class="text-center">
                               {{ caps(noAvailableRoom.room_type.name) }}
                             </div>
                             <div class="text-center">
@@ -939,6 +942,9 @@
                             dark
                           >
                             <div class="text-center">
+                              <v-icon dark class="pa-0">mdi mdi-home</v-icon>
+                            </div>
+                            <div class="text-center">
                               {{ caps(room.room_type.name) }}
                             </div>
                             <div class="text-center">
@@ -963,6 +969,7 @@
         <v-img src="/preloaders/1.gif"></v-img>
       </div>
     </div>
+    <!-- <div v-else>'ggggg'</div> -->
   </div>
 </template>
 <script>
@@ -991,6 +998,14 @@ import CheckOutRoomsReport from "../components/summary_reports/CheckOutRoomsRepo
 import DirtyRoomsReport from "../components/summary_reports/DirtyRoomsReport.vue";
 import Grc from "../components/booking/GRC.vue";
 export default {
+  layout({ $auth }) {
+    if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {
+      return "guest";
+    } else {
+      return "default";
+    }
+  },
+
   components: {
     Grc,
     DirtyRoomsReport,
@@ -1189,6 +1204,7 @@ export default {
     async logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();
+        this.$router.push(`/login`);
       });
     },
 
@@ -1198,11 +1214,9 @@ export default {
         this.$auth.user.is_verified == 0
       ) {
         this.logout();
-        console.log(1);
-        this.$router.push(`/login`);
+        this.$router.push(`login`);
         return false;
       } else {
-        console.log(2);
         return true;
       }
     },
@@ -1738,6 +1752,10 @@ export default {
 
   .available-room-list {
     width: 13.333333% !important;
+  }
+
+  .box {
+    border-radius: 7px !important;
   }
 }
 </style>

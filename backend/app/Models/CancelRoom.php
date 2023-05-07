@@ -40,6 +40,14 @@ class CancelRoom extends Model
         "customer_id",
     ];
 
+    protected $appends = [
+        'time',
+    ];
+
+    public function getTImeAttribute()
+    {
+        return date('H:i', strtotime($this->created_at));
+    }
 
     /**
      * Get the user that owns the CancelRoom

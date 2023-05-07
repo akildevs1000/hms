@@ -1787,6 +1787,7 @@ export default {
         "Holiday",
         "Party/Functions",
         "Friend Visit",
+        "Marriage",
       ],
       selectMeal: [],
       wantNewDoc: false,

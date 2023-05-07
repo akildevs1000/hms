@@ -107,7 +107,7 @@ class AuthController extends Controller
             if ($user->otp == $otp) {
                 $user->is_verified = 1;
                 $user->save();
-                return $this->response('updated.', null, true);
+                return $this->response('updated.', $user, true);
             }
             $user->is_verified = 0;
             $user->save();
