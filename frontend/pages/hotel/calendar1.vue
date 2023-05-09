@@ -383,13 +383,42 @@ export default {
       y: 0,
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
-        // now: "2022-11-07",
+
+        customButtons: {
+          first: {
+            text: "30 Days",
+            click: () => {
+              this.calendarOptions.views.resourceTimelineYear.duration.days = 60;
+            },
+          },
+          second: {
+            text: "60 Days",
+            click: () => {
+              this.calendarOptions.views.resourceTimelineYear.duration.days = 90;
+            },
+          },
+          third: {
+            text: "90 Days",
+            click: () => {
+              this.calendarOptions.views.resourceTimelineYear.duration.days = 120;
+            },
+          },
+        },
+        headerToolbar: {
+          start: "first,second,third",
+          center: "title",
+          // end: "dayGridMonth,timeGridWeek,timeGridDay",
+        },
+        // now: "2022-11-01",
         now: "",
+
+        defaultDate: new Date().setDate(1),
         editable: true,
         aspectRatio: 1.8,
         scrollTime: "00:00",
         displayEventTime: false,
         selectable: true,
+        // initialView: "resourceTimelineMonth",
         initialView: "resourceTimelineYear",
         //initialView: "timeGrid",
         // visibleRange: {
@@ -403,7 +432,7 @@ export default {
           },
           resourceTimelineYear: {
             type: "resourceTimeline",
-            duration: { days: 60 },
+            duration: { days: 30 },
             buttonText: "10 days",
           },
         },
@@ -578,6 +607,7 @@ export default {
 
   created() {
     this.currentDate;
+    this.currentDateForNow;
   },
 
   mounted() {
@@ -625,7 +655,26 @@ export default {
     },
 
     currentDate() {
-      // return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
+      return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10);
+
+      //   return (this.calendarOptions.now = new Date(
+      //   Date.now() - new Date().getTimezoneOffset() * 60000
+      // )  .toISOString()  .substr(0, 10));
+    },
+
+    currentDateForNow() {
+      const currentDate = new Date();
+      const day = currentDate.getDate();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+      const year = currentDate.getFullYear();
+
+      let date = `${year}-${month}-0${1}`;
+      this.calendarOptions.now = date;
+      console.log(date);
+      // now: "2022-11-01",
+      return date;
 
       return (this.calendarOptions.now = new Date(
         Date.now() - new Date().getTimezoneOffset() * 60000
@@ -1044,9 +1093,9 @@ export default {
 
 <style scoped src="@/assets/custom/calendar.css"></style>
 
-<!-- <style>
+<style>
 .fc-timeline-event-harness {
-  margin-left: 30px;
-  margin-right: -20px;
+  margin-left: 14px;
+  margin-right: -15px;
 }
-</style> -->
+</style>
