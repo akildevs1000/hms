@@ -390,8 +390,23 @@ export default {
         scrollTime: "00:00",
         displayEventTime: false,
         selectable: true,
-        initialView: "resourceTimelineMonth",
-
+        initialView: "resourceTimelineYear",
+        //initialView: "timeGrid",
+        // visibleRange: {
+        //   start: "2023-05-22",
+        //   end: "2023-05-25",
+        // },
+        views: {
+          resourceTimelineDay: {
+            buttonText: ":15 slots",
+            slotDuration: "00:15",
+          },
+          resourceTimelineYear: {
+            type: "resourceTimeline",
+            duration: { days: 60 },
+            buttonText: "10 days",
+          },
+        },
         eventResizableFromStart: true, // enables resizing from the start of the event
         slotEventOverlap: false, // allows events to overlap time slots
         navLinks: true,
@@ -611,6 +626,7 @@ export default {
 
     currentDate() {
       // return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
+
       return (this.calendarOptions.now = new Date(
         Date.now() - new Date().getTimezoneOffset() * 60000
       )
