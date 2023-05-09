@@ -39,7 +39,7 @@ class WhatsappController extends Controller
                     'number'       => $data['to'],
                     'type'         => 'text',
                     'message'      => $data['message'],
-                    'instance_id'  => $data['instance_id'],
+                    'instance_id'  => env('OTP_INSTANCE_ID'),
                     'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
                 ]);
 
