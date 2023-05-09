@@ -125,13 +125,25 @@ class BookedRoom extends Model
         } else if (($model->booking_status == 2) && (date('Y-m-d', strtotime($model->check_out)) <= date('Y-m-d'))) {
             (int) $status = 7;
         } else if (($model->booking_status > 3 || $model->booking_status == 0) && $model->balance > 0) {
-            (int) $status = 8;
+            if ($this->booking_status == 3) {
+                (int)  $status = $this->booking_status;
+            } else {
+                (int) $status = 8;
+            }
         } else {
-            (int) $status = $model->booking_status ?? 0;
+            if ($model->booking_status == 3) {
+                (int)  $status = $this->booking_status;
+                // echo $status;
+            } else {
+                (int) $status = $model->booking_status ?? 0;
+                // echo $model->booking_status;
+            }
         }
 
-        return match($status) {
+        // echo $status;
+        // dd($status);
 
+        return match ($status) {
             1 => 'linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
             // 2 => 'linear-gradient(135deg, #F95C39 0, #F95C39 100%)', //check in room

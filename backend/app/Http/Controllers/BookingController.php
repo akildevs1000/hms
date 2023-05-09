@@ -60,7 +60,7 @@ class BookingController extends Controller
                     (new ManagementController)->generateOccupancyRateByBooking($request);
                     return response()->json(['data' => $booking->id, 'status' => true]);
                 }
-            } catch (\Throwable$th) {
+            } catch (\Throwable $th) {
                 // return $th->getMessage();
                 Log::error($th->getMessage()); // log the error message
                 return response()->json(['error' => 'An error occurred. Please try again.']); // return a user-friendly error message
@@ -232,7 +232,7 @@ class BookingController extends Controller
 
                 return $this->response('Room Booked Successfully.', $booked, true);
             });
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -397,7 +397,7 @@ class BookingController extends Controller
 
                 return $this->response('Room Booked Successfully.', $booked, true);
             });
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -466,7 +466,7 @@ class BookingController extends Controller
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -586,7 +586,7 @@ class BookingController extends Controller
                 $isExistCustomer->update($customer);
             }
             return true;
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -608,7 +608,7 @@ class BookingController extends Controller
             }
             return $id;
             return $this->response('Customer successfully added.', $id, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -659,7 +659,7 @@ class BookingController extends Controller
             }
 
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
             // throw $th;
         }
@@ -755,7 +755,6 @@ class BookingController extends Controller
                 $booking->booking_status = 3;
                 $booking->check_out      = date('Y-m-d H:i');
                 $booking->save();
-
                 if (app()->isProduction()) {
                     (new WhatsappNotificationController)->checkOutNotification($booking, $customer);
                 }
@@ -763,7 +762,7 @@ class BookingController extends Controller
                 return response()
                     ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -813,7 +812,7 @@ class BookingController extends Controller
             }
 
             return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
             // throw $th;
         }
@@ -873,7 +872,7 @@ class BookingController extends Controller
                 return response()->json(['bookingId' => $booking->id, 'message' => 'Payment Successfully', 'status' => true]);
             }
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -888,7 +887,7 @@ class BookingController extends Controller
         return BookedRoom::whereHas('booking', function ($q) use ($request) {
             // $q->where('booking_status', '!=', 0);
             $q->where('company_id', $request->company_id);
-        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out']);
+        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out', 'booking_status']);
     }
 
     public function events_list1(Request $request)
@@ -953,21 +952,25 @@ class BookingController extends Controller
             }
 
             return response()->json(['data' => '', 'message' => 'Successfully canceled', 'status' => true]);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
 
-    public function setAvailable($id)
+    public function setAvailable(Request $request, $id)
     {
         try {
             $booking = Booking::find($id);
-            $booking->update(['booking_status' => 0]);
             if ($booking) {
-                BookedRoom::whereBookingId($booking->id)->update(['booking_status' => 0]);
+                BookedRoom::find($request->bookedRoomId)->update(['booking_status' => 0]);
+                $numberDirtRooms =    BookedRoom::whereBookingId($booking->id)->where('booking_status', '>=', 3)->count();
+                if ($numberDirtRooms == 0) {
+                    $booking->update(['booking_status' => 0]);
+                }
+                // return $this->response($numberDirtRooms, null, true);
                 return $this->response('Now room available.', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -981,7 +984,7 @@ class BookingController extends Controller
                 BookedRoom::whereBookingId($booking->id)->update(['booking_status' => 4]);
                 return $this->response('Now room maintenance.', null, true);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -1049,51 +1052,9 @@ class BookingController extends Controller
                 ]
             );
 
-            // return [
-            //     'newRoom' => $newRoom,
-            // ];
-
-            // {
-            //     "id": 39,
-            //     "room_type_id": 6,
-            //     "room_no": "105",
-            //     "status": "0",
-            //     "deleteStatus": 0,
-            //     "company_id": 2,
-            //     "created_at": null,
-            //     "price": "2800.00",
-            //     "room_type": {
-            //         "id": 6,
-            //         "name": "Queen",
-            //         "price": "2800.00"
-            //     }
-            // }
-
-            // {
-            //     "newRoom": {
-            //         "id": 50,
-            //         "room_type_id": 7,
-            //         "room_no": "101",
-            //         "status": "0",
-            //         "deleteStatus": 0,
-            //         "company_id": 2,
-            //         "created_at": null,
-            //         "price": "3800.00",
-            //         "room_type": {
-            //             "id": 7,
-            //             "name": "Castle",
-            //             "price": "3800.00"
-            //         }
-            //     }
-            // }
 
             return $this->response(' Under the working!', null, true);
 
-            // return $newRoom;
-            // return [
-            //     'new' =>  $newRoom->room_type->name,
-            //     'old' =>  $oldRoom->room_type,
-            // ];
 
             if ($newRoom->room_type->name == $oldRoom->room_type) {
                 $checkIn  = date('Y-m-d', strtotime($request->start));
@@ -1195,7 +1156,7 @@ class BookingController extends Controller
                 return $this->response('Room/Amount changed Successfully.', null, true);
             }
             return $this->response('DataBase Error in status change', null, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -1293,9 +1254,13 @@ class BookingController extends Controller
 
                 if ($deleted) {
                     $orderRooms = array_intersect_key(
-                        $bookedRoomAttributes, array_flip(OrderRoom::orderRoomAttributes()));
-                    $period = CarbonPeriod::create($newUpdateRoom['check_in'],
-                        $this->checkOutDate($newUpdateRoom['check_out']));
+                        $bookedRoomAttributes,
+                        array_flip(OrderRoom::orderRoomAttributes())
+                    );
+                    $period = CarbonPeriod::create(
+                        $newUpdateRoom['check_in'],
+                        $this->checkOutDate($newUpdateRoom['check_out'])
+                    );
                     foreach ($period as $date) {
                         $orderRooms['date']           = $date->format('Y-m-d');
                         $orderRooms['booked_room_id'] = $request->eventId;
@@ -1327,7 +1292,7 @@ class BookingController extends Controller
                 return $this->response('Room/Amount changed Successfully.', null, true);
             }
             return $this->response('DataBase Error in status change', null, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -1387,7 +1352,7 @@ class BookingController extends Controller
             return $this->response('Date changed Successfully.', null, true);
 
             return $this->response('DataBase Error in status change', null, true);
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];
@@ -1531,7 +1496,7 @@ class BookingController extends Controller
                 'extend_room_price' => array_sum(array_column($orderRooms_arr, 'grand_total')),
                 'number_of_nights'  => count($numberOfNights),
             ];
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
             return ["done" => false, "data" => "DataBase Error booking"];

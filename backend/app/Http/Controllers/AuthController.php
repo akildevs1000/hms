@@ -58,7 +58,6 @@ class AuthController extends Controller
             $user->permissions = [];
         }
 
-
         $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company") : ($user->role_id > 0 ? "user" : "master");
         $model = $model->with('company', 'employee')->first();
         $obj = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
@@ -77,6 +76,44 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = User::find($request->user()->id);
+        $user->is_verified = 0;
+        $user->save();
         $request->user()->tokens()->delete();
+    }
+
+    public function generateOTP(Request $request, $userId)
+    {
+        try {
+            $random_number = mt_rand(100000, 999999);
+            $user =   User::with('company')->find($userId);
+            $user->otp = $random_number;
+
+            if ($user->save()) {
+                if (app()->isProduction()) {
+                    (new WhatsappNotificationController)->loginOTP($user);
+                }
+                return $this->response('updated.', null, true);
+            }
+        } catch (\Throwable $th) {
+            return $this->response($th, null, true);
+        }
+    }
+
+    public function checkOTP(Request $request, $otp)
+    {
+        try {
+            $user =   User::with('company')->find($request->userId);
+            if ($user->otp == $otp) {
+                $user->is_verified = 1;
+                $user->save();
+                return $this->response('updated.', $user, true);
+            }
+            $user->is_verified = 0;
+            $user->save();
+            return $this->response('updated.', null, false);
+        } catch (\Throwable $th) {
+            return $this->response($th, null, false);
+        }
     }
 }

@@ -219,7 +219,9 @@
               <td>{{ item && item.check_in }}</td>
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">{{ item.advance_price }}</td>
+              <td class="text-right">
+                {{ setAdvancePayment(item.advance_price) }}
+              </td>
               <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
@@ -245,6 +247,7 @@
           </table>
         </v-card>
       </v-col>
+
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -344,6 +347,7 @@
           </table>
         </v-card>
       </v-col>
+
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -418,7 +422,9 @@
               <td>{{ item && item.check_in }}</td>
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">{{ item.advance_price }}</td>
+              <td class="text-right">
+                {{ setAdvancePayment(item.advance_price) }}
+              </td>
               <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
@@ -444,6 +450,7 @@
           </table>
         </v-card>
       </v-col>
+
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -518,7 +525,9 @@
               <td>{{ item && item.check_in }}</td>
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">{{ item.advance_price }}</td>
+              <td class="text-right">
+                {{ setAdvancePayment(item.advance_price) }}
+              </td>
               <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
@@ -544,6 +553,7 @@
           </table>
         </v-card>
       </v-col>
+
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -618,7 +628,9 @@
               <td>{{ item && item.check_in }}</td>
               <td>{{ item && item.check_out }}</td>
               <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">{{ item.advance_price }}</td>
+              <td class="text-right">
+                {{ setAdvancePayment(item.advance_price) }}
+              </td>
               <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
               <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
@@ -687,6 +699,7 @@
             <tr>
               <th>Room No</th>
               <th>Room Type</th>
+              <th>Time</th>
               <th>Amount</th>
               <th>Reason</th>
               <th>Cancel By</th>
@@ -694,6 +707,7 @@
             <tr v-for="(item, index) in cancelRooms" :key="index">
               <td>{{ item && item.room_no }}</td>
               <td>{{ item && item.room_type }}</td>
+              <td>{{ item && item.time }}</td>
               <td class="text-right">{{ item && item.grand_total }}</td>
               <td>{{ item && item.reason }}</td>
               <td>{{ item && item.user && item.user.name }}</td>
@@ -889,7 +903,7 @@ export default {
       let tot =
         parseFloat(this.cityLedgerTotalCash) +
         parseFloat(this.totalCash) +
-        parseFloat(this.totalUPI) +
+        // parseFloat(this.totalUPI) +
         parseFloat(this.checkoutTotalCash) +
         parseFloat(this.continueTotalCash) +
         parseFloat(this.todayPaymentTotalCash);
@@ -987,6 +1001,10 @@ export default {
         );
       });
       return sum.toFixed(2);
+    },
+
+    setAdvancePayment(amt) {
+      return amt > 0 ? amt : 0;
     },
 
     process(type) {

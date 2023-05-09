@@ -17,6 +17,54 @@ class AgentsController extends Controller
      */
     public function index(Request $request)
     {
+        $model = Booking::query();
+
+        $model->where('company_id', $request->company_id);
+        $model->where('type', '!=', 'Customer');
+        $model->with('customer');
+        $model->where('booking_status', '!=', -1);
+        $model->where('paid_by', '>=', 0);
+
+        if ($request->filled('search') && $request->search != "") {
+            $model->where(function ($q) use ($request) {
+                $q->where(function ($query) use ($request) {
+                    $query->orWhere('reservation_no', 'ILIKE', '%' . $request->search . '%');
+                });
+            });
+
+            $model->orWhereHas('customer', function ($q) use ($request) {
+                $q->where(function ($query) use ($request) {
+                    $query->orWhere('first_name', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('last_name', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('contact_no', 'ILIKE', '%' . $request->search . '%');
+                });
+            });
+        }
+
+        if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
+            $model->where('source', $request->source);
+        }
+
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->where(function ($q) use ($request) {
+                $q->WhereDate('check_in', '>=', $request->from);
+                $q->whereDate('check_in', '<=', $request->to);
+            });
+        }
+
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->where(function ($q) use ($request) {
+                $q->WhereDate('check_out', '>=', $request->from);
+                $q->whereDate('check_out', '<=', $request->to);
+            });
+        }
+
+        $model->orderBy('id', 'desc');
+        return $model->paginate($request->per_page);
+    }
+
+    public function indexOld(Request $request)
+    {
         $model = Agent::query();
 
         $model->where('company_id', $request->company_id);

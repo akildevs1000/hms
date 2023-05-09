@@ -276,7 +276,7 @@ class WhatsappNotificationController extends Controller
 
     public function getPayMode($mode = "")
     {
-        return match($mode) {
+        return match ($mode) {
             1 => 'Cash',
             2 => 'Card',
             3 => 'Online',
@@ -284,5 +284,43 @@ class WhatsappNotificationController extends Controller
             5 => 'UPI',
             6 => 'Cheque',
         };
+    }
+
+    public function loginOTP($user)
+    {
+        $instance_id  = "";
+        $access_token = "";
+        $comName      = "";
+        $msg          = "";
+        $customerName = ucfirst($user['name']) ?? 'Guest';
+        $company      = $user->company;
+        $otp      = $user['otp'];
+
+        $instance_id = $company->whatsapp_instance_id;
+        $comName     = $company->company_code;
+
+        $msg .= "$comName\n";
+        $msg .= "\n";
+        $msg .= "Dear  $customerName, \n";
+
+        $msg .= "\n";
+        $msg .= "--------------- \n";
+        $msg .= "Your OTP  \n";
+        $msg .= "--------------- \n";
+        $msg .= "\n";
+        $msg .= "$otp \n";
+
+
+        $data = [
+            'to'           => env('COUNTRY_CODE') . $user['mobile'],
+            'message'      => $msg,
+            'company'      => $company ?? false,
+            'instance_id'  => $instance_id,
+            'access_token' => $access_token,
+            'type'         => 'Login',
+            'userName'        => $user['name'] ?? "",
+        ];
+
+        (new WhatsappController)->sentOTP($data);
     }
 }

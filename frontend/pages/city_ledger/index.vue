@@ -181,6 +181,12 @@
             <td>{{ item.source || "---" }}</td>
             <td>{{ item.total_price || "---" }}</td>
             <td>{{ item.total_posting_amount || 0 }}</td>
+            <td>
+              {{
+                parseFloat(item.total_price) +
+                  parseFloat(item.total_posting_amount) || "---"
+              }}.00
+            </td>
             <td>{{ item.paid_amounts || 0 }}</td>
             <td>{{ item.balance || 0 }}</td>
             <td>{{ (item && item.check_in_date) || "---" }}</td>
@@ -294,7 +300,10 @@ export default {
         text: "Amount",
       },
       {
-        text: "Amount",
+        text: "P/Amount",
+      },
+      {
+        text: "T/Amount",
       },
       {
         text: "Total Paid Amount",

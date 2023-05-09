@@ -1,6 +1,7 @@
  <?php
 
     use App\Http\Controllers\CustomerController;
+    use App\Http\Controllers\InquiriesController;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,9 @@
         $countries = DB::table('countries')->get();
         return $countries;
     });
+
+
+
+    Route::post('inquiry', [InquiriesController::class, 'store']);
+    Route::get('inquiry', [InquiriesController::class, 'index']);
+    Route::post('inquiry/{id}', [InquiriesController::class, 'update']);

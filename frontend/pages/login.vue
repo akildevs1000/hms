@@ -81,38 +81,26 @@
                         <v-btn
                           :loading="loading"
                           @click="login"
-                          class="
-                            btn btn-primary btn-block
-                            text-white
-                            fa-lg
-                            primary
-                            mt-1
-                            mb-3
-                          "
+                          class="btn btn-primary btn-block text-white fa-lg primary mt-1 mb-3"
                         >
                           Log in
                         </v-btn>
                       </div>
 
                       <div
-                        class="
-                          d-flex
-                          align-items-center
-                          justify-content-center
-                          pb-4
-                        "
+                        class="d-flex align-items-center justify-content-center pb-4"
                       >
                         <!-- <p class="mb-0 me-2">Don't have an account?</p> -->
                         <!-- <button type="button" class="btn btn-outline-danger">Create new</button> -->
                       </div>
                     </v-form>
-                    <div class="text-right">
+                    <!-- <div class="text-right">
                       <nuxt-link
                         class="text-muted text-right"
                         to="/reset-password"
                         >Forgot password?</nuxt-link
                       >
-                    </div>
+                    </div> -->
                   </div>
                 </div>
                 <div class="col-lg-6 d-flex align-items-center primary">
@@ -153,11 +141,11 @@ export default {
     show_password: false,
     msg: "",
     emailRules: [
-      v => !!v || "E-mail is required",
-      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
+      (v) => !!v || "E-mail is required",
+      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
     ],
 
-    passwordRules: [v => !!v || "Password is required"]
+    passwordRules: [(v) => !!v || "Password is required"],
   }),
   created() {},
   methods: {
@@ -166,55 +154,42 @@ export default {
     //   this.showGRC = this.reCaptcha ? false : true;
     // },
 
-    login() {
-      // this.showGRC = this.reCaptcha ? false : true;
+    set_otp(useId) {
+      let payload = {
+        cancel_by: this.$auth.user.id,
+      };
+      this.$axios
+        .post(`generate_otp/${useId}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            return;
+          }
+        })
+        .catch((err) => console.log(err));
+    },
 
-      // if (this.$refs.form.validate() && this.reCaptcha) {
+    login() {
       if (this.$refs.form.validate()) {
         this.msg = "";
         this.loading = true;
-        // const token = await this.$recaptcha.getResponse();
         let credentials = {
           email: this.email,
-          password: this.password
+          password: this.password,
         };
         this.$auth
           .loginWith(
             "local",
             { data: credentials },
             {
-              "Access-Control-Allow-Origin": "*"
+              "Access-Control-Allow-Origin": "*",
             }
           )
           .then(({ data }) => {
-            let id, name;
-            // if (data.user && data.user.user_type == "employee") {
-            //   this.$router.push(`/employee_dashboard`);
-            //   id = data.user?.employee?.id;
-            //   name = data.user?.employee?.first_name;
-            // } else if (data.user && data.user.user_type == "company") {
-            //   id = data.user?.company?.id;
-            //   name = data.user?.company?.name;
-            // } else if (data.user && data.user.user_type == "master") {
-            //   this.$router.push(`/master`);
-            //   id = data.user?.id;
-            //   name = data.user?.name;
-            // }
-
-            if (data.user && data.user.user_type == "master") {
-              this.$router.push(`/master`);
-              id = data.user?.id;
-              name = data.user?.name;
+            if (this.$auth.user.user_type != "company") {
+              this.set_otp(this.$auth.user.id);
+              this.$router.push(`/otp`);
+              return;
             }
-
-            // this.$axios.post(`activity`, {
-            //   user_id: id,
-            //   action: "Logged In",
-            //   type: "Login",
-            //   model_id: id,
-            //   model_type: "User",
-            //   description: `${name} logged In`
-            // });
           })
           .catch(({ response }) => {
             if (!response) {
@@ -225,8 +200,8 @@ export default {
             setTimeout(() => (this.loading = false), 2000);
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>

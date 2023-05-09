@@ -269,9 +269,9 @@
               <v-list-item link @click="setAvailable">
                 <v-list-item-title>Make Available</v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="setMaintenance">
+              <!-- <v-list-item link @click="setMaintenance">
                 <v-list-item-title>Make Maintenance</v-list-item-title>
-              </v-list-item>
+              </v-list-item> -->
             </div>
 
             <div v-if="bookingStatus == 4">
@@ -390,8 +390,23 @@ export default {
         scrollTime: "00:00",
         displayEventTime: false,
         selectable: true,
-        initialView: "resourceTimelineMonth",
-
+        initialView: "resourceTimelineYear",
+        //initialView: "timeGrid",
+        // visibleRange: {
+        //   start: "2023-05-22",
+        //   end: "2023-05-25",
+        // },
+        views: {
+          resourceTimelineDay: {
+            buttonText: ":15 slots",
+            slotDuration: "00:15",
+          },
+          resourceTimelineYear: {
+            type: "resourceTimeline",
+            duration: { days: 60 },
+            buttonText: "10 days",
+          },
+        },
         eventResizableFromStart: true, // enables resizing from the start of the event
         slotEventOverlap: false, // allows events to overlap time slots
         navLinks: true,
@@ -404,7 +419,7 @@ export default {
             width: "3%",
           },
           {
-            headerContent: "Room Type",
+            headerContent: "Room Type1",
             field: "room_type",
             width: "5%",
           },
@@ -475,7 +490,7 @@ export default {
           if (date.startStr < this.currentDate) {
             this.alert(
               "Missing!",
-              "Please Select Current Date or Future Date",
+              "Please Select Current Date or Future Date1",
               "error"
             );
             return;
@@ -611,6 +626,7 @@ export default {
 
     currentDate() {
       // return (this.calendarOptions.now = new Date().toJSON().slice(0, 10));
+
       return (this.calendarOptions.now = new Date(
         Date.now() - new Date().getTimezoneOffset() * 60000
       )
@@ -861,7 +877,9 @@ export default {
     },
 
     setAvailable() {
-      let payload = {};
+      let payload = {
+        bookedRoomId: this.evenIid,
+      };
 
       this.$axios
         .post(`set_available/${this.bookingId}`, payload)
@@ -1025,3 +1043,10 @@ export default {
 </script>
 
 <style scoped src="@/assets/custom/calendar.css"></style>
+
+<!-- <style>
+.fc-timeline-event-harness {
+  margin-left: 30px;
+  margin-right: -20px;
+}
+</style> -->

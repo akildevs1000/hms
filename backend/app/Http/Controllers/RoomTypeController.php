@@ -18,7 +18,7 @@ class RoomTypeController extends Controller
      */
     public function index(Request $request)
     {
-        return RoomType::get(['id', 'name', 'price']);
+        return RoomType::whereCompanyId($request->company_id)->get(['id', 'name', 'price']);
     }
 
     public function getPriceList(Request $request)

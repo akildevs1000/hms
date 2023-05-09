@@ -1855,6 +1855,12 @@ export default {
       this.room.rooms = rooms.toString();
       this.room.type = this.changeRoomOptions.booking.type;
       this.room.source = this.changeRoomOptions.booking.source;
+
+      this.room.reference_no = this.changeRoomOptions.booking.reference_no;
+      this.room.paid_by = this.changeRoomOptions.booking.paid_by;
+
+      console.log(this.changeRoomOptions);
+
       let payload = {
         ...this.room,
         ...this.customer,

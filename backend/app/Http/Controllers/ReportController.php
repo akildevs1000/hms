@@ -190,11 +190,26 @@ class ReportController extends Controller
     public function dirtyRoomsReportProcess($request)
     {
         $company_id        = $request->company_id;
-        return $dirtyRooms = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
-            $q->where('booking_status', '!=', 0);
-            $q->where('booking_status', 3);
-            $q->where('company_id', $company_id);
-        })->get();
+        // return $dirtyRooms = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
+        //         $q->where('booking_status', '!=', 0);
+        //         $q->where('booking_status', 3);
+        //         $q->where('company_id', $company_id);
+        //     })->get();
+
+        return  $dirtyRooms = BookedRoom::where('booking_status', '!=', 0)
+            ->where('booking_status', 3)
+            ->where('company_id', $company_id)
+            ->get();
+
+        // ------------------backup------------------------------
+        // $company_id        = $request->company_id;
+        // return $dirtyRooms = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
+        //     $q->where('booking_status', '!=', 0);
+        //     $q->where('booking_status', 3);
+        //     $q->where('company_id', $company_id);
+        // })->get();
+        // ------------------------------------------------
+
     }
 
     // -----------------------

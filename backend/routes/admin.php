@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/generate_otp/{useId}', [AuthController::class, 'generateOTP']);
+Route::post('/check_otp/{otp}', [AuthController::class, 'checkOTP']);
 
 // reset password
 Route::post('/reset-password', [ResetPasswordController::class, 'sendCode']);

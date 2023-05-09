@@ -280,7 +280,7 @@ class ManagementController extends Controller
             ->with('user')
             ->whereDate('created_at', $request->date)
             ->where('company_id', $company_id)
-            ->get(['room_no', 'room_type', 'grand_total', 'reason', 'cancel_by']);
+            ->get(['room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at']);
     }
 
     private function cityLedgerPaymentsAudit($model, $request)

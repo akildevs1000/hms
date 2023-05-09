@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\WhatsappController;
 use App\Http\Controllers\AttendanceController;
+use App\Models\Agent;
 
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
@@ -242,6 +243,7 @@ Route::get('truncate', function () {
     CancelRoom::truncate();
     Food::truncate();
     Taxable::truncate();
+    Agent::truncate();
     Expense::truncate();
     // Customer::truncate();
     return "truncate done";

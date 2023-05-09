@@ -1,17 +1,11 @@
 <template>
   <div v-if="can(`agents_access`)">
     <div class="text-center ma-2">
-      <v-snackbar
-        v-model="snackbar"
-        top
-        absolute
-        color="secondary"
-        elevation="24"
-      >
+      <v-snackbar v-model="snackbar" top absolute color="secondary" elevation="24">
         {{ response }}
       </v-snackbar>
     </div>
-    <!-- <v-dialog v-model="agentPaymentDialog" persistent max-width="800px">
+    <v-dialog v-model="agentPaymentDialog" persistent max-width="800px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Agent Payment</span>
@@ -19,13 +13,8 @@
         <v-card-text>
           <v-container>
             <table>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
+              <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                color="primary"></v-progress-linear>
               <tr>
                 <th>Customer Name</th>
                 <td style="width: 490px">
@@ -51,23 +40,14 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-select
-                    v-model="booking.payment_mode_id"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' },
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                  ></v-select>
+                  <v-select v-model="booking.payment_mode_id" :items="[
+                    { id: 1, name: 'Cash' },
+                    { id: 2, name: 'Card' },
+                    { id: 3, name: 'Online' },
+                    { id: 4, name: 'Bank' },
+                    { id: 5, name: 'UPI' },
+                    { id: 6, name: 'Cheque' },
+                  ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-select>
                 </td>
               </tr>
               <tr v-if="booking.payment_mode_id != 1">
@@ -76,13 +56,8 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="text"
-                    v-model="booking.transaction"
-                    :hide-details="true"
-                  ></v-text-field>
+                  <v-text-field dense outlined type="text" v-model="booking.transaction"
+                    :hide-details="true"></v-text-field>
                 </td>
               </tr>
               <tr>
@@ -106,19 +81,12 @@
                 <th>Payment</th>
                 <td>
                   <v-container fluid>
-                    <v-radio-group
-                      v-model="paid_status"
-                      @change="getFullPayment"
-                      row
-                      dense
-                      :hide-details="errors && !errors.paid_status"
-                      :error="errors && errors.paid_status"
-                      :error-messages="
+                    <v-radio-group v-model="paid_status" @change="getFullPayment" row dense
+                      :hide-details="errors && !errors.paid_status" :error="errors && errors.paid_status" :error-messages="
                         errors && errors.paid_status
                           ? errors.paid_status[0]
                           : ''
-                      "
-                    >
+                      ">
                       <v-radio label="Only Rooms" :value="1"></v-radio>
                       <v-radio label="Only Posting" :value="2"></v-radio>
                       <v-radio label="Rooms + Posting" :value="3"></v-radio>
@@ -134,13 +102,8 @@
                   <span class="text-danger">*</span>
                 </th>
                 <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="booking.full_payment"
-                    :hide-details="true"
-                  ></v-text-field>
+                  <v-text-field dense outlined type="number" v-model="booking.full_payment"
+                    :hide-details="true"></v-text-field>
                 </td>
               </tr>
             </table>
@@ -153,25 +116,6 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog> -->
-
-    <v-dialog v-model="payingDialog" persistent max-width="1000px">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Payment</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
-        </v-toolbar>
-        <v-card-text>
-          <Paying
-            :msg="'payment by agent'"
-            :BookingData="bookingData"
-            @close-dialog="payingDialog = false"
-          ></Paying>
-        </v-card-text>
-      </v-card>
     </v-dialog>
 
     <v-row class="mt-5 mb-0">
@@ -183,123 +127,47 @@
 
     <v-row class="pt-0 mt-0">
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-text-field
-          class=""
-          label="Search..."
-          dense
-          outlined
-          flat
-          append-icon="mdi-magnify"
-          @input="searchIt"
-          v-model="search"
-          hide-details
-        ></v-text-field>
+        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
+          v-model="search" hide-details></v-text-field>
       </v-col>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="type"
-          :items="types"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo flat
+          :hide-details="true" @change="getDataFromApi('agents')"></v-select>
       </v-col>
 
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="source"
-          :items="type == 'Online' ? sources : agentList"
-          dense
-          item-value="name"
-          item-text="name"
-          placeholder="Sources"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="source" :items="type == 'Online' ? sources : agentList"
+          dense item-value="name" item-text="name" placeholder="Sources" solo flat :hide-details="true"
+          @change="getDataFromApi('agents')"></v-select>
       </v-col>
 
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="guest_mode"
-          :items="['Select All', 'Arrival', 'Departure']"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
+          dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi('agents')"></v-select>
       </v-col>
 
       <v-col md="2">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
+              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col md="2">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
+            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
+              solo flat label="To" :hide-details="true"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
+
 
     <div v-if="can(`agents_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
@@ -314,31 +182,18 @@
               {{ item.text }}
             </th>
           </tr>
-          <v-progress-linear
-            v-if="loading"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
-          <tr
-            v-for="(item, index) in data"
-            :key="index"
-            style="font-size: 12px"
-          >
+          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+            color="primary"></v-progress-linear>
+          <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
             <td>
               <b>{{ ++index }}</b>
             </td>
             <td>
-              <span
-                class="blue--text"
-                @click="goToRevView(item)"
-                style="cursor: pointer"
-              >
-                {{ (item && item.reservation_no) || "---" }}
+              <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer;">
+                {{ (item.booking && item.booking.reservation_no) || "---" }}
               </span>
             </td>
-            <td style="max-width: 80px">{{ (item && item.rooms) || "---" }}</td>
+            <td style="max-width: 80px;">{{ (item && item.booking && item.booking.rooms) || "---" }}</td>
             <td>{{ item.booking_date || "---" }}</td>
             <td>{{ item.reference_no || "---" }}</td>
             <td>
@@ -346,39 +201,45 @@
             </td>
             <td>{{ item.type || "---" }}</td>
             <td>{{ item.source || "---" }}</td>
-            <td>{{ item.total_price || "0" }}</td>
-            <td>{{ item.total_posting_amount || "0" }}</td>
+            <td>{{ item.amount || "0" }}</td>
+            <td>{{ item.posting_amount || "0" }}</td>
             <td>
               {{
-                parseFloat(item.total_price) +
-                  parseFloat(item.total_posting_amount) || "---"
+                parseFloat(item.amount) + parseFloat(item.posting_amount) ||
+                "---"
               }}.00
             </td>
             <td>
-              {{ (item && item.check_in_date) || "---" }}
+              {{
+                (item && item.booking && item.booking.check_in_date) || "---"
+              }}
             </td>
             <td>
-              {{ (item && item.check_out_date) || "---" }}
+              {{
+                (item && item.booking && item.booking.check_out_date) || "---"
+              }}
             </td>
-            <td>{{ item.paid_amounts || "---" }}</td>
-            <td>{{ item.balance || "---" }}</td>
             <td>
-              <v-chip
-                x-small
-                class="ma-2"
-                :color="is_paid_color(item.balance)"
-                text-color="white"
-              >
+              <v-chip x-small class="ma-2" :color="is_paid_color(item.is_paid)" text-color="white">
                 {{ is_paid_text(item.is_paid) }}
               </v-chip>
             </td>
+            <td>{{ item.agent_paid_amount || "---" }}</td>
+            <!-- <td>{{ item.transaction || "---" }}</td> -->
+            <!-- <td>{{ item.paid_date || "---" }}</td> -->
             <td>
-              <v-icon
+              <!-- <v-icon
                 x-small
                 color="primary"
-                @click="paidAmount(item)"
+                @click="viewAgentsBilling(item)"
                 class="mr-2"
               >
+                mdi-eye
+              </v-icon> -->
+
+              <!-- v-if="!item.is_paid" -->
+
+              <v-icon x-small color="primary" @click="paidAmount(item)" class="mr-2">
                 mdi-cash-multiple
               </v-icon>
             </td>
@@ -389,12 +250,8 @@
         <v-row>
           <v-col md="12" class="float-right">
             <div class="float-right">
-              <v-pagination
-                v-model="pagination.current"
-                :length="pagination.total"
-                @input="onPageChange"
-                :total-visible="12"
-              ></v-pagination>
+              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                :total-visible="12"></v-pagination>
             </div>
           </v-col>
         </v-row>
@@ -405,15 +262,10 @@
   <NoAccess v-else />
 </template>
 <script>
-import Paying from "../../components/booking/Paying.vue";
 export default {
-  components: {
-    Paying,
-  },
   data: () => ({
     radioGroup: 1,
 
-    payingDialog: false,
     agentPaymentDialog: false,
     snackbar: false,
     response: "",
@@ -485,15 +337,19 @@ export default {
       {
         text: "C/Out",
       },
-      {
-        text: "Paid Amount",
-      },
-      {
-        text: "Balance",
-      },
+
       {
         text: "Paid/Status",
       },
+      {
+        text: "Paid Amount",
+      },
+      // {
+      //   text: "Transaction",
+      // },
+      // {
+      //   text: "Paid Date",
+      // },
       {
         text: "Action",
       },
@@ -503,7 +359,6 @@ export default {
     defaultItem: { name: "" },
     response: "",
     data: [],
-    bookingData: {},
     booking: {},
     paid_status: 1,
     agentData: [],
@@ -537,14 +392,8 @@ export default {
       );
     },
 
-    is_paid_color(blc) {
-      let s;
-      if (blc > 0) {
-        s = parseInt(0);
-      } else {
-        s = parseInt(1);
-      }
-
+    is_paid_color(status) {
+      let s = parseInt(status);
       switch (s) {
         case 0:
           return "red";
@@ -552,22 +401,23 @@ export default {
         case 1:
           return "green";
           break;
+        case 2:
+          return "orange";
+          break;
       }
     },
 
-    is_paid_text(blc) {
-      let s;
-      if (blc > 0) {
-        s = parseInt(1);
-      } else {
-        s = parseInt(0);
-      }
+    is_paid_text(status) {
+      let s = parseInt(status);
       switch (s) {
         case 0:
           return "pending";
           break;
         case 1:
           return "paid";
+          break;
+        case 2:
+          return "customer";
           break;
       }
     },
@@ -586,12 +436,7 @@ export default {
       }
     },
 
-    paidAmount(item) {
-      console.log(item);
-      this.bookingData = item;
-      this.payingDialog = true;
-      return;
-
+    paidAmount(agentData) {
       this.agentData = agentData;
       let payload = {
         params: {
@@ -646,7 +491,7 @@ export default {
     },
 
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      this.$router.push(`/customer/details/${item.booking_id}`);
     },
 
     getDataFromApi(url = this.endpoint) {
@@ -662,6 +507,7 @@ export default {
           source: newSource,
           guest_mode: this.guest_mode,
           search: this.search,
+
         },
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
@@ -691,6 +537,7 @@ export default {
         transaction: this.booking.transaction,
         paid_status: this.paid_status,
         user_id: this.$auth.user.id,
+
       };
       // return;
       console.log(payload);
