@@ -195,7 +195,20 @@
           hide-details
         ></v-text-field>
       </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
+      <v-col xs="12" sm="12" md="1" cols="12">
+        <v-select
+          class="custom-text-box shadow-none"
+          v-model="paid_status_type"
+          :items="['Select All', 'Pending', 'Paid']"
+          dense
+          placeholder="Payment"
+          solo
+          flat
+          :hide-details="true"
+          @change="getDataFromApi('agents')"
+        ></v-select>
+      </v-col>
+      <v-col xs="12" sm="12" md="1" cols="12">
         <v-select
           class="custom-text-box shadow-none"
           v-model="type"
@@ -208,7 +221,6 @@
           @change="getDataFromApi('agents')"
         ></v-select>
       </v-col>
-
       <v-col xs="12" sm="12" md="2" cols="12">
         <v-select
           class="custom-text-box shadow-none"
@@ -369,7 +381,7 @@
                 :color="is_paid_color(item.balance)"
                 text-color="white"
               >
-                {{ is_paid_text(item.is_paid) }}
+                {{ is_paid_text(item.balance) }}
               </v-chip>
             </td>
             <td>
@@ -417,6 +429,7 @@ export default {
     agentPaymentDialog: false,
     snackbar: false,
     response: "",
+    paid_status_type: "",
 
     from_date: "",
     from_menu: false,
@@ -564,10 +577,10 @@ export default {
       }
       switch (s) {
         case 0:
-          return "pending";
+          return "paid";
           break;
         case 1:
-          return "paid";
+          return "pending";
           break;
       }
     },
@@ -662,6 +675,7 @@ export default {
           source: newSource,
           guest_mode: this.guest_mode,
           search: this.search,
+          paid_status_type: this.paid_status_type,
         },
       };
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {

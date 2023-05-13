@@ -448,7 +448,7 @@ export default {
             width: "3%",
           },
           {
-            headerContent: "Room Type1",
+            headerContent: "Room Type",
             field: "room_type",
             width: "5%",
           },
@@ -519,7 +519,7 @@ export default {
           if (date.startStr < this.currentDate) {
             this.alert(
               "Missing!",
-              "Please Select Current Date or Future Date1",
+              "Please Select Current Date or Future Date",
               "error"
             );
             return;

@@ -37,9 +37,9 @@
                             <v-icon color="white" small>mdi-plus</v-icon>
                             Add Room
                           </v-btn>
-                          <v-btn icon>
+                          <!-- <v-btn icon>
                             <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
+                          </v-btn> -->
                         </div>
                       </div>
                       <v-divider class="p-0 m-0" dense></v-divider>
@@ -567,6 +567,19 @@
                     <strong>{{ convert_decimal(room.remaining_price) }}</strong>
                   </div>
                 </div>
+                <div class="input-group input-group-sm px-5 mb-5">
+                  <v-textarea
+                    filled
+                    placeholder="Room Change Reason"
+                    label="Room Change Reason"
+                    :hide-details="true"
+                    v-model="changeReason"
+                    outlined
+                    dense
+                    rows="4"
+                    row-height="15"
+                  ></v-textarea>
+                </div>
                 <div class="input-group input-group-sm px-3 mb-5">
                   <v-btn
                     style="background-color: #4390fc; margin-right: 5px"
@@ -958,6 +971,8 @@ export default {
       // -------customer history---------------
       roomTab: null,
       customer: "",
+      changeReason: "",
+
       bookings: "",
       revenue: "",
       city_ledger: "",
@@ -1841,6 +1856,12 @@ export default {
         this.room.advance_price = 0;
       }
 
+      if (this.changeReason == "") {
+        this.alert("Missing!", "Enter room change reason", "error");
+        this.subLoad = false;
+        return;
+      }
+
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");
@@ -1915,10 +1936,13 @@ export default {
         })
         .catch((e) => console.log(e));
     },
-
+    // The room number 103 was changed to room 104
     cancelItem(oldRoom) {
+      let rt = this.selectedRooms[0].room_type;
+      let ac = `The room number ${oldRoom.room_no} was changed to category ${rt} room ${this.room.rooms}`;
       let payload = {
-        reason: oldRoom.room_no + " changed as new room",
+        reason: this.changeReason || "",
+        action: ac,
         cancel_by: this.$auth.user.id,
       };
       this.$axios
