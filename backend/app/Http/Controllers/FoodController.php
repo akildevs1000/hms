@@ -90,6 +90,10 @@ class FoodController extends Controller
     {
         $model = BookedRoom::query();
         $model->whereCompanyId($request->company_id);
+        $model->where(function ($q) {
+            $q->where('tot_adult_food', '>', 0);
+            $q->orWhere('tot_child_food', '>', 0);
+        });
         $model->without('booking');
         $model->whereHas('booking', function ($q) use ($request) {
             $q->where('booking_status', 2);

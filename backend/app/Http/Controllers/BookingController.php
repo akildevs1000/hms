@@ -616,6 +616,9 @@ class BookingController extends Controller
     public function check_in_room(Request $request)
     {
         try {
+
+            session(['isCheckInSes' => true]);
+
             $booking_id              = $request->booking_id;
             $booking                 = Booking::find($booking_id);
             $customer                = Customer::find($request->customer_id);
@@ -624,6 +627,7 @@ class BookingController extends Controller
             $booking->id_card_no     = $request->id_card_no;
             $booking->expired        = $request->expired;
             $booking->id_card_type   = IdCardType::find($request->id_card_type_id)->name ?? "";
+            $booking->check_in      = date('Y-m-d H:i');
 
             if ($request->hasFile('document')) {
                 $file     = $request->file('document');
@@ -660,7 +664,7 @@ class BookingController extends Controller
 
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
         } catch (\Throwable $th) {
-            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+            return response()->json(['data' => '', 'message' => $th, 'status' => false]);
             // throw $th;
         }
     }
@@ -919,6 +923,7 @@ class BookingController extends Controller
             if ($bookedRoom) {
                 $bookedRoom->reason    = $request->reason;
                 $bookedRoom->cancel_by = $request->cancel_by;
+                $bookedRoom->action = $request->action ?? "Cancel by manual";
 
                 $arr    = $bookedRoom->toArray();
                 $cancel = CancelRoom::create($arr);

@@ -45,6 +45,11 @@ class AgentsController extends Controller
             $model->where('source', $request->source);
         }
 
+        if ($request->filled('paid_status_type') && $request->paid_status_type != "" && $request->paid_status_type != 'Select All') {
+            $s = $request->paid_status_type == "Pending" ? '>' : '<';
+            $model->where('balance', $s, 0);
+        }
+
         if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->where(function ($q) use ($request) {
                 $q->WhereDate('check_in', '>=', $request->from);

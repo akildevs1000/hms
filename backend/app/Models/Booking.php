@@ -92,11 +92,13 @@ class Booking extends Model
 
     public function SetCheckInAttribute($value)
     {
-        // dd($value . ' ' . date('H:i:s'));
-        // dd(date('Y-m-d H:i:s', strtotime($value)));
-        // dd($value);
-        // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
-        $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+        // $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+        if (session('isCheckInSes')) {
+            $cod = $this->attributes['check_in'] = date('Y-m-d H:i', strtotime($value));
+            BookedRoom::whereBookingId($this->attributes['id'])->update(['check_in' => $cod, 'booking_status' => 2]);
+        } else {
+            $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+        }
     }
 
     public function SetReferenceNoAttribute($value)
@@ -114,7 +116,7 @@ class Booking extends Model
         }
 
         // dd($cod);
-
+        
         // $date = Carbon::parse($value);
         // $date->addDays(1);
         // $d = $date->format('Y-m-d');

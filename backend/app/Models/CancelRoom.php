@@ -37,6 +37,7 @@ class CancelRoom extends Model
         "reason",
         "cancel_by",
         "booking_id",
+        "action",
         "customer_id",
     ];
 
@@ -48,6 +49,7 @@ class CancelRoom extends Model
     {
         return date('H:i', strtotime($this->created_at));
     }
+
 
     /**
      * Get the user that owns the CancelRoom
