@@ -26,6 +26,19 @@ class Kernel extends ConsoleKernel
             ->appendOutputTo("db_backup.log")
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
+        // PDF
+        $schedule
+            ->command('task:generate_audit_report')
+            ->everyMinute()
+            // ->everyThirtyMinutes()
+            // ->dailyAt('2:00')
+            //->hourly()
+            ->appendOutputTo(storage_path("logs/pdf.log"))
+            ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+
+
+
+
         // if (env("APP_ENV") == "production") {
         //     $schedule
         //         ->command('task:sync_attendance_logs')

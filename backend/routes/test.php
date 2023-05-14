@@ -1,8 +1,10 @@
 <?php
 
 use App\Models\Food;
+use App\Models\Agent;
 use App\Mail\TestMail;
 use App\Models\Booking;
+use App\Models\Company;
 use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\Posting;
@@ -17,6 +19,8 @@ use App\Models\BookedRoom;
 use App\Models\CancelRoom;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Mail\AuditReportMail;
+use setasign\Fpdi\Tcpdf\Fpdi;
 use App\Models\ReportNotification;
 use Illuminate\Support\Facades\DB;
 use App\Mail\ReportNotificationMail;
@@ -27,99 +31,40 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\WhatsappController;
 use App\Http\Controllers\AttendanceController;
-use App\Models\Agent;
 
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
 
-Route::get('/test', function (Request $request) { {
-        return   Customer::whereContactNo("null")->whereCompanyId(2)->first();
+Route::get('/test', function (Request $request) {
+
+    // $company_ids =    Company::orderBy('id', 'asc')->pluck("id");
+    $company_ids =    [1, 2];
+    foreach ($company_ids as $company_id) {
+        $date = date('Y-m-13');
+        // $folderPath = storage_path("app/pdf/$date/$company_id");
+        // $pdfFiles = glob("$folderPath/*.pdf");
+
+        $pdfFiles =  storage_path("app/pdf/$date/$company_id/Today Checkin Report.pdf");
+
+        // return $pdfFiles;
+
+        $data = [
+            'file' => $pdfFiles,
+            'date' => date('Y-M-d H:i'),
+            'body' => 'Night Audit Report',
+            'company' => Company::find($company_id),
+        ];
+        Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new AuditReportMail($data));
     }
-    // THANJ_INSTANCE_ID
-    // THANJ_ACCESS_TOKEN
 
-    return Customer::customerAttributes();
-    $data = [
-        "from"         => "14157386102",
-        "to"           => "971502848071",
-        "message_type" => "text",
-        "text"         => "This is a WhatsApp Message sent from the EZHMS",
-        "channel"      => "whatsapp",
-    ];
 
-    (new WhatsappController)->toSendNotification($data);
-    return 'done';
-    WhatsappJob::dispatch($data);
-    return;
+    return 'success';
 
-    for ($i = 0; $i < 1000; $i++) {
-        WhatsappJob::dispatch($data);
-    }
+    return    collect(glob(storage_path("app/ezhms/*.zip")))->last();
+    $date = date('Y-m-13');
+    return collect(glob(storage_path("app/pdf/$date*")))->last();
 });
 
-Route::get('/db_backup', function (Request $request) {
-
-    // $data = [
-    //     'file' => collect(glob(storage_path("app/ezhms/*.zip")))->last(),
-    //     'date' => date('Y-M-d H:i'),
-    //     'body' => 'ezhms Database Backup',
-    // ];
-
-    // return Mail::to(env("ADMIN_MAIL_RECEIVERS"))->queue(new DbBackupMail($data));
-
-    $data = [
-        'file' => collect(glob(storage_path("app/ezhms/*.zip")))->last(),
-        'date' => date('Y-M-d H:i'),
-        'body' => 'ezhms Database Backup',
-    ];
-
-    Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new DbBackupMail($data));
-});
-
-Route::get('/reset_attendance', [AttendanceController::class, 'ResetAttendance']);
-
-Route::get('/generate_attendance_log', function (Request $request) {
-
-    $arr = [];
-    for ($i = 1; $i <= 5; $i++) {
-        for ($j = 13; $j <= 13; $j++) {
-            for ($k = 1; $k <= 1; $k++) {
-                $time  = rand(8, 20);
-                $time  = $time < 10 ? '0' . $time : $time;
-                $arr[] = [
-                    'UserID'     => $i,
-                    'LogTime'    => "2022-10-$j $time:00:00",
-                    'DeviceID'   => "OX-8862021010097",
-                    'company_id' => "1",
-                ];
-            }
-        }
-    }
-    // return $arr;
-    DB::table('attendance_logs')->insert($arr);
-});
-
-Route::get('/test-re', function (Request $request) {
-    Employee::truncate();
-    DB::statement('DELETE FROM users WHERE id > 2');
-
-    return 'done';
-});
-
-Route::get('/test-date', function (Request $request) {
-
-    // $start = date('Y-m-d');
-    // $end = date('Y-m-d');
-
-    $start = date('Y-m-1'); // hard-coded '01' for first day
-    $end   = date('Y-m-t');
-
-    $model = Attendance::query();
-    return $model->whereBetween('date', [$start, $end])
-        ->get();
-
-    return 'done';
-});
 
 Route::get('/storage', function (Request $request) {
     Storage::put('example.csv', 'francis');
@@ -132,40 +77,6 @@ Route::post('/upload', function (Request $request) {
     $data['file']         = $file;
 });
 
-Route::get('/test/whatsapp', function () {
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-        CURLOPT_URL            => 'https://graph.facebook.com/v14.0/102482416002121/messages',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING       => '',
-        CURLOPT_MAXREDIRS      => 10,
-        CURLOPT_TIMEOUT        => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST  => 'POST',
-        CURLOPT_POSTFIELDS     => '{
-    "messaging_product": "whatsapp",
-    "to": "923108559858",
-    "type": "template",
-    "template": {
-        "name": "hello_world",
-        "language": {
-            "code": "en_US"
-        }
-    }
-}',
-        CURLOPT_HTTPHEADER     => array(
-            'Content-Type: application/json',
-            'Authorization: Bearer EAAP9IfKKSo0BALkTWKQE6xLcyfO3eyGt69Y7SH6EfpCmKCAGb1AZCuptzmnPf5qsRZBaj4WYqSXbbxDEvaOD6WiiFwklq4P0FvASsBYOigDTrEhC3geXTNLFZCzQ1wTxNthkfzI4wSfG0KF79rrvh7cEIKdyx7mvM4ZC06MHNZBYg78yYrfGZCIcbtDUnegflDudZB5e2i9AZBDCIJ81o2xa',
-        ),
-    ));
-
-    $response = curl_exec($curl);
-
-    curl_close($curl);
-    echo $response;
-});
 
 Route::get('/test_attachment', function () {
 

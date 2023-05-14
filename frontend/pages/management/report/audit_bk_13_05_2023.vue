@@ -156,21 +156,60 @@
           show-arrows
         >
           <v-spacer></v-spacer>
-          <v-tab active-class="active-link"> Today Checkin Report </v-tab>
-          <v-tab active-class="active-link"> Continue Report </v-tab>
-          <v-tab active-class="active-link"> CheckOut Report </v-tab>
-          <v-tab active-class="active-link"> Today Booking Report </v-tab>
-          <v-tab active-class="active-link"> City Ledger Report </v-tab>
-          <v-tab active-class="active-link"> Cancel Rooms </v-tab>
-          <v-tab active-class="active-link"> Food Order List </v-tab>
-
+          <v-tab active-class="active-link">
+            <v-icon> mdi mdi-chart-bar </v-icon>
+          </v-tab>
+          <v-tab active-class="active-link">
+            <v-icon> mdi mdi-chart-pie </v-icon>
+          </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
-          <!-- today checkin -->
           <v-tab-item>
             <v-card flat>
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
+                <v-toolbar
+                  class="rounded-md"
+                  color="background"
+                  dense
+                  flat
+                  dark
+                >
+                  <label class="white--text">Today Checkin Report</label>
+                  <v-spacer></v-spacer>
+                  <v-tooltip top color="primary">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        class="ma-0"
+                        x-small
+                        :ripple="false"
+                        text
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="process('income_report_print')"
+                      >
+                        <v-icon class="">mdi-printer-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>PRINT</span>
+                  </v-tooltip>
+
+                  <v-tooltip top color="primary">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        x-small
+                        :ripple="false"
+                        text
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="process('income_report_download')"
+                      >
+                        <v-icon class="">mdi-download-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span> DOWNLOAD </span>
+                  </v-tooltip>
+                </v-toolbar>
                 <table>
-                  <tr class="">
+                  <tr>
                     <th v-for="(item, index) in incomeHeaders" :key="index">
                       <span v-html="item.text"></span>
                     </th>
@@ -229,7 +268,9 @@
                       {{ item.balance }}
                     </td>
                     <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
+                      {{
+                        item.balance > 0 ? "Payment pending" : "Payment close"
+                      }}
                     </td>
                   </tr>
                   <tr class="text-right">
@@ -246,422 +287,18 @@
             </v-card>
           </v-tab-item>
 
-          <!-- continueRooms -->
           <v-tab-item>
             <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
-                      <span v-html="item.text"></span>
-                    </th>
-                  </tr>
-                  <tr
-                    v-for="(item, index) in continueRooms"
-                    :key="index"
-                    style="background-color: #9bc1e6"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
-
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">{{ item.advance_price }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ continueTotalCash }}</th>
-                    <th class="text-right">{{ continueTotalCard }}</th>
-                    <th class="text-right">{{ continueTotalOnline }}</th>
-                    <th class="text-right">{{ continueTotalBank }}</th>
-                    <th class="text-right">{{ continueTotalUPI }}</th>
-                    <th class="text-right">{{ continueTotalBalance }}</th>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
-          </v-tab-item>
-
-          <!-- today payment -->
-          <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
-                      <span v-html="item.text"></span>
-                    </th>
-                  </tr>
-                  <tr
-                    v-for="(item, index) in todayCheckOut"
-                    :key="index"
-                    style="background-color: #90d24d"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
-
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">
-                      {{ setAdvancePayment(item.advance_price) }}
-                    </td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ checkoutTotalCash }}</th>
-                    <th class="text-right">{{ checkoutTotalCard }}</th>
-                    <th class="text-right">{{ checkoutTotalOnline }}</th>
-                    <th class="text-right">{{ checkoutTotalBank }}</th>
-                    <th class="text-right">{{ checkoutTotalUPI }}</th>
-                    <th class="text-right">{{ checkoutTotalBalance }}</th>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
-          </v-tab-item>
-
-          <!-- today payment -->
-          <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
-                      <span v-html="item.text"></span>
-                    </th>
-                  </tr>
-                  <tr
-                    v-for="(item, index) in todayPayments"
-                    :key="index"
-                    style="background-color: #29b9ca"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
-
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">
-                      {{ setAdvancePayment(item.advance_price) }}
-                    </td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ todayPaymentTotalCash }}</th>
-                    <th class="text-right">{{ todayPaymentTotalCard }}</th>
-                    <th class="text-right">{{ todayPaymentTotalOnline }}</th>
-                    <th class="text-right">{{ todayPaymentTotalBank }}</th>
-                    <th class="text-right">{{ todayPaymentTotalUPI }}</th>
-                    <th class="text-right">{{ todayPaymentTotalBalance }}</th>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
-          </v-tab-item>
-
-          <!-- today cityledger -->
-          <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
-                      <span v-html="item.text"></span>
-                    </th>
-                  </tr>
-                  <tr
-                    v-for="(item, index) in cityLedgerPaymentsAudit"
-                    :key="index"
-                    style="background-color: #e4dc94"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
-
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">
-                      {{ setAdvancePayment(item.advance_price) }}
-                    </td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ cityLedgerTotalCash }}</th>
-                    <th class="text-right">{{ cityLedgerTotalCard }}</th>
-                    <th class="text-right">{{ cityLedgerTotalOnline }}</th>
-                    <th class="text-right">{{ cityLedgerTotalBank }}</th>
-                    <th class="text-right">{{ cityLedgerTotalUPI }}</th>
-                    <th class="text-right">{{ cityLedgerTotalBalance }}</th>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <th>Room No</th>
-                    <th>Room Type</th>
-                    <th>C/In Time</th>
-                    <th>Cancel Time</th>
-                    <th>Amount</th>
-                    <th>Reason</th>
-                    <th>Action</th>
-                    <th>Cancel By</th>
-                  </tr>
-                  <tr v-for="(item, index) in cancelRooms" :key="index">
-                    <td>{{ item && item.room_no }}</td>
-                    <td>{{ item && item.room_type }}</td>
-                    <td>{{ getTimeFromCheckIn(item.check_in) }}</td>
-                    <td>{{ item && item.time }}</td>
-                    <td class="text-right">{{ item && item.grand_total }}</td>
-                    <td>{{ item && item.reason }}</td>
-                    <td>{{ item && item.action }}</td>
-                    <td>{{ item && item.user && item.user.name }}</td>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table
-                  v-for="(item, index) in FoodData"
-                  :key="index"
-                  class="mt-4"
-                >
-                  <tr
-                    style="background-color: #ecf0f4; color: black"
-                    class="my-0 py-0"
-                  >
-                    <th class="my-0 py-0">
-                      Room No - {{ item.room_no || "---" }}
-                    </th>
-                    <th class="my-0 py-0">Adult</th>
-                    <th class="my-0 py-0">Child</th>
-                    <th class="my-0 py-0">Baby</th>
-                  </tr>
-                  <tr style="background-color: white" class="my-0 py-0">
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.breakfast && item.breakfast.title) ||
-                        "Breakfast"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item &&
-                          item.breakfast &&
-                          item.breakfast.no_of_adult) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item &&
-                          item.breakfast &&
-                          item.breakfast.no_of_child) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.breakfast && item.breakfast.no_of_baby) ||
-                        "---"
-                      }}
-                    </td>
-                  </tr>
-                  <tr style="background-color: white" class="my-0 py-0">
-                    <td class="my-0 py-0">
-                      {{ (item && item.lunch && item.lunch.title) || "Lunch" }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.lunch && item.lunch.no_of_adult) || "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.lunch && item.lunch.no_of_child) || "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.lunch && item.lunch.no_of_baby) || "---"
-                      }}
-                    </td>
-                  </tr>
-                  <tr style="background-color: white" class="my-0 py-0">
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.title) || "Dinner"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.no_of_adult) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.no_of_child) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.no_of_baby) || "---"
-                      }}
-                    </td>
-                  </tr>
-                </table>
-              </v-card>
+              <v-card-text>
+                <client-only> 2 </client-only>
+              </v-card-text>
             </v-card>
           </v-tab-item>
         </v-tabs>
       </v-card>
     </div>
 
-    <!-- <v-row>
+    <v-row>
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -748,7 +385,7 @@
                 {{ item.balance }}
               </td>
               <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
+                {{ item.balance > 0 ? "Payment pending" : "Payment close" }}
               </td>
             </tr>
             <tr class="text-right">
@@ -848,7 +485,7 @@
                 {{ item.balance }}
               </td>
               <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
+                {{ item.balance > 0 ? "Payment pending" : "Payment close" }}
               </td>
             </tr>
             <tr class="text-right">
@@ -951,7 +588,7 @@
                 {{ item.balance }}
               </td>
               <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
+                {{ item.balance > 0 ? "Payment pending" : "Payment close" }}
               </td>
             </tr>
             <tr class="text-right">
@@ -1054,7 +691,7 @@
                 {{ item.balance }}
               </td>
               <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
+                {{ item.balance > 0 ? "Payment pending" : "Payment close" }}
               </td>
             </tr>
             <tr class="text-right">
@@ -1157,7 +794,7 @@
                 {{ item.balance }}
               </td>
               <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
+                {{ item.balance > 0 ? "Payment pending" : "Payment close" }}
               </td>
             </tr>
             <tr class="text-right">
@@ -1340,7 +977,7 @@
           </table>
         </v-card>
       </v-col>
-    </v-row> -->
+    </v-row>
   </div>
 </template>
 
@@ -1596,7 +1233,6 @@ export default {
       this.getExpenseData();
     },
     can(permission) {
-      return true;
       return this.$auth.user.user_type == "company" ? true : false;
       return (
         (user && user.permissions.some((e) => e.permission == permission)) ||
