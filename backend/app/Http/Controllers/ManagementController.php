@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\CancelRoom;
-use App\Models\Expense;
-use App\Models\OrderRoom;
-use App\Models\Report;
-use App\Models\Room;
 use Carbon\Carbon;
+use App\Models\Room;
+use App\Models\Report;
+use App\Models\Booking;
+use App\Models\Company;
+use App\Models\Expense;
 use Carbon\CarbonPeriod;
+use App\Models\OrderRoom;
+use App\Models\CancelRoom;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ManagementController extends Controller
 {
@@ -310,5 +312,16 @@ class ManagementController extends Controller
                     ->with('paymentMode');
             })
             ->get();
+    }
+
+    public function testcheckin(Request $request)
+    {
+        $model = Booking::query();
+
+        $todayCheckin = $this->todayCheckinAudit($model, $request);
+
+        return Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find(1)])
+            ->setPaper('a4', 'landscape')
+            ->stream();
     }
 }

@@ -140,8 +140,10 @@ class BookedRoom extends Model
             }
         }
 
-        // echo $status;
-        // dd($status);
+        if ($status == 0 && $model->balance > 0) {
+            (int) $status = 8;
+        }
+
 
         return match ($status) {
             1 => 'linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)', //paid advance

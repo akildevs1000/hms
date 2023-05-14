@@ -1566,7 +1566,7 @@ class BookingController extends Controller
 
         return $model
             ->with([
-                'bookedRooms:booking_id,id,room_no,room_type',
+                'bookedRooms:booking_id,id,room_no,room_type,booking_status',
                 'customer:id,first_name,last_name,document',
             ])
             ->where('company_id', $request->company_id)
