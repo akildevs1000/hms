@@ -66,6 +66,9 @@ class ExpenseController extends Controller
         if ($request->is_account && $request->has('is_account') && $request->filled('is_account')) {
             return $model->get();
         }
+
+        return $model->paginate($request->per_page ?? 50);
+
     }
 
     public function search(Request $request, $key)
