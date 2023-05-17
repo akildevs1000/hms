@@ -1002,8 +1002,10 @@ export default {
           return "In House ";
         case 3:
           return "C/Out ";
+        case -1:
+          return "Cancel Reservation ";
         default:
-          return "C/Out ";
+          return " ";
       }
     },
 

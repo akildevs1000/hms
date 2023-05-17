@@ -554,6 +554,22 @@ export default {
       this.expenseDialog = true;
     },
 
+    getFirstAndLastDay() {
+      const currentDate = new Date();
+      const day = currentDate.getDate();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+      const year = currentDate.getFullYear();
+      const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
+
+      let firstDay = `${year}-${month}-0${1}`;
+      let lastDay = `${year}-${month}-0${last}`;
+
+      return [
+        firstDay,
+        lastDay
+      ]
+    },
+
     commonMethod() {
       const today = new Date();
       switch (this.filterType) {
@@ -574,8 +590,8 @@ export default {
           this.to_date = this.week[1];
           break;
         case 4:
-          this.from_date = new Date(today.getFullYear(), today.getMonth(), 1);
-          this.to_date = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+          this.from_date = this.getFirstAndLastDay()[0];
+          this.to_date = this.getFirstAndLastDay()[1];
           break;
 
         // default:

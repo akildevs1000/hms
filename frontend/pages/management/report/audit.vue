@@ -117,44 +117,20 @@
     </v-row>
     <v-row>
       <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              outlined
-              label="Date"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true" outlined
+              label="Date"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
 
     <div v-if="can(`agents_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-tabs
-          v-model="activeTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
+        <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
           <v-spacer></v-spacer>
           <v-tab active-class="active-link"> Today Checkin Report </v-tab>
           <v-tab active-class="active-link"> Continue Report </v-tab>
@@ -175,30 +151,18 @@
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <tr
-                    v-for="(item, index) in todayCheckIn"
-                    :key="index"
-                    style="background-color: yellow"
-                  >
+                  <tr v-for="(item, index) in todayCheckIn" :key="index" style="background-color: yellow">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -256,30 +220,18 @@
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <tr
-                    v-for="(item, index) in continueRooms"
-                    :key="index"
-                    style="background-color: #9bc1e6"
-                  >
+                  <tr v-for="(item, index) in continueRooms" :key="index" style="background-color: #9bc1e6">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -325,30 +277,18 @@
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <tr
-                    v-for="(item, index) in todayCheckOut"
-                    :key="index"
-                    style="background-color: #90d24d"
-                  >
+                  <tr v-for="(item, index) in todayCheckOut" :key="index" style="background-color: #90d24d">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -397,30 +337,18 @@
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <tr
-                    v-for="(item, index) in todayPayments"
-                    :key="index"
-                    style="background-color: #29b9ca"
-                  >
+                  <tr v-for="(item, index) in todayPayments" :key="index" style="background-color: #29b9ca">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -469,30 +397,18 @@
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <tr
-                    v-for="(item, index) in cityLedgerPaymentsAudit"
-                    :key="index"
-                    style="background-color: #e4dc94"
-                  >
+                  <tr v-for="(item, index) in cityLedgerPaymentsAudit" :key="index" style="background-color: #e4dc94">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
+                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -536,6 +452,7 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
+                    <th>Rev. No</th>
                     <th>Room No</th>
                     <th>Room Type</th>
                     <th>C/In Time</th>
@@ -546,6 +463,11 @@
                     <th>Cancel By</th>
                   </tr>
                   <tr v-for="(item, index) in cancelRooms" :key="index">
+                    <td class="room-width">
+                      <span class="blue--text" @click="goToRevViewFromCancel(item)" style="cursor: pointer">
+                        {{ item && item.booking && item.booking.reservation_no }}
+                      </span>
+                    </td>
                     <td>{{ item && item.room_no }}</td>
                     <td>{{ item && item.room_type }}</td>
                     <td>{{ getTimeFromCheckIn(item.check_in) }}</td>
@@ -563,15 +485,8 @@
           <v-tab-item>
             <v-card flat>
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table
-                  v-for="(item, index) in FoodData"
-                  :key="index"
-                  class="mt-4"
-                >
-                  <tr
-                    style="background-color: #ecf0f4; color: black"
-                    class="my-0 py-0"
-                  >
+                <table v-for="(item, index) in FoodData" :key="index" class="mt-4">
+                  <tr style="background-color: #ecf0f4; color: black" class="my-0 py-0">
                     <th class="my-0 py-0">
                       Room No - {{ item.room_no || "---" }}
                     </th>
@@ -1623,6 +1538,11 @@ export default {
     goToRevView(item) {
       this.$router.push(`/customer/details/${item.id}`);
     },
+
+    goToRevViewFromCancel(item) {
+      this.$router.push(`/customer/details/${item.booking_id}`);
+    },
+
 
     getTimeFromCheckIn(date) {
       const dateObj = new Date(date);
