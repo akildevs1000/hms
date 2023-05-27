@@ -4,13 +4,8 @@
       <v-col md="7">
         <v-container>
           <table>
-            <v-progress-linear
-              v-if="false"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
+            <v-progress-linear v-if="false" :active="loading" :indeterminate="loading" absolute
+              color="primary"></v-progress-linear>
             <tr>
               <th>Customer Name</th>
               <td style="width: 300px">
@@ -47,23 +42,14 @@
                 <span class="text-danger">*</span>
               </th>
               <td>
-                <v-select
-                  v-model="BookingData.payment_mode_id"
-                  :items="[
+                <v-select v-model="BookingData.payment_mode_id" :items="[
                     { id: 1, name: 'Cash' },
                     { id: 2, name: 'Card' },
                     { id: 3, name: 'Online' },
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
                     { id: 6, name: 'Cheque' },
-                  ]"
-                  item-text="name"
-                  item-value="id"
-                  dense
-                  outlined
-                  :hide-details="true"
-                  :height="1"
-                ></v-select>
+                  ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-select>
               </td>
             </tr>
             <tr v-if="BookingData.payment_mode_id != 1">
@@ -72,13 +58,7 @@
                 <span class="text-danger">*</span>
               </th>
               <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="text"
-                  v-model="reference"
-                  :hide-details="true"
-                ></v-text-field>
+                <v-text-field dense outlined type="text" v-model="reference" :hide-details="true"></v-text-field>
               </td>
             </tr>
             <tr>
@@ -102,14 +82,8 @@
             <tr style="background-color: white" v-if="BookingData.paid_by != 2">
               <th>Discount</th>
               <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="number"
-                  v-model="discount"
-                  :hide-details="true"
-                  @keyup="get_after_discount_balance(discount)"
-                ></v-text-field>
+                <v-text-field dense outlined type="number" v-model="discount" :hide-details="true"
+                  @keyup="get_after_discount_balance(discount)"></v-text-field>
               </td>
             </tr>
             <tr style="background-color: white" v-if="BookingData.paid_by != 2">
@@ -124,35 +98,18 @@
                 <span class="text-danger">*</span>
               </th>
               <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="number"
-                  v-model="full_payment"
-                  :hide-details="true"
-                ></v-text-field>
+                <v-text-field dense outlined type="number" v-model="full_payment" :hide-details="true"></v-text-field>
               </td>
             </tr>
             <tr>
               <th>Print Invoice</th>
               <td>
-                <v-checkbox
-                  v-model="isPrintInvoice"
-                  :hide-details="true"
-                  class="pt-0 py-1 chk-align"
-                >
+                <v-checkbox v-model="isPrintInvoice" :hide-details="true" class="pt-0 py-1 chk-align">
                 </v-checkbox>
               </td>
             </tr>
           </table>
-          <v-btn
-            class="primary mt-3"
-            height="40"
-            width="25%"
-            small
-            :loading="loading"
-            @click="store_check_out"
-          >
+          <v-btn class="primary mt-3" height="40" width="25%" small :loading="loading" @click="store_check_out">
             Check Out
           </v-btn>
         </v-container>
@@ -167,11 +124,8 @@
             <th>Balance</th>
           </tr>
 
-          <tr
-            v-for="(item, index) in transactions"
-            :key="index"
-            style="font-size: 13px; background-color: white; color: black"
-          >
+          <tr v-for="(item, index) in transactions" :key="index"
+            style="font-size: 13px; background-color: white; color: black">
             <td>
               <b>{{ ++index }}</b>
             </td>
@@ -243,6 +197,13 @@ export default {
     };
   },
 
+  watch: {
+    BookingData() {
+      this.discount = 0;
+      this.full_payment = 0;
+    }
+  },
+
   created() {
     this.preloader = false;
   },
@@ -257,7 +218,6 @@ export default {
   methods: {
     get_after_discount_balance(amt = 0) {
       let discount = amt || 0;
-      console.log(discount);
       let blc =
         parseFloat(this.BookingData.grand_remaining_price) -
         parseFloat(discount);
@@ -266,7 +226,6 @@ export default {
 
     get_transaction() {
       let id = this.BookingData.id;
-      console.log(id);
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -303,7 +262,8 @@ export default {
             this.loading = false;
           } else {
             this.loading = false;
-            this.closeDialog(data);
+
+            this.closeDialog(payload);
             this.alert("Success", "Successfully Checkout", "success");
             if (this.isPrintInvoice) {
               this.redirect_to_invoice(data.bookingId);
@@ -313,8 +273,10 @@ export default {
         .catch((e) => console.log(e));
     },
 
-    closeDialog(data) {
-      this.$emit("close-dialog", data);
+    closeDialog(payload) {
+      this.discount = 0;
+      this.full_payment = 0;
+      this.$emit("close-dialog", payload);
     },
 
     redirect_to_invoice(id) {
