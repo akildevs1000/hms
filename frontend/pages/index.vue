@@ -1,63 +1,36 @@
 <template>
   <div v-if="can()">
     <div v-if="isPageLoad">
-      <link
-        href="matrix/dist/css/style.min.css"
-        rel="stylesheet"
-        v-if="isIndex"
-      />
+      <link href="matrix/dist/css/style.min.css" rel="stylesheet" v-if="isIndex" />
       <div class="text-center ma-2">
-        <v-snackbar
-          v-model="snackbar"
-          top
-          absolute
-          color="secondary"
-          elevation="24"
-        >
+        <v-snackbar v-model="snackbar" top absolute color="secondary" elevation="24">
           {{ response }}
         </v-snackbar>
       </div>
 
       <!-- dialogs -->
       <div>
-        <v-dialog
-          v-model="checkInDialog"
-          persistent
-          :width="1366"
-          class="checkin-models"
-        >
+        <v-dialog v-model="checkInDialog" persistent :width="1366" class="checkin-models">
           <v-card>
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>{{ formTitle }}</span>
               <v-spacer></v-spacer>
-              <v-icon dark class="pa-0" @click="close"
-                >mdi mdi-close-box</v-icon
-              >
+              <v-icon dark class="pa-0" @click="close">mdi mdi-close-box</v-icon>
             </v-toolbar>
             <v-card-text>
-              <check-in
-                :BookingData="checkData"
-                @close-dialog="closeCheckInAndOpenGRC"
-              ></check-in>
+              <check-in :BookingData="checkData" @close-dialog="closeCheckInAndOpenGRC"></check-in>
             </v-card-text>
             <v-container></v-container>
             <v-card-actions> </v-card-actions>
           </v-card>
         </v-dialog>
 
-        <v-dialog
-          v-model="GRCDialog"
-          persistent
-          :width="900"
-          class="checkin-models"
-        >
+        <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
           <v-card>
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>{{ formTitle }}</span>
               <v-spacer></v-spacer>
-              <v-icon dark class="pa-0" @click="GRCDialog = false"
-                >mdi mdi-close-box</v-icon
-              >
+              <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
             </v-toolbar>
             <v-card-text>
               <Grc :bookingId="checkData.id"> </Grc>
@@ -71,59 +44,37 @@
 
         <!-- end check in dialog -->
 
-        <v-dialog
-          v-model="ExpectCheckInReportDialog"
-          persistent
-          max-width="700px"
-        >
+        <v-dialog v-model="ExpectCheckInReportDialog" persistent max-width="700px">
           <v-card>
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>Expect Checkin Rooms Report</span>
               <v-spacer></v-spacer>
-              <v-icon
-                dark
-                class="pa-0"
-                @click="ExpectCheckInReportDialog = false"
-              >
+              <v-icon dark class="pa-0" @click="ExpectCheckInReportDialog = false">
                 mdi mdi-close-box
               </v-icon>
             </v-toolbar>
             <v-card-text>
               <v-container>
                 <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-                <ExpectCheckInReport
-                  :data="expectCheckIn"
-                  @close-dialog="closeDialogs"
-                />
+                <ExpectCheckInReport :data="expectCheckIn" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
         </v-dialog>
 
-        <v-dialog
-          v-model="ExpectCheckOutReportDialog"
-          persistent
-          max-width="700px"
-        >
+        <v-dialog v-model="ExpectCheckOutReportDialog" persistent max-width="700px">
           <v-card>
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>Expect Checkout Report</span>
               <v-spacer></v-spacer>
-              <v-icon
-                dark
-                class="pa-0"
-                @click="ExpectCheckOutReportDialog = false"
-              >
+              <v-icon dark class="pa-0" @click="ExpectCheckOutReportDialog = false">
                 mdi mdi-close-box
               </v-icon>
             </v-toolbar>
             <v-card-text>
               <v-container>
                 <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-                <ExpectCheckOutReport
-                  :data="expectCheckOut"
-                  @close-dialog="closeDialogs"
-                />
+                <ExpectCheckOutReport :data="expectCheckOut" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
@@ -141,10 +92,7 @@
             <v-card-text>
               <v-container>
                 <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-                <BookedRoomsReport
-                  :data="reservedWithoutAdvance"
-                  @close-dialog="closeDialogs"
-                />
+                <BookedRoomsReport :data="reservedWithoutAdvance" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
@@ -162,10 +110,7 @@
             <v-card-text>
               <v-container>
                 <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-                <PaidRoomsReport
-                  :data="confirmedBookingList"
-                  @close-dialog="closeDialogs"
-                />
+                <PaidRoomsReport :data="confirmedBookingList" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
@@ -183,10 +128,7 @@
             <v-card-text>
               <v-container>
                 <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-                <CheckInRoomsReport
-                  :data="checkIn"
-                  @close-dialog="closeDialogs"
-                />
+                <CheckInRoomsReport :data="checkIn" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
@@ -204,10 +146,7 @@
             <v-card-text>
               <v-container>
                 <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-                <CheckOutRoomsReport
-                  :data="checkOut"
-                  @close-dialog="closeDialogs"
-                />
+                <CheckOutRoomsReport :data="checkOut" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
@@ -225,38 +164,24 @@
             <v-card-text>
               <v-container>
                 <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-                <DirtyRoomsReport
-                  :data="dirtyRoomsList"
-                  @close-dialog="closeDialogs"
-                />
+                <DirtyRoomsReport :data="dirtyRoomsList" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
         </v-dialog>
 
-        <v-dialog
-          v-model="AvailableRoomsReportDialog"
-          persistent
-          max-width="700px"
-        >
+        <v-dialog v-model="AvailableRoomsReportDialog" persistent max-width="700px">
           <v-card>
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>Expect Checkout Rooms Report</span>
               <v-spacer></v-spacer>
-              <v-icon
-                dark
-                class="pa-0"
-                @click="AvailableRoomsReportDialog = false"
-              >
+              <v-icon dark class="pa-0" @click="AvailableRoomsReportDialog = false">
                 mdi mdi-close-box
               </v-icon>
             </v-toolbar>
             <v-card-text>
               <v-container>
-                <AvailableRoomsReport
-                  :data="availableRooms"
-                  @close-dialog="closeDialogs"
-                />
+                <AvailableRoomsReport :data="availableRooms" @close-dialog="closeDialogs" />
               </v-container>
             </v-card-text>
           </v-card>
@@ -291,11 +216,7 @@
             </v-toolbar>
             <v-card-text>
               <v-container>
-                <Posting
-                  :BookingData="checkData"
-                  :evenIid="evenIid"
-                  @close-dialog="closeDialogs"
-                >
+                <Posting :BookingData="checkData" :evenIid="evenIid" @close-dialog="closeDialogs">
                 </Posting>
               </v-container>
             </v-card-text>
@@ -318,13 +239,8 @@
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <v-progress-linear
-                    v-if="false"
-                    :active="loading"
-                    :indeterminate="loading"
-                    absolute
-                    color="primary"
-                  ></v-progress-linear>
+                  <v-progress-linear v-if="false" :active="loading" :indeterminate="loading" absolute
+                    color="primary"></v-progress-linear>
                   <tr v-for="(item, index) in postings" :key="index">
                     <td>{{ ++index }}</td>
                     <td>{{ caps(item.bill_no) }}</td>
@@ -355,15 +271,10 @@
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>{{ formTitle }}</span>
               <v-spacer></v-spacer>
-              <v-icon dark class="pa-0" @click="payingAdvance = false"
-                >mdi mdi-close-box</v-icon
-              >
+              <v-icon dark class="pa-0" @click="payingAdvance = false">mdi mdi-close-box</v-icon>
             </v-toolbar>
             <v-card-text>
-              <PayAdvance
-                :BookingData="checkData"
-                @close-dialog="closeDialogs"
-              ></PayAdvance>
+              <PayAdvance :BookingData="checkData" @close-dialog="closeDialogs"></PayAdvance>
             </v-card-text>
           </v-card>
         </v-dialog>
@@ -375,15 +286,12 @@
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>{{ formTitle }}</span>
               <v-spacer></v-spacer>
-              <v-icon dark class="pa-0" @click="checkOutDialog = false">
+              <v-icon dark class="pa-0" @click="closeCheckOut">
                 mdi mdi-close-box
               </v-icon>
             </v-toolbar>
             <v-card-text>
-              <check-out
-                :BookingData="checkData"
-                @close-dialog="closeDialogs"
-              />
+              <check-out :BookingData="checkData" @close-dialog="closeDialogs" />
             </v-card-text>
             <v-card-actions> </v-card-actions>
           </v-card>
@@ -397,21 +305,10 @@
               Are you sure you want to cancel this
             </v-card-title>
             <v-container grid-list-xs>
-              <v-textarea
-                placeholder="Reason"
-                rows="3"
-                dense
-                outlined
-                v-model="reason"
-              ></v-textarea>
+              <v-textarea placeholder="Reason" rows="3" dense outlined v-model="reason"></v-textarea>
             </v-container>
             <v-card-actions>
-              <v-btn
-                class="primary"
-                small
-                :loading="cancelLoad"
-                @click="cancelItem"
-              >
+              <v-btn class="primary" small :loading="cancelLoad" @click="cancelItem">
                 Yes
               </v-btn>
               <v-btn class="error" small @click="cancelDialog = false">
@@ -428,8 +325,7 @@
             <v-toolbar class="rounded-md" color="background" dense flat dark>
               <span>{{ formTitle }}</span>
               <v-spacer></v-spacer>
-              <v-icon dark class="pa-0" @click="closeNewCheckin"
-                >mdi mdi-close-box
+              <v-icon dark class="pa-0" @click="closeNewCheckin">mdi mdi-close-box
               </v-icon>
             </v-toolbar>
             <v-card-text v-if="NewBooking">
@@ -443,28 +339,14 @@
 
       <div>
         <v-row class="flex" justify="center"> </v-row>
-        <v-menu
-          v-model="showMenu"
-          :position-x="x"
-          :position-y="y"
-          absolute
-          offset-y
-        >
+        <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
           <v-list>
             <v-list-item-group v-model="selectedItem">
-              <v-list-item
-                v-if="bookingStatus == 1"
-                link
-                @click="checkInDialog = true"
-              >
+              <v-list-item v-if="bookingStatus == 1" link @click="checkInDialog = true">
                 <v-list-item-title>Check In</v-list-item-title>
               </v-list-item>
 
-              <v-list-item
-                v-else-if="bookingStatus == 2"
-                link
-                @click="get_check_out"
-              >
+              <v-list-item v-else-if="bookingStatus == 2" link @click="get_check_out">
                 <v-list-item-title>Check Out</v-list-item-title>
               </v-list-item>
 
@@ -496,53 +378,27 @@
                   <v-list-item-title>View Billing</v-list-item-title>
                 </v-list-item>
               </div>
-              <v-list-item
-                link
-                @click="payingAdvance = true"
-                v-if="bookingStatus <= 2 && checkData.paid_by != 2"
-              >
+              <v-list-item link @click="payingAdvance = true" v-if="bookingStatus <= 2 && checkData.paid_by != 2">
                 <v-list-item-title>Pay Advance </v-list-item-title>
               </v-list-item>
 
-              <v-list-item
-                link
-                @click="cancelDialog = true"
-                v-if="bookingStatus == 1"
-              >
+              <v-list-item link @click="cancelDialog = true" v-if="bookingStatus == 1">
                 <v-list-item-title>Cancel Room</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-menu>
-        <v-menu
-          v-model="showMenuForNewBooking"
-          :position-x="x"
-          :position-y="y"
-          absolute
-          offset-y
-        >
+        <v-menu v-model="showMenuForNewBooking" :position-x="x" :position-y="y" absolute offset-y>
           <v-list>
             <v-list-item-group>
               <!-- {{ newBookingRoom.status }} -->
-              <v-list-item
-                link
-                v-if="newBookingRoom.status == 0"
-                @click="NewBooking = true"
-              >
+              <v-list-item link v-if="newBookingRoom.status == 0" @click="NewBooking = true">
                 <v-list-item-title>CheckIn</v-list-item-title>
               </v-list-item>
-              <v-list-item
-                link
-                v-if="newBookingRoom.status == 0"
-                @click="roomStatus('1')"
-              >
+              <v-list-item link v-if="newBookingRoom.status == 0" @click="roomStatus('1')">
                 <v-list-item-title>Block</v-list-item-title>
               </v-list-item>
-              <v-list-item
-                link
-                v-if="newBookingRoom.status == 1"
-                @click="roomStatus('0')"
-              >
+              <v-list-item link v-if="newBookingRoom.status == 1" @click="roomStatus('0')">
                 <v-list-item-title>Unblock</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
@@ -557,21 +413,15 @@
               <div class="row">
                 <div class="col-md-12 col-12 col-lg-4 col-xlg-3 py-0">
                   <div class="card card-hover mx-0">
-                    <a
-                      @click="FoodDialog = true"
-                      class="box text-center ipad-font-food-grid"
-                      style="
+                    <a @click="FoodDialog = true" class="box text-center ipad-font-food-grid" style="
                         padding: 7px 0;
                         margin: 0px -5px;
                         background-color: #6722b9;
                         border-radius: 7px;
-                      "
-                    >
+                      ">
                       <div class="d-flex justify-space-around py-0 my-0">
                         <h1 class="font-light text-white py-0 my-0">
-                          <i
-                            class="mdi mdi-human-male-female-child fx-1 food-icon-size"
-                          ></i>
+                          <i class="mdi mdi-human-male-female-child fx-1 food-icon-size"></i>
                           <h5>
                             {{ members.adult }} | {{ members.child }} |
                             {{ members.baby }}
@@ -608,28 +458,18 @@
                   </div>
                 </div>
                 <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="AvailableRoomsReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #32a15c; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="AvailableRoomsReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #32a15c; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <Available />
-                          <h4
-                            class="text-white pb-0 mb-0 mt-4 text-left dash-font-size"
-                          >
+                          <h4 class="text-white pb-0 mb-0 mt-4 text-left dash-font-size">
                             Available
                           </h4>
                         </h1>
                       </v-col>
                       <v-col md="6" class="p-0 m-0">
-                        <h1
-                          class="big-screen laptop-font-grid ipad-font-qty-grid"
-                        >
+                        <h1 class="big-screen laptop-font-grid ipad-font-qty-grid">
                           <!-- (availableRooms && availableRooms.length) -->
                           {{ get_availableRooms(availableRooms) || 0 }}
                         </h1>
@@ -638,28 +478,18 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="BookedRoomReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #ffbe00; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="BookedRoomReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #ffbe00; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <Booked />
-                          <h4
-                            class="text-white pb-0 mb-0 mt-4 text-left dash-font-size"
-                          >
+                          <h4 class="text-white pb-0 mb-0 mt-4 text-left dash-font-size">
                             Reserved
                           </h4>
                         </h1>
                       </v-col>
                       <v-col md="6" class="p-0 m-0">
-                        <h1
-                          class="big-screen laptop-font-grid ipad-font-qty-grid"
-                        >
+                        <h1 class="big-screen laptop-font-grid ipad-font-qty-grid">
                           {{
                             // (notAvailableRooms && notAvailableRooms.length) || 0
                             (reservedWithoutAdvance &&
@@ -672,29 +502,19 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="PaidRoomReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #02ada4; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="PaidRoomReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #02ada4; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <PaidBookedSvg />
                           <h4
-                            class="pb-0 mb-0 text-left dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
-                          >
+                            class="pb-0 mb-0 text-left dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid">
                             Booked
                           </h4>
                         </h1>
                       </v-col>
                       <v-col md="6" class="p-0 m-0">
-                        <h1
-                          class="big-screen laptop-font-grid ipad-font-qty-grid"
-                          style="font-size: 65px"
-                        >
+                        <h1 class="big-screen laptop-font-grid ipad-font-qty-grid" style="font-size: 65px">
                           {{ confirmedBooking || 0 }}
                         </h1>
                       </v-col>
@@ -702,29 +522,18 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-2 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="DirtyRoomsReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #ff0000; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="DirtyRoomsReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #ff0000; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <Dirty />
-                          <h4
-                            class="text-white pb-0 mb-0 mt-3 text-left dash-font-size"
-                          >
+                          <h4 class="text-white pb-0 mb-0 mt-3 text-left dash-font-size">
                             Dirty
                           </h4>
                         </h1>
                       </v-col>
                       <v-col md="6" class="p-0 m-0">
-                        <h1
-                          class="big-screen laptop-font-grid ipad-font-qty-grid"
-                          style="font-size: 65px"
-                        >
+                        <h1 class="big-screen laptop-font-grid ipad-font-qty-grid" style="font-size: 65px">
                           {{ dirtyRooms || 0 }}
                         </h1>
                       </v-col>
@@ -732,20 +541,12 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="ExpectCheckInReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #18069e; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="ExpectCheckInReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #18069e; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <ExpectCheckInSvg />
-                          <h4
-                            class="text-white pb-0 mb-0 mt-2 text-left dash-font-size"
-                          >
+                          <h4 class="text-white pb-0 mb-0 mt-2 text-left dash-font-size">
                             Expect C/In
                           </h4>
                         </h1>
@@ -759,20 +560,12 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="ExpectCheckOutReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #4390fc; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="ExpectCheckOutReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #4390fc; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <ExpectCheckOutSvg />
-                          <h4
-                            class="text-white pb-0 mb-0 mt-2 text-left dash-font-size"
-                          >
+                          <h4 class="text-white pb-0 mb-0 mt-2 text-left dash-font-size">
                             Expect C/Out
                           </h4>
                         </h1>
@@ -786,20 +579,12 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="CheckInReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #800000; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="CheckInReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #800000; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <CheckInSvg />
-                          <h4
-                            class="text-white pb-0 mb-0 mt-5 dash-font-size text-left"
-                          >
+                          <h4 class="text-white pb-0 mb-0 mt-5 dash-font-size text-left">
                             Check In
                           </h4>
                         </h1>
@@ -813,20 +598,12 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-3 col-xlg-3 py-0">
-                  <a
-                    class="card card-hover mx-1"
-                    @click="CheckOutReportDialog = true"
-                  >
-                    <v-row
-                      class="box text-center"
-                      style="background-color: #74166d; border-radius: 7px"
-                    >
+                  <a class="card card-hover mx-1" @click="CheckOutReportDialog = true">
+                    <v-row class="box text-center" style="background-color: #74166d; border-radius: 7px">
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">
                           <CheckOutSvg />
-                          <h4
-                            class="text-white pb-0 mb-0 mt-5 dash-font-size text-left"
-                          >
+                          <h4 class="text-white pb-0 mb-0 mt-5 dash-font-size text-left">
                             Check Out
                           </h4>
                         </h1>
@@ -854,58 +631,36 @@
                   <div class="row">
                     <div class="col-lg-12 pt-0">
                       <v-row>
-                        <v-col
-                          :class="noAvailableRoom.id"
-                          lg="1"
-                          md="4"
-                          sm="12"
-                          cols="12"
-                          class="available-room-list"
-                          v-for="(noAvailableRoom, i) in notAvailableRooms"
-                          :key="i"
-                        >
-                          <v-card
-                            @contextmenu="show"
-                            @touchstart="
-                              touchstart(
-                                $event,
-                                noAvailableRoom &&
-                                  noAvailableRoom.booked_room &&
-                                  noAvailableRoom.booked_room.id,
-                                noAvailableRoom &&
-                                  noAvailableRoom.booked_room &&
-                                  noAvailableRoom.booked_room.booking
-                                    .booking_status
-                              )
-                            "
-                            :elevation="0"
-                            @mouseover="
-                              mouseOver(
-                                noAvailableRoom &&
-                                  noAvailableRoom.booked_room &&
-                                  noAvailableRoom.booked_room.id,
-                                noAvailableRoom &&
-                                  noAvailableRoom.booked_room &&
-                                  noAvailableRoom.booked_room.booking
-                                    .booking_status
-                              )
-                            "
-                            @dblclick="dblclick"
-                            class="ma-0 px-md-1 py-md-2"
-                            :class="
-                              noAvailableRoom.booked_room.background ==
-                              'linear-gradient(135deg, #4390FC      0, #4390FC 100%)'
-                                ? 'element'
-                                : ''
-                            "
-                            dark
-                            :style="`background-image:${
-                              (noAvailableRoom &&
-                                noAvailableRoom.booked_room &&
-                                noAvailableRoom.booked_room.background) ||
-                              ''
-                            }`"
-                          >
+                        <v-col :class="noAvailableRoom.id" lg="1" md="4" sm="12" cols="12" class="available-room-list"
+                          v-for="(noAvailableRoom, i) in notAvailableRooms" :key="i">
+                          <v-card @contextmenu="show" @touchstart="touchstart(
+                              $event,
+                              noAvailableRoom &&
+                              noAvailableRoom.booked_room &&
+                              noAvailableRoom.booked_room.id,
+                              noAvailableRoom &&
+                              noAvailableRoom.booked_room &&
+                              noAvailableRoom.booked_room.booking
+                                .booking_status
+                            )
+                            " :elevation="0" @mouseover="mouseOver(
+      noAvailableRoom &&
+      noAvailableRoom.booked_room &&
+      noAvailableRoom.booked_room.id,
+      noAvailableRoom &&
+      noAvailableRoom.booked_room &&
+      noAvailableRoom.booked_room.booking
+        .booking_status
+    )
+    " @dblclick="dblclick" class="ma-0 px-md-1 py-md-2" :class="noAvailableRoom.booked_room.background ==
+      'linear-gradient(135deg, #4390FC      0, #4390FC 100%)'
+      ? 'element'
+      : ''
+    " dark :style="`background-image:${(noAvailableRoom &&
+      noAvailableRoom.booked_room &&
+      noAvailableRoom.booked_room.background) ||
+    ''
+    }`">
                             <div class="text-center">
                               <v-icon dark class="pa-0">mdi mdi-bed</v-icon>
                             </div>
@@ -919,29 +674,14 @@
                         </v-col>
                       </v-row>
                       <v-row>
-                        <v-col
-                          :class="room.id"
-                          lg="1"
-                          md="4"
-                          sm="12"
-                          cols="12"
-                          class="available-room-list"
-                          v-for="(room, index) in availableRooms"
-                          :key="index"
-                        >
-                          <v-card
-                            @contextmenu="makeNewBooking($event, room)"
-                            @mouseover="mouseOverForAvailable(room)"
-                            @touchstart="makeNewBookingForTouch($event, room)"
-                            :elevation="0"
-                            class="ma-0 px-md-1 py-md-2"
-                            :style="
-                              room.status == 1
+                        <v-col :class="room.id" lg="1" md="4" sm="12" cols="12" class="available-room-list"
+                          v-for="(room, index) in availableRooms" :key="index">
+                          <v-card @contextmenu="makeNewBooking($event, room)" @mouseover="mouseOverForAvailable(room)"
+                            @touchstart="makeNewBookingForTouch($event, room)" :elevation="0" class="ma-0 px-md-1 py-md-2"
+                            :style="room.status == 1
                                 ? 'background-color: #D60078'
                                 : 'background-color: #32a15c'
-                            "
-                            dark
-                          >
+                              " dark>
                             <div class="text-center">
                               <v-icon dark class="pa-0">mdi mdi-home</v-icon>
                             </div>
@@ -1200,7 +940,7 @@ export default {
   },
 
   computed: {},
-  mounted() {},
+  mounted() { },
   methods: {
     async logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
@@ -1211,7 +951,7 @@ export default {
 
     can() {
       if (
-        this.$auth.user.user_type != "company" &&
+        this.$auth.user.employee_role_id > 0 &&
         this.$auth.user.is_verified == 0
       ) {
         this.logout();
@@ -1410,9 +1150,10 @@ export default {
     },
 
     room_list() {
+      console.log(this.$auth.user);
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id,
+          company_id: this.$auth.user && this.$auth.user.company.id,
           // check_in: new Date().toJSON().slice(0, 10),
           check_in: new Date(
             Date.now() - new Date().getTimezoneOffset() * 60000
@@ -1676,6 +1417,10 @@ export default {
       this.document = null;
     },
 
+    closeCheckOut() {
+      this.checkOutDialog = false
+    },
+
     closeDialogs(res) {
       this.succuss(res);
     },
@@ -1706,6 +1451,7 @@ export default {
 }
 
 @media only screen and (min-width: 1025px) and (max-width: 1199px) {
+
   /* Adjust layout for iPad pro landscape mode */
   .ipad-font-grid {
     font-size: 12px !important;
@@ -1734,6 +1480,7 @@ export default {
 }
 
 @media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
+
   /* ipad mini Air */
   .ipad-font-qty-grid {
     font-size: 55px !important;
