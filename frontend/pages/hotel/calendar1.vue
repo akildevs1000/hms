@@ -6,6 +6,43 @@
       </v-snackbar>
     </div>
 
+
+    <v-dialog v-model="confirmationDialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="text-h5">
+          Action
+        </v-card-title>
+        <v-card-text>Are you sure you want to proceed?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="change_room_by_drag">
+            Yes
+          </v-btn>
+          <v-btn color="green darken-1" text @click="closeConfirmationDialog">
+            No
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="extendConfirmationDialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="text-h5">
+          Action
+        </v-card-title>
+        <v-card-text>Are you sure you want to proceed?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="change_date_by_drag">
+            Yes
+          </v-btn>
+          <v-btn color="green darken-1" text @click="closeExtendConfirmationDialog">
+            No
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -290,6 +327,9 @@ export default {
   data() {
     return {
       // date: "",
+      isConfirm: false,
+      confirmationDialog: false,
+      extendConfirmationDialog: false,
       changeRoomDialog: false,
       dateConfirmationDialog: false,
       LoadingDialog: false,
@@ -312,6 +352,10 @@ export default {
       ty: 0,
       x: 0,
       y: 0,
+
+      dragObj: {},
+      extendObj: {},
+
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
         locale: "en",
@@ -320,17 +364,17 @@ export default {
           first: {
             text: "30 Days",
             click: () => {
-              this.clearHeaderContent();
+              // this.clearHeaderContent();
               this.calendarOptions.views.resourceTimelineYear.duration.days = 60;
-              this.changeTableHeaderContent();
+              // this.changeTableHeaderContent();
             },
           },
           second: {
             text: "60 Days",
             click: () => {
-              this.clearHeaderContent();
+              // this.clearHeaderContent();
               this.calendarOptions.views.resourceTimelineYear.duration.days = 90;
-              this.changeTableHeaderContent();
+              // this.changeTableHeaderContent();
             },
           },
           third: {
@@ -338,7 +382,7 @@ export default {
             click: () => {
               this.clearHeaderContent();
               this.calendarOptions.views.resourceTimelineYear.duration.days = 120;
-              this.changeTableHeaderContent();
+              // this.changeTableHeaderContent();
             },
           },
         },
@@ -384,24 +428,10 @@ export default {
             weekday: "long",
             day: "numeric",
             slotLabelFormat: [
-              // { month: "long", year: "numeric" }, // top level of text
 
               { day: "2-digit", weekday: "short", omitCommas: true },
             ],
-            // slotLabelFormat: function (date) {
-            //   date = date.toString().split(" "); //
 
-            //   let [weekday, m, daydate] = date;
-            //   //     //content = date.getFullYear();
-            //   // let returnforamt =
-            //   //   "<span style='font-size:12px'>" +
-            //   //   daydate +
-            //   //   "</span><span style='font-size:10px'>(" +
-            //   //   weekday +
-            //   //   ")</span>"; //';content;
-            //   let returnforamt = date[0]; //';content;
-            //   return returnforamt;
-            // },
           },
           dayGrid: {
             weekday: "long",
@@ -436,15 +466,6 @@ export default {
             width: "4%",
           },
 
-          // resourceTimelineWeek: [{
-          //       type: "resourceTimelineWeek",
-          //       slotDuration: {days: 1},
-          //       slotLabelInterval: {days: 1},
-          //       slotLabelFormat: [
-          //           {week: 'short', omitCommas: true}, // top level of text
-          //           {day: 'numeric'} // lower level of text
-          //       ]
-          //   }],
         ],
         resources: [
           // { id: "103", room_no: "103", room_type: "king", eventColor: "green" },
@@ -529,17 +550,25 @@ export default {
             user_id: this.$auth.user.id,
           };
 
-          this.change_date_by_drag(obj);
+          this.extendObj = obj;
+          this.extendConfirmationDialog = true;
+          return;
+
+          // this.change_date_by_drag(obj);
         },
 
         eventDrop: (arg, delta) => {
+
           let obj = {
             eventId: arg.event.id,
             start: this.convert_date_format(arg.event.start),
             end: this.convert_end_date_format(arg.event.start, arg.event.end),
             company_id: this.$auth.user.company.id,
+            user_id: this.$auth.user.id,
             roomId: arg.event._def.resourceIds[0],
           };
+
+          this.dragObj = obj;
           if (obj.start < this.currentDate) {
             this.alert(
               "Missing!",
@@ -549,7 +578,9 @@ export default {
             this.get_events();
             return;
           }
-          this.change_room_by_drag(obj);
+          this.confirmationDialog = true;
+          return;
+          // this.change_room_by_drag(obj);
         },
       },
       headers: [
@@ -633,7 +664,7 @@ export default {
       //     // return
       //   }
       // }, 1000 * 2);
-      this.changeTableHeaderContent();
+      // this.changeTableHeaderContent();
     });
   },
   activated() { },
@@ -1055,7 +1086,9 @@ export default {
         .catch((err) => console.log(err));
     },
 
-    change_room_by_drag(obj) {
+    change_room_by_drag() {
+      let obj = this.dragObj;
+
       this.$axios
         .post("/change_room_by_drag", obj)
         .then(({ data }) => {
@@ -1067,10 +1100,24 @@ export default {
             this.snackbar = data.message;
             this.response = data.message;
             // this.get_events();
-            this.getChangeRoomMethod(data);
+            this.confirmationDialog = false;
+            if (data.record) {
+              this.getChangeRoomMethod(data);
+            }
+
           }
         })
         .catch((e) => console.log(e));
+    },
+
+    closeConfirmationDialog() {
+      this.get_events();
+      this.confirmationDialog = false;
+    },
+
+    closeExtendConfirmationDialog() {
+      this.get_events();
+      this.extendConfirmationDialog = false;
     },
 
     closeChangeRoom() {
@@ -1084,7 +1131,8 @@ export default {
       this.changeRoomDialog = true;
     },
 
-    change_date_by_drag(obj) {
+    change_date_by_drag() {
+      let obj = this.extendObj;
       this.$axios
         .post("/change_date_by_drag", obj)
         .then(({ data }) => {
@@ -1097,6 +1145,7 @@ export default {
             this.snackbar = data.message;
             this.response = data.message;
             this.get_events();
+            this.extendConfirmationDialog = false;
           }
         })
         .catch((e) => console.log(e));
