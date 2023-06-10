@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Expense;
+namespace App\Http\Requests\RoomType;
 
 use App\Traits\failedValidationWithName;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateRequest extends FormRequest
+class StoreRequest extends FormRequest
 {
     use failedValidationWithName;
     /**
@@ -28,7 +28,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'price' => 'nullable',
+            'price' => 'required|numeric',
             'room_only_price' => 'nullable',
             'Break_fast_price' => 'nullable',
             'Break_fast_with_dinner_price' => 'nullable',
@@ -36,12 +36,10 @@ class UpdateRequest extends FormRequest
             'lunch_with_dinner_price' => 'nullable',
             'full_board_price' => 'nullable',
             'max_person' => 'nullable',
-            'created_at' => 'nullable',
-            'updated_at' => 'nullable',
             'company_id' => 'required',
-            'adult' => 'nullable',
-            'child' => 'nullable',
-            'baby' => 'nullable',
+            'adult' => 'required',
+            'child' => 'required',
+            'baby' => 'required',
             'holiday_price' => 'nullable',
             'weekday_price' => 'nullable',
             'weekend_price' => 'nullable',
