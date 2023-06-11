@@ -787,10 +787,24 @@ class BookingController extends Controller
                 'user_id'           => $request->user_id,
             ];
 
-            (new TransactionController())->store($transactionData, $request->new_advance, 'credit');
+            $payAmt = $request->new_advance;
+            $meth = 'credit';
+
+            if($payAmt < 0) {
+                $meth = 'debit';
+            }
+
+            (new TransactionController())->store($transactionData, $payAmt, $meth);
             (new TransactionController())->updateBookingByTransactions($booking->id, 0);
-            $booking->advance_price = (int) $booking->advance_price + (int) $request->new_advance;
-            $booking->save();
+
+            // $payAmt < 0 ? $booking->advance_price = (int) $booking->advance_price - (int) $payAmt :
+            // $booking->advance_price = (int) $booking->advance_price + (int) $payAmt ;
+
+            if($payAmt > 0) {
+                $booking->advance_price = (int) $booking->advance_price + (int) $request->new_advance;
+                $booking->save();
+            }
+
             $paymentsData = [
                 'booking_id'   => $booking->id,
                 'payment_mode' => $request->payment_mode_id,
@@ -803,11 +817,16 @@ class BookingController extends Controller
 
             $payment = Payment::whereBookingId($booking->id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
             if ($payment) {
-                $payment->amount = (int) $payment->amount - (int) $request->new_advance;
+
+                $payAmt < 0 ? $payment->amount = (int) $payment->amount + (int) $payAmt : $payment->amount = (int) $payment->amount - (int) $payAmt;
+                // $payment->amount = (int) $payment->amount - (int) $payAmt;
                 $payment->save();
             }
+
             $payment = new PaymentController();
-            $payment->store($paymentsData);
+            if($payAmt > 0) {
+                $payment->store($paymentsData);
+            }
 
             if (app()->isProduction() && $request->new_advance > 0) {
 
