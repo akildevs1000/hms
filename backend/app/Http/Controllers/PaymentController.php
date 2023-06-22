@@ -33,8 +33,8 @@ class PaymentController extends Controller
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $from = $request->from_date;
             $to = $request->to_date;
-            $model->whereDate('created_at', '>=', $from);
-            $model->whereDate('created_at', '<=', $to);
+            $model->whereDate('date', '>=', $from);
+            $model->whereDate('date', '<=', $to);
         }
 
         return $model->get();

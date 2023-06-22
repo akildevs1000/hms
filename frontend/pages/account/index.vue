@@ -97,27 +97,27 @@
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
             @change="commonMethod"></v-select></v-col>
       </v-col>
 
@@ -198,7 +198,7 @@
 
                   <tr v-for="(item, index) in incomeData" :key="index">
                     <td>{{ ++index }}</td>
-                    <td>{{ item.created_at }}</td>
+                    <td>{{ item.date }}</td>
                     <td>{{ item.time }}</td>
                     <td>
                       <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
@@ -217,38 +217,32 @@
                     <td>{{ item.description }}</td>
 
                     <td v-for="i in 7" :key="i" class="text-right">
-                      <span v-if="
-                        (item &&
+                      <span v-if="(item &&
                           item.payment_mode &&
                           item.payment_mode.name) == 'Cash' && i == 1
-                      ">
+                        ">
                         {{ item.amount }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Bank' && i == 4
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Bank' && i == 4
+                        ">
                         {{ item.amount }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Online' && i == 3
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Online' && i == 3
+                        ">
                         {{ item.amount }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'UPI' && i == 5
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'UPI' && i == 5
+                        ">
                         {{ item.amount }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Card' && i == 2
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Card' && i == 2
+                        ">
                         {{ item.amount }}
                       </span>
 
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'City Ledger' &&
+                      <span v-else-if="(item && item.payment_mode.name) == 'City Ledger' &&
                         i == 7
-                      ">
+                        ">
                         {{ item.amount }}
                       </span>
 
@@ -312,29 +306,24 @@
                     <td>{{ item.qty }}</td>
 
                     <td v-for="i in 6" :key="i" class="text-right">
-                      <span v-if="
-                        (item && item.payment_mode.name) == 'Cash' && i == 1
-                      ">
+                      <span v-if="(item && item.payment_mode.name) == 'Cash' && i == 1
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Bank' && i == 4
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Bank' && i == 4
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Online' && i == 3
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Online' && i == 3
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'UPI' && i == 5
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'UPI' && i == 5
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Card' && i == 2
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Card' && i == 2
+                        ">
                         {{ item.total }}
                       </span>
 
@@ -397,29 +386,24 @@
                     <td>{{ item.qty }}</td>
 
                     <td v-for="i in 6" :key="i" class="text-right">
-                      <span v-if="
-                        (item && item.payment_mode.name) == 'Cash' && i == 1
-                      ">
+                      <span v-if="(item && item.payment_mode.name) == 'Cash' && i == 1
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Bank' && i == 4
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Bank' && i == 4
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Online' && i == 3
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Online' && i == 3
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'UPI' && i == 5
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'UPI' && i == 5
+                        ">
                         {{ item.total }}
                       </span>
-                      <span v-else-if="
-                        (item && item.payment_mode.name) == 'Card' && i == 2
-                      ">
+                      <span v-else-if="(item && item.payment_mode.name) == 'Card' && i == 2
+                        ">
                         {{ item.total }}
                       </span>
 

@@ -44,27 +44,27 @@
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
             @change="commonMethod"></v-select></v-col>
       </v-col>
 
@@ -162,13 +162,13 @@
             </v-col>
             <v-col cols="6">
               <v-autocomplete v-model="editedItem.payment_modes" :items="[
-                { id: 1, name: 'Cash' },
-                { id: 2, name: 'Card' },
-                { id: 3, name: 'Online' },
-                { id: 4, name: 'Bank' },
-                { id: 5, name: 'UPI' },
-                { id: 6, name: 'Cheque' },
-              ]" item-text="name" item-value="id" placeholder="Select Payment Mode" label="Select Payment Mode"
+                    { id: 1, name: 'Cash' },
+                    { id: 2, name: 'Card' },
+                    { id: 3, name: 'Online' },
+                    { id: 4, name: 'Bank' },
+                    { id: 5, name: 'UPI' },
+                    { id: 6, name: 'Cheque' },
+                  ]" item-text="name" item-value="id" placeholder="Select Payment Mode" label="Select Payment Mode"
                 outlined :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
@@ -177,8 +177,8 @@
             </v-col>
 
             <v-col cols="12" v-if="is_management">
-              <v-autocomplete v-model="editedItem.user" :items="['Ariff', 'Ansari']" item-text="name" item-value="id"
-                placeholder="Select User" label="Select User" outlined :hide-details="true" dense>
+              <v-autocomplete v-model="editedItem.user" :items="['Nadia', 'Ariff', 'Ansari']" item-text="name"
+                item-value="id" placeholder="Select User" label="Select User" outlined :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
                 errors.department_id[0]
@@ -562,7 +562,10 @@ export default {
       const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
 
       let firstDay = `${year}-${month}-0${1}`;
-      let lastDay = `${year}-${month}-0${last}`;
+
+      let lastDayFirst = last > 9 ? `${last}` : `0${last}`;
+
+      let lastDay = `${year}-${month}-${lastDayFirst}`;
 
       return [
         firstDay,

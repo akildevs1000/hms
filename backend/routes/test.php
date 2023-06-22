@@ -37,6 +37,25 @@ Route::post('store_test', [TestController::class, 'store']);
 
 Route::get('/test', function (Request $request) {
 
+
+
+
+    $date = '2023-06-10';
+
+    // return  $payment =  Payment::whereDate('created_at', $date)
+    $payment =  DB::table('payments')
+    // ->whereDate('created_at', $date)
+   ->get(['id', 'created_at']);
+
+
+    foreach ($payment as $key => $value) {
+        $d = date('Y-m-d', strtotime($value->created_at));
+        DB::table('payments')
+        ->where('id', $value->id)
+        ->update(['date'=>$d]);
+    }
+
+
     // $company_ids =    Company::orderBy('id', 'asc')->pluck("id");
     $company_ids =    [1, 2];
     foreach ($company_ids as $company_id) {
