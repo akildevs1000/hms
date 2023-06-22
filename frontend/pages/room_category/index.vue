@@ -270,7 +270,6 @@ export default {
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
 
-      console.log(item);
 
       this.roomTypeDialog = true;
     },
