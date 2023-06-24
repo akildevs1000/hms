@@ -88,9 +88,14 @@ class ExpenseController extends Controller
     {
         try {
 
+            // return $request->validated();
+
             $record = Expense::create($request->validated());
             if ($record) {
-                $this->storeDocument($request, $record);
+                $this->storeDocument($request, $record, 'document');
+                $this->storeDocument($request, $record, 'document1');
+                $this->storeDocument($request, $record, 'document2');
+                $this->storeDocument($request, $record, 'document3');
                 return $this->response($this->name . ' Successfully created.', $record, true);
             } else {
                 return $this->response($this->name . ' cannot create.', null, false);
@@ -98,6 +103,20 @@ class ExpenseController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function storeDocument($request, $model, $docFileName = false)
+    {
+        if ($request->hasFile($docFileName)) {
+            $file     = $request->file($docFileName);
+            $ext      = $file->getClientOriginalExtension();
+            // $fileName = time() . '.' . $ext;
+            $fileName = time() . '_' . uniqid() . '.' . $ext;
+            $file->storeAs('public/documents/expense', $fileName);
+            $model->$docFileName = $fileName;
+            return $model->save();
+        }
+        return null;
     }
 
     public function update(UpdateRequest $request, Expense $expense)
@@ -208,16 +227,4 @@ class ExpenseController extends Controller
         return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('total');
     }
 
-    public function storeDocument($request, $model)
-    {
-        if ($request->hasFile('document')) {
-            $file     = $request->file('document');
-            $ext      = $file->getClientOriginalExtension();
-            $fileName = time() . '.' . $ext;
-            $file->storeAs('public/documents/expense', $fileName);
-            $model->document = $fileName;
-            return $model->save();
-        }
-        return null;
-    }
 }

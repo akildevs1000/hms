@@ -158,28 +158,7 @@
         </v-menu>
       </template>
 
-      <!-- <template v-slot:item.display_name="{ item, index }" style="width:300px">
-                <v-edit-dialog large save-text="Reset" cancel-text="Ok" style="margin-left: 4%;" @save="getDataFromApi()"
-                  @open="datatable_open">
-                  <v-row no-gutters>
-                    <v-col style="padding: 5px;;padding-left:0px;width:50px;max-width:50px">
-                      <v-img style="border-radius: 50%; height: auto;  width: 50px;max-width: 50px" :src="item.profile_picture
-                        ? item.profile_picture
-                        : '/no-profile-image.jpg'
-                        ">
-                      </v-img>
-                    </v-col>
-                    <v-col style="padding: 10px;">
-                      <strong> {{ item.first_name ? item.first_name : '---' }} {{ item.last_name ? item.last_name : '---'
-                      }}</strong>
-                      <div> {{ item.designation ? item.designation.name : "---" }}</div>
 
-                    </v-col>
-                  </v-row>
-                  <template v-slot:input>
-                    <v-text-field @input="getDataFromApi_FilterEmployeeName" v-model="datatable_search_textbox"
-                      label="Type Employee Name"></v-text-field>
-        </template> -->
 
     </v-data-table>
   </div>
