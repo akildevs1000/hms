@@ -1,7 +1,25 @@
 <template>
   <div>
+
+    <div class="text-center ma-2">
+      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
+        {{ response }}
+
+      </v-snackbar>
+    </div>
+
+
+    this from venu branch
+
+    <v-row>
+      <v-col cols="12">
+        <FullCalendar :options="calendarOptions" style="background: #fff" />
+      </v-col>
+    </v-row>
+
     <v-data-table :headers="headers" :items="desserts" :options.sync="options" :server-items-length="totalDesserts"
       :loading="loading" class="elevation-1"></v-data-table>
+
   </div>
 </template>
 
