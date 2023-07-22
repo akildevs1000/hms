@@ -29,9 +29,9 @@ class Kernel extends ConsoleKernel
         // PDF
         $schedule
             ->command('task:generate_audit_report')
-            ->everyMinute()
+            // ->everyMinute()
             // ->everyThirtyMinutes()
-            // ->dailyAt('2:00')
+            ->dailyAt('23:50')
             //->hourly()
             ->appendOutputTo(storage_path("logs/pdf.log"))
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));

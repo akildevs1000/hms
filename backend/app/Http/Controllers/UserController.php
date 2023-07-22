@@ -12,26 +12,65 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        // $model = User::query();
+
+        // if ($request->user_type == "employee") {
+        //     $model->where('id', $request->id);
+        // }
+
+        // $model->where('company_id', $request->company_id);
+        // return $model->paginate(20);
+
+
+        $sortBy = $request->input('sortBy');
+        $sortDesc = $request->input('sortDesc');
+        $itemsPerPage = $request->input('itemsPerPage');
+
         $model = User::query();
 
-        if ($request->user_type == "employee") {
-            $model->where('id', $request->id);
+
+        // $model->when()
+
+        if($request->filled('name') && $request->has('name')) {
+            $model->Where('name', 'ILIKE', '%' . $request->name . '%');
         }
 
-        $model->where('company_id', $request->company_id);
-        return $model->get();
+        if($request->filled('email') && $request->email != "") {
+            $model->Where('email', 'ILIKE', '%' . $request->email . '%');
+        }
+
+        if($request->filled('mobile') && $request->mobile != "") {
+            $model->Where('mobile', 'ILIKE', '%' . $request->mobile . '%');
+        }
+
+        if ($sortBy && $sortDesc) {
+            $model->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
+        }
+
+        $desserts = $model->paginate($itemsPerPage);
+
+        return $desserts;
+
+
     }
+
     public function store(User $model, StoreRequest $request)
     {
         try {
+
             $data = $request->validated();
             $data["password"] = Hash::make($data["password"]);
+            $data["employee_role_id"] = 1;
 
-            if ($request->company_id) {
-                $data["company_id"] = $request->company_id;
+            if ($request->hasFile('image')) {
+                $file            = $request->file('image');
+                $ext             = $file->getClientOriginalExtension();
+                $fileName        = time() . '.' . $ext;
+                $path            = $file->storeAs('public/user/images', $fileName);
             }
-
+            $data["image"] = $fileName;
             $record = $model->create($data);
+
 
             if ($record) {
                 return $this->response('User successfully added.', $record, true);
@@ -51,6 +90,16 @@ class UserController extends Controller
             if ($request->password) {
                 $data["password"] = Hash::make($data["password"]);
             }
+
+
+            if ($request->hasFile('image')) {
+                $file            = $request->file('image');
+                $ext             = $file->getClientOriginalExtension();
+                $fileName        = time() . '.' . $ext;
+                $path            = $file->storeAs('public/user/images', $fileName);
+            }
+
+            $data["image"] = $fileName;
 
             $record = $user->update($data);
 

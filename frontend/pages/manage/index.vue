@@ -5,7 +5,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row class="mt-5 mb-5">
+    <v-row class="mt-5 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
@@ -14,132 +14,112 @@
     </v-row>
 
     <v-row>
-      <v-col md="5" sm="12" lg="5">
-        <v-card elevation="0">
-          <v-toolbar color="primary" dense flat dark>
-            <span>{{ formTitle }} {{ Model }}</span>
+      <v-dialog v-model="holidayDialog" max-width="40%">
+        <v-card>
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <v-toolbar color="background" dense flat dark>
+              <span>{{ formTitle }} {{ Model }}</span>
+            </v-toolbar>
+            <v-spacer></v-spacer>
+            <v-icon dark class="pa-0" @click="holidayDialog = false">mdi mdi-close-box</v-icon>
           </v-toolbar>
-          <v-divider class="py-0 my-0"></v-divider>
-          <v-card-text>
-            <v-container>
-              <!-- <v-row>
-                <v-col md="2" class="mt-2 pr-0 mr-0">
-                  <h5>Weekdays</h5>
-                </v-col>
-                <v-col md="1" sm="4" class="py-0 my-0 ml-3" v-for="(day, index) in Weekdays" :key="index">
-                  <v-checkbox v-model="selectedWeekDays" :label="day.name" :value="day.name"></v-checkbox>
-                </v-col>
-              </v-row> -->
+          <v-container>
+            <v-row>
+              <v-col md="12" lg="12">
+                <v-card elevation="0">
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col md="12">
+                          <v-row>
+                            <v-col md="12" cols="12">
+                              <v-text-field v-model="description" placeholder="Name" label="Name" outlined
+                                :hide-details="true" dense></v-text-field>
+                              <span v-if="errors && errors.description" class="error--text">{{ errors.description[0]
+                              }}</span>
+                            </v-col>
+                            <v-col md="6" cols="12">
+                              <v-menu v-model="from_date_menu" :close-on-content-click="false" :nudge-right="40"
+                                transition="scale-transition" offset-y min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field v-model="from_date" @change="getDays(from_date)" label="From Date"
+                                    v-on="on" v-bind="attrs" :hide-details="true" dense outlined></v-text-field>
+                                </template>
+                                <v-date-picker v-model="from_date" @input="from_date_menu = false"></v-date-picker>
+                              </v-menu>
+                              <span v-if="errors && errors.email" class="error--text">{{ errors.email[0]
+                              }}
+                              </span>
+                            </v-col>
+                            <v-col md="6" cols="12">
+                              <v-menu v-model="to_date_menu" :close-on-content-click="false" :nudge-right="40"
+                                transition="scale-transition" offset-y min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field v-model="to_date" label="To Date" v-on="on" v-bind="attrs"
+                                    :hide-details="true" dense outlined></v-text-field>
+                                </template>
+                                <v-date-picker v-model="to_date" @input="to_date_menu = false"></v-date-picker>
+                              </v-menu>
+                              <span v-if="errors && errors.email" class="error--text">{{ errors.email[0]
+                              }}
+                              </span>
+                            </v-col>
+                            <v-col md="12" cols="12">
+                              <v-text-field v-model="numberOfDays" placeholder="Number of Days" label="Number of Days"
+                                outlined :hide-details="true" dense></v-text-field>
+                              <span v-if="errors && errors.numberOfDays" class="error--text">{{ errors.numberOfDays[0]
+                              }}</span>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                      <v-card-actions>
+                        <v-btn class="error" @click="holidayDialog = false">
+                          Cancel
+                        </v-btn>
+                        <!-- <v-btn class="primary">Save</v-btn> -->
+                        <v-btn class="primary" @click="update_holidays" v-if="isUpdate">Update</v-btn>
+                        <v-btn class="primary" @click="store_holidays" v-else>
+                          Save
+                        </v-btn>
+                      </v-card-actions>
 
-              <!-- <v-row>
-                <v-col md="2" class="mt-2 pr-0 mr-0">
-                  <h5>Weekend</h5>
-                </v-col>
-                <v-col
-                  md="1"
-                  sm="2"
-                  class="py-0 my-0 ml-3"
-                  v-for="(day, index) in Weekdays"
-                  :key="index"
-                >
-                  <v-checkbox
-                    v-model="selectedWeekDays"
-                    :label="day.name"
-                    :value="day.name"
-                  ></v-checkbox>
-                </v-col>
-              </v-row> -->
-
-              <v-row class="mt-2">
-                <v-col cols="12" sm="12">
-                  <v-date-picker
-                    v-model="dates"
-                    full-width
-                    range
-                  ></v-date-picker>
-                  <span v-if="errors && errors.dates" class="error--text">{{
-                    errors.dates[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12" sm="12">
-                  <v-textarea
-                    rows="3"
-                    v-model="description"
-                    label="Description"
-                    outlined
-                    dense
-                    :hide-details="true"
-                  ></v-textarea>
-                  <span
-                    v-if="errors && errors.description"
-                    class="error--text"
-                    >{{ errors.description[0] }}</span
-                  >
-                </v-col>
-                <v-card-actions>
-                  <v-btn
-                    class="primary"
-                    @click="update_holidays"
-                    v-if="isUpdate"
-                    >Update</v-btn
-                  >
-                  <v-btn class="primary" @click="store_holidays" v-else>
-                    Save
-                  </v-btn>
-                  <v-btn class="accent" @click="clear">CLear</v-btn>
-                </v-card-actions>
-              </v-row>
-            </v-container>
-          </v-card-text>
+                    </v-container>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-card-actions> </v-card-actions>
         </v-card>
-      </v-col>
+      </v-dialog>
 
       <v-dialog v-model="priceEditDialog" max-width="600px">
         <v-card>
           <v-card-title> Edit </v-card-title>
           <v-divider></v-divider>
-          <h3
-            style="
+          <h3 style="
               text-transform: capitalize;
               margin: 11px 20px -25px 20px;
               color: #aaaaaa;
-            "
-          >
+            ">
             {{ editPriceList.name }}
           </h3>
           <v-card-text class="mt-8">
             <v-row>
               <v-col md="4">
-                <v-text-field
-                  v-model="editPriceList.weekday_price"
-                  label="Weekdays Amount"
-                  placeholder="Weekdays Amount"
-                  id="id"
-                  outlined
-                  dense
-                >
+                <v-text-field v-model="editPriceList.weekday_price" label="Weekdays Amount" placeholder="Weekdays Amount"
+                  id="id" outlined dense>
                 </v-text-field>
               </v-col>
               <v-col md="4">
-                <v-text-field
-                  v-model="editPriceList.weekend_price"
-                  label="	Weekend Amount"
-                  placeholder="Weekend Amount"
-                  id="id"
-                  outlined
-                  dense
-                >
+                <v-text-field v-model="editPriceList.weekend_price" label="	Weekend Amount" placeholder="Weekend Amount"
+                  id="id" outlined dense>
                 </v-text-field>
               </v-col>
               <v-col md="4">
-                <v-text-field
-                  v-model="editPriceList.holiday_price"
-                  label="Holiday Amount"
-                  placeholder="Holiday Amount"
-                  id="id"
-                  outlined
-                  dense
-                >
+                <v-text-field v-model="editPriceList.holiday_price" label="Holiday Amount" placeholder="Holiday Amount"
+                  id="id" outlined dense>
                 </v-text-field>
               </v-col>
             </v-row>
@@ -158,32 +138,20 @@
         <v-card>
           <v-card-title> Edit </v-card-title>
           <v-divider></v-divider>
-          <h3
-            style="
+          <h3 style="
               text-transform: capitalize;
               margin: 11px 20px -25px 20px;
               color: #aaaaaa;
-            "
-          >
-            {{ editPriceList.name }}
+            ">
+            <!-- {{ editPriceList }} -->
           </h3>
           <v-card-text class="mt-8">
             <v-row>
               <v-col md="2" class="mt-2 pr-0 mr-0">
                 <h5>Weekdays</h5>
               </v-col>
-              <v-col
-                md="1"
-                sm="4"
-                class="py-0 my-0 ml-3"
-                v-for="(day, index) in Weekdays"
-                :key="index"
-              >
-                <v-checkbox
-                  v-model="editWeekend.name"
-                  :label="day.name"
-                  :value="day.name"
-                >
+              <v-col md="1" sm="4" class="py-0 my-0 ml-3" v-for="(day, index) in Weekdays" :key="index">
+                <v-checkbox v-model="editWeekend.name" :label="day.name" :value="day.name">
                 </v-checkbox>
               </v-col>
             </v-row>
@@ -196,18 +164,16 @@
         </v-card>
       </v-dialog>
 
-      <v-col md="7" sm="12" class="float-right">
+      <v-col md="12" sm="12" class="float-right">
         <v-card>
-          <v-toolbar color="primary" dark flat>
-            <template v-slot:extension>
-              <v-tabs v-model="tab" align-with-title>
-                <v-tabs-slider color="yellow"></v-tabs-slider>
-                <v-tab v-for="item in items" :key="item">
-                  {{ item }}
-                </v-tab>
-              </v-tabs>
-            </template>
-          </v-toolbar>
+          <v-tabs v-model="tab" align-with-title background-color="primary" dark show-arrows>
+            <v-spacer></v-spacer>
+            <v-tab v-for="item in items" :key="item" active-class="active-link">
+              {{ item }}
+            </v-tab>
+            <v-tabs-slider color="#1259a7"></v-tabs-slider>
+          </v-tabs>
+
           <v-tabs-items v-model="tab">
             <!-- weekdays -->
 
@@ -220,18 +186,9 @@
                     <th>Weekend</th>
                     <th>Action</th>
                   </tr>
-                  <v-progress-linear
-                    v-if="loading"
-                    :active="loading"
-                    :indeterminate="loading"
-                    absolute
-                    color="primary"
-                  ></v-progress-linear>
-                  <tr
-                    style="font-size: 12px"
-                    v-for="(item, index) in weekendList"
-                    :key="index"
-                  >
+                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                    color="primary"></v-progress-linear>
+                  <tr style="font-size: 12px" v-for="(item, index) in weekendList" :key="index">
                     <td>{{ ++index }}</td>
                     <td>
                       <span v-for="(w, i) in item.day" :key="i">
@@ -262,32 +219,30 @@
                 </table>
               </v-card>
             </v-tab-item>
-
             <!-- weekend -->
+
             <v-tab-item>
               <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
-                <table>
+                <div class="d-flex justify-center">
+                  <v-btn small class="pt-4 pb-4 mr-1 elevation-0" color="#ECF0F4" @click="toggleFilter">
+                    Search
+                    <v-icon right>mdi-magnify</v-icon>
+                  </v-btn>
+                  <v-btn @click="holidayDialog = true" small class="pt-4 pb-4 elevation-0" color="#ECF0F4">
+                    New
+                    <v-icon right>mdi-plus-circle</v-icon>
+                  </v-btn>
+                </div>
+
+                <!-- <table>
                   <tr>
-                    <th
-                      style="font-size: 12px"
-                      v-for="(item, index) in headers"
-                      :key="index"
-                    >
+                    <th style="font-size: 12px" v-for="(item, index) in headers" :key="index">
                       <span v-html="item.text"></span>
                     </th>
                   </tr>
-                  <v-progress-linear
-                    v-if="loading"
-                    :active="loading"
-                    :indeterminate="loading"
-                    absolute
-                    color="primary"
-                  ></v-progress-linear>
-                  <tr
-                    style="font-size: 12px"
-                    v-for="(item, index) in data"
-                    :key="index"
-                  >
+                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                    color="primary"></v-progress-linear>
+                  <tr style="font-size: 12px" v-for="(item, index) in data" :key="index">
                     <td>
                       {{
                         (pagination.current - 1) * pagination.per_page +
@@ -329,15 +284,54 @@
                 <v-row>
                   <v-col md="12" class="float-right">
                     <div class="float-right">
-                      <v-pagination
-                        v-model="pagination.current"
-                        :length="pagination.total"
-                        @input="onPageChange"
-                        :total-visible="12"
-                      ></v-pagination>
+                      <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                        :total-visible="12"></v-pagination>
                     </div>
                   </v-col>
-                </v-row>
+                </v-row> -->
+
+                <v-data-table :headers="holidayHeaders" :items="data" :options.sync="holidayOptions"
+                  :server-items-length="totalUserData" :loading="loading" class="elevation-1 mt-2" :footer-props="{
+                      itemsPerPageOptions: [50, 100, 500, 1000],
+                    }">
+                  <!-- <template v-slot:header="{ props: { headers } }"> -->
+                  <template v-slot:header="{ props: { headers } }">
+                    <tr v-if="isFilter">
+                      <th v-for="header in holidayHeaders" :key="header.text">
+                        <v-text-field v-if="header.filterable" v-model="filters[header.value]" :label="header.text"
+                          clearable @input="applyFilters" dense outlined flat append-icon="mdi-magnify"></v-text-field>
+                      </th>
+                    </tr>
+                  </template>
+                  <template v-slot:item.actions="{ item }">
+
+                    <v-menu bottom left>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list width="120" dense>
+                        <v-list-item @click="editItem(item)">
+                          <v-list-item-title style="cursor: pointer">
+                            <v-icon color="secondary" small>
+                              mdi-pencil
+                            </v-icon>
+                            Edit
+                          </v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="deleteItem(item)">
+                          <v-list-item-title style="cursor: pointer">
+                            <v-icon color="error" small> mdi-delete </v-icon>
+                            Delete
+                          </v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template>
+                </v-data-table>
+
+
               </v-card>
             </v-tab-item>
 
@@ -352,18 +346,9 @@
                     <th>Holiday Amount</th>
                     <th>Action</th>
                   </tr>
-                  <v-progress-linear
-                    v-if="loading"
-                    :active="loading"
-                    :indeterminate="loading"
-                    absolute
-                    color="primary"
-                  ></v-progress-linear>
-                  <tr
-                    style="font-size: 12px"
-                    v-for="(item, index) in priceList"
-                    :key="index"
-                  >
+                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                    color="primary"></v-progress-linear>
+                  <tr style="font-size: 12px" v-for="(item, index) in priceList" :key="index">
                     <td>{{ ++index }}</td>
                     <td style="text-transform: uppercase">{{ item.name }}</td>
                     <td>{{ item.weekday_price }}</td>
@@ -392,6 +377,7 @@
                 </table>
               </v-card>
             </v-tab-item>
+
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -408,6 +394,22 @@ export default {
     selectedWeekDays: [],
     dates: [],
     description: "",
+    numberOfDays: "",
+    from_date_menu: false,
+    from_date: "",
+    to_date: "",
+    to_date_menu: false,
+
+    holidayOptions: {},
+    filters: {},
+    isFilter: false,
+    totalUserData: 0,
+    holidayHeaders: [
+      { text: 'Name', value: 'description', filterable: true },
+      { text: 'From', value: 'from', filterable: false },
+      { text: 'to', value: 'to', filterable: false },
+      { text: 'Actions', value: 'actions', filterable: false, sortable: false },
+    ],
 
     Weekdays: [
       { name: "Mon" },
@@ -440,6 +442,7 @@ export default {
     options: {},
     endpoint: "holiday",
     search: "",
+    holidayDialog: false,
     priceEditDialog: false,
     weekendDialog: false,
     isUpdate: false,
@@ -450,13 +453,13 @@ export default {
     total: 0,
     id: "",
     priceId: "",
-    headers: [
-      { text: "#" },
-      { text: "From" },
-      { text: "To" },
-      { text: "Desc" },
-      { text: "Action" },
-    ],
+    // headers: [
+    //   { text: "#" },
+    //   { text: "From" },
+    //   { text: "To" },
+    //   { text: "Desc" },
+    //   { text: "Action" },
+    // ],
     editedIndex: -1,
     response: "",
     priceList: [],
@@ -464,9 +467,31 @@ export default {
     errors: [],
   }),
 
+  watch: {
+
+    holidayDialog(val) {
+      !val ? this.close() : ''
+      console.log(val);
+    },
+
+    from_date() {
+      this.getDays();
+    },
+
+    to_date() {
+      this.getDays();
+    },
+
+    holidayOptions: {
+      handler() {
+        this.getDataFromApi()
+      },
+      deep: true,
+    },
+  },
+
   created() {
     this.loading = true;
-    this.getDataFromApi();
     this.get_price_list();
     this.get_weekends();
   },
@@ -484,6 +509,7 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
+
     can(permission) {
       let user = this.$auth;
       return;
@@ -492,6 +518,7 @@ export default {
         user.master
       );
     },
+
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -500,16 +527,35 @@ export default {
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
+
     onPageChange() {
       this.getDataFromApi();
     },
 
+    toggleFilter() {
+      this.isFilter = !this.isFilter;
+      console.log(this.isFilter);
+    },
+
+    close() {
+      this.description = "";
+      this.from_date = "";
+      this.to_date = "";
+      this.numberOfDays = "";
+    },
+
     editItem(item) {
+      this.holidayDialog = true;
+      // console.log(item);
       this.id = item.id;
 
       this.description = item.description;
       this.isUpdate = true;
       this.dates = [item.from, item.to];
+
+      this.from_date = item.from;
+      this.to_date = item.to;
+
     },
 
     priceEditItem(item) {
@@ -552,19 +598,27 @@ export default {
     },
 
     getDataFromApi(url = this.endpoint) {
+
+      const { sortBy, sortDesc, page, itemsPerPage } = this.holidayOptions;
+      let sortedBy = sortBy[0];
+      let sortedDesc = sortDesc[0]
       this.loading = true;
-      let page = this.pagination.current;
       let options = {
         params: {
-          status: this.pagination.status,
-          per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
+          page: page,
+          itemsPerPage: itemsPerPage,
+          sortBy: sortedBy,
+          sortDesc: sortedDesc,
+          ...this.filters
+
         },
       };
-
+      console.log(options);
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
+        this.totalUserData = data.data.total;
         this.pagination.total = data.last_page;
         this.loading = false;
       });
@@ -588,6 +642,7 @@ export default {
         },
       };
       this.$axios.get("weekend", payload).then(({ data }) => {
+        this.loading = false;
         this.weekendList = data;
       });
     },
@@ -600,12 +655,18 @@ export default {
       }
     },
 
+    applyFilters() {
+      this.getDataFromApi();
+    },
+
     update_holidays() {
       let payload = {
-        dates: this.dates,
+        // dates: this.dates,
+        dates: [this.from_date, this.to_date],
         description: this.description,
         company_id: this.$auth.user.company.id,
       };
+
       this.$axios
         .put(`holiday/${this.id}`, payload)
         .then(({ data }) => {
@@ -613,7 +674,7 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
           } else {
-            console.log(data.status);
+            this.holidayDialog = false;
             this.getDataFromApi();
             this.snackbar = true;
             this.response = "Holiday successfully updated";
@@ -681,22 +742,32 @@ export default {
         .catch((res) => console.log(res));
     },
 
+    getDays() {
+      let f_date = new Date(this.from_date);
+      let t_date = new Date(this.to_date);
+      let Difference_In_Time = t_date.getTime() - f_date.getTime();
+      let days = Difference_In_Time / (1000 * 3600 * 24) + 1;
+      if (days > 0) {
+        (this.numberOfDays = days);
+      }
+    },
+
     store_holidays() {
-      console.log(this.dates);
       let payload = {
-        dates: this.dates,
+        // dates: this.dates,
+        dates: [this.from_date, this.to_date],
         description: this.description,
         company_id: this.$auth.user.company.id,
       };
       this.$axios
         .post(this.endpoint, payload)
         .then(({ data }) => {
-          console.log(data);
           if (!data.status) {
             this.errors = data.errors;
           } else {
             console.log(data.status);
             this.getDataFromApi();
+            this.holidayDialog = false;
             this.snackbar = true;
             this.response = "Holiday successfully added";
             this.description = "";

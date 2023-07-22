@@ -8,6 +8,8 @@ use App\Models\Weekend;
 use App\Models\RoomType;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use App\Http\Requests\RoomType\StoreRequest;
+use App\Http\Requests\RoomType\UpdateRequest;
 
 class RoomTypeController extends Controller
 {
@@ -19,6 +21,52 @@ class RoomTypeController extends Controller
     public function index(Request $request)
     {
         return RoomType::whereCompanyId($request->company_id)->get(['id', 'name', 'price']);
+    }
+
+    public function getRoomType(Request $request)
+    {
+        $model =  RoomType::whereCompanyId($request->company_id);
+
+        if ($request->filled('search') && $request->search) {
+            $model->where('name', 'ILIKE', "%$request->search%");
+        }
+
+        return $model->paginate($request->per_page ?? 50);
+    }
+
+    public function store(StoreRequest $request)
+    {
+        $data = $request->validated();
+        $data['holiday_price'] = $data['weekday_price'] = $data['weekend_price'] = $data['price'];
+
+        // return $data;
+
+        try {
+            $record = RoomType::create($data);
+            if ($record) {
+                return $this->response('Room Category Successfully created.', $record, true);
+            } else {
+                // return $this->response($this->name . ' cannot create.', null, false);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function update(UpdateRequest $request, RoomType $roomType)
+    {
+        try {
+            $data = $request->validated();
+            $data['holiday_price'] = $data['weekday_price'] = $data['weekend_price'] = $data['price'];
+            $record = $roomType->update($data);
+            if ($record) {
+                return $this->response('Room Category successfully updated.', $record, true);
+            } else {
+                return $this->response('Room Category cannot update.', null, false);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     public function getPriceList(Request $request)
@@ -177,4 +225,7 @@ class RoomTypeController extends Controller
         date_modify($date, "-1 days");
         return date_format($date, "Y-m-d");
     }
+
+
+
 }

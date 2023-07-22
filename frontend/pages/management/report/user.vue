@@ -6,27 +6,27 @@
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
             @change="commonMethod"></v-select>
         </v-col>
       </v-col>
@@ -119,42 +119,36 @@
               <td>{{ trans.credit }}</td>
               <td>{{ trans.debit }}</td>
               <td v-for="i in 7" :key="i" class="text-right">
-                <span v-if="
-                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                <span v-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
                   'Cash' && i == 1
-                ">
+                  ">
                   {{ trans.credit }}
                 </span>
-                <span v-else-if="
-                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
                   'Card' && i == 2
-                ">
+                  ">
                   {{ trans.credit }}
                 </span>
-                <span v-else-if="
-                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
                   'Online' && i == 3
-                ">
+                  ">
                   {{ trans.credit }}
                 </span>
-                <span v-else-if="
-                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
                   'Bank' && i == 4
-                ">
+                  ">
                   {{ trans.credit }}
                 </span>
 
-                <span v-else-if="
-                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
                   'UPI' && i == 5
-                ">
+                  ">
                   {{ trans.credit }}
                 </span>
 
-                <span v-else-if="
-                  (trans && trans.payment_mode && trans.payment_mode.name) ==
+                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
                   'City Ledger' && i == 7
-                ">
+                  ">
                   {{ trans.debit }}
                 </span>
 
@@ -314,7 +308,48 @@ export default {
       this.$router.push(`/customer/details/${item.booking_id}`);
     },
 
+    // getFirstAndLastDay() {
+    //   const currentDate = new Date();
+    //   const day = currentDate.getDate();
+    //   const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    //   const year = currentDate.getFullYear();
+    //   const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
+
+    //   let firstDay = `${year}-${month}-0${1}`;
+    //   let lastDay = `${year}-${month}-0${last}`;
+
+    //   return [
+    //     firstDay,
+    //     lastDay
+    //   ]
+    // },
+
+
+    getFirstAndLastDay() {
+      const currentDate = new Date();
+      const day = currentDate.getDate();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+      const year = currentDate.getFullYear();
+      const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
+
+      let firstDay = `${year}-${month}-0${1}`;
+
+
+      let lastDayFirst = last > 9 ? `${last}` : `0${last}`;
+
+      console.log('date' + last);
+
+
+      let lastDay = `${year}-${month}-${lastDayFirst}`;
+
+      return [
+        firstDay,
+        lastDay
+      ]
+    },
+
     commonMethod() {
+      // alert('ff');
       const today = new Date();
       console.log(this.currentDate);
       switch (this.filterType) {
@@ -335,19 +370,19 @@ export default {
           this.to_date = this.week[1];
           break;
         case 4:
-          this.from_date = new Date(today.getFullYear(), today.getMonth(), 1);
-          this.to_date = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+          this.from_date = this.getFirstAndLastDay()[0];
+          this.to_date = this.getFirstAndLastDay()[1];
           break;
 
-        default:
-          this.from_date = new Date().toJSON().slice(0, 10);
-          this.to_date = new Date().toJSON().slice(0, 10);
-          break;
+        // default:
+        //   this.from_date = new Date().toJSON().slice(0, 10);
+        //   this.to_date = new Date().toJSON().slice(0, 10);
+        //   break;
       }
 
-      console.log(this.from_date + "from");
-      console.log(this.to_date + "to");
-      console.log(this.filterType + "type");
+      // console.log(this.from_date + "from");
+      // console.log(this.to_date + "to");
+      // console.log(this.filterType + "type");
 
       this.getPaymentReportsByUser();
     },

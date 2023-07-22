@@ -9,28 +9,14 @@
 
     <v-row>
       <v-col md="3">
-        <v-select
-          :items="months"
-          label="Select Month"
-          outlined
-          dense
-          item-value="id"
-          item-text="name"
-          v-model="month"
-          @change="getReportByMonth(month)"
-        ></v-select>
+        <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
+          @change="getReportByMonth(month)"></v-select>
       </v-col>
     </v-row>
 
     <div v-if="can(`agents_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-tabs
-          v-model="activeTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
+        <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
           <v-spacer></v-spacer>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-chart-bar </v-icon>
@@ -38,18 +24,17 @@
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-chart-pie </v-icon>
           </v-tab>
+          <v-tab active-class="active-link">
+            <!-- <v-icon> mdi mdi-chart-pie </v-icon> -->
+            source
+          </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
           <v-tab-item>
             <v-card flat>
               <v-card-text>
                 <client-only>
-                  <ApexCharts
-                    :options="barChartOptions"
-                    :series="barSeries"
-                    chart-id="bar"
-                    :height="400"
-                    :key="chartKey"
-                  />
+                  <ApexCharts :options="barChartOptions" :series="barSeries" chart-id="bar" :height="400"
+                    :key="chartKey" />
                 </client-only>
               </v-card-text>
             </v-card>
@@ -59,13 +44,18 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
-                  <ApexCharts
-                    :options="chartOptions"
-                    :series="series"
-                    :height="400"
-                    chart-id="pieChart"
-                    :key="chartKey"
-                  />
+                  <ApexCharts :options="chartOptions" :series="series" :height="400" chart-id="pieChart"
+                    :key="chartKey" />
+                </client-only>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <client-only>
+                  <SourceReport :parentMonth="month" />
                 </client-only>
               </v-card-text>
             </v-card>
@@ -77,7 +67,11 @@
 </template>
 
 <script>
+import SourceReport from '../../../components/bookingSource/SourceReport.vue';
 export default {
+  components: {
+    SourceReport,
+  },
   data() {
     return {
       series: [],
@@ -291,8 +285,6 @@ export default {
 
         let totSold = eval(data.sold.join("+"));
         let totUnsold = eval(data.unsold.join("+"));
-        console.log(totSold);
-        console.log(totUnsold);
         this.series.push(...[totSold, totUnsold]);
         this.forceChartRerender();
         this.loading = false;

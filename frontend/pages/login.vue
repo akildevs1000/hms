@@ -168,6 +168,17 @@ export default {
         .catch((err) => console.log(err));
     },
 
+    set_otp_new(userId) {
+      this.$axios
+        .post(`whatsapp-otp/`, { userId })
+        .then(({ data }) => {
+          if (!data.status) {
+            return;
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+
     login() {
       if (this.$refs.form.validate()) {
         this.msg = "";
@@ -185,11 +196,25 @@ export default {
             }
           )
           .then(({ data }) => {
-            if (this.$auth.user.user_type != "company") {
-              this.set_otp(this.$auth.user.id);
+            let LoginUser = this.$auth.user;
+            console.log(data);
+            if (LoginUser.employee_role_id > 0) {
+              this.set_otp_new(this.$auth.user.id);
               this.$router.push(`/otp`);
               return;
             }
+
+            if (data.user && data.user.user_type == "master") {
+              this.$router.push(`/master/companies`);
+              id = data.user?.id;
+              name = data.user?.name;
+            }
+
+            // if (LoginUser.employee_role_id > 0) {
+            //   this.set_otp(this.$auth.user.id);
+            //   this.$router.push(`/otp`);
+            //   return;
+            // }
           })
           .catch(({ response }) => {
             if (!response) {

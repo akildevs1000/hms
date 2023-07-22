@@ -39,4 +39,28 @@ class Expense extends Model
         }
         return asset('storage/documents/expense/' . $value);
     }
+
+    public function getDocument1Attribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/documents/expense/' . $value);
+    }
+
+    public function getDocument2Attribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/documents/expense/' . $value);
+    }
+
+    public function getDocument3Attribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/documents/expense/' . $value);
+    }
 }

@@ -65,6 +65,39 @@ class ManagementController extends Controller
         return $arr;
     }
 
+    public function getSourceRateByMonth(Request $request)
+    {
+
+        $data = Booking::whereCompanyId($request->company_id)
+        ->whereMonth('check_in', $request->month)
+        ->where('booking_status', '!=', -1)
+        ->select('source', 'total_price')
+        ->get()
+        ->groupBy('source')
+        ->map(function ($group) {
+            return $group->sum('total_price');
+        });
+
+
+        return $data;
+
+        return 'gg';
+
+        $reportModel = Report::query();
+        $arr         = [];
+        $data        = $reportModel->select('sold', 'unsold', 'date')
+            ->whereCompanyId($request->company_id)
+            ->whereMonth('date', $request->month)
+            ->get()->toArray();
+
+        foreach ($data as $data) {
+            $arr['date'][]   = $data['date'];
+            $arr['sold'][]   = $data['sold'];
+            $arr['unsold'][] = $data['unsold'];
+        }
+        return $arr;
+    }
+
     public function getOccupancyRateByFilter(Request $request)
     {
         $startOfWeek = Carbon::now()->startOfWeek();
@@ -282,7 +315,8 @@ class ManagementController extends Controller
             ->with('user')
             ->whereDate('created_at', $request->date)
             ->where('company_id', $company_id)
-            ->get(['room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in']);
+            ->with('booking:id,reservation_no')
+            ->get(['booking_id','room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in']);
     }
 
     private function cityLedgerPaymentsAudit($model, $request)

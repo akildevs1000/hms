@@ -3,14 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-row>
-          <v-col
-            xs="12"
-            sm="12"
-            md="3"
-            cols="12"
-            v-for="(i, index) in total_items"
-            :key="index"
-          >
+          <v-col xs="12" sm="12" md="3" cols="12" v-for="(i, index) in total_items" :key="index">
             <v-card class="no_print">
               <v-list-item three-line>
                 <v-list-item-content>
@@ -33,7 +26,7 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <DataTable :title="title" :headers="headers" :endpoint="endpoint" />
+        <!-- <DataTable :title="title" :headers="headers" :endpoint="endpoint" /> -->
       </v-col>
     </v-row>
   </div>

@@ -13,7 +13,22 @@ class HolidayController extends Controller
 
     public function index(Request $request)
     {
-        return Holiday::whereCompanyId($request->company_id)->paginate($request->per_page ?? 20);
+        $sortBy = $request->input('sortBy');
+        $sortDesc = $request->input('sortDesc');
+        $itemsPerPage = $request->input('itemsPerPage');
+
+        $model = Holiday::whereCompanyId($request->company_id);
+
+        if($request->filled('description') && $request->has('description')) {
+            $model->Where('description', 'ILIKE', '%' . $request->description . '%');
+        }
+
+        if ($sortBy && $sortDesc) {
+            $model->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
+        }
+
+        return   $model->paginate($itemsPerPage ?? 20);
+
     }
 
     public function store(StoreRequest $request)

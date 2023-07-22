@@ -16,16 +16,18 @@ class User extends Authenticatable
     use Notifiable;
 
 
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
+        'title',
         'otp',
+        'mobile',
         'name',
         'email',
+        'image',
         'password',
         'role_id',
         'company_id',
@@ -49,9 +51,6 @@ class User extends Authenticatable
     ];
 
     protected $with = ['assigned_permissions'];
-
-
-
 
     public function assigned_permissions()
     {
@@ -99,6 +98,15 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function getImageAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/user/images/' . $value);
+
     }
 
     protected static function boot()
@@ -160,7 +168,7 @@ class User extends Authenticatable
     public function getSumByModel($userId = null, $id = null, $col = 'credit')
     {
         return Transaction::where('user_id', $userId)
-            ->whereDate('created_at', '>=',  request('from_date', date('Y-m-d')))
+            ->whereDate('created_at', '>=', request('from_date', date('Y-m-d')))
             ->whereDate('created_at', '<=', request('to_date', date('Y-m-d')))
             ->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum($col) ?? 0;
     }

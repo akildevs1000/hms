@@ -44,27 +44,27 @@
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+              {
+                id: 1,
+                name: 'Today',
+              },
+              {
+                id: 2,
+                name: 'Yesterday',
+              },
+              {
+                id: 3,
+                name: 'This Week',
+              },
+              {
+                id: 4,
+                name: 'This Month',
+              },
+              {
+                id: 5,
+                name: 'Custom',
+              },
+            ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
             @change="commonMethod"></v-select></v-col>
       </v-col>
 
@@ -162,13 +162,13 @@
             </v-col>
             <v-col cols="6">
               <v-autocomplete v-model="editedItem.payment_modes" :items="[
-                { id: 1, name: 'Cash' },
-                { id: 2, name: 'Card' },
-                { id: 3, name: 'Online' },
-                { id: 4, name: 'Bank' },
-                { id: 5, name: 'UPI' },
-                { id: 6, name: 'Cheque' },
-              ]" item-text="name" item-value="id" placeholder="Select Payment Mode" label="Select Payment Mode"
+                    { id: 1, name: 'Cash' },
+                    { id: 2, name: 'Card' },
+                    { id: 3, name: 'Online' },
+                    { id: 4, name: 'Bank' },
+                    { id: 5, name: 'UPI' },
+                    { id: 6, name: 'Cheque' },
+                  ]" item-text="name" item-value="id" placeholder="Select Payment Mode" label="Select Payment Mode"
                 outlined :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
@@ -177,8 +177,8 @@
             </v-col>
 
             <v-col cols="12" v-if="is_management">
-              <v-autocomplete v-model="editedItem.user" :items="['Ariff', 'Ansari']" item-text="name" item-value="id"
-                placeholder="Select User" label="Select User" outlined :hide-details="true" dense>
+              <v-autocomplete v-model="editedItem.user" :items="['Nadia', 'Ariff', 'Ansari']" item-text="name"
+                item-value="id" placeholder="Select User" label="Select User" outlined :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
                 errors.department_id[0]
@@ -192,8 +192,9 @@
                 errors.amount[0]
               }}</span>
             </v-col>
-            <v-col :md="formTitle === 'New' ? 12 : 12">
-              <v-file-input v-model="editedItem.document" color="primary" counter placeholder="Select your files"
+
+            <v-col :md="3">
+              <v-file-input dense v-model="editedItem.document" color="primary" counter placeholder="Invoice"
                 :hide-details="true" outlined :show-size="1000">
                 <template v-slot:selection="{ index, text }">
                   <v-chip v-if="index < 2" color="primary" dark label small>
@@ -207,6 +208,59 @@
               </v-file-input>
               <small class="red--text" v-if="errors && errors.document">
                 {{ errors && errors.document ? errors.document[0] : "" }}
+              </small>
+            </v-col>
+
+            <v-col :md="3">
+              <v-file-input dense v-model="editedItem.document1" color="primary" counter placeholder="Receipt"
+                :hide-details="true" outlined :show-size="1000">
+                <template v-slot:selection="{ index, text }">
+                  <v-chip v-if="index < 2" color="primary" dark label small>
+                    {{ text }}
+                  </v-chip>
+
+                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
+                    +{{ editedItem.document1.length - 2 }} File(s)
+                  </span>
+                </template>
+              </v-file-input>
+              <small class="red--text" v-if="errors && errors.document1">
+                {{ errors && errors.document1 ? errors.document1[0] : "" }}
+              </small>
+            </v-col>
+
+            <v-col :md="3">
+              <v-file-input dense v-model="editedItem.document2" color="primary" counter placeholder="Bank Slip"
+                :hide-details="true" outlined :show-size="1000">
+                <template v-slot:selection="{ index, text }">
+                  <v-chip v-if="index < 2" color="primary" dark label small>
+                    {{ text }}
+                  </v-chip>
+                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
+                    +{{ editedItem.document2.length - 2 }} File(s)
+                  </span>
+                </template>
+              </v-file-input>
+              <small class="red--text" v-if="errors && errors.document2">
+                {{ errors && errors.document2 ? errors.document2[0] : "" }}
+              </small>
+            </v-col>
+
+            <v-col :md="3">
+              <v-file-input dense v-model="editedItem.document3" color="primary" counter placeholder="Other"
+                :hide-details="true" outlined :show-size="1000">
+                <template v-slot:selection="{ index, text }">
+                  <v-chip v-if="index < 2" color="primary" dark label small>
+                    {{ text }}
+                  </v-chip>
+
+                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
+                    +{{ editedItem.document3.length - 2 }} File(s)
+                  </span>
+                </template>
+              </v-file-input>
+              <small class="red--text" v-if="errors && errors.document3">
+                {{ errors && errors.document3 ? errors.document3[0] : "" }}
               </small>
             </v-col>
             <!-- <div class="mt-2 ml-4" v-if="getDocType(editedItem.document)">
@@ -303,11 +357,18 @@
                 </v-tooltip>
               </td>
               <td>
-                <v-btn v-if="item.document" small dark class="primary lg-pt-4 lg-pb-4 doc-btn"
-                  @click="preview(item.document)">
-                  Preview
-                  <v-icon right dark>mdi-file</v-icon>
-                </v-btn>
+                <v-icon v-if="item.document" @click="preview(item.document)" right>mdi
+                  mdi-alpha-i-circle
+                </v-icon>
+                <span v-else> --- </span>
+
+                <v-icon v-if="item.document1" @click="preview(item.document1)" right> mdi-alpha-r-circle</v-icon>
+                <span v-else> --- </span>
+
+                <v-icon v-if="item.document2" @click="preview(item.document2)" right> mdi-alpha-b-circle</v-icon>
+                <span v-else> --- </span>
+
+                <v-icon v-if="item.document3" @click="preview(item.document3)" right> mdi-alpha-o-circle</v-icon>
                 <span v-else> --- </span>
               </td>
               <td class="text-center">
@@ -418,6 +479,9 @@ export default {
       total: 0,
       reference: "",
       document: null,
+      document1: null,
+      document2: null,
+      document3: null,
       user: "",
     },
   }),
@@ -554,6 +618,25 @@ export default {
       this.expenseDialog = true;
     },
 
+    getFirstAndLastDay() {
+      const currentDate = new Date();
+      const day = currentDate.getDate();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+      const year = currentDate.getFullYear();
+      const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
+
+      let firstDay = `${year}-${month}-0${1}`;
+
+      let lastDayFirst = last > 9 ? `${last}` : `0${last}`;
+
+      let lastDay = `${year}-${month}-${lastDayFirst}`;
+
+      return [
+        firstDay,
+        lastDay
+      ]
+    },
+
     commonMethod() {
       const today = new Date();
       switch (this.filterType) {
@@ -574,8 +657,8 @@ export default {
           this.to_date = this.week[1];
           break;
         case 4:
-          this.from_date = new Date(today.getFullYear(), today.getMonth(), 1);
-          this.to_date = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+          this.from_date = this.getFirstAndLastDay()[0];
+          this.to_date = this.getFirstAndLastDay()[1];
           break;
 
         // default:
@@ -621,7 +704,7 @@ export default {
       let payload = new FormData();
       for (let x in obj) {
         if (obj[x]) {
-          console.log(x);
+          console.log(obj);
           payload.append(x, obj[x]);
         }
       }
@@ -641,6 +724,10 @@ export default {
     save() {
       this.loading = true;
       let payload = this.mapper(this.editedItem);
+
+      console.log(payload);
+      // return;
+
       if (this.editedIndex > -1) {
         this.$axios
           .post(this.endpoint + "/" + this.editedItem.id, payload)

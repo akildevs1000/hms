@@ -26,10 +26,10 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
+            'title' => 'required',
             'name' => 'required|min:3|max:100',
             'email' => 'required|min:3|max:191',
             'password' => [
-                'required',
                 'confirmed',
                 'string',
                 'min:6',             // must be at least 10 characters in length
@@ -39,7 +39,12 @@ class UpdateRequest extends FormRequest
                 'regex:/[0-9]/',      // must contain at least one digit
                 'regex:/[@$!%*#?&]/', // must contain a special character
             ],
-            'role_id' => 'required'
+            // 'role_id' => 'required',
+            'role_id' => 'nullable',
+            'employee_role_id' => 'nullable',
+            'company_id' => 'required',
+            'mobile' => 'nullable',
+            'image' => 'nullable',
         ];
     }
 
