@@ -462,6 +462,12 @@ export default {
           menu: "city_ledger_access",
         },
         {
+          icon: "mdi mdi-calendar-month",
+          title: "Monthly New",
+          to: "/management/report/monthly2",
+          menu: "city_ledger_access",
+        },
+        {
           icon: "mdi mdi-chart-pie",
           title: "Custom",
           to: "/management/report/daily",
