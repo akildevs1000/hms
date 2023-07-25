@@ -14,6 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ManagementController extends Controller
 {
@@ -352,7 +353,6 @@ class ManagementController extends Controller
     public function getReportMonthlyWiseGroup(Request $request)
     {
         setlocale(LC_MONETARY, 'en_IN');
-        setlocale(LC_MONETARY, 'en_IN');
 
         $model = Expense::query();
         $model->where('company_id', $request->company_id);
@@ -499,7 +499,6 @@ class ManagementController extends Controller
 
             $returnArray[] = $row;
 
-
             $totalRooms += $sold;
             $totalIncome += $income;
             $totalExpenses += $expenses;
@@ -634,6 +633,49 @@ class ManagementController extends Controller
 
         return $amount;
     }
+    public function getReportTop10Customers(Request $request)
+    {
+        $year = $request->year;
+
+        $bookings = Booking::select(
+            DB::raw("string_agg(rooms, ',') as rooms"),
+            'bookings.customer_id',
+            DB::raw('sum(total_price) as customer_total_price'),
+            DB::raw('count(id) as number_of_visits'),
+
+        )
+            ->with('customer:id,contact_no')
+            ->groupBy('bookings.customer_id')
+            ->orderByDesc('customer_total_price')
+            ->where('company_id', $request->company_id)
+            ->where('type', 'Walking')
+            ->where('booking_status', 1)
+            ->whereYear('created_at', $year)
+            ->limit(10)
+            ->get();
+
+        $total_price = Booking::
+            where('company_id', $request->company_id)
+            ->where('type', 'Walking')
+            ->where('booking_status', 1)
+            ->whereYear('created_at', $year)
+            ->sum('total_price');
+
+        $colorsArray = [["value" => "01", "text" => "Jan", "color" => "#3366CC"]
+            , ["value" => "02", "text" => "Feb", "color" => "#FF69B4"]
+            , ["value" => "03", "text" => "Mar", "color" => "#00FF00"]
+            , ["value" => "04", "text" => "Apr", "color" => "#FFD700"]
+            , ["value" => "05", "text" => "May", "color" => "#FF4500"]
+            , ["value" => "06", "text" => "Jun", "color" => "#800080"]
+            , ["value" => "07", "text" => "Jul", "color" => "#FF6347"]
+            , ["value" => "08", "text" => "Aug", "color" => "#008080"]
+            , ["value" => "09", "text" => "Sep", "color" => "#FFA500"]
+            , ["value" => "10", "text" => "Oct", "color" => "#DC143C"]
+            , ["value" => "11", "text" => "Nov", "color" => "#7CFC00"]
+            , ["value" => "12", "text" => "Dec", "color" => "#4169E1"]];
+        return ["data" => $bookings, "colors" => $colorsArray, "total_price" => $total_price];
+    }
+
     public function testcheckin(Request $request)
     {
         $model = Booking::query();

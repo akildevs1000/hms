@@ -12,7 +12,7 @@
       <v-card class="mb-5" elevation="0">
         <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
           <v-col cols="12">
-            <span> Revenue Report - Monthly wise</span>
+            <span>Top 10 walk-in Customers </span>
 
 
             <v-tooltip top color="primary">
@@ -27,54 +27,47 @@
         </v-toolbar>
         <v-row>
           <v-col cols="8">
+
             <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
               itemsPerPageOptions: [12],
             }" class="elevation-1" :hide-default-footer="true">
 
-              <template v-slot:item.color="{ item }">
-                <v-icon :color="item.color">mdi mdi-circle</v-icon>
+              <template v-slot:item.color="{ item, index }">
+
+                <v-icon :color="colors[index].color">mdi mdi-circle</v-icon>
               </template>
 
-              <template v-slot:item.month_name="{ item }">
-                {{ item.month }}
+              <template v-slot:item.name="{ item }">
+                {{ item.title }}
               </template>
 
-              <template v-slot:item.room_sold="{ item }">
-                {{ item.sold }}
+              <template v-slot:item.phone_number="{ item }">
+                {{ item.customer.contact_no }}
               </template>
-              <template v-slot:item.income="{ item }">
-                {{ item.income }}
+              <template v-slot:item.no_of_visits="{ item }">
+                {{ item.number_of_visits }}
               </template>
-              <template v-slot:item.expenses="{ item }">
-                {{ item.expenses }}
+              <template v-slot:item.no_of_rooms="{ item }">
+                {{ getRoomsCount(item.rooms) }}
               </template>
-              <template v-slot:item.management_expenses="{ item }">
-                {{ item.management_expenses }}
+              <template v-slot:item.revenue="{ item }">
+                {{ item.customer_total_price }}
               </template>
-              <template v-slot:item.profit="{ item }">
-                {{ item.profit }}
-              </template>
+
               <template v-slot:item.percentage="{ item }">
-                {{ item.percentage }} %
+                {{ getPercentage(item.customer_total_price) }} %
               </template>
-              <template slot="body.append">
-                <tr>
-                  <td class="text-center  font-weight-bold" colspan="2">TOTAL</td>
-                  <td class="text-right font-weight-bold"> {{ grandTotal.totalRooms }}</td>
-                  <td class="text-right font-weight-bold">{{ grandTotal.totalIncome }}</td>
-                  <td class="text-right font-weight-bold">{{ grandTotal.totalExpenses }}</td>
-                  <td class="text-right font-weight-bold">{{ grandTotal.totalManagementExpenses }}</td>
-                  <td class="text-right font-weight-bold">{{ grandTotal.totalProfit }}</td>
-                  <td class="text-right font-weight-bold">{{ grandTotal.totalPercentage }}%</td>
-                </tr>
-              </template>
+
 
             </v-data-table>
 
           </v-col>
           <v-col cols="4">
-            <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries" chart-id="bar"
-              :height="400" :key="chartKey" />
+            <!-- <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries" chart-id="bar"
+              :height="400" :key="chartKey" /> -->
+
+            <ApexCharts :options="chartOptions" ref="realtimeChart" :series="series" :height="400" chart-id="pieChart"
+              :key="chartKey" />
           </v-col>
         </v-row>
 
@@ -92,18 +85,68 @@ export default {
   },
   data() {
     return {
+      total_price: 0,
       data_table: [],
       grandTotal: [],
       totalRowsCount: 0,
       series: [],
+      colors: [],
 
+      series: [],
 
-      barSeries: [
-        {
-          name: "Percentage %",
-          data: [],
+      chartOptions: {
+        chart: {
+          width: 380,
+          type: "pie",
         },
-      ],
+        labels: [],// ["Sold", "Unsold"],
+        colors: [],// ["#228B22", "#D71921"], // set custom colors
+        customLabel: [],
+        // plotOptions: {
+        //   pie: {
+        //     dataLabels: {
+        //       offset: -5,
+        //     },
+        //   },
+        // },
+        legend: {
+          show: false,
+        },
+        dataLabels: {
+          formatter(val, opts) {
+            const name = opts.w.globals.labels[opts.seriesIndex];
+            return [name, val.toFixed(1) + "%"];
+          },
+        },
+
+        tooltip: {
+          enabled: true,
+          y: {
+            formatter: function (val, opts) {
+              return opts.config.customLabel[opts.seriesIndex] + ".00" + " Rs"
+            },
+            title: {
+              formatter: function (seriesName) {
+                return ''
+              }
+            }
+          }
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 200,
+              },
+              legend: {
+                position: "bottom",
+              },
+            },
+          },
+        ],
+      },
+      // -------------------end pie chart ----------------
       barChartOptions: {
 
         chart: {
@@ -191,66 +234,57 @@ export default {
           text: "Color",
           align: "left",
           sortable: false,
-          key: "employee_id",
           filterable: false,
           value: "color",
         },
         {
-          text: "Month Name",
+          text: "Name",
           align: "left",
           sortable: false,
-          key: "employee_id",
           filterable: false,
-          value: "month_name",
+          value: "name",
         },
         {
-          text: "Room Sold",
+          text: "Phone Number",
+          align: "right",
+          sortable: false,
+
+          filterable: false,
+          value: "phone_number",
+        },
+        {
+          text: "No.of Visits",
+          align: "right",
+          sortable: false,
+
+          filterable: false,
+          value: "no_of_visits",
+        },
+        {
+          text: "No.of Rooms",
           align: "right",
           sortable: false,
           key: "employee_id",
           filterable: false,
-          value: "room_sold",
+          value: "no_of_rooms",
         },
         {
-          text: "Income",
+          text: "Revenue",
           align: "right",
           sortable: false,
-          key: "employee_id",
+
           filterable: false,
-          value: "income",
-        },
-        {
-          text: "Expenses",
-          align: "right",
-          sortable: false,
-          key: "employee_id",
-          filterable: false,
-          value: "expenses",
-        },
-        {
-          text: "Management Expenses",
-          align: "right",
-          sortable: false,
-          key: "employee_id",
-          filterable: false,
-          value: "management_expenses",
-        },
-        {
-          text: "Profit",
-          align: "right",
-          sortable: false,
-          key: "employee_id",
-          filterable: false,
-          value: "profit",
+          value: "revenue",
         },
         {
           text: "%",
           align: "right",
           sortable: false,
-          key: "employee_id",
+
           filterable: false,
           value: "percentage",
         },
+
       ],
 
     };
@@ -278,6 +312,16 @@ export default {
   //   },
   // },
   methods: {
+    getPercentage(customer_total_price) {
+      if (this.total_price > 0) return Math.round((customer_total_price / this.total_price) * 100);
+      else return 0;
+    },
+    getRoomsCount(rooms) {
+      return rooms.split(",").length;
+    },
+    getColorCode(index) {
+      return this.colors[index].color;
+    },
     onPageChange() {
       this.getDataFromApi();
     },
@@ -329,25 +373,32 @@ export default {
         },
       };
 
-      this.$axios.get('get_report_monthly_wise_group', options).then(({ data }) => {
+
+
+      this.$axios.get('get_report_top-ten-customers', options).then(({ data }) => {
 
         this.data_table = data.data;
+        this.total_price = data.total_price;
+        this.colors = data.colors;
         this.loading = false;
         this.totalRowsCount = 12;
         this.grandTotal = data.grandTotal;
 
+        this.series.splice(0, this.series.length);
+
         let counter = 0;
         this.data_table.forEach(item => {
 
-          this.barSeries[0]["data"][counter] = item.percentage;
-          this.barChartOptions.xaxis.categories[counter] = item.month;
-          this.barChartOptions.colors[counter] = item.color;
+          this.series.push(Math.round((item.customer_total_price / data.total_price) * 100));
+          this.chartOptions.labels[counter] = item.title;
+          this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + item.customer_total_price + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + this.getRoomsCount(item.rooms);
+
+          this.chartOptions.colors[counter] = data.colors[counter].color;
           counter++;
 
         });
-        this.$refs.realtimeChart.updateSeries([{
-          data: this.barSeries[0].data,
-        }], false, true);
+
+        this.loading = false;
         this.loading = false;
 
       });

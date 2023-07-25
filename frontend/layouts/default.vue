@@ -466,6 +466,11 @@ export default {
           title: "Monthly New",
           to: "/management/report/monthly2",
           menu: "city_ledger_access",
+        }, {
+          icon: "mdi mdi-calendar-month",
+          title: "Top 10 Customers",
+          to: "/management/report/top-customers",
+          menu: "mdi-account-check",
         },
         {
           icon: "mdi mdi-chart-pie",
