@@ -651,6 +651,9 @@ class ManagementController extends Controller
             ->where('type', 'Walking')
             ->where('booking_status', 1)
             ->whereYear('created_at', $year)
+            ->when($request->filled('month'), function ($q) use ($request) {
+                $q->whereMonth('created_at', $request->month);
+            })
             ->limit(10)
             ->get();
 
@@ -659,6 +662,9 @@ class ManagementController extends Controller
             ->where('type', 'Walking')
             ->where('booking_status', 1)
             ->whereYear('created_at', $year)
+            ->when($request->filled('month'), function ($q) use ($request) {
+                $q->whereMonth('created_at', $request->month);
+            })
             ->sum('total_price');
 
         $colorsArray = [["value" => "01", "text" => "Jan", "color" => "#3366CC"]

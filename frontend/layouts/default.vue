@@ -462,12 +462,12 @@ export default {
           menu: "city_ledger_access",
         },
         {
-          icon: "mdi mdi-calendar-month",
+          icon: "mdi mdi-account-group",
           title: "Monthly New",
           to: "/management/report/monthly2",
           menu: "city_ledger_access",
         }, {
-          icon: "mdi mdi-calendar-month",
+          icon: "mdi mdi-briefcase-account",
           title: "Top 10 Customers",
           to: "/management/report/top-customers",
           menu: "mdi-account-check",

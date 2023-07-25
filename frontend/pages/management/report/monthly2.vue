@@ -3,7 +3,7 @@
 
     <v-row>
 
-      <v-col md="3">
+      <v-col md="2">
         <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
       </v-col>
     </v-row>

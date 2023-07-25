@@ -634,31 +634,31 @@
                         <v-col :class="noAvailableRoom.id" lg="1" md="4" sm="12" cols="12" class="available-room-list"
                           v-for="(noAvailableRoom, i) in notAvailableRooms" :key="i">
                           <v-card @contextmenu="show" @touchstart="touchstart(
-                              $event,
-                              noAvailableRoom &&
-                              noAvailableRoom.booked_room &&
-                              noAvailableRoom.booked_room.id,
-                              noAvailableRoom &&
-                              noAvailableRoom.booked_room &&
-                              noAvailableRoom.booked_room.booking
-                                .booking_status
-                            )
+                            $event,
+                            noAvailableRoom &&
+                            noAvailableRoom.booked_room &&
+                            noAvailableRoom.booked_room.id,
+                            noAvailableRoom &&
+                            noAvailableRoom.booked_room &&
+                            noAvailableRoom.booked_room.booking
+                              .booking_status
+                          )
                             " :elevation="0" @mouseover="mouseOver(
-      noAvailableRoom &&
-      noAvailableRoom.booked_room &&
-      noAvailableRoom.booked_room.id,
-      noAvailableRoom &&
-      noAvailableRoom.booked_room &&
-      noAvailableRoom.booked_room.booking
-        .booking_status
-    )
+    noAvailableRoom &&
+    noAvailableRoom.booked_room &&
+    noAvailableRoom.booked_room.id,
+    noAvailableRoom &&
+    noAvailableRoom.booked_room &&
+    noAvailableRoom.booked_room.booking
+      .booking_status
+  )
     " @dblclick="dblclick" class="ma-0 px-md-1 py-md-2" :class="noAvailableRoom.booked_room.background ==
-      'linear-gradient(135deg, #4390FC      0, #4390FC 100%)'
-      ? 'element'
-      : ''
+    'linear-gradient(135deg, #4390FC      0, #4390FC 100%)'
+    ? 'element'
+    : ''
     " dark :style="`background-image:${(noAvailableRoom &&
-      noAvailableRoom.booked_room &&
-      noAvailableRoom.booked_room.background) ||
+    noAvailableRoom.booked_room &&
+    noAvailableRoom.booked_room.background) ||
     ''
     }`">
                             <div class="text-center">
@@ -679,8 +679,8 @@
                           <v-card @contextmenu="makeNewBooking($event, room)" @mouseover="mouseOverForAvailable(room)"
                             @touchstart="makeNewBookingForTouch($event, room)" :elevation="0" class="ma-0 px-md-1 py-md-2"
                             :style="room.status == 1
-                                ? 'background-color: #D60078'
-                                : 'background-color: #32a15c'
+                              ? 'background-color: #D60078'
+                              : 'background-color: #32a15c'
                               " dark>
                             <div class="text-center">
                               <v-icon dark class="pa-0">mdi mdi-home</v-icon>

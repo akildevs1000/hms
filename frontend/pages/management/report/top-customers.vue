@@ -3,8 +3,12 @@
 
     <v-row>
 
-      <v-col md="3">
+      <v-col md="2">
         <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
+      </v-col>
+      <v-col md="2">
+        <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
+          @change="getDataFromApi()"></v-select>
       </v-col>
     </v-row>
 
@@ -51,13 +55,21 @@
                 {{ getRoomsCount(item.rooms) }}
               </template>
               <template v-slot:item.revenue="{ item }">
-                {{ item.customer_total_price }}
+                {{ getPriceFormat(item.customer_total_price) }}
               </template>
 
               <template v-slot:item.percentage="{ item }">
                 {{ getPercentage(item.customer_total_price) }} %
               </template>
-
+              <template slot="body.append">
+                <tr>
+                  <td class="text-right  font-weight-bold" colspan="3">TOTAL</td>
+                  <td class="text-right font-weight-bold">{{ total_visits }}</td>
+                  <td class="text-right font-weight-bold">{{ total_rooms }}</td>
+                  <td class="text-right font-weight-bold">{{ getPriceFormat(total_price) }}</td>
+                  <td>&nbsp;</td>
+                </tr>
+              </template>
 
             </v-data-table>
 
@@ -85,6 +97,8 @@ export default {
   },
   data() {
     return {
+      total_rooms: 0,
+      total_visits: 0,
       total_price: 0,
       data_table: [],
       grandTotal: [],
@@ -199,6 +213,7 @@ export default {
       years: "",
       month: "",
       months: [
+        { id: '', name: "All Months" },
         { id: 1, name: "January" },
         { id: 2, name: "February" },
         { id: 3, name: "March" },
@@ -294,7 +309,7 @@ export default {
     this.loading = true;
 
     this.getYears();
-    this.month = new Date().getMonth() + 1;
+    //this.month = new Date().getMonth() + 1;
     this.year = new Date().getFullYear();
     this.getDataFromApi();
   },
@@ -312,6 +327,11 @@ export default {
   //   },
   // },
   methods: {
+    getPriceFormat(amount) {
+
+      amount = parseFloat(amount);
+      return amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    },
     getPercentage(customer_total_price) {
       if (this.total_price > 0) return Math.round((customer_total_price / this.total_price) * 100);
       else return 0;
@@ -367,7 +387,7 @@ export default {
           sortDesc: sortedDesc,
           per_page: itemsPerPage,
           company_id: this.$auth.user.company.id,
-
+          month: this.month,
           year: this.year,
 
         },
@@ -386,14 +406,21 @@ export default {
 
         this.series.splice(0, this.series.length);
 
+
+        this.total_rooms = 0;
+        this.total_visits = 0;
         let counter = 0;
         this.data_table.forEach(item => {
 
+          let rooms = this.getRoomsCount(item.rooms);
           this.series.push(Math.round((item.customer_total_price / data.total_price) * 100));
           this.chartOptions.labels[counter] = item.title;
-          this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + item.customer_total_price + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + this.getRoomsCount(item.rooms);
+          this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + this.getPriceFormat(item.customer_total_price) + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + rooms;
 
           this.chartOptions.colors[counter] = data.colors[counter].color;
+
+          this.total_rooms = this.total_rooms + rooms;
+          this.total_visits += item.number_of_visits;
           counter++;
 
         });
