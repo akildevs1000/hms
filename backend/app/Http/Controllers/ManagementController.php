@@ -352,7 +352,6 @@ class ManagementController extends Controller
 
     public function getReportMonthlyWiseGroup(Request $request)
     {
-        setlocale(LC_MONETARY, 'en_IN');
 
         $model = Expense::query();
         $model->where('company_id', $request->company_id);
@@ -518,8 +517,6 @@ class ManagementController extends Controller
     }
     public function getReportMonthlyWise(Request $request)
     {
-        setlocale(LC_MONETARY, 'en_IN');
-        setlocale(LC_MONETARY, 'en_IN');
 
         $model = Expense::query();
         $model->where('company_id', $request->company_id);
