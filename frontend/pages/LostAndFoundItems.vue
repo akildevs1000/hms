@@ -37,8 +37,8 @@
                         <v-tabs-items v-model="tab">
                             <v-tab-item value="tab-1">
                                 <v-card>
-                                    <v-card-title v-if="editedIndex == -1">Search Booking Id</v-card-title>
-                                    <v-card-title v-else>Guest Details</v-card-title>
+                                    <!-- <v-card-title v-if="editedIndex == -1">Search Booking Id</v-card-title>
+                                    <v-card-title v-else>Guest Details</v-card-title> -->
                                     <v-card-text>
                                         <v-row class="mb-2 mt=4" v-if="editedIndex == -1">
                                             <v-col md="3" cols="12">

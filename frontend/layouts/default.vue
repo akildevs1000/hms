@@ -400,6 +400,12 @@ export default {
           to: "/management/report/audit",
           menu: "city_ledger_access",
         },
+        {
+          icon: "mdi-home-search-outline",
+          title: "Lost And Found Items",
+          to: "/LostAndFoundItems",
+          menu: "dashboard",
+        },
       ],
       items: [],
       modules: {
@@ -507,12 +513,7 @@ export default {
         },
       ],
     };
-    let LostAndFoundItems = {
-      icon: "mdi-home-search-outline",
-      title: "Lost And Found Items",
-      to: "/LostAndFoundItems",
-      menu: "dashboard",
-    };
+
     let user = this.$auth.user;
 
     this.items.push(das);
@@ -521,8 +522,6 @@ export default {
     });
     if (this.$auth.user.user_type == "company") {
       this.items.push(Management);
-
-      this.items.push(LostAndFoundItems);
       this.items.push(setting);
     }
     this.getCompanyDetails();

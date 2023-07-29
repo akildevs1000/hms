@@ -104,7 +104,11 @@
                     {{ currentPage ? ((currentPage - 1) * perPage) + (cumulativeIndex + itemIndex(item)) : '' }}
                 </template>
                 <template v-slot:item.res_number="item">
-                    {{ item.item.reservation_no || "---" }}
+
+
+                    <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                        {{ item.item.reservation_no || "---" }}
+                    </span>
                 </template>
                 <template v-slot:item.source="item">
                     {{ item.item.source || "---" }}
@@ -341,6 +345,7 @@ export default {
             },
             {
                 text: "C/In",
+                width: "105px",
                 align: "left",
                 sortable: false,
                 key: "employee_id",
@@ -350,6 +355,7 @@ export default {
             {
                 text: "C/Out",
                 align: "left",
+                width: "105px",
                 sortable: false,
                 key: "employee_id",
                 filterable: true,
@@ -391,6 +397,7 @@ export default {
                 text: "Rev. Date",
                 align: "left",
                 sortable: false,
+                width: "105px",
                 key: "employee_id",
                 filterable: true,
                 value: "res_date",
@@ -404,7 +411,7 @@ export default {
                 value: "view",
             },
             {
-                text: "Payment",
+                text: "Pay",
                 align: "left",
                 sortable: false,
                 key: "employee_id",
@@ -412,7 +419,7 @@ export default {
                 value: "payment",
             },
             {
-                text: "Invoice",
+                text: "Inv",
                 align: "left",
                 sortable: false,
                 key: "employee_id",
