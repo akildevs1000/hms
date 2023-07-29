@@ -302,6 +302,13 @@ export default {
               to: "/inquiry",
               menu: "agent_access",
             },
+
+            {
+              icon: "mdi mdi-file-document-edit-outline",
+              title: "Last & Found",
+              to: "/missing",
+              menu: "agent_access",
+            },
           ],
         },
 
@@ -400,6 +407,12 @@ export default {
           to: "/management/report/audit",
           menu: "city_ledger_access",
         },
+        {
+          icon: "mdi-home-search-outline",
+          title: "Lost And Found Items",
+          to: "/LostAndFoundItems",
+          menu: "dashboard",
+        }
       ],
       items: [],
       modules: {
@@ -460,6 +473,17 @@ export default {
           title: "Monthly",
           to: "/management/report/monthly",
           menu: "city_ledger_access",
+        },
+        {
+          icon: "mdi mdi-account-group",
+          title: "Monthly New",
+          to: "/management/report/monthly2",
+          menu: "city_ledger_access",
+        }, {
+          icon: "mdi mdi-briefcase-account",
+          title: "Top 10 Customers",
+          to: "/management/report/top-customers",
+          menu: "mdi-account-check",
         },
         {
           icon: "mdi mdi-chart-pie",
@@ -644,6 +668,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .fixed-setting {
   position: fixed !important;
@@ -725,3 +750,26 @@ export default {
   background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
 }
 </style>
+
+<style>
+.custom-text-box {
+  border-radius: 2px !important;
+  border: 1px solid #dbdddf !important;
+}
+
+input[type="text"]:focus.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select:focus {
+  outline: none !important;
+  border-color: #5fafa3;
+  box-shadow: 0 0 0px #5fafa3;
+}
+</style>
+
+

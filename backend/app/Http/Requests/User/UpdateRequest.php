@@ -45,6 +45,7 @@ class UpdateRequest extends FormRequest
             'company_id' => 'required',
             'mobile' => 'nullable',
             'image' => 'nullable',
+            'is_active' => 'nullable',
         ];
     }
 

@@ -13,3 +13,9 @@ Installation Guide:
   - npm run dev (dev environment)
   - npm run build && npm run start (production environment)
   - pm2 start "npm run start" --name "Nuxt"
+
+
+
+  BACKEND_URL=http://192.168.2.210:8000/api/
+
+Testing Test

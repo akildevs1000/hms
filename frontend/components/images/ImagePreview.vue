@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-img :src="src" class="grey darken-4" v-if="isImg"></v-img>
-    <embed v-else-if="isPdf" :src="src" width="100%" height="1000px" />
+    <embed v-else-if="isPdf" :src="src" width="100%" height="800px" />
   </div>
 </template>
 

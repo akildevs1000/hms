@@ -230,6 +230,13 @@ class RoomController extends Controller
             'dinner'    => $this->getCustomersDinnerOnly($dinner),
         ];
 
+        //booking 1
+        //checking 2
+        //checkout 3
+        //3 dirty
+        //4 maintaining
+        //0 available;
+
         // ======================
 
         $dirtyRooms = BookedRoom::where('booking_status', '!=', 0)
@@ -333,7 +340,7 @@ class RoomController extends Controller
             })
             ->get();
 
-        // return  $dirtyRooms->get();
+        // return $dirtyRooms->get();
 
         return [
             'dirtyRooms'             => $dirtyRooms->count(),

@@ -38,8 +38,6 @@ Route::post('store_test', [TestController::class, 'store']);
 Route::get('/test', function (Request $request) {
 
 
-
-
     $date = '2023-06-10';
 
     // return  $payment =  Payment::whereDate('created_at', $date)
@@ -73,6 +71,7 @@ Route::get('/test', function (Request $request) {
             'body' => 'Night Audit Report',
             'company' => Company::find($company_id),
         ];
+
         Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new AuditReportMail($data));
     }
 

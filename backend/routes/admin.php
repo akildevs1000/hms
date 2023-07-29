@@ -9,6 +9,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeviceStatusController;
+use App\Http\Controllers\MissingController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ResetPasswordController;
@@ -133,3 +134,9 @@ Route::get('source/search/{key}', [SourceController::class, 'search']);
 Route::get('get_online', [SourceController::class, 'getOnline']);
 Route::get('get_agent', [SourceController::class, 'getAgent']);
 Route::get('get_corporate', [SourceController::class, 'getCorporate']);
+
+
+// Missing
+Route::resource('missing', MissingController::class);
+Route::get('get_reservation_list', [MissingController::class, 'getReservationList']);
+Route::get('get_booking_by_id/{bookingId}', [MissingController::class, 'getBookingModel']);
