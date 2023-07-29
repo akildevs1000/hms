@@ -5,9 +5,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Preview</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="imgView = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-container>
           <ImagePreview :docObj="documentObj"></ImagePreview>
@@ -20,94 +18,47 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Add Document</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="documentDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="documentDialog = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-container class="pa-5">
           <v-row>
             <v-col md="12" sm="12" cols="12" dense>
-              <v-select
-                v-model="customer.id_card_type_id"
-                :items="idCards"
-                dense
-                label="ID Card Type"
-                outlined
-                item-text="name"
-                item-value="id"
-                :hide-details="errors && !errors.id_card_type_id"
-                :error="errors && errors.id_card_type_id"
-                :error-messages="
-                  errors && errors.id_card_type_id
+              <v-select v-model="customer.id_card_type_id" :items="idCards" dense label="ID Card Type" outlined
+                item-text="name" item-value="id" :hide-details="errors && !errors.id_card_type_id"
+                :error="errors && errors.id_card_type_id" :error-messages="errors && errors.id_card_type_id
                     ? errors.id_card_type_id[0]
                     : ''
-                "
-              ></v-select>
+                  "></v-select>
             </v-col>
             <v-col md="12" cols="12" sm="12">
-              <v-text-field
-                dense
-                label="ID Card"
-                outlined
-                type="text"
-                v-model="customer.id_card_no"
-                :hide-details="errors && !errors.id_card_no"
-                :error="errors && errors.id_card_no"
-                :error-messages="
-                  errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                "
-              ></v-text-field>
+              <v-text-field dense label="ID Card" outlined type="text" v-model="customer.id_card_no"
+                :hide-details="errors && !errors.id_card_no" :error="errors && errors.id_card_no" :error-messages="errors && errors.id_card_no ? errors.id_card_no[0] : ''
+                  "></v-text-field>
             </v-col>
             <v-col md="12" cols="12" sm="12">
-              <v-menu
-                v-model="customer.passport_expiration_menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
+              <v-menu v-model="customer.passport_expiration_menu" :close-on-content-click="false" :nudge-right="40"
+                transition="scale-transition" offset-y min-width="auto">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="customer.passport_expiration"
-                    label="Expired"
-                    v-on="on"
-                    v-bind="attrs"
-                    dense
-                    outlined
-                    :hide-details="errors && !errors.passport_expiration"
-                    :error="errors && errors.passport_expiration"
-                    :error-messages="
-                      errors && errors.passport_expiration
+                  <v-text-field v-model="customer.passport_expiration" label="Expired" v-on="on" v-bind="attrs" dense
+                    outlined :hide-details="errors && !errors.passport_expiration"
+                    :error="errors && errors.passport_expiration" :error-messages="errors && errors.passport_expiration
                         ? errors.passport_expiration[0]
                         : ''
-                    "
-                  ></v-text-field>
+                      "></v-text-field>
                 </template>
-                <v-date-picker
-                  v-model="customer.passport_expiration"
-                  @input="customer.passport_expiration_menu = false"
-                ></v-date-picker>
+                <v-date-picker v-model="customer.passport_expiration"
+                  @input="customer.passport_expiration_menu = false"></v-date-picker>
               </v-menu>
             </v-col>
             <v-col md="12">
-              <v-file-input
-                v-model="customer.document"
-                color="primary"
-                counter
-                placeholder="Select your files"
-                outlined
-                :show-size="1000"
-              >
+              <v-file-input v-model="customer.document" color="primary" counter placeholder="Select your files" outlined
+                :show-size="1000">
                 <template v-slot:selection="{ index, text }">
                   <v-chip v-if="index < 2" color="primary" dark label small>
                     {{ text }}
                   </v-chip>
 
-                  <span
-                    v-else-if="index === 2"
-                    class="text-overline grey--text text--darken-3 mx-2"
-                  >
+                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
                     +{{ customer.document.length - 2 }} File(s)
                   </span>
                 </template>
@@ -118,12 +69,7 @@
             </v-col>
             <v-divider></v-divider>
             <v-col md="12">
-              <v-btn
-                small
-                dark
-                class="primary pt-4 pb-4"
-                @click="document_validate"
-              >
+              <v-btn small dark class="primary pt-4 pb-4" @click="document_validate">
                 Submit
                 <v-icon right dark>mdi-file</v-icon>
               </v-btn>
@@ -135,13 +81,7 @@
     </v-dialog>
     <v-row class="m-0 p-0 mt-0" v-if="customer.id">
       <v-col md="12">
-        <v-tabs
-          v-model="activeTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
+        <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-account-tie </v-icon>
           </v-tab>
@@ -154,45 +94,23 @@
               <v-card-text>
                 <v-row>
                   <v-col md="2" cols="12">
-                    <v-img
-                      @click="onpick_attachment"
-                      style="
+                    <v-img @click="onpick_attachment" style="
                         width: 150px;
                         height: 150px;
                         margin: 0 auto;
                         border-radius: 50%;
-                      "
-                      :src="showImage"
-                    ></v-img>
-                    <input
-                      required
-                      type="file"
-                      @change="attachment"
-                      style="display: none"
-                      accept="image/*"
-                      ref="attachment_input"
-                    />
+                      " :src="showImage"></v-img>
+                    <input required type="file" @change="attachment" style="display: none" accept="image/*"
+                      ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
-                      {{ errors.image[0] }}</span
-                    >
+                      {{ errors.image[0] }}</span>
                     <div class="mt-2 ml-0" v-if="customer.document">
-                      <v-btn
-                        small
-                        dark
-                        class="primary lg-pt-4 lg-pb-4 doc-btn"
-                        @click="preview()"
-                      >
+                      <v-btn small dark class="primary lg-pt-4 lg-pb-4 doc-btn" @click="preview()">
                         View
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
 
-                      <v-btn
-                        elevation="0"
-                        @click="add_document()"
-                        small
-                        color="#ECF0F4"
-                        dark
-                      >
+                      <v-btn elevation="0" @click="add_document()" small color="#ECF0F4" dark>
                         <!-- <v-icon right class="black--text" dark>
                           mdi-pencil
                         </v-icon> -->
@@ -216,12 +134,7 @@
                       </v-col> -->
                     </div>
                     <div class="mt-2 ml-2" v-else>
-                      <v-btn
-                        small
-                        dark
-                        class="primary pt-4 pb-4"
-                        @click="add_document()"
-                      >
+                      <v-btn small dark class="primary pt-4 pb-4" @click="add_document()">
                         <small>Document</small>
                         <v-icon right dark>mdi-plus</v-icon>
                       </v-btn>
@@ -240,172 +153,78 @@
                         ></v-text-field>
                       </v-col> -->
                       <v-col md="2" cols="12" sm="12">
-                        <v-select
-                          v-model="customer.title"
-                          :items="titleItems"
-                          label="Tittle *"
-                          dense
-                          item-text="name"
-                          item-value="name"
-                          :hide-details="errors && !errors.title"
-                          :error="errors && errors.title"
-                          :error-messages="
-                            errors && errors.title ? errors.title[0] : ''
-                          "
-                          outlined
-                        ></v-select>
+                        <v-select v-model="customer.title" :items="titleItems" label="Tittle *" dense item-text="name"
+                          item-value="name" :hide-details="errors && !errors.title" :error="errors && errors.title"
+                          :error-messages="errors && errors.title ? errors.title[0] : ''
+                            " outlined></v-select>
                       </v-col>
                       <v-col md="5" cols="12" sm="12">
-                        <v-text-field
-                          label="First Name *"
-                          dense
-                          outlined
-                          type="text"
-                          v-model="customer.first_name"
-                          :hide-details="errors && !errors.first_name"
-                          :error="errors && errors.first_name"
-                          :error-messages="
-                            errors && errors.first_name
+                        <v-text-field label="First Name *" dense outlined type="text" v-model="customer.first_name"
+                          :hide-details="errors && !errors.first_name" :error="errors && errors.first_name"
+                          :error-messages="errors && errors.first_name
                               ? errors.first_name[0]
                               : ''
-                          "
-                        ></v-text-field>
+                            "></v-text-field>
                       </v-col>
                       <v-col md="5" cols="12" sm="12">
-                        <v-text-field
-                          label="Last Name"
-                          dense
-                          :hide-details="true"
-                          outlined
-                          type="text"
-                          v-model="customer.last_name"
-                        ></v-text-field>
+                        <v-text-field label="Last Name" dense :hide-details="true" outlined type="text"
+                          v-model="customer.last_name"></v-text-field>
                       </v-col>
                       <v-col md="6" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Contact No *"
-                          outlined
-                          type="number"
-                          v-model="customer.contact_no"
-                          :hide-details="errors && !errors.contact_no"
-                          :error="errors && errors.contact_no"
-                          :error-messages="
-                            errors && errors.contact_no
+                        <v-text-field dense label="Contact No *" outlined type="number" v-model="customer.contact_no"
+                          :hide-details="errors && !errors.contact_no" :error="errors && errors.contact_no"
+                          :error-messages="errors && errors.contact_no
                               ? errors.contact_no[0]
                               : ''
-                          "
-                          @keyup="mergeContact"
-                        ></v-text-field>
+                            " @keyup="mergeContact"></v-text-field>
                       </v-col>
                       <v-col md="6" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Whatsapp No"
-                          outlined
-                          type="number"
-                          v-model="customer.whatsapp"
-                          :hide-details="errors && !errors.whatsapp"
-                          :error="errors && errors.whatsapp"
-                          :error-messages="
-                            errors && errors.whatsapp ? errors.whatsapp[0] : ''
-                          "
-                        ></v-text-field>
+                        <v-text-field dense label="Whatsapp No" outlined type="number" v-model="customer.whatsapp"
+                          :hide-details="errors && !errors.whatsapp" :error="errors && errors.whatsapp" :error-messages="errors && errors.whatsapp ? errors.whatsapp[0] : ''
+                            "></v-text-field>
                       </v-col>
 
                       <v-col md="6" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Email *"
-                          outlined
-                          type="email"
-                          v-model="customer.email"
-                          :hide-details="errors && !errors.email"
-                          :error="errors && errors.email"
-                          :error-messages="
-                            errors && errors.email ? errors.email[0] : ''
-                          "
-                        ></v-text-field>
+                        <v-text-field dense label="Email *" outlined type="email" v-model="customer.email"
+                          :hide-details="errors && !errors.email" :error="errors && errors.email" :error-messages="errors && errors.email ? errors.email[0] : ''
+                            "></v-text-field>
                       </v-col>
                       <v-col md="6" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Car Number"
-                          outlined
-                          :hide-details="true"
-                          type="text"
-                          v-model="customer.car_no"
-                        ></v-text-field>
+                        <v-text-field dense label="Car Number" outlined :hide-details="true" type="text"
+                          v-model="customer.car_no"></v-text-field>
                       </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col md="4" cols="12" sm="12">
-                    <v-select
-                      v-model="customer.nationality"
-                      :items="countryList"
-                      label="Nationality"
-                      item-text="name"
-                      item-value="name"
-                      :hide-details="errors && !errors.nationality"
-                      :error="errors && errors.nationality"
-                      :error-messages="
-                        errors && errors.nationality
+                    <v-select v-model="customer.nationality" :items="countryList" label="Nationality" item-text="name"
+                      item-value="name" :hide-details="errors && !errors.nationality"
+                      :error="errors && errors.nationality" :error-messages="errors && errors.nationality
                           ? errors.nationality[0]
                           : ''
-                      "
-                      dense
-                      outlined
-                    ></v-select>
+                        " dense outlined></v-select>
                   </v-col>
                   <v-col md="4" cols="12" sm="12">
-                    <v-menu
-                      v-model="customer.dob_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu v-model="customer.dob_menu" :close-on-content-click="false" :nudge-right="40"
+                      transition="scale-transition" offset-y min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="customer.dob"
-                          label="DOB"
-                          v-on="on"
-                          v-bind="attrs"
-                          :hide-details="true"
-                          dense
-                          outlined
-                        ></v-text-field>
+                        <v-text-field v-model="customer.dob" label="DOB" v-on="on" v-bind="attrs" :hide-details="true"
+                          dense outlined></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="customer.dob"
-                        @input="customer.dob_menu = false"
-                      ></v-date-picker>
+                      <v-date-picker v-model="customer.dob" @input="customer.dob_menu = false"></v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col md="4" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      outlined
-                      label="GST"
-                      type="text"
-                      v-model="customer.gst_number"
-                      :hide-details="true"
-                    ></v-text-field>
+                    <v-text-field dense outlined label="GST" type="text" v-model="customer.gst_number"
+                      :hide-details="true"></v-text-field>
                   </v-col>
                 </v-row>
 
                 <v-row>
                   <v-col md="12" cols="12" sm="12">
-                    <v-textarea
-                      rows="3"
-                      label="Address"
-                      v-model="customer.address"
-                      outlined
-                      :hide-details="true"
-                    ></v-textarea>
+                    <v-textarea rows="3" label="Address" v-model="customer.address" outlined
+                      :hide-details="true"></v-textarea>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -428,16 +247,9 @@
     </v-row>
     <v-row v-else>
       <v-col md="12">
-        <v-sheet
-          :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
-          class="pa-3"
-        >
-          <v-skeleton-loader
-            class="mx-auto"
-            max-width="900"
-            type="article, actions"
-            :min-height="500"
-          ></v-skeleton-loader>
+        <v-sheet :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`" class="pa-3">
+          <v-skeleton-loader class="mx-auto" max-width="900" type="article, actions"
+            :min-height="500"></v-skeleton-loader>
         </v-sheet>
       </v-col>
     </v-row>
