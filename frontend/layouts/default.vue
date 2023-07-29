@@ -507,7 +507,12 @@ export default {
         },
       ],
     };
-
+    let LostAndFoundItems = {
+      icon: "mdi-home-search-outline",
+      title: "Lost And Found Items",
+      to: "/LostAndFoundItems",
+      menu: "dashboard",
+    };
     let user = this.$auth.user;
 
     this.items.push(das);
@@ -516,6 +521,8 @@ export default {
     });
     if (this.$auth.user.user_type == "company") {
       this.items.push(Management);
+
+      this.items.push(LostAndFoundItems);
       this.items.push(setting);
     }
     this.getCompanyDetails();
@@ -655,6 +662,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .fixed-setting {
   position: fixed !important;
@@ -736,3 +744,26 @@ export default {
   background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
 }
 </style>
+
+<style>
+.custom-text-box {
+  border-radius: 2px !important;
+  border: 1px solid #dbdddf !important;
+}
+
+input[type="text"]:focus.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select:focus {
+  outline: none !important;
+  border-color: #5fafa3;
+  box-shadow: 0 0 0px #5fafa3;
+}
+</style>
+
+  

@@ -1,6 +1,6 @@
  <?php
 
-    use App\Http\Controllers\BookingController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
