@@ -27,6 +27,7 @@ class UserController extends Controller
         $itemsPerPage = $request->input('itemsPerPage');
 
         $model = User::query();
+        $model->where('company_id', $request->company_id);
 
 
         // $model->when()
@@ -68,7 +69,7 @@ class UserController extends Controller
                 $fileName        = time() . '.' . $ext;
                 $path            = $file->storeAs('public/user/images', $fileName);
             }
-            $data["image"] = $fileName;
+            $data["image"] = $fileName ?? "";
             $record = $model->create($data);
 
 
@@ -99,7 +100,7 @@ class UserController extends Controller
                 $path            = $file->storeAs('public/user/images', $fileName);
             }
 
-            $data["image"] = $fileName;
+            $data["image"] = $fileName ?? "";
 
             $record = $user->update($data);
 

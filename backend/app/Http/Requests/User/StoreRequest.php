@@ -45,6 +45,7 @@ class StoreRequest extends FormRequest
             'company_id' => 'required',
             'mobile' => 'nullable',
             'image' => 'nullable',
+            'is_active' => 'nullable',
         ];
     }
 

@@ -302,6 +302,13 @@ export default {
               to: "/inquiry",
               menu: "agent_access",
             },
+
+            {
+              icon: "mdi mdi-file-document-edit-outline",
+              title: "Last & Found",
+              to: "/missing",
+              menu: "agent_access",
+            },
           ],
         },
 
@@ -405,7 +412,7 @@ export default {
           title: "Lost And Found Items",
           to: "/LostAndFoundItems",
           menu: "dashboard",
-        },
+        }
       ],
       items: [],
       modules: {
@@ -765,4 +772,4 @@ select:focus {
 }
 </style>
 
-  
+

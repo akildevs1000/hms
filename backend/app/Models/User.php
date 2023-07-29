@@ -38,6 +38,7 @@ class User extends Authenticatable
         'employee_role_id',
         'email_verified_at',
         'is_verified',
+        'is_active',
     ];
 
     protected $appends = [
