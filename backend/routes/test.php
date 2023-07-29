@@ -178,3 +178,7 @@ Route::get('truncate', function () {
     // Customer::truncate();
     return "truncate done";
 });
+
+
+Route::post('whatsapp-otp', [WhatsappController::class, 'sentWhatsappOtp']);
+Route::post('whatsapp-test', [WhatsappController::class, 'sentNotificationTest']);

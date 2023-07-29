@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
+    />
     <section class="h-100 gradient-form" style="background-color: #eee">
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -13,11 +16,25 @@
                       <img width="35%" :src="logo" alt="logo" />
                     </div>
 
-                    <v-form ref="form" method="post" v-model="valid" lazy-validation>
+                    <v-form
+                      ref="form"
+                      method="post"
+                      v-model="valid"
+                      lazy-validation
+                    >
                       <label for="">Email</label>
                       <div class="form-outline mb-4">
-                        <v-text-field v-model="email" :rules="emailRules" :hide-details="false" id="form2Example11"
-                          placeholder="master@erp.com" required dense outlined type="email"></v-text-field>
+                        <v-text-field
+                          v-model="email"
+                          :rules="emailRules"
+                          :hide-details="false"
+                          id="form2Example11"
+                          placeholder="master@erp.com"
+                          required
+                          dense
+                          outlined
+                          type="email"
+                        ></v-text-field>
                       </div>
 
                       <label for="">Password</label>
@@ -32,9 +49,18 @@
                           placeholder="secret"
                         /> -->
 
-                        <v-text-field dense outlined :rules="passwordRules" :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'
-                          " :type="show_password ? 'text' : 'password'" v-model="password" class="input-group--focused"
-                          @click:append="show_password = !show_password"></v-text-field>
+                        <v-text-field
+                          dense
+                          outlined
+                          :rules="passwordRules"
+                          :append-icon="
+                            show_password ? 'mdi-eye' : 'mdi-eye-off'
+                          "
+                          :type="show_password ? 'text' : 'password'"
+                          v-model="password"
+                          class="input-group--focused"
+                          @click:append="show_password = !show_password"
+                        ></v-text-field>
                       </div>
                       <!-- <vue-recaptcha
                         class="g-recaptcha"
@@ -52,13 +78,18 @@
                         <span v-if="msg" class="error--text">
                           {{ msg }}
                         </span>
-                        <v-btn :loading="loading" @click="login"
-                          class="btn btn-primary btn-block text-white fa-lg primary mt-1 mb-3">
+                        <v-btn
+                          :loading="loading"
+                          @click="login"
+                          class="btn btn-primary btn-block text-white fa-lg primary mt-1 mb-3"
+                        >
                           Log in
                         </v-btn>
                       </div>
 
-                      <div class="d-flex align-items-center justify-content-center pb-4">
+                      <div
+                        class="d-flex align-items-center justify-content-center pb-4"
+                      >
                         <!-- <p class="mb-0 me-2">Don't have an account?</p> -->
                         <!-- <button type="button" class="btn btn-outline-danger">Create new</button> -->
                       </div>
@@ -116,7 +147,7 @@ export default {
 
     passwordRules: [(v) => !!v || "Password is required"],
   }),
-  created() { },
+  created() {},
   methods: {
     // mxVerify(res) {
     //   this.reCaptcha = res;
@@ -129,6 +160,17 @@ export default {
       };
       this.$axios
         .post(`generate_otp/${useId}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            return;
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+
+    set_otp_new(userId) {
+      this.$axios
+        .post(`whatsapp-otp/`, { userId })
         .then(({ data }) => {
           if (!data.status) {
             return;
@@ -157,7 +199,7 @@ export default {
             let LoginUser = this.$auth.user;
             console.log(data);
             if (LoginUser.employee_role_id > 0) {
-              this.set_otp(this.$auth.user.id);
+              this.set_otp_new(this.$auth.user.id);
               this.$router.push(`/otp`);
               return;
             }
@@ -168,13 +210,11 @@ export default {
               name = data.user?.name;
             }
 
-
             // if (LoginUser.employee_role_id > 0) {
             //   this.set_otp(this.$auth.user.id);
             //   this.$router.push(`/otp`);
             //   return;
             // }
-
           })
           .catch(({ response }) => {
             if (!response) {
