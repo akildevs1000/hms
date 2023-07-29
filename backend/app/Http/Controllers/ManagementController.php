@@ -648,8 +648,9 @@ class ManagementController extends Controller
             ->groupBy('bookings.customer_id')
             ->orderByDesc('customer_total_price')
             ->where('company_id', $request->company_id)
-            ->where('type', 'Walking')
-            ->where('booking_status', 1)
+        //->where('type', 'Walking')
+        // -1 cancel booking ;
+            ->where('booking_status', "!=", -1)
             ->whereYear('created_at', $year)
             ->when($request->filled('month'), function ($q) use ($request) {
                 $q->whereMonth('created_at', $request->month);
@@ -659,8 +660,8 @@ class ManagementController extends Controller
 
         $total_price = Booking::
             where('company_id', $request->company_id)
-            ->where('type', 'Walking')
-            ->where('booking_status', 1)
+        //->where('type', 'Walking')
+            ->where('booking_status', "!=", -1)
             ->whereYear('created_at', $year)
             ->when($request->filled('month'), function ($q) use ($request) {
                 $q->whereMonth('created_at', $request->month);
