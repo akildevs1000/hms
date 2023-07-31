@@ -106,7 +106,7 @@
                 <template v-slot:item.res_number="item">
 
 
-                    <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                    <span class="blue--text" @click="goToRevView(item.item)" style="cursor: pointer">
                         {{ item.item.reservation_no || "---" }}
                     </span>
                 </template>
