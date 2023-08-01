@@ -5,6 +5,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
 
+Route::apiResource('/room', RoomController::class);
 Route::get('room', [RoomController::class, 'index']);
 Route::get('room/search/{key}', [RoomController::class, 'search']);
 

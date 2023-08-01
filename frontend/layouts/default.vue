@@ -403,7 +403,7 @@ export default {
         {
           icon: "mdi-home-search-outline",
           title: "Lost And Found Items",
-          to: "/LostAndFoundItems",
+          to: "/lost_and_found_items",
           menu: "dashboard",
         },
       ],
@@ -497,6 +497,12 @@ export default {
           icon: "mdi mdi-bed",
           title: "Room Category",
           to: "/room_category",
+          menu: "city_ledger_access",
+        },
+        {
+          icon: "mdi mdi-bed",
+          title: "Rooms",
+          to: "/rooms",
           menu: "city_ledger_access",
         },
         {
@@ -764,5 +770,110 @@ select:focus {
   box-shadow: 0 0 0px #5fafa3;
 }
 </style>
+<style>
+/* Table Header Filter Textbox alignment    */
+td {
+  text-align: left;
+  padding: 8px;
+
+}
+</style>
+
+<!-- CSS Code used from Loast and Found Items (scoped)  -->
+<!-- <style   >
+.no-bg {
+  background-color: white !important;
+}
+
+.guest-avatar {
+  max-width: 200px !important;
+  height: 200px !important;
+  float: left;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.text-box {
+  border: 1px solid rgb(215, 211, 211);
+  padding: 10px 0px 0px 10px;
+  margin: 10px 20px;
+  position: relative;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.text-box-amt {
+  border: 0px solid rgb(215, 211, 211);
+  padding: 0px 0px 0px 0px;
+  margin: 0px 00px;
+  position: relative;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.amt-border {
+  border-bottom: 1px solid;
+}
+
+.amt-border-full {
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+}
+
+.text-box p {
+  margin: 5px;
+}
+
+h6 {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background-color: white;
+  padding: 0 10px;
+  color: rgb(154, 152, 152);
+  margin: 0;
+  font-size: 15px;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 8px;
+  /* border: 1px solid black !important; */
+}
+
+tr:nth-child(even) {
+  background-color: white;
+}
+
+.custom-text-box {
+  border-radius: 2px !important;
+  border: 1px solid #dbdddf !important;
+}
+
+input[type="text"]:focus.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select:focus {
+  outline: none !important;
+  border-color: #5fafa3;
+  box-shadow: 0 0 0px #5fafa3;
+}
+
+.table-header-text {
+  font-size: 12px;
+}
+</style>   -->
 
   

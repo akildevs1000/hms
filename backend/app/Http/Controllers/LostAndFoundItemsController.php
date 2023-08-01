@@ -35,8 +35,11 @@ class LostAndFoundItemsController extends Controller
         $data->when($request->filled('booking_id'), function ($q) use ($request) {
             $q->where('booking_id', 'ILIKE', "$request->booking_id%");
         });
-        $data->when($request->filled('room_number'), function ($q) use ($request) {
-            $q->whereHas('booking', fn(Builder $query) => $query->where('rooms', 'ILIKE', "%$request->room_number%"));
+        $data->when($request->filled('reservation_no'), function ($q) use ($request) {
+            $q->whereHas('booking', fn(Builder $query) => $query->where('reservation_no', 'ILIKE', "$request->reservation_no%"));
+        });
+        $data->when($request->filled('bookings_rooms'), function ($q) use ($request) {
+            $q->whereHas('booking', fn(Builder $query) => $query->where('rooms', 'ILIKE', "%$request->bookings_rooms%"));
         });
         $data->when($request->filled('customer_name'), function ($q) use ($request) {
             $q->whereHas('booking.customer', fn(Builder $query) => $query->where('first_name', 'ILIKE', "%$request->customer_name%"));
@@ -75,8 +78,26 @@ class LostAndFoundItemsController extends Controller
 
         // });
 
-        if (!$request->sortBy) {
-            $data->orderBy('id', 'DESC');
+        $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
+
+        if ($request->filled('sortBy')) {
+            $sortBy = $request->sortBy;
+            if (strpos($sortBy, '.')) {
+
+                if ($request->sortBy == 'bookings.rooms') {
+                    $data->orderBy(Booking::select('rooms')->whereColumn('bookings.id', 'lost_and_found_items.booking_id'), $sortDesc);
+                } else if ($request->sortBy == 'booking.reservation_no') {
+                    $data->orderBy(Booking::select('reservation_no')->whereColumn('bookings.id', 'lost_and_found_items.booking_id'), $sortDesc);
+                } else if ($request->sortBy == 'customer.name') {
+                    // $data->orderBy(Booking::select('customer:first_name')->whereColumn('bookings.id', 'lost_and_found_items.booking_id'), $sortDesc);
+                }
+
+            } else {
+                $data->orderBy($sortBy, $sortDesc);
+            }
+
+        } else {
+            $data->orderBy('id', $sortDesc);
         }
 
         $data = $data->paginate($request->per_page ?? 100);
@@ -156,8 +177,9 @@ class LostAndFoundItemsController extends Controller
 
     public function searchBookingDetails(Request $request, $id)
     {
+
         $lostItem = null;
-        $booking = Booking::with(['customer'])->where('reservation_no', $id)->first();
+        $booking = Booking::with(['customer'])->where('reservation_no', $id)->where('company_id', $request->company_id)->first();
         if ($request->missingItemId) {
             $lostItem = LostAndFoundItems::with(['booking'])->where('id', $request->missingItemId)->first();
         }

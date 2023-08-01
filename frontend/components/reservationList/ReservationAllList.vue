@@ -46,7 +46,7 @@
             <v-col xs="12" sm="12" md="2" cols="12">
                 <v-select class="custom-text-box shadow-none" v-model="guest_mode"
                     :items="['Select All', 'Arrival', 'Departure']" dense placeholder="Type" solo flat :hide-details="true"
-                    @change="getDataFromApi(endpoint)"></v-select>
+                    @change="reload()"></v-select>
             </v-col>
 
             <v-col md="2">
@@ -95,10 +95,11 @@
                     <span> DOWNLOAD </span>
                 </v-tooltip>
             </v-toolbar>
+
             <v-data-table dense small :headers="headers_table" :items="data" :loading="loading" :options.sync="options"
                 :footer-props="{
-                    itemsPerPageOptions: [20, 50, 100, 500, 1000],
-                }" class="elevation-1" :server-items-length="totalRowsCount" @page-change="updateIndex">
+                    itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+                }" class="elevation-1" :server-items-length="totalRowsCount">
 
                 <template v-slot:item.sno="{ item, index }">
                     {{ currentPage ? ((currentPage - 1) * perPage) + (cumulativeIndex + itemIndex(item)) : '' }}
@@ -307,6 +308,7 @@ export default {
                 text: "Rev. No",
                 align: "left",
                 sortable: false,
+                width: "100px",
                 key: "employee_id",
                 filterable: true,
                 value: "res_number",
@@ -605,7 +607,7 @@ export default {
             this.getDataFromApi();
         },
         updateIndex(page) {
-            alert(this.cumulativeIndex);
+
             this.currentPage = page;
             this.cumulativeIndex = (page - 1) * this.perPage;
 
@@ -614,7 +616,11 @@ export default {
         itemIndex(item) {
             return this.data.indexOf(item);
         },
-        getDataFromApi(url = this.endpoint) {
+        reload() {
+
+            this.getDataFromApi(this.endpoint, 1);
+        },
+        getDataFromApi(url = this.endpoint, customPage = 0) {
             // :items="type == 'Online' ? sources : agentList"
 
             let newSource;
@@ -632,6 +638,9 @@ export default {
 
             let sortedBy = sortBy ? sortBy[0] : "";
             let sortedDesc = sortDesc ? sortDesc[0] : "";
+            if (customPage == 1) page = 1;
+            this.currentPage = page;
+
             let options = {
                 params: {
                     page: page,

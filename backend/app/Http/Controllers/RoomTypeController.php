@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
-use App\Models\Holiday;
-use App\Models\Weekend;
-use App\Models\RoomType;
-use Carbon\CarbonPeriod;
-use Illuminate\Http\Request;
 use App\Http\Requests\RoomType\StoreRequest;
 use App\Http\Requests\RoomType\UpdateRequest;
+use App\Models\Holiday;
+use App\Models\Room;
+use App\Models\RoomType;
+use App\Models\Weekend;
+use Carbon\CarbonPeriod;
+use Illuminate\Http\Request;
 
 class RoomTypeController extends Controller
 {
@@ -25,12 +25,12 @@ class RoomTypeController extends Controller
 
     public function getRoomType(Request $request)
     {
-        $model =  RoomType::whereCompanyId($request->company_id);
+        $model = RoomType::whereCompanyId($request->company_id);
 
         if ($request->filled('search') && $request->search) {
             $model->where('name', 'ILIKE', "%$request->search%");
         }
-
+        $model->orderBy('name', 'asc');
         return $model->paginate($request->per_page ?? 50);
     }
 
@@ -77,21 +77,21 @@ class RoomTypeController extends Controller
     public function getDataBySelect(Request $request)
     {
         $company_id = $request->company_id;
-        $discount   = $request->discount ?? 0;
-        $room       = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
-        $prices     = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
+        $discount = $request->discount ?? 0;
+        $room = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
+        $prices = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
             ->first(['holiday_price', 'weekend_price', 'weekday_price']);
 
-        $weekModel =  Weekend::where('company_id', $request->company_id)->first();
+        $weekModel = Weekend::where('company_id', $request->company_id)->first();
         $weekends = $weekModel->day;
 
-        $arr    = [];
+        $arr = [];
         $period = CarbonPeriod::create($request->checkin, $this->checkOutDate($request->checkout));
         foreach ($period as $date) {
             $iteration_date = $date->format('Y-m-d');
-            $day            = $date->format('D');
-            $isWeekend      = in_array($day, $weekends);
-            $isHoliday      = $this->checkHoliday($iteration_date, $company_id);
+            $day = $date->format('D');
+            $isWeekend = in_array($day, $weekends);
+            $isHoliday = $this->checkHoliday($iteration_date, $company_id);
             if ($isHoliday) {
                 $arr[] = ["date" => $iteration_date, "price" => $prices->holiday_price, "day_type" => "holiday", "day" => $day];
             } elseif ($isWeekend) {
@@ -102,8 +102,8 @@ class RoomTypeController extends Controller
         }
 
         return [
-            'room'        => $room,
-            'data'        => $arr,
+            'room' => $room,
+            'data' => $arr,
             'total_price' => array_sum(array_column($arr, "price")),
         ];
 
@@ -117,38 +117,38 @@ class RoomTypeController extends Controller
     {
         // return app()->isProduction();
         $company_id = $request->company_id;
-        $discount   = $request->discount ?? 0;
-        $room       = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
-        $prices     = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
+        $discount = $request->discount ?? 0;
+        $room = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
+        $prices = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
             ->first(['holiday_price', 'weekend_price', 'weekday_price']);
 
-        $weekModel =  Weekend::where('company_id', $request->company_id)->first();
+        $weekModel = Weekend::where('company_id', $request->company_id)->first();
         $weekends = $weekModel->day;
 
-        $arr    = [];
+        $arr = [];
         $period = CarbonPeriod::create($request->checkin, $this->checkOutDate($request->checkout));
         foreach ($period as $date) {
             $iteration_date = $date->format('Y-m-d');
-            $day            = $date->format('D');
-            $isWeekend      = in_array($day, $weekends);
-            $isHoliday      = $this->checkHoliday($iteration_date, $company_id);
+            $day = $date->format('D');
+            $isWeekend = in_array($day, $weekends);
+            $isHoliday = $this->checkHoliday($iteration_date, $company_id);
             if ($isHoliday) {
                 $arr[] = [
                     "date" => $iteration_date,
                     "price" => $this->getRoomTax($prices->holiday_price - $discount)['total_with_tax'],
                     "day_type" => "holiday",
                     "day" => $day,
-                    "tax" =>  $this->getRoomTax($prices->holiday_price - $discount)['room_tax'],
-                    "room_price" =>  $prices->holiday_price,
+                    "tax" => $this->getRoomTax($prices->holiday_price - $discount)['room_tax'],
+                    "room_price" => $prices->holiday_price,
                 ];
             } elseif ($isWeekend) {
                 $arr[] = [
                     "date" => $iteration_date,
                     "price" => $this->getRoomTax($prices->weekend_price - $discount)['total_with_tax'],
-                    "tax" =>  $this->getRoomTax($prices->weekend_price - $discount)['room_tax'],
+                    "tax" => $this->getRoomTax($prices->weekend_price - $discount)['room_tax'],
                     "day_type" => "weekend",
                     "day" => $day,
-                    "room_price" =>  $prices->weekend_price,
+                    "room_price" => $prices->weekend_price,
                 ];
             } else {
                 $arr[] = [
@@ -156,15 +156,15 @@ class RoomTypeController extends Controller
                     "price" => $this->getRoomTax($prices->weekday_price - $discount)['total_with_tax'],
                     "day_type" => "weekday",
                     "day" => $day,
-                    "tax" =>  $this->getRoomTax($prices->weekday_price - $discount)['room_tax'],
-                    "room_price" =>  $prices->weekday_price,
+                    "tax" => $this->getRoomTax($prices->weekday_price - $discount)['room_tax'],
+                    "room_price" => $prices->weekday_price,
                 ];
             }
         }
 
         return [
-            'room'        => $room,
-            'data'        => $arr,
+            'room' => $room,
+            'data' => $arr,
             'total_price' => array_sum(array_column($arr, "price")),
             'total_tax' => array_sum(array_column($arr, "tax")),
         ];
@@ -177,18 +177,18 @@ class RoomTypeController extends Controller
 
     private function getRoomTax($amount)
     {
-        $temp             = [];
-        $per              = $amount < 3000 ? 12 : 18;
-        $tax              = ($amount / 100) * $per;
+        $temp = [];
+        $per = $amount < 3000 ? 12 : 18;
+        $tax = ($amount / 100) * $per;
         $temp['room_tax'] = $tax;
 
         // return (float) $amount + (float) $tax;
 
         $temp['total_with_tax'] = (float) $amount + (float) $tax;
         $temp['after_discount'] = $amount;
-        $gst                    = floatval($tax) / 2;
-        $temp['cgst']           = $gst;
-        $temp['sgst']           = $gst;
+        $gst = floatval($tax) / 2;
+        $temp['cgst'] = $gst;
+        $temp['sgst'] = $gst;
         return $temp;
     }
 
@@ -225,7 +225,5 @@ class RoomTypeController extends Controller
         date_modify($date, "-1 days");
         return date_format($date, "Y-m-d");
     }
-
-
 
 }
