@@ -42,13 +42,6 @@
                     :items="type == 'Online' ? sources : agentList" dense item-value="name" item-text="name"
                     placeholder="Sources" solo flat :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
             </v-col>
-
-            <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select class="custom-text-box shadow-none" v-model="guest_mode"
-                    :items="['Select All', 'Arrival', 'Departure']" dense placeholder="Type" solo flat :hide-details="true"
-                    @change="reload()"></v-select>
-            </v-col>
-
             <v-col md="2">
                 <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
                     offset-y min-width="auto">
@@ -56,7 +49,8 @@
                         <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
                             class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
                     </template>
-                    <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
+                    <v-date-picker no-title v-model="from_date" @input="from_menu = false"
+                        @change="commonMethod"></v-date-picker>
                 </v-menu>
             </v-col>
             <v-col md="2">
@@ -66,9 +60,17 @@
                         <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense
                             class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"></v-text-field>
                     </template>
-                    <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
+                    <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"
+                        no-title></v-date-picker>
                 </v-menu>
             </v-col>
+            <v-col xs="12" sm="12" md="2" cols="12">
+                <v-select class="custom-text-box shadow-none" v-model="guest_mode"
+                    :items="['Select All', 'Arrival', 'Departure']" dense placeholder="Type" solo flat :hide-details="true"
+                    @change="reload()"></v-select>
+            </v-col>
+
+
         </v-row>
 
         <v-card class="mb-5 rounded-md mt-3" elevation="0">

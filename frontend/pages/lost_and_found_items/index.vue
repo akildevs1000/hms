@@ -541,7 +541,7 @@
                                                     v-model="filters[header.value]" readonly v-bind="attrs" v-on="on"
                                                     placeholder="Select Date"></v-text-field>
                                             </template>
-                                            <v-date-picker style="height: 450px" v-model="filters[header.value]" no-title
+                                            <v-date-picker style="height: 400px" v-model="filters[header.value]" no-title
                                                 scrollable @input="applyFilters()">
                                                 <v-spacer></v-spacer>
 
@@ -561,7 +561,7 @@
                                                     v-model="filters[header.value]" readonly v-bind="attrs" v-on="on"
                                                     placeholder="Select Date"></v-text-field>
                                             </template>
-                                            <v-date-picker style="height: 450px" v-model="filters[header.value]" no-title
+                                            <v-date-picker style="height: 400px" v-model="filters[header.value]" no-title
                                                 scrollable @input="applyFilters()">
                                                 <v-spacer></v-spacer>
 
@@ -581,7 +581,7 @@
                                                     v-model="filters[header.value]" readonly v-bind="attrs" v-on="on"
                                                     placeholder="Select Date"></v-text-field>
                                             </template>
-                                            <v-date-picker style="height: 450px" v-model="filters[header.value]" no-title
+                                            <v-date-picker style="height: 400px" v-model="filters[header.value]" no-title
                                                 scrollable @input="applyFilters()">
                                                 <v-spacer></v-spacer>
 

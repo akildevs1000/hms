@@ -779,6 +779,13 @@ td {
 }
 </style>
 
+ <!-- datepicker min height is required  -->
+<style>
+.v-date-picker-table {
+  min-height: 400px;
+}
+</style>
+
 <!-- CSS Code used from Loast and Found Items (scoped)  -->
 <!-- <style   >
 .no-bg {
