@@ -32,11 +32,15 @@ class RoomController extends Controller
         if ($request->filled('room_type')) {
             $model->where('room_type_id', $request->room_type);
         }
+        if ($request->filled('floor_no')) {
+            $model->where('floor_no', $request->floor_no);
+        }
         if ($request->filled('status')) {
             $model->where('status', $request->status);
         } else {
             $model->where('status', 0);
         }
+
 //datatable sorty by
         if ($request->filled('sortBy')) {
 

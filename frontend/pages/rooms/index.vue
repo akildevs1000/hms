@@ -9,7 +9,7 @@
             <v-card>
                 <v-card-title dense class=" primary  white--text background">
                     <span v-if="viewMode">View Room Info </span>
-                    <span v-else-if="editedItemIndex = -1">Add Room Info </span>
+                    <span v-else-if="editedItemIndex == -1">Add Room </span>
                     <span v-else>Edit Room Info </span>
                     <v-spacer></v-spacer>
                     <v-icon @click="newItemDialog = false" outlined dark color="white">
@@ -29,7 +29,13 @@
                                 }}</span>
                             </v-col>
                             <v-col md="12" cols="12">
-                                <label> category</label>
+                                <label>Floor No</label>
+                                <v-select v-model="editedItem.floor_no" :disabled="viewMode" outlined dense small
+                                    :hide-details="true" :items="floors" placeholder="Select Floor"></v-select>
+                                <span v-if="errors && errors.floor_no" class="error--text">{{ errors.floor_no[0] }}</span>
+                            </v-col>
+                            <v-col md="12" cols="12">
+                                <label> Category</label>
                                 <v-select :disabled="viewMode" :items="roomTypesData" v-model="editedItem.room_type_id"
                                     outlined dense small :hide-details="true" item-text="name" item-value="id"
                                     placeholder="Select Category">
@@ -47,6 +53,7 @@
                                 <span v-if="errors && errors.status" class="error--text">{{ errors.status[0]
                                 }}</span>
                             </v-col>
+
 
                         </v-row>
 
@@ -118,6 +125,11 @@
                                         :hide-details="true" :items="roomTypesForSelectOptions" item-text="name"
                                         item-value="id">
                                     </v-autocomplete>
+                                    <v-select v-model="filters[header.key]"
+                                        v-if="header.filterable && header.filterSpecial && header.key == 'floor_no'"
+                                        :items="floors" outlined dense clearable
+                                        @click:clear="filters[header.kye] = ''; applyFilters();" :hide-details="true"
+                                        @change="applyFilters()"></v-select>
 
                                 </td>
                             </tr>
@@ -127,6 +139,8 @@
                                 (cumulativeIndex +
                                     itemIndex(item)) : '' }}
                         </template>
+                        <template v-slot:item.floor_no="{ item }">
+                            {{ item.floor_no }}</template>
                         <template v-slot:item.room_type.name="{ item }">
                             {{ item.room_type.name }}</template>
                         <template v-slot:item.status="{ item }">
@@ -190,6 +204,7 @@ export default
             loading: false,
             headers_table: [{ text: "#", value: "sno", align: "left", sortable: false, filterable: false, },
             { text: "Room No", value: "room_no", align: "left", sortable: true, filterable: true, },
+            { text: "Floor No", value: "floor_no", align: "left", sortable: true, key: 'floor_no', filterable: true, filterSpecial: true },
             { text: "Room Type", value: "room_type.name", key: "room_type", align: "left", sortable: true, filterable: true, filterSpecial: true },
             { text: "Status", value: "status", align: "left", key: "status", sortable: true, filterable: true, filterSpecial: true },
             { text: "Options", value: "options", align: "left", sortable: false },
@@ -210,6 +225,7 @@ export default
             snackbarColor: "red",
             snackbarResponse: "",
             viewMode: false,
+            floors: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
         }),
         watch: {
 
@@ -310,25 +326,29 @@ export default
                 this.editedItem = {};
                 let options = { params: { company_id: this.$auth.user.company.id, } };
                 this.newItemDialog = true;
-                this.editedItemIndex = item.id;
+
                 this.$axios.get(`${this.endpoint}/${item.id}`, options).then(({ data }) => {
 
                     this.editedItem = data;
+                    this.editedItemIndex = item.id;
+
                 });
             },
             save() {
 
 
-                if (this.editedItemIndex != "-1") {
+                if (this.editedItemIndex != -1) {
                     let options = {
                         params: {
                             company_id: this.$auth.user.company.id,
                             room_no: this.editedItem.room_no,
                             room_type_id: this.editedItem.room_type_id,
-                            status: this.editedItem.status
+                            status: this.editedItem.status,
+                            user_id: this.$auth.user.id,
+                            floor_no: this.editedItem.floor_no,
                         }
                     };
-
+                    console.log(this.$auth.user);
                     this.$axios.put(`${this.endpoint}/${this.editedItemIndex}`, options.params).then(({ data }) => {
                         if (data.status) {
                             this.getDataFromApi();
@@ -363,6 +383,7 @@ export default
                     let options = {
                         params: {
                             company_id: this.$auth.user.company.id,
+                            user_id: this.$auth.user.id,
                             ...this.editedItem
                         }
                     };
