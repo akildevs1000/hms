@@ -330,7 +330,7 @@
                 {{-- 04542-291888 --}}
                 <small> Telephone No: {{ $company->contact->number ?? '04542291888' }} </small><br>
                 <small> Email: {{ $company->user->email ?? '---' }}</small><br>
-                <small> Date: {{ $date }}</small>
+                <small> Date: {{ $date }} {{count($data) }}</small>
             </div>
         </div>
     </div>
@@ -349,130 +349,47 @@
     </div>
 
     <table class="mt-3 w-100">
-        <tr style="background-color: white; color: black" class="my-0 py-0">
-            <th class="my-0 py-0">#</th>
-            <th class="my-0 py-0">Guest</th>
-            <th class="my-0 py-0">Rev. No</th>
-            <th class="my-0 py-0">Rooms</th>
-            <th class="my-0 py-0">Source</th>
-            <th class="my-0 py-0">CheckIn</th>
-            <th class="my-0 py-0">CheckOut</th>
-            <th class="my-0 py-0">Tariff</th>
-            <th class="my-0 py-0">Advance</th>
-            <th class="my-0 py-0">Cash</th>
-            <th class="my-0 py-0">Card</th>
-            <th class="my-0 py-0">Online</th>
-            <th class="my-0 py-0">Bank</th>
-            <th class="my-0 py-0">UPI</th>
-            <th class="my-0 py-0">Balance</th>
-            <th class="my-0 py-0">Remark</th>
-        </tr>
-        @php
-            $i = 1;
 
-            $functionName = $fileName;
-            $getPaySumFn = 'getPaySums' . $fileName;
-
-            $getPaySumFn = function ($payload, $mode) {
-                $sum = 0;
-                foreach ($payload as $e) {
-                    if ($e['payment_method_id'] == $mode) {
-                        $sum += floatval($e['credit']);
-                    }
-                }
-                return number_format($sum, 2);
-            };
-
-            ${$functionName} = function ($item, $mode) use ($getPaySumFn) {
-                $creditTrans = $item['transactions'];
-                switch ($mode) {
-                    case 1:
-                        return $getPaySumFn($creditTrans, 1);
-                    // return getPaySum($creditTrans, 1);
-                    case 2:
-                        return $getPaySumFn($creditTrans, 2);
-                    // return getPaySum($creditTrans, 2);
-                    case 3:
-                        return $getPaySumFn($creditTrans, 3);
-                    // return getPaySum($creditTrans, 3);
-                    case 4:
-                        return $getPaySumFn($creditTrans, 4);
-                    // return getPaySum($creditTrans, 4);
-                    case 5:
-                        return $getPaySumFn($creditTrans, 5);
-                    // return getPaySum($creditTrans, 5);
-                    default:
-                        return '0';
-                        break;
-                }
-            };
-
-            // function getPaySum($payload, $mode)
-            // {
-            //     $sum = 0;
-            //     foreach ($payload as $e) {
-            //         if ($e['payment_method_id'] == $mode) {
-            //             $sum += floatval($e['credit']);
-            //         }
-            //     }
-            //     return number_format($sum, 2);
-            // }
-
-            $cashTotal=0;
-            $cardTotal=0;
-            $onlineTotal=0;
-            $bankTotal=0;
-            $upiTotal=0;
-            $balanceTotal=0;
-
-        @endphp
         <tbody>
-            @foreach ($data as $index => $item)
-@php
-$cashTotal+=is_numeric(${$functionName}($item, 1))?${$functionName}($item, 1):0;
-$cardTotal+=is_numeric(${$functionName}($item, 2))?${$functionName}($item, 2):0;
-$onlineTotal+=is_numeric(${$functionName}($item, 3))?${$functionName}($item, 3):0;
-$bankTotal+=is_numeric(${$functionName}($item, 4))?${$functionName}($item,4):0;
-$upiTotal+=is_numeric(${$functionName}($item, 5))?${$functionName}($item, 5):0;
-$balanceTotal+=$item->balance;
-@endphp
-
-                <tr style="background-color: yellow;">
-                    <td>{{ ++$index }}</td>
-                    <td>{{ $item->customer->first_name ?? '' }}</td>
-                    <td> {{ $item->reservation_no }} </td>
-                    <td class="room-width"> {{ $item->rooms }} </td>
-                    <td>{{ $item->source ?? '' }}</td>
-                    <td>{{ $item->check_in ?? '' }}</td>
-                    <td>{{ $item->check_out ?? '' }}</td>
-                    <td class="text-right">{{ $item->total_price }}</td>
-                    <td class="text-right">{{ $item->advance_price > 0 ? $item->advance_price : 0 }}</td>
-                    <td class="text-right">{{ ${$functionName}($item, 1) }}</td>
-                    <td class="text-right">{{ ${$functionName}($item, 2) }}</td>
-                    <td class="text-right">{{ ${$functionName}($item, 3) }}</td>
-                    <td class="text-right">{{ ${$functionName}($item, 4) }}</td>
-                    <td class="text-right">{{ ${$functionName}($item, 5) }}</td>
-                    <td class="text-right">{{ $item->balance }}</td>
-                    <td> </td>
-                </tr>
-            @endforeach
-            <tr>
-                <td colspan="9" style="text-align:right">Total</td>
-                <td class="text-right">{{$cashTotal}}.00</td>
-                <td class="text-right">{{$cardTotal}}.00</td>
-                <td class="text-right">{{$onlineTotal}}.00</td>
-                <td class="text-right">{{$bankTotal}}.00</td>
-                <td class="text-right">{{$upiTotal}}.00</td>
-                <td class="text-right">{{$balanceTotal}}.00</td>
-                <td  >{{ $balanceTotal > 0 ? 'Due' : 'Paid' }}</td>
+        @foreach ($data as $item)
+        <table class="mt-3 w-100">
+            <tr style="background-color: white; color: black" class="my-0 py-0">
+                <th class="my-0 py-0">Room No - {{ $item->room_no ?? '---' }}</th>
+                <th class="my-0 py-0">Adult</th>
+                <th class="my-0 py-0">Child</th>
+                <th class="my-0 py-0">Baby</th>
             </tr>
+            <tr style="background-color: white" class="my-0 py-0">
+                <td class="my-0 py-0">{{ $item['breakfast']['title'] ?? 'Breakfast' }}</td>
+                <td class="my-0 py-0">{{ $item['breakfast']['no_of_adult'] ?? '---' }}</td>
+                <td class="my-0 py-0">{{ $item['breakfast']['no_of_child'] ?? '---' }}</td>
+                <td class="my-0 py-0">{{ $item['breakfast']['no_of_baby'] ?? '---' }}</td>
+            </tr>
+            <tr style="background-color: white" class="my-0 py-0">
+                <td class="my-0 py-0">{{ $item['lunch']['title'] ?? 'Lunch' }}</td>
+                <td class="my-0 py-0">{{ $item['lunch']['no_of_adult'] ?? '---' }}</td>
+                <td class="my-0 py-0">{{ $item['lunch']['no_of_child'] ?? '---' }}</td>
+                <td class="my-0 py-0">{{ $item['lunch']['no_of_baby'] ?? '---' }}</td>
+            </tr>
+            <tr style="background-color: white" class="my-0 py-0">
+                <td class="my-0 py-0">{{ $item['dinner']['title'] ?? 'Dinner' }}</td>
+                <td class="my-0 py-0">{{ $item['dinner']['no_of_adult'] ?? '---' }}</td>
+                <td class="my-0 py-0">{{ $item['dinner']['no_of_child'] ?? '---' }}</td>
+                <td class="my-0 py-0">{{ $item['dinner']['no_of_baby'] ?? '---' }}</td>
+            </tr>
+        </table>
+    @endforeach
+
+
+
         </tbody>
     </table>
-
     <br/>
     <center>  @if(count($data) == 0)
        No Records are available
 @endif </center>
+
+
 </body>
 
 </html>

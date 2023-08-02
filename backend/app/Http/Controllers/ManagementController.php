@@ -184,6 +184,7 @@ class ManagementController extends Controller
 
     public function getAuditReport(Request $request)
     {
+
         $model = Booking::query();
 
         $todayCheckin = $this->todayCheckinAudit($model, $request);

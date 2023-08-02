@@ -305,6 +305,10 @@
             padding: 2px 2px;
             border: 1px solid #e9e9e9;
         }
+        .text-right
+        {
+            text-align:right;
+        }
     </style>
 </head>
 
@@ -341,7 +345,7 @@
         <div class="col-5">
         </div>
         <div class="col-4" style="margin: 0px">
-        {{ $fileName }}
+        {{$fileName}}
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
         </div>
@@ -428,7 +432,7 @@
         @endphp
         <tbody>
             @foreach ($data as $index => $item)
-@php
+            @php
 $cashTotal+=is_numeric(${$functionName}($item, 1))?${$functionName}($item, 1):0;
 $cardTotal+=is_numeric(${$functionName}($item, 2))?${$functionName}($item, 2):0;
 $onlineTotal+=is_numeric(${$functionName}($item, 3))?${$functionName}($item, 3):0;
@@ -436,8 +440,7 @@ $bankTotal+=is_numeric(${$functionName}($item, 4))?${$functionName}($item,4):0;
 $upiTotal+=is_numeric(${$functionName}($item, 5))?${$functionName}($item, 5):0;
 $balanceTotal+=$item->balance;
 @endphp
-
-                <tr style="background-color: yellow;">
+                <tr style="background-color: #FFF;">
                     <td>{{ ++$index }}</td>
                     <td>{{ $item->customer->first_name ?? '' }}</td>
                     <td> {{ $item->reservation_no }} </td>
@@ -453,9 +456,10 @@ $balanceTotal+=$item->balance;
                     <td class="text-right">{{ ${$functionName}($item, 4) }}</td>
                     <td class="text-right">{{ ${$functionName}($item, 5) }}</td>
                     <td class="text-right">{{ $item->balance }}</td>
-                    <td> </td>
+                    <td>{{ $item->balance > 0 ? 'Due' : 'Paid' }}</td>
                 </tr>
             @endforeach
+
             <tr>
                 <td colspan="9" style="text-align:right">Total</td>
                 <td class="text-right">{{$cashTotal}}.00</td>
@@ -464,11 +468,10 @@ $balanceTotal+=$item->balance;
                 <td class="text-right">{{$bankTotal}}.00</td>
                 <td class="text-right">{{$upiTotal}}.00</td>
                 <td class="text-right">{{$balanceTotal}}.00</td>
-                <td  >{{ $balanceTotal > 0 ? 'Due' : 'Paid' }}</td>
+                <td  > </td>
             </tr>
         </tbody>
     </table>
-
     <br/>
     <center>  @if(count($data) == 0)
        No Records are available
