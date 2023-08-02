@@ -127,6 +127,7 @@ class LostAndFoundItemsController extends Controller
             $data = $request->validated();
 
             if ($data) {
+
                 $record = LostAndFoundItems::create($data);
 
                 //$verifyExistingData = LostAndFoundItems::where('booking_id', $data['booking_id'])->count();

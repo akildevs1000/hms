@@ -191,7 +191,7 @@
                                                             v-model="missing_date" readonly v-bind="attrs"
                                                             v-on="on"></v-text-field>
                                                     </template>
-                                                    <v-date-picker style="height:450px" no-title v-model="missing_date"
+                                                    <v-date-picker style="height:400px" no-title v-model="missing_date"
                                                         @input="menu1 = false"></v-date-picker>
                                                 </v-menu>
                                                 <span dense v-if="errors && errors.missing_datetime" class="error--text">{{
@@ -377,7 +377,7 @@
                                                                     v-model="returned_date" readonly v-bind="attrs"
                                                                     v-on="on"></v-text-field>
                                                             </template>
-                                                            <v-date-picker style="height:450px" no-title
+                                                            <v-date-picker style="height:400px" no-title
                                                                 v-model="returned_date"
                                                                 @input="menu5 = false"></v-date-picker>
                                                         </v-menu>
@@ -1217,6 +1217,7 @@ export default {
                     company_id: this.$auth.user.company.id,
                     booking_id: this.bookingId,
                     update_type: "missing",
+                    user_id: this.$auth.user.id,
                     ...this.editedItem
                 },
             };
