@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="can('settings_rooms_access') && can('settings_rooms_view')">
         <div class="text-center ma-2">
             <v-snackbar v-model="snackbar" top="top" :color="snackbarColor" elevation="24">
                 {{ snackbarResponse }}
@@ -89,7 +89,7 @@
                     <span>Filter</span>
                 </v-tooltip>
                 <v-spacer></v-spacer>
-                <v-tooltip top color="primary">
+                <v-tooltip v-if="can('settings_rooms_create')" top color="primary">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="AddNewRoom()">
                             <v-icon color="white" dark white>mdi-plus-circle</v-icon>
@@ -146,7 +146,8 @@
                         <template v-slot:item.status="{ item }">
                             {{ item.status == '0' ? "Active" : "In-active" }}
                         </template>
-                        <template v-slot:item.options="{ item }">
+                        <template v-slot:item.options="{ item }"
+                            v-if="can('settings_rooms_view') || can('settings_rooms_edit') || can('settings_rooms_delete')">
                             <v-menu bottom left>
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn dark-2 icon v-bind="attrs" v-on="on">
@@ -154,19 +155,19 @@
                                     </v-btn>
                                 </template>
                                 <v-list width="120" dense>
-                                    <v-list-item @click="editItem(item, true)">
+                                    <v-list-item v-if="can('settings_rooms_view')" @click="editItem(item, true)">
                                         <v-list-item-title style="cursor: pointer">
                                             <v-icon color="primary" small> mdi-eye </v-icon>
                                             View
                                         </v-list-item-title>
                                     </v-list-item>
-                                    <v-list-item @click="editItem(item, false)">
+                                    <v-list-item v-if="can('settings_rooms_edit')" @click="editItem(item, false)">
                                         <v-list-item-title style="cursor: pointer">
                                             <v-icon color="secondary" small> mdi-pencil </v-icon>
                                             Edit
                                         </v-list-item-title>
                                     </v-list-item>
-                                    <v-list-item @click="deleteItem(item)">
+                                    <v-list-item v-if="can('settings_rooms_delete')" @click="deleteItem(item)">
                                         <v-list-item-title style="cursor: pointer">
                                             <v-icon color="error" small> mdi-delete </v-icon>
                                             Delete
@@ -186,6 +187,7 @@
 
         </v-card>
     </div>
+    <NoAccess v-else />
 </template>
 <script>
 export default
@@ -245,7 +247,12 @@ export default
 
         },
         methods: {
-
+            can(per) {
+                let u = this.$auth.user;
+                return (
+                    (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+                );
+            },
             AddNewRoom() {
                 this.editedItem = {}
                 this.editedItemIndex = -1;

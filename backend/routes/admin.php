@@ -25,9 +25,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-
-
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -117,15 +114,12 @@ Route::get('assign-module/search/{key}', [AssignModuleController::class, 'search
 Route::get('assign-module/nacs', [AssignModuleController::class, 'notAssignedCompanyIds']);
 Route::resource('assign-module', AssignModuleController::class);
 
-
 //Testing Routes for Cron Jobs
 Route::get('SyncCompanyIdsWithDevices', [AttendanceLogController::class, 'SyncCompanyIdsWithDevices']);
 
 Route::get('SyncAttendance', [AttendanceController::class, 'SyncAttendance']);
 Route::get('SyncAbsent', [AttendanceController::class, 'SyncAbsent']);
 // Route::get('SyncAbsentForMultipleDays', [AttendanceController::class, 'SyncAbsentForMultipleDays']);
-
-
 
 // Hotel
 Route::resource('source', SourceController::class);

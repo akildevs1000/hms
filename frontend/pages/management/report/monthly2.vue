@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('management_revenue_report_access') && can('management_revenue_report_view')">
 
     <v-row>
 
@@ -8,7 +8,7 @@
       </v-col>
     </v-row>
 
-    <div v-if="can(`agents_view`)">
+    <div>
       <v-card class="mb-5" elevation="0">
         <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
           <v-col cols="12">
@@ -81,6 +81,7 @@
       </v-card>
     </div>
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -285,8 +286,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 
@@ -345,9 +345,13 @@ export default {
           counter++;
 
         });
-        this.$refs.realtimeChart.updateSeries([{
-          data: this.barSeries[0].data,
-        }], false, true);
+        try {
+          this.$refs.realtimeChart.updateSeries([{
+            data: this.barSeries[0].data,
+          }], false, true);
+        }
+        catch (e) { }
+
         this.loading = false;
 
       });

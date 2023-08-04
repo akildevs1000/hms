@@ -463,13 +463,13 @@ export default {
         },
         {
           icon: "mdi mdi-calendar-month",
-          title: "Monthly",
+          title: "Sold-out Report",
           to: "/management/report/monthly",
           menu: "city_ledger_access",
         },
         {
           icon: "mdi mdi-account-group",
-          title: "Monthly New",
+          title: "Revenue Report",
           to: "/management/report/monthly2",
           menu: "city_ledger_access",
         }, {
@@ -517,6 +517,19 @@ export default {
           to: "/users",
           menu: "user_access",
         },
+        {
+          icon: "mdi mdi-account-check-outline",
+          title: "Roles",
+          to: "/role",
+          menu: "user_access",
+        },
+        {
+          icon: "mdi mdi-account-details",
+          title: "Permissions",
+          to: "/assign_permission",
+          menu: "user_access",
+        },
+
       ],
     };
 

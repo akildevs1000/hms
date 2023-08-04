@@ -1,5 +1,5 @@
 <template>
-    <div v-if="can(`department_access`)">
+    <div v-if="can('lost_and_found_access') && can('lost_and_found_view')">
         <div class="text-center ma-2">
             <v-snackbar v-model="snackbar" top="top" :color="snackbarColor" elevation="24">
                 {{ response }}
@@ -494,7 +494,7 @@
                     <v-spacer></v-spacer>
 
                     <v-tooltip top color="primary">
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-if="can('lost_and_found_create')" v-slot:activator="{ on, attrs }">
                             <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="openNewRecord()">
                                 <v-icon color="white" dark white>mdi-plus-circle</v-icon>
                             </v-btn>
@@ -639,27 +639,28 @@
                             </template>
 
                             <template v-slot:item.options="{ item }">
-                                <v-menu bottom left>
+                                <v-menu bottom left
+                                    v-if="can('lost_and_found_create') || can('lost_and_found_edit') || can('lost_and_found_delete')">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-btn dark-2 icon v-bind="attrs" v-on="on">
                                             <v-icon>mdi-dots-vertical</v-icon>
                                         </v-btn>
                                     </template>
                                     <v-list width="120" dense>
-                                        <v-list-item @click="viewItem(item.id)">
+                                        <v-list-item v-if="can('lost_and_found_create')" @click="viewItem(item.id)">
                                             <v-list-item-title style="cursor: pointer">
                                                 <v-icon color="primary" small> mdi-eye </v-icon>
                                                 View
                                             </v-list-item-title>
                                         </v-list-item>
 
-                                        <v-list-item @click="editItem(item, false)">
+                                        <v-list-item v-if="can('lost_and_found_edit')" @click="editItem(item, false)">
                                             <v-list-item-title style="cursor: pointer">
                                                 <v-icon color="secondary" small> mdi-pencil </v-icon>
                                                 Edit
                                             </v-list-item-title>
                                         </v-list-item>
-                                        <v-list-item @click="deleteItem(item)">
+                                        <v-list-item v-if="can('lost_and_found_delete')" @click="deleteItem(item)">
                                             <v-list-item-title style="cursor: pointer">
                                                 <v-icon color="error" small> mdi-delete </v-icon>
                                                 Delete
@@ -1205,7 +1206,7 @@ export default {
         can(per) {
             let u = this.$auth.user;
             return (
-                (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
+                (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
             );
         },
         saveMissingItems() {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('management_top_10_customers_access') && can('management_top_10_customers_view')">
 
     <v-row>
 
@@ -12,7 +12,7 @@
       </v-col>
     </v-row>
 
-    <div v-if="can(`agents_view`)">
+    <div>
       <v-card class="mb-5" elevation="0">
         <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
           <v-col cols="12">
@@ -86,6 +86,7 @@
       </v-card>
     </div>
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -137,7 +138,7 @@ export default {
           enabled: true,
           y: {
             formatter: function (val, opts) {
-              return opts.config.customLabel[opts.seriesIndex] + ".00" + " Rs"
+              return opts.config.customLabel[opts.seriesIndex]
             },
             title: {
               formatter: function (seriesName) {
@@ -349,8 +350,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

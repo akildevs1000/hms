@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`customer_access`)">
+  <div v-if="can(`guest_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -46,12 +46,13 @@
           v-model="search" hide-details></v-text-field>
       </v-col>
     </v-row>
-    <div v-if="can(`customer_view`)">
+    <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List </span>
           <v-spacer></v-spacer>
-          <v-btn class="float-right py-3" @click="NewCustomerDialog = true" x-small color="primary">
+          <v-btn v-if="can('guest_create')" class="float-right py-3" @click="NewCustomerDialog = true" x-small
+            color="primary">
             <v-icon color="white" small class="py-5">mdi-plus</v-icon>
             Add
           </v-btn>
@@ -80,7 +81,7 @@
             <td>{{ item.gst_number || "---" }}</td>
             <td>{{ item.address || "---" }}</td>
             <td>
-              <v-icon x-small color="primary" @click="viewCustomerBilling(item)" class="mr-2">
+              <v-icon x-small v-if="can('guest_edit')" color="primary" @click="viewCustomerBilling(item)" class="mr-2">
                 mdi-pencil
               </v-icon>
             </td>
@@ -98,7 +99,7 @@
         </v-row>
       </div>
     </div>
-    <NoAccess v-else />
+
   </div>
   <NoAccess v-else />
 </template>
@@ -191,12 +192,10 @@ export default {
       this.NewCustomerDialog = false;
       this.viewCustomerDialog = false;
     },
-
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('management_summary_access') && can('management_summary_view')">
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -9,63 +9,23 @@
 
     <v-row>
       <v-col md="3">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
+              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col md="3">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
+            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
+              solo flat label="To" :hide-details="true"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col xs="12" sm="12" class="pl-0 ml-0" md="3" cols="12">
@@ -76,7 +36,7 @@
       </v-col>
     </v-row>
 
-    <div v-if="can(`agents_view`)">
+    <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List</span>
@@ -88,52 +48,31 @@
               {{ item.text }}
             </th>
           </tr>
-          <v-progress-linear
-            v-if="loading"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
+          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+            color="primary"></v-progress-linear>
 
-          <tr
-            v-for="(item, index) in data"
-            :key="index"
-            style="font-size: 12px"
-          >
+          <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
             <td style="width: 2%">
               <b>{{ ++index }}</b>
             </td>
             <td style="width: 20%">{{ item.date || "---" }}</td>
             <td>
-              <v-progress-linear
-                :value="item.sold"
-                color="teal"
-                height="20"
-                width="20"
-                rounded
-              >
+              <v-progress-linear :value="item.sold" color="teal" height="20" width="20" rounded>
                 <template v-slot:default="{ value }" style="position: relative">
-                  <strong
-                    :style="{
-                      left: value + 1 + '%',
-                      // left: (value * 100) / 100 + '%',
-                      transform: 'translateX(-50%)',
-                      position: 'absolute',
-                      top: '0',
-                    }"
-                    >{{ Math.ceil(value) }}%</strong
-                  >
-                  <strong
-                    :style="{
-                      // left: ((98 - value) * 100) / 100 + '%',
-                      right: 0 + '%',
-                      transform: 'translateX(-50%)',
-                      position: 'absolute',
-                      top: '0',
-                    }"
-                    >{{ Math.ceil(100 - value) }}%</strong
-                  >
+                  <strong :style="{
+                    left: value + 1 + '%',
+                    // left: (value * 100) / 100 + '%',
+                    transform: 'translateX(-50%)',
+                    position: 'absolute',
+                    top: '0',
+                  }">{{ Math.ceil(value) }}%</strong>
+                  <strong :style="{
+                    // left: ((98 - value) * 100) / 100 + '%',
+                    right: 0 + '%',
+                    transform: 'translateX(-50%)',
+                    position: 'absolute',
+                    top: '0',
+                  }">{{ Math.ceil(100 - value) }}%</strong>
                 </template>
               </v-progress-linear>
             </td>
@@ -151,18 +90,15 @@
         <v-row>
           <v-col md="12" class="float-right">
             <div class="float-right">
-              <v-pagination
-                v-model="pagination.current"
-                :length="pagination.total"
-                @input="onPageChange"
-                :total-visible="12"
-              ></v-pagination>
+              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                :total-visible="12"></v-pagination>
             </div>
           </v-col>
         </v-row>
       </div>
     </div>
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -243,8 +179,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

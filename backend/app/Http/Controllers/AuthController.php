@@ -61,8 +61,15 @@ class AuthController extends Controller
         $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company") : ($user->role_id > 0 ? "user" : "master");
         $model = $model->with('company', 'employee')->first();
         $obj = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
-        $obj->user_type =  $user->user_type;
-        $obj->permissions =  $user->assigned_employee_permissions->permission_names ?? [];
+        $obj->user_type = $user->user_type;
+        $obj->employee_permissions = $user->assigned_employee_permissions->permission_names ?? [];
+        $obj->permissions = $obj->employee_permissions;
+
+        if ($obj && $obj->assigned_permissions) {
+            $obj->permissions = $obj->assigned_permissions->permission_names;
+        } else {
+            $obj->permissions = [];
+        }
         return response()->json(['user' => $obj], 200);
 
         // return response()->json(['user' => $user], 200);
@@ -86,7 +93,7 @@ class AuthController extends Controller
     {
         try {
             $random_number = mt_rand(100000, 999999);
-            $user =   User::with('company')->find($userId);
+            $user = User::with('company')->find($userId);
             $user->otp = $random_number;
 
             if ($user->save()) {
@@ -103,7 +110,7 @@ class AuthController extends Controller
     public function checkOTP(Request $request, $otp)
     {
         try {
-            $user =   User::with('company')->find($request->userId);
+            $user = User::with('company')->find($request->userId);
             if ($user->otp == $otp) {
                 $user->is_verified = 1;
                 $user->save();

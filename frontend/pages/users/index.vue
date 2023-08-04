@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('settings_users_access') && can('settings_users_view')">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -27,7 +27,7 @@
                             <v-select v-model="editedItem.title" :items="titleItems" dense item-text="name"
                               item-value="name" :hide-details="errors && !errors.title" :error="errors && errors.title"
                               :error-messages="errors && errors.title ?
-                                  errors.title[0] : ''
+                                errors.title[0] : ''
                                 " outlined></v-select>
                           </v-col>
                           <v-col md="9" cols="12">
@@ -60,6 +60,11 @@
                               :hide-details="true" type="number" dense></v-text-field>
                             <span v-if="errors && errors.mobile" class="error--text">{{ errors.mobile[0]
                             }}</span>
+                          </v-col>
+                          <v-col md="12" cols="12">
+                            <v-select :items="roles" item-text="name" item-value="id" v-model="editedItem.role_id"
+                              outlined placeholder="Select Role" lable="Role" :hide-details="true" dense></v-select>
+                            <span v-if="errors && errors.role_id" class="error--text">{{ errors.role_id[0] }}</span>
                           </v-col>
                         </v-row>
                       </v-col> <v-col md="4">
@@ -110,7 +115,8 @@
         <v-icon color="white" small class="py-5">mdi-magnify</v-icon>
         Search
       </v-btn>
-      <v-btn class="float-right py-3 ml-2" @click="userDialog = true" x-small color="primary">
+      <v-btn v-if="can('settings_users_create')" class="float-right py-3 ml-2" @click="userDialog = true" x-small
+        color="primary">
         <v-icon color="white" small class="py-5">mdi-plus</v-icon>
         Add
       </v-btn>
@@ -118,8 +124,8 @@
 
     <v-data-table :headers="headers" :items="userData" :options.sync="options" :server-items-length="totalUserData"
       :loading="loading" class="elevation-1" :footer-props="{
-          itemsPerPageOptions: [10, 50, 100, 500, 1000],
-        }">
+        itemsPerPageOptions: [10, 50, 100, 500, 1000],
+      }">
       <template v-slot:header="{ props: { headers } }">
         <tr v-if="isFilter">
           <th v-for="header in headers" :key="header.text">
@@ -131,16 +137,20 @@
           </th>
         </tr>
       </template>
+      <template v-slot:item.role="{ item }">
+        {{ item.role && capsTitle(item.role.name) }}
+
+      </template>
       <template v-slot:item.actions="{ item }">
 
-        <v-menu bottom left>
+        <v-menu bottom left v-if="can('settings_users_edit') || can('settings_users_delete')">
           <template v-slot:activator="{ on, attrs }">
             <v-btn dark-2 icon v-bind="attrs" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
           <v-list width="120" dense>
-            <v-list-item @click="editItem(item)">
+            <v-list-item v-if="can('settings_users_edit')" @click="editItem(item)">
               <v-list-item-title style="cursor: pointer">
                 <v-icon color="secondary" small>
                   mdi-pencil
@@ -148,7 +158,7 @@
                 Edit
               </v-list-item-title>
             </v-list-item>
-            <v-list-item @click="deleteItem(item)">
+            <v-list-item v-if="can('settings_users_delete')" @click="deleteItem(item)">
               <v-list-item-title style="cursor: pointer">
                 <v-icon color="error" small> mdi-delete </v-icon>
                 Delete
@@ -162,6 +172,7 @@
 
     </v-data-table>
   </div>
+  <NoAccess v-else />
 </template>
 
 
@@ -169,6 +180,8 @@
 export default {
   data() {
     return {
+      Rules: [v => !!v || "This field is required"],
+      roles: [],
       Model: "Users",
       snackbar: false,
       response: "",
@@ -190,6 +203,7 @@ export default {
         { text: 'Name', value: 'name', filterable: true },
         { text: 'Email', value: 'email', filterable: true },
         { text: 'Mobile', value: 'mobile', filterable: true },
+        { text: 'Role', value: 'role', filterable: false },
         { text: 'Actions', value: 'actions', filterable: false, sortable: false },
       ],
       editedIndex: -1,
@@ -248,6 +262,18 @@ export default {
   },
 
   methods: {
+    can(per) {
+      let u = this.$auth.user;
+      return (
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+      );
+    },
+    capsTitle(val) {
+      let res = val;
+      let r = res.replace(/[^a-z]/g, " ");
+      let title = r.replace(/\b\w/g, c => c.toUpperCase());
+      return title;
+    },
     toggleFilter() {
       this.isFilter = !this.isFilter;
     },
@@ -325,8 +351,17 @@ export default {
           console.error(error);
           this.loading = false;
         });
-    },
 
+
+      this.getRolesList();
+    },
+    getRolesList() {
+      let options = { params: { company_id: this.$auth.user.company.id } };
+      this.$axios.get('role', options).then((data) => {
+        this.roles = data.data.data;
+        console.log(this.roles);
+      });
+    },
     save() {
       let payload = new FormData();
 
@@ -345,11 +380,15 @@ export default {
       if (this.editedItem.password_confirmation) {
         payload.append("password_confirmation", this.editedItem.password_confirmation);
       }
+      if (this.editedItem.role_id) {
+        payload.append("role_id", this.editedItem.role_id);
+        //payload.append("employee_role_id", this.editedItem.role_id);
+      }
+
 
       payload.append("title", this.editedItem.title);
       payload.append("name", this.editedItem.name);
       payload.append("email", this.editedItem.email);
-
 
       payload.append("company_id", this.$auth.user.company.id);
 

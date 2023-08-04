@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`department_access`)">
+  <div v-if="can(`inquiry_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -26,30 +26,16 @@
                 <v-card-text>
                   <v-row>
                     <v-col md="2" cols="12">
-                      <v-img
-                        @click="onpick_attachment"
-                        style="
+                      <v-img @click="onpick_attachment" style="
                           width: 150px;
                           height: 150px;
                           margin: 0 auto;
                           border-radius: 50%;
-                        "
-                        :src="showImage"
-                      ></v-img>
-                      <input
-                        required
-                        type="file"
-                        @change="attachment"
-                        style="display: none"
-                        accept="image/*"
-                        ref="attachment_input"
-                      />
-                      <span
-                        v-if="errors && errors.image"
-                        class="red--text mt-2"
-                      >
-                        {{ errors.image[0] }}</span
-                      >
+                        " :src="showImage"></v-img>
+                      <input required type="file" @change="attachment" style="display: none" accept="image/*"
+                        ref="attachment_input" />
+                      <span v-if="errors && errors.image" class="red--text mt-2">
+                        {{ errors.image[0] }}</span>
                     </v-col>
                     <v-col md="10" cols="12">
                       <v-row>
@@ -62,240 +48,106 @@
                         </v-col>
                         <v-col md="5" dense> </v-col>
                         <v-col md="5" dense>
-                          <v-select
-                            label="Type"
-                            v-model="inquiry.customer_type"
-                            :items="['Company', 'Regular', 'Corporate']"
-                            dense
-                            item-text="name"
-                            item-value="id"
-                            outlined
-                            :hide-details="true"
-                          ></v-select>
+                          <v-select label="Type" v-model="inquiry.customer_type"
+                            :items="['Company', 'Regular', 'Corporate']" dense item-text="name" item-value="id" outlined
+                            :hide-details="true"></v-select>
                         </v-col>
                         <v-col md="2" cols="12" sm="12">
-                          <v-select
-                            v-model="inquiry.title"
-                            :items="titleItems"
-                            label="Tittle *"
-                            dense
-                            item-text="name"
-                            item-value="name"
-                            :hide-details="errors && !errors.title"
-                            :error="errors && errors.title"
-                            :error-messages="
-                              errors && errors.title ? errors.title[0] : ''
-                            "
-                            outlined
-                          ></v-select>
+                          <v-select v-model="inquiry.title" :items="titleItems" label="Tittle *" dense item-text="name"
+                            item-value="name" :hide-details="errors && !errors.title" :error="errors && errors.title"
+                            :error-messages="errors && errors.title ? errors.title[0] : ''
+                              " outlined></v-select>
                         </v-col>
                         <v-col md="5" cols="12" sm="12">
-                          <v-text-field
-                            label="First Name *"
-                            dense
-                            outlined
-                            type="text"
-                            v-model="inquiry.first_name"
-                            :hide-details="errors && !errors.first_name"
-                            :error="errors && errors.first_name"
-                            :error-messages="
-                              errors && errors.first_name
-                                ? errors.first_name[0]
-                                : ''
-                            "
-                          ></v-text-field>
+                          <v-text-field label="First Name *" dense outlined type="text" v-model="inquiry.first_name"
+                            :hide-details="errors && !errors.first_name" :error="errors && errors.first_name"
+                            :error-messages="errors && errors.first_name
+                              ? errors.first_name[0]
+                              : ''
+                              "></v-text-field>
                         </v-col>
                         <v-col md="5" cols="12" sm="12">
-                          <v-text-field
-                            label="Last Name"
-                            dense
-                            :hide-details="true"
-                            outlined
-                            type="text"
-                            v-model="inquiry.last_name"
-                          ></v-text-field>
+                          <v-text-field label="Last Name" dense :hide-details="true" outlined type="text"
+                            v-model="inquiry.last_name"></v-text-field>
                         </v-col>
                         <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Contact No *"
-                            outlined
-                            type="number"
-                            v-model="inquiry.contact_no"
-                            :hide-details="errors && !errors.contact_no"
-                            :error="errors && errors.contact_no"
-                            :error-messages="
-                              errors && errors.contact_no
-                                ? errors.contact_no[0]
-                                : ''
-                            "
-                            @keyup="mergeContact()"
-                          ></v-text-field>
+                          <v-text-field dense label="Contact No *" outlined type="number" v-model="inquiry.contact_no"
+                            :hide-details="errors && !errors.contact_no" :error="errors && errors.contact_no"
+                            :error-messages="errors && errors.contact_no
+                              ? errors.contact_no[0]
+                              : ''
+                              " @keyup="mergeContact()"></v-text-field>
                         </v-col>
                         <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Whatsapp No"
-                            outlined
-                            type="number"
-                            v-model="inquiry.whatsapp"
-                            :hide-details="errors && !errors.whatsapp"
-                            :error="errors && errors.whatsapp"
-                            :error-messages="
-                              errors && errors.whatsapp
-                                ? errors.whatsapp[0]
-                                : ''
-                            "
-                          ></v-text-field>
+                          <v-text-field dense label="Whatsapp No" outlined type="number" v-model="inquiry.whatsapp"
+                            :hide-details="errors && !errors.whatsapp" :error="errors && errors.whatsapp" :error-messages="errors && errors.whatsapp
+                              ? errors.whatsapp[0]
+                              : ''
+                              "></v-text-field>
                         </v-col>
                         <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Email *"
-                            outlined
-                            type="email"
-                            v-model="inquiry.email"
-                            :hide-details="errors && !errors.email"
-                            :error="errors && errors.email"
-                            :error-messages="
-                              errors && errors.email ? errors.email[0] : ''
-                            "
-                          ></v-text-field>
+                          <v-text-field dense label="Email *" outlined type="email" v-model="inquiry.email"
+                            :hide-details="errors && !errors.email" :error="errors && errors.email" :error-messages="errors && errors.email ? errors.email[0] : ''
+                              "></v-text-field>
                         </v-col>
                       </v-row>
                     </v-col>
                   </v-row>
                   <v-row>
                     <v-col md="4" cols="12" sm="12">
-                      <v-select
-                        v-model="inquiry.rooms_type"
-                        :items="roomTypes"
-                        label="Room Type"
-                        item-text="name"
-                        item-value="name"
-                        :hide-details="errors && !errors.rooms_type"
-                        :error="errors && errors.rooms_type"
-                        :error-messages="
-                          errors && errors.rooms_type
-                            ? errors.rooms_type[0]
-                            : ''
-                        "
-                        dense
-                        outlined
-                      ></v-select>
+                      <v-select v-model="inquiry.rooms_type" :items="roomTypes" label="Room Type" item-text="name"
+                        item-value="name" :hide-details="errors && !errors.rooms_type"
+                        :error="errors && errors.rooms_type" :error-messages="errors && errors.rooms_type
+                          ? errors.rooms_type[0]
+                          : ''
+                          " dense outlined></v-select>
                     </v-col>
                     <v-col md="4" cols="12" sm="12">
-                      <v-text-field
-                        dense
-                        outlined
-                        label="City"
-                        type="text"
-                        v-model="inquiry.city"
-                        :hide-details="true"
-                      ></v-text-field>
+                      <v-text-field dense outlined label="City" type="text" v-model="inquiry.city"
+                        :hide-details="true"></v-text-field>
                     </v-col>
                     <v-col md="4">
-                      <v-select
-                        label="Purpose"
-                        v-model="inquiry.purpose"
-                        :items="purposes"
-                        dense
-                        :hide-details="true"
-                        outlined
-                      ></v-select>
+                      <v-select label="Purpose" v-model="inquiry.purpose" :items="purposes" dense :hide-details="true"
+                        outlined></v-select>
                     </v-col>
                     <v-col md="3" cols="12" sm="12">
-                      <v-menu
-                        v-model="check_in_menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
+                      <v-menu v-model="check_in_menu" :close-on-content-click="false" :nudge-right="40"
+                        transition="scale-transition" offset-y min-width="auto">
                         <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="inquiry.check_in"
-                            label="CheckIn"
-                            v-on="on"
-                            v-bind="attrs"
-                            :hide-details="true"
-                            dense
-                            outlined
-                          ></v-text-field>
+                          <v-text-field v-model="inquiry.check_in" label="CheckIn" v-on="on" v-bind="attrs"
+                            :hide-details="true" dense outlined></v-text-field>
                         </template>
-                        <v-date-picker
-                          v-model="inquiry.check_in"
-                          @input="check_in_menu = false"
-                        ></v-date-picker>
+                        <v-date-picker v-model="inquiry.check_in" @input="check_in_menu = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col md="3" cols="12" sm="12">
-                      <v-menu
-                        v-model="check_out_menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
+                      <v-menu v-model="check_out_menu" :close-on-content-click="false" :nudge-right="40"
+                        transition="scale-transition" offset-y min-width="auto">
                         <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="inquiry.check_out"
-                            label="CheckOut"
-                            v-on="on"
-                            v-bind="attrs"
-                            :hide-details="true"
-                            dense
-                            outlined
-                          ></v-text-field>
+                          <v-text-field v-model="inquiry.check_out" label="CheckOut" v-on="on" v-bind="attrs"
+                            :hide-details="true" dense outlined></v-text-field>
                         </template>
-                        <v-date-picker
-                          v-model="inquiry.check_out"
-                          @input="check_out_menu = false"
-                        ></v-date-picker>
+                        <v-date-picker v-model="inquiry.check_out" @input="check_out_menu = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col md="3" cols="12" sm="12">
-                      <v-select
-                        v-model="inquiry.number_of_rooms"
-                        :items="[1, 2, 3, 4, 5, 6, 7, 8]"
-                        label="Number of Rooms"
-                        :hide-details="true"
-                        dense
-                        outlined
-                      ></v-select>
+                      <v-select v-model="inquiry.number_of_rooms" :items="[1, 2, 3, 4, 5, 6, 7, 8]"
+                        label="Number of Rooms" :hide-details="true" dense outlined></v-select>
                     </v-col>
                     <v-col md="3" cols="12" sm="12">
-                      <v-select
-                        v-model="inquiry.days"
-                        :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                        label="Number of Days"
-                        :hide-details="true"
-                        dense
-                        outlined
-                      ></v-select>
+                      <v-select v-model="inquiry.days" :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" label="Number of Days"
+                        :hide-details="true" dense outlined></v-select>
                     </v-col>
                   </v-row>
 
                   <v-row>
                     <v-col md="6" cols="12" sm="12">
-                      <v-textarea
-                        rows="3"
-                        label="Reception Remark"
-                        v-model="inquiry.remark"
-                        outlined
-                        :hide-details="true"
-                      ></v-textarea>
+                      <v-textarea rows="3" label="Reception Remark" v-model="inquiry.remark" outlined
+                        :hide-details="true"></v-textarea>
                     </v-col>
                     <v-col md="6" cols="12" sm="12">
-                      <v-textarea
-                        rows="3"
-                        label="Customer Request"
-                        v-model="inquiry.customer_request"
-                        outlined
-                        :hide-details="true"
-                      ></v-textarea>
+                      <v-textarea rows="3" label="Customer Request" v-model="inquiry.customer_request" outlined
+                        :hide-details="true"></v-textarea>
                     </v-col>
                   </v-row>
                   <v-row>
@@ -314,30 +166,17 @@
 
     <v-row class="mt-0 pt-0">
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-text-field
-          class=""
-          label="Search..."
-          dense
-          outlined
-          flat
-          append-icon="mdi-magnify"
-          @input="searchIt"
-          v-model="search"
-          hide-details
-        ></v-text-field>
+        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
+          v-model="search" hide-details></v-text-field>
       </v-col>
     </v-row>
-    <div v-if="can(`customer_view`)">
+    <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List </span>
           <v-spacer></v-spacer>
-          <v-btn
-            class="float-right py-3"
-            @click="inquiryDialog = true"
-            x-small
-            color="primary"
-          >
+          <v-btn v-if="can(`inquiry_create`)" class="float-right py-3" @click="inquiryDialog = true" x-small
+            color="primary">
             <v-icon color="white" small class="py-5">mdi-plus</v-icon>
             Add
           </v-btn>
@@ -348,18 +187,9 @@
               {{ item.text }}
             </th>
           </tr>
-          <v-progress-linear
-            v-if="loading"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
-          <tr
-            v-for="(item, index) in data"
-            :key="index"
-            style="font-size: 13px"
-          >
+          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+            color="primary"></v-progress-linear>
+          <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
             <td>
               <b>{{ ++index }}</b>
             </td>
@@ -374,7 +204,7 @@
             <td>{{ item.rooms_type || "---" }}</td>
             <td>{{ item.number_of_rooms || "---" }}</td>
             <td>
-              <v-menu bottom left>
+              <v-menu bottom left v-if="can(`inquiry_edit`)">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn dark-2 icon v-bind="attrs" v-on="on">
                     <v-icon>mdi-dots-vertical</v-icon>
@@ -397,12 +227,8 @@
         <v-row>
           <v-col md="12" class="float-right">
             <div class="float-right">
-              <v-pagination
-                v-model="pagination.current"
-                :length="pagination.total"
-                @input="onPageChange"
-                :total-visible="12"
-              ></v-pagination>
+              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                :total-visible="12"></v-pagination>
             </div>
           </v-col>
         </v-row>

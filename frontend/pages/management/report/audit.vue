@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can(`night_audit_access`)">
     <!-- <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -128,7 +128,7 @@
       </v-col>
     </v-row>
 
-    <div v-if="can(`agents_view`)">
+    <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
           <v-spacer></v-spacer>
@@ -1257,6 +1257,7 @@
       </v-col>
     </v-row> -->
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -1510,12 +1511,10 @@ export default {
     onPageChange() {
       this.getExpenseData();
     },
-    can(permission) {
-      return true;
-      return this.$auth.user.user_type == "company" ? true : false;
+    can(per) {
+      let u = this.$auth.user;
       return (
-        (user && user.permissions.some((e) => e.permission == permission)) ||
-        user.master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
     caps(str) {

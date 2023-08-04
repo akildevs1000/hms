@@ -101,4 +101,8 @@ class AssignPermissionController extends Controller
 
         return $model->get();
     }
+    public function assignPermissionsByRoleid(Model $model, Request $request, $role_id)
+    {
+        return $this->FilterCompanyList($model, $request)->with('role')->where('role_id', $role_id)->get();
+    }
 }

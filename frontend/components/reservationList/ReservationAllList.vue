@@ -155,7 +155,8 @@
                     </v-icon>
                 </template>
                 <template v-slot:item.payment="item">
-                    <v-icon @click="get_payment(item.item)" x-small color="primary" class="mr-2">
+                    <v-icon v-if="can('reservation_edit') || can('in_house_edit') || can('checkout_edit')"
+                        @click="get_payment(item.item)" x-small color="primary" class="mr-2">
                         mdi-cash-multiple
                     </v-icon>
                 </template>
@@ -460,12 +461,10 @@ export default {
     },
 
     methods: {
-        can(permission) {
-            let user = this.$auth;
-            return;
+        can(per) {
+            let u = this.$auth.user;
             return (
-                (user && user.permissions.some((e) => e.permission == permission)) ||
-                user.master
+                (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
             );
         },
 
