@@ -484,7 +484,7 @@ class ManagementController extends Controller
             $income = round($income, 2);
             $expenses = round($expenses, 2);
             $management_expenses = round($management_expenses, 2);
-
+            $row['month_number'] = $month;
             $row['sold'] = $sold;
             $row['management_expenses'] = $this->getMoneyFormat($management_expenses);
             $row['expenses'] = $this->getMoneyFormat($expenses);
@@ -549,7 +549,7 @@ class ManagementController extends Controller
 
             if (isset($monthArray[$month])) {
                 $row = [];
-                $row['month'] = $monthArray[$month]["text"] . ' ' . $year;
+                // $row['month'] = $monthArray[$month]["text"] . ' ' . $year;
 
                 $expensesModel = $model->clone()
                     ->whereMonth('created_at', $monthArray[$month]["value"])
@@ -583,6 +583,7 @@ class ManagementController extends Controller
                 $expenses = round($expenses, 2);
                 $management_expenses = round($management_expenses, 2);
 
+                $row['month_number'] = $month;
                 $row['sold'] = $sold;
                 $row['management_expenses'] = $this->getMoneyFormat($management_expenses);
                 $row['expenses'] = $this->getMoneyFormat($expenses);
@@ -691,5 +692,151 @@ class ManagementController extends Controller
             ->setPaper('a4', 'landscape')
             ->stream();
 
+    }
+    public function getReportDailyWiseGroup(Request $request)
+    {
+
+        $model = Expense::query();
+        $model->where('company_id', $request->company_id);
+        $returnArray = [];
+        $year = $request->year;
+
+        $dayColorsArray = [];
+        $colors = ["#3366CC", "#FF69B4", "#00FF00", "#FFD700", "#FF4500", "#800080", "#FF6347", "#008080", "#FFA500", "#DC143C", "#7CFC00", "#4169E1", "#FF1493", "#32CD32", "#FFD700", "#4682B4", "#800000", "#808000", "#FF4500", "#DA70D6", "#808080", "#2E8B57", "#BA55D3", "#ADFF2F", "#20B2AA", "#FF4500", "#87CEEB", "#3CB371", "#FA8072", "#9370DB", "#6A5ACD", "#00FA9A", "#FF69B4"];
+
+        for ($i = 1; $i <= 31; $i++) {
+            $dayColorsArray[$i] = $colors[$i - 1];
+        }
+
+        $totalRooms = 0;
+        $totalIncome = 0;
+        $totalExpenses = 0;
+        $totalManagementExpenses = 0;
+        $totalProfit = 0;
+        $totalPercentage = 0;
+        $totalArray = [];
+        //group
+
+        $expencesModel = Expense::selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month, EXTRACT(DAY  FROM created_at) as date,  SUM(amount) as total_amount')
+            ->where('company_id', $request->company_id)
+            ->whereMonth('created_at', $request->month)
+            ->whereYear('created_at', $request->year)
+            ->groupBy(DB::raw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at) , EXTRACT(DAY FROM created_at)  '))
+            ->orderBy(DB::raw('EXTRACT(YEAR FROM created_at)'), 'asc')
+            ->orderBy(DB::raw('EXTRACT(MONTH FROM created_at)'), 'asc')
+            ->orderBy(DB::raw('EXTRACT(DAY  FROM created_at)'), 'asc')
+
+        ;
+
+        $ExpencesManagementArray = $expencesModel->clone()->where('is_management', 1)->get()->toArray();
+        $ExpencesNonManagementArray = $expencesModel->clone()->where('is_management', 0)->get()->toArray();
+
+        $soldArray = Report::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date ,sold')
+            ->whereCompanyId($request->company_id)
+            ->whereMonth('date', $request->month)
+            ->whereYear('date', $request->year)
+            ->orderBy('date', 'ASC')->get()->toArray();
+
+        $incomeArray = Payment::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date,  SUM(amount) as total_amount')
+            ->where('company_id', $request->company_id)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            })
+            ->whereMonth('date', $request->month)
+            ->whereYear('date', $request->year)
+            ->groupBy(DB::raw('year, month , date  '))->get()->toArray();
+
+        for ($day = 1; $day <= 31; $day++) {
+
+            $income = 0;
+            $expenses = 0;
+            $management_expenses = 0;
+            $sold = 0;
+
+            $income = array_filter($incomeArray, function ($item) use ($request, $day) {
+                return $item['year'] == $request->year && $item['month'] == $request->month && $item['date'] == $day;
+            });
+
+            $management_expenses = array_filter($ExpencesManagementArray, function ($item) use ($request, $day) {
+                return $item['year'] == $request->year && $item['month'] == $request->month && $item['date'] == $day;
+            });
+            $expenses = array_filter($ExpencesNonManagementArray, function ($item) use ($request, $day) {
+                return $item['year'] == $request->year && $item['month'] == $request->month && $item['date'] == $day;
+            });
+            $sold = array_filter($soldArray, function ($item) use ($request, $day) {
+
+                $format = $request->year . '-' . $request->month . '-' . $day;
+                return $item['year'] == $request->year && $item['month'] == $request->month && $item['date'] == $day;
+            });
+
+            if (!empty($income)) {
+                $income = reset($income)["total_amount"];
+            } else {
+                $income = 0;
+            }
+            if (!empty($management_expenses)) {
+                $management_expenses = reset($management_expenses)["total_amount"];
+            } else {
+                $management_expenses = 0;
+            }
+            if (!empty($expenses)) {
+                $expenses = reset($expenses)["total_amount"];
+            } else {
+                $expenses = 0;
+            }
+            if (!empty($sold)) {
+                $sold = reset($sold)["sold"];
+            } else {
+                $sold = 0;
+            }
+
+            $color = $dayColorsArray[$day];
+
+            // $income = isset($income[0]) ? $income[0]['total_amount'] : 0;
+
+            // $expenses = isset($expenses[0]) ? $expenses[0]['total_amount'] : 0;
+
+            // $management_expenses = isset($management_expenses[0]) ? $management_expenses[0]['total_amount'] : 0;
+
+            // $sold = isset($sold[0]) ? $sold[0]['sold'] : 0;
+
+            $income = round($income, 2);
+            $expenses = round($expenses, 2);
+            $management_expenses = round($management_expenses, 2);
+            $row['month'] = $request->year . '-' . $request->month . '-' . $day;
+            $row['date'] = date('Y-m-d', strtotime($request->year . '-' . $request->month . '-' . $day));
+            $row['sold'] = $sold;
+            $row['management_expenses'] = $this->getMoneyFormat($management_expenses);
+            $row['expenses'] = $this->getMoneyFormat($expenses);
+            $row['color'] = $color;
+            $row['income'] = $this->getMoneyFormat($income); //$income;
+            $profit = $income - ($management_expenses + $expenses);
+            $profit = round($profit, 2);
+            $row['profit'] = $this->getMoneyFormat($profit); //number_format($profit, 2);
+            $percentage = $income > 0 ? ($profit / $income) * 100 : 0;
+            $percentage = $percentage < 0 ? 0 : $percentage;
+
+            $row['percentage'] = round($percentage);
+            $row['total_expenses'] = $this->getMoneyFormat($management_expenses + $expenses);
+
+            //$row['colors'] = $monthArray;
+            $returnArray[] = $row;
+            $totalRooms += $sold;
+            $totalIncome += $income;
+            $totalExpenses += $expenses;
+            $totalManagementExpenses += $management_expenses;
+            $totalProfit += $profit;
+        }
+
+        $totalPercentage += $totalIncome > 0 ? ($totalProfit / $totalIncome) * 100 : 0;
+
+        $totalArray['totalRooms'] = $totalRooms;
+        $totalArray['totalIncome'] = $this->getMoneyFormat($totalIncome);
+        $totalArray['totalExpenses'] = $this->getMoneyFormat($totalExpenses);
+        $totalArray['totalManagementExpenses'] = $this->getMoneyFormat($totalManagementExpenses);
+        $totalArray['totalProfit'] = $this->getMoneyFormat($totalProfit);
+        $totalArray['totalPercentage'] = round($totalPercentage);
+
+        return ["data" => $returnArray, "grandTotal" => $totalArray];
     }
 }

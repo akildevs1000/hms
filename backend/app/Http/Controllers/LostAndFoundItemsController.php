@@ -97,7 +97,7 @@ class LostAndFoundItemsController extends Controller
             }
 
         } else {
-            $data->orderBy('id', $sortDesc);
+            $data->orderBy('updated_at', 'DESC');
         }
 
         $data = $data->paginate($request->per_page ?? 100);

@@ -1324,6 +1324,12 @@ export default {
   }),
 
   created() {
+    let filters = this.$store.getters.getDataToSend;
+    if (filters.date) {
+      this.from_date = filters.date;
+    }
+
+
     this.loading = true;
     this.getdata();
     this.get_food_order_list();

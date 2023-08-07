@@ -166,7 +166,7 @@ export default {
           )
           .then(({ data }) => {
             let LoginUser = this.$auth.user;
-            console.log(data);
+            //console.log(data);
             if (LoginUser.employee_role_id > 0) {
               this.set_otp_new(this.$auth.user.id);
               this.$router.push(`/otp`);

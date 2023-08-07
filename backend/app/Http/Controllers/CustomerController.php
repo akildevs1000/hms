@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Customer\StoreRequest;
+use App\Http\Requests\Customer\UpdateRequest;
 use App\Models\Booking;
-
+use App\Models\Customer;
+use App\Models\IdCardType;
 use App\Models\Payment;
 use App\Models\Posting;
-use App\Models\Customer;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\Customer\StoreRequest;
-use App\Http\Requests\Customer\UpdateRequest;
 
 class CustomerController extends Controller
 {
@@ -22,15 +22,34 @@ class CustomerController extends Controller
         $model->where('company_id', $request->company_id);
         $model->with('idCardType');
 
+        if ($request->filled('sortBy')) {
+            $sortDesc = $request->sortDesc == 'true' ? 'DESC' : 'ASC';
+            $sortBy = $request->sortBy;
 
-        return   $model->paginate($request->per_page);;
+            if (strpos($sortBy, '.') === -1 || strpos($sortBy, '.') == '') {
+                $model->orderBy($sortBy, $sortDesc);
+
+            } else {
+                if ($sortBy == 'id_card_type.name') {
+                    $model->orderBy(IdCardType::select('name')
+                            ->whereRaw('id_card_types.id = CAST(customers.id_card_type_id AS bigint)'), $sortDesc);
+
+                }
+
+            }
+
+        } else {
+            $model->orderBy('updated_at', 'DESC');
+        }
+
+        return $model->paginate($request->per_page);
     }
 
     public function store(StoreRequest $request)
     {
         try {
 
-            $customer =   Customer::whereContactNo($request->contact_no)->first();
+            $customer = Customer::whereContactNo($request->contact_no)->first();
             $id = "";
 
             if ($customer) {
@@ -49,7 +68,7 @@ class CustomerController extends Controller
     public function storeNewCustomer(StoreRequest $request)
     {
         try {
-            $customer =   Customer::create($request->validated());
+            $customer = Customer::create($request->validated());
             if ($customer) {
                 if ($request->hasFile('document')) {
                     $file = $request->file('document');
@@ -67,7 +86,6 @@ class CustomerController extends Controller
                     $customer->image = $fileName;
                 }
                 $customer->save();
-
 
                 return $this->response('Customer successfully added.', $customer->id, true);
             }
@@ -107,7 +125,6 @@ class CustomerController extends Controller
         }
     }
 
-
     public function search(Request $request, $key)
     {
         // return $key;
@@ -121,7 +138,7 @@ class CustomerController extends Controller
 
     public function getCustomer($id, Request $request)
     {
-        $data =  Customer::where('contact_no', $id)
+        $data = Customer::where('contact_no', $id)
             ->where('company_id', $request->company_id)
             ->first();
 
@@ -134,7 +151,7 @@ class CustomerController extends Controller
 
     public function getCustomerById($id, Request $request)
     {
-        $data =  Customer::where('id', $id)
+        $data = Customer::where('id', $id)
             ->where('company_id', $request->company_id)
             ->first();
 
@@ -157,8 +174,8 @@ class CustomerController extends Controller
 
     public function viewBookingCustomerBill($id)
     {
-        $booking =  Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'orderRooms')->first();
-        $postings =  Posting::with('room')->whereBookingId($id)->get();
+        $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'orderRooms')->first();
+        $postings = Posting::with('room')->whereBookingId($id)->get();
         // $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
         $transaction = Transaction::with('paymentMode')->whereBookingId($id);
         $transactions = $transaction->clone()->orderBy('id', 'asc')->get();
@@ -172,7 +189,7 @@ class CustomerController extends Controller
             'transaction' => $transactions,
             'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0,
             'transactionSummary' => $transactionSummary,
-            'postings' => $postings
+            'postings' => $postings,
         ]);
     }
 

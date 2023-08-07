@@ -1,14 +1,10 @@
 <template>
-  <div v-if="can('management_top_10_customers_access') && can('management_top_10_customers_view')">
+  <div v-if="can('management_revenue_report_access') && can('management_revenue_report_view')">
 
     <v-row>
 
       <v-col md="2">
         <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
-      </v-col>
-      <v-col md="2">
-        <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
-          @change="getDataFromApi()"></v-select>
       </v-col>
     </v-row>
 
@@ -16,7 +12,7 @@
       <v-card class="mb-5" elevation="0">
         <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
           <v-col cols="12">
-            <span>Top 10 walk-in Customers </span>
+            <span> Revenue Report - Monthly wise</span>
 
 
             <v-tooltip top color="primary">
@@ -31,42 +27,47 @@
         </v-toolbar>
         <v-row>
           <v-col cols="8">
-
             <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
               itemsPerPageOptions: [12],
             }" class="elevation-1" :hide-default-footer="true">
 
-              <template v-slot:item.color="{ item, index }">
-
-                <v-icon :color="colors[index].color">mdi mdi-circle</v-icon>
+              <template v-slot:item.color="{ item }">
+                <v-icon :color="item.color">mdi mdi-circle</v-icon>
               </template>
 
-              <template v-slot:item.name="{ item }">
-                <a @click="getToCheckoutPage(item)"> {{ item.title }}</a> </template>
+              <template v-slot:item.month_name="{ item }">
+                <a @click="goToDailyReport(item)">{{ item.month }}</a>
 
-              <template v-slot:item.phone_number="{ item }">
-                {{ item.customer.contact_no }}
-              </template>
-              <template v-slot:item.no_of_visits="{ item }">
-                {{ item.number_of_visits }}
-              </template>
-              <template v-slot:item.no_of_rooms="{ item }">
-                {{ getRoomsCount(item.rooms) }}
-              </template>
-              <template v-slot:item.revenue="{ item }">
-                {{ getPriceFormat(item.customer_total_price) }}
+
               </template>
 
+              <template v-slot:item.room_sold="{ item }">
+                {{ item.sold }}
+              </template>
+              <template v-slot:item.income="{ item }">
+                {{ item.income }}
+              </template>
+              <template v-slot:item.expenses="{ item }">
+                {{ item.expenses }}
+              </template>
+              <template v-slot:item.management_expenses="{ item }">
+                {{ item.management_expenses }}
+              </template>
+              <template v-slot:item.profit="{ item }">
+                {{ item.profit }}
+              </template>
               <template v-slot:item.percentage="{ item }">
-                {{ getPercentage(item.customer_total_price) }} %
+                {{ item.percentage }} %
               </template>
               <template slot="body.append">
                 <tr>
-                  <td class="text-right  font-weight-bold" colspan="3">TOTAL</td>
-                  <td class="text-right font-weight-bold">{{ total_visits }}</td>
-                  <td class="text-right font-weight-bold">{{ total_rooms }}</td>
-                  <td class="text-right font-weight-bold">{{ getPriceFormat(total_price) }}</td>
-                  <td>&nbsp;</td>
+                  <td class="text-center  font-weight-bold" colspan="2">TOTAL</td>
+                  <td class="text-right font-weight-bold"> {{ grandTotal.totalRooms }}</td>
+                  <td class="text-right font-weight-bold">{{ grandTotal.totalIncome }}</td>
+                  <td class="text-right font-weight-bold">{{ grandTotal.totalExpenses }}</td>
+                  <td class="text-right font-weight-bold">{{ grandTotal.totalManagementExpenses }}</td>
+                  <td class="text-right font-weight-bold">{{ grandTotal.totalProfit }}</td>
+                  <td class="text-right font-weight-bold">{{ grandTotal.totalPercentage }}%</td>
                 </tr>
               </template>
 
@@ -74,11 +75,8 @@
 
           </v-col>
           <v-col cols="4">
-            <!-- <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries" chart-id="bar"
-              :height="400" :key="chartKey" /> -->
-
-            <ApexCharts :options="chartOptions" ref="realtimeChart" :series="series" :height="400" chart-id="pieChart"
-              :key="chartKey" />
+            <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries" chart-id="bar"
+              :height="400" :key="chartKey" />
           </v-col>
         </v-row>
 
@@ -97,72 +95,20 @@ export default {
   },
   data() {
     return {
-      total_rooms: 0,
-      total_visits: 0,
-      total_price: 0,
       data_table: [],
       grandTotal: [],
       totalRowsCount: 0,
       series: [],
-      colors: [],
 
-      series: [],
 
-      chartOptions: {
-        chart: {
-          width: 380,
-          type: "pie",
+      barSeries: [
+        {
+          name: "Percentage %",
+          data: [],
         },
-        labels: [],// ["Sold", "Unsold"],
-        colors: [],// ["#228B22", "#D71921"], // set custom colors
-        customLabel: [],
-        // plotOptions: {
-        //   pie: {
-        //     dataLabels: {
-        //       offset: -5,
-        //     },
-        //   },
-        // },
-        legend: {
-          show: false,
-        },
-        dataLabels: {
-          formatter(val, opts) {
-            const name = opts.w.globals.labels[opts.seriesIndex];
-            return [name, val.toFixed(1) + "%"];
-          },
-        },
-
-        tooltip: {
-          enabled: true,
-          y: {
-            formatter: function (val, opts) {
-              return opts.config.customLabel[opts.seriesIndex]
-            },
-            title: {
-              formatter: function (seriesName) {
-                return ''
-              }
-            }
-          }
-        },
-        responsive: [
-          {
-            breakpoint: 480,
-            options: {
-              chart: {
-                width: 200,
-              },
-              legend: {
-                position: "bottom",
-              },
-            },
-          },
-        ],
-      },
-      // -------------------end pie chart ----------------
+      ],
       barChartOptions: {
-
+        customLabel: [],
         chart: {
           type: "bar",
           id: 'basic-bar'
@@ -174,7 +120,21 @@ export default {
         yaxis: {
           max: 100 // Set the maximum value of the y-axis to 100
         },
+        tooltip: {
+          enabled: true,
+          y: {
+            formatter: function (val, opts) {
 
+
+              return opts.w.config.customLabel[opts.dataPointIndex]
+            },
+            title: {
+              formatter: function (seriesName) {
+                return ''
+              }
+            }
+          }
+        },
         plotOptions: {
           bar: {
             distributed: true,
@@ -213,7 +173,6 @@ export default {
       years: "",
       month: "",
       months: [
-        { id: '', name: "All Months" },
         { id: 1, name: "January" },
         { id: 2, name: "February" },
         { id: 3, name: "March" },
@@ -249,57 +208,66 @@ export default {
           text: "Color",
           align: "left",
           sortable: false,
+          key: "employee_id",
           filterable: false,
           value: "color",
         },
         {
-          text: "Name",
+          text: "Month Name",
           align: "left",
           sortable: false,
+          key: "employee_id",
           filterable: false,
-          value: "name",
+          value: "month_name",
         },
         {
-          text: "Phone Number",
-          align: "right",
-          sortable: false,
-
-          filterable: false,
-          value: "phone_number",
-        },
-        {
-          text: "No.of Visits",
-          align: "right",
-          sortable: false,
-
-          filterable: false,
-          value: "no_of_visits",
-        },
-        {
-          text: "No.of Rooms",
+          text: "Room Sold",
           align: "right",
           sortable: false,
           key: "employee_id",
           filterable: false,
-          value: "no_of_rooms",
+          value: "room_sold",
         },
         {
-          text: "Revenue",
+          text: "Income",
           align: "right",
           sortable: false,
-
+          key: "employee_id",
           filterable: false,
-          value: "revenue",
+          value: "income",
+        },
+        {
+          text: "Non.Mng Expenses",
+          align: "right",
+          sortable: false,
+          key: "employee_id",
+          filterable: false,
+          value: "expenses",
+        },
+        {
+          text: "Management Expenses",
+          align: "right",
+          sortable: false,
+          key: "employee_id",
+          filterable: false,
+          value: "management_expenses",
+        },
+        {
+          text: "Profit",
+          align: "right",
+          sortable: false,
+          key: "employee_id",
+          filterable: false,
+          value: "profit",
         },
         {
           text: "%",
           align: "right",
           sortable: false,
-
+          key: "employee_id",
           filterable: false,
           value: "percentage",
         },
-
       ],
 
     };
@@ -309,7 +277,7 @@ export default {
     this.loading = true;
 
     this.getYears();
-    //this.month = new Date().getMonth() + 1;
+    this.month = new Date().getMonth() + 1;
     this.year = new Date().getFullYear();
     this.getDataFromApi();
   },
@@ -327,29 +295,15 @@ export default {
   //   },
   // },
   methods: {
-    getToCheckoutPage(item) {
-      this.$store.dispatch('setData', { customer_name: item.first_name });
-      this.$router.push('reservation/check_out');
-    },
-    getPriceFormat(amount) {
-
-      amount = parseFloat(amount);
-      return amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-    },
-    getPercentage(customer_total_price) {
-      if (this.total_price > 0) return Math.round((customer_total_price / this.total_price) * 100);
-      else return 0;
-    },
-    getRoomsCount(rooms) {
-      return rooms.split(",").length;
-    },
-    getColorCode(index) {
-      return this.colors[index].color;
-    },
     onPageChange() {
       this.getDataFromApi();
     },
+    goToDailyReport(item) {
 
+      this.$store.dispatch('setData', { year: this.year, month: item.month_number });
+      this.$router.push({ path: '/management/report/daily_revenue' });
+
+    },
     can(per) {
       let u = this.$auth.user;
       return (
@@ -390,45 +344,42 @@ export default {
           sortDesc: sortedDesc,
           per_page: itemsPerPage,
           company_id: this.$auth.user.company.id,
-          month: this.month,
+
           year: this.year,
 
         },
       };
 
-
-
-      this.$axios.get('get_report_top-ten-customers', options).then(({ data }) => {
+      this.$axios.get('get_report_monthly_wise_group', options).then(({ data }) => {
 
         this.data_table = data.data;
-        this.total_price = data.total_price;
-        this.colors = data.colors;
         this.loading = false;
         this.totalRowsCount = 12;
         this.grandTotal = data.grandTotal;
 
-        this.series.splice(0, this.series.length);
-
-
-        this.total_rooms = 0;
-        this.total_visits = 0;
         let counter = 0;
         this.data_table.forEach(item => {
 
-          let rooms = this.getRoomsCount(item.rooms);
-          this.series.push(Math.round((item.customer_total_price / data.total_price) * 100));
-          this.chartOptions.labels[counter] = item.title;
-          this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + this.getPriceFormat(item.customer_total_price) + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + rooms;
+          this.barSeries[0]["data"][counter] = item.percentage;
+          this.barChartOptions.xaxis.categories[counter] = item.month;
+          this.barChartOptions.colors[counter] = item.color;
+          this.barChartOptions.customLabel[counter] = '<table><tr><td>Percentage</td><td> : ' + item.percentage + '%</td></tr> '
+            + "<tr><td>Rooms Sold</td><td> :  " + item.sold + '</td></tr> '
+            + "<tr><td>Income</td><td style='text-align:right;color:green'> :  " + item.income + '</td></tr> '
+            + "<tr><td>Non-Mng Expenses</td><td style='text-align:right;color:red'>   -" + item.expenses + '</td></tr> '
+            + "<tr><td>Management Expenses</td><td style='text-align:right;color:red'>  - " + item.management_expenses + '</td></tr> '
+            + "<tr><td>Proffit</td><td style='text-align:right; '>   = " + item.profit + '</td></tr> </table>'
 
-          this.chartOptions.colors[counter] = data.colors[counter].color;
-
-          this.total_rooms = this.total_rooms + rooms;
-          this.total_visits += item.number_of_visits;
           counter++;
 
         });
+        try {
+          this.$refs.realtimeChart.updateSeries([{
+            data: this.barSeries[0].data,
+          }], false, true);
+        }
+        catch (e) { }
 
-        this.loading = false;
         this.loading = false;
 
       });
