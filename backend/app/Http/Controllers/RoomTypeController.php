@@ -181,6 +181,7 @@ class RoomTypeController extends Controller
         $per = $amount < 3000 ? 12 : 18;
         $tax = ($amount / 100) * $per;
         $temp['room_tax'] = $tax;
+        $temp['tax_percentage'] = $per;
 
         // return (float) $amount + (float) $tax;
 

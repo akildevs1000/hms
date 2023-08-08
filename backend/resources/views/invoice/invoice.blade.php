@@ -123,7 +123,7 @@
                                             <tr class="inv-room-th-txt">
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Date</th>
                                                 <th class="tm_width_3 tm_semi_bold tm_primary_color">Room No</th>
-                                                <th class="tm_width_6 tm_semi_bold tm_primary_color">Description</th>
+                                                <!-- <th class="tm_width_6 tm_semi_bold tm_primary_color">Description</th> -->
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Price</th>
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Discount</th>
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Amount</th>
@@ -156,11 +156,11 @@
                                                         {{ date('d M Y', strtotime($room->date)) }}
                                                     </td>
                                                     <td class="tm_width_2">
-                                                        {{ $room->room_no }}
+                                                        {{ $room->room_no }} <br/> {{ $room->room_type }}
                                                     </td>
-                                                    <td class="tm_width_2 ">
-                                                        {{ $room->room_type }}
-                                                    </td>
+                                                    <!-- <td class="tm_width_2 ">
+                                                    {{ $room->room_type }}
+                                                    </td> -->
                                                     <td class="tm_width_2 tm_text_right">
                                                         {{ number_format($room->price+$room->room_discount, 2) }}
                                                     </td>
@@ -249,6 +249,18 @@
                                         {{ $paymentMode['payment_method_id'] != 1 ? ' - ' . $paymentMode['reference_number'] : '' }}
                                         <br>Amount: {{ $amtLatter }}
                                     </p>
+
+<!--
+@php
+
+$totalFoodCost=$room->tot_adult_food+$room->tot_child_food;
+$tax=5;
+$basePrice = ($totalFoodCost * 100) / (100 +5);
+        $gstAmount = $totalFoodCost - $basePrice;
+@endphp
+
+
+                                                  <p style="margin-top:20px">Food Tax:   {{ number_format((float)   $gstAmount, 2) }}</p> -->
                                 </div>
                                 <div class="tm_right_footer">
                                     <table class="tm_mb15">
@@ -281,8 +293,8 @@
                                             </tr>
                                             <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_border_none tm_bold"
-                                                    style="font-size:11px">
-                                                    Total(After Discount)
+                                                     >
+                                                    Total(After Disc)
                                                 </td>
 
                                                 <td
@@ -301,6 +313,7 @@
                                                     {{ number_format((float) $totalPostingsgst + (float) $totalsgst + (float) $totalPostingcgst + (float) $totalcgst, 2) }}
                                                 </td>
                                             </tr>
+
                                             <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
                                                     Grand Total
@@ -327,6 +340,25 @@
                                                 <td
                                                     class="tm_width_3 tm_border_top_0 tm_bold tm_f18 tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
                                                     {{ number_format($transactions->sum('debit') - $transactions->sum('credit'), 2) ?? 0 }}
+                                                </td>
+                                            </tr>
+
+                                              <tr>
+                                                <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
+                                                    Food Tax(5%)
+                                                </td>
+                                                <td style=""
+                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
+@php
+
+$totalFoodCost=$room->tot_adult_food+$room->tot_child_food;
+$tax=5;
+$basePrice = ($totalFoodCost * 100) / (100 +5);
+        $gstAmount = $totalFoodCost - $basePrice;
+@endphp
+
+
+                                                    {{ number_format((float)   $gstAmount, 2) }}
                                                 </td>
                                             </tr>
                                         </tbody>

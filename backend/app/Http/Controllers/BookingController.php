@@ -520,10 +520,10 @@ class BookingController extends Controller
 
         return ["basePrice" => round($basePrice, 2), "gstAmount" => round($gstAmount, 2), "tax" => $tax];
     }
-    public function reCalculatePriceTest($finalAmountWithDiscount)
+    public function reCalculatePriceTest()
     {
 
-        //$finalAmountWithDiscount = 4000;
+        $finalAmountWithDiscount = 500;
         $tax = 12; //default
 
         $calculationStatus = false;
@@ -1102,7 +1102,11 @@ class BookingController extends Controller
     private function getRoomTax($amount)
     {
         $temp = [];
-        $per = $amount < 3000 ? 12 : 18;
+        $per = $amount < 2500 ? 12 : 18;
+        if ($amount > 7500) {
+            $per = 28;
+        }
+
         $tax = ($amount / 100) * $per;
         $temp['room_tax'] = $tax;
         $temp['total_with_tax'] = (float) $amount + (float) $tax;

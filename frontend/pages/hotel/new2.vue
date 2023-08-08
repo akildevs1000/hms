@@ -452,7 +452,7 @@
                           <v-col md="12">
                             <v-divider color="#4390FC"></v-divider>
                             <div class="d-flex justify-space-around py-3">
-                              <span>
+                              <!-- <span>
                                 <b>Room Price </b>:
                                 {{ (temp.priceList && temp.priceList[0].room_price) }}
                               </span>
@@ -464,6 +464,10 @@
                                 <b>Total</b>:
                                 {{ convert_decimal(temp.priceList && temp.priceList[0].room_price -
                                   parseInt(temp.room_discount)) }}
+                              </span> -->
+                              <span>
+                                <b>Total</b>:
+                                {{ gst_calculation.recal_basePrice }}
                               </span>
 
                               <span>
@@ -1011,7 +1015,8 @@
                   </span>
                   <div type="text" class="form-control" aria-label="Sizing example input"
                     aria-describedby="inputGroup-sizing-sm" disabled>
-                    {{ convert_decimal(item.room_tax) }}
+                    {{ convert_decimal(gst_calculation.recal_gst_total) }}
+
                   </div>
                 </div>
                 <!-- <div class="input-group input-group-sm px-5">
@@ -1516,16 +1521,18 @@ export default {
 
     updateDiscount(temp) {
 
+      console.log(temp);
 
-
-      let finalDisplayPrice = parseFloat(temp.price) +
-        parseFloat(-temp.room_discount);
+      let finalDisplayPrice = parseFloat(temp.price) -
+        parseFloat(temp.room_discount);
       this.$axios.get('get_re_calculate_price/' + finalDisplayPrice, null).then(({ data }) => {
 
         this.gst_calculation.recal_basePrice = data.basePrice;
         this.gst_calculation.recal_final = data.basePrice + data.gstAmount;
         this.gst_calculation.recal_gst_total = data.gstAmount;
         this.gst_calculation.recal_gst_percentage = data.tax;
+
+        this.item.room_tax = this.gst_calculation.recal_gst_total;
       });
 
     },
@@ -1599,6 +1606,7 @@ export default {
 
     get_reservation() {
       this.reservation = this.$store.state.reservation;
+      console.log(this.reservation);
       this.temp.room_id = this.reservation.room_id;
       this.temp.room_no = this.reservation.room_no;
       this.temp.room_type = this.reservation.room_type;
@@ -1610,6 +1618,8 @@ export default {
       this.room.check_out = this.reservation.check_out;
       this.temp.priceList = this.reservation.priceList;
       this.get_cs_gst(this.temp.room_tax);
+
+      this.updateDiscount(this.temp);
     },
 
     get_food_price() {

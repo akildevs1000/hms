@@ -17,16 +17,16 @@ class InvoiceController extends Controller
         $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
             ->find($id);
 
-        $orderRooms   = $booking->orderRooms;
-        $company      = $booking->company;
+        $orderRooms = $booking->orderRooms;
+        $company = $booking->company;
         $transactions = $booking->transactions;
-        $bookedRooms  = $booking->bookedRooms;
+        $bookedRooms = $booking->bookedRooms;
 
-        $roomTypes   = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
+        $roomTypes = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
         $paymentMode = $transactions->toArray();
         $paymentMode = end($paymentMode);
 
-        $amtLatter         = $this->amountToText($transactions->sum('debit') ?? 0);
+        $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
         $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
             return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
         });
@@ -45,7 +45,7 @@ class InvoiceController extends Controller
     public function printInvoice($id)
     {
         // return $booking = Booking::with('orderRooms.postings', 'customer')->find($id);
-        $booking    = Booking::with('orderRooms', 'customer')->find($id);
+        $booking = Booking::with('orderRooms', 'customer')->find($id);
         $orderRooms = $booking->orderRooms;
         return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms"))
         // ->setPaper('a4', 'landscape')
@@ -56,14 +56,14 @@ class InvoiceController extends Controller
     public function amountToText($amount)
     {
         $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
-        $text      = ucwords($formatter->format($amount));
+        $text = ucwords($formatter->format($amount));
         return $text;
     }
 
     public function grc($id)
     {
         $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans   = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
             ->stream();
@@ -72,11 +72,11 @@ class InvoiceController extends Controller
     public function grcByCheckin($id)
     {
         $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans   = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
 
         return [
             'booking' => $booking,
-            'trans'   => $trans,
+            'trans' => $trans,
         ];
 
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
@@ -87,7 +87,7 @@ class InvoiceController extends Controller
     public function grcPrint($id)
     {
         $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans   = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
 
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
@@ -97,7 +97,7 @@ class InvoiceController extends Controller
     public function grcDownload($id)
     {
         $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans   = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
 
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
