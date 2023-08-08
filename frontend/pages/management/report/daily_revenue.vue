@@ -43,10 +43,6 @@
                                 <a @click="goToNightAuditReport(item)">{{ item.date }}</a>
                             </template>
 
-                            <template v-slot:item.color="{ item }">
-                                <v-icon :color="item.color">mdi mdi-circle</v-icon>
-                            </template>
-
 
                             <template v-slot:item.room_sold="{ item }">
                                 {{ item.sold }}
@@ -219,14 +215,7 @@ export default {
                     filterable: false,
                     value: "date",
                 },
-                {
-                    text: "Color",
-                    align: "left",
-                    sortable: false,
-                    key: "employee_id",
-                    filterable: false,
-                    value: "color",
-                },
+
 
                 {
                     text: "Room Sold",

@@ -31,9 +31,7 @@
               itemsPerPageOptions: [12],
             }" class="elevation-1" :hide-default-footer="true">
 
-              <template v-slot:item.color="{ item }">
-                <v-icon :color="item.color">mdi mdi-circle</v-icon>
-              </template>
+
 
               <template v-slot:item.month_name="{ item }">
                 <a @click="goToDailyReport(item)">{{ item.month }}</a>
@@ -204,14 +202,7 @@ export default {
         },
       ],
       headers_table: [
-        {
-          text: "Color",
-          align: "left",
-          sortable: false,
-          key: "employee_id",
-          filterable: false,
-          value: "color",
-        },
+
         {
           text: "Month Name",
           align: "left",

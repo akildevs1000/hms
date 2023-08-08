@@ -21,7 +21,6 @@ use App\Models\Weekend;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Support\Facades\Storage;
 
@@ -51,20 +50,20 @@ class BookingController extends Controller
         // return $request->all();
 
         return DB::transaction(function () use ($request) {
-            try {
-                $customer_id = $this->customerStore($request->only(Customer::customerAttributes()));
-                $request['customer_id'] = $customer_id;
-                $booking = $this->storeBooking($request);
-                if ($booking) {
-                    $this->storeBookedRooms($request, $booking);
-                    (new ManagementController())->generateOccupancyRateByBooking($request);
-                    return response()->json(['data' => $booking->id, 'status' => true]);
-                }
-            } catch (\Throwable $th) {
-                // return $th->getMessage();
-                Log::error($th->getMessage()); // log the error message
-                return response()->json(['error' => 'An error occurred. Please try again.']); // return a user-friendly error message
+            // try {
+            $customer_id = $this->customerStore($request->only(Customer::customerAttributes()));
+            $request['customer_id'] = $customer_id;
+            $booking = $this->storeBooking($request);
+            if ($booking) {
+                $this->storeBookedRooms($request, $booking);
+                (new ManagementController())->generateOccupancyRateByBooking($request);
+                return response()->json(['data' => $booking->id, 'status' => true]);
             }
+            // } catch (\Throwable $th) {
+            //     // return $th->getMessage();
+            //     Log::error($th->getMessage()); // log the error message
+            //     return response()->json(['error' => 'An error occurred. Please try again.' . $th->getMessage()]); // return a user-friendly error message
+            // }
         });
     }
 
@@ -430,12 +429,21 @@ class BookingController extends Controller
                 $singleDayPrice = ($room['price'] / count($priceList));
 
                 foreach ($priceList as $list) {
+
+// Recalculation start
+                    $taxArray = $this->reCalculatePrice($orderRooms['after_discount']);
+
+                    $singleDayPrice = $taxArray['basePrice'];
+                    $list['tax'] = $taxArray['gstAmount'];
+// Recalculation end
+
                     $orderRooms['date'] = $list['date'];
 
                     $orderRooms['room_discount'] = $singleDayDiscount;
                     $orderRooms['after_discount'] = $list['price'] - $orderRooms['room_discount'] + $singleDayExtraAmount;
 
                     $orderRooms['price'] = $singleDayPrice;
+
                     $orderRooms['total_with_tax'] = $orderRooms['after_discount'];
 
                     $orderRooms['tot_child_food'] = $bookedRoomId->tot_child_food / $bookedRoomId->days;
@@ -473,7 +481,77 @@ class BookingController extends Controller
             return ["done" => false, "data" => "DataBase Error booking"];
         }
     }
+    public function reCalculatePrice($finalAmountWithDiscount)
+    {
+        //$finalAmountWithDiscount = 4000;
+        $tax = 12; //default
 
+        $calculationStatus = false;
+
+        $array = $this->gstTax($finalAmountWithDiscount, $tax);
+
+        if ($array['basePrice'] <= 2499 && $tax == 12) {
+            $calculationStatus = true;
+        }
+        if ($calculationStatus == false) {
+            $tax = 18;
+            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+
+            if ($array['basePrice'] > 2499 && $array['basePrice'] <= 7499) {
+                $calculationStatus = true;
+            }
+        }
+        if ($calculationStatus == false) {
+            $tax = 28;
+            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+
+            if ($array['basePrice'] > 7499) {
+                $calculationStatus = true;
+            }
+        }
+
+        return $array;
+
+    }
+    public function gstTax($finalAmountWithDiscount, $tax)
+    {
+        $basePrice = ($finalAmountWithDiscount * 100) / (100 + $tax);
+        $gstAmount = $finalAmountWithDiscount - $basePrice;
+
+        return ["basePrice" => round($basePrice, 2), "gstAmount" => round($gstAmount, 2), "tax" => $tax];
+    }
+    public function reCalculatePriceTest($finalAmountWithDiscount)
+    {
+
+        //$finalAmountWithDiscount = 4000;
+        $tax = 12; //default
+
+        $calculationStatus = false;
+
+        $array = $this->gstTax($finalAmountWithDiscount, $tax);
+
+        if ($array['basePrice'] <= 2499 && $tax == 12) {
+            $calculationStatus = true;
+        }
+        if ($calculationStatus == false) {
+            $tax = 18;
+            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+
+            if ($array['basePrice'] > 2499 && $array['basePrice'] <= 7499) {
+                $calculationStatus = true;
+            }
+        }
+        if ($calculationStatus == false) {
+            $tax = 28;
+            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+
+            if ($array['basePrice'] > 7499) {
+                $calculationStatus = true;
+            }
+        }
+
+        return $array;
+    }
     public function storeDocument(Request $request)
     {
 

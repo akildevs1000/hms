@@ -435,7 +435,7 @@ class ManagementController extends Controller
             $monthStr = $month;
             $row = [];
 
-            $row['month'] = $monthArray[$month - 1]["text"] . ' ' . $year;
+            $row['month'] = $monthArray[$month - 1]["text"]; // . ' ' . $year;
             $row['sold'] = 0;
             $soldTemp = array_filter($soldArray, function ($result) use ($monthStr) {
                 if ($result['month'] == $monthStr) {
@@ -803,7 +803,7 @@ class ManagementController extends Controller
             $income = round($income, 2);
             $expenses = round($expenses, 2);
             $management_expenses = round($management_expenses, 2);
-            $row['month'] = $request->year . '-' . $request->month . '-' . $day;
+            $row['month'] = $day; // $request->year . '-' . $request->month . '-' . $day;
             $row['date'] = date('Y-m-d', strtotime($request->year . '-' . $request->month . '-' . $day));
             $row['sold'] = $sold;
             $row['management_expenses'] = $this->getMoneyFormat($management_expenses);
