@@ -219,7 +219,7 @@ export default {
           icon: "mdi-calendar",
           title: "Calendar",
           to: "/hotel/calendar1",
-          menu: "reservation_access",
+          menu: "calendar_access",
         },
 
         // {
@@ -265,7 +265,7 @@ export default {
               icon: "mdi mdi-home-account",
               title: "In House",
               to: "/reservation/in_house",
-              menu: "reservation_access",
+              menu: "guest_access",
             },
             {
               icon: "mdi mdi-home-export-outline",
@@ -286,21 +286,21 @@ export default {
               icon: "fas fa-male",
               title: "Guest",
               to: "/customer/list",
-              menu: "reservation_access",
+              menu: "guest_access",
             },
 
             {
               icon: "mdi mdi-account-tie",
               title: "Source",
               to: "/source",
-              menu: "agent_access",
+              menu: "source_access",
             },
 
             {
               icon: "mdi mdi-file-document-edit-outline",
               title: "inquiries",
               to: "/inquiry",
-              menu: "agent_access",
+              menu: "inquiry_access",
             },
 
             {
@@ -335,14 +335,14 @@ export default {
               icon: "mdi mdi-food",
               title: "Posting",
               to: "/posting",
-              menu: "posting_access",
+              menu: "accounts_posting_access",
             },
 
             {
               icon: "mdi mdi-bank-transfer-out",
               title: "Expense",
               to: "/expense",
-              menu: "expense_access",
+              menu: "accounts_expences_access",
             },
 
             // {
@@ -355,7 +355,7 @@ export default {
               icon: "mdi-cash",
               title: "GST Bills",
               to: "/taxable",
-              menu: "transaction_access",
+              menu: "accounts_gst_access",
             },
           ],
         },
@@ -370,13 +370,13 @@ export default {
               icon: "mdi mdi-human-male-board-poll",
               title: "Agents",
               to: "/agents",
-              menu: "agent_access",
+              menu: "ledger_agents_access",
             },
             {
               icon: "mdi-account-cash",
               title: "Guest",
               to: "/city_ledger",
-              menu: "city_ledger_access",
+              menu: "ledger_guests_access",
             },
           ],
         },
@@ -405,14 +405,16 @@ export default {
           icon: "mdi mdi-file-chart-outline",
           title: "Night Audit",
           to: "/management/report/audit",
-          menu: "city_ledger_access",
+          menu: "night_audit_access",
         },
         {
           icon: "mdi-home-search-outline",
           title: "Lost And Found Items",
-          to: "/LostAndFoundItems",
-          menu: "dashboard",
-        }
+
+          to: "/lost_and_found_items",
+          menu: "lost_and_found_access",
+        },
+
       ],
       items: [],
       modules: {
@@ -448,48 +450,53 @@ export default {
           icon: "mdi mdi-bank-transfer-out",
           title: "Expense",
           to: "/management/expense",
-          menu: "agent_access",
+          menu: "management_expenses_access",
         },
         {
           icon: "mdi mdi-bank-transfer-in",
           title: "Income",
           to: "/account",
-          menu: "income_access",
+          menu: "management_income_access",
         },
         {
           icon: "mdi mdi-text-account",
           title: "Payment By User Report",
           to: "/management/report/user",
-          menu: "city_ledger_access",
+          menu: "management_payments_access",
         },
         {
           icon: "mdi mdi-finance",
           title: "Summary",
           to: "/management/report/summary",
-          menu: "city_ledger_access",
+          menu: "management_summary_access",
         },
         {
           icon: "mdi mdi-calendar-month",
-          title: "Monthly",
+          title: "Sold-out Report",
           to: "/management/report/monthly",
-          menu: "city_ledger_access",
+          menu: "management_soldout_access",
         },
         {
           icon: "mdi mdi-account-group",
-          title: "Monthly New",
-          to: "/management/report/monthly2",
-          menu: "city_ledger_access",
+          title: "Monhtly wise Revenue Report",
+          to: "/management/report/monthly_revenue",
+          menu: "management_revenue_report_access",
+        }, {
+          icon: "mdi mdi-account-group",
+          title: "Day wise Revenue Report  ",
+          to: "/management/report/daily_revenue",
+          menu: "management_revenue_report_access",
         }, {
           icon: "mdi mdi-briefcase-account",
           title: "Top 10 Customers",
           to: "/management/report/top-customers",
-          menu: "mdi-account-check",
+          menu: "management_top_10_customers_access",
         },
         {
           icon: "mdi mdi-chart-pie",
           title: "Custom",
           to: "/management/report/daily",
-          menu: "city_ledger_access",
+          menu: "management_custom_soldout_access",
         },
       ],
     };
@@ -504,20 +511,39 @@ export default {
           icon: "mdi mdi-bed",
           title: "Room Category",
           to: "/room_category",
-          menu: "city_ledger_access",
+          menu: "settings_rooms_category_access",
+        },
+        {
+          icon: "mdi mdi-bed",
+          title: "Rooms",
+          to: "/rooms",
+          menu: "settings_rooms_access",
         },
         {
           icon: "mdi-tools",
           title: "Price Setup",
           to: "/manage",
-          menu: "city_ledger_access",
+          menu: "settings_room_price_access",
         },
         {
           icon: "mdi mdi-account-tie",
           title: "User",
           to: "/users",
-          menu: "user_access",
+          menu: "settings_users_access",
         },
+        {
+          icon: "mdi mdi-account-check-outline",
+          title: "Roles",
+          to: "/role",
+          menu: "settings_roles_access",
+        },
+        {
+          icon: "mdi mdi-account-details",
+          title: "Permissions",
+          to: "/assign_permission",
+          menu: "settings_permissions_access",
+        },
+
       ],
     };
 
@@ -771,5 +797,121 @@ select:focus {
   box-shadow: 0 0 0px #5fafa3;
 }
 </style>
+<style>
+/* Table Header Filter Textbox alignment    */
+td {
+  text-align: left;
+  padding: 8px;
+
+}
+
+/* Datatable Sorting Icon color  */
+.mdi-arrow-up {
+  color: red !important;
+}
+
+/* datepicker min height is required  */
+
+.v-date-picker-table {
+  min-height: 400px;
+}
+</style>
+
+<!-- CSS Code used from Loast and Found Items (scoped)  -->
+<!-- <style   >
+.no-bg {
+  background-color: white !important;
+}
+
+.guest-avatar {
+  max-width: 200px !important;
+  height: 200px !important;
+  float: left;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.text-box {
+  border: 1px solid rgb(215, 211, 211);
+  padding: 10px 0px 0px 10px;
+  margin: 10px 20px;
+  position: relative;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.text-box-amt {
+  border: 0px solid rgb(215, 211, 211);
+  padding: 0px 0px 0px 0px;
+  margin: 0px 00px;
+  position: relative;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.amt-border {
+  border-bottom: 1px solid;
+}
+
+.amt-border-full {
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+}
+
+.text-box p {
+  margin: 5px;
+}
+
+h6 {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background-color: white;
+  padding: 0 10px;
+  color: rgb(154, 152, 152);
+  margin: 0;
+  font-size: 15px;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 8px;
+  /* border: 1px solid black !important; */
+}
+
+tr:nth-child(even) {
+  background-color: white;
+}
+
+.custom-text-box {
+  border-radius: 2px !important;
+  border: 1px solid #dbdddf !important;
+}
+
+input[type="text"]:focus.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select:focus {
+  outline: none !important;
+  border-color: #5fafa3;
+  box-shadow: 0 0 0px #5fafa3;
+}
+
+.table-header-text {
+  font-size: 12px;
+}
+</style>   -->
 
 

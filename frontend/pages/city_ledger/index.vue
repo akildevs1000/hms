@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`agents_access`)">
+  <div v-if="can(`ledger_guests_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top absolute color="secondary" elevation="24">
         {{ response }}
@@ -150,7 +150,7 @@
 
 
 
-    <div v-if="can(`agents_view`)">
+    <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List</span>
@@ -184,7 +184,7 @@
             <td>
               {{
                 parseFloat(item.total_price) +
-                  parseFloat(item.total_posting_amount) || "---"
+                parseFloat(item.total_posting_amount) || "---"
               }}.00
             </td>
             <td>{{ item.paid_amounts || 0 }}</td>
@@ -205,7 +205,8 @@
               >
                 mdi-eye
               </v-icon> -->
-              <v-icon v-if="!item.is_paid" x-small color="primary" @click="paidAmount(item)" class="mr-2">
+              <v-icon v-if="can(`ledger_guests_edit`) && !item.is_paid" x-small color="primary" @click="paidAmount(item)"
+                class="mr-2">
                 mdi-cash-multiple
               </v-icon>
             </td>
@@ -223,7 +224,7 @@
         </v-row>
       </div>
     </div>
-    <NoAccess v-else />
+
   </div>
   <NoAccess v-else />
 </template>
@@ -357,8 +358,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

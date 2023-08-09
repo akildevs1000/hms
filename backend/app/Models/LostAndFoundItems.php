@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class LostAndFoundItems extends Model
 {
     use HasFactory;
-    protected $fillable = ['company_id', 'booking_id', 'item_name', 'missing_datetime', 'missing_notes', 'missing_remarks'];
+    protected $fillable = ['user_id', 'company_id', 'booking_id', 'item_name', 'missing_datetime', 'missing_notes', 'missing_remarks'];
 
     public function booking()
     {

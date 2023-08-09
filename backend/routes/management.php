@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\ReportGenerateController;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,8 @@ Route::get('get_audit_report_pdf', [ReportGenerateController::class, 'generateAu
 Route::get('get_report_monthly_wise', [ManagementController::class, 'getReportMonthlyWise']);
 Route::get('get_report_monthly_wise_group', [ManagementController::class, 'getReportMonthlyWiseGroup']);
 Route::get('get_report_top-ten-customers', [ManagementController::class, 'getReportTop10Customers']);
+Route::get('get_report_daily_wise_group', [ManagementController::class, 'getReportDailyWiseGroup']);
+
+Route::get('get_re_calculate_price/{key}', [BookingController::class, 'reCalculatePrice']);
+
+Route::get('test_gst_value', [BookingController::class, 'reCalculatePriceTest']);

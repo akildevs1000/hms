@@ -25,3 +25,9 @@ function getDatesInRange(startDate, endDate) {
   const d2 = new Date('2022-01-24');
   
   console.log(getDatesInRange(d1, d2));
+
+  php artisan serve --host=192.168.2.210  --port=8000
+
+  twilio/sdk //composer require twilio/sdk
+
+  

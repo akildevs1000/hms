@@ -21,26 +21,28 @@ class UserController extends Controller
         // $model->where('company_id', $request->company_id);
         // return $model->paginate(20);
 
-
         $sortBy = $request->input('sortBy');
         $sortDesc = $request->input('sortDesc');
         $itemsPerPage = $request->input('itemsPerPage');
 
-        $model = User::query();
+
+        $model = User::with(['role']);
+
         $model->where('company_id', $request->company_id);
+
 
 
         // $model->when()
 
-        if($request->filled('name') && $request->has('name')) {
+        if ($request->filled('name') && $request->has('name')) {
             $model->Where('name', 'ILIKE', '%' . $request->name . '%');
         }
 
-        if($request->filled('email') && $request->email != "") {
+        if ($request->filled('email') && $request->email != "") {
             $model->Where('email', 'ILIKE', '%' . $request->email . '%');
         }
 
-        if($request->filled('mobile') && $request->mobile != "") {
+        if ($request->filled('mobile') && $request->mobile != "") {
             $model->Where('mobile', 'ILIKE', '%' . $request->mobile . '%');
         }
 
@@ -52,26 +54,28 @@ class UserController extends Controller
 
         return $desserts;
 
-
     }
 
     public function store(User $model, StoreRequest $request)
     {
-        try {
 
+        try {
+            $fileName = '';
             $data = $request->validated();
             $data["password"] = Hash::make($data["password"]);
             $data["employee_role_id"] = 1;
 
             if ($request->hasFile('image')) {
-                $file            = $request->file('image');
-                $ext             = $file->getClientOriginalExtension();
-                $fileName        = time() . '.' . $ext;
-                $path            = $file->storeAs('public/user/images', $fileName);
+                $file = $request->file('image');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $path = $file->storeAs('public/user/images', $fileName);
+                $data["image"] = $fileName;
             }
+
+
             $data["image"] = $fileName ?? "";
             $record = $model->create($data);
-
 
             if ($record) {
                 return $this->response('User successfully added.', $record, true);
@@ -85,6 +89,7 @@ class UserController extends Controller
 
     public function update(User $user, UpdateRequest $request)
     {
+
         try {
             $data = $request->validated();
 
@@ -92,13 +97,14 @@ class UserController extends Controller
                 $data["password"] = Hash::make($data["password"]);
             }
 
-
             if ($request->hasFile('image')) {
-                $file            = $request->file('image');
-                $ext             = $file->getClientOriginalExtension();
-                $fileName        = time() . '.' . $ext;
-                $path            = $file->storeAs('public/user/images', $fileName);
+                $file = $request->file('image');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $path = $file->storeAs('public/user/images', $fileName);
+                $data["image"] = $fileName;
             }
+
 
             $data["image"] = $fileName ?? "";
 

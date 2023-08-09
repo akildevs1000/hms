@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`department_access`)">
+  <div v-if="can(`source_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -98,7 +98,8 @@
               <v-toolbar class="rounded-md" color="background" dense flat dark>
                 <span> {{ Model }} List</span>
                 <v-spacer></v-spacer>
-                <v-btn class="float-right py-3" @click="agentDialog = true" x-small color="primary">
+                <v-btn v-if="can('source_create')" class="float-right py-3" @click="agentDialog = true" x-small
+                  color="primary">
                   <v-icon color="white" small class="py-5">mdi-plus</v-icon>
                   Add
                 </v-btn>
@@ -138,14 +139,14 @@
                     {{ item.created_at }}
                   </td>
                   <td class="text-center">
-                    <v-menu bottom left>
+                    <v-menu bottom left v-if="can('source_edit') || can('source_delete')">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn dark-2 icon v-bind="attrs" v-on="on">
                           <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                       </template>
                       <v-list width="120" dense>
-                        <v-list-item @click="editItem(item)">
+                        <v-list-item v-if="can('source_edit')" @click="editItem(item)">
                           <v-list-item-title style="cursor: pointer">
                             <v-icon color="secondary" small>
                               mdi-pencil
@@ -153,7 +154,7 @@
                             Edit
                           </v-list-item-title>
                         </v-list-item>
-                        <v-list-item @click="deleteItem(item)">
+                        <v-list-item v-if="can('source_delete')" @click="deleteItem(item)">
                           <v-list-item-title style="cursor: pointer">
                             <v-icon color="error" small> mdi-delete </v-icon>
                             Delete

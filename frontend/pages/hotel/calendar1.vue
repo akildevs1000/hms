@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('calendar_access') && can('calendar_view')">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -298,6 +298,7 @@
       </v-col>
     </v-row>
   </div>
+  <NoAccess v-else />
 </template>
 <script>
 import Posting from "../../components/booking/Posting";
@@ -641,8 +642,12 @@ export default {
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
+      try {
+        document.querySelector(".fc-license-message").style.display = "none";
+      } catch (error) {
 
-      document.querySelector(".fc-license-message").style.display = "none";
+      }
+
       // const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
       // setTimeout(() => {
       //   for (let i = 0; i < elements.length; i++) {
@@ -737,6 +742,13 @@ export default {
     },
   },
   methods: {
+    can(per) {
+      let u = this.$auth.user;
+      if (!u.permissions) return false;
+      return (
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+      );
+    },
     clearHeaderContent() {
       const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
 

@@ -63,16 +63,22 @@
                                     <div>
                                         <span>Check In:</span> <br>
                                         <b class="tm_primary_color">
-                                            {{ date('d M Y', strtotime($booking->check_in)) }}</b>
+                                            {{ date('d M Y', strtotime($booking->check_in)) }}
+                                            <div>{{ date('H:i', strtotime($booking->check_in)) }}</div></b>
                                     </div>
                                     <div>
                                         <span>Check Out:</span> <br>
                                         <b class="tm_primary_color">
-                                            {{ date('d M Y', strtotime($booking->check_out)) }}</b>
+                                            {{ date('d M Y', strtotime($booking->check_out)) }}
+                                            <div>{{ date('H:i', strtotime($booking->check_out)) }}</div></b>
                                     </div>
                                     <div>
                                         <span>Reservation No:</span> <br>
-                                        <b class="tm_primary_color">{{ $booking->reservation_no }}</b>
+                                        <b class="tm_primary_color">{{ $booking->reservation_no }}
+
+                                        <div>{{ date('d M Y', strtotime($booking->booking_date)) }}</div>
+
+                                        </b>
                                     </div>
                                     <div>
                                         <span>Nights:</span> <br>
@@ -98,13 +104,15 @@
                                     <br>
                                     {{ $booking->customer->gst_number ?? '' }}
                                     <br>
-                                    {{ strtolower($booking->customer->address) ?? '' }}
+
                                 </p>
                             </div>
                             <div>
-                                <b class="tm_primary_color">Room & Service Details:</b>
+                               Address:
+                            {{ strtolower($booking->customer->address) ?? '' }}
+                                <!-- <b class="tm_primary_color">Room & Service Details:</b>
                                 <p class="tm_m0">Room service is a hotel service enabling guests to choose items of
-                                    food and drink for delivery to their hotel room for consumption.</p>
+                                    food and drink for delivery to their hotel room for consumption.</p> -->
                             </div>
                         </div>
                         <div class="tm_table tm_style1">
@@ -116,8 +124,10 @@
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Date</th>
                                                 <th class="tm_width_3 tm_semi_bold tm_primary_color">Room No</th>
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Description</th>
-                                                <th class="tm_width_6 tm_semi_bold tm_primary_color">Amount</th>
+                                                <th class="tm_width_6 tm_semi_bold tm_primary_color">Price</th>
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Discount</th>
+                                                <th class="tm_width_6 tm_semi_bold tm_primary_color">Amount</th>
+
                                                 <th class="tm_width_4 tm_semi_bold tm_primary_color">Food</th>
                                                 <th class="tm_width_4 tm_semi_bold tm_primary_color">SGST</th>
                                                 <th class="tm_width_4 tm_semi_bold tm_primary_color">CGST</th>
@@ -139,6 +149,8 @@
                                                 $grandTotal = 0;
                                             @endphp
                                             @foreach ($orderRooms as $room)
+
+
                                                 <tr class="inv-tr-txt">
                                                     <td class="tm_width_6">
                                                         {{ date('d M Y', strtotime($room->date)) }}
@@ -150,11 +162,15 @@
                                                         {{ $room->room_type }}
                                                     </td>
                                                     <td class="tm_width_2 tm_text_right">
-                                                        {{ number_format($room->price, 2) }}
+                                                        {{ number_format($room->price+$room->room_discount, 2) }}
                                                     </td>
                                                     <td class="tm_width_2 tm_text_right">
                                                         {{ number_format($room->room_discount, 2) }}
                                                     </td>
+                                                    <td class="tm_width_2 tm_text_right">
+                                                        {{ number_format($room->price, 2) }}
+                                                    </td>
+
                                                     <td class="tm_width_2 tm_text_right">
                                                         {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food, 2) }}
                                                     </td>
@@ -189,8 +205,12 @@
                                                         <td class="tm_width_2 ">
                                                             {{ $post->item }}
                                                         </td>
-                                                        <td class="tm_width_2 ">
+
+                                                        <td class="tm_width_2 tm_text_right ">
                                                             {{ $post->amount }}
+                                                        </td>
+                                                        <td class="tm_width_2 ">
+                                                            ---
                                                         </td>
                                                         <td class="tm_width_2 ">
                                                             ---
@@ -233,11 +253,12 @@
                                 <div class="tm_right_footer">
                                     <table class="tm_mb15">
                                         <tbody>
-                                            <tr>
+                                        <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_border_none tm_bold"
                                                     style="font-size:11px">
-                                                    Total(excl GST)
+                                                    Price(excl GST)
                                                 </td>
+
                                                 <td
                                                     class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_bold">
                                                     @php
@@ -246,7 +267,7 @@
                                                         $gcgst = (float) $totalPostingcgst + (float) $totalcgst;
                                                         $gwithoutgst = $gtot - ($gsgst + $gcgst);
                                                     @endphp
-                                                    {{ number_format($gwithoutgst, 2) ?? 0 }}
+                                                    {{ number_format($gwithoutgst+$roomsDiscount, 2) ?? 0 }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -258,6 +279,19 @@
                                                     {{ number_format($roomsDiscount, 2) ?? 0 }}
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td class="tm_width_3 tm_primary_color tm_border_none tm_bold"
+                                                    style="font-size:11px">
+                                                    Total(After Discount)
+                                                </td>
+
+                                                <td
+                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_bold">
+
+                                                    {{ number_format($gwithoutgst, 2) ?? 0 }}
+                                                </td>
+                                            </tr>
+
                                             <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
                                                     Tax

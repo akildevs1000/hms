@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
-
 
     /**
      * The attributes that are mass assignable.
@@ -63,7 +62,6 @@ class User extends Authenticatable
         return $this->hasOne(AssignPermission::class, 'role_id', 'employee_role_id');
     }
 
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -84,7 +82,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime:d-M-y',
     ];
-
 
     public function company()
     {
@@ -133,7 +130,7 @@ class User extends Authenticatable
     public function GetCashSumAttribute()
     {
 
-        return  $this->getSumByModel($this->id, 1);
+        return $this->getSumByModel($this->id, 1);
     }
 
     public function GetCardSumAttribute()
@@ -158,12 +155,12 @@ class User extends Authenticatable
 
     public function GetChequeSumAttribute()
     {
-        return   $this->getSumByModel($this->id, 6);
+        return $this->getSumByModel($this->id, 6);
     }
 
     public function GetCityLedgerSumAttribute()
     {
-        return   $this->getSumByModel($this->id, 7, 'debit');
+        return $this->getSumByModel($this->id, 7, 'debit');
     }
 
     public function getSumByModel($userId = null, $id = null, $col = 'credit')
@@ -171,6 +168,6 @@ class User extends Authenticatable
         return Transaction::where('user_id', $userId)
             ->whereDate('created_at', '>=', request('from_date', date('Y-m-d')))
             ->whereDate('created_at', '<=', request('to_date', date('Y-m-d')))
-            ->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum($col) ?? 0;
+            ->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum($col) ?? 0;
     }
 }

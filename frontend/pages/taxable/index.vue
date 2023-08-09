@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can(`accounts_gst_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -173,7 +173,7 @@
                 item && item.booking && item.booking.id,
                 item.show_taxable_invoice_number
               )
-            " x-small color="primary" class="mr-2">
+              " x-small color="primary" class="mr-2">
               mdi-cash-multiple
             </v-icon>
           </td>
@@ -254,12 +254,10 @@ export default {
   },
 
   methods: {
-    can(permission) {
-      let user = this.$auth;
-      return;
+    can(per) {
+      let u = this.$auth.user;
       return (
-        (user && user.permissions.some((e) => e.permission == permission)) ||
-        user.master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 
