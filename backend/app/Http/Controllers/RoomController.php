@@ -409,7 +409,7 @@ class RoomController extends Controller
             })
             ->get();
 
-        // return  $dirtyRooms->get();
+        // return $dirtyRooms->get();
 
         return [
             'dirtyRooms' => $dirtyRooms->count(),

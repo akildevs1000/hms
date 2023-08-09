@@ -2,5 +2,5 @@
 
 @REM for frontend   
 @cd frontend
-@set PATH=nodejs;%PATH%
+@REM @set PATH=nodejs;%PATH%
 code . 
