@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('calendar_create')">
     <v-row>
       <v-dialog v-model="imgView" max-width="80%">
         <v-card>
@@ -17,13 +17,7 @@
         </v-card>
       </v-dialog>
       <v-col md="8">
-        <v-tabs
-          v-model="activeTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
+        <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
           <div class="py-3" style="background-color: #1259a7">
             <span class="mx-2">New Reservation</span>
           </div>
@@ -47,34 +41,18 @@
                 {{ bookings }}
                 <v-row>
                   <v-col md="2" cols="12">
-                    <v-img
-                      @click="onpick_attachment"
-                      style="
+                    <v-img @click="onpick_attachment" style="
                         width: 150px;
                         height: 150px;
                         margin: 0 auto;
                         border-radius: 50%;
-                      "
-                      :src="showImage"
-                    ></v-img>
-                    <input
-                      required
-                      type="file"
-                      @change="attachment"
-                      style="display: none"
-                      accept="image/*"
-                      ref="attachment_input"
-                    />
+                      " :src="showImage"></v-img>
+                    <input required type="file" @change="attachment" style="display: none" accept="image/*"
+                      ref="attachment_input" />
                     <span v-if="errors && errors.image" class="red--text mt-2">
-                      {{ errors.image[0] }}</span
-                    >
+                      {{ errors.image[0] }}</span>
                     <div class="mt-2 ml-4" v-if="customer.document">
-                      <v-btn
-                        small
-                        dark
-                        class="primary pt-4 pb-4"
-                        @click="preview(customer.document)"
-                      >
+                      <v-btn small dark class="primary pt-4 pb-4" @click="preview(customer.document)">
                         ID
                         <v-icon right dark>mdi-file</v-icon>
                       </v-btn>
@@ -90,357 +68,149 @@
                       </v-col>
                       <v-col md="5" dense> </v-col>
                       <v-col md="5" dense>
-                        <v-select
-                          label="Type"
-                          v-model="customer.customer_type"
-                          :items="['Company', 'Regular', 'Corporate']"
-                          dense
-                          item-text="name"
-                          item-value="id"
-                          outlined
-                          :hide-details="true"
-                        ></v-select>
+                        <v-select label="Type" v-model="customer.customer_type"
+                          :items="['Company', 'Regular', 'Corporate']" dense item-text="name" item-value="id" outlined
+                          :hide-details="true"></v-select>
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
-                        <v-select
-                          v-model="customer.title"
-                          :items="titleItems"
-                          label="Tittle *"
-                          dense
-                          item-text="name"
-                          item-value="name"
-                          :hide-details="errors && !errors.title"
-                          :error="errors && errors.title"
-                          :error-messages="
-                            errors && errors.title ? errors.title[0] : ''
-                          "
-                          outlined
-                        ></v-select>
+                        <v-select v-model="customer.title" :items="titleItems" label="Tittle *" dense item-text="name"
+                          item-value="name" :hide-details="errors && !errors.title" :error="errors && errors.title"
+                          :error-messages="errors && errors.title ? errors.title[0] : ''
+                            " outlined></v-select>
                       </v-col>
                       <v-col md="5" cols="12" sm="12">
-                        <v-text-field
-                          label="First Name *"
-                          dense
-                          outlined
-                          type="text"
-                          v-model="customer.first_name"
-                          :hide-details="errors && !errors.first_name"
-                          :error="errors && errors.first_name"
-                          :error-messages="
-                            errors && errors.first_name
-                              ? errors.first_name[0]
-                              : ''
-                          "
-                        ></v-text-field>
+                        <v-text-field label="First Name *" dense outlined type="text" v-model="customer.first_name"
+                          :hide-details="errors && !errors.first_name" :error="errors && errors.first_name"
+                          :error-messages="errors && errors.first_name
+                            ? errors.first_name[0]
+                            : ''
+                            "></v-text-field>
                       </v-col>
                       <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          label="Last Name"
-                          dense
-                          :hide-details="true"
-                          outlined
-                          type="text"
-                          v-model="customer.last_name"
-                        ></v-text-field>
+                        <v-text-field label="Last Name" dense :hide-details="true" outlined type="text"
+                          v-model="customer.last_name"></v-text-field>
                       </v-col>
                       <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Contact No *"
-                          outlined
-                          type="number"
-                          v-model="customer.contact_no"
-                          :hide-details="errors && !errors.contact_no"
-                          :error="errors && errors.contact_no"
-                          :error-messages="
-                            errors && errors.contact_no
-                              ? errors.contact_no[0]
-                              : ''
-                          "
-                          @keyup="mergeContact"
-                        ></v-text-field>
+                        <v-text-field dense label="Contact No *" outlined type="number" v-model="customer.contact_no"
+                          :hide-details="errors && !errors.contact_no" :error="errors && errors.contact_no"
+                          :error-messages="errors && errors.contact_no
+                            ? errors.contact_no[0]
+                            : ''
+                            " @keyup="mergeContact"></v-text-field>
                       </v-col>
                       <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Whatsapp No"
-                          outlined
-                          type="number"
-                          v-model="customer.whatsapp"
-                          :hide-details="errors && !errors.whatsapp"
-                          :error="errors && errors.whatsapp"
-                          :error-messages="
-                            errors && errors.whatsapp ? errors.whatsapp[0] : ''
-                          "
-                        ></v-text-field>
+                        <v-text-field dense label="Whatsapp No" outlined type="number" v-model="customer.whatsapp"
+                          :hide-details="errors && !errors.whatsapp" :error="errors && errors.whatsapp" :error-messages="errors && errors.whatsapp ? errors.whatsapp[0] : ''
+                            "></v-text-field>
                       </v-col>
 
                       <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Email *"
-                          outlined
-                          type="email"
-                          v-model="customer.email"
-                          :hide-details="errors && !errors.email"
-                          :error="errors && errors.email"
-                          :error-messages="
-                            errors && errors.email ? errors.email[0] : ''
-                          "
-                        ></v-text-field>
+                        <v-text-field dense label="Email *" outlined type="email" v-model="customer.email"
+                          :hide-details="errors && !errors.email" :error="errors && errors.email" :error-messages="errors && errors.email ? errors.email[0] : ''
+                            "></v-text-field>
                       </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col md="4" cols="12" sm="12">
-                    <v-select
-                      v-model="customer.nationality"
-                      :items="countryList"
-                      label="Nationality"
-                      item-text="name"
-                      item-value="name"
-                      :hide-details="errors && !errors.nationality"
-                      :error="errors && errors.nationality"
-                      :error-messages="
-                        errors && errors.nationality
-                          ? errors.nationality[0]
-                          : ''
-                      "
-                      dense
-                      outlined
-                    ></v-select>
+                    <v-select v-model="customer.nationality" :items="countryList" label="Nationality" item-text="name"
+                      item-value="name" :hide-details="errors && !errors.nationality"
+                      :error="errors && errors.nationality" :error-messages="errors && errors.nationality
+                        ? errors.nationality[0]
+                        : ''
+                        " dense outlined></v-select>
                   </v-col>
                   <v-col md="4" cols="12" sm="12">
-                    <v-menu
-                      v-model="customer.dob_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu v-model="customer.dob_menu" :close-on-content-click="false" :nudge-right="40"
+                      transition="scale-transition" offset-y min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="customer.dob"
-                          readonly
-                          label="DOB"
-                          v-on="on"
-                          v-bind="attrs"
-                          :hide-details="true"
-                          dense
-                          outlined
-                        ></v-text-field>
+                        <v-text-field v-model="customer.dob" readonly label="DOB" v-on="on" v-bind="attrs"
+                          :hide-details="true" dense outlined></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="customer.dob"
-                        @input="customer.dob_menu = false"
-                      ></v-date-picker>
+                      <v-date-picker v-model="customer.dob" @input="customer.dob_menu = false"></v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col md="4">
-                    <v-select
-                      label="Purpose"
-                      v-model="room.purpose"
-                      :items="purposes"
-                      dense
-                      :hide-details="true"
-                      outlined
-                    ></v-select>
+                    <v-select label="Purpose" v-model="room.purpose" :items="purposes" dense :hide-details="true"
+                      outlined></v-select>
                   </v-col>
                 </v-row>
 
                 <v-row>
                   <v-col md="3" sm="12" cols="12" dense>
-                    <v-select
-                      v-model="customer.id_card_type_id"
-                      :items="idCards"
-                      dense
-                      label="ID Card Type"
-                      outlined
-                      item-text="name"
-                      item-value="id"
-                      :hide-details="errors && !errors.id_card_type_id"
-                      :error="errors && errors.id_card_type_id"
-                      :error-messages="
-                        errors && errors.id_card_type_id
-                          ? errors.id_card_type_id[0]
-                          : ''
-                      "
-                    ></v-select>
+                    <v-select v-model="customer.id_card_type_id" :items="idCards" dense label="ID Card Type" outlined
+                      item-text="name" item-value="id" :hide-details="errors && !errors.id_card_type_id"
+                      :error="errors && errors.id_card_type_id" :error-messages="errors && errors.id_card_type_id
+                        ? errors.id_card_type_id[0]
+                        : ''
+                        "></v-select>
                   </v-col>
                   <v-col md="3" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      label="ID Card"
-                      outlined
-                      type="text"
-                      v-model="customer.id_card_no"
-                      :hide-details="errors && !errors.id_card_no"
-                      :error="errors && errors.id_card_no"
-                      :error-messages="
-                        errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                      "
-                    ></v-text-field>
+                    <v-text-field dense label="ID Card" outlined type="text" v-model="customer.id_card_no"
+                      :hide-details="errors && !errors.id_card_no" :error="errors && errors.id_card_no" :error-messages="errors && errors.id_card_no ? errors.id_card_no[0] : ''
+                        "></v-text-field>
                   </v-col>
                   <v-col md="3" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      outlined
-                      label="GST"
-                      type="text"
-                      v-model="customer.gst_number"
-                      :hide-details="errors && !errors.gst_number"
-                      :error="errors && errors.gst_number"
-                      :error-messages="
-                        errors && errors.gst_number ? errors.gst_number[0] : ''
-                      "
-                    ></v-text-field>
+                    <v-text-field dense outlined label="GST" type="text" v-model="customer.gst_number"
+                      :hide-details="errors && !errors.gst_number" :error="errors && errors.gst_number" :error-messages="errors && errors.gst_number ? errors.gst_number[0] : ''
+                        "></v-text-field>
                   </v-col>
                   <v-col md="3" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      label="Car Number"
-                      outlined
-                      :hide-details="true"
-                      type="text"
-                      v-model="customer.car_no"
-                    ></v-text-field>
+                    <v-text-field dense label="Car Number" outlined :hide-details="true" type="text"
+                      v-model="customer.car_no"></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col md="6" cols="12" sm="12">
-                    <v-textarea
-                      rows="3"
-                      label="Address"
-                      v-model="customer.address"
-                      outlined
-                      :hide-details="true"
-                    ></v-textarea>
+                    <v-textarea rows="3" label="Address" v-model="customer.address" outlined
+                      :hide-details="true"></v-textarea>
                   </v-col>
                   <v-col md="6">
-                    <v-textarea
-                      rows="3"
-                      label="Customer Request"
-                      v-model="room.request"
-                      :hide-details="true"
-                      outlined
-                    ></v-textarea>
+                    <v-textarea rows="3" label="Customer Request" v-model="room.request" :hide-details="true"
+                      outlined></v-textarea>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col md="3" sm="12" cols="12" dense>
-                    <v-select
-                      v-model="room.type"
-                      label="Source Type *"
-                      :items="types"
-                      dense
-                      outlined
-                      @change="getType(room.type)"
-                      :hide-details="errors && !errors.type"
-                      :error="errors && errors.type"
-                      :error-messages="
-                        errors && errors.type ? errors.type[0] : ''
-                      "
-                    ></v-select>
+                    <v-select v-model="room.type" label="Source Type *" :items="types" dense outlined
+                      @change="getType(room.type)" :hide-details="errors && !errors.type" :error="errors && errors.type"
+                      :error-messages="errors && errors.type ? errors.type[0] : ''
+                        "></v-select>
                   </v-col>
                   <v-col md="3" cols="12" sm="12" v-if="isAgent">
-                    <v-select
-                      dense
-                      label="Agent Name"
-                      outlined
-                      :items="agentList"
-                      type="text"
-                      @change="get_gst(room.source, 'agent')"
-                      item-value="name"
-                      item-text="name"
-                      v-model="room.source"
-                      :hide-details="errors && !errors.source"
-                      :error="errors && errors.source"
-                      :error-messages="
-                        errors && errors.source ? errors.source[0] : ''
-                      "
-                    ></v-select>
+                    <v-select dense label="Agent Name" outlined :items="agentList" type="text"
+                      @change="get_gst(room.source, 'agent')" item-value="name" item-text="name" v-model="room.source"
+                      :hide-details="errors && !errors.source" :error="errors && errors.source" :error-messages="errors && errors.source ? errors.source[0] : ''
+                        "></v-select>
                   </v-col>
                   <v-col md="3" sm="12" cols="12" dense v-if="isOnline">
-                    <v-select
-                      v-model="room.source"
-                      label="Source"
-                      :items="sources"
-                      dense
-                      @change="get_gst(room.source, 'online')"
-                      outlined
-                      item-value="name"
-                      item-text="name"
-                      :hide-details="errors && !errors.source"
-                      :error="errors && errors.source"
-                      :error-messages="
-                        errors && errors.source ? errors.source[0] : ''
-                      "
-                    ></v-select>
+                    <v-select v-model="room.source" label="Source" :items="sources" dense
+                      @change="get_gst(room.source, 'online')" outlined item-value="name" item-text="name"
+                      :hide-details="errors && !errors.source" :error="errors && errors.source" :error-messages="errors && errors.source ? errors.source[0] : ''
+                        "></v-select>
                   </v-col>
                   <v-col md="3" sm="12" cols="12" dense v-if="isCorporate">
-                    <v-select
-                      v-model="room.source"
-                      label="Corporate"
-                      :items="CorporateList"
-                      dense
-                      outlined
-                      @change="get_gst(room.source, 'corporate')"
-                      item-value="name"
-                      item-text="name"
-                      :hide-details="errors && !errors.source"
-                      :error="errors && errors.source"
-                      :error-messages="
-                        errors && errors.source ? errors.source[0] : ''
-                      "
-                    ></v-select>
+                    <v-select v-model="room.source" label="Corporate" :items="CorporateList" dense outlined
+                      @change="get_gst(room.source, 'corporate')" item-value="name" item-text="name"
+                      :hide-details="errors && !errors.source" :error="errors && errors.source" :error-messages="errors && errors.source ? errors.source[0] : ''
+                        "></v-select>
                   </v-col>
-                  <v-col
-                    md="3"
-                    cols="12"
-                    sm="12"
-                    v-if="isAgent || isOnline || isCorporate"
-                  >
-                    <v-text-field
-                      label="Reference Number"
-                      dense
-                      outlined
-                      type="text"
-                      v-model="room.reference_no"
-                      :hide-details="errors && !errors.reference_no"
-                      :error="errors && errors.reference_no"
-                      :error-messages="
-                        errors && errors.reference_no
-                          ? errors.reference_no[0]
-                          : ''
-                      "
-                    ></v-text-field>
+                  <v-col md="3" cols="12" sm="12" v-if="isAgent || isOnline || isCorporate">
+                    <v-text-field label="Reference Number" dense outlined type="text" v-model="room.reference_no"
+                      :hide-details="errors && !errors.reference_no" :error="errors && errors.reference_no"
+                      :error-messages="errors && errors.reference_no
+                        ? errors.reference_no[0]
+                        : ''
+                        "></v-text-field>
                   </v-col>
-                  <v-col
-                    md="3"
-                    sm="12"
-                    cols="12"
-                    dense
-                    v-if="isAgent || isOnline || isCorporate"
-                  >
-                    <v-select
-                      v-model="room.paid_by"
-                      label="Paid Type"
-                      :items="[
-                        { name: 'Paid at Hotel', value: '1' },
-                        { name: 'Paid by Agents', value: '2' },
-                      ]"
-                      dense
-                      outlined
-                      item-value="value"
-                      item-text="name"
-                      :hide-details="errors && !errors.paid_by"
-                      :error="errors && errors.paid_by"
-                      :error-messages="
-                        errors && errors.paid_by ? errors.paid_by[0] : ''
-                      "
-                    ></v-select>
+                  <v-col md="3" sm="12" cols="12" dense v-if="isAgent || isOnline || isCorporate">
+                    <v-select v-model="room.paid_by" label="Paid Type" :items="[
+                      { name: 'Paid at Hotel', value: '1' },
+                      { name: 'Paid by Agents', value: '2' },
+                    ]" dense outlined item-value="value" item-text="name" :hide-details="errors && !errors.paid_by"
+                      :error="errors && errors.paid_by" :error-messages="errors && errors.paid_by ? errors.paid_by[0] : ''
+                        "></v-select>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -466,11 +236,7 @@
                           {{ temp.room_type || "---" }}
                         </h4>
                         <div>
-                          <v-btn
-                            color="primary"
-                            @click="get_available_rooms"
-                            small
-                          >
+                          <v-btn color="primary" @click="get_available_rooms" small>
                             <v-icon color="white" small>mdi-plus</v-icon>
                             Add Room
                           </v-btn>
@@ -483,151 +249,92 @@
                       <div class="mt-3">
                         <v-row>
                           <v-col md="4" sm="12" cols="12" dense>
-                            <label class="col-form-label"
-                              >Adult <span class="text-danger">*</span>
+                            <label class="col-form-label">Adult <span class="text-danger">*</span>
                             </label>
 
                             <div class="wrapper">
-                              <span
-                                class="minus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'adult',
-                                    temp.no_of_adult == 0
-                                      ? 0
-                                      : --temp.no_of_adult
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_adult < 1 || temp.no_of_adult
-                                "
-                                >-</span
-                              >
+                              <span class="minus" @mouseup="
+                                get_food_price_cal(
+                                  'adult',
+                                  temp.no_of_adult == 0
+                                    ? 0
+                                    : --temp.no_of_adult
+                                )
+                                " @click="
+    temp.no_of_adult < 1 || temp.no_of_adult
+    ">-</span>
                               <span class="num">{{ temp.no_of_adult }}</span>
-                              <span
-                                class="plus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'adult',
-                                    temp.no_of_adult < 4
-                                      ? ++temp.no_of_adult
-                                      : 4
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_adult > 3 || temp.no_of_adult
-                                "
-                                >+</span
-                              >
+                              <span class="plus" @mouseup="
+                                get_food_price_cal(
+                                  'adult',
+                                  temp.no_of_adult < 4
+                                    ? ++temp.no_of_adult
+                                    : 4
+                                )
+                                " @click="
+    temp.no_of_adult > 3 || temp.no_of_adult
+    ">+</span>
                             </div>
                           </v-col>
                           <v-col md="4" sm="12" cols="12" dense>
                             <label class="col-form-label">Child </label>
                             <div class="wrapper">
-                              <span
-                                class="minus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'child',
-                                    temp.no_of_child == 0
-                                      ? 0
-                                      : --temp.no_of_child
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_child < 1 || temp.no_of_child
-                                "
-                                >-</span
-                              >
+                              <span class="minus" @mouseup="
+                                get_food_price_cal(
+                                  'child',
+                                  temp.no_of_child == 0
+                                    ? 0
+                                    : --temp.no_of_child
+                                )
+                                " @click="
+    temp.no_of_child < 1 || temp.no_of_child
+    ">-</span>
                               <span class="num">{{ temp.no_of_child }}</span>
-                              <span
-                                class="plus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'child',
-                                    temp.no_of_child < 3
-                                      ? ++temp.no_of_child
-                                      : 3
-                                  )
-                                "
-                                @click="
-                                  temp.no_of_child > 1 || temp.no_of_child
-                                "
-                                >+</span
-                              >
+                              <span class="plus" @mouseup="
+                                get_food_price_cal(
+                                  'child',
+                                  temp.no_of_child < 3
+                                    ? ++temp.no_of_child
+                                    : 3
+                                )
+                                " @click="
+    temp.no_of_child > 1 || temp.no_of_child
+    ">+</span>
                             </div>
                           </v-col>
                           <v-col md="4" sm="12" cols="12" dense>
                             <label class="col-form-label">Baby </label>
                             <div class="wrapper">
-                              <span
-                                class="minus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'baby',
-                                    temp.no_of_baby == 0 ? 0 : --temp.no_of_baby
-                                  )
-                                "
-                                @click="temp.no_of_baby < 1 || temp.no_of_baby"
-                                >-</span
-                              >
+                              <span class="minus" @mouseup="
+                                get_food_price_cal(
+                                  'baby',
+                                  temp.no_of_baby == 0 ? 0 : --temp.no_of_baby
+                                )
+                                " @click="temp.no_of_baby < 1 || temp.no_of_baby">-</span>
                               <span class="num">{{ temp.no_of_baby }}</span>
-                              <span
-                                class="plus"
-                                @mouseup="
-                                  get_food_price_cal(
-                                    'baby',
-                                    temp.no_of_baby < 1 ? ++temp.no_of_baby : 1
-                                  )
-                                "
-                                @click="temp.no_of_baby > 1 || temp.no_of_baby"
-                                >+</span
-                              >
+                              <span class="plus" @mouseup="
+                                get_food_price_cal(
+                                  'baby',
+                                  temp.no_of_baby < 1 ? ++temp.no_of_baby : 1
+                                )
+                                " @click="temp.no_of_baby > 1 || temp.no_of_baby">+</span>
                             </div>
                           </v-col>
 
-                          <v-col
-                            md="12"
-                            sm="12"
-                            cols="12"
-                            dense
-                            class="mb-0 pb-0 d-flex justify-center"
-                          >
+                          <v-col md="12" sm="12" cols="12" dense class="mb-0 pb-0 d-flex justify-center">
                             <v-radio-group row dense class="py-0 my-0">
-                              <v-checkbox
-                                v-model="temp.breakfast"
-                                label="Breakfast"
-                                value="breakfast"
-                                class="px-3 py-0 my-0"
-                                @change="meal_cal(temp.breakfast)"
-                                :hide-details="true"
-                              >
+                              <v-checkbox v-model="temp.breakfast" label="Breakfast" value="breakfast"
+                                class="px-3 py-0 my-0" @change="meal_cal(temp.breakfast)" :hide-details="true">
                               </v-checkbox>
-                              <v-checkbox
-                                v-model="temp.lunch"
-                                label="Lunch"
-                                value="lunch"
-                                class="px-3 py-0 my-0"
-                                @change="meal_cal(temp.lunch)"
-                                :hide-details="true"
-                              >
+                              <v-checkbox v-model="temp.lunch" label="Lunch" value="lunch" class="px-3 py-0 my-0"
+                                @change="meal_cal(temp.lunch)" :hide-details="true">
                               </v-checkbox>
-                              <v-checkbox
-                                v-model="temp.dinner"
-                                label="Dinner"
-                                value="dinner"
-                                class="px-3 py-0 my-0"
-                                @change="meal_cal(temp.dinner)"
-                                :hide-details="true"
-                              >
+                              <v-checkbox v-model="temp.dinner" label="Dinner" value="dinner" class="px-3 py-0 my-0"
+                                @change="meal_cal(temp.dinner)" :hide-details="true">
                               </v-checkbox>
                             </v-radio-group>
                           </v-col>
-                          <v-col
-                            md="12"
-                            cols="12"
-                            class="mt-0 pt-0 d-flex justify-center"
-                          >
+                          <v-col md="12" cols="12" class="mt-0 pt-0 d-flex justify-center">
                             <table class="styled-table" style="width: 100%">
                               <thead>
                                 <tr>
@@ -666,15 +373,8 @@
                             </table>
                           </v-col>
                           <!-- </v-row> -->
-                          <v-col
-                            md="12"
-                            cols="12"
-                            class="d-flex py-0 my-0 justify-center"
-                          >
-                            <table
-                              class="styled-table py-0 my-0"
-                              style="width: 100%"
-                            >
+                          <v-col md="12" cols="12" class="d-flex py-0 my-0 justify-center">
+                            <table class="styled-table py-0 my-0" style="width: 100%">
                               <thead>
                                 <tr>
                                   <th>Date</th>
@@ -686,10 +386,7 @@
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr
-                                  v-for="(item, index) in temp.priceList"
-                                  :key="index"
-                                >
+                                <tr v-for="(item, index) in temp.priceList" :key="index">
                                   <td>
                                     {{ item.date }}
                                   </td>
@@ -724,7 +421,7 @@
                               </tbody>
                             </table>
                           </v-col>
-                          <v-col md="12">
+                          <!-- <v-col md="12">
                             <v-divider color="#4390FC"></v-divider>
                             <div class="d-flex justify-space-around py-3">
                               <span>
@@ -744,10 +441,38 @@
                                 {{
                                   convert_decimal(
                                     parseFloat(temp.room_extra_amount) +
-                                      parseFloat(temp.price) +
-                                      parseFloat(-temp.room_discount)
+                                    parseFloat(temp.price) +
+                                    parseFloat(-temp.room_discount)
                                   )
                                 }}
+                              </span>
+                            </div>
+                            <v-divider color="#4390FC"></v-divider>
+                          </v-col> -->
+                          <v-col md="12">
+                            <v-divider color="#4390FC"></v-divider>
+                            <div class="d-flex justify-space-around py-3">
+                              <span>
+                                <b>Room Price </b>:
+                                {{ (temp.priceList && temp.priceList[0].room_price) }}
+                              </span>
+                              <span>
+                                <b>Discount</b>:
+                                {{ convert_decimal(temp.room_discount) }}
+                              </span>
+                              <span>
+                                <b>Total</b>:
+                                {{ convert_decimal(temp.priceList && temp.priceList[0].room_price -
+                                  parseInt(temp.room_discount)) }}
+                              </span>
+
+                              <span>
+                                <b>Tax ({{ gst_calculation.recal_gst_percentage }}%)</b>:
+                                {{ convert_decimal(gst_calculation.recal_gst_total) }}
+                              </span>
+                              <span>
+                                <b>Final</b>:
+                                {{ convert_decimal(gst_calculation.recal_final) }}
                               </span>
                             </div>
                             <v-divider color="#4390FC"></v-divider>
@@ -952,89 +677,36 @@
                             <label class="col-form-label">
                               Discount/Extra
                             </label>
-                            <v-select
-                              v-model="extraPayType"
-                              :items="['Discount', 'ExtraAmount']"
-                              dense
-                              :hide-details="true"
-                              outlined
-                            ></v-select>
+                            <v-select v-model="extraPayType" :items="['Discount', 'ExtraAmount']" dense
+                              :hide-details="true" outlined></v-select>
                           </v-col>
-                          <v-col
-                            md="4"
-                            sm="12"
-                            cols="12"
-                            dense
-                            v-if="extraPayType == 'Discount'"
-                          >
+                          <v-col md="4" sm="12" cols="12" dense v-if="extraPayType == 'Discount'">
                             <label class="col-form-label">
                               Discount Amount
                             </label>
-                            <v-text-field
-                              dense
-                              outlined
-                              type="number"
-                              v-model="temp.room_discount"
-                              :hide-details="true"
-                            ></v-text-field>
+                            <v-text-field dense outlined type="number" v-model="temp.room_discount" :hide-details="true"
+                              @keyup="updateDiscount(temp)"></v-text-field>
                           </v-col>
-                          <v-col
-                            md="4"
-                            sm="12"
-                            cols="12"
-                            dense
-                            v-if="extraPayType == 'Discount'"
-                          >
+                          <v-col md="4" sm="12" cols="12" dense v-if="extraPayType == 'Discount'">
                             <label class="col-form-label"> Reason </label>
-                            <v-text-field
-                              dense
-                              outlined
-                              type="text"
-                              v-model="temp.discount_reason"
-                              :hide-details="true"
-                            ></v-text-field>
+                            <v-text-field dense outlined type="text" v-model="temp.discount_reason"
+                              :hide-details="true"></v-text-field>
                           </v-col>
-                          <v-col
-                            md="4"
-                            sm="12"
-                            cols="12"
-                            dense
-                            v-if="extraPayType == 'ExtraAmount'"
-                          >
+                          <v-col md="4" sm="12" cols="12" dense v-if="extraPayType == 'ExtraAmount'">
                             <label class="col-form-label"> Extra Amount </label>
-                            <v-text-field
-                              dense
-                              outlined
-                              type="number"
-                              v-model="temp.room_extra_amount"
-                              :hide-details="true"
-                            ></v-text-field>
+                            <v-text-field dense outlined type="number" v-model="temp.room_extra_amount"
+                              :hide-details="true"></v-text-field>
                           </v-col>
-                          <v-col
-                            md="4"
-                            sm="12"
-                            cols="12"
-                            dense
-                            v-if="extraPayType == 'ExtraAmount'"
-                          >
+                          <v-col md="4" sm="12" cols="12" dense v-if="extraPayType == 'ExtraAmount'">
                             <label class="col-form-label"> Reason </label>
-                            <v-text-field
-                              dense
-                              outlined
-                              type="text"
-                              v-model="temp.extra_amount_reason"
-                              :hide-details="true"
-                            ></v-text-field>
+                            <v-text-field dense outlined type="text" v-model="temp.extra_amount_reason"
+                              :hide-details="true"></v-text-field>
                           </v-col>
                         </v-row>
 
                         <v-row>
                           <v-col md="12">
-                            <v-btn
-                              @click="add_room"
-                              class="float-right"
-                              color="primary"
-                            >
+                            <v-btn @click="add_room" class="float-right" color="primary">
                               Confirm Room
                             </v-btn>
                           </v-col>
@@ -1072,25 +744,14 @@
       </v-col>
 
       <v-col md="4">
-        <v-tabs
-          color="primary"
-          v-model="activeSummaryTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
+        <v-tabs color="primary" v-model="activeSummaryTab" :vertical="vertical" background-color="primary" dark
+          show-arrows>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-list-box-outline </v-icon>
           </v-tab>
 
-          <v-tab
-            class="p-0 m-0"
-            active-class="active-link"
-            style="min-width: 10px !important"
-            v-for="(item, index) in selectedRooms"
-            :key="index"
-          >
+          <v-tab class="p-0 m-0" active-class="active-link" style="min-width: 10px !important"
+            v-for="(item, index) in selectedRooms" :key="index">
             <small>
               {{ item && item.room_no }}
             </small>
@@ -1104,13 +765,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Name
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ customer.first_name || "---" }}
                   </div>
                 </div>
@@ -1118,13 +774,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Contact
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ customer.contact_no || "---" }}
                   </div>
                 </div>
@@ -1132,13 +783,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Check In
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ temp.check_in || "---" }} 12:00 PM
                   </div>
                 </div>
@@ -1146,13 +792,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Check Out
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ temp.check_out || "---" }} 11:00 AM
                   </div>
                 </div>
@@ -1160,13 +801,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Days
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ getDays() }}
                   </div>
                 </div>
@@ -1174,13 +810,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     No. Rooms
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ selectedRooms.length || 0 }}
                   </div>
                 </div>
@@ -1243,13 +874,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(room.total_price) }}
                   </div>
                 </div>
@@ -1257,13 +883,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Advance Payment
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ room.advance_price }}
                   </div>
                 </div>
@@ -1271,35 +892,18 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     <strong>Balance Amount</strong>
                   </span>
-                  <div
-                    type="text"
-                    class="form-control red--text"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control red--text" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     <strong>{{ convert_decimal(room.remaining_price) }}</strong>
                   </div>
                 </div>
                 <div class="input-group input-group-sm px-3 mb-5">
-                  <v-btn
-                    style="background-color: #4390fc; margin-right: 5px"
-                    width="50%"
-                    height="40"
-                    @click="advanceDialog = true"
-                    dark
-                  >
+                  <v-btn style="background-color: #4390fc; margin-right: 5px" width="50%" height="40"
+                    @click="advanceDialog = true" dark>
                     Pay
                   </v-btn>
-                  <v-btn
-                    style="background-color: #5fafa3"
-                    width="50%"
-                    height="40"
-                    @click="store"
-                    :loading="subLoad"
-                    dark
-                    >Book</v-btn
-                  >
+                  <v-btn style="background-color: #5fafa3" width="50%" height="40" @click="store" :loading="subLoad"
+                    dark>Book</v-btn>
                 </div>
               </section>
             </v-card>
@@ -1308,10 +912,7 @@
 
           <v-tab-item v-for="(item, index) in selectedRooms" :key="index">
             <v-card flat>
-              <div
-                class="px-5 pt-2 d-flex justify-space-between"
-                style="font-size: 16px; color: #aaaaaa"
-              >
+              <div class="px-5 pt-2 d-flex justify-space-between" style="font-size: 16px; color: #aaaaaa">
                 <span> Room - {{ item.room_no }}</span>
                 <span> {{ item.room_type }}</span>
               </div>
@@ -1370,13 +971,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Amount
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.price) }}
                   </div>
                 </div>
@@ -1385,13 +981,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Discount
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.room_discount) }}
                   </div>
                 </div>
@@ -1400,13 +991,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Extra Amount
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.room_extra_amount) }}
                   </div>
                 </div>
@@ -1414,13 +1000,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     After Dis.
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.after_discount) }}
                   </div>
                 </div>
@@ -1428,13 +1009,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     GST
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.room_tax) }}
                   </div>
                 </div>
@@ -1456,13 +1032,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Adult Food
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.tot_adult_food) }}
                   </div>
                 </div>
@@ -1470,13 +1041,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Child Food
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.tot_child_food) }}
                   </div>
                 </div>
@@ -1484,13 +1050,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total Food
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{
                       convert_decimal(item.tot_adult_food + item.tot_child_food)
                     }}
@@ -1500,13 +1061,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Grand Total
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.total) }}
                   </div>
                 </div>
@@ -1515,13 +1071,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Discount Reason
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ item.discount_reason || "---" }}
                   </div>
                 </div>
@@ -1530,13 +1081,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Amount Reason
                   </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
+                  <div type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ item.extra_amount_reason || "---" }}
                   </div>
                 </div>
@@ -1555,17 +1101,10 @@
         <v-card-text>
           <v-row>
             <v-col md="12" cols="12" sm="12">
-              <label class="col-form-label"
-                >Search By Mobile Number
+              <label class="col-form-label">Search By Mobile Number
                 <span class="text-danger">*</span>
               </label>
-              <v-text-field
-                dense
-                outlined
-                type="text"
-                v-model="search.mobile"
-                :hide-details="true"
-              ></v-text-field>
+              <v-text-field dense outlined type="text" v-model="search.mobile" :hide-details="true"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -1591,140 +1130,76 @@
         <v-card-text>
           <v-row class="px-5 mt-2">
             <div class="input-group input-group-sm px-3">
-              <span
-                class="input-group-text"
-                id="inputGroup-sizing-sm"
-                style="width: 220px !important; color: black !important"
-              >
-                <v-autocomplete
-                  v-model="room.payment_mode_id"
-                  :items="[
-                    { id: 1, name: 'Cash' },
-                    { id: 2, name: 'Card' },
-                    { id: 3, name: 'Online' },
-                    { id: 4, name: 'Bank' },
-                    { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                  ]"
-                  cache-items
-                  item-text="name"
-                  item-value="id"
-                  class="ma-0 pa-0"
-                  dense
-                  flat
-                  hide-no-data
-                  hide-details
-                  solo
-                  elevation="0"
-                  background-color="#E9ECEF"
-                  style="color: black !important"
-                >
+              <span class="input-group-text" id="inputGroup-sizing-sm"
+                style="width: 220px !important; color: black !important">
+                <v-autocomplete v-model="room.payment_mode_id" :items="[
+                  { id: 1, name: 'Cash' },
+                  { id: 2, name: 'Card' },
+                  { id: 3, name: 'Online' },
+                  { id: 4, name: 'Bank' },
+                  { id: 5, name: 'UPI' },
+                  { id: 6, name: 'Cheque' },
+                ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data hide-details
+                  solo elevation="0" background-color="#E9ECEF" style="color: black !important">
                 </v-autocomplete>
               </span>
-              <input
-                type="number"
-                class="form-control"
-                aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm"
-                style="height: 48px"
-                @keyup="runAllFunctions"
-                :disabled="room.paid_by == '2' ? true : false"
-                v-model="room.advance_price"
-              />
+              <input type="number" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
+                :disabled="room.paid_by == '2' ? true : false" v-model="room.advance_price" />
             </div>
 
-            <div
-              class="input-group input-group-sm px-3"
-              v-if="room.payment_mode_id != 1"
-            >
-              <span
-                class="input-group-text"
-                id="inputGroup-sizing-sm"
-                style="width: 220px !important"
-              >
+            <div class="input-group input-group-sm px-3" v-if="room.payment_mode_id != 1">
+              <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 220px !important">
                 Reference No
               </span>
-              <input
-                v-model="room.reference_number"
-                type="text"
-                class="form-control"
-                aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm"
-                style="height: 39px"
-              />
+              <input v-model="room.reference_number" type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm" style="height: 39px" />
             </div>
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            @click="
-              (e) => {
-                selectedRooms.length > 0
-                  ? (advanceDialog = false)
-                  : alert('oops', 'Select room');
-              }
-            "
-          >
+          <v-btn color="primary" @click="(e) => {
+            selectedRooms.length > 0
+              ? (advanceDialog = false)
+              : alert('oops', 'Select room');
+          }
+            ">
             Pay
             <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-navigation-drawer
-      v-model="RoomDrawer"
-      temporary
-      right
-      :fixed="true"
-      :clipped="true"
-      style="z-index: 1000"
-    >
+    <v-navigation-drawer v-model="RoomDrawer" temporary right :fixed="true" :clipped="true" style="z-index: 1000">
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title>Available Rooms</v-list-item-title>
           <v-list-item-title>
-            <v-text-field
-              label="Search..."
-              outlined
-              dense
-              class="mt-3"
-              v-model="search_available_room"
-              @keyup="searchAvailableRoom(search_available_room)"
-            ></v-text-field>
+            <v-text-field label="Search..." outlined dense class="mt-3" v-model="search_available_room"
+              @keyup="searchAvailableRoom(search_available_room)"></v-text-field>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <!-- :color="item.background" -->
-      <v-alert
-        style="border-bottom: 1px solid rgba(0, 0, 0, 0.2)"
-        :style="index == 1 ? 'border-top:1px solid rgba(0, 0, 0, 0.2);' : ''"
-        border="left"
-        colored-border
-        :color="item.background"
-        elevation="0"
-        rounded="0"
-        dense
-        class="my-0 py-0"
-        v-for="(item, index) in availableRooms"
-        :key="index"
-      >
+      <v-alert style="border-bottom: 1px solid rgba(0, 0, 0, 0.2)"
+        :style="index == 1 ? 'border-top:1px solid rgba(0, 0, 0, 0.2);' : ''" border="left" colored-border
+        :color="item.background" elevation="0" rounded="0" dense class="my-0 py-0" v-for="(item, index) in availableRooms"
+        :key="index">
         <v-row dense>
           <v-col md="6" dense>
             <b class="pt-3">{{ item.room_no }}</b>
             <p>{{ item && item.room_type && item.room_type.name }}</p>
           </v-col>
           <v-col md="6" dense>
-            <v-btn class="mt-3" @click="selectRoom(item)" small color="primary"
-              >Select</v-btn
-            >
+            <v-btn class="mt-3" @click="selectRoom(item)" small color="primary">Select</v-btn>
           </v-col>
         </v-row>
       </v-alert>
     </v-navigation-drawer>
   </div>
+  <NoAccess v-else />
 </template>
 <script>
 import History from "../../components/customer/History.vue";
@@ -1870,8 +1345,15 @@ export default {
         tot_child_food: 0,
         discount_reason: "",
         priceList: [],
-      },
 
+
+      },
+      gst_calculation: {
+        recal_basePrice: 0,
+        recal_gst_percentage: 0,
+        recal_gst_total: 0,
+        recal_final: 0,
+      },
       check_in_menu: false,
       check_out_menu: false,
       upload: {
@@ -2031,6 +1513,22 @@ export default {
     },
   },
   methods: {
+
+    updateDiscount(temp) {
+
+
+
+      let finalDisplayPrice = parseFloat(temp.price) +
+        parseFloat(-temp.room_discount);
+      this.$axios.get('get_re_calculate_price/' + finalDisplayPrice, null).then(({ data }) => {
+
+        this.gst_calculation.recal_basePrice = data.basePrice;
+        this.gst_calculation.recal_final = data.basePrice + data.gstAmount;
+        this.gst_calculation.recal_gst_total = data.gstAmount;
+        this.gst_calculation.recal_gst_percentage = data.tax;
+      });
+
+    },
     nextTab() {
       // if (this.activeTab) {
       this.activeTab += 1;
@@ -2280,6 +1778,8 @@ export default {
     },
 
     convert_decimal(n) {
+
+
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
@@ -2586,9 +2086,8 @@ export default {
       this.temp.room_discount =
         this.temp.room_discount == "" ? 0 : this.temp.room_discount;
 
-      this.temp.meal = `${this.temp.breakfast || "---"} | ${
-        this.temp.lunch || "---"
-      } | ${this.temp.dinner || "---"}`;
+      this.temp.meal = `${this.temp.breakfast || "---"} | ${this.temp.lunch || "---"
+        } | ${this.temp.dinner || "---"}`;
 
       delete this.temp.check_in_menu;
       delete this.temp.check_out_menu;
@@ -2765,6 +2264,7 @@ export default {
 
     can(per) {
       let u = this.$auth.user;
+      if (!u.permissions) return false;
       return (
         (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
@@ -2830,7 +2330,7 @@ export default {
           } else {
             this.store_document(data.data);
             this.alert("Success!", "Successfully room added", "success");
-            this.$router.push(`/`);
+            this.$router.push('/');
           }
         })
         .catch((e) => console.log(e));
@@ -2860,183 +2360,3 @@ export default {
 };
 </script>
 
-<style>
-.wrapper {
-  height: 40px;
-  width: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  border-radius: 5px;
-  border: 1px solid rgb(145, 140, 140);
-}
-
-.wrapper span {
-  width: 100%;
-  text-align: center;
-  font-size: 25px;
-  font-weight: normal;
-  cursor: pointer;
-  user-select: none;
-}
-
-.wrapper span.num {
-  font-size: 20px;
-  border-right: 2px solid rgba(0, 0, 0, 0.2);
-  border-left: 2px solid rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-}
-
-fieldset {
-  background-color: white !important;
-}
-
-.payment-table table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.payment-table td,
-th {
-  text-align: left;
-  padding: 7px;
-}
-
-/* .food-table table {
-  border: 1px solid #a0a0a0 !important;
-  border-collapse: collapse;
-  padding: 100px;
-  text-align: right;
-}
-
-.food-table th,
-td {
-  border: 1px solid #a0a0a0 !important;
-  padding: 8px 50px;
-  text-align: right;
-} */
-
-/* .food-table {
-  border: 1px solid #a0a0a0 !important;
-  border-collapse: collapse;
-  width: 250px;
-  text-align: right;
-  padding: 0 5px;
-} */
-
-.input-group {
-  display: flex;
-  align-items: center;
-  margin: 2px 0px !important;
-  padding: 0px 0px !important;
-}
-
-.input-group-sm {
-  width: 100%;
-}
-
-.input-group-text {
-  background-color: #e9ecef;
-  border-color: #e9ecef;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.9;
-  /* border-radius: 0.25rem; */
-  text-align: left;
-  width: 150px;
-}
-
-.form-control {
-  height: calc(1.5em + 0.75rem + 2px);
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #495057;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  width: 100%;
-}
-
-.mb-3 {
-  margin-bottom: 1rem;
-}
-
-.payment-section .input-group-text {
-  background-color: #e9ecef;
-  border-color: #e9ecef;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.9;
-  /* border-radius: 0.25rem; */
-  text-align: left;
-  width: 350px;
-}
-
-.payment-section .form-control {
-  height: calc(1.5em + 0.75rem + 2px);
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #495057;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-  /* border-radius: 0.25rem; */
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  width: 100%;
-  text-align: right;
-}
-
-.active-link {
-  background-color: #1259a7;
-}
-
-input[type="number"]:focus.form-control {
-  /* border: 2px solid #5fafa3 !important; */
-  border-color: #4390fc;
-  outline: none;
-}
-
-/* ======================== */
-.styled-table {
-  border-collapse: collapse;
-  margin: 25px 0;
-  font-size: 0.9em;
-  font-family: sans-serif;
-  min-width: 400px;
-}
-
-.styled-table thead tr {
-  background-color: #4390fc;
-  color: #ffffff;
-  text-align: left;
-}
-
-.styled-table th,
-.styled-table td {
-  padding: 5px 15px;
-}
-
-.styled-table tbody tr {
-  border-bottom: 1px solid #dddddd;
-}
-
-.styled-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-
-.styled-table tbody tr:last-of-type {
-  border-bottom: 2px solid #4390fc;
-}
-
-.styled-table tbody tr.active-row {
-  font-weight: bold;
-  color: #4390fc;
-}
-</style>

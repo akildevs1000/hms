@@ -795,7 +795,8 @@
                       {{ item.amount_with_tax || "---" }}
                     </td>
                     <td class="text-center">
-                      <v-icon x-small color="accent" @click="cancelPosting(item)" class="mr-2">
+                      <v-icon v-if="can('accounts_posting_delete')"> x-small color="accent" @click="cancelPosting(item)"
+                        class="mr-2">
                         mdi-delete
                       </v-icon>
                     </td>
@@ -807,7 +808,7 @@
               <v-card flat>
                 <v-row>
                   <v-col md="12" class="mt-2 text-right">
-                    <v-btn small class="elevation-0" color="#ECF0F4" @click="get_payment()" v-if="can()">
+                    <v-btn small class="elevation-0" color="#ECF0F4" @click="get_payment()">
                       Transaction
                       <v-icon right>mdi mdi-cash-sync</v-icon>
                     </v-btn>
@@ -979,13 +980,10 @@ export default {
       return dataTime;
     },
 
-    can() {
-      return this.$auth.user.user_type == "company" ? true : false;
-
+    can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

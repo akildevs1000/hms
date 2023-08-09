@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('accounts_posting_access') && can('accounts_posting_view')">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -189,6 +189,7 @@
       </v-col>
     </v-row>
   </div>
+  <NoAccess v-else />
 </template>
 <script>
 import CustomFilter from "../components/filter/CustomFilter.vue";
@@ -276,12 +277,10 @@ export default {
   },
 
   methods: {
-    can(permission) {
-      let user = this.$auth;
-      return;
+    can(per) {
+      let u = this.$auth.user;
       return (
-        (user && user.permissions.some((e) => e.permission == permission)) ||
-        user.master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
     caps(str) {

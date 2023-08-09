@@ -1,14 +1,15 @@
 <template>
-  <div v-if="can(`assign_permission_access`)">
+  <div v-if="can(`settings_permissions_access`) && can('settings_permissions_view')">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row class="mt-5 mb-5">
+    <v-row class=" ">
       <v-col cols="6">
         <h3>{{ Module }}</h3>
-        <div>Dashboard / {{ Module }}</div>
+        <div>Dashboard / {{ Module }}
+        </div>
       </v-col>
       <v-col cols="6">
         <div class="text-right">
@@ -20,77 +21,112 @@
             @click="delteteSelectedRecords"
             >Delete Selected Records</v-btn
           > -->
+          <v-btn v-if="can(`settings_permissions_create`)" small color="primary" to="/assign_permission/create"
+            class="mb-2">Assign New Permision +</v-btn>
 
-          <v-btn
-            v-if="can(`assign_permission_create`)"
-            small
-            color="primary"
-            to="/assign_permission/create"
-            class="mb-2"
-            >{{ Module }} +</v-btn
-          >
         </div>
       </v-col>
     </v-row>
 
     <v-row>
       <v-col md="12">
-        <v-card elevation="0">
-          <div v-for="(item, index) in data" :key="index">
-            <v-toolbar class="rounded-md" color="background" dense flat dark>
-              <span> {{ item.role && item.role.name }}</span>
-            </v-toolbar>
-            <table class="mb-15">
-              <tr style="text-align:center; ">
-                <th style="width:600px; padding: 5px 0 !important">
-                  Module
-                </th>
-                <th>Access</th>
-                <th>View</th>
-                <th>Create</th>
-                <th>Edit</th>
-                <th>Delete</th>
-              </tr>
-              <tr v-for="(items, idx) in permissions" :key="idx">
-                <th class="ps-3">{{ capsTitle(idx) }}</th>
-                <th
-                  v-for="(pa, idx) in items"
-                  :key="idx"
-                  style="text-align:center !important;"
-                  class=""
-                >
-                  <v-checkbox
-                    :value="pa.id"
-                    v-model="item.permission_ids"
-                    :hide-details="true"
-                    class="pt-0  py-1 chk-align"
-                  >
-                  </v-checkbox>
-                </th>
-              </tr>
-              <v-btn
-                v-if="can(`assign_permission_edit`)"
-                dark
-                small
-                color="primary"
-                class="mx-1 my-4"
-                @click="save(item)"
-              >
-                Submit
-              </v-btn>
-              <v-btn
-                v-if="can(`assign_permission_delete`)"
-                dark
-                small
-                color="error"
-                class="mx-1 my-4"
-                @click="deleteItem(item)"
-              >
-                Delete
-              </v-btn>
-            </table>
-          </div>
+        <v-row>
+          <v-col md="4">
+            <span>Select/Change the Role</span>
+            <v-select :rules="Rules" v-model="role_id" :items="roles" item-value="id" item-text="name"
+              placeholder="Select Role" outlined dense @change="getDataFromApi()"></v-select>
+            <span v-if="errors && errors.role_id" class="red--text">
+              {{ errors.role_id[0] }}
+            </span>
+          </v-col>
+        </v-row>
+        <v-card class="mb-5" elevation="0" v-for="(item, index) in  data " :key="index">
+
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <v-toolbar-title><span> {{ item.role && capsTitle(item.role.name) }}</span></v-toolbar-title>
+
+
+            <v-spacer></v-spacer>
+
+            <v-tooltip v-if="can(`settings_permissions_create`)" top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" to="/assign_permission/create">
+                  <v-icon dark white>mdi-plus-circle</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ Module }} </span>
+            </v-tooltip>
+
+          </v-toolbar>
+
+
+
+
+          <table class="mb-15">
+
+            <tr v-if="can(`settings_permissions_edit`)">
+              <th style="width:600px;text-align:center; padding: 5px 0 !important">
+
+              </th>
+              <th style="text-align:center;padding-left:50px"> <v-checkbox v-model="access_select_all" label="Select All"
+                  @change="setAllIds('access', $event)">
+                </v-checkbox> </th>
+              <th style="text-align:center;padding-left:50px"> <v-checkbox v-model="view_select_all" label="Select All"
+                  @change="setAllIds('view', $event)">
+                </v-checkbox></th>
+              <th style="text-align:center;padding-left:50px"> <v-checkbox v-model="create_select_all" label="Select All"
+                  @change="setAllIds('create', $event)">
+                </v-checkbox></th>
+              <th style="text-align:center;padding-left:50px"> <v-checkbox v-model="edit_select_all" label="Select All"
+                  @change="setAllIds('edit', $event)">
+                </v-checkbox></th>
+              <th style="text-align:center;padding-left:50px"> <v-checkbox v-model="delete_select_all" label="Select All"
+                  @change="setAllIds('delete', $event)">
+                </v-checkbox></th>
+            </tr>
+            <tr style="text-align:center; ">
+              <th style="width:600px;text-align:center; padding: 5px 0 !important">
+                Module
+              </th>
+              <th style="text-align:center;padding-left:50px">Access</th>
+              <th style="text-align:center;padding-left:50px">View</th>
+              <th style="text-align:center;padding-left:50px">Create</th>
+              <th style="text-align:center;padding-left:50px">Edit</th>
+              <th style="text-align:center;padding-left:50px">Delete</th>
+
+            </tr>
+            <tr v-for=" (items, idx) in  permissions " :key="idx">
+              <th class="ps-3">{{ capsTitle(idx) }}</th>
+              <th v-for="(pa, idx) in  items " :key="idx" style="text-align:center !important;" class="">
+                <v-checkbox :disabled="!can(`settings_permissions_edit`)" :value="pa.id" v-model="permission_ids"
+                  :hide-details="true" class="pt-0  py-1 chk-align">
+                </v-checkbox>
+
+              </th>
+            </tr>
+
+
+          </table>
+          <v-col cols="12">
+            <span v-if="errors && errors.permission_ids" class="red--text">
+              {{ errors.permission_ids[0] }}
+            </span>
+          </v-col>
+          <v-card-actions>
+            <v-btn v-if="can(`settings_permissions_delete`)" dark small color="error" class="mx-1 my-4"
+              @click="deleteItem(item)">
+              Delete
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn v-if="can(`settings_permissions_edit`)" dark small color="primary" class="mx-1 my-4 "
+              @click="save(item)">
+              Update Permisions
+            </v-btn>
+          </v-card-actions>
         </v-card>
+
+        <span v-if="data.length == 0"> Data is not avaiallbe. <v-btn v-if="can(`settings_permissions_create`)" small
+            color="primary" to="/assign_permission/create" class="mb-2">Assign New Permision +</v-btn></span>
       </v-col>
     </v-row>
 
@@ -211,6 +247,9 @@
 <script>
 export default {
   data: () => ({
+    Rules: [v => !!v || "This field is required"],
+    role_id: '',
+    roles: [],
     panel: [0, 1, 2],
     readonly: false,
     Module: "Assign Permission",
@@ -230,7 +269,13 @@ export default {
     data: [],
     errors: [],
     permission_ids: [],
-    permissions: []
+    permissions: [],
+    access_select_all: false,
+    view_select_all: false,
+    create_select_all: false,
+    edit_select_all: false,
+    delete_select_all: false,
+
   }),
 
   computed: {
@@ -256,14 +301,29 @@ export default {
     }
   },
   created() {
-    this.loading = true;
-    this.getDataFromApi();
-    this.getHeaders();
+
 
     this.$axios
       .get("dropDownList")
       .then(({ data }) => {
         this.permissions = data.data;
+
+      })
+      .catch(err => console.log(err));
+
+    let options = {
+      params: {
+        company_id: this.$auth.user.company.id
+      }
+    };
+    this.$axios
+      .get("role", options)
+      .then(({ data }) => {
+        this.roles = data.data;
+        this.role_id = this.roles[0].id;
+        this.loading = true;
+        this.getDataFromApi();
+        this.getHeaders();
       })
       .catch(err => console.log(err));
   },
@@ -271,6 +331,7 @@ export default {
   methods: {
     can(per) {
       let u = this.$auth.user;
+      if (!u.permissions) return false;
       return (
         (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
@@ -299,8 +360,56 @@ export default {
         { text: "Actions", align: "center", value: "action", sortable: false }
       ];
     },
+    setAllIds(filter, e) {
+      let isSelected = e;
 
+      // this.permission_ids = this.just_ids
+      //   ? this.permissions.map(e => e.id)
+      //   : [];
+
+      // Function to filter IDs containing the text "edit"
+      let data = this.permissions;
+      const filteredIds = [];
+
+      // Loop through each module in the data
+      for (const module in data) {
+        if (data.hasOwnProperty(module)) {
+          // Filter the items in the module where the "name" contains "edit"
+          const editItems = data[module].filter(item => item.name.includes(filter));
+
+          // Extract and store the IDs from the filtered items
+          const editItemIds = editItems.map(item => item.id);
+
+
+
+          if (isSelected) {
+            this.permission_ids.push(...editItemIds);
+          }
+
+          else {
+            const indexToDelete = this.permission_ids.findIndex(item => item === editItemIds[0]);
+
+            if (indexToDelete !== -1) {
+              this.permission_ids.splice(indexToDelete, 1);
+
+            }
+          }
+        }
+      }
+      const uniqueSet = new Set(this.permission_ids);
+
+      this.permission_ids = Array.from(uniqueSet);
+
+
+
+    },
     getDataFromApi(url = this.endpoint) {
+
+      this.access_select_all = false;
+      this.view_select_all = false;
+      this.create_select_all = false;
+      this.edit_select_all = false;
+      this.delete_select_all = false;
       this.loading = true;
 
       const { page, itemsPerPage } = this.options;
@@ -312,9 +421,14 @@ export default {
         }
       };
 
-      this.$axios.get(`${url}`, options).then(({ data }) => {
+      this.$axios.get('assign-permission/role-id/' + this.role_id, options).then(({ data }) => {
         this.data = data;
         this.loading = false;
+        if (data[0])
+          this.permission_ids = data[0].permission_ids;
+        // else
+        //   this.$router.push("/assign_permission/create");
+
       });
     },
     searchIt(e) {
@@ -325,13 +439,18 @@ export default {
       }
     },
     save(item) {
+      this.errors = [];
       let payload = {
         role_id: item.role_id,
-        permission_ids: item.permission_ids
+        permission_ids: this.permission_ids
       };
       this.$axios
         .put("assign-permission/" + item.id, payload)
         .then(({ data }) => {
+          if (!data.status) {
+            this.errors = data.errors;
+            return;
+          }
           this.response = "Permissions has been assigned";
           this.snackbar = true;
           setTimeout(() => this.$router.push("/assign_permission"), 2000);
@@ -386,9 +505,11 @@ table {
   border-collapse: collapse;
   width: 100%;
 }
+
 tr:nth-child(even) {
   background-color: #e9e9e9;
 }
+
 th,
 td {
   border: 1px solid #dddddd;
@@ -406,7 +527,7 @@ td {
   box-sizing: border-box;
 }
 
-body > div {
+body>div {
   min-height: 100vh;
   display: flex;
   font-family: "Roboto", sans-serif;
@@ -430,22 +551,22 @@ table {
   border-collapse: collapse;
 }
 
-table > thead {
+table>thead {
   background-color: #00bcd4;
   color: #fff;
 }
 
-table > thead th {
+table>thead th {
   padding: 15px;
 }
 
 table th,
 table td {
   border: 1px solid #00000017;
-  padding: 10px 15px;
+  padding: 0px 0px;
 }
 
-table > tbody > tr > td > img {
+table>tbody>tr>td>img {
   display: inline-block;
   width: 60px;
   height: 60px;
@@ -461,7 +582,7 @@ table > tbody > tr > td > img {
   gap: 10px;
 }
 
-.action_btn > a {
+.action_btn>a {
   text-decoration: none;
   color: #444;
   background: #fff;
@@ -473,28 +594,28 @@ table > tbody > tr > td > img {
   transition: 0.3s ease-in-out;
 }
 
-.action_btn > a:nth-child(1) {
+.action_btn>a:nth-child(1) {
   border-color: #26a69a;
 }
 
-.action_btn > a:nth-child(2) {
+.action_btn>a:nth-child(2) {
   border-color: orange;
 }
 
-.action_btn > a:hover {
+.action_btn>a:hover {
   box-shadow: 0 3px 8px #0003;
 }
 
-table > tbody > tr {
+table>tbody>tr {
   background-color: #fff;
   transition: 0.3s ease-in-out;
 }
 
-table > tbody > tr:nth-child(even) {
+table>tbody>tr:nth-child(even) {
   background-color: rgb(238, 238, 238);
 }
 
-table > tbody > tr:hover {
+table>tbody>tr:hover {
   filter: drop-shadow(0px 2px 6px #0002);
 }
 </style>

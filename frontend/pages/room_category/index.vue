@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`department_access`)">
+  <div v-if="can(`settings_rooms_category_access`) && can(`settings_rooms_category_view`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -89,7 +89,8 @@
               <v-toolbar class="rounded-md" color="background" dense flat dark>
                 <span> {{ Model }} List</span>
                 <v-spacer></v-spacer>
-                <v-btn class="float-right py-3" @click="roomTypeDialog = true" x-small color="primary">
+                <v-btn v-if="can(`settings_rooms_category_create`)" class=" float-right py-3"
+                  @click="roomTypeDialog = true" x-small color="primary">
                   <v-icon color="white" small class="py-5">mdi-plus</v-icon>
                   Add
                 </v-btn>
@@ -108,7 +109,8 @@
                 </tr>
                 <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
                   color="primary"></v-progress-linear>
-                <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
+                <tr v-for="(            item, index            ) in             data            " :key="index"
+                  style="font-size: 13px">
                   <td>
                     {{
                       (pagination.current - 1) * pagination.per_page + index + 1
@@ -123,14 +125,16 @@
                   <td>{{ caps(item.holiday_price) }}</td>
 
                   <td class="text-center">
-                    <v-menu bottom left>
+                    <v-menu bottom left v-if="can(`settings_rooms_category_edit`) || can(`settings_rooms_category_delete`)
+                      ">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn dark-2 icon v-bind="attrs" v-on="on">
                           <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                       </template>
                       <v-list width="120" dense>
-                        <v-list-item @click="editItem(item)">
+                        <v-list-item v-if="can(`settings_rooms_category_edit`)
+                          " @click="editItem(item)">
                           <v-list-item-title style="cursor: pointer">
                             <v-icon color="secondary" small>
                               mdi-pencil
@@ -138,7 +142,8 @@
                             Edit
                           </v-list-item-title>
                         </v-list-item>
-                        <v-list-item @click="deleteItem(item)">
+                        <v-list-item v-if="can(`settings_rooms_category_delete`)
+                          " @click="deleteItem(item)">
                           <v-list-item-title style="cursor: pointer">
                             <v-icon color="error" small> mdi-delete </v-icon>
                             Delete
@@ -243,6 +248,8 @@ export default {
       this.getDataFromApi();
     },
     getDataFromApi(url = this.endpoint) {
+
+      console.log(this.$auth.user);
       this.loading = true;
       let page = this.pagination.current;
       let options = {

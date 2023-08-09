@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div v-if="can('management_soldout_access') && can('management_soldout_view')">
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
-        <h3>{{ Model }}</h3>
+        <h3>Soldout {{ Model }}</h3>
         <div>Dashboard / {{ Model }}</div>
       </v-col>
     </v-row>
@@ -14,7 +14,7 @@
       </v-col>
     </v-row>
 
-    <div v-if="can(`agents_view`)">
+    <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
           <v-spacer></v-spacer>
@@ -64,6 +64,7 @@
       </v-card>
     </div>
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -236,8 +237,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

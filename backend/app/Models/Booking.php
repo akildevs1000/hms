@@ -25,8 +25,8 @@ class Booking extends Model
         'check_out_date',
     ];
     protected $casts = [
-        'booking_date'   => 'datetime:Y-m-d',
-        'check_in_date'  => 'datetime:d-M-y H:i',
+        'booking_date' => 'datetime:Y-m-d',
+        'check_in_date' => 'datetime:d-M-y H:i',
         'check_out_date' => 'datetime:d-M-y H:i',
     ];
 
@@ -116,7 +116,7 @@ class Booking extends Model
         }
 
         // dd($cod);
-        
+
         // $date = Carbon::parse($value);
         // $date->addDays(1);
         // $d = $date->format('Y-m-d');
@@ -148,21 +148,22 @@ class Booking extends Model
 
     public function scopeFilter($query, $filter)
     {
-        $query->when($filter ?? false, fn ($query, $search) =>
-        $query->where(
-            fn ($query) => $query
-                ->orWhere('reservation_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('reference_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('type', 'ILIKE', '%' . $search . '%')
-                ->orWhereHas(
-                    'customer',
-                    fn ($query) =>
-                    $query->Where('first_name', 'ILIKE', '%' . $search . '%')
-                        ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
-                        ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
-                        ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
-                )
-        ));
+        $query->when($filter ?? false, fn($query, $search) =>
+            $query->where(
+                fn($query) => $query
+                    ->orWhere('reservation_no', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('reference_no', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('type', 'ILIKE', '%' . $search . '%')
+                    ->orWhereHas(
+                        'customer',
+                        fn($query) =>
+                        $query->Where('first_name', 'ILIKE', '%' . $search . '%')
+                            ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
+                            ->orWhere('title', 'ILIKE', '%' . $search . '%')
+                            ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
+                            ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
+                    )
+            ));
     }
 
     public function payments()

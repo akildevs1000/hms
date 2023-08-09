@@ -1,32 +1,32 @@
 <template>
-  <div>
+  <div v-if="can('management_income_access') && can('management_income_view')">
 
     <v-row>
       <v-col md="3">
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
-              {
-                id: 1,
-                name: 'Today',
-              },
-              {
-                id: 2,
-                name: 'Yesterday',
-              },
-              {
-                id: 3,
-                name: 'This Week',
-              },
-              {
-                id: 4,
-                name: 'This Month',
-              },
-              {
-                id: 5,
-                name: 'Custom',
-              },
-            ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+            {
+              id: 1,
+              name: 'Today',
+            },
+            {
+              id: 2,
+              name: 'Yesterday',
+            },
+            {
+              id: 3,
+              name: 'This Week',
+            },
+            {
+              id: 4,
+              name: 'This Month',
+            },
+            {
+              id: 5,
+              name: 'Custom',
+            },
+          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
             @change="commonMethod"></v-select>
         </v-col>
       </v-col>
@@ -170,6 +170,7 @@
       </v-col>
     </v-row>
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -275,12 +276,10 @@ export default {
     onPageChange() {
       this.getExpenseData();
     },
-    can(permission) {
-      let user = this.$auth;
-      return;
+    can(per) {
+      let u = this.$auth.user;
       return (
-        (user && user.permissions.some((e) => e.permission == permission)) ||
-        user.master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
     caps(str) {

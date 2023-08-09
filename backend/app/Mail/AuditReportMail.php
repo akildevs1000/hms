@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -28,7 +27,17 @@ class AuditReportMail extends Mailable
      */
     public function build()
     {
-        $this->attach($this->data['file']);
+        if (isset($this->data['file'])) {
+            $this->attach($this->data['file']);
+        } else {
+            if (isset($this->data['files'])) {
+                foreach ($this->data['files'] as $file) {
+
+                    $this->attach($file);
+                }
+            }
+        }
+
         return $this->view('emails.audit.audit')->with(["body" => $this->data['body'], "company" => $this->data['company'], 'date' => $this->data['date']]);
     }
 }

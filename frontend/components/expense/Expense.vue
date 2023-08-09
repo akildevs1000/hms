@@ -1,5 +1,6 @@
-<template>
-  <div>
+<template >
+  <div
+    v-if="(can('accounts_expences_access') && can('accounts_expences_view')) || (can('management_expenses_access') && can('management_expenses_view'))">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -12,7 +13,8 @@
       </v-col>
       <v-col cols="6">
         <v-spacer></v-spacer>
-        <v-btn class="float-right py-3" @click="expenseDialog = true" color="primary">
+        <v-btn v-if="can('accounts_expences_create') || can('management_expenses_create')" class="float-right py-3"
+          @click="expenseDialog = true" color="primary">
           <v-icon color="white" small class="py-5">mdi-plus</v-icon>
           Add
         </v-btn>
@@ -44,27 +46,27 @@
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
-              {
-                id: 1,
-                name: 'Today',
-              },
-              {
-                id: 2,
-                name: 'Yesterday',
-              },
-              {
-                id: 3,
-                name: 'This Week',
-              },
-              {
-                id: 4,
-                name: 'This Month',
-              },
-              {
-                id: 5,
-                name: 'Custom',
-              },
-            ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+            {
+              id: 1,
+              name: 'Today',
+            },
+            {
+              id: 2,
+              name: 'Yesterday',
+            },
+            {
+              id: 3,
+              name: 'This Week',
+            },
+            {
+              id: 4,
+              name: 'This Month',
+            },
+            {
+              id: 5,
+              name: 'Custom',
+            },
+          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
             @change="commonMethod"></v-select></v-col>
       </v-col>
 
@@ -162,13 +164,13 @@
             </v-col>
             <v-col cols="6">
               <v-autocomplete v-model="editedItem.payment_modes" :items="[
-                    { id: 1, name: 'Cash' },
-                    { id: 2, name: 'Card' },
-                    { id: 3, name: 'Online' },
-                    { id: 4, name: 'Bank' },
-                    { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                  ]" item-text="name" item-value="id" placeholder="Select Payment Mode" label="Select Payment Mode"
+                { id: 1, name: 'Cash' },
+                { id: 2, name: 'Card' },
+                { id: 3, name: 'Online' },
+                { id: 4, name: 'Bank' },
+                { id: 5, name: 'UPI' },
+                { id: 6, name: 'Cheque' },
+              ]" item-text="name" item-value="id" placeholder="Select Payment Mode" label="Select Payment Mode"
                 outlined :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
@@ -372,20 +374,23 @@
                 <span v-else> --- </span>
               </td>
               <td class="text-center">
-                <v-menu bottom left>
+                <v-menu bottom left
+                  v-if="can('accounts_expences_edit') || can('accounts_expences_delete') || can('management_expenses_edit') || can('management_expenses_delete')">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn dark-2 icon v-bind="attrs" v-on="on">
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>
                   <v-list width="120" dense>
-                    <v-list-item @click="editItem(item)">
+                    <v-list-item v-if="can('accounts_expences_edit') || can('management_expenses_edit')"
+                      @click="editItem(item)">
                       <v-list-item-title style="cursor: pointer">
                         <v-icon color="secondary" small> mdi-pencil </v-icon>
                         Edit
                       </v-list-item-title>
                     </v-list-item>
-                    <v-list-item @click="deleteItem(item)">
+                    <v-list-item v-if="can('accounts_expences_delete') || can('management_expenses_delete')"
+                      @click="deleteItem(item)">
                       <v-list-item-title style="cursor: pointer">
                         <v-icon color="error" small> mdi-delete </v-icon>
                         Delete
@@ -413,6 +418,8 @@
       </v-col>
     </v-row>
   </div>
+
+  <NoAccess v-else />
 </template>
 <script>
 import ImagePreview from "../images/ImagePreview.vue";
@@ -545,13 +552,10 @@ export default {
     onPageChange() {
       this.commonMethod();
     },
-
-    can(permission) {
-      let user = this.$auth;
-      return;
+    can(per) {
+      let u = this.$auth.user;
       return (
-        (user && user.permissions.some((e) => e.permission == permission)) ||
-        user.master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

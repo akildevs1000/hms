@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Twilio\Rest\Client;
 
 class WhatsappController extends Controller
 {
@@ -14,10 +15,10 @@ class WhatsappController extends Controller
         try {
             if ($data['instance_id']) {
                 $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
-                    'number'       => $data['to'],
-                    'type'         => 'text',
-                    'message'      => $data['message'],
-                    'instance_id'  => $data['instance_id'],
+                    'number' => $data['to'],
+                    'type' => 'text',
+                    'message' => $data['message'],
+                    'instance_id' => $data['instance_id'],
                     'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
                 ]);
 
@@ -38,10 +39,10 @@ class WhatsappController extends Controller
         try {
             if ($data['instance_id']) {
                 $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
-                    'number'       => $data['to'],
-                    'type'         => 'text',
-                    'message'      => $data['message'],
-                    'instance_id'  => env('OTP_INSTANCE_ID'),
+                    'number' => $data['to'],
+                    'type' => 'text',
+                    'message' => $data['message'],
+                    'instance_id' => env('OTP_INSTANCE_ID'),
                     'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
                 ]);
 
@@ -75,9 +76,34 @@ class WhatsappController extends Controller
             $response = Http::withoutVerifying()->get($url);
 
             $response->status();
+
+            return ['message' => $response];
         } catch (\Throwable $th) {
             Log::channel("custom")->error("BookingController: " . $th);
         }
+    }
+    public function sentTwilio($user = null)
+    {
+        //composer require twilio/sdk
+
+        $number = '+971582608568'; // '+' . env('COUNTRY_CODE') . $user->mobile;
+        //$number = '+91' . $user->mobile;
+        $msg = "Hello"; //$this->processMessage($user);
+        //Twilio
+        $sid = "ACd6488bdbbbdeaae210b94f2a3dc21d24";
+        $token = "5d437943999440ccd6697a55d4ca21ab";
+        $twilio = new Client($sid, $token);
+
+        $message = $twilio->messages
+            ->create("whatsapp:{$number}", // to
+                array(
+                    "from" => "whatsapp:+14155238886",
+                    "body" => $msg,
+                )
+            );
+        Log::channel('whatsapp_logs')->info($message);
+        return ['message' => $message->sid, 'mobile_number' => $number, 'msg' => $msg];
+
     }
 
     // public function sentNotification($data)
@@ -106,43 +132,103 @@ class WhatsappController extends Controller
         return $response->status();
     }
 
+    public function sentNotificationTest2()
+    {
+
+        $sid = "ACd6488bdbbbdeaae210b94f2a3dc21d24";
+        $token = "5d437943999440ccd6697a55d4ca21ab";
+        $twilio = new Client($sid, $token);
+
+        $message = $twilio->messages
+            ->create("whatsapp:+919701226007", // to
+                array(
+                    "from" => "whatsapp:+14155238886",
+                    "body" => "Your appointment is coming up on July 21 at 3PM",
+                )
+            );
+
+        print($message->sid);
+        // $sid = config('ACd6488bdbbbdeaae210b94f2a3dc21d24');
+        // $token = config('5d437943999440ccd6697a55d4ca21ab');
+        // $client = new Client($sid, $token);
+
+        // // Replace the following with the actual phone number and Twilio purchased number
+        // $phoneNumber = "+919701226007";
+        // $twilioPurchasedNumber = "+XXXXXXXXXX";
+
+        // // Send a text message
+        // $message = $client->messages->create(
+        //     $phoneNumber,
+        //     [
+        //         'from' => $twilioPurchasedNumber,
+        //         'body' => "Hey Jenny! Good luck on the bar exam!",
+        //     ]
+        // );
+        // $messageSid = $message->sid;
+
+        // return "Message sent successfully with SID: $messageSid";
+    }
+    public function getMessages()
+    {
+        require __DIR__ . '/../src/Twilio/autoload.php';
+
+        $sid = config('services.twilio.account_sid');
+        $token = config('services.twilio.auth_token');
+        $client = new Client($sid, $token);
+
+        // Print the last 10 messages
+        $messageList = $client->messages->read([], 10);
+        $messages = [];
+
+        foreach ($messageList as $msg) {
+            $messages[] = [
+                'ID' => $msg->sid,
+                'From' => $msg->from,
+                'To' => $msg->to,
+                'Status' => $msg->status,
+                'Body' => $msg->body,
+            ];
+        }
+
+        return $messages;
+    }
+
     public function sentWhatsappOtp(Request $request)
     {
 
+        //try {
+        $user = User::with('company')->find($request->userId);
 
-        try {
-            $user = User::with('company')->find($request->userId);
-            $user->otp = mt_rand(100000, 999999);
+        $user->otp = mt_rand(100000, 999999);
 
+        if ($user->save()) {
+            // if (app()->isProduction()) {
+            $return = $this->sentOTPNew($user);
 
-            if ($user->save()) {
-                // if (app()->isProduction()) {
-                $this->sentOTPNew($user);
-
-                // }
-                return $this->response('updated.', null, true);
-            }
-        } catch (\Throwable $th) {
-            return $this->response($th, null, true);
+            // }
+            return $this->response('updated.', $return, true);
         }
+        // } catch (\Throwable $th) {
+        //     return $this->response($th, null, true);
+        // }
     }
 
     public function processMessage($user)
     {
-        $company      = $user->company;
+        $company = $user->company;
         $customerName = ucfirst($user['name']) ?? 'Guest';
 
-        $msg          = "";
-        $msg          .= "$company->company_code" ?? 0 . "\n";
-        $msg          .= "\n";
-        $msg          .= "Dear  $customerName, \n";
+        $msg = "";
+        $msg .= "$company->company_code" ?? 0 . "\n";
+        $msg .= "\n";
+        $msg .= "Dear  $customerName, \n";
 
-        $msg          .= "\n";
-        $msg          .= "--------------- \n";
-        $msg          .= "Your OTP  \n";
-        $msg          .= "--------------- \n";
-        $msg          .= "\n";
-        $msg          .= "$user->otp \n";
+        $msg .= "\n";
+        $msg .= "--------------- \n";
+        $msg .= "Your OTP  \n";
+        $msg .= "--------------- \n";
+        $msg .= "\n";
+        $msg .= "$user->otp \n";
 
         return $msg;
     }

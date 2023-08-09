@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('management_income_access') && can('management_income_view')">
     <v-row>
       <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
         <div class="card px-2 available">
@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('company')">
+      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('management_income_view')">
         <div class="card px-2" style="background-color: #ce008e">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('company')">
+      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('management_income_view')">
         <div class="card px-2 checkedIn">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -61,7 +61,7 @@
         </div>
       </div>
 
-      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('company')">
+      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
         <div class="card px-2" style="
                             background-image: linear-gradient(135deg, #b00000 0, #b00000 100%);
                           ">
@@ -97,27 +97,27 @@
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
-              {
-                id: 1,
-                name: 'Today',
-              },
-              {
-                id: 2,
-                name: 'Yesterday',
-              },
-              {
-                id: 3,
-                name: 'This Week',
-              },
-              {
-                id: 4,
-                name: 'This Month',
-              },
-              {
-                id: 5,
-                name: 'Custom',
-              },
-            ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+            {
+              id: 1,
+              name: 'Today',
+            },
+            {
+              id: 2,
+              name: 'Yesterday',
+            },
+            {
+              id: 3,
+              name: 'This Week',
+            },
+            {
+              id: 4,
+              name: 'This Month',
+            },
+            {
+              id: 5,
+              name: 'Custom',
+            },
+          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
             @change="commonMethod"></v-select></v-col>
       </v-col>
 
@@ -155,7 +155,7 @@
           <v-spacer></v-spacer>
           <v-tab active-class="active-link"> Income List </v-tab>
           <v-tab active-class="active-link"> {{ Model }} List </v-tab>
-          <v-tab active-class="active-link" v-if="can('company')">
+          <v-tab active-class="active-link" v-if="can('management_income_view')">
             Management {{ Model }} List
           </v-tab>
 
@@ -218,8 +218,8 @@
 
                     <td v-for="i in 7" :key="i" class="text-right">
                       <span v-if="(item &&
-                          item.payment_mode &&
-                          item.payment_mode.name) == 'Cash' && i == 1
+                        item.payment_mode &&
+                        item.payment_mode.name) == 'Cash' && i == 1
                         ">
                         {{ item.amount }}
                       </span>
@@ -345,7 +345,7 @@
           </v-tab-item>
 
           <v-tab-item>
-            <v-col md="12" v-if="can('company')">
+            <v-col md="12" v-if="can('management_income_view')">
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <v-toolbar class="rounded-md" color="background" dense flat>
                   <v-spacer></v-spacer>
@@ -427,6 +427,7 @@
       </v-card>
     </v-row>
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -547,11 +548,11 @@ export default {
     onPageChange() {
       this.getExpenseData();
     },
-    can(permission) {
-      return this.$auth.user.user_type == "company" ? true : false;
+
+    can(per) {
+      let u = this.$auth.user;
       return (
-        (user && user.permissions.some((e) => e.permission == permission)) ||
-        user.master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
     caps(str) {

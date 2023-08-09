@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('settings_room_price_access') && can('settings_room_price_view')">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -197,14 +197,14 @@
                       </span>
                     </td>
                     <td class="text-left">
-                      <v-menu bottom left>
+                      <v-menu bottom left v-if="can('settings_room_price_edit')">
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn dark-2 icon v-bind="attrs" v-on="on">
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
                         <v-list width="120" dense>
-                          <v-list-item @click="weekendEditItem(item)">
+                          <v-list-item v-if="can('settings_room_price_edit')" @click="weekendEditItem(item)">
                             <v-list-item-title style="cursor: pointer">
                               <v-icon color="secondary" small>
                                 mdi-pencil
@@ -228,7 +228,8 @@
                     Search
                     <v-icon right>mdi-magnify</v-icon>
                   </v-btn>
-                  <v-btn @click="holidayDialog = true" small class="pt-4 pb-4 elevation-0" color="#ECF0F4">
+                  <v-btn v-if="can('settings_room_price_create')" @click="holidayDialog = true" small
+                    class="pt-4 pb-4 elevation-0" color="#ECF0F4">
                     New
                     <v-icon right>mdi-plus-circle</v-icon>
                   </v-btn>
@@ -292,8 +293,8 @@
 
                 <v-data-table :headers="holidayHeaders" :items="data" :options.sync="holidayOptions"
                   :server-items-length="totalUserData" :loading="loading" class="elevation-1 mt-2" :footer-props="{
-                      itemsPerPageOptions: [50, 100, 500, 1000],
-                    }">
+                    itemsPerPageOptions: [50, 100, 500, 1000],
+                  }">
                   <!-- <template v-slot:header="{ props: { headers } }"> -->
                   <template v-slot:header="{ props: { headers } }">
                     <tr v-if="isFilter">
@@ -305,14 +306,14 @@
                   </template>
                   <template v-slot:item.actions="{ item }">
 
-                    <v-menu bottom left>
+                    <v-menu bottom left v-if="can('settings_room_price_edit') || can('settings_room_price_delete')">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn dark-2 icon v-bind="attrs" v-on="on">
                           <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                       </template>
                       <v-list width="120" dense>
-                        <v-list-item @click="editItem(item)">
+                        <v-list-item v-if="can('settings_room_price_edit')" @click="editItem(item)">
                           <v-list-item-title style="cursor: pointer">
                             <v-icon color="secondary" small>
                               mdi-pencil
@@ -320,7 +321,7 @@
                             Edit
                           </v-list-item-title>
                         </v-list-item>
-                        <v-list-item @click="deleteItem(item)">
+                        <v-list-item v-if="can('settings_room_price_delete')" @click="deleteItem(item)">
                           <v-list-item-title style="cursor: pointer">
                             <v-icon color="error" small> mdi-delete </v-icon>
                             Delete
@@ -355,14 +356,14 @@
                     <td>{{ item.weekend_price }}</td>
                     <td>{{ item.holiday_price }}</td>
                     <td class="text-left">
-                      <v-menu bottom left>
+                      <v-menu bottom left v-if="can('settings_room_price_edit')">
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn dark-2 icon v-bind="attrs" v-on="on">
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
                         <v-list width="120" dense>
-                          <v-list-item @click="priceEditItem(item)">
+                          <v-list-item v-if="can('settings_room_price_edit')" @click="priceEditItem(item)">
                             <v-list-item-title style="cursor: pointer">
                               <v-icon color="secondary" small>
                                 mdi-pencil
@@ -383,6 +384,8 @@
       </v-col>
     </v-row>
   </div>
+
+  <NoAccess v-else />
 </template>
 <script>
 export default {
@@ -510,12 +513,10 @@ export default {
       this.getDataFromApi();
     },
 
-    can(permission) {
-      let user = this.$auth;
-      return;
+    can(per) {
+      let u = this.$auth.user;
       return (
-        (user && user.permissions.some((e) => e.permission == permission)) ||
-        user.master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

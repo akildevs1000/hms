@@ -32,15 +32,15 @@ class UpdateRequest extends FormRequest
             'password' => [
                 'confirmed',
                 'string',
-                'min:6',             // must be at least 10 characters in length
-                'max:25',             // must be maximum 25 characters in length
-                'regex:/[a-z]/',      // must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
+                'min:6', // must be at least 10 characters in length
+                'max:25', // must be maximum 25 characters in length
+                'regex:/[a-z]/', // must contain at least one lowercase letter
+                'regex:/[A-Z]/', // must contain at least one uppercase letter
+                'regex:/[0-9]/', // must contain at least one digit
                 'regex:/[@$!%*#?&]/', // must contain a special character
             ],
             // 'role_id' => 'required',
-            'role_id' => 'nullable',
+            'role_id' => 'required',
             'employee_role_id' => 'nullable',
             'company_id' => 'required',
             'mobile' => 'nullable',
@@ -52,7 +52,7 @@ class UpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            "role_id.required" => "The role field is required."
+            "role_id.required" => "The role field is required.",
         ];
     }
 }

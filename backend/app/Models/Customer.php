@@ -66,6 +66,27 @@ class Customer extends Model
         }
         return null;
     }
+    // public function getCarNoAttribute(): string
+    // {
+    //     return $this->car_no != '' ? $this->car_no : '---';
+    // }
+    // public function getGstNumberAttribute(): string
+    // {
+    //     return $this->gst_number != '' ? $this->gst_number : '---';
+    // }
+
+    // public function getAddressAttribute(): string
+    // {
+    //     return $this->address != '' ? $this->address : "---";
+    // }
+    // public function getIdCardNoAttribute(): string
+    // {
+    //     return $this->id_card_no != '' ? $this->id_card_no : "---";
+    // }
+    // public function getEmailAttribute(): string
+    // {
+    //     return $this->email != '' ? $this->email : "---";
+    // }
 
     public static function customerAttributes()
     {

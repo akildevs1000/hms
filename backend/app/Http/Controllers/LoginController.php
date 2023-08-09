@@ -15,7 +15,6 @@ class LoginController extends Controller
         // $user = User::where('email', $request->email)->where('is_master', 1)->where('role_id', 0)->first();
         $user = User::where('email', $request->email)->first();
 
-
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
@@ -23,7 +22,6 @@ class LoginController extends Controller
         }
 
         $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company") : ($user->role_id > 0 ? "user" : "master");
-
 
         return response()->json([
             'token' => $user->createToken('myApp')->plainTextToken,
@@ -65,7 +63,7 @@ class LoginController extends Controller
         }
 
         $model = $model->with('company', 'employee')->first();
-        $model->permissions = $user->permissions;
+        //$model->permissions = $user->permissions;
         $obj = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
         return response()->json(['user' => $obj], 200);
 

@@ -42,13 +42,6 @@
                     :items="type == 'Online' ? sources : agentList" dense item-value="name" item-text="name"
                     placeholder="Sources" solo flat :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
             </v-col>
-
-            <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select class="custom-text-box shadow-none" v-model="guest_mode"
-                    :items="['Select All', 'Arrival', 'Departure']" dense placeholder="Type" solo flat :hide-details="true"
-                    @change="getDataFromApi(endpoint)"></v-select>
-            </v-col>
-
             <v-col md="2">
                 <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
                     offset-y min-width="auto">
@@ -56,7 +49,8 @@
                         <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
                             class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
                     </template>
-                    <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
+                    <v-date-picker no-title v-model="from_date" @input="from_menu = false"
+                        @change="commonMethod"></v-date-picker>
                 </v-menu>
             </v-col>
             <v-col md="2">
@@ -66,9 +60,17 @@
                         <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense
                             class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"></v-text-field>
                     </template>
-                    <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
+                    <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"
+                        no-title></v-date-picker>
                 </v-menu>
             </v-col>
+            <v-col xs="12" sm="12" md="2" cols="12">
+                <v-select class="custom-text-box shadow-none" v-model="guest_mode"
+                    :items="['Select All', 'Arrival', 'Departure']" dense placeholder="Type" solo flat :hide-details="true"
+                    @change="reload()"></v-select>
+            </v-col>
+
+
         </v-row>
 
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
@@ -95,10 +97,11 @@
                     <span> DOWNLOAD </span>
                 </v-tooltip>
             </v-toolbar>
+
             <v-data-table dense small :headers="headers_table" :items="data" :loading="loading" :options.sync="options"
                 :footer-props="{
-                    itemsPerPageOptions: [20, 50, 100, 500, 1000],
-                }" class="elevation-1" :server-items-length="totalRowsCount" @page-change="updateIndex">
+                    itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+                }" class="elevation-1" :server-items-length="totalRowsCount">
 
                 <template v-slot:item.sno="{ item, index }">
                     {{ currentPage ? ((currentPage - 1) * perPage) + (cumulativeIndex + itemIndex(item)) : '' }}
@@ -106,7 +109,7 @@
                 <template v-slot:item.res_number="item">
 
 
-                    <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                    <span class="blue--text" @click="goToRevView(item.item)" style="cursor: pointer">
                         {{ item.item.reservation_no || "---" }}
                     </span>
                 </template>
@@ -152,7 +155,8 @@
                     </v-icon>
                 </template>
                 <template v-slot:item.payment="item">
-                    <v-icon @click="get_payment(item.item)" x-small color="primary" class="mr-2">
+                    <v-icon v-if="can('reservation_edit') || can('in_house_edit') || can('checkout_edit')"
+                        @click="get_payment(item.item)" x-small color="primary" class="mr-2">
                         mdi-cash-multiple
                     </v-icon>
                 </template>
@@ -307,6 +311,7 @@ export default {
                 text: "Rev. No",
                 align: "left",
                 sortable: false,
+                width: "100px",
                 key: "employee_id",
                 filterable: true,
                 value: "res_number",
@@ -456,12 +461,10 @@ export default {
     },
 
     methods: {
-        can(permission) {
-            let user = this.$auth;
-            return;
+        can(per) {
+            let u = this.$auth.user;
             return (
-                (user && user.permissions.some((e) => e.permission == permission)) ||
-                user.master
+                (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
             );
         },
 
@@ -605,7 +608,7 @@ export default {
             this.getDataFromApi();
         },
         updateIndex(page) {
-            alert(this.cumulativeIndex);
+
             this.currentPage = page;
             this.cumulativeIndex = (page - 1) * this.perPage;
 
@@ -614,7 +617,11 @@ export default {
         itemIndex(item) {
             return this.data.indexOf(item);
         },
-        getDataFromApi(url = this.endpoint) {
+        reload() {
+
+            this.getDataFromApi(this.endpoint, 1);
+        },
+        getDataFromApi(url = this.endpoint, customPage = 0) {
             // :items="type == 'Online' ? sources : agentList"
 
             let newSource;
@@ -632,6 +639,9 @@ export default {
 
             let sortedBy = sortBy ? sortBy[0] : "";
             let sortedDesc = sortDesc ? sortDesc[0] : "";
+            if (customPage == 1) page = 1;
+            this.currentPage = page;
+
             let options = {
                 params: {
                     page: page,

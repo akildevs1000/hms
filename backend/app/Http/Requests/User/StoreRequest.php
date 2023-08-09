@@ -40,7 +40,7 @@ class StoreRequest extends FormRequest
                 'regex:/[0-9]/', // must contain at least one digit
                 'regex:/[@$!%*#?&]/', // must contain a special character
             ],
-            'role_id' => 'nullable',
+            'role_id' => 'required',
             'employee_role_id' => 'nullable',
             'company_id' => 'required',
             'mobile' => 'nullable',

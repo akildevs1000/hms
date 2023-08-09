@@ -1150,7 +1150,7 @@ export default {
     },
 
     room_list() {
-      console.log(this.$auth.user);
+
       let payload = {
         params: {
           company_id: this.$auth.user && this.$auth.user.company.id,

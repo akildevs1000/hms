@@ -1,13 +1,7 @@
 <template>
-  <div v-if="can(`agents_access`)">
+  <div v-if="can('ledger_agents_access') && can('ledger_agents_view')">
     <div class="text-center ma-2">
-      <v-snackbar
-        v-model="snackbar"
-        top
-        absolute
-        color="secondary"
-        elevation="24"
-      >
+      <v-snackbar v-model="snackbar" top absolute color="secondary" elevation="24">
         {{ response }}
       </v-snackbar>
     </div>
@@ -160,16 +154,10 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Payment</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
+          <v-icon dark class="pa-0" @click="payingDialog = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-card-text>
-          <Paying
-            :msg="'payment by agent'"
-            :BookingData="bookingData"
-            @close-dialog="payingDialog = false"
-          ></Paying>
+          <Paying :msg="'payment by agent'" :BookingData="bookingData" @close-dialog="payingDialog = false"></Paying>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -183,137 +171,52 @@
 
     <v-row class="pt-0 mt-0">
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-text-field
-          class=""
-          label="Search..."
-          dense
-          outlined
-          flat
-          append-icon="mdi-magnify"
-          @input="searchIt"
-          v-model="search"
-          hide-details
-        ></v-text-field>
+        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
+          v-model="search" hide-details></v-text-field>
       </v-col>
       <v-col xs="12" sm="12" md="1" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="paid_status_type"
-          :items="['Select All', 'Pending', 'Paid']"
-          dense
-          placeholder="Payment"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="paid_status_type"
+          :items="['Select All', 'Pending', 'Paid']" dense placeholder="Payment" solo flat :hide-details="true"
+          @change="getDataFromApi('agents')"></v-select>
       </v-col>
       <v-col xs="12" sm="12" md="1" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="type"
-          :items="types"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo flat
+          :hide-details="true" @change="getDataFromApi('agents')"></v-select>
       </v-col>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="source"
-          :items="type == 'Online' ? sources : agentList"
-          dense
-          item-value="name"
-          item-text="name"
-          placeholder="Sources"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="source" :items="type == 'Online' ? sources : agentList"
+          dense item-value="name" item-text="name" placeholder="Sources" solo flat :hide-details="true"
+          @change="getDataFromApi('agents')"></v-select>
       </v-col>
 
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="guest_mode"
-          :items="['Select All', 'Arrival', 'Departure']"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-          @change="getDataFromApi('agents')"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
+          dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi('agents')"></v-select>
       </v-col>
 
       <v-col md="2">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
+              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col md="2">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
+            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
+              solo flat label="To" :hide-details="true"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
 
-    <div v-if="can(`agents_view`)">
+    <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List</span>
@@ -326,27 +229,14 @@
               {{ item.text }}
             </th>
           </tr>
-          <v-progress-linear
-            v-if="loading"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
-          <tr
-            v-for="(item, index) in data"
-            :key="index"
-            style="font-size: 12px"
-          >
+          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+            color="primary"></v-progress-linear>
+          <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
             <td>
               <b>{{ ++index }}</b>
             </td>
             <td>
-              <span
-                class="blue--text"
-                @click="goToRevView(item)"
-                style="cursor: pointer"
-              >
+              <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                 {{ (item && item.reservation_no) || "---" }}
               </span>
             </td>
@@ -363,7 +253,7 @@
             <td>
               {{
                 parseFloat(item.total_price) +
-                  parseFloat(item.total_posting_amount) || "---"
+                parseFloat(item.total_posting_amount) || "---"
               }}.00
             </td>
             <td>
@@ -375,22 +265,12 @@
             <td>{{ item.paid_amounts || "---" }}</td>
             <td>{{ item.balance || "---" }}</td>
             <td>
-              <v-chip
-                x-small
-                class="ma-2"
-                :color="is_paid_color(item.balance)"
-                text-color="white"
-              >
+              <v-chip x-small class="ma-2" :color="is_paid_color(item.balance)" text-color="white">
                 {{ is_paid_text(item.balance) }}
               </v-chip>
             </td>
             <td>
-              <v-icon
-                x-small
-                color="primary"
-                @click="paidAmount(item)"
-                class="mr-2"
-              >
+              <v-icon v-if="can('ledger_agents_edit')" x-small color="primary" @click="paidAmount(item)" class="mr-2">
                 mdi-cash-multiple
               </v-icon>
             </td>
@@ -401,18 +281,14 @@
         <v-row>
           <v-col md="12" class="float-right">
             <div class="float-right">
-              <v-pagination
-                v-model="pagination.current"
-                :length="pagination.total"
-                @input="onPageChange"
-                :total-visible="12"
-              ></v-pagination>
+              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                :total-visible="12"></v-pagination>
             </div>
           </v-col>
         </v-row>
       </div>
     </div>
-    <NoAccess v-else />
+
   </div>
   <NoAccess v-else />
 </template>
@@ -545,8 +421,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

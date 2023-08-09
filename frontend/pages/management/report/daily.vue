@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can('management_custom_soldout_access') && can('management_custom_soldout_view')">
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -9,100 +9,49 @@
 
     <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          class="custom-text-box shadow-none"
-          v-model="filterType"
-          :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]"
-          dense
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-          item-text="name"
-          item-value="id"
-          @change="getDataFromApi()"
-        ></v-select>
+        <v-select class="custom-text-box shadow-none" v-model="filterType" :items="[
+          {
+            id: 1,
+            name: 'Today',
+          },
+          {
+            id: 2,
+            name: 'Yesterday',
+          },
+          {
+            id: 3,
+            name: 'This Week',
+          },
+          {
+            id: 4,
+            name: 'This Month',
+          },
+          {
+            id: 5,
+            name: 'Custom',
+          },
+        ]" dense placeholder="Type" solo flat :hide-details="true" item-text="name" item-value="id"
+          @change="getDataFromApi()"></v-select>
       </v-col>
 
       <v-col md="3" v-if="filterType == 5">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="From"
-            ></v-text-field>
+            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
+              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col md="3" v-if="filterType == 5">
-        <v-menu
-          v-model="to_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="to_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              class="custom-text-box shadow-none"
-              solo
-              flat
-              label="To"
-              :hide-details="true"
-            ></v-text-field>
+            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
+              solo flat label="To" :hide-details="true"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="to_date"
-            @input="to_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
+          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
@@ -112,16 +61,11 @@
         <span> Day Report</span>
       </v-toolbar>
       <client-only>
-        <ApexCharts
-          :options="chartOptions"
-          :series="series"
-          :height="400"
-          chart-id="pieChart"
-          :key="chartKey"
-        />
+        <ApexCharts :options="chartOptions" :series="series" :height="400" chart-id="pieChart" :key="chartKey" />
       </client-only>
     </v-card>
   </div>
+  <NoAccess v-else />
 </template>
 
 <script>
@@ -208,8 +152,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
       );
     },
 

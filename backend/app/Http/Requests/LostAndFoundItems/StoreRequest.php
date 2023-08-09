@@ -32,6 +32,7 @@ class StoreRequest extends FormRequest
             'missing_datetime' => 'required',
             'missing_remarks' => 'nullable',
             'missing_notes' => 'nullable',
+            'user_id' => 'required',
 
         ];
     }
