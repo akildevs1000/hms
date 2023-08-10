@@ -57,7 +57,8 @@ class ManagementController extends Controller
         $arr = [];
         $data = $reportModel->select('sold', 'unsold', 'date')
             ->whereCompanyId($request->company_id)
-            ->whereMonth('date', $request->month)
+        // ->whereMonth('date', $request->month)
+            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
             ->get()->toArray();
 
         foreach ($data as $data) {
@@ -72,7 +73,8 @@ class ManagementController extends Controller
     {
 
         $data = Booking::whereCompanyId($request->company_id)
-            ->whereMonth('check_in', $request->month)
+        //->whereMonth('check_in', $request->month)
+            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
             ->where('booking_status', '!=', -1)
             ->select('source', 'total_price')
             ->get()
@@ -431,7 +433,7 @@ class ManagementController extends Controller
         for ($date = $startDate; $date <= $endDate; $date->modify('+1 month')) {
 
             $year = $date->format('Y');
-            $monthStr = $date->format('F');
+            $monthStr = $date->format('M');
             $month = $date->format('m');
 
             $sold = 0;

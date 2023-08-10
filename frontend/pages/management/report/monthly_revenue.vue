@@ -380,7 +380,7 @@ export default {
     this.month = new Date().getMonth();
     this.year = new Date().getFullYear();
 
-    this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
+    this.filter_from_date = this.formatDate(new Date(this.year, 0, 1));
     this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
 
 
