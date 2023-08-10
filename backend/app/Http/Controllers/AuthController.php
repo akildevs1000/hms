@@ -12,7 +12,15 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->where('is_active', 1)->first();
+
+        //check user status
+        if(!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['Your account is currently marked as inactive.'],
+            ]);
+        }
+
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
@@ -98,7 +106,7 @@ class AuthController extends Controller
 
             if ($user->save()) {
                 if (app()->isProduction()) {
-                    (new WhatsappNotificationController)->loginOTP($user);
+                    (new WhatsappNotificationController())->loginOTP($user);
                 }
                 return $this->response('updated.', null, true);
             }

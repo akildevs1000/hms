@@ -62,9 +62,22 @@
                             }}</span>
                           </v-col>
                           <v-col md="12" cols="12">
+
                             <v-select :items="roles" item-text="name" item-value="id" v-model="editedItem.role_id"
                               outlined placeholder="Select Role" lable="Role" :hide-details="true" dense></v-select>
                             <span v-if="errors && errors.role_id" class="error--text">{{ errors.role_id[0] }}</span>
+
+                            <v-select v-model="editedItem.is_active" :items="[
+                              { name: 'Active', value: '1' },
+                              { name: 'Inactive', value: '0' }
+                            ]" dense item-text="name" item-value="value" :hide-details="errors && !errors.is_active"
+                              :error="errors && errors.is_active" :error-messages="errors && errors.is_active ?
+                                errors.is_active[0] : ''
+                                " outlined></v-select>
+
+                            <span v-if="errors && errors.is_active" class="error--text">{{ errors.is_active[0]
+                            }}</span>
+
                           </v-col>
                         </v-row>
                       </v-col> <v-col md="4">
@@ -124,7 +137,9 @@
 
     <v-data-table :headers="headers" :items="userData" :options.sync="options" :server-items-length="totalUserData"
       :loading="loading" class="elevation-1" :footer-props="{
+
         itemsPerPageOptions: [10, 50, 100, 500, 1000],
+
       }">
       <template v-slot:header="{ props: { headers } }">
         <tr v-if="isFilter">
@@ -214,6 +229,7 @@ export default {
         password_confirmation: "",
         email: "",
         mobile: "",
+        is_active: 1,
       },
 
       defaultItem: {
@@ -244,7 +260,6 @@ export default {
   watch: {
     userDialog(val) {
       !val ? this.editedItem = {} : ''
-      console.log(val);
     },
 
     options: {
@@ -339,6 +354,7 @@ export default {
             itemsPerPage: itemsPerPage,
             sortBy: sortedBy,
             sortDesc: sortedDesc,
+            company_id: this.$auth.user.company.id,
             ...this.filters
           },
         })
@@ -389,6 +405,7 @@ export default {
       payload.append("title", this.editedItem.title);
       payload.append("name", this.editedItem.name);
       payload.append("email", this.editedItem.email);
+      payload.append("is_active", this.editedItem.is_active);
 
       payload.append("company_id", this.$auth.user.company.id);
 
@@ -399,7 +416,6 @@ export default {
         this.$axios
           .post('users' + "/" + this.editedItem.id, payload)
           .then(({ data }) => {
-            console.log(data);
             if (!data.status) {
               this.errors = data.errors;
             } else {

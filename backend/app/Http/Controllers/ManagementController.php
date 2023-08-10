@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\DB;
 
 class ManagementController extends Controller
 {
-
     public function getOccupancyRate(Request $request)
     {
         $reportModel = Report::query();
@@ -226,13 +225,13 @@ class ManagementController extends Controller
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')->with('transactions', function ($q) use ($request) {
-            $q->where('is_posting', 0);
-            // $q->where('credit', '>', 0);
-            $q->whereDate('date', $request->date);
-            $q->where('payment_method_id', '!=', 7);
-            $q->where('company_id', $request->company_id)
-                ->with('paymentMode');
-        })->get();
+                $q->where('is_posting', 0);
+                // $q->where('credit', '>', 0);
+                $q->whereDate('date', $request->date);
+                $q->where('payment_method_id', '!=', 7);
+                $q->where('company_id', $request->company_id)
+                    ->with('paymentMode');
+            })->get();
     }
 
     private function continueAudit($model, $request)
@@ -533,7 +532,8 @@ class ManagementController extends Controller
         $returnArray = [];
         $year = $request->year;
 
-        $monthArray = [["value" => "01", "text" => "Jan", "color" => "#3366CC"]
+        $monthArray = [
+              ["value" => "01", "text" => "Jan", "color" => "#3366CC"]
             , ["value" => "02", "text" => "Feb", "color" => "#FF69B4"]
             , ["value" => "03", "text" => "Mar", "color" => "#00FF00"]
             , ["value" => "04", "text" => "Apr", "color" => "#FFD700"]
@@ -650,7 +650,6 @@ class ManagementController extends Controller
             'bookings.customer_id',
             DB::raw('sum(total_price) as customer_total_price'),
             DB::raw('count(id) as number_of_visits'),
-
         )
             ->with('customer:id,contact_no')
             ->groupBy('bookings.customer_id')
@@ -666,8 +665,7 @@ class ManagementController extends Controller
             ->limit(10)
             ->get();
 
-        $total_price = Booking::
-            where('company_id', $request->company_id)
+        $total_price = Booking::where('company_id', $request->company_id)
         //->where('type', 'Walking')
             ->where('booking_status', "!=", -1)
             ->whereYear('created_at', $year)

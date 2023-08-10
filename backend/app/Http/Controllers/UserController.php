@@ -25,7 +25,12 @@ class UserController extends Controller
         $sortDesc = $request->input('sortDesc');
         $itemsPerPage = $request->input('itemsPerPage');
 
+
         $model = User::with(['role']);
+
+        $model->where('company_id', $request->company_id);
+
+
 
         // $model->when()
 
@@ -68,6 +73,8 @@ class UserController extends Controller
                 $data["image"] = $fileName;
             }
 
+
+            $data["image"] = $fileName ?? "";
             $record = $model->create($data);
 
             if ($record) {
@@ -97,6 +104,9 @@ class UserController extends Controller
                 $path = $file->storeAs('public/user/images', $fileName);
                 $data["image"] = $fileName;
             }
+
+
+            $data["image"] = $fileName ?? "";
 
             $record = $user->update($data);
 

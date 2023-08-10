@@ -62,8 +62,10 @@
                           <v-text-field label="First Name *" dense outlined type="text" v-model="inquiry.first_name"
                             :hide-details="errors && !errors.first_name" :error="errors && errors.first_name"
                             :error-messages="errors && errors.first_name
+
                               ? errors.first_name[0]
                               : ''
+
                               "></v-text-field>
                         </v-col>
                         <v-col md="5" cols="12" sm="12">
@@ -74,15 +76,19 @@
                           <v-text-field dense label="Contact No *" outlined type="number" v-model="inquiry.contact_no"
                             :hide-details="errors && !errors.contact_no" :error="errors && errors.contact_no"
                             :error-messages="errors && errors.contact_no
+
                               ? errors.contact_no[0]
                               : ''
+
                               " @keyup="mergeContact()"></v-text-field>
                         </v-col>
                         <v-col md="4" cols="12" sm="12">
                           <v-text-field dense label="Whatsapp No" outlined type="number" v-model="inquiry.whatsapp"
                             :hide-details="errors && !errors.whatsapp" :error="errors && errors.whatsapp" :error-messages="errors && errors.whatsapp
+
                               ? errors.whatsapp[0]
                               : ''
+
                               "></v-text-field>
                         </v-col>
                         <v-col md="4" cols="12" sm="12">
@@ -98,8 +104,10 @@
                       <v-select v-model="inquiry.rooms_type" :items="roomTypes" label="Room Type" item-text="name"
                         item-value="name" :hide-details="errors && !errors.rooms_type"
                         :error="errors && errors.rooms_type" :error-messages="errors && errors.rooms_type
+
                           ? errors.rooms_type[0]
                           : ''
+
                           " dense outlined></v-select>
                     </v-col>
                     <v-col md="4" cols="12" sm="12">
@@ -175,8 +183,10 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span> {{ Model }} List </span>
           <v-spacer></v-spacer>
+
           <v-btn v-if="can(`inquiry_create`)" class="float-right py-3" @click="inquiryDialog = true" x-small
             color="primary">
+
             <v-icon color="white" small class="py-5">mdi-plus</v-icon>
             Add
           </v-btn>
