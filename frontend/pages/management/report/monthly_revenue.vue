@@ -3,9 +3,44 @@
 
     <v-row>
 
-      <v-col md="2">
+      <!-- <v-col md="2">
         <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
+      </v-col> -->
+
+
+      <v-col md="2">
+        <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"
+          transition="scale-transition" offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field outlined dense v-model="filter_from_date" readonly v-bind="attrs" v-on="on"
+              label="From Date"></v-text-field>
+          </template>
+          <v-date-picker type="month" style="height: 400px" v-model="filter_from_date" no-title scrollable
+            @input="getDataFromApi(); menu_from_filter = false">
+
+
+          </v-date-picker>
+        </v-menu>
       </v-col>
+      <v-col md="2">
+        <v-menu ref="menu_to_filter" v-model="menu_to_filter" :close-on-content-click="false"
+          transition="scale-transition" offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field outlined dense v-model="filter_to_date" readonly v-bind="attrs" v-on="on"
+              label="To Date"></v-text-field>
+          </template>
+          <v-date-picker type="month" style="height: 400px" v-model="filter_to_date" no-title scrollable
+            @input="getDataFromApi(); menu_to_filter = false">
+
+
+          </v-date-picker>
+        </v-menu>
+
+      </v-col>
+      <!-- <v-col md="2">
+    <v-btn @click="getDataFromApi()" dense color="primary">Submit</v-btn>
+</v-col> -->
+
     </v-row>
 
     <div>
@@ -30,7 +65,7 @@
             <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
                 mdi mdi-printer</v-icon> </v-col> -->
             <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
-              itemsPerPageOptions: [12],
+              itemsPerPageOptions: [1000],
             }" class="elevation-1" :hide-default-footer="true">
 
 
@@ -95,6 +130,11 @@ export default {
   },
   data() {
     return {
+      menu_from_filter: '',
+      filter_from_date: '',
+
+      menu_to_filter: '',
+      filter_to_date: '',
       data_table: [],
       grandTotal: [],
       totalRowsCount: 0,
@@ -337,8 +377,13 @@ export default {
     this.loading = true;
 
     this.getYears();
-    this.month = new Date().getMonth() + 1;
+    this.month = new Date().getMonth();
     this.year = new Date().getFullYear();
+
+    this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
+    this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
+
     this.getDataFromApi();
   },
   mounted() {
@@ -355,6 +400,13 @@ export default {
   //   },
   // },
   methods: {
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+
+      return year + '-' + (month < 10 ? '0' : '') + month;//+ '-' + (day < 10 ? '0' : '') + day;
+    },
     printTable() {
 
 
@@ -372,7 +424,7 @@ export default {
     },
     goToDailyReport(item) {
 
-      this.$store.dispatch('setData', { year: this.year, month: item.month_number });
+      this.$store.dispatch('setData', { year: item.year_number, month: item.month_number });
       this.$router.push({ path: '/management/report/daily_revenue' });
 
     },
@@ -417,8 +469,9 @@ export default {
           per_page: itemsPerPage,
           company_id: this.$auth.user.company.id,
 
-          year: this.year,
-
+          //year: this.year,
+          filter_from_date: this.filter_from_date,
+          filter_to_date: this.filter_to_date,
         },
       };
 
@@ -426,7 +479,7 @@ export default {
 
         this.data_table = data.data;
         this.loading = false;
-        this.totalRowsCount = 12;
+        this.totalRowsCount = data.totalRowsCount;;
         this.grandTotal = data.grandTotal;
 
         let counter = 0;

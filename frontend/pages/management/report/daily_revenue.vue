@@ -1,7 +1,7 @@
 <template>
     <div v-if="can('management_revenue_report_access') && can('management_revenue_report_view')">
 
-        <v-row>
+        <!-- <v-row>
 
             <v-col md="2">
                 <v-select :items="years" label="Select Year" outlined dense v-model="year"
@@ -10,6 +10,41 @@
             <v-col md="2">
                 <v-select :items="months" lable="Select Month" outlined dense v-model="month" item-value="id"
                     item-text="name" @change="getDataFromApi()"></v-select> </v-col>
+        </v-row> -->
+        <v-row>
+
+            <v-col md="2">
+                <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"
+                    transition="scale-transition" offset-y min-width="auto">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-text-field outlined dense v-model="filter_from_date" readonly v-bind="attrs" v-on="on"
+                            label="From Date"></v-text-field>
+                    </template>
+                    <v-date-picker style="height: 400px" v-model="filter_from_date" no-title scrollable
+                        @input="getDataFromApi(); menu_from_filter = false">
+
+
+                    </v-date-picker>
+                </v-menu>
+            </v-col>
+            <v-col md="2">
+                <v-menu ref="menu_to_filter" v-model="menu_to_filter" :close-on-content-click="false"
+                    transition="scale-transition" offset-y min-width="auto">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-text-field outlined dense v-model="filter_to_date" readonly v-bind="attrs" v-on="on"
+                            label="To Date"></v-text-field>
+                    </template>
+                    <v-date-picker style="height: 400px" v-model="filter_to_date" no-title scrollable
+                        @input="getDataFromApi(); menu_to_filter = false">
+
+
+                    </v-date-picker>
+                </v-menu>
+
+            </v-col>
+            <!-- <v-col md="2">
+                <v-btn @click="getDataFromApi()" dense color="primary">Submit</v-btn>
+            </v-col> -->
         </v-row>
 
         <div>
@@ -35,7 +70,7 @@
                     </div>
                     <v-col cols="12">
                         <ApexCharts type="bar" height="430" ref="realtimeChart" :options="barChartOptionsNew"
-                            :series="barSeriesNew"></ApexCharts>
+                            :series="barSeriesNew" :key="chartKey"></ApexCharts>
                         <!-- <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries"
                             chart-id="bar" :height="400" :key="chartKey" /> -->
                     </v-col>
@@ -47,7 +82,7 @@
 
                         <v-data-table dense :headers="headers_table" ref="dataTable" :items="data_table" :loading="loading"
                             :footer-props="{
-                                itemsPerPageOptions: [31],
+                                itemsPerPageOptions: [1000],
                             }" class="elevation-1" :hide-default-footer="true">
 
                             <template v-slot:item.date="{ item }">
@@ -107,7 +142,11 @@ export default {
     },
     data() {
         return {
+            menu_from_filter: '',
+            filter_from_date: '',
 
+            menu_to_filter: '',
+            filter_to_date: '',
 
             barSeriesNew: [
                 {
@@ -353,20 +392,30 @@ export default {
     },
 
     created() {
+        this.month = new Date().getMonth();
+        this.year = new Date().getFullYear();
+
         this.loading = true;
 
+
+        // this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
+        // this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
         this.getYears();
-        this.month = new Date().getMonth() + 1;
-        this.year = new Date().getFullYear();
+
 
         let filters = this.$store.getters.getDataToSend;
         if (filters.month) {
-            this.month = parseInt(filters.month);
+            this.month = parseInt(filters.month) - 1;
         }
 
         if (filters.year) {
             this.year = parseInt(filters.year);
         }
+
+        this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
+        this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
         this.getDataFromApi();
     },
     mounted() {
@@ -383,6 +432,13 @@ export default {
     //   },
     // },
     methods: {
+        formatDate(date) {
+            var day = date.getDate();
+            var month = date.getMonth() + 1; // Months are zero-based
+            var year = date.getFullYear();
+
+            return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+        },
         printTable() {
 
             const printWindow = window.open('', '_blank');
@@ -419,6 +475,17 @@ export default {
 
         forceChartRerender() {
             this.chartKey += 1;
+
+            this.barSeriesNew = [
+                {
+                    name: "Income",
+                    data: [],
+                },
+                {
+                    name: "Expences",
+                    data: [],
+                },
+            ];
         },
         getYears() {
             const year = new Date().getFullYear();
@@ -444,12 +511,14 @@ export default {
                     sortDesc: sortedDesc,
                     per_page: itemsPerPage,
                     company_id: this.$auth.user.company.id,
-                    month: this.month,
-                    year: this.year,
+                    // month: this.month,
+                    // year: this.year,
+                    filter_from_date: this.filter_from_date,
+                    filter_to_date: this.filter_to_date,
 
                 },
             };
-
+            this.forceChartRerender();
             this.$axios.get('get_report_daily_wise_group', options).then(({ data }) => {
 
                 this.data_table = data.data;
@@ -458,11 +527,14 @@ export default {
                 this.grandTotal = data.grandTotal;
 
                 let counter = 0;
+                this.forceChartRerender();
+                this.barSeriesNew[0]["data"] = [];
+                this.barSeriesNew[1]["data"] = [];
                 this.data_table.forEach(item => {
 
                     this.barSeriesNew[0]["data"][counter] = parseInt(item.income.replaceAll(',', ''));
                     this.barSeriesNew[1]["data"][counter] = parseInt(item.total_expenses.replaceAll(',', ''));
-                    this.barChartOptionsNew.xaxis.categories[counter] = item.month;
+                    this.barChartOptionsNew.xaxis.categories[counter] = item.month + '-' + item.day;
                     // this.barChartOptionsNew.colors[counter] = item.color;
                     this.barChartOptionsNew.customLabel[counter] = "<table>"
                         + "<tr><td>Income</td><td style='text-align:right;color:green'> :  " + item.income + '</td></tr> '

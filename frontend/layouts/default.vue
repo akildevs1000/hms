@@ -464,12 +464,12 @@ export default {
           to: "/management/report/user",
           menu: "management_payments_access",
         },
-        {
-          icon: "mdi mdi-finance",
-          title: "Summary",
-          to: "/management/report/summary",
-          menu: "management_summary_access",
-        },
+        // {
+        //   icon: "mdi mdi-finance",
+        //   title: "Summary",
+        //   to: "/management/report/summary",
+        //   menu: "management_summary_access",
+        // },
         {
           icon: "mdi mdi-calendar-month",
           title: "Sold-out Report",

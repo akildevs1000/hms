@@ -117,6 +117,7 @@ class ExpenseController extends Controller
             return $model->save();
         }
         return null;
+
     }
 
     public function update(UpdateRequest $request, Expense $expense)
