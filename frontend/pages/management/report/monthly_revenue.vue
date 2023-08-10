@@ -122,12 +122,12 @@
 </template>
 
 <script>
-import SourceReport from '../../../components/bookingSource/SourceReport.vue';
+// import SourceReport from '../../../components/bookingSource/SourceReport.vue';
 
 export default {
-  components: {
-    SourceReport,
-  },
+  // components: {
+  //   SourceReport,
+  // },
   data() {
     return {
       menu_from_filter: '',

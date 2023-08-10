@@ -472,32 +472,32 @@ export default {
         // },
         {
           icon: "mdi mdi-calendar-month",
-          title: "Sold-out Report",
+          title: "All Reports",
           to: "/management/report/monthly",
           menu: "management_soldout_access",
         },
-        {
-          icon: "mdi mdi-account-group",
-          title: "Monhtly wise Revenue Report",
-          to: "/management/report/monthly_revenue",
-          menu: "management_revenue_report_access",
-        }, {
-          icon: "mdi mdi-account-group",
-          title: "Day wise Revenue Report  ",
-          to: "/management/report/daily_revenue",
-          menu: "management_revenue_report_access",
-        }, {
-          icon: "mdi mdi-briefcase-account",
-          title: "Top 10 Customers",
-          to: "/management/report/top-customers",
-          menu: "management_top_10_customers_access",
-        },
-        {
-          icon: "mdi mdi-chart-pie",
-          title: "Custom",
-          to: "/management/report/daily",
-          menu: "management_custom_soldout_access",
-        },
+        // {
+        //   icon: "mdi mdi-account-group",
+        //   title: "Monhtly wise Revenue Report",
+        //   to: "/management/report/monthly_revenue",
+        //   menu: "management_revenue_report_access",
+        // }, {
+        //   icon: "mdi mdi-account-group",
+        //   title: "Day wise Revenue Report  ",
+        //   to: "/management/report/daily_revenue",
+        //   menu: "management_revenue_report_access",
+        // }, {
+        //   icon: "mdi mdi-briefcase-account",
+        //   title: "Top 10 Customers",
+        //   to: "/management/report/top-customers",
+        //   menu: "management_top_10_customers_access",
+        // },
+        // {
+        //   icon: "mdi mdi-chart-pie",
+        //   title: "Custom",
+        //   to: "/management/report/daily",
+        //   menu: "management_custom_soldout_access",
+        // },
       ],
     };
 

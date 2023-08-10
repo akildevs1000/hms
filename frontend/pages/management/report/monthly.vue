@@ -3,7 +3,7 @@
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>Soldout {{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
     </v-row>
 
@@ -48,10 +48,19 @@
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
           <v-spacer></v-spacer>
           <v-tab active-class="active-link">
-            <v-icon> mdi mdi-chart-bar </v-icon>
+            Monthly Revenue
           </v-tab>
           <v-tab active-class="active-link">
-            <v-icon> mdi mdi-chart-pie </v-icon>
+            Daily Revenue
+          </v-tab>
+          <v-tab active-class="active-link">
+            Top 10 Customers
+          </v-tab>
+          <v-tab active-class="active-link">
+            Sold Graph1
+          </v-tab>
+          <v-tab active-class="active-link">
+            Sold Graph2
           </v-tab>
           <v-tab active-class="active-link">
             <!-- <v-icon> mdi mdi-chart-pie </v-icon> -->
@@ -62,8 +71,37 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
+                  <MonthlyReport :filter_from_date="filter_from_date" :filter_to_date="filter_to_date" />
+                </client-only>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <client-only>
+                  <DailyReport :filter_from_date="filter_from_date" :filter_to_date="filter_to_date" />
+                </client-only>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <client-only>
+                  <Top10Report :filter_from_date="filter_from_date" :filter_to_date="filter_to_date" />
+                </client-only>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <client-only>
+                  <span v-if="soldNodataDipslay" style="color:red">No data is available</span>
                   <ApexCharts :options="barChartOptions" :series="barSeries" chart-id="bar" :height="400"
                     :key="chartKey" />
+
                 </client-only>
               </v-card-text>
             </v-card>
@@ -73,9 +111,11 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
+
                   <span v-if="pieSeries.length == 0" style="color:red">No Data available</span>
                   <ApexCharts :options="pieChartOptions" :series="pieSeries" :height="400" chart-id="pieChart"
                     :key="chartKey" />
+
 
                 </client-only>
               </v-card-text>
@@ -101,12 +141,20 @@
 
 <script>
 import SourceReport from '../../../components/bookingSource/SourceReport.vue';
+import MonthlyReport from '../../../components/reports/reportsMonthly.vue';
+import DailyReport from '../../../components/reports/reportsDaily.vue';
+import Top10Report from '../../../components/reports/top10Report.vue';
+
 export default {
   components: {
     SourceReport,
+    MonthlyReport,
+    DailyReport,
+    Top10Report,
   },
   data() {
     return {
+      soldNodataDipslay: false,
       menu_from_filter: '',
       filter_from_date: '',
       menu_to_filter: '',
@@ -336,16 +384,31 @@ export default {
       this.barSeries[0]["data"] = [];
       this.forceChartRerender();
       this.$axios.get(`${url}`, options).then(({ data }) => {
-        try {
-          data.sold.forEach((item) => this.barSeries[0]["data"].push(item));
+        let counter = 0;
+        // try {
+        if (data.sold) {
+          this.soldNodataDipslay = false;
+          data.sold.forEach((item) => {
+            this.barSeries[0]["data"].push(item);
+
+          });
+          // data.date.forEach((item) => {
+
+          //   this.barChartOptions.xaxis.categories.push(item);
+          // });
 
           let totSold = eval(data.sold.join("+"));
           let totUnsold = eval(data.unsold.join("+"));
           this.pieSeries.push(...[totSold, totUnsold]);
           this.forceChartRerender();
           this.loading = false;
+          counter++;
         }
-        catch (e) { }
+        else {
+          this.soldNodataDipslay = true;
+        }
+        //}
+        //catch (e) { }
         try {
           this.$refs.realtimeChart.updateSeries([{
             data: this.barSeries[0].data,

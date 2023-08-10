@@ -98,7 +98,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="imgView" max-width="80%">
+    <v-dialog v-model="imgView" width="500px">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Preview</span>
@@ -610,7 +610,7 @@ export default {
       fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
       this.documentObj = {
         fileExtension: fileExtension,
-        file: file,
+        file: file + "?t=" + Math.random(),
       };
       this.imgView = true;
     },
@@ -696,7 +696,19 @@ export default {
         this.loading = false;
       });
     },
-
+    deleteItem(item) {
+      confirm(
+        "Are you sure you wish to delete?"
+      ) &&
+        this.$axios
+          .delete(this.endpoint + "/" + item.id)
+          .then(({ data }) => {
+            this.getDataFromApi();
+            this.snackbar = data.status;
+            this.response = data.message;
+          })
+          .catch((err) => console.log(err));
+    },
     // searchIt(e) {
     //   if (e.length == 0) {
     //     this.getDataFromApi(this.endpoint);
@@ -727,7 +739,7 @@ export default {
     },
 
     save() {
-      this.loading = true;
+      // this.loading = true;
       let payload = this.mapper(this.editedItem);
 
       console.log(payload);

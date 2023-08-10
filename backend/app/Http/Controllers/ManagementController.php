@@ -58,7 +58,7 @@ class ManagementController extends Controller
         $data = $reportModel->select('sold', 'unsold', 'date')
             ->whereCompanyId($request->company_id)
         // ->whereMonth('date', $request->month)
-            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
+            ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
             ->get()->toArray();
 
         foreach ($data as $data) {
@@ -359,11 +359,17 @@ class ManagementController extends Controller
         $model->where('company_id', $request->company_id);
         $returnArray = [];
         //$year = $request->year;
+        $year_number = '';
+        $filter_from_date = $request->filter_from_date;
+        $filter_to_date = $request->filter_to_date;
+        if (count(explode('-', $request->filter_from_date)) == 1) {
+            $filter_from_date = $filter_from_date . '-01';
+            $filter_to_date = $filter_to_date . '-' . cal_days_in_month(CAL_GREGORIAN, explode('-', $filter_to_date)[1], explode('-', $filter_to_date)[0]);
 
-        $filter_from_date = $request->filter_from_date . '-01';
-        $filter_to_date = $request->filter_to_date . '-' . cal_days_in_month(CAL_GREGORIAN, explode('-', $request->filter_to_date)[1], explode('-', $request->filter_to_date)[0]);
+            $year_number = date('Y', strtotime($filter_from_date));
+        } else {
 
-        $year_number = date('Y', strtotime($filter_from_date));
+        }
 
         $soldArray = Report::selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
@@ -833,10 +839,12 @@ class ManagementController extends Controller
         //->where('type', 'Walking')
         // -1 cancel booking ;
             ->where('booking_status', "!=", -1)
-            ->whereYear('created_at', $year)
-            ->when($request->filled('month'), function ($q) use ($request) {
-                $q->whereMonth('created_at', $request->month);
-            })
+        // ->whereYear('created_at', $year)
+        // ->when($request->filled('month'), function ($q) use ($request) {
+        //     $q->whereMonth('created_at', $request->month);
+        // })
+            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
+
             ->limit(10)
             ->get();
 
