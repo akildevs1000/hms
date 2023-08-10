@@ -36,10 +36,13 @@
               itemsPerPageOptions: [12],
             }" class="elevation-1" :hide-default-footer="true">
 
+              <template v-slot:item.color="{ item, index }">
+
+                <v-icon :color="colors[index].color">mdi mdi-circle</v-icon>
+              </template>
 
               <template v-slot:item.name="{ item }">
-                {{ item.title }}
-              </template>
+                <a @click="getToCheckoutPage(item)"> {{ item.title }}</a> </template>
 
               <template v-slot:item.phone_number="{ item }">
                 {{ item.customer.contact_no }}
@@ -242,7 +245,13 @@ export default {
         },
       ],
       headers_table: [
-
+        {
+          text: "Color",
+          align: "left",
+          sortable: false,
+          filterable: false,
+          value: "color",
+        },
         {
           text: "Name",
           align: "left",

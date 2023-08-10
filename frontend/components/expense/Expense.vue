@@ -616,6 +616,7 @@ export default {
     },
 
     editItem(item) {
+      console.log(item);
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       console.log(this.editedItem);

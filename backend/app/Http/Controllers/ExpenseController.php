@@ -124,7 +124,14 @@ class ExpenseController extends Controller
         try {
             $record = $expense->update($request->validated());
             if ($record) {
-                $this->storeDocument($request, $expense);
+
+                //$this->storeDocument($request, $expense);
+
+                $this->storeDocument($request, $record, 'document');
+                $this->storeDocument($request, $record, 'document1');
+                $this->storeDocument($request, $record, 'document2');
+                $this->storeDocument($request, $record, 'document3');
+
                 return $this->response($this->name . ' successfully updated.', $record, true);
             } else {
                 return $this->response($this->name . ' cannot update.', null, false);

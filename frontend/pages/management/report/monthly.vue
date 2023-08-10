@@ -26,7 +26,7 @@
           </v-tab>
           <v-tab active-class="active-link">
             <!-- <v-icon> mdi mdi-chart-pie </v-icon> -->
-            source
+            Revenue Sources
           </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
           <v-tab-item>
@@ -44,7 +44,7 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
-                  <ApexCharts :options="chartOptions" :series="series" :height="400" chart-id="pieChart"
+                  <ApexCharts :options="pieChartOptions" :series="pieSeries" :height="400" chart-id="pieChart"
                     :key="chartKey" />
                 </client-only>
               </v-card-text>
@@ -75,12 +75,13 @@ export default {
   },
   data() {
     return {
-      series: [],
-      chartOptions: {
+      pieSeries: [],
+      pieChartOptions: {
         chart: {
           width: 380,
           type: "pie",
         },
+
         labels: ["Sold", "Unsold"],
         colors: ["#228B22", "#D71921"], // set custom colors
 
@@ -97,7 +98,7 @@ export default {
         dataLabels: {
           formatter(val, opts) {
             const name = opts.w.globals.labels[opts.seriesIndex];
-            return [name, val.toFixed(1) + "%"];
+            return [name, val.toFixed(1)];
           },
         },
         responsive: [
@@ -125,7 +126,7 @@ export default {
 
       barChartOptions: {
         chart: {
-          type: "bar",
+          type: "area",
           height: 350,
         },
         plotOptions: {
@@ -135,26 +136,28 @@ export default {
             endingShape: "rounded",
           },
         },
-        colors: ["#228B22", "#D71921"], // set custom colors
+
         dataLabels: {
           enabled: false,
         },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ["transparent"],
-        },
+        // stroke: {
+        //   show: true,
+        //   width: 2,
+        //   colors: ["transparent"],
+        // },
         xaxis: {
           categories: [],
+          max: 31,
         },
         yaxis: {
+          max: 100,
           title: {
-            text: "% (Percentage)",
+            text: " ",
           },
           labels: {
             show: true,
             formatter: function (val) {
-              return val + "%";
+              return val;
             },
           },
         },
@@ -165,7 +168,7 @@ export default {
         tooltip: {
           x: {
             formatter: function (val) {
-              return "% " + val + " Percentage";
+              return "Day " + val;
             },
           },
         },
@@ -271,7 +274,7 @@ export default {
 
     getDataFromApi(url = this.endpoint) {
       this.barSeries[0]["data"].splice(0, this.barSeries[0]["data"].length);
-      this.series.splice(0, this.series.length);
+      this.pieSeries.splice(0, this.pieSeries.length);
 
       this.loading = true;
       let options = {
@@ -285,7 +288,7 @@ export default {
 
         let totSold = eval(data.sold.join("+"));
         let totUnsold = eval(data.unsold.join("+"));
-        this.series.push(...[totSold, totUnsold]);
+        this.pieSeries.push(...[totSold, totUnsold]);
         this.forceChartRerender();
         this.loading = false;
       });
@@ -293,7 +296,7 @@ export default {
   },
 };
 </script>
-
+<!--
 <style scoped>
 table {
   font-family: arial, sans-serif;
@@ -329,4 +332,4 @@ select:focus {
   border-color: #5fafa3;
   box-shadow: 0 0 0px #5fafa3;
 }
-</style>
+</style> -->

@@ -516,6 +516,15 @@ class ManagementController extends Controller
 
         return ["data" => $returnArray, "grandTotal" => $totalArray];
     }
+
+    public function getReportMonthlyWiseGroupPrint(Request $request)
+    {
+        //$data = $this->getReportDailyWiseGroup($request);
+
+        return Pdf::loadView('report.revenue_report_monthlywise', [
+
+            'company' => Company::find($request->company_id)])->setPaper('a4', 'landscape');
+    }
     public function getReportMonthlyWise(Request $request)
     {
 
@@ -702,11 +711,12 @@ class ManagementController extends Controller
         $year = $request->year;
 
         $dayColorsArray = [];
-        $colors = ["#3366CC", "#FF69B4", "#00FF00", "#FFD700", "#FF4500", "#800080", "#FF6347", "#008080", "#FFA500", "#DC143C", "#7CFC00", "#4169E1", "#FF1493", "#32CD32", "#FFD700", "#4682B4", "#800000", "#808000", "#FF4500", "#DA70D6", "#808080", "#2E8B57", "#BA55D3", "#ADFF2F", "#20B2AA", "#FF4500", "#87CEEB", "#3CB371", "#FA8072", "#9370DB", "#6A5ACD", "#00FA9A", "#FF69B4"];
+        // $colors = ["#3366CC", "#FF69B4", "#00FF00", "#FFD700", "#FF4500", "#800080", "#FF6347", "#008080", "#FFA500", "#DC143C", "#7CFC00", "#4169E1", "#FF1493", "#32CD32", "#FFD700", "#4682B4", "#800000", "#808000", "#FF4500", "#DA70D6", "#808080", "#2E8B57", "#BA55D3", "#ADFF2F", "#20B2AA", "#FF4500", "#87CEEB", "#3CB371", "#FA8072", "#9370DB", "#6A5ACD", "#00FA9A", "#FF69B4"];
+        $dayColorsArray = ["#3366CC"];
 
-        for ($i = 1; $i <= 31; $i++) {
-            $dayColorsArray[$i] = $colors[$i - 1];
-        }
+        // for ($i = 1; $i <= 31; $i++) {
+        //     $dayColorsArray[$i] = $colors[$i - 1];
+        // }
 
         $totalRooms = 0;
         $totalIncome = 0;
@@ -790,7 +800,7 @@ class ManagementController extends Controller
                 $sold = 0;
             }
 
-            $color = $dayColorsArray[$day];
+            $color = $dayColorsArray[0]; // $dayColorsArray[$day];
 
             // $income = isset($income[0]) ? $income[0]['total_amount'] : 0;
 

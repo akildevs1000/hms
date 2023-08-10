@@ -43,6 +43,7 @@ class CompanyUpdateRequest extends FormRequest
             'mol_id' => ['nullable', 'max:15'], 'min:2',
             'p_o_box_no' => ['nullable', 'max:15', 'min:2'],
             'whatsapp_instance_id' => ['nullable'],
+            'currency' => ['nullable'],
 
         ];
     }
