@@ -12,7 +12,7 @@
         <v-card-title class="text-h5">
           Action
         </v-card-title>
-        <v-card-text>Are you sure you want to proceed?</v-card-text>
+        <v-card-text>Are you sure you want to proceed(Change the Room)?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="change_room_by_drag">
@@ -30,7 +30,7 @@
         <v-card-title class="text-h5">
           Action
         </v-card-title>
-        <v-card-text>Are you sure you want to proceed?</v-card-text>
+        <v-card-text>Are you sure you want to proceed(Change the Date)?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="change_date_by_drag">

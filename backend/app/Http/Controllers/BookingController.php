@@ -1492,6 +1492,15 @@ class BookingController extends Controller
                 $bookedRoom->update([
                     'check_in' => $request->start,
                     'check_out' => $request->end,
+
+                    'room_tax' => $bookedRoom->room_tax - array_sum(array_column($cancel_date, 'room_tax')),
+                    'price' => $bookedRoom->price - array_sum(array_column($cancel_date, 'price')),
+                    'sgst' => $bookedRoom->sgst - array_sum(array_column($cancel_date, 'sgst')),
+                    'cgst' => $bookedRoom->cgst - array_sum(array_column($cancel_date, 'cgst')),
+                    'room_discount' => $bookedRoom->room_discount - array_sum(array_column($cancel_date, 'room_discount')),
+                    'after_discount' => $bookedRoom->after_discount - array_sum(array_column($cancel_date, 'after_discount')),
+                    'total' => $bookedRoom->total - array_sum(array_column($cancel_date, 'grand_total')),
+                    'grand_total' => $bookedRoom->grand_total - array_sum(array_column($cancel_date, 'grand_total')),
                 ]);
                 return [
                     'extend_room_price' => -$total_cancel_amount,

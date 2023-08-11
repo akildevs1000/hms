@@ -318,9 +318,11 @@ export default {
 
         },
         filter_to_date() {
+
             this.getDataFromApi();
 
         }
+
     },
     created() {
         this.loading = true;

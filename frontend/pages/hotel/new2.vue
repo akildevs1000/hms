@@ -38,7 +38,7 @@
           <v-tab-item>
             <v-card flat>
               <v-card-text>
-                {{ bookings }}
+
                 <v-row>
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment" style="
@@ -1644,7 +1644,7 @@ export default {
     // },
 
     redirect() {
-      this.$router.push("/");
+      this.$router.push("/hotel/calendar1");
     },
 
     get_food_price_cal(person_type, person_qty) {
@@ -2340,7 +2340,8 @@ export default {
           } else {
             this.store_document(data.data);
             this.alert("Success!", "Successfully room added", "success");
-            this.$router.push('/');
+            //this.$router.push('/');
+            this.$router.push("/hotel/calendar1");
           }
         })
         .catch((e) => console.log(e));

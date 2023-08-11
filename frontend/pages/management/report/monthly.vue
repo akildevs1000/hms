@@ -46,17 +46,18 @@
     <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
+
           <v-spacer></v-spacer>
-          <v-tab active-class="active-link">
-            Monthly Revenue
+          <v-tab active-class="active-link" @click="getDataFromApi2()">
+            Monthly Revenue {{ componentKey }}
           </v-tab>
-          <v-tab active-class="active-link">
-            Daily Revenue
+          <v-tab active-class="active-link" @click="getDataFromApi2()">
+            Daily Revenue {{ componentKey }}
           </v-tab>
-          <v-tab active-class="active-link">
-            Top 10 Customers
+          <v-tab active-class="active-link" @click="getDataFromApi2()">
+            Top 10 Customers {{ componentKey }}
           </v-tab>
-          <v-tab active-class="active-link">
+          <v-tab active-class="active-link" @click="getDataFromApi2()">
             Sold Graph1
           </v-tab>
           <v-tab active-class="active-link">
@@ -71,7 +72,8 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
-                  <MonthlyReport :filter_from_date="filter_from_date" :filter_to_date="filter_to_date" />
+                  <MonthlyReport :filter_from_date="filter_from_date" :filter_to_date="filter_to_date"
+                    :key="componentKey" />
                 </client-only>
               </v-card-text>
             </v-card>
@@ -80,7 +82,8 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
-                  <DailyReport :filter_from_date="filter_from_date" :filter_to_date="filter_to_date" />
+                  <DailyReport :filter_from_date="filter_from_date" :filter_to_date="filter_to_date"
+                    :key="componentKey" />
                 </client-only>
               </v-card-text>
             </v-card>
@@ -89,7 +92,8 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
-                  <Top10Report :filter_from_date="filter_from_date" :filter_to_date="filter_to_date" />
+                  <Top10Report :filter_from_date="filter_from_date" :filter_to_date="filter_to_date"
+                    :key="componentKey" />
                 </client-only>
               </v-card-text>
             </v-card>
@@ -154,6 +158,7 @@ export default {
   },
   data() {
     return {
+      componentKey: 0,
       soldNodataDipslay: false,
       menu_from_filter: '',
       filter_from_date: '',
@@ -322,6 +327,10 @@ export default {
   },
 
   methods: {
+    updateFilterValues() {
+      this.$emit('filter_from_date');
+      this.$emit('filter_to_date');
+    },
     formatDate(date) {
       var day = date.getDate();
       var month = date.getMonth() + 1; // Months are zero-based
@@ -368,8 +377,17 @@ export default {
     forceChartRerender() {
       this.chartKey += 1;
     },
+    getDataFromApi2() {
+
+      this.componentKey += 1;
+      this.getDataFromApi();
+
+    },
 
     getDataFromApi(url = this.endpoint) {
+
+
+      this.componentKey++;
       this.barSeries[0]["data"].splice(0, this.barSeries[0]["data"].length);
       this.pieSeries.splice(0, this.pieSeries.length);
 
@@ -392,10 +410,10 @@ export default {
             this.barSeries[0]["data"].push(item);
 
           });
-          // data.date.forEach((item) => {
+          data.date.forEach((item) => {
 
-          //   this.barChartOptions.xaxis.categories.push(item);
-          // });
+            this.barChartOptions.xaxis.categories.push(item);
+          });
 
           let totSold = eval(data.sold.join("+"));
           let totUnsold = eval(data.unsold.join("+"));

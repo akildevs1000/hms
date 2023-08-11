@@ -59,6 +59,7 @@ class ManagementController extends Controller
             ->whereCompanyId($request->company_id)
         // ->whereMonth('date', $request->month)
             ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
+            ->orderBy('date', 'ASC')
             ->get()->toArray();
 
         foreach ($data as $data) {
