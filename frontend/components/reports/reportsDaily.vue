@@ -1,65 +1,66 @@
 <template>
     <div v-if="can('management_revenue_report_access') && can('management_revenue_report_view')">
 
-        <div id="chart">
+        <v-row>
+            <div id="chart">
 
-        </div>
-        <v-col cols="12">
-            <ApexCharts type="bar" height="350" ref="realtimeChart" :options="barChartOptionsNew" :series="barSeriesNew"
-                :key="chartKey"></ApexCharts>
-            <!-- <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries"
+            </div>
+            <v-col cols="12">
+                <ApexCharts type="bar" height="350" ref="realtimeChart" :options="barChartOptionsNew" :series="barSeriesNew"
+                    :key="chartKey"></ApexCharts>
+                <!-- <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries"
                             chart-id="bar" :height="400" :key="chartKey" /> -->
-        </v-col>
+            </v-col>
 
-        <v-col cols="12">
+            <v-col cols="12">
 
-            <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
+                <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
                                 mdi mdi-printer</v-icon> </v-col> -->
 
-            <v-data-table dense :headers="headers_table" ref="dataTable" :items="data_table" :loading="loading"
-                :footer-props="{
-                    itemsPerPageOptions: [1000],
-                }" class="elevation-1" :hide-default-footer="true">
+                <v-data-table dense :headers="headers_table" ref="dataTable" :items="data_table" :loading="loading"
+                    :footer-props="{
+                        itemsPerPageOptions: [1000],
+                    }" class="elevation-1" :hide-default-footer="true">
 
-                <template v-slot:item.date="{ item }">
-                    <a @click="goToNightAuditReport(item)">{{ item.date }}</a>
-                </template>
+                    <template v-slot:item.date="{ item }">
+                        <a @click="goToNightAuditReport(item)">{{ item.date }}</a>
+                    </template>
 
 
-                <template v-slot:item.room_sold="{ item }">
-                    {{ item.sold }}
-                </template>
-                <template v-slot:item.income="{ item }">
-                    {{ item.income }}
-                </template>
-                <template v-slot:item.expenses="{ item }">
-                    {{ item.expenses }}
-                </template>
-                <template v-slot:item.management_expenses="{ item }">
-                    {{ item.management_expenses }}
-                </template>
-                <template v-slot:item.profit="{ item }">
-                    {{ item.profit }}
-                </template>
-                <template v-slot:item.percentage="{ item }">
-                    {{ item.percentage }} %
-                </template>
-                <template slot="body.append">
-                    <tr>
-                        <td class="text-center  font-weight-bold">TOTAL</td>
-                        <td class="text-right font-weight-bold"> {{ grandTotal.totalRooms }}</td>
-                        <td class="text-right font-weight-bold">{{ grandTotal.totalIncome }}</td>
-                        <td class="text-right font-weight-bold">{{ grandTotal.totalExpenses }}</td>
-                        <td class="text-right font-weight-bold">{{ grandTotal.totalManagementExpenses }}
-                        </td>
-                        <td class="text-right font-weight-bold">{{ grandTotal.totalProfit }}</td>
-                        <td class="text-right font-weight-bold">{{ grandTotal.totalPercentage }}%</td>
-                    </tr>
-                </template>
+                    <template v-slot:item.room_sold="{ item }">
+                        {{ item.sold }}
+                    </template>
+                    <template v-slot:item.income="{ item }">
+                        {{ item.income }}
+                    </template>
+                    <template v-slot:item.expenses="{ item }">
+                        {{ item.expenses }}
+                    </template>
+                    <template v-slot:item.management_expenses="{ item }">
+                        {{ item.management_expenses }}
+                    </template>
+                    <template v-slot:item.profit="{ item }">
+                        {{ item.profit }}
+                    </template>
+                    <template v-slot:item.percentage="{ item }">
+                        {{ item.percentage }} %
+                    </template>
+                    <template slot="body.append">
+                        <tr>
+                            <td class="text-center  font-weight-bold">TOTAL</td>
+                            <td class="text-right font-weight-bold"> {{ grandTotal.totalRooms }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalIncome }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalExpenses }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalManagementExpenses }}
+                            </td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalProfit }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalPercentage }}%</td>
+                        </tr>
+                    </template>
 
-            </v-data-table>
+                </v-data-table>
 
-        </v-col>
+            </v-col>
 
         </v-row>
 
