@@ -1,152 +1,85 @@
 <template>
     <div v-if="can('management_revenue_report_access') && can('management_revenue_report_view')">
 
-        <!-- <v-row>
-
-            <v-col md="2">
-                <v-select :items="years" label="Select Year" outlined dense v-model="year"
-                    @change="getDataFromApi()"></v-select>
-            </v-col>
-            <v-col md="2">
-                <v-select :items="months" lable="Select Month" outlined dense v-model="month" item-value="id"
-                    item-text="name" @change="getDataFromApi()"></v-select> </v-col>
-        </v-row> -->
         <v-row>
+            <div id="chart">
 
-            <v-col md="2">
-                <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"
-                    transition="scale-transition" offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field outlined dense v-model="filter_from_date" readonly v-bind="attrs" v-on="on"
-                            label="From Date"></v-text-field>
-                    </template>
-                    <v-date-picker style="height: 400px" v-model="filter_from_date" no-title scrollable
-                        @input="getDataFromApi(); menu_from_filter = false">
-
-
-                    </v-date-picker>
-                </v-menu>
-            </v-col>
-            <v-col md="2">
-                <v-menu ref="menu_to_filter" v-model="menu_to_filter" :close-on-content-click="false"
-                    transition="scale-transition" offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field outlined dense v-model="filter_to_date" readonly v-bind="attrs" v-on="on"
-                            label="To Date"></v-text-field>
-                    </template>
-                    <v-date-picker style="height: 400px" v-model="filter_to_date" no-title scrollable
-                        @input="getDataFromApi(); menu_to_filter = false">
-
-
-                    </v-date-picker>
-                </v-menu>
-
-            </v-col>
-            <!-- <v-col md="2">
-                <v-btn @click="getDataFromApi()" dense color="primary">Submit</v-btn>
-            </v-col> -->
-        </v-row>
-
-        <div>
-            <v-card class="mb-5" elevation="0">
-                <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
-                    <v-col cols="12">
-                        <span> Revenue Report - Day wise</span>
-
-
-                        <v-tooltip top color="primary">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn dense class="ma-0 px-0" x-small :ripple="false" text v-bind="attrs" v-on="on">
-                                    <v-icon color="white" class="ml-2" @click="getDataFromApi" dark>mdi mdi-reload</v-icon>
-                                </v-btn>
-                            </template>
-                            <span>Reload</span>
-                        </v-tooltip>
-                    </v-col>
-                </v-toolbar>
-                <v-row>
-                    <div id="chart">
-
-                    </div>
-                    <v-col cols="12">
-                        <ApexCharts type="bar" height="430" ref="realtimeChart" :options="barChartOptionsNew"
-                            :series="barSeriesNew" :key="chartKey"></ApexCharts>
-                        <!-- <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries"
+            </div>
+            <v-col cols="12">
+                <ApexCharts type="bar" height="350" ref="realtimeChart" :options="barChartOptionsNew" :series="barSeriesNew"
+                    :key="chartKey"></ApexCharts>
+                <!-- <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries"
                             chart-id="bar" :height="400" :key="chartKey" /> -->
-                    </v-col>
+            </v-col>
 
-                    <v-col cols="12">
+            <v-col cols="12">
 
-                        <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
+                <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
                                 mdi mdi-printer</v-icon> </v-col> -->
 
-                        <v-data-table dense :headers="headers_table" ref="dataTable" :items="data_table" :loading="loading"
-                            :footer-props="{
-                                itemsPerPageOptions: [1000],
-                            }" class="elevation-1" :hide-default-footer="true">
+                <v-data-table dense :headers="headers_table" ref="dataTable" :items="data_table" :loading="loading"
+                    :footer-props="{
+                        itemsPerPageOptions: [1000],
+                    }" class="elevation-1" :hide-default-footer="true">
 
-                            <template v-slot:item.date="{ item }">
-                                <a @click="goToNightAuditReport(item)">{{ item.date }}</a>
-                            </template>
+                    <template v-slot:item.date="{ item }">
+                        <a @click="goToNightAuditReport(item)">{{ item.date }}</a>
+                    </template>
 
 
-                            <template v-slot:item.room_sold="{ item }">
-                                {{ item.sold }}
-                            </template>
-                            <template v-slot:item.income="{ item }">
-                                {{ item.income }}
-                            </template>
-                            <template v-slot:item.expenses="{ item }">
-                                {{ item.expenses }}
-                            </template>
-                            <template v-slot:item.management_expenses="{ item }">
-                                {{ item.management_expenses }}
-                            </template>
-                            <template v-slot:item.profit="{ item }">
-                                {{ item.profit }}
-                            </template>
-                            <template v-slot:item.percentage="{ item }">
-                                {{ item.percentage }} %
-                            </template>
-                            <template slot="body.append">
-                                <tr>
-                                    <td class="text-center  font-weight-bold">TOTAL</td>
-                                    <td class="text-right font-weight-bold"> {{ grandTotal.totalRooms }}</td>
-                                    <td class="text-right font-weight-bold">{{ grandTotal.totalIncome }}</td>
-                                    <td class="text-right font-weight-bold">{{ grandTotal.totalExpenses }}</td>
-                                    <td class="text-right font-weight-bold">{{ grandTotal.totalManagementExpenses }}
-                                    </td>
-                                    <td class="text-right font-weight-bold">{{ grandTotal.totalProfit }}</td>
-                                    <td class="text-right font-weight-bold">{{ grandTotal.totalPercentage }}%</td>
-                                </tr>
-                            </template>
+                    <template v-slot:item.room_sold="{ item }">
+                        {{ item.sold }}
+                    </template>
+                    <template v-slot:item.income="{ item }">
+                        {{ item.income }}
+                    </template>
+                    <template v-slot:item.expenses="{ item }">
+                        {{ item.expenses }}
+                    </template>
+                    <template v-slot:item.management_expenses="{ item }">
+                        {{ item.management_expenses }}
+                    </template>
+                    <template v-slot:item.profit="{ item }">
+                        {{ item.profit }}
+                    </template>
+                    <template v-slot:item.percentage="{ item }">
+                        {{ item.percentage }} %
+                    </template>
+                    <template slot="body.append">
+                        <tr>
+                            <td class="text-center  font-weight-bold">TOTAL</td>
+                            <td class="text-right font-weight-bold"> {{ grandTotal.totalRooms }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalIncome }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalExpenses }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalManagementExpenses }}
+                            </td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalProfit }}</td>
+                            <td class="text-right font-weight-bold">{{ grandTotal.totalPercentage }}%</td>
+                        </tr>
+                    </template>
 
-                        </v-data-table>
+                </v-data-table>
 
-                    </v-col>
+            </v-col>
 
-                </v-row>
+        </v-row>
 
-            </v-card>
-        </div>
+
     </div>
     <NoAccess v-else />
 </template>
   
 <script>
-import SourceReport from '../../../components/bookingSource/SourceReport.vue';
 
 export default {
-    components: {
-        SourceReport,
-    },
+    props: ['filter_from_date', 'filter_to_date'],
     data() {
         return {
-            menu_from_filter: '',
-            filter_from_date: '',
+            // menu_from_filter: '',
+            // filter_from_date: '',
 
-            menu_to_filter: '',
-            filter_to_date: '',
+            // menu_to_filter: '',
+            // filter_to_date: '',
 
             barSeriesNew: [
                 {
@@ -390,7 +323,18 @@ export default {
 
         };
     },
+    watch: {
 
+        filter_from_date() {
+
+            this.getDataFromApi();
+
+        },
+        filter_to_date() {
+            this.getDataFromApi();
+
+        }
+    },
     created() {
         this.month = new Date().getMonth();
         this.year = new Date().getFullYear();
@@ -420,6 +364,10 @@ export default {
     },
     mounted() {
         // this.getDataFromApi();
+
+    },
+    computed: {
+        // Use a computed property to calculate and return the filtered items
 
     },
     // watch: {

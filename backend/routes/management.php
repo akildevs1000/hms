@@ -9,6 +9,7 @@ Route::post('generate_occupancy_rate', [ManagementController::class, 'generateOc
 Route::get('get_occupancy_rate', [ManagementController::class, 'getOccupancyRate']);
 Route::get('get_single_day_occupancy_rate', [ManagementController::class, 'getSingleDayOccupancyRate']);
 Route::get('get_occupancy_rate_by_month', [ManagementController::class, 'getOccupancyRateByMonth']);
+Route::get('get_occupancy_rate_by_month2', [ManagementController::class, 'getOccupancyRateByMonth2']);
 
 Route::get('get_source_rate_by_month', [ManagementController::class, 'getSourceRateByMonth']);
 
@@ -20,6 +21,7 @@ Route::get('get_audit_report_pdf', [ReportGenerateController::class, 'generateAu
 
 Route::get('get_report_monthly_wise', [ManagementController::class, 'getReportMonthlyWise']);
 Route::get('get_report_monthly_wise_group', [ManagementController::class, 'getReportMonthlyWiseGroup']);
+Route::get('get_report_monthly_wise_print', [ManagementController::class, 'getReportMonthlyWiseGroupPrint']);
 Route::get('get_report_top-ten-customers', [ManagementController::class, 'getReportTop10Customers']);
 Route::get('get_report_daily_wise_group', [ManagementController::class, 'getReportDailyWiseGroup']);
 

@@ -3,12 +3,41 @@
 
     <v-row>
 
-      <v-col md="2">
+      <!-- <v-col md="2">
         <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
       </v-col>
       <v-col md="2">
         <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
           @change="getDataFromApi()"></v-select>
+      </v-col> -->
+      <v-col md="2">
+        <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"
+          transition="scale-transition" offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field outlined dense v-model="filter_from_date" readonly v-bind="attrs" v-on="on"
+              label="From Date"></v-text-field>
+          </template>
+          <v-date-picker style="height: 400px" v-model="filter_from_date" no-title scrollable
+            @input="getDataFromApi(); menu_from_filter = false">
+
+
+          </v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col md="2">
+        <v-menu ref="menu_to_filter" v-model="menu_to_filter" :close-on-content-click="false"
+          transition="scale-transition" offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field outlined dense v-model="filter_to_date" readonly v-bind="attrs" v-on="on"
+              label="To Date"></v-text-field>
+          </template>
+          <v-date-picker style="height: 400px" v-model="filter_to_date" no-title scrollable
+            @input="getDataFromApi(); menu_to_filter = false">
+
+
+          </v-date-picker>
+        </v-menu>
+
       </v-col>
     </v-row>
 
@@ -37,9 +66,9 @@
             }" class="elevation-1" :hide-default-footer="true">
 
 
+
               <template v-slot:item.name="{ item }">
-                {{ item.title }}
-              </template>
+                <a @click="getToCheckoutPage(item)"> {{ item.title }}</a> </template>
 
               <template v-slot:item.phone_number="{ item }">
                 {{ item.customer.contact_no }}
@@ -94,6 +123,11 @@ export default {
   },
   data() {
     return {
+      menu_from_filter: '',
+      filter_from_date: '',
+
+      menu_to_filter: '',
+      filter_to_date: '',
       total_rooms: 0,
       total_visits: 0,
       total_price: 0,
@@ -301,7 +335,14 @@ export default {
 
     this.getYears();
     //this.month = new Date().getMonth() + 1;
+    //this.year = new Date().getFullYear();
+
+    this.month = new Date().getMonth();
     this.year = new Date().getFullYear();
+
+    this.filter_from_date = this.formatDate(new Date(this.year, 0, 1));
+    this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
     this.getDataFromApi();
   },
   mounted() {
@@ -318,6 +359,13 @@ export default {
   //   },
   // },
   methods: {
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
     getToCheckoutPage(item) {
       this.$store.dispatch('setData', { customer_name: item.first_name });
       this.$router.push('reservation/check_out');
@@ -383,6 +431,8 @@ export default {
           company_id: this.$auth.user.company.id,
           month: this.month,
           year: this.year,
+          filter_from_date: this.filter_from_date,
+          filter_to_date: this.filter_to_date,
 
         },
       };

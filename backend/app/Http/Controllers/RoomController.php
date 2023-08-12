@@ -37,9 +37,10 @@ class RoomController extends Controller
         }
         if ($request->filled('status')) {
             $model->where('status', $request->status);
-        } else {
-            $model->where('status', 0);
         }
+        //  else {
+        //     $model->where('status', 0);
+        // }
 
 //datatable sorty by
         if ($request->filled('sortBy')) {

@@ -464,40 +464,40 @@ export default {
           to: "/management/report/user",
           menu: "management_payments_access",
         },
-        {
-          icon: "mdi mdi-finance",
-          title: "Summary",
-          to: "/management/report/summary",
-          menu: "management_summary_access",
-        },
+        // {
+        //   icon: "mdi mdi-finance",
+        //   title: "Summary",
+        //   to: "/management/report/summary",
+        //   menu: "management_summary_access",
+        // },
         {
           icon: "mdi mdi-calendar-month",
-          title: "Sold-out Report",
+          title: "All Reports",
           to: "/management/report/monthly",
           menu: "management_soldout_access",
         },
-        {
-          icon: "mdi mdi-account-group",
-          title: "Monhtly wise Revenue Report",
-          to: "/management/report/monthly_revenue",
-          menu: "management_revenue_report_access",
-        }, {
-          icon: "mdi mdi-account-group",
-          title: "Day wise Revenue Report  ",
-          to: "/management/report/daily_revenue",
-          menu: "management_revenue_report_access",
-        }, {
-          icon: "mdi mdi-briefcase-account",
-          title: "Top 10 Customers",
-          to: "/management/report/top-customers",
-          menu: "management_top_10_customers_access",
-        },
-        {
-          icon: "mdi mdi-chart-pie",
-          title: "Custom",
-          to: "/management/report/daily",
-          menu: "management_custom_soldout_access",
-        },
+        // {
+        //   icon: "mdi mdi-account-group",
+        //   title: "Monhtly wise Revenue Report",
+        //   to: "/management/report/monthly_revenue",
+        //   menu: "management_revenue_report_access",
+        // }, {
+        //   icon: "mdi mdi-account-group",
+        //   title: "Day wise Revenue Report  ",
+        //   to: "/management/report/daily_revenue",
+        //   menu: "management_revenue_report_access",
+        // }, {
+        //   icon: "mdi mdi-briefcase-account",
+        //   title: "Top 10 Customers",
+        //   to: "/management/report/top-customers",
+        //   menu: "management_top_10_customers_access",
+        // },
+        // {
+        //   icon: "mdi mdi-chart-pie",
+        //   title: "Custom",
+        //   to: "/management/report/daily",
+        //   menu: "management_custom_soldout_access",
+        // },
       ],
     };
 
@@ -535,6 +535,12 @@ export default {
           icon: "mdi mdi-account-check-outline",
           title: "Roles",
           to: "/role",
+          menu: "settings_roles_access",
+        },
+        {
+          icon: "mdi mdi-account-check-outline",
+          title: "Emails",
+          to: "/emails",
           menu: "settings_roles_access",
         },
         {

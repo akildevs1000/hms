@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Controllers\ReportGenerateController;
 use App\Mail\AuditReportMail;
 use App\Models\Company;
+use App\Models\EmailNotifications;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Support\Facades\Mail;
@@ -44,8 +45,8 @@ class AuditReport extends Command
                 return;
             }
 
-            // $company_ids =    Company::orderBy('id', 'asc')->pluck("id");
-            $company_ids = [1, 2];
+            $company_ids = Company::orderBy('id', 'asc')->pluck("id");
+            //$company_ids = [1, 2];
             foreach ($company_ids as $company_id) {
                 $date = date('Y-m-d');
                 $folderPath = storage_path("app/pdf/$date/$company_id");
@@ -63,7 +64,19 @@ class AuditReport extends Command
                     'company' => Company::find($company_id),
                 ];
 
-                Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new AuditReportMail($data));
+                $emailsArray = EmailNotifications::where('company_id', $company_id)
+                    ->where('status', 1)
+                    ->where('email', '!=', '')
+                    ->get();
+
+                // Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new AuditReportMail($data));
+                foreach ($emailsArray as $value) {
+                    if (strpos($value, '@')) {
+                        Mail::to($value)->send(new AuditReportMail($data));
+                    }
+
+                }
+
             }
 
             echo "[" . $date . "] Cron: $script_name.   generated.\n";
