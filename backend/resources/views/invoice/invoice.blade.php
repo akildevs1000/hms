@@ -16,7 +16,7 @@
             <div class="tm_invoice tm_style2 print_header" id="tm_download_section" style="padding-top:10px">
                 <div class="tm_invoice_in">
                     <div class="tm_invoice_content">
-                        <div class="tm_invoice_head tm_mb5">
+                        <div class="tm_invoice_head tm_mb0">
                             <div class="tm_invoice_left">
                                 <div class="tm_logo">
                                     @if ($booking->company_id == 1)
@@ -48,7 +48,7 @@
 
                         </div >
                         <div  style="text-align:center">
-                        <h4>Tax Invoice</h4>
+                       <spna style="font-size:20px">Tax Invoice</span>
                         </div>
                         <div  style="text-align:right">
                         Invoice Number - {{ $invNo }}
@@ -75,18 +75,18 @@
                             <div>
 
                             </div> -->
-                            <div class="tm_invoice_info_right">
+                            <div class="" style="width:100%">
                                 <div class="tm_grid_row tm_col_4 tm_col_2_sm tm_invoice_info_in tm_gray_bg tm_round_border">
                                     <div>
                                     <b class="tm_primary_color">Guest Info</b>
-                                <p class="tm_m0">{{ $booking->customer->full_name ?? '' }}
+                                    <p class="tm_m0">{{ $booking->customer->full_name ?? '' }}
                                     <br>
                                     {{ $booking->customer->contact_no ?? '' }}
                                     <br>
                                     {{ $booking->customer->gst_number ?? '' }}
                                     <br>
                                     {{ strtolower($booking->customer->address) ?? '' }}
-                                </p>
+                                    </p>
                                     </div>
                                     <div>
                                         <span>Check In:</span> <br>
@@ -296,12 +296,12 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                             </div>
                             <div class="tm_invoice_footer tm_mb15">
                                 <div class="tm_left_footer">
-                                    <p class="tm_mb2"><b class="tm_primary_color">Payment info:</b></p>
+                                    <!-- <p class="tm_mb2"><b class="tm_primary_color">Payment info:</b></p>
                                     <p class="tm_m0">{{ $booking->customer->full_name ?? '' }} <br>
                                         {{ $paymentMode['payment_mode']['name'] ?? '' }}
                                         {{ $paymentMode['payment_method_id'] != 1 ? ' - ' . $paymentMode['reference_number'] : '' }}
                                         <br>Amount: {{ $amtLatter }}
-                                    </p>
+                                    </p> -->
 
 <!--
 @php
@@ -316,7 +316,7 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                   <p style="margin-top:20px">Food Tax:   {{ number_format((float)   $gstAmount, 2) }}</p> -->
                                 </div>
                                 <div class="tm_right_footer">
-                                    <table class="tm_mb15">
+                                    <table class="tm_mb0">
                                         <tbody>
                                         <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_border_none tm_bold"
@@ -345,13 +345,13 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="tm_width_3 tm_primary_color tm_border_none tm_bold"
+                                                <td class="tm_width_3 tm_primary_color tm_border_none  "
                                                      >
                                                     Total(After Disc)
                                                 </td>
 
                                                 <td
-                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_bold">
+                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none  ">
 
                                                      {{$company->currency ? $company->currency:''}}{{ number_format($gwithoutgst, 2) ?? 0 }}
                                                 </td>
@@ -368,11 +368,11 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                             </tr>
 
                                             <tr>
-                                                <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
+                                                <td class="tm_width_3 tm_primary_color tm_bold tm_border_none tm_pt0 ">
                                                     Grand Total
                                                 </td>
                                                 <td
-                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
+                                                    class="tm_width_3 tm_primary_color tm_bold tm_text_right tm_border_none tm_pt0">
                                                      {{$company->currency ? $company->currency:''}}{{ number_format((float) $totalWithTax + (float) $totalPostingWithTax, 2) }}
                                                 </td>
                                             </tr>
@@ -400,6 +400,9 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                            <div class="tm_text_right">
+                            <br>Amount: {{ $amtLatter }} Only
                             </div>
                         </div>
                         <div class="tm_note tm_text_center tm_font_style_normal"><br>

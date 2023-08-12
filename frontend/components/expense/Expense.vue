@@ -98,7 +98,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="imgView" width="500px">
+    <v-dialog v-model="imgView" :width="previewImageWidth">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Preview</span>
@@ -431,6 +431,7 @@ export default {
     ImagePreview,
   },
   data: () => ({
+    previewImageWidth: "500px",
     Model: "Expense",
 
     from_date: "",
@@ -608,6 +609,8 @@ export default {
       let file = doc ?? null;
       const fileExtension = file.split(".").pop().toLowerCase();
       fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
+      fileExtension == "pdf" ? (this.previewImageWidth = "70%") : this.previewImageWidth = "500px";
+
       this.documentObj = {
         fileExtension: fileExtension,
         file: file + "?t=" + Math.random(),

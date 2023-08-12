@@ -409,7 +409,7 @@ export default {
         },
         {
           icon: "mdi-home-search-outline",
-          title: "Lost And Found Items",
+          title: "Lost & Found  ",
 
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
