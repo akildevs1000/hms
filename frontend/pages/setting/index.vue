@@ -14,90 +14,45 @@
       </v-row>
 
       <v-row>
-        <v-col cols="6">
+        <v-col cols="6" style="display:none">
           <v-card>
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <label class="col-form-label"
-                    >Current Password <span class="text-danger">*</span></label
-                  >
-                  <v-text-field
-                    dense
-                    outlined
-                    :hide-details="!errors.current_password"
-                    :append-icon="
-                      current_password_show ? 'mdi-eye' : 'mdi-eye-off'
-                    "
-                    :type="current_password_show ? 'text' : 'password'"
-                    v-model="payload.current_password"
-                    class="input-group--focused"
-                    @click:append="
+                  <label class="col-form-label">Current Password <span class="text-danger">*</span></label>
+                  <v-text-field dense outlined :hide-details="!errors.current_password" :append-icon="current_password_show ? 'mdi-eye' : 'mdi-eye-off'
+                    " :type="current_password_show ? 'text' : 'password'" v-model="payload.current_password"
+                    class="input-group--focused" @click:append="
                       current_password_show = !current_password_show
-                    "
-                    :error="errors.current_password"
-                    :error-messages="
-                      errors && errors.current_password
-                        ? errors.current_password
-                        : ''
-                    "
-                  ></v-text-field>
+                      " :error="errors.current_password" :error-messages="errors && errors.current_password
+    ? errors.current_password
+    : ''
+    "></v-text-field>
                 </v-col>
                 <v-col md="12" sm="12" cols="12" dense>
-                  <label class="col-form-label"
-                    >Password <span class="text-danger">*</span></label
-                  >
-                  <v-text-field
-                    dense
-                    outlined
-                    :hide-details="!errors.password"
-                    :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="show_password ? 'text' : 'password'"
-                    v-model="payload.password"
-                    class="input-group--focused"
-                    @click:append="show_password = !show_password"
-                    :error="errors.password"
-                    :error-messages="
-                      errors && errors.password ? errors.password[0] : ''
-                    "
-                  ></v-text-field>
+                  <label class="col-form-label">Password <span class="text-danger">*</span></label>
+                  <v-text-field dense outlined :hide-details="!errors.password"
+                    :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'" :type="show_password ? 'text' : 'password'"
+                    v-model="payload.password" class="input-group--focused" @click:append="show_password = !show_password"
+                    :error="errors.password" :error-messages="errors && errors.password ? errors.password[0] : ''
+                      "></v-text-field>
                 </v-col>
 
                 <v-col md="12" sm="12" cols="12" dense>
-                  <label class="col-form-label"
-                    >Confirm Password <span class="text-danger">*</span></label
-                  >
-                  <v-text-field
-                    dense
-                    outlined
-                    :hide-details="!errors.password_confirmation"
-                    :append-icon="
-                      show_password_confirm ? 'mdi-eye' : 'mdi-eye-off'
-                    "
-                    :type="show_password_confirm ? 'text' : 'password'"
-                    v-model="payload.password_confirmation"
-                    class="input-group--focused"
-                    @click:append="
+                  <label class="col-form-label">Confirm Password <span class="text-danger">*</span></label>
+                  <v-text-field dense outlined :hide-details="!errors.password_confirmation" :append-icon="show_password_confirm ? 'mdi-eye' : 'mdi-eye-off'
+                    " :type="show_password_confirm ? 'text' : 'password'" v-model="payload.password_confirmation"
+                    class="input-group--focused" @click:append="
                       show_password_confirm = !show_password_confirm
-                    "
-                    :error="errors.show_password_confirm"
-                    :error-messages="
-                      errors && errors.show_password_confirm
-                        ? errors.show_password_confirm[0]
-                        : ''
-                    "
-                  ></v-text-field>
+                      " :error="errors.show_password_confirm" :error-messages="errors && errors.show_password_confirm
+    ? errors.show_password_confirm[0]
+    : ''
+    "></v-text-field>
                 </v-col>
                 <v-col cols="12">
                   <div class="text-left">
-                    <v-btn
-                      v-if="can('setting_company_change_password_access')"
-                      dark
-                      small
-                      :loading="loading_password"
-                      color="primary"
-                      @click="update_setting"
-                    >
+                    <v-btn v-if="can('setting_company_change_password_access')" dark small :loading="loading_password"
+                      color="primary" @click="update_setting">
                       Submit
                     </v-btn>
                   </div>
@@ -106,9 +61,38 @@
             </v-container>
           </v-card>
         </v-col>
+        <v-col cols="4">
+          <v-card>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <div class="form-group">
+                    <label class="col-form-label">Currency</label>
+                    <span class="text-danger">*</span>
+                    <v-select outlined dense small v-model="company_payload.currency"
+                      :items="[{ 'text': 'INR ₹', 'value': '₹' }, { 'text': 'US $', 'value': '$' }]">
+
+                    </v-select>
+
+                    <span v-if="errors && errors.currency" class="text-danger mt-2">{{ errors.p_o_box_no[0]
+                    }}</span>
+                  </div>
+                  <v-col cols="12">
+                    <div class="text-right">
+                      <v-btn v-if="can('setting_company_change_password_access')" dark small :loading="loading_password"
+                        color="primary" @click="update_setting">
+                        Submit
+                      </v-btn>
+                    </div>
+                  </v-col>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-col>
       </v-row>
       <v-row>
-        <v-col cols="3">
+        <v-col cols="3" style="display:none">
           <v-card>
             <v-container>
               <v-row>
@@ -118,26 +102,16 @@
                     <v-icon right dark>mdi-cloud-upload</v-icon>
                   </v-btn> -->
                   <div class="pa-5">
-                    <v-img
-                      @click="onpick_attachment"
-                      style="
+                    <v-img @click="onpick_attachment" style="
                         width: 150px;
                         height: 150px;
                         margin: 0 auto;
                         border-radius: 50%;
-                      "
-                      :src="showImage"
-                    ></v-img>
+                      " :src="showImage"></v-img>
                   </div>
 
-                  <input
-                    required
-                    type="file"
-                    @change="attachment"
-                    style="display: none"
-                    accept="image/*"
-                    ref="attachment_input"
-                  />
+                  <input required type="file" @change="attachment" style="display: none" accept="image/*"
+                    ref="attachment_input" />
 
                   <span v-if="errors && errors.logo" class="text-danger mt-2">{{
                     errors.logo[0]
@@ -146,14 +120,8 @@
 
                 <v-col cols="12">
                   <div class="text-left">
-                    <v-btn
-                      v-if="can('setting_company_change_logo_access')"
-                      dark
-                      small
-                      :loading="loading"
-                      :color="color"
-                      @click="update_image"
-                    >
+                    <v-btn v-if="can('setting_company_change_logo_access')" dark small :loading="loading" :color="color"
+                      @click="update_image">
                       Submit
                     </v-btn>
                   </div>
@@ -197,6 +165,10 @@ export default {
 
     errors: [],
     previewImage: null,
+    company_payload: {
+
+      currency: "",
+    },
   }),
 
   created() {
@@ -204,6 +176,7 @@ export default {
     this.id = this.$auth?.user?.company?.id;
     this.getImage();
     console.log(this.imgPath, this.previewImage);
+    this.getDataFromApi();
   },
   computed: {
     showImage() {
@@ -217,6 +190,17 @@ export default {
     },
   },
   methods: {
+    getDataFromApi() {
+      this.id = this.$auth.user?.company?.id;//this.$route.params.id;
+      this.$axios.get(`company/${this.id}`).then(({ data }) => {
+        let r = data.record;
+
+        this.company_payload.currency = r.currency;
+
+
+        this.preloader = false;
+      });
+    },
     changeTopBarColor(color) {
       this.color = color;
       this.$store.commit("change_color", color);
@@ -251,9 +235,19 @@ export default {
     },
 
     update_setting() {
-      let payload = this.payload;
-      let id = this.id;
-      this.start_process(`/company/${id}/update/user`, payload, `Setting`);
+      let payload = new FormData();
+
+
+      payload.append("currency", this.company_payload.currency);
+
+      this.start_process(`/company/${this.id}/update_settings`, payload, `Company`);
+    },
+    update_contact() {
+      this.start_process(
+        `/company/${this.id}/update/contact`,
+        this.contact_payload,
+        `Contact`
+      );
     },
 
     update_image() {

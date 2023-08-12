@@ -10,6 +10,7 @@ use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Report;
 use App\Models\Room;
+use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -160,6 +161,8 @@ class ManagementController extends Controller
                 'date' => $date,
                 'sold' => $soldRate,
                 'unsold' => $unsoldRate,
+                'sold_qty' => $numberOfSoldRooms,
+                'unsold_qty' => $totalRooms - $numberOfSoldRooms,
             ]);
         }
         return response()->json(['record' => null, 'message' => '', 'status' => true]);
@@ -175,12 +178,15 @@ class ManagementController extends Controller
             ->whereCompanyId($request->company_id)->count();
         $soldRate = round(($numberOfSoldRooms / $totalRooms) * 100);
         $unsoldRate = 100 - $soldRate;
+
         Report::whereDate('date', $date)->whereCompanyId($request->company_id)->delete();
         Report::create([
             'company_id' => $request->company_id,
             'date' => $date,
             'sold' => $soldRate,
             'unsold' => $unsoldRate,
+            'sold_qty' => $numberOfSoldRooms,
+            'unsold_qty' => $totalRooms - $numberOfSoldRooms,
         ]);
         return response()->json(['record' => null, 'message' => '', 'status' => true]);
     }
@@ -355,6 +361,7 @@ class ManagementController extends Controller
     }
     public function getReportMonthlyWiseGroup(Request $request)
     {
+        // session(['isMonthReport' => ])
 
         $model = Expense::query();
         $model->where('company_id', $request->company_id);
@@ -374,7 +381,7 @@ class ManagementController extends Controller
 
         $soldArray = Report::selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
-            ->selectRaw('sum(sold) as total')
+            ->selectRaw('sum(sold_qty) as total')
             ->where('company_id', $request->company_id)
         // ->whereYear('created_at', $year)
             ->whereBetween('created_at', [$filter_from_date, $filter_to_date])
@@ -385,9 +392,10 @@ class ManagementController extends Controller
             ->get()
             ->toArray();
 
-        $incomeArray = Payment::selectRaw("EXTRACT(MONTH FROM date) as month")
+        $incomeArray = Transaction::
+            selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
-            ->selectRaw('sum(amount) as total')
+            ->selectRaw('sum(credit) as total')
             ->where('company_id', $request->company_id)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
@@ -404,7 +412,7 @@ class ManagementController extends Controller
             ->selectRaw("EXTRACT(YEAR FROM created_at) as year")
             ->selectRaw('sum(total) as total')
             ->where('company_id', $request->company_id)
-            ->whereYear('created_at', 2023)
+
         //   ->whereBetween('created_at', [$filter_from_date, $filter_to_date])
 
             ->where('is_management', 1)
@@ -568,6 +576,7 @@ class ManagementController extends Controller
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
             ->selectRaw('sum(amount) as total')
             ->where('company_id', $request->company_id)
+            ->where('payment_mode', "!=", 7)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             })
@@ -925,7 +934,7 @@ class ManagementController extends Controller
         $ExpencesManagementArray = $expencesModel->clone()->where('is_management', 1)->get()->toArray();
         $ExpencesNonManagementArray = $expencesModel->clone()->where('is_management', 0)->get()->toArray();
 
-        $soldArray = Report::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date ,sold')
+        $soldArray = Report::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date ,sold_qty')
             ->whereCompanyId($request->company_id)
         // ->whereMonth('created_at', $request->month)
         // ->whereYear('created_at', $request->year)
@@ -934,6 +943,7 @@ class ManagementController extends Controller
 
         $incomeArray = Payment::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date,  SUM(amount) as total_amount')
             ->where('company_id', $request->company_id)
+            ->where('payment_mode', "!=", 7)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             })
@@ -985,7 +995,7 @@ class ManagementController extends Controller
                 $expenses = 0;
             }
             if (!empty($sold)) {
-                $sold = reset($sold)["sold"];
+                $sold = reset($sold)["sold_qty"];
             } else {
                 $sold = 0;
             }

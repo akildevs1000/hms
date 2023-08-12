@@ -303,12 +303,7 @@ export default {
               menu: "inquiry_access",
             },
 
-            {
-              icon: "mdi mdi-file-document-edit-outline",
-              title: "Last & Found",
-              to: "/missing",
-              menu: "agent_access",
-            },
+
           ],
         },
 
@@ -539,9 +534,21 @@ export default {
         },
         {
           icon: "mdi mdi-account-check-outline",
-          title: "Emails",
+          title: "Report Emails",
           to: "/emails",
           menu: "settings_roles_access",
+        },
+        {
+          icon: "mdi mdi-account-details",
+          title: "Settings",
+          to: "/setting",
+          menu: "settings_permissions_access",
+        },
+        {
+          icon: "mdi mdi-account-details",
+          title: "Profile",
+          to: "/companies",
+          menu: "settings_permissions_access",
         },
         {
           icon: "mdi mdi-account-details",
@@ -813,7 +820,7 @@ td {
 
 /* Datatable Sorting Icon color  */
 .mdi-arrow-up {
-  color: red !important;
+  color: #5fafa3 !important;
 }
 
 /* datepicker min height is required  */

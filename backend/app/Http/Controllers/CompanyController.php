@@ -258,6 +258,21 @@ class CompanyController extends Controller
 
         return $this->response('Company successfully updated.', $company, true);
     }
+    public function updateSettings(Request $request, $id)
+    {
+
+        if (isset($request->currency)) {
+
+            $data["currency"] = $request->currency;
+            $company = Company::find($id)->update($data);
+
+            if (!$company) {
+                return $this->response('Company cannot updated.', null, false);
+            }
+        }
+
+        return $this->response('Company successfully updated.', $company, true);
+    }
 
     public function updateContact(ContactRequest $request, $id)
     {
