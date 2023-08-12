@@ -49,13 +49,13 @@
 
           <v-spacer></v-spacer>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
-            Monthly Revenue {{ componentKey }}
+            Monthly Revenue
           </v-tab>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
-            Daily Revenue {{ componentKey }}
+            Daily Revenue
           </v-tab>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
-            Top 10 Customers {{ componentKey }}
+            Top 10 Customers
           </v-tab>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
             Sold Graph1
