@@ -538,6 +538,12 @@ export default {
           menu: "settings_roles_access",
         },
         {
+          icon: "mdi mdi-account-check-outline",
+          title: "Emails",
+          to: "/emails",
+          menu: "settings_roles_access",
+        },
+        {
           icon: "mdi mdi-account-details",
           title: "Permissions",
           to: "/assign_permission",

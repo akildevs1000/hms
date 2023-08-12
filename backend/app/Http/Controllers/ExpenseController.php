@@ -110,6 +110,7 @@ class ExpenseController extends Controller
     public function storeDocument($request, $model, $docFileName = false, $id)
     {
         if ($request->hasFile($docFileName)) {
+
             $file = $request->file($docFileName);
             $ext = $file->getClientOriginalExtension();
             // $fileName = time() . '.' . $ext;
