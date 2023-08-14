@@ -317,6 +317,24 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="cancelCheckInDialog" persistent max-width="500">
+          <v-card>
+            <v-card-title class="text-h6">
+              Are you sure you want to cancel CheckIn?
+            </v-card-title>
+            <v-container grid-list-xs>
+              <v-textarea placeholder="Reason" rows="3" dense outlined v-model="checkInCancelReason"></v-textarea>
+            </v-container>
+            <v-card-actions>
+              <v-btn class="primary" small :loading="cancelLoad" @click="changeCheckInAdminProcess()">
+                Yes
+              </v-btn>
+              <v-btn class="error" small @click="cancelCheckInDialog = false">
+                Cancel
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <!-- end cancel room -->
 
         <!-- New Booking room  -->
@@ -342,6 +360,10 @@
         <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
           <v-list>
             <v-list-item-group v-model="selectedItem">
+              <v-list-item>
+                <v-list-item-title style="color:green">Room: {{ rightClickRoomId }}</v-list-item-title>
+              </v-list-item>
+
               <v-list-item v-if="bookingStatus == 1" link @click="checkInDialog = true">
                 <v-list-item-title>Check In</v-list-item-title>
               </v-list-item>
@@ -349,6 +371,7 @@
               <v-list-item v-else-if="bookingStatus == 2" link @click="get_check_out">
                 <v-list-item-title>Check Out</v-list-item-title>
               </v-list-item>
+
 
               <div v-else-if="bookingStatus == 3">
                 <v-list-item link @click="setAvailable">
@@ -377,6 +400,9 @@
                 <v-list-item link @click="viewBillingDialog">
                   <v-list-item-title>View Billing</v-list-item-title>
                 </v-list-item>
+
+
+
               </div>
               <v-list-item link @click="payingAdvance = true" v-if="bookingStatus <= 2 && checkData.paid_by != 2">
                 <v-list-item-title>Pay Advance </v-list-item-title>
@@ -385,6 +411,17 @@
               <v-list-item link @click="cancelDialog = true" v-if="bookingStatus == 1">
                 <v-list-item-title>Cancel Room</v-list-item-title>
               </v-list-item>
+              <div v-if="bookingStatus == 2">
+
+                <v-list-item link @click="cancelCheckInDialog = true"
+                  v-if="$auth.user.role.name.toLowerCase() == 'admin'">
+                  <v-list-item-title color="red">Cancel Check-in(admin)
+                  </v-list-item-title>
+                </v-list-item>
+
+
+
+              </div>
             </v-list-item-group>
           </v-list>
         </v-menu>
@@ -775,6 +812,12 @@ export default {
   },
   data() {
     return {
+
+      rightClickRoomId: '',
+      selected_booked_room_id: '',
+      selected_booking_id: '',
+      cancelCheckInDialog: false,
+      checkInCancelReason: '',
       chart: {
         eco: 35,
       },
@@ -1044,21 +1087,30 @@ export default {
     },
 
     get_data(jsEvent = null) {
+
+      this.selected_booked_room_id = this.evenIid;
+
       let payload = {
         params: {
           id: this.evenIid,
           company_id: this.$auth.user.company.id,
         },
       };
+      this.rightClickRoomId = '---';
       this.$axios.get(`get_booking`, payload).then(({ data }) => {
         this.checkData = data;
         this.bookingId = data.id;
+
+        this.rightClickRoomId = data.resourceId;
+
         this.full_payment = "";
         this.bookingStatus = data.booking_status;
         this.customerId = data.customer_id;
         if (this.isDbCLick) {
           this.get_event_by_db_click();
         }
+
+
       });
     },
 
@@ -1257,7 +1309,55 @@ export default {
         })
         .catch((e) => console.log(e));
     },
+    changeCheckInAdminProcess() {
 
+
+      if (this.$auth.user.role.name.toLowerCase() != 'admin') {
+        alert("You are not authorized to Cancel the Checkin");
+        return false;
+      }
+      else {
+        if (this.checkInCancelReason == "") {
+          alert("Enter reason");
+          return;
+        }
+
+
+
+        this.cancelLoad = true;
+
+        let payload = {
+          cancel_checkin_reason: this.checkInCancelReason,
+          cancel_checkin_userid: this.$auth.user.id,
+          booking_id: this.bookingId,
+          company_id: this.$auth.user.company.id,
+          booked_room_id: this.selected_booked_room_id
+
+        };
+
+
+        this.$axios
+          .post(`change_checkin_to_booking_admin/${this.evenIid}`, payload)
+          .then(({ data }) => {
+            if (!data.status) {
+              this.snackbar = data.status;
+              this.response = data.message;
+              this.cancelLoad = false;
+              return;
+            }
+            this.cancelLoad = false;
+            this.room_list();
+            this.reason = "";
+            this.cancelDialog = false;
+            this.snackbar = data.status;
+            this.response = data.message;
+            this.cancelCheckInDialog = false;
+          })
+          .catch((err) => console.log(err));
+
+      }
+
+    },
     setAvailable() {
       let payload = {
         cancel_by: this.$auth.user.id,

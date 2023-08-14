@@ -1010,6 +1010,64 @@ class BookingController extends Controller
         // return response()->json(['booking' => $bookedRoom->booking, 'status' => true]);
     }
 
+    public function changeCheckIntoBookingAdmin(Request $request, $id)
+    {
+        try {
+            $company_id = $request->company_id;
+            $cancel_checkin_userid = $request->cancel_checkin_userid;
+            $cancel_checkin_reason = $request->cancel_checkin_reason;
+            $booking_id = $request->booking_id;
+            $booked_room_id = $request->booked_room_id;
+//change booking status
+            $bookingModel = Booking::where('company_id', $company_id)
+                ->where('id', $booking_id)
+                ->where('booking_status', 2) //only checkedin status
+            ;
+
+            $data1 = ['booking_status' => 1,
+                'cancel_checkin_reason' => $cancel_checkin_reason,
+                'cancel_checkin_datetime' => date('Y-m-d H:i:s'),
+                'cancel_checkin_userid' => $cancel_checkin_userid];
+            $updatedStatus = $bookingModel->update($data1);
+
+            if ($updatedStatus) {
+                //change status on booking_rooms table
+                $bookingRoomModel = BookedRoom::where('company_id', $company_id)
+                    ->where('id', $booked_room_id)
+                    ->where('booking_status', 2) //only checkedin status
+                ;
+                $data2 = ['booking_status' => 1,
+                    'cancel_checkin_reason' => $cancel_checkin_reason,
+                    'cancel_checkin_datetime' => date('Y-m-d H:i:s'),
+                    'cancel_checkin_userid' => $cancel_checkin_userid];
+                $bookingRoomModel->update($data2);
+
+                //change status on booking_rooms table
+                $transactionData = Transaction::where('company_id', $company_id)
+                    ->where('booking_id', $booking_id)
+                    ->where('desc', 'check in payment')
+                    ->where('credit', '0.0')
+                    ->where('debit', '0.0')
+                    ->where('payment_method_id', 1)
+                    ->latest()->first();
+
+                $transactionData->delete();
+
+                return $this->response('Room Checkin Information is changed to Booking', null, true);
+
+            } else {
+                return $this->response('Something is wrong. Room Checkin Information is not updated', null, false);
+            }
+
+            return $this->response('Something is wrong. Room Checkin Information is not updated2', null, false);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+
+            return $this->response(json_encode($th), null, false);
+        }
+    }
+
     public function cancelRoom(Request $request, $id)
     {
         try {
