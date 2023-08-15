@@ -1200,7 +1200,9 @@ export default {
         this.postings = data;
       });
     },
-
+    alert(title = "Success!", message = "hello", type = "error") {
+      this.$swal(title, message, type);
+    },
     room_list() {
 
       let payload = {
@@ -1215,6 +1217,13 @@ export default {
         },
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
+
+        if (!data.status) {
+
+          this.alert("Failure!", data.data, "error");
+          return false;
+        }
+
         this.rooms = data;
         this.onlyBreakfast = {
           ...data.fooForCustomers.breakfast,
@@ -1313,7 +1322,9 @@ export default {
 
 
       if (this.$auth.user.role.name.toLowerCase() != 'admin') {
-        alert("You are not authorized to Cancel the Checkin");
+        //alert("You are not authorized to Cancel the Checkin");
+
+        this.alert("Failure!", "You are not authorized to Cancel the Checkin", "error");
         return false;
       }
       else {
