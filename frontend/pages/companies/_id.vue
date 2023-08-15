@@ -78,8 +78,8 @@
                         <div class="form-group">
                           <label class="col-form-label">Mol ID</label>
                           <span class="text-danger">*</span>
-                          <input v-model="company_payload.mol_id" class="form-control form-control-lg shadow-none"
-                            type="text" />
+                          <input v-model="company_payload.mol_id" readonly
+                            class="form-control form-control-lg shadow-none" type="text" />
 
                           <span v-if="errors && errors.mol_id" class="text-danger mt-2">{{ errors.mol_id[0] }}</span>
                         </div>
@@ -89,8 +89,8 @@
                         <div class="form-group">
                           <label class="col-form-label">P.O Box</label>
                           <span class="text-danger">*</span>
-                          <input v-model="company_payload.p_o_box_no" class="form-control form-control-lg shadow-none"
-                            type="text" />
+                          <input v-model="company_payload.p_o_box_no" readonly
+                            class="form-control form-control-lg shadow-none" type="text" />
 
                           <span v-if="errors && errors.p_o_box_no" class="text-danger mt-2">{{ errors.p_o_box_no[0]
                           }}</span>
@@ -100,10 +100,9 @@
                         <div class="form-group">
                           <label class="col-form-label">Currency</label>
                           <span class="text-danger">*</span>
-                          <v-select outlined dense small v-model="company_payload.currency"
-                            :items="[{ 'text': 'INR ₹', 'value': '₹' }, { 'text': 'US $', 'value': '$' }]">
+                          <input v-model="company_payload.currency" readonly
+                            class="form-control form-control-lg shadow-none" type="text" />
 
-                          </v-select>
 
                           <span v-if="errors && errors.currency" class="text-danger mt-2">{{ errors.p_o_box_no[0]
                           }}</span>
@@ -194,7 +193,7 @@
                         <span v-if="errors && errors.logo" class="text-danger mt-2">{{ errors.logo[0] }}</span>
                       </div>
                     </div>
-                    <v-row>
+                    <!-- <v-row>
                       <v-col cols="12">
                         <div class="text-right">
                           <v-btn v-if="can('company_edit')" small :loading="loading" color="primary"
@@ -203,7 +202,7 @@
                           </v-btn>
                         </div>
                       </v-col>
-                    </v-row>
+                    </v-row> -->
                   </v-card-text>
                 </v-card>
               </v-tab-item>

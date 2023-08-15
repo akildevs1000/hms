@@ -86,6 +86,10 @@ export default {
                     name: "Expences",
                     data: [],
                 },
+                {
+                    name: "Sold",
+                    data: [],
+                },
             ],
             barChartOptionsNew: {
                 customLabel: [],
@@ -94,7 +98,7 @@ export default {
                     id: 'MonthlyReport'
 
                 },
-                colors: ['#0C9241', '#FF0000'],
+                colors: ['#0C9241', '#FF0000', '#0815cb'],
 
                 plotOptions: {
                     bar: {
@@ -251,7 +255,7 @@ export default {
             headers_table: [
 
                 {
-                    text: "Month Name",
+                    text: "Month",
                     align: "left",
                     sortable: false,
                     key: "employee_id",
@@ -259,7 +263,7 @@ export default {
                     value: "month_name",
                 },
                 {
-                    text: "Rooms Sold",
+                    text: "Sold",
                     align: "right",
                     sortable: false,
                     key: "employee_id",
@@ -275,7 +279,7 @@ export default {
                     value: "income",
                 },
                 {
-                    text: "Non.Mng Expenses",
+                    text: "N_M Expenses",
                     align: "right",
                     sortable: false,
                     key: "employee_id",
@@ -283,7 +287,7 @@ export default {
                     value: "expenses",
                 },
                 {
-                    text: "Management Expenses",
+                    text: "M Expenses",
                     align: "right",
                     sortable: false,
                     key: "employee_id",
@@ -439,6 +443,7 @@ export default {
 
                     this.barSeriesNew[0]["data"][counter] = parseInt(item.income.replaceAll(',', ''));
                     this.barSeriesNew[1]["data"][counter] = parseInt(item.total_expenses.replaceAll(',', ''));
+                    this.barSeriesNew[2]["data"][counter] = parseInt(item.sold);
                     this.barChartOptionsNew.xaxis.categories[counter] = item.month;
                     // this.barChartOptionsNew.colors[counter] = item.color;
                     this.barChartOptionsNew.customLabel[counter] = "<table>"
@@ -460,6 +465,8 @@ export default {
                         data: this.barSeriesNew[0].data,
                     }, {
                         data: this.barSeriesNew[1].data,
+                    }, {
+                        data: this.barSeriesNew[2].data,
                     }], false, true);
                 }
                 catch (e) { }

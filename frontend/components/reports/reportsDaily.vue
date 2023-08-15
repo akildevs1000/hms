@@ -89,6 +89,9 @@ export default {
                 {
                     name: "Expences",
                     data: [],
+                }, {
+                    name: "Sold",
+                    data: [],
                 },
             ],
             barChartOptionsNew: {
@@ -101,7 +104,7 @@ export default {
                     id: 'DailyReport'
 
                 },
-                colors: ['#0C9241', '#FF0000'],
+                colors: ['#0C9241', '#FF0000', '#0815cb'],
 
                 plotOptions: {
                     bar: {
@@ -272,7 +275,7 @@ export default {
 
 
                 {
-                    text: "Room Sold",
+                    text: "Sold",
                     align: "right",
                     sortable: true,
                     key: "employee_id",
@@ -288,7 +291,7 @@ export default {
                     value: "income",
                 },
                 {
-                    text: "Non.Mng Expenses",
+                    text: "N_M Expenses",
                     align: "right",
                     sortable: true,
                     key: "employee_id",
@@ -296,7 +299,7 @@ export default {
                     value: "expenses",
                 },
                 {
-                    text: "Management Expenses",
+                    text: "M Expenses",
                     align: "right",
                     sortable: true,
                     key: "employee_id",
@@ -466,7 +469,7 @@ export default {
 
                 },
             };
-            this.forceChartRerender();
+            // this.forceChartRerender();
             this.$axios.get('get_report_daily_wise_group', options).then(({ data }) => {
 
                 this.data_table = data.data;
@@ -475,13 +478,14 @@ export default {
                 this.grandTotal = data.grandTotal;
 
                 let counter = 0;
-                this.forceChartRerender();
+                //this.forceChartRerender();
                 this.barSeriesNew[0]["data"] = [];
                 this.barSeriesNew[1]["data"] = [];
                 this.data_table.forEach(item => {
 
                     this.barSeriesNew[0]["data"][counter] = parseInt(item.income.replaceAll(',', ''));
                     this.barSeriesNew[1]["data"][counter] = parseInt(item.total_expenses.replaceAll(',', ''));
+                    this.barSeriesNew[2]["data"][counter] = parseInt(item.sold);
                     this.barChartOptionsNew.xaxis.categories[counter] = item.month + '-' + item.day;
                     // this.barChartOptionsNew.colors[counter] = item.color;
                     this.barChartOptionsNew.customLabel[counter] = "<table>"
@@ -500,6 +504,8 @@ export default {
                         data: this.barSeriesNew[0].data,
                     }, {
                         data: this.barSeriesNew[1].data,
+                    }, {
+                        data: this.barSeriesNew[2].data,
                     }], false, true);
                 }
                 catch (e) { }

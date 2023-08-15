@@ -927,4 +927,14 @@ select:focus {
 }
 </style>   -->
 
+<style>
+.apexcharts-active {
+  top: 0px !important;
+}
+
+.apexcharts-tooltip-text-y-value td {
+  padding: 0px !important;
+}
+</style>
+
 

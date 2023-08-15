@@ -235,7 +235,7 @@ export default {
                     value: "phone_number",
                 },
                 {
-                    text: "No.of Visits",
+                    text: "Visits",
                     align: "right",
                     sortable: false,
 
@@ -243,7 +243,7 @@ export default {
                     value: "no_of_visits",
                 },
                 {
-                    text: "No.of Rooms",
+                    text: "Rooms",
                     align: "right",
                     sortable: false,
                     key: "employee_id",

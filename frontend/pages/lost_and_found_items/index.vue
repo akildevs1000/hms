@@ -760,7 +760,7 @@ export default {
                 filterSpecial: true,
             },
             {
-                text: "Date Returned",
+                text: "Returned Date ",
                 align: "left",
                 sortable: true,
                 key: 'date_returned',
