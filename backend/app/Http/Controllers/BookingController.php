@@ -47,7 +47,11 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
-        // return $request->all();
+
+        $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
+        if ($diff_in_seconds < 0) {
+            return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        }
 
         return DB::transaction(function () use ($request) {
             // try {

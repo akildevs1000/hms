@@ -1304,7 +1304,7 @@ export default {
       ],
 
       search: {
-        mobile: "",
+        mobile: "8888888888",
       },
       availableRooms: [],
       selectedRooms: [],
@@ -1494,6 +1494,9 @@ export default {
     };
   },
   created() {
+
+
+
     this.get_food_price();
     this.get_reservation();
     this.get_room_types();
@@ -1519,21 +1522,72 @@ export default {
   },
   methods: {
 
+    updateDiscount_old(temp) {
+
+      // console.log(temp);
+
+      // let finalDisplayPrice = parseFloat(temp.price) -
+      //   parseFloat(temp.room_discount);
+      // this.$axios.get('get_re_calculate_price/' + finalDisplayPrice, null).then(({ data }) => {
+
+      //   // this.gst_calculation.recal_basePrice = data.basePrice;
+      //   // this.gst_calculation.recal_final = data.basePrice + data.gstAmount;
+      //   // this.gst_calculation.recal_gst_total = data.gstAmount;
+      //   // this.gst_calculation.recal_gst_percentage = data.tax;
+
+      //   // this.item.room_tax = this.gst_calculation.recal_gst_total;
+      // });
+
+    },
     updateDiscount(temp) {
 
-      console.log(temp);
+      this.reservation = this.$store.state.reservation;
 
-      let finalDisplayPrice = parseFloat(temp.price) -
-        parseFloat(temp.room_discount);
-      this.$axios.get('get_re_calculate_price/' + finalDisplayPrice, null).then(({ data }) => {
+      console.log('reservation2', this.reservation);
 
-        this.gst_calculation.recal_basePrice = data.basePrice;
-        this.gst_calculation.recal_final = data.basePrice + data.gstAmount;
-        this.gst_calculation.recal_gst_total = data.gstAmount;
-        this.gst_calculation.recal_gst_percentage = data.tax;
+      let payload = {
+        params: {
+          ...this.$store.state.booking_payload.params,
+          discount: temp.room_discount,
+        },
+      };
+      console.log('payload', payload);
 
-        this.item.room_tax = this.gst_calculation.recal_gst_total;
-      });
+      this.$axios
+        .get(`get_data_by_select_with_tax`, payload)
+        .then(({ data }) => {
+          let reservation = {};
+          reservation.check_in = data.room.id;
+          reservation.check_out = data.room.id;
+          reservation.price = data.room.id;
+          reservation.check_out = data.room.id;
+          reservation.check_out = data.room.id;
+          reservation.check_out = data.room.id;
+          reservation.check_out = data.room.id;
+
+
+
+          reservation.room_id = data.room.id;
+          reservation.price = data.total_price;
+          reservation.priceList = data.data;
+
+          reservation.total_tax = data.total_tax;
+          reservation.total_price_after_discount = data.total_price_after_discount;
+          reservation.total_price = data.total_price;
+          reservation.total_discount == data.total_discount;
+          reservation.total_discount = data.total_discount;
+          let commitObj = {
+            ...reservation,
+            payload: payload,
+            'discount_applied': 'true',
+          };
+          this.$store.commit("reservation", commitObj);
+
+          this.get_reservation();
+        });
+
+
+
 
     },
     nextTab() {
@@ -1619,7 +1673,7 @@ export default {
       this.temp.priceList = this.reservation.priceList;
       this.get_cs_gst(this.temp.room_tax);
 
-      this.updateDiscount(this.temp);
+
     },
 
     get_food_price() {
@@ -2337,6 +2391,9 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
             this.subLoad = false;
+            this.alert("Failure!", data.data, "error");
+
+            return false;
           } else {
             this.store_document(data.data);
             this.alert("Success!", "Successfully room added", "success");
@@ -2370,7 +2427,7 @@ export default {
   },
 };
 </script>
-
+<!-- 
 <style>
 .wrapper {
   height: 40px;
@@ -2414,28 +2471,7 @@ th {
   text-align: left;
   padding: 7px;
 }
-
-/* .food-table table {
-  border: 1px solid #a0a0a0 !important;
-  border-collapse: collapse;
-  padding: 100px;
-  text-align: right;
-}
-
-.food-table th,
-td {
-  border: 1px solid #a0a0a0 !important;
-  padding: 8px 50px;
-  text-align: right;
-} */
-
-/* .food-table {
-  border: 1px solid #a0a0a0 !important;
-  border-collapse: collapse;
-  width: 250px;
-  text-align: right;
-  padding: 0 5px;
-} */
+ 
 
 .input-group {
   display: flex;
@@ -2454,7 +2490,7 @@ td {
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.9;
-  /* border-radius: 0.25rem; */
+  
   text-align: left;
   width: 150px;
 }
@@ -2483,7 +2519,7 @@ td {
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.9;
-  /* border-radius: 0.25rem; */
+  
   text-align: left;
   width: 350px;
 }
@@ -2498,7 +2534,7 @@ td {
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #ced4da;
-  /* border-radius: 0.25rem; */
+   
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   width: 100%;
   text-align: right;
@@ -2509,12 +2545,11 @@ td {
 }
 
 input[type="number"]:focus.form-control {
-  /* border: 2px solid #5fafa3 !important; */
+ 
   border-color: #4390fc;
   outline: none;
 }
-
-/* ======================== */
+ 
 .styled-table {
   border-collapse: collapse;
   margin: 25px 0;
@@ -2550,5 +2585,5 @@ input[type="number"]:focus.form-control {
   font-weight: bold;
   color: #4390fc;
 }
-</style>
+</style> -->
 

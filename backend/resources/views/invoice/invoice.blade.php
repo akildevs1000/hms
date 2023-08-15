@@ -130,7 +130,7 @@
                         <div class="tm_table tm_style1">
                             <div class="tm_round_border">
                                 <div class="tm_table_responsive">
-                                    <table>
+                                   <table>
                                         <thead>
                                             <tr class="inv-room-th-txt">
                                                 <th class="tm_width_6 tm_semi_bold tm_primary_color">Date</th>
@@ -148,6 +148,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+
+
                                             @php
                                                 $totalWithoutDiscounts = 0;
                                                 $totalWithTax = 0;

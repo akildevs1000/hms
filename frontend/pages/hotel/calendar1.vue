@@ -909,16 +909,30 @@ export default {
           checkout: this.reservation.check_out,
         },
       };
+      this.$store.commit("booking_payload", payload);
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
+          if (!data.status) {
+
+            this.alert("Failure11111!", data.data, "error");
+            return false;
+          }
+
           this.reservation.room_id = data.room.id;
           this.reservation.price = data.total_price;
           this.reservation.priceList = data.data;
           this.reservation.total_tax = data.total_tax;
+
+          this.reservation.total_price_after_discount = data.total_price_after_discount;
+          this.reservation.total_price = data.total_price;
+          this.reservation.total_discount = data.total_discount;
+
           let commitObj = {
             ...this.reservation,
+
           };
+          //console.log('reservation1', commitObj);
           this.$store.commit("reservation", commitObj);
           this.$router.push(`/hotel/new2`);
         });
