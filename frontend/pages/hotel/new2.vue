@@ -1304,7 +1304,7 @@ export default {
       ],
 
       search: {
-        mobile: "8888888888",
+        mobile: "",
       },
       availableRooms: [],
       selectedRooms: [],

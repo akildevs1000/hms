@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Role\StoreRequest;
 use App\Http\Requests\Role\UpdateRequest;
+use App\Models\AssignPermission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -35,32 +36,48 @@ class RoleController extends Controller
             } else {
                 return $this->response('Role cannot create.', null, false);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
 
     public function update(UpdateRequest $request, Role $Role)
     {
-        try {
-            $record = $Role->update($request->all());
 
-            if ($record) {
+        try {
+            $data = $request->validated();
+
+            if ($data) {
+
+                $isNameExist = Role::where('name', $request->name)
+                    ->where('company_id', $request->company_id)
+                    ->first();
+
+                if ($isNameExist) {
+                    if ($isNameExist->id != $Role->id) {
+                        return $this->response($request->room_no . ' Room Details are already Exist', null, false);
+                    }
+                }
+                $record = $Role->update($request->all());
                 return $this->response('Role successfully updated.', $record, true);
             } else {
                 return $this->response('Role cannot update.', null, false);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
 
     public function destroy(Role $Role)
     {
+
         $record = $Role->delete();
 
         if ($record) {
-            return $this->response('Role successfully deleted.', $record, true);
+            $permissionModel = AssignPermission::where('company_id', $Role->company_id)->where('role_id', $Role->id)->first();
+            $permissionModel->delete();
+
+            return $this->response('Role and Permissions successfully deleted.', $record, true);
         } else {
             return $this->response('Role cannot delete.', null, false);
         }

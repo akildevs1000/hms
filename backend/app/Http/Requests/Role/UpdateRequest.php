@@ -29,14 +29,16 @@ class UpdateRequest extends FormRequest
         $name = $this->name;
         $companyId = $this->company_id;
         return [
-            'name' => [
-                'required', 'min:4', 'max:100',
-                Rule::unique('roles')->where(function ($query) use ($name, $companyId) {
-                    return $query->where('name', $name)
-                        ->where('company_id', $companyId);
-                }),
-            ],
+            // 'name' => [
+            //     'required', 'min:4', 'max:100',
+            //     Rule::unique('roles')->where(function ($query) use ($name, $companyId) {
+            //         return $query->where('name', $name)
+            //             ->where('company_id', $companyId);
+            //     }),
+            // ],
+            'name' => 'required',
             'company_id' => 'required',
+            'description' => 'required',
         ];
     }
 }

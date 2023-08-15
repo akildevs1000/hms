@@ -1555,7 +1555,7 @@ export default {
     },
     updateDiscount(temp) {
 
-
+      return false;
 
       this.reservation = this.$store.state.reservation;
 
@@ -1601,7 +1601,7 @@ export default {
           // };
           // this.$store.commit("reservation", commitObj);
 
-          //this.reservation.price = data.total_price;
+          this.reservation.price = data.total_price;
           this.temp.price = data.total_price;
           this.temp.room_tax = data.total_tax;
           this.temp.priceList = data.data;

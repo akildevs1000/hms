@@ -550,12 +550,12 @@ export default {
           to: "/companies",
           menu: "settings_permissions_access",
         },
-        {
-          icon: "mdi mdi-account-details",
-          title: "Permissions",
-          to: "/assign_permission",
-          menu: "settings_permissions_access",
-        },
+        // {
+        //   icon: "mdi mdi-account-details",
+        //   title: "Permissions",
+        //   to: "/assign_permission",
+        //   menu: "settings_permissions_access",
+        // },
 
       ],
     };
