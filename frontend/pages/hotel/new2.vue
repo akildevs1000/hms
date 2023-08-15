@@ -38,7 +38,7 @@
           <v-tab-item>
             <v-card flat>
               <v-card-text>
-
+                {{ bookings }}
                 <v-row>
                   <v-col md="2" cols="12">
                     <v-img @click="onpick_attachment" style="
@@ -452,7 +452,7 @@
                           <v-col md="12">
                             <v-divider color="#4390FC"></v-divider>
                             <div class="d-flex justify-space-around py-3">
-                              <!-- <span>
+                              <span>
                                 <b>Room Price </b>:
                                 {{ (temp.priceList && temp.priceList[0].room_price) }}
                               </span>
@@ -464,14 +464,10 @@
                                 <b>Total</b>:
                                 {{ convert_decimal(temp.priceList && temp.priceList[0].room_price -
                                   parseInt(temp.room_discount)) }}
-                              </span> -->
-                              <span>
-                                <b>Total</b>:
-                                {{ gst_calculation.recal_basePrice }}
                               </span>
 
                               <span>
-                                <b>Tax ({{ gst_calculation.recal_gst_percentage }}%)</b>:
+                                <b>Tax </b>:
                                 {{ convert_decimal(gst_calculation.recal_gst_total) }}
                               </span>
                               <span>
@@ -1015,8 +1011,7 @@
                   </span>
                   <div type="text" class="form-control" aria-label="Sizing example input"
                     aria-describedby="inputGroup-sizing-sm" disabled>
-                    {{ convert_decimal(gst_calculation.recal_gst_total) }}
-
+                    {{ convert_decimal(item.room_tax) }}
                   </div>
                 </div>
                 <!-- <div class="input-group input-group-sm px-5">
@@ -1494,9 +1489,6 @@ export default {
     };
   },
   created() {
-
-
-
     this.get_food_price();
     this.get_reservation();
     this.get_room_types();
@@ -1522,72 +1514,19 @@ export default {
   },
   methods: {
 
-    updateDiscount_old(temp) {
-
-      // console.log(temp);
-
-      // let finalDisplayPrice = parseFloat(temp.price) -
-      //   parseFloat(temp.room_discount);
-      // this.$axios.get('get_re_calculate_price/' + finalDisplayPrice, null).then(({ data }) => {
-
-      //   // this.gst_calculation.recal_basePrice = data.basePrice;
-      //   // this.gst_calculation.recal_final = data.basePrice + data.gstAmount;
-      //   // this.gst_calculation.recal_gst_total = data.gstAmount;
-      //   // this.gst_calculation.recal_gst_percentage = data.tax;
-
-      //   // this.item.room_tax = this.gst_calculation.recal_gst_total;
-      // });
-
-    },
     updateDiscount(temp) {
 
-      this.reservation = this.$store.state.reservation;
-
-      console.log('reservation2', this.reservation);
-
-      let payload = {
-        params: {
-          ...this.$store.state.booking_payload.params,
-          discount: temp.room_discount,
-        },
-      };
-      console.log('payload', payload);
-
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          let reservation = {};
-          reservation.check_in = data.room.id;
-          reservation.check_out = data.room.id;
-          reservation.price = data.room.id;
-          reservation.check_out = data.room.id;
-          reservation.check_out = data.room.id;
-          reservation.check_out = data.room.id;
-          reservation.check_out = data.room.id;
 
 
+      let finalDisplayPrice = parseFloat(temp.price) +
+        parseFloat(-temp.room_discount);
+      this.$axios.get('get_re_calculate_price/' + finalDisplayPrice, null).then(({ data }) => {
 
-          reservation.room_id = data.room.id;
-          reservation.price = data.total_price;
-          reservation.priceList = data.data;
-
-          reservation.total_tax = data.total_tax;
-          reservation.total_price_after_discount = data.total_price_after_discount;
-          reservation.total_price = data.total_price;
-          reservation.total_discount == data.total_discount;
-          reservation.total_discount = data.total_discount;
-          let commitObj = {
-            ...reservation,
-            payload: payload,
-            'discount_applied': 'true',
-          };
-          this.$store.commit("reservation", commitObj);
-
-          this.get_reservation();
-        });
-
-
-
+        this.gst_calculation.recal_basePrice = data.basePrice;
+        this.gst_calculation.recal_final = data.basePrice + data.gstAmount;
+        this.gst_calculation.recal_gst_total = data.gstAmount;
+        this.gst_calculation.recal_gst_percentage = data.tax;
+      });
 
     },
     nextTab() {
@@ -1660,7 +1599,6 @@ export default {
 
     get_reservation() {
       this.reservation = this.$store.state.reservation;
-      console.log(this.reservation);
       this.temp.room_id = this.reservation.room_id;
       this.temp.room_no = this.reservation.room_no;
       this.temp.room_type = this.reservation.room_type;
@@ -1672,8 +1610,6 @@ export default {
       this.room.check_out = this.reservation.check_out;
       this.temp.priceList = this.reservation.priceList;
       this.get_cs_gst(this.temp.room_tax);
-
-
     },
 
     get_food_price() {
@@ -1698,7 +1634,7 @@ export default {
     // },
 
     redirect() {
-      this.$router.push("/hotel/calendar1");
+      this.$router.push("/");
     },
 
     get_food_price_cal(person_type, person_qty) {
@@ -2391,14 +2327,10 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
             this.subLoad = false;
-            this.alert("Failure!", data.data, "error");
-
-            return false;
           } else {
             this.store_document(data.data);
             this.alert("Success!", "Successfully room added", "success");
-            //this.$router.push('/');
-            this.$router.push("/hotel/calendar1");
+            this.$router.push('/');
           }
         })
         .catch((e) => console.log(e));
@@ -2427,163 +2359,3 @@ export default {
   },
 };
 </script>
-<!-- 
-<style>
-.wrapper {
-  height: 40px;
-  width: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  border-radius: 5px;
-  border: 1px solid rgb(145, 140, 140);
-}
-
-.wrapper span {
-  width: 100%;
-  text-align: center;
-  font-size: 25px;
-  font-weight: normal;
-  cursor: pointer;
-  user-select: none;
-}
-
-.wrapper span.num {
-  font-size: 20px;
-  border-right: 2px solid rgba(0, 0, 0, 0.2);
-  border-left: 2px solid rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-}
-
-fieldset {
-  background-color: white !important;
-}
-
-.payment-table table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.payment-table td,
-th {
-  text-align: left;
-  padding: 7px;
-}
- 
-
-.input-group {
-  display: flex;
-  align-items: center;
-  margin: 2px 0px !important;
-  padding: 0px 0px !important;
-}
-
-.input-group-sm {
-  width: 100%;
-}
-
-.input-group-text {
-  background-color: #e9ecef;
-  border-color: #e9ecef;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.9;
-  
-  text-align: left;
-  width: 150px;
-}
-
-.form-control {
-  height: calc(1.5em + 0.75rem + 2px);
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #495057;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  width: 100%;
-}
-
-.mb-3 {
-  margin-bottom: 1rem;
-}
-
-.payment-section .input-group-text {
-  background-color: #e9ecef;
-  border-color: #e9ecef;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.9;
-  
-  text-align: left;
-  width: 350px;
-}
-
-.payment-section .form-control {
-  height: calc(1.5em + 0.75rem + 2px);
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #495057;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-   
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  width: 100%;
-  text-align: right;
-}
-
-.active-link {
-  background-color: #1259a7;
-}
-
-input[type="number"]:focus.form-control {
- 
-  border-color: #4390fc;
-  outline: none;
-}
- 
-.styled-table {
-  border-collapse: collapse;
-  margin: 25px 0;
-  font-size: 0.9em;
-  font-family: sans-serif;
-  min-width: 400px;
-}
-
-.styled-table thead tr {
-  background-color: #4390fc;
-  color: #ffffff;
-  text-align: left;
-}
-
-.styled-table th,
-.styled-table td {
-  padding: 5px 15px;
-}
-
-.styled-table tbody tr {
-  border-bottom: 1px solid #dddddd;
-}
-
-.styled-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-
-.styled-table tbody tr:last-of-type {
-  border-bottom: 2px solid #4390fc;
-}
-
-.styled-table tbody tr.active-row {
-  font-weight: bold;
-  color: #4390fc;
-}
-</style> -->
-
