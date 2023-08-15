@@ -178,7 +178,7 @@ class RoomTypeController extends Controller
         return [
             'room' => $room,
             'data' => $arr,
-            'total_price' => array_sum(array_column($arr, "room_price")),
+            'total_price' => array_sum(array_column($arr, "price")),
             'total_tax' => array_sum(array_column($arr, "tax")),
 
             'total_price_after_discount' => array_sum(array_column($arr, "price")),
