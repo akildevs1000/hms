@@ -670,17 +670,18 @@
                       <v-row>
                         <v-col :class="noAvailableRoom.id" lg="1" md="4" sm="12" cols="12" class="available-room-list"
                           v-for="(noAvailableRoom, i) in notAvailableRooms" :key="i">
-                          <v-card @contextmenu="show" @touchstart="touchstart(
-                            $event,
-                            noAvailableRoom &&
-                            noAvailableRoom.booked_room &&
-                            noAvailableRoom.booked_room.id,
-                            noAvailableRoom &&
-                            noAvailableRoom.booked_room &&
-                            noAvailableRoom.booked_room.booking
-                              .booking_status
-                          )
-                            " :elevation="0" @mouseover="mouseOver(
+                          <v-card @mouseenter="showMenu = false" @mousedown="showMenu = false" @mouseup="showMenu = false"
+                            @contextmenu="show" @touchstart="touchstart(
+                              $event,
+                              noAvailableRoom &&
+                              noAvailableRoom.booked_room &&
+                              noAvailableRoom.booked_room.id,
+                              noAvailableRoom &&
+                              noAvailableRoom.booked_room &&
+                              noAvailableRoom.booked_room.booking
+                                .booking_status
+                            )
+                              " :elevation="0" @mouseover="mouseOver(
     noAvailableRoom &&
     noAvailableRoom.booked_room &&
     noAvailableRoom.booked_room.id,
