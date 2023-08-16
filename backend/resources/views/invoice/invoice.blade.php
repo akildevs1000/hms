@@ -242,7 +242,7 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                 @if ($room->tot_adult_food >0 || $room->tot_child_food>0)
                                                 <tr class="inv-tr-txt">
                                                     <td class=" ">
-                                                    ---
+                                                    {{ date('d M Y', strtotime($room->date)) }}
                                                     </td>
                                                     <td class="  tm_text_left">
                                                   Food
