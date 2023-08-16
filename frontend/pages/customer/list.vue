@@ -28,7 +28,7 @@
           <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi mdi-close-box</v-icon>
         </v-toolbar>
         <v-container class="mt-0 pt-0">
-          <customer-index :customer_id="customer_id" @close-dialog="closeDialogs" />
+          <customer-index :edit_mode="true" :customer_id="customer_id" @close-dialog="closeDialogs" />
         </v-container>
         <v-card-actions> </v-card-actions>
       </v-card>

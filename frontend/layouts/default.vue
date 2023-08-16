@@ -508,12 +508,12 @@ export default {
           to: "/room_category",
           menu: "settings_rooms_category_access",
         },
-        {
-          icon: "mdi mdi-bed",
-          title: "Rooms",
-          to: "/rooms",
-          menu: "settings_rooms_access",
-        },
+        // {
+        //   icon: "mdi mdi-bed",
+        //   title: "Rooms",
+        //   to: "/rooms",
+        //   menu: "settings_rooms_access",
+        // },
         {
           icon: "mdi-tools",
           title: "Price Setup",

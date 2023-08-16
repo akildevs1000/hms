@@ -23,7 +23,8 @@
                     }" class="elevation-1" :hide-default-footer="true">
 
                     <template v-slot:item.date="{ item }">
-                        <a @click="goToNightAuditReport(item)">{{ item.date }}</a>
+                        <!-- <a @click="goToNightAuditReport(item)">{{ item.date }}</a> -->
+                        {{ item.date }}
                     </template>
 
 
@@ -348,40 +349,43 @@ export default {
         // this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
         // this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
 
-        this.getYears();
+        //this.getYears();
 
 
-        let filters = this.$store.getters.getDataToSend;
-        if (filters.month) {
-            this.month = parseInt(filters.month) - 1;
-        }
+        // let filters = this.$store.getters.getDataToSend;
+        // if (filters.month) {
+        //     this.month = parseInt(filters.month) - 1;
+        // }
 
-        if (filters.year) {
-            this.year = parseInt(filters.year);
-        }
+        // if (filters.year) {
+        //     this.year = parseInt(filters.year);
+        // }
 
-        this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
-        this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+        // this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
+        // this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
 
-        this.getDataFromApi();
+        //this.getDataFromApi();
     },
     mounted() {
-        // this.getDataFromApi();
+        this.getDataFromApi();
 
     },
     computed: {
         // Use a computed property to calculate and return the filtered items
 
     },
-    // watch: {
+    watch: {
 
-    //   options: {
-    //     handler() {
-    //       this.getMonthlyWiseData();
-    //     },
-    //     deep: true,
-    //   },
-    // },
+        filter_from_date() {
+
+            this.getDataFromApi();
+
+        },
+        filter_to_date() {
+            this.getDataFromApi();
+
+        }
+    },
     methods: {
         formatDate(date) {
             var day = date.getDate();

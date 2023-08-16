@@ -15,7 +15,7 @@
 
 
                     <template v-slot:item.month_name="{ item }">
-                        <a @click="goToDailyReport(item)">{{ item.month }}</a>
+                        <a @click="goToDailyReport(item.year_number, item.month_number)">{{ item.month }}</a>
 
 
                     </template>
@@ -316,16 +316,16 @@ export default {
     },
     watch: {
 
-        filter_from_date() {
+        // filter_from_date() {
 
-            this.getDataFromApi();
+        //     this.getDataFromApi();
 
-        },
-        filter_to_date() {
+        // },
+        // filter_to_date() {
 
-            this.getDataFromApi();
+        //     this.getDataFromApi();
 
-        }
+        // }
 
     },
     created() {
@@ -378,10 +378,12 @@ export default {
         onPageChange() {
             this.getDataFromApi();
         },
-        goToDailyReport(item) {
+        goToDailyReport(year, month) {
+            //this.getDataFromApi();
+            this.$emit('goToDailyReportTab', { tab: 1, filter_from_date: year + '-' + month + '-01', filter_to_date: year + '-' + month + '-' + this.getTotalDays(year, month) });
 
-            this.$store.dispatch('setData', { year: item.year_number, month: item.month_number });
-            this.$router.push({ path: '/management/report/daily_revenue' });
+            // this.$store.dispatch('setData', { year: item.year_number, month: item.month_number });
+            // this.$router.push({ path: '/management/report/daily_revenue' });
 
         },
         can(per) {
@@ -397,6 +399,9 @@ export default {
 
         getDaysInMonth(month = 2, year = new Date().getFullYear()) {
 
+        },
+        getTotalDays(year, month) {
+            return new Date(year, month, 0).getDate();
         },
 
         forceChartRerender() {
@@ -428,6 +433,7 @@ export default {
                     //year: this.year,
                     filter_from_date: this.filter_from_date,
                     filter_to_date: this.filter_to_date,
+                    t: Math.random()
                 },
             };
 

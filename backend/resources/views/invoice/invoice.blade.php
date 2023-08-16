@@ -138,16 +138,16 @@
                                    <table>
                                         <thead>
                                             <tr class="inv-room-th-txt">
-                                                <th class="tm_width_6 tm_semi_bold tm_primary_color">Date</th>
-                                                <th class="tm_width_6 tm_semi_bold tm_primary_color">Room No</th>
+                                                <th class="tm_width_2 tm_semi_bold tm_primary_color">Date</th>
+                                                <th class="tm_width_2 tm_semi_bold tm_primary_color">Room No</th>
                                                 <!-- <th class="tm_width_6 tm_semi_bold tm_primary_color">Description</th> -->
-                                                <th class="tm_width_6 tm_semi_bold tm_primary_color"  >Price</th>
+                                                <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right"  >Price</th>
 
                                                 <!-- <th class="tm_width_6 tm_semi_bold tm_primary_color">Amount</th> -->
 
 
-                                               <th class="tm_width_4 tm_semi_bold tm_primary_color">SGST</th>
-                                                <th class="tm_width_4 tm_semi_bold tm_primary_color">CGST</th>
+                                               <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">SGST</th>
+                                                <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">CGST</th>
                                                   <!--<th class="tm_width_6 tm_semi_bold tm_primary_color">Discount</th>-->
                                                 <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">Total
                                                 </th>
@@ -204,10 +204,10 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
 
 
                                                 <tr class="inv-tr-txt">
-                                                    <td class="tm_width_6">
+                                                    <td  >
                                                         {{ date('d M Y', strtotime($room->date)) }}
                                                     </td>
-                                                    <td class="tm_width_2">
+                                                    <td  >
                                                         {{ $room->room_no }} ({{ $room->room_type }})
                                                     </td>
                                                     <!-- <td class="tm_width_2 ">
@@ -217,7 +217,7 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                     {{ number_format($room->price, 2) }}
                                                     </td> -->
 
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
 
                                                     {{ number_format($room->price_adjusted_after_dsicount,2) }}
                                                     <!-- {{ number_format($room->price-$room->room_discount,2) }} -->
@@ -226,40 +226,40 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                     </td>
 
 
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                         {{ $room->cgst-($foodGstAmount/2) }}
                                                     </td>
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                         {{ $room->sgst-($foodGstAmount/2) }}
                                                     </td>
                                                     <!-- <td class="tm_width_2 tm_text_right">
                                                         {{ number_format($room->room_discount, 2) }}
                                                     </td> -->
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                         {{ number_format($room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)-$foodGstAmount , 2) }}
                                                     </td>
                                                 </tr>
                                                 @if ($room->tot_adult_food >0 || $room->tot_child_food>0)
                                                 <tr class="inv-tr-txt">
-                                                    <td class="tm_width_6">
+                                                    <td class=" ">
                                                     ---
                                                     </td>
-                                                    <td class="tm_width_2 tm_text_left">
+                                                    <td class="  tm_text_left">
                                                   Food
                                                     </td>
 
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                     {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food-$foodGstAmount, 2) }}
 
                                                     </td>
 
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                     {{  $foodGstAmount/2 }}
                                                     </td>
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                     {{  $foodGstAmount/2 }}
                                                     </td>
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                         {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food , 2) }}
                                                     </td>
                                                 </tr>
@@ -276,32 +276,32 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                 @endphp
                                                 @foreach ($postings as $post)
                                                     <tr class="inv-posting-td-txt">
-                                                        <td class="tm_width_2">
+                                                        <td class=" ">
                                                             {{ date('d M Y', strtotime($post->posting_date)) }}
                                                         </td>
-                                                        <td class="tm_width_2 ">
+                                                        <td class="  ">
                                                             {{ $room->room_no }}
                                                         </td>
-                                                        <td class="tm_width_2 ">
+                                                        <td class="  ">
                                                             {{ $post->item }}
                                                         </td>
 
-                                                        <td class="tm_width_2 tm_text_right ">
+                                                        <td class="  tm_text_right ">
                                                             {{ $post->amount }}
                                                         </td>
 
-                                                        <td class="tm_width_2 ">
+                                                        <td class="  ">
                                                             ---
                                                         </td>
-                                                        <td class="tm_width_2 tm_text_right">
+                                                        <td class="  tm_text_right">
                                                             {{ $post->sgst }} <br>
                                                             {{-- ({{ (float) $post->tax_type / 2 }}%) --}}
                                                         </td>
-                                                        <td class="tm_width_2 tm_text_right">
+                                                        <td class="  tm_text_right">
                                                             {{ $post->cgst }} <br>
                                                             {{-- ({{ (float) $post->tax_type / 2 }} %) --}}
                                                         </td>
-                                                        <td class="tm_width_2 tm_text_right">
+                                                        <td class="  tm_text_right">
                                                             {{ number_format((float) $post->amount_with_tax, 2) }}
                                                         </td>
                                                     </tr>
@@ -316,25 +316,25 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                     @endphp
                                                 @endforeach
                                             @endforeach
-                                            <tr class="inv-tr-txt" style="font-weight:bold">
-                                                    <td class="tm_width_6">
+                                            <tr class="inv-tr-txt" style="font-weight:bold;border-top:groove;">
+                                                    <td class=" ">
 
                                                     </td>
-                                                    <td class="tm_width_2 tm_text_left">
+                                                    <td class="  tm_text_left">
 
                                                     </td>
 
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
 {{$subtotal_price}}
                                                     </td>
 
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                     {{$subtotal_sgst}}
                                                      </td>
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                     {{$subtotal_cgst}}
                                                      </td>
-                                                    <td class="tm_width_2 tm_text_right">
+                                                    <td class="  tm_text_right">
                                                     {{number_format($subtotal_total,2)}}
                                                     </td>
                                                 </tr>
@@ -435,7 +435,7 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                             </tr>
                                             <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
-                                                    Paid
+                                                    Paid Advance
                                                 </td>
                                                 <td
                                                     class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">

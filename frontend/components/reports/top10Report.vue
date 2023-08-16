@@ -2,7 +2,20 @@
     <div v-if="can('management_top_10_customers_access') && can('management_top_10_customers_view')">
 
 
-
+        <v-dialog v-model="viewCustomerDialog" max-width="60%">
+            <v-card>
+                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                    <span>Customer History</span>
+                    <v-spacer></v-spacer>
+                    <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi mdi-close-box</v-icon>
+                </v-toolbar>
+                <v-container class="mt-0 pt-0">
+                    <CustomerIndex :customer_id="customer_id" :edit_mode="false"
+                        @close-dialog="viewCustomerDialog = false" />
+                </v-container>
+                <v-card-actions> </v-card-actions>
+            </v-card>
+        </v-dialog>
         <div>
             <v-row>
                 <v-col cols="8">
@@ -60,11 +73,18 @@
   
 <script>
 
+import CustomerIndex from "../../components/customer/CustomerIndex.vue";
 export default {
+    components: {
+        CustomerIndex,
+
+    },
     props: ['filter_from_date', 'filter_to_date'],
 
     data() {
         return {
+            viewCustomerDialog: false,
+            customer_id: '',
             // menu_from_filter: '',
             // filter_from_date: '',
 
@@ -286,15 +306,15 @@ export default {
     created() {
         this.loading = true;
 
-        this.getYears();
-        //this.month = new Date().getMonth() + 1;
-        //this.year = new Date().getFullYear();
+        // this.getYears();
+        // //this.month = new Date().getMonth() + 1;
+        // //this.year = new Date().getFullYear();
 
-        this.month = new Date().getMonth();
-        this.year = new Date().getFullYear();
+        // this.month = new Date().getMonth();
+        // this.year = new Date().getFullYear();
 
-        this.filter_from_date = this.formatDate(new Date(this.year, 0, 1));
-        this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+        // this.filter_from_date = this.formatDate(new Date(this.year, 0, 1));
+        // this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
 
         this.getDataFromApi();
     },
@@ -320,8 +340,10 @@ export default {
             return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
         },
         getToCheckoutPage(item) {
-            this.$store.dispatch('setData', { customer_name: item.first_name });
-            this.$router.push('reservation/check_out');
+            // this.$store.dispatch('setData', { customer_name: item.first_name });
+            // this.$router.push('reservation/check_out');
+            this.customer_id = item.customer_id;
+            this.viewCustomerDialog = true;
         },
         getPriceFormat(amount) {
 
@@ -414,7 +436,7 @@ export default {
                     this.chartOptions.labels[counter] = item.title;
                     this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + this.getPriceFormat(item.customer_total_price) + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + rooms;
 
-                    this.chartOptions.colors[counter] = data.colors[counter].color;
+                    //this.chartOptions.colors[counter] = data.colors[counter].color;
 
                     this.total_rooms = this.total_rooms + rooms;
                     this.total_visits += item.number_of_visits;

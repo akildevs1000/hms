@@ -355,7 +355,7 @@ export default
                             floor_no: this.editedItem.floor_no,
                         }
                     };
-                    console.log(this.$auth.user);
+
                     this.$axios.put(`${this.endpoint}/${this.editedItemIndex}`, options.params).then(({ data }) => {
                         if (data.status) {
                             this.getDataFromApi();
