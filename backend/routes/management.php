@@ -22,7 +22,7 @@ Route::get('get_audit_report_pdf', [ReportGenerateController::class, 'generateAu
 Route::get('get_report_monthly_wise', [ManagementController::class, 'getReportMonthlyWise']);
 Route::get('get_report_monthly_wise_group', [ManagementController::class, 'getReportMonthlyWiseGroup']);
 Route::get('get_report_monthly_wise_print', [ManagementController::class, 'getReportMonthlyWiseGroupPrint']);
-Route::get('get_report_top-ten-customers', [ManagementController::class, 'getReportTop10Customers']);
+Route::get('get_report_top_ten_customers', [ManagementController::class, 'getReportTop10Customers']);
 Route::get('get_report_daily_wise_group', [ManagementController::class, 'getReportDailyWiseGroup']);
 
 Route::get('get_re_calculate_price/{key}', [BookingController::class, 'reCalculatePrice']);

@@ -47,7 +47,7 @@
                         </template>
                         <template slot="body.append">
                             <tr>
-                                <td class="text-right  font-weight-bold" colspan="3">TOTAL</td>
+                                <td class="text-right  font-weight-bold" colspan="2">TOTAL</td>
                                 <td class="text-right font-weight-bold">{{ total_visits }}</td>
                                 <td class="text-right font-weight-bold">{{ total_rooms }}</td>
                                 <td class="text-right font-weight-bold">{{ getPriceFormat(total_price) }}</td>
@@ -414,7 +414,7 @@ export default {
 
 
 
-            this.$axios.get('get_report_top-ten-customers', options).then(({ data }) => {
+            this.$axios.get('get_report_top_ten_customers', options).then(({ data }) => {
 
                 this.data_table = data.data;
                 this.total_price = data.total_price;
@@ -436,7 +436,7 @@ export default {
                     this.chartOptions.labels[counter] = item.title;
                     this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + this.getPriceFormat(item.customer_total_price) + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + rooms;
 
-                    //this.chartOptions.colors[counter] = data.colors[counter].color;
+                    this.chartOptions.colors[counter] = data.colors[counter].color;
 
                     this.total_rooms = this.total_rooms + rooms;
                     this.total_visits += item.number_of_visits;

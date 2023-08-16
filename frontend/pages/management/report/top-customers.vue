@@ -439,7 +439,7 @@ export default {
 
 
 
-      this.$axios.get('get_report_top-ten-customers', options).then(({ data }) => {
+      this.$axios.get('get_report_top_ten_customers', options).then(({ data }) => {
 
         this.data_table = data.data;
         this.total_price = data.total_price;

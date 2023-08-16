@@ -76,7 +76,7 @@ class ManagementController extends Controller
 
         $data = Booking::whereCompanyId($request->company_id)
         //->whereMonth('check_in', $request->month)
-            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
+            ->whereBetween('booking_date', [$request->filter_from_date, $request->filter_to_date])
             ->where('booking_status', '!=', -1)
             ->select('source', 'total_price')
             ->get()
@@ -873,7 +873,19 @@ class ManagementController extends Controller
             ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
             ->sum('amount');
 
-        return ["data" => $bookings, "colors" => null, "total_price" => $total_price];
+        $colorsArray = [["value" => "01", "text" => "Jan", "color" => "#3366CC"]
+            , ["value" => "02", "text" => "Feb", "color" => "#FF69B4"]
+            , ["value" => "03", "text" => "Mar", "color" => "#00FF00"]
+            , ["value" => "04", "text" => "Apr", "color" => "#FFD700"]
+            , ["value" => "05", "text" => "May", "color" => "#FF4500"]
+            , ["value" => "06", "text" => "Jun", "color" => "#800080"]
+            , ["value" => "07", "text" => "Jul", "color" => "#FF6347"]
+            , ["value" => "08", "text" => "Aug", "color" => "#008080"]
+            , ["value" => "09", "text" => "Sep", "color" => "#FFA500"]
+            , ["value" => "10", "text" => "Oct", "color" => "#DC143C"]
+            , ["value" => "11", "text" => "Nov", "color" => "#7CFC00"]
+            , ["value" => "12", "text" => "Dec", "color" => "#4169E1"]];
+        return ["data" => $bookings, "colors" => $colorsArray, "total_price" => $total_price];
     }
 
     public function testcheckin(Request $request)
