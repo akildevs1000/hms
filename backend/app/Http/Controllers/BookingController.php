@@ -430,17 +430,18 @@ class BookingController extends Controller
                 $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
                 $singleDayDiscount = ($room['room_discount'] / count($priceList));
                 $singleDayExtraAmount = ($room['room_extra_amount'] / count($priceList));
-                $singleDayPrice = ($room['price'] / count($priceList));
+                // $singleDayPrice = ($room['price'] / count($priceList));
 
                 foreach ($priceList as $list) {
-
+                    $singleDayPrice = $list['room_price'];
 // Recalculation start
-                    $taxArray = $this->reCalculatePrice($orderRooms['after_discount']);
+                    $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
 
-                    $singleDayPrice = $taxArray['basePrice'];
+                    $price_adjusted_after_dsicount = $taxArray['basePrice'];
                     $list['tax'] = $taxArray['gstAmount'];
 // Recalculation end
 
+                    $orderRooms['price_adjusted_after_dsicount'] = $price_adjusted_after_dsicount;
                     $orderRooms['date'] = $list['date'];
 
                     $orderRooms['room_discount'] = $singleDayDiscount;
@@ -468,6 +469,7 @@ class BookingController extends Controller
                     $orderRooms['no_of_child'] = $bookedRoomId->no_of_child;
                     $orderRooms['no_of_baby'] = $bookedRoomId->no_of_baby;
 
+                    // print_r($orderRooms);
                     OrderRoom::create($orderRooms);
                 }
             }
@@ -527,7 +529,7 @@ class BookingController extends Controller
     public function reCalculatePriceTest()
     {
 
-        $finalAmountWithDiscount = 500;
+        $finalAmountWithDiscount = 4289;
         $tax = 12; //default
 
         $calculationStatus = false;

@@ -421,7 +421,7 @@
                               </tbody>
                             </table>
                           </v-col>
-                          <!-- <v-col md="12">
+                          <v-col md="12">
                             <v-divider color="#4390FC"></v-divider>
                             <div class="d-flex justify-space-around py-3">
                               <span>
@@ -448,8 +448,8 @@
                               </span>
                             </div>
                             <v-divider color="#4390FC"></v-divider>
-                          </v-col> -->
-                          <v-col md="12">
+                          </v-col>
+                          <!-- <v-col md="12">
                             <v-divider color="#4390FC"></v-divider>
                             <div class="d-flex justify-space-around py-3">
                               <span>
@@ -476,7 +476,7 @@
                               </span>
                             </div>
                             <v-divider color="#4390FC"></v-divider>
-                          </v-col>
+                          </v-col> -->
                           <!-- <v-col md="12">
                             <v-card>
                               <v-tabs
@@ -1005,7 +1005,7 @@
                     {{ convert_decimal(item.after_discount) }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <!-- <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     GST
                   </span>
@@ -1013,7 +1013,7 @@
                     aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.room_tax) }}
                   </div>
-                </div>
+                </div> -->
                 <!-- <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     T.R Rent

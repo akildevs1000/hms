@@ -41,6 +41,7 @@ class OrderRoom extends Model
         "customer_id",
         "date",
         "booked_room_id",
+        "price_adjusted_after_dsicount",
     ];
 
     /**

@@ -915,7 +915,7 @@ export default {
         .then(({ data }) => {
           if (!data.status) {
 
-            this.alert("Failure11111!", data.data, "error");
+            this.alert("Failure!", data.data, "error");
             return false;
           }
 

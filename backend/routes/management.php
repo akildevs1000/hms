@@ -27,4 +27,4 @@ Route::get('get_report_daily_wise_group', [ManagementController::class, 'getRepo
 
 Route::get('get_re_calculate_price/{key}', [BookingController::class, 'reCalculatePrice']);
 
-Route::get('test_gst_value', [BookingController::class, 'reCalculatePriceTest']);
+Route::get('reCalculatePriceTest', [BookingController::class, 'reCalculatePriceTest']);
