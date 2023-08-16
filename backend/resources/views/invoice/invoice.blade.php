@@ -93,12 +93,24 @@
                                         <b class="tm_primary_color">
                                             {{ date('d M Y', strtotime($booking->check_in)) }}
                                             <div>{{ date('H:i', strtotime($booking->check_in)) }}</div></b>
+
+                                            <br/>
+                                            <div>
+                                        <span>Nights:</span> <br>
+                                        <b class="tm_primary_color">{{ $booking->total_days }}</b>
+                                    </div>
                                     </div>
                                     <div>
                                         <span>Check Out:</span> <br>
                                         <b class="tm_primary_color">
                                             {{ date('d M Y', strtotime($booking->check_out)) }}
                                             <div>{{ date('H:i', strtotime($booking->check_out)) }}</div></b>
+
+<br/>
+                                            <div>
+                                        <span>Rooms:</span> <br>
+                                        <b class="tm_primary_color">{{ count($booking->bookedRooms) }}</b>
+                                    </div>
                                     </div>
                                     <div>
                                         <span>Reservation No:</span> <br>
@@ -107,22 +119,15 @@
                                         <div>{{ date('d M Y', strtotime($booking->booking_date)) }}</div>
 
                                         </b>
-                                    </div>
-                                    <div>
-
-                                    </div>
-                                    <div>
-                                        <span>Nights:</span> <br>
-                                        <b class="tm_primary_color">{{ $booking->total_days }}</b>
-                                    </div>
-                                    <div>
-                                        <span>Rooms:</span> <br>
-                                        <b class="tm_primary_color">{{ count($booking->bookedRooms) }}</b>
-                                    </div>
-                                    <div>
+                                        <br/>
+                                        <div>
                                         <span>Room type:</span> <br>
                                         <b class="tm_primary_color">{{ implode(',', $roomTypes) }}</b>
                                     </div>
+                                    </div>
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -330,7 +335,7 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                     {{$subtotal_cgst}}
                                                      </td>
                                                     <td class="tm_width_2 tm_text_right">
-                                                    {{$subtotal_total}}
+                                                    {{number_format($subtotal_total,2)}}
                                                     </td>
                                                 </tr>
                                         </tbody>
@@ -366,7 +371,8 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
 
 
                                 </div>
-                                <div class="tm_right_footer">
+                                <div class="tm_right_footer" style="padding-top:10px">
+
                                     <table class="tm_mb0">
                                         <tbody>
                                         <tr>
