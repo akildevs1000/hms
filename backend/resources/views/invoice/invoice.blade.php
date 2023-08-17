@@ -139,66 +139,66 @@
                                         <thead>
                                             <tr class="inv-room-th-txt">
                                                 <th class="tm_width_2 tm_semi_bold tm_primary_color">Date</th>
-                                                <th class="tm_width_2 tm_semi_bold tm_primary_color">Room No</th>
-                                                <!-- <th class="tm_width_6 tm_semi_bold tm_primary_color">Description</th> -->
-                                                <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right"  >Price</th>
+                                                <th class="  tm_semi_bold tm_primary_color">Room No</th>
+                                                 <th class="  tm_semi_bold tm_primary_color">Pax</th>
+                                                <th class="  tm_semi_bold tm_primary_color tm_text_right"  >Price</th>
 
                                                 <!-- <th class="tm_width_6 tm_semi_bold tm_primary_color">Amount</th> -->
 
 
-                                               <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">SGST</th>
-                                                <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">CGST</th>
+                                               <th class="  tm_semi_bold tm_primary_color tm_text_right">SGST</th>
+                                                <th class=" tm_semi_bold tm_primary_color tm_text_right">CGST</th>
                                                   <!--<th class="tm_width_6 tm_semi_bold tm_primary_color">Discount</th>-->
-                                                <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">Total
+                                                <th class="  tm_semi_bold tm_primary_color tm_text_right">Total
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
 
 
-                                            @php
-                                                $totalWithoutDiscounts = 0;
-                                                $totalWithTax = 0;
-                                                $totalcgst = 0;
-                                                $totalsgst = 0;
+                                                    @php
+                                                        $totalWithoutDiscounts = 0;
+                                                        $totalWithTax = 0;
+                                                        $totalcgst = 0;
+                                                        $totalsgst = 0;
 
-                                                $totalPostingWithTax = 0;
-                                                $totalPostingcgst = 0;
-                                                $totalPostingsgst = 0;
+                                                        $totalPostingWithTax = 0;
+                                                        $totalPostingcgst = 0;
+                                                        $totalPostingsgst = 0;
 
-                                                $totalFoodGst=0;
+                                                        $totalFoodGst=0;
 
-                                                $grandTotal = 0;
-
-
-                                                $subtotal_price=0;
-$subtotal_cgst=0;
-$subtotal_sgst=0;
-$subtotal_total=0;
+                                                        $grandTotal = 0;
 
 
-
-                                            @endphp
-                                            @foreach ($orderRooms as $room)
-                                            @php
-
-$totalFoodCost=$room->tot_adult_food+$room->tot_child_food;
-$tax=5;
-$basePrice = ($totalFoodCost * 100) / (100 +5);
-        $foodGstAmount = $totalFoodCost - $basePrice;
-
-        $totalFoodGst += $foodGstAmount;
+                                                        $subtotal_price=0;
+                                                        $subtotal_cgst=0;
+                                                        $subtotal_sgst=0;
+                                                        $subtotal_total=0;
 
 
-        $subtotal_price+=$room->price_adjusted_after_dsicount+($room->tot_adult_food +   $room->tot_child_food-$foodGstAmount) ;
-        $subtotal_sgst+=$room->sgst +($foodGstAmount/2);
-        $subtotal_cgst+=$room->cgst +($foodGstAmount/2);
+
+                                                    @endphp
+                                                    @foreach ($orderRooms as $room)
+                                                    @php
+
+                                                        $totalFoodCost=$room->tot_adult_food+$room->tot_child_food;
+                                                        $tax=5;
+                                                        $basePrice = ($totalFoodCost * 100) / (100 +5);
+                                                                $foodGstAmount = $totalFoodCost - $basePrice;
+
+                                                                $totalFoodGst += $foodGstAmount;
 
 
-        $subtotal_total+=$room->total;
+                                                                $subtotal_price+=$room->price_adjusted_after_dsicount+($room->tot_adult_food +   $room->tot_child_food-$foodGstAmount) ;
+                                                                $subtotal_sgst+=$room->sgst +($foodGstAmount/2);
+                                                                $subtotal_cgst+=$room->cgst +($foodGstAmount/2);
 
 
-@endphp
+                                                                $subtotal_total+=$room->total;
+
+
+                                                        @endphp
 
 
 
@@ -206,9 +206,16 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                 <tr class="inv-tr-txt">
                                                     <td  >
                                                         {{ date('d M Y', strtotime($room->date)) }}
+
+
                                                     </td>
                                                     <td  >
                                                         {{ $room->room_no }} ({{ $room->room_type }})
+                                                    </td>
+                                                    <td>
+                                                    {{$room->no_of_adult}} |
+                                                        {{$room->no_of_child}} |
+                                                        {{$room->no_of_baby}}
                                                     </td>
                                                     <!-- <td class="tm_width_2 ">
                                                     {{ $room->room_type }}
@@ -247,7 +254,7 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                     <td class="  tm_text_left">
                                                   Food
                                                     </td>
-
+<td>---</td>
                                                     <td class="  tm_text_right">
                                                     {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food-$foodGstAmount, 2) }}
 
@@ -285,7 +292,9 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                         <td class="  ">
                                                             {{ $post->item }}
                                                         </td>
-
+                                                        <td class="  ">
+                                                            ---
+                                                        </td>
                                                         <td class="  tm_text_right ">
                                                             {{ $post->amount }}
                                                         </td>
@@ -323,7 +332,9 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                                     <td class="  tm_text_left">
 
                                                     </td>
+                                                    <td class="  tm_text_left">
 
+</td>
                                                     <td class="  tm_text_right">
 {{$subtotal_price}}
                                                     </td>
