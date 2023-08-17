@@ -10,11 +10,15 @@
               <table>
                 <tr>
                   <th>Source</th>
-                  <th class="text-right">Total Revenue</th>
+                  <th class="text-right">Total Amount</th>
                 </tr>
                 <tr v-for="(value, key) in data" :key="key">
                   <th>{{ key }}</th>
                   <td class="text-right">{{ convert_decimal(value) }}</td>
+                </tr>
+                <tr>
+                  <th style="text-align:right">Total</th>
+                  <th class="text-right"> {{ convert_decimal(getTotal(data)) }}</th>
                 </tr>
               </table>
               <span v-if="data.length == 0" style="color:red">No Data available</span>
@@ -151,7 +155,15 @@ export default {
   },
 
   methods: {
+    getTotal(data) {
 
+      return Object.values(data).reduce((sum, value) => sum + value, 0);
+
+
+
+
+      // return sum;
+    },
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
@@ -212,7 +224,7 @@ export default {
       };
 
       this.$axios.get(`${url}`, options).then(({ data }) => {
-        console.log(data);
+        //console.log(data);
         this.data = data;
         const keys = Object.keys(data);
         const values = Object.values(data);

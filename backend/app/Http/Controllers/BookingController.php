@@ -1650,6 +1650,10 @@ class BookingController extends Controller
             $model->WhereDate('check_out', '>=', $request->from);
             $model->whereDate('check_out', '<=', $request->to);
         }
+        if ($request->guest_mode == '' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('check_in', '>=', $request->from);
+            $model->whereDate('check_in', '<=', $request->to);
+        }
 
         $model->orderBy('id', 'desc');
 

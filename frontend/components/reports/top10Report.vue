@@ -20,11 +20,13 @@
             <v-row>
                 <v-col cols="8">
 
-                    <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
-                        itemsPerPageOptions: [12],
-                    }" class="elevation-1" :hide-default-footer="true">
+                    <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" class="elevation-1"
+                        :disable-pagination="true" :hide-default-footer="true">
 
+                        <template v-slot:item.sno="{ item, index }">
 
+                            {{ currentPage ? ((currentPage - 1) * perPage) + (cumulativeIndex + itemIndex(item)) : '' }}
+                        </template>
 
                         <template v-slot:item.name="{ item }">
                             <a @click="getToCheckoutPage(item)"> {{ item.title }}</a> </template>
@@ -47,7 +49,7 @@
                         </template>
                         <template slot="body.append">
                             <tr>
-                                <td class="text-right  font-weight-bold" colspan="2">TOTAL</td>
+                                <td class="text-right  font-weight-bold" colspan="3">TOTAL</td>
                                 <td class="text-right font-weight-bold">{{ total_visits }}</td>
                                 <td class="text-right font-weight-bold">{{ total_rooms }}</td>
                                 <td class="text-right font-weight-bold">{{ getPriceFormat(total_price) }}</td>
@@ -83,6 +85,10 @@ export default {
 
     data() {
         return {
+            cumulativeIndex: 1,
+            perPage: 20,
+            currentPage: 1,
+
             viewCustomerDialog: false,
             customer_id: '',
             // menu_from_filter: '',
@@ -238,7 +244,14 @@ export default {
                 },
             ],
             headers_table: [
-
+                {
+                    text: "#",
+                    align: "left",
+                    sortable: false,
+                    key: "sno",
+                    filterable: true,
+                    value: "sno",
+                },
                 {
                     text: "Name",
                     align: "left",
@@ -271,21 +284,21 @@ export default {
                     value: "no_of_rooms",
                 },
                 {
-                    text: "Revenue",
+                    text: "Booking Amount",
                     align: "right",
                     sortable: false,
 
                     filterable: false,
                     value: "revenue",
                 },
-                {
-                    text: "%",
-                    align: "right",
-                    sortable: false,
+                // {
+                //     text: "%",
+                //     align: "right",
+                //     sortable: false,
 
-                    filterable: false,
-                    value: "percentage",
-                },
+                //     filterable: false,
+                //     value: "percentage",
+                // },
 
             ],
 
@@ -332,6 +345,16 @@ export default {
     //   },
     // },
     methods: {
+        updateIndex(page) {
+
+            this.currentPage = page;
+            this.cumulativeIndex = (page - 1) * this.perPage;
+
+
+        },
+        itemIndex(item) {
+            return this.data_table.indexOf(item);
+        },
         formatDate(date) {
             var day = date.getDate();
             var month = date.getMonth() + 1; // Months are zero-based
@@ -402,7 +425,7 @@ export default {
                     page: page,
                     sortBy: sortedBy,
                     sortDesc: sortedDesc,
-                    per_page: itemsPerPage,
+                    //per_page: itemsPerPage,
                     company_id: this.$auth.user.company.id,
                     month: this.month,
                     year: this.year,
@@ -417,10 +440,10 @@ export default {
             this.$axios.get('get_report_top_ten_customers', options).then(({ data }) => {
 
                 this.data_table = data.data;
-                this.total_price = data.total_price;
+                // this.total_price = data.total_price;
                 this.colors = data.colors;
                 this.loading = false;
-                this.totalRowsCount = 12;
+
                 this.grandTotal = data.grandTotal;
 
                 this.series.splice(0, this.series.length);
@@ -431,20 +454,27 @@ export default {
                 let counter = 0;
                 this.data_table.forEach(item => {
 
+
                     let rooms = this.getRoomsCount(item.rooms);
-                    this.series.push(Math.round((item.customer_total_price / data.total_price) * 100));
-                    this.chartOptions.labels[counter] = item.title;
-                    this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + this.getPriceFormat(item.customer_total_price) + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + rooms;
+                    if (counter <= 9) {
+                        // this.series.push(Math.round((item.customer_total_price / data.total_price) * 100));
+                        this.series.push(Math.round((item.customer_total_price)));
+                        this.chartOptions.labels[counter] = item.title;
+                        this.chartOptions.customLabel[counter] = item.title + "<br/>Total Amount: " + this.getPriceFormat(item.customer_total_price) + "<br/>No.of Visits: " + item.number_of_visits + "<br/>No.of Rooms: " + rooms;
 
-                    this.chartOptions.colors[counter] = data.colors[counter].color;
+                        this.chartOptions.colors[counter] = data.colors[counter].color;
 
-                    this.total_rooms = this.total_rooms + rooms;
+                    }
+
+                    this.total_rooms += rooms;
                     this.total_visits += item.number_of_visits;
+                    this.total_price += Math.round((item.customer_total_price));
                     counter++;
+
+
 
                 });
 
-                this.loading = false;
                 this.loading = false;
 
             });
