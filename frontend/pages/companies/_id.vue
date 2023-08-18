@@ -170,6 +170,7 @@
                       <div class="form-group">
                         <v-card class="ml-1 mr-1">
                           <div class="pa-5">
+
                             <v-img @click="onpick_attachment" style="
                                   width: 150px;
                                   height: 150px;

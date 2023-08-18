@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Revenue Report - Monthly</title>
+    <title>Revenue Report - Day wise</title>
     <style>
         * {
             box-sizing: border-box;
@@ -382,7 +382,7 @@
     <div class="row">
 
         <div class="col-12" style="margin: 0px;text-align:center">
-            Revenue Month wise Report {{$request->filter_from_date}} to {{$request->filter_to_date}}
+            Revenue Day wise Report {{$request->filter_from_date}} to {{$request->filter_to_date}}
         </div>
 
     </div>

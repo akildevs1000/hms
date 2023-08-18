@@ -6,6 +6,29 @@
 
         <v-row>
             <v-col md="12" lg="6" cols="12">
+                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                    <span> Month wise Report </span>
+                    <v-spacer></v-spacer>
+                    <v-tooltip top color="primary">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                @click="process('revenue_monthly_report_print', endpoint)">
+                                <v-icon class="white--text">mdi-printer-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>PRINT</span>
+                    </v-tooltip>
+
+                    <v-tooltip top color="primary">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                @click="process('revenue_monthly_report_download', endpoint)">
+                                <v-icon class="white--text">mdi-download-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span> DOWNLOAD </span>
+                    </v-tooltip>
+                </v-toolbar>
                 <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
                   mdi mdi-printer</v-icon> </v-col> -->
                 <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
@@ -356,6 +379,7 @@ export default {
     //   },
     // },
     methods: {
+
         formatDate(date) {
             var day = date.getDate();
             var month = date.getMonth() + 1; // Months are zero-based
@@ -480,6 +504,21 @@ export default {
                 this.loading = false;
 
             });
+        },
+        process(type, model) {
+
+
+
+
+            let url =
+                process.env.BACKEND_URL +
+                `${type}?company_id=${this.$auth.user.company.id}&filter_from_date=${this.filter_from_date}&filter_to_date=${this.filter_to_date}`;
+            console.log(url);
+            let element = document.createElement("a");
+            element.setAttribute("target", "_blank");
+            element.setAttribute("href", `${url}`);
+            document.body.appendChild(element);
+            element.click();
         },
     },
 };

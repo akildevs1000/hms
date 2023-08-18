@@ -49,3 +49,12 @@ Route::get('grc_by_checkin/{id}', [InvoiceController::class, 'grcByCheckin']);
 
 Route::get('grc_report_print/{id}', [InvoiceController::class, 'grcPrint']);
 Route::get('grc_report_download/{id}', [InvoiceController::class, 'grcDownload']);
+
+Route::get('revenue_monthly_report_print', [ReportController::class, 'revenueMonthlyReportPrint']);
+Route::get('revenue_monthly_report_download', [ReportController::class, 'revenueMonthlyReportDownload']);
+
+Route::get('revenue_daily_report_print', [ReportController::class, 'revenueDailyReportPrint']);
+Route::get('revenue_daily_report_download', [ReportController::class, 'revenueDailyReportDownload']);
+
+Route::get('revenue_customer_wise_report_print', [ReportController::class, 'revenueCustomerWiseReportPrint']);
+Route::get('revenue_customer_wise_report_download', [ReportController::class, 'revenueCustomerWiseReportDownload']);

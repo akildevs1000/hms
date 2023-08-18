@@ -837,11 +837,10 @@ class ManagementController extends Controller
     {
         $year = $request->year;
 
-        //return Booking::whereBetween('check_in', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])->get();
         $bookings = Booking::select(
             DB::raw("string_agg(rooms, ',') as rooms"),
             'bookings.customer_id',
-            // DB::raw('sum(total_price) as customer_total_price'),
+
             DB::raw('sum(total_price) as customer_total_price'),
             DB::raw('count(id) as number_of_visits'),
         )
@@ -849,14 +848,7 @@ class ManagementController extends Controller
             ->groupBy('bookings.customer_id')
             ->orderByDesc('customer_total_price')
             ->where('company_id', $request->company_id)
-        //->where('type', 'Walking')
-        // -1 cancel booking ;
             ->where('booking_status', "!=", -1)
-        // ->whereYear('created_at', $year)
-        // ->when($request->filled('month'), function ($q) use ($request) {
-        //     $q->whereMonth('created_at', $request->month);
-        // })
-        //->whereBetween('check_in', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
 
             ->where(function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {

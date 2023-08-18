@@ -19,7 +19,29 @@
         <div>
             <v-row>
                 <v-col cols="8">
+                    <v-toolbar class="rounded-2" color="background" dense flat dark>
+                        <span> Customer Wise Report </span>
+                        <v-spacer></v-spacer>
+                        <v-tooltip top color="primary">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                    @click="process('revenue_customer_wise_report_print', endpoint)">
+                                    <v-icon class="white--text">mdi-printer-outline</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>PRINT</span>
+                        </v-tooltip>
 
+                        <v-tooltip top color="primary">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                    @click="process('revenue_customer_wise_report_download', endpoint)">
+                                    <v-icon class="white--text">mdi-download-outline</v-icon>
+                                </v-btn>
+                            </template>
+                            <span> DOWNLOAD </span>
+                        </v-tooltip>
+                    </v-toolbar>
                     <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" class="elevation-1"
                         :disable-pagination="true" :hide-default-footer="true">
 
@@ -478,6 +500,18 @@ export default {
                 this.loading = false;
 
             });
+        },
+        process(type, model) {
+
+            let url =
+                process.env.BACKEND_URL +
+                `${type}?company_id=${this.$auth.user.company.id}&filter_from_date=${this.filter_from_date}&filter_to_date=${this.filter_to_date}`;
+            console.log(url);
+            let element = document.createElement("a");
+            element.setAttribute("target", "_blank");
+            element.setAttribute("href", `${url}`);
+            document.body.appendChild(element);
+            element.click();
         },
     },
 };

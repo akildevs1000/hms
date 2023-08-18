@@ -55,7 +55,7 @@
             Daily Revenue
           </v-tab>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
-            Top 10 Customers
+            Customer wise
           </v-tab>
           <!-- <v-tab active-class="active-link" @click="getDataFromApi2()">
             Sold Graph1

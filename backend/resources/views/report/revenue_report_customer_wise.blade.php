@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Revenue Report - Monthly</title>
+    <title>Revenue Report - Customer wise</title>
     <style>
         * {
             box-sizing: border-box;
@@ -382,7 +382,7 @@
     <div class="row">
 
         <div class="col-12" style="margin: 0px;text-align:center">
-            Revenue Month wise Report {{$request->filter_from_date}} to {{$request->filter_to_date}}
+            Revenue Customer wise Report {{$request->filter_from_date}} to {{$request->filter_to_date}}
         </div>
 
     </div>
@@ -391,41 +391,48 @@
     <table class="mt-3 w-100">
         <tr style="background-color: white; color: black" class="my-0 py-0">
             <th class="my-0 py-0 fnt-size  "style="text-align:center"># </th>
-            <th class="my-0 py-0 fnt-size" style="text-align:center">Month</th>
-            <th class="my-0 py-0 fnt-size" style="text-align:center">Sold</th>
-            <th class="my-0 py-0 fnt-size" style="text-align:center">Income</th>
-            <th class="my-0 py-0 fnt-size" style="text-align:center">N_M_Expences</th>
-            <th class="my-0 py-0 fnt-size" style="text-align:center">M Expences</th>
-            <th class="my-0 py-0 fnt-size" style="text-align:center">Profit  </th>
-            <th class="my-0 py-0 fnt-size" style="text-align:center">%</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Name</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Phone Number</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Visits</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Rooms</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Booking Amount</th>
         </tr>
         @php
             $i = 1;
+
+            $total_rooms=0;
+        $total_visits=0;
+        $total_price=0;
         @endphp
+
+
         @foreach ($data['data'] as $item)
-            {{-- @dd($item) --}}
+        @php
+        $total_visits=$total_visits+$item['number_of_visits'];
+         $total_rooms+=  count(explode(',',$item['rooms']));
+
+         $total_price+= $item['customer_total_price'];
+         @endphp
+
+
             <tr style="font-size:11px">
                 <td class="my-1 py-1 fnt-size ">{{ $i++ }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item['month'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $item['sold'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $item['income'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $item['expenses'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $item['management_expenses'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $item['profit'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $item['percentage'].'%' ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['title'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['customer']['contact_no'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['number_of_visits'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['rooms'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ numFormat($item['customer_total_price']) ?? '---' }}</td>
             </tr>
         @endforeach
         <tr  class="grand_total">
                 <td class="my-1 py-1 fnt-size text-right " colspan="8" style="border-left:0px!important;border-right:0px!important" >&nbsp; </td>
             </tr>
         <tr  class="grand_total">
-                <td class="my-1 py-1 fnt-size text-right " colspan="2" style="border-top:1px solid red;">Total</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalRooms'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalIncome'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalExpenses'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalManagementExpenses'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalProfit'] ?? '---' }}</td>
-                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalPercentage'].'%' ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right " colspan="3" style="border-top:1px solid red;">Total</td>
+
+                <td class="my-1 py-1 fnt-size text-right">{{ $total_visits    }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $total_rooms    }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{numFormat( $total_price)    }}</td>
             </tr>
     </table>
 

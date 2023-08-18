@@ -14,11 +14,11 @@
                 </tr>
                 <tr v-for="(value, key) in data" :key="key">
                   <th>{{ key }}</th>
-                  <td class="text-right">{{ convert_decimal(value) }}</td>
+                  <td class="text-right">{{ getPriceFormat(value) }}</td>
                 </tr>
                 <tr>
                   <th style="text-align:right">Total</th>
-                  <th class="text-right"> {{ convert_decimal(getTotal(data)) }}</th>
+                  <th class="text-right"> {{ getPriceFormat(getTotal(data)) }}</th>
                 </tr>
               </table>
               <span v-if="data.length == 0" style="color:red">No Data available</span>
@@ -250,7 +250,12 @@ export default {
         colors.push(color);
       }
       return colors;
-    }
+    },
+    getPriceFormat(amount) {
+
+      amount = parseFloat(amount);
+      return amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    },
   },
 };
 </script>
