@@ -66,6 +66,8 @@
                             <v-select :items="roles" item-text="name" item-value="id" v-model="editedItem.role_id"
                               outlined placeholder="Select Role" lable="Role" :hide-details="true" dense></v-select>
                             <span v-if="errors && errors.role_id" class="error--text">{{ errors.role_id[0] }}</span>
+                          </v-col>
+                          <v-col md="12" cols="12">
 
                             <v-select v-model="editedItem.is_active" :items="[
                               { name: 'Active', value: '1' },

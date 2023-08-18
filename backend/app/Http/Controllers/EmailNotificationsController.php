@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EmailNotifications\StoreEmailNotificationsRequest;
 use App\Http\Requests\EmailNotifications\UpdateEmailNotificationsRequest;
 use App\Models\EmailNotifications;
+use App\Models\NotificationReportAccess;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class EmailNotificationsController extends Controller
@@ -16,14 +18,28 @@ class EmailNotificationsController extends Controller
      */
     public function index(Request $request)
     {
-        $model = EmailNotifications::query();
+
+        $model = EmailNotifications::with(['report_type_access.report_type']);
 
         //datatable Filters
         if ($request->filled('email')) {
-            $model->where('email', 'like', "$request->email%");}
+            $model->where('email', 'ILIKE', "$request->email%");}
+
+        if ($request->filled('name')) {
+            $model->where('name', 'ILIKE', "$request->name%");}
+
+        if ($request->filled('whatsapp_number')) {
+            $model->where('whatsapp_number', 'like', "$request->whatsapp_number%");}
 
         if ($request->filled('status')) {
             $model->where('status', $request->status);
+        }
+        if ($request->filled('report_name')) {
+            $model->whereHas('report_type_access', function (Builder $query) use ($request) {
+                $query->whereHas('report_type', function (Builder $query1) use ($request) {
+                    $query1->where('name', 'ILIKE', "$request->report_name%");
+                });
+            });
         }
         //datatable sorty by
         if ($request->filled('sortBy')) {
@@ -80,20 +96,25 @@ class EmailNotificationsController extends Controller
     }
     public function storeSingle(StoreEmailNotificationsRequest $request)
     {
+
         try {
             $data = $request->validated();
 
             if ($data) {
 
-                $verifyIsRoom = EmailNotifications::where('company_id', $request->company_id)->where('email', $request->email)->count();
-                if ($verifyIsRoom == 0) {
+                $verifyIsEmail = EmailNotifications::where('company_id', $request->company_id)->where('email', $request->email)->count();
+                if ($verifyIsEmail == 0) {
 
                     $record = EmailNotifications::create($data);
 
+                    foreach ($request->selected_report_types as $notification_report_types_id) {
+                        NotificationReportAccess::create(['company_id' => $request->company_id, 'email_notifications_id' => $record->id, 'notification_report_types_id' => $notification_report_types_id]);
+                    }
+
                     if ($record) {
-                        return $this->response('Email details are successfully created', $record, true);
+                        return $this->response('Notification details are successfully created', $record, true);
                     } else {
-                        return $this->response('Email details not created', $record, false);
+                        return $this->response('Notification details are not created', $record, false);
                     }
 
                 } else {
@@ -155,6 +176,12 @@ class EmailNotificationsController extends Controller
                     }
                 }
                 $status = EmailNotifications::whereId($id)->update($data);
+
+                NotificationReportAccess::where('email_notifications_id', $id)->delete();
+                foreach ($request->selected_report_types as $notification_report_types_id) {
+                    NotificationReportAccess::create(['company_id' => $request->company_id, 'email_notifications_id' => $id, 'notification_report_types_id' => $notification_report_types_id]);
+                }
+
                 if ($status) {
                     return $this->response('Email is updated succesfully', $status, true);
                 } else {
@@ -180,9 +207,12 @@ class EmailNotificationsController extends Controller
     {
         if (EmailNotifications::find($id)->delete()) {
 
+            NotificationReportAccess::where('email_notifications_id', $id)->delete();
+
             return $this->response('Record    successfully deleted.', null, true);
         } else {
             return $this->response('Record   cannot delete.', null, false);
         }
     }
+
 }

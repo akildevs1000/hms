@@ -24,7 +24,7 @@
 
                     <template v-slot:item.date="{ item }">
                         <!-- <a @click="goToNightAuditReport(item)">{{ item.date }}</a> -->
-                        {{ item.date }}
+                        {{ changeDateFormat(item.date) }}
                     </template>
 
 
@@ -345,26 +345,6 @@ export default {
 
         this.loading = true;
 
-
-        // this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
-        // this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
-
-        //this.getYears();
-
-
-        // let filters = this.$store.getters.getDataToSend;
-        // if (filters.month) {
-        //     this.month = parseInt(filters.month) - 1;
-        // }
-
-        // if (filters.year) {
-        //     this.year = parseInt(filters.year);
-        // }
-
-        // this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
-        // this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
-
-        //this.getDataFromApi();
     },
     mounted() {
         this.getDataFromApi();
@@ -447,6 +427,21 @@ export default {
             this.years = Array.from({ length: 10 }, (_, i) => year - i);
 
         },
+        changeDateFormat(date) {
+
+            var months = [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+
+            var dateParts = date.split("-");
+            var year = dateParts[0].slice(2); // Extract last two digits of the year
+            var month = months[parseInt(dateParts[1], 10) - 1]; // Month is 0-indexed
+            var day = dateParts[2];
+
+            return day + " " + month + " " + year;
+
+        },
         getDataFromApi(url = this.endpoint) {
 
 
@@ -478,7 +473,7 @@ export default {
 
                 this.data_table = data.data;
                 this.loading = false;
-                this.totalRowsCount = 12;
+                // this.totalRowsCount = 12;
                 this.grandTotal = data.grandTotal;
 
                 let counter = 0;

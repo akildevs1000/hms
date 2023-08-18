@@ -213,9 +213,7 @@
                                                         {{ $room->room_no }} ({{ $room->room_type }})
                                                     </td>
                                                     <td>
-                                                    {{$room->no_of_adult}} |
-                                                        {{$room->no_of_child}} |
-                                                        {{$room->no_of_baby}}
+                                                    {{$room->no_of_adult+$room->no_of_child}}
                                                     </td>
                                                     <!-- <td class="tm_width_2 ">
                                                     {{ $room->room_type }}

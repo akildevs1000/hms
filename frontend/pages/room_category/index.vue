@@ -8,13 +8,13 @@
     <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
     </v-row>
     <div>
       <v-dialog v-model="roomTypeDialog" max-width="40%">
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <v-toolbar color="background" dense flat dark>
             <v-toolbar color="background" dense flat dark>
               <span>{{ formTitle }} {{ Model }}</span>
             </v-toolbar>
@@ -81,8 +81,8 @@
         <v-row>
 
           <v-col md="12" lg="12">
-            <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows
-              class=" elevation-1">
+            <v-tabs v-model="activeTab" :vertical="vertical" background-color="background" dense flat dark show-arrows
+              class=" rounded-t-sm">
 
               <v-spacer></v-spacer>
               <v-tab active-class="active-link">
@@ -100,10 +100,10 @@
                       @input="searchIt" v-model="search" hide-details></v-text-field>
                   </v-col>
                   <v-card>
-                    <v-toolbar class="rounded-md mb-2 white--text" color="primary" dense flat>
+                    <v-toolbar class=" mb-2 white--text" color="background" dense flat>
 
                       <v-spacer></v-spacer>
-                      <v-tooltip v-if="can('settings_rooms_create')" top color="primary">
+                      <v-tooltip v-if="can('settings_rooms_create')" top color="background">
                         <template v-slot:activator="{ on, attrs }">
 
 
@@ -208,11 +208,11 @@
   <NoAccess v-else />
 </template>
 <script>
-import roomsComponent from '../../components/roomsComponent.vue';
+// import roomsComponent from '../../components/roomsComponent.vue';
 export default {
-  components: {
-    roomsComponent,
-  },
+  // components: {
+  //   roomsComponent,
+  // },
   data: () => ({
     componentKey: 0,
     vertical: false,

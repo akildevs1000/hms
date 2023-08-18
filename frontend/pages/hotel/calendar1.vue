@@ -757,35 +757,35 @@ export default {
         elements[i].innerHTML = "";
       }
     },
-    changeTableHeaderContent() {
-      this.changetableheaderwaitprocess();
-      setTimeout(() => {
-        this.changetableheaderwaitprocess();
-      }, 1000 * 5);
-    },
-    changetableheaderwaitprocess() {
-      const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
-      setTimeout(() => {
-        for (let i = 0; i < elements.length; i++) {
-          //elements[i].style.backgroundColor = "red";
+    // changeTableHeaderContent() {
+    //   this.changetableheaderwaitprocess();
+    //   setTimeout(() => {
+    //     this.changetableheaderwaitprocess();
+    //   }, 1000 * 5);
+    // },
+    // changetableheaderwaitprocess() {
+    //   const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
+    //   setTimeout(() => {
+    //     for (let i = 0; i < elements.length; i++) {
+    //       //elements[i].style.backgroundColor = "red";
 
-          let content = elements[i].getAttribute("title");
-          let date = new Date(content);
-          date = date.toString().split(" "); //
+    //       let content = elements[i].getAttribute("title");
+    //       let date = new Date(content);
+    //       date = date.toString().split(" "); //
 
-          let [weekday, m, daydate] = date;
-          //     //content = date.getFullYear();
+    //       let [weekday, m, daydate] = date;
+    //       //     //content = date.getFullYear();
 
-          elements[i].innerHTML =
-            "<span style='font-size:12px'>" +
-            daydate +
-            "</span> <span style='font-size:10px'>(" +
-            weekday +
-            ")</span>"; //';content;
-          // return
-        }
-      }, 1000 * 3);
-    },
+    //       elements[i].innerHTML =
+    //         "<span style='font-size:12px'>" +
+    //         daydate +
+    //         "</span> <span style='font-size:10px'>(" +
+    //         weekday +
+    //         ")</span>"; //';content;
+    //       // return
+    //     }
+    //   }, 1000 * 3);
+    // },
     caps(str) {
       if (str == "" || str == null) {
         return "---";

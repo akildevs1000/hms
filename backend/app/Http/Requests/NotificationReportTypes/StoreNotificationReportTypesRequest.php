@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests\EmailNotifications;
+namespace App\Http\Requests\NotificationReportTypes;
 
 use App\Traits\failedValidationWithName;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreEmailNotificationsRequest extends FormRequest
+class StoreNotificationReportTypesRequest extends FormRequest
 {
+
     use failedValidationWithName;
     /**
      * Determine if the user is authorized to make this request.
@@ -27,10 +28,8 @@ class StoreEmailNotificationsRequest extends FormRequest
     {
         return [
             'company_id' => 'required',
-            'email' => 'required|email|min:10|max:191|unique:email_notifications',
-            'status' => 'required',
+            'description' => 'required',
             'name' => 'required',
-            'whatsapp_number' => ['nullable', 'min:10', 'max:13'],
 
         ];
     }

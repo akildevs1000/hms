@@ -8,7 +8,7 @@
     <v-row class="mt-5 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
       <v-col cols="6"> </v-col>
     </v-row>
@@ -166,7 +166,7 @@
 
       <v-col md="12" sm="12" class="float-right">
         <v-card>
-          <v-tabs v-model="tab" align-with-title background-color="primary" dark show-arrows>
+          <v-tabs v-model="tab" align-with-title background-color="background" dark show-arrows>
             <v-spacer></v-spacer>
             <v-tab v-for="item in items" :key="item" active-class="active-link">
               {{ item }}
