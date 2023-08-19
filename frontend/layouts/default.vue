@@ -222,38 +222,11 @@ export default {
           menu: "calendar_access",
         },
 
-        // {
-        //   icon: "mdi-bed",
-        //   title: `Reservation`,
-        //   open_menu: false,
-        //   menu: "reservation_access",
-        //   hasChildren: [
-        //     // {
-        //     //   icon: "mdi-bookmark ",
-        //     //   title: "Bulk Reservation",
-        //     //   to: "/reservation/bulk",
-        //     //   menu: "reservation_access"
-        //     // },
-        //     // {
-        //     //   icon: "mdi-bookmark ",
-        //     //   title: "Add Reservation",
-        //     //   to: "/reservation/create",
-        //     //   menu: "reservation_access"
-        //     // },
-        //     {
-        //       icon: "mdi-bed",
-        //       title: "List Reservation",
-        //       to: "/reservation/list1",
-        //       menu: "reservation_access",
-        //     },
-        //   ],
-        // },
-
         {
           icon: "mdi-bed",
           title: `History`,
           open_menu: false,
-          menu: "customer_access",
+          menu: "history_menu",
           hasChildren: [
             {
               icon: "mdi mdi-home-import-outline",
@@ -280,7 +253,7 @@ export default {
           icon: "mdi mdi-human-male-female-child",
           title: `Guest`,
           open_menu: false,
-          menu: "customer_access",
+          menu: "guest_menu",
           hasChildren: [
             {
               icon: "fas fa-male",
@@ -307,25 +280,13 @@ export default {
           ],
         },
 
-        // {
-        //   icon: "mdi-bed",
-        //   title: "Manage Room",
-        //   to: "/room",
-        //   menu: "room_access"
-        // },
-
         {
           icon: "mdi-currency-usd",
           title: `Accounts`,
           open_menu: false,
-          menu: "accounts_access",
+          menu: "account_menu",
           hasChildren: [
-            // {
-            //   icon: "mdi-account",
-            //   title: "Customers Bill  ",
-            //   to: "/customer/bill",
-            //   menu: "customer_bill_access"
-            // },
+
             {
               icon: "mdi mdi-food",
               title: "Posting",
@@ -340,12 +301,6 @@ export default {
               menu: "accounts_expences_access",
             },
 
-            // {
-            //   icon: "mdi-cash",
-            //   title: "Transaction",
-            //   to: "/transactions",
-            //   menu: "transaction_access"
-            // }
             {
               icon: "mdi-cash",
               title: "GST Bills",
@@ -376,26 +331,7 @@ export default {
           ],
         },
 
-        // {
-        //   icon: "mdi mdi-account-tie",
-        //   title: `Management`,
-        //   open_menu: false,
-        //   menu: "customer_access",
-        //   hasChildren: [
-        //     {
-        //       icon: "mdi mdi-bank-transfer-out",
-        //       title: "Expense",
-        //       to: "/management/expense",
-        //       menu: "agent_access",
-        //     },
-        //     {
-        //       icon: "mdi mdi-text-account",
-        //       title: "Payment By User Report",
-        //       to: "/management/report/user",
-        //       menu: "city_ledger_access",
-        //     },
-        //   ],
-        // },
+
         {
           icon: "mdi mdi-file-chart-outline",
           title: "Night Audit",
@@ -409,7 +345,92 @@ export default {
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
         },
+        {
+          icon: "mdi mdi-account-tie",
+          title: `Management`,
+          open_menu: false,
+          menu: "management_access",
+          hasChildren: [
+            {
+              icon: "mdi mdi-bank-transfer-out",
+              title: "Expense",
+              to: "/management/expense",
+              menu: "management_expenses_access",
+            },
+            {
+              icon: "mdi mdi-bank-transfer-in",
+              title: "Income",
+              to: "/account",
+              menu: "management_income_access",
+            },
+            {
+              icon: "mdi mdi-text-account",
+              title: "Payment By User Report",
+              to: "/management/report/user",
+              menu: "management_payments_access",
+            },
 
+            {
+              icon: "mdi mdi-calendar-month",
+              title: "All Reports",
+              to: "/management/report/monthly",
+              menu: "management_soldout_access",
+            },
+
+          ],
+        },
+        {
+          icon: "mdi-tools",
+          title: `Setting`,
+          open_menu: false,
+          menu: "setting_access",
+          hasChildren: [
+            {
+              icon: "mdi mdi-bed",
+              title: "Room Category",
+              to: "/room_category",
+              menu: "settings_rooms_category_access",
+            },
+
+            {
+              icon: "mdi-tools",
+              title: "Price Setup",
+              to: "/manage",
+              menu: "settings_room_price_access",
+            },
+            {
+              icon: "mdi mdi-account-tie",
+              title: "User",
+              to: "/users",
+              menu: "settings_users_access",
+            },
+            {
+              icon: "mdi mdi-account-check-outline",
+              title: "Roles",
+              to: "/role",
+              menu: "settings_roles_access",
+            },
+            {
+              icon: "mdi mdi-account-check-outline",
+              title: "Report Emails",
+              to: "/emails",
+              menu: "settings_roles_access",
+            },
+            {
+              icon: "mdi mdi-account-details",
+              title: "Settings",
+              to: "/setting",
+              menu: "settings_permissions_access",
+            },
+            {
+              icon: "mdi mdi-account-details",
+              title: "Profile",
+              to: "/companies",
+              menu: "settings_permissions_access",
+            },
+
+          ],
+        }
       ],
       items: [],
       modules: {
@@ -435,141 +456,127 @@ export default {
       menu: "dashboard",
     };
 
-    let Management = {
-      icon: "mdi mdi-account-tie",
-      title: `Management`,
-      open_menu: false,
-      menu: "customer_access",
-      hasChildren: [
-        {
-          icon: "mdi mdi-bank-transfer-out",
-          title: "Expense",
-          to: "/management/expense",
-          menu: "management_expenses_access",
-        },
-        {
-          icon: "mdi mdi-bank-transfer-in",
-          title: "Income",
-          to: "/account",
-          menu: "management_income_access",
-        },
-        {
-          icon: "mdi mdi-text-account",
-          title: "Payment By User Report",
-          to: "/management/report/user",
-          menu: "management_payments_access",
-        },
-        // {
-        //   icon: "mdi mdi-finance",
-        //   title: "Summary",
-        //   to: "/management/report/summary",
-        //   menu: "management_summary_access",
-        // },
-        {
-          icon: "mdi mdi-calendar-month",
-          title: "All Reports",
-          to: "/management/report/monthly",
-          menu: "management_soldout_access",
-        },
-        // {
-        //   icon: "mdi mdi-account-group",
-        //   title: "Monhtly wise Revenue Report",
-        //   to: "/management/report/monthly_revenue",
-        //   menu: "management_revenue_report_access",
-        // }, {
-        //   icon: "mdi mdi-account-group",
-        //   title: "Day wise Revenue Report  ",
-        //   to: "/management/report/daily_revenue",
-        //   menu: "management_revenue_report_access",
-        // }, {
-        //   icon: "mdi mdi-briefcase-account",
-        //   title: "Top 10 Customers",
-        //   to: "/management/report/top-customers",
-        //   menu: "management_top_10_customers_access",
-        // },
-        // {
-        //   icon: "mdi mdi-chart-pie",
-        //   title: "Custom",
-        //   to: "/management/report/daily",
-        //   menu: "management_custom_soldout_access",
-        // },
-      ],
-    };
+    // let Management = {
+    //   icon: "mdi mdi-account-tie",
+    //   title: `Management`,
+    //   open_menu: false,
+    //   menu: "management_access",
+    //   hasChildren: [
+    //     {
+    //       icon: "mdi mdi-bank-transfer-out",
+    //       title: "Expense",
+    //       to: "/management/expense",
+    //       menu: "management_expenses_access",
+    //     },
+    //     {
+    //       icon: "mdi mdi-bank-transfer-in",
+    //       title: "Income",
+    //       to: "/account",
+    //       menu: "management_income_access",
+    //     },
+    //     {
+    //       icon: "mdi mdi-text-account",
+    //       title: "Payment By User Report",
+    //       to: "/management/report/user",
+    //       menu: "management_payments_access",
+    //     },
 
-    let setting = {
-      icon: "mdi-tools",
-      title: `Setting`,
-      open_menu: false,
-      menu: "customer_access",
-      hasChildren: [
-        {
-          icon: "mdi mdi-bed",
-          title: "Room Category",
-          to: "/room_category",
-          menu: "settings_rooms_category_access",
-        },
-        // {
-        //   icon: "mdi mdi-bed",
-        //   title: "Rooms",
-        //   to: "/rooms",
-        //   menu: "settings_rooms_access",
-        // },
-        {
-          icon: "mdi-tools",
-          title: "Price Setup",
-          to: "/manage",
-          menu: "settings_room_price_access",
-        },
-        {
-          icon: "mdi mdi-account-tie",
-          title: "User",
-          to: "/users",
-          menu: "settings_users_access",
-        },
-        {
-          icon: "mdi mdi-account-check-outline",
-          title: "Roles",
-          to: "/role",
-          menu: "settings_roles_access",
-        },
-        {
-          icon: "mdi mdi-account-check-outline",
-          title: "Report Emails",
-          to: "/emails",
-          menu: "settings_roles_access",
-        },
-        {
-          icon: "mdi mdi-account-details",
-          title: "Settings",
-          to: "/setting",
-          menu: "settings_permissions_access",
-        },
-        {
-          icon: "mdi mdi-account-details",
-          title: "Profile",
-          to: "/companies",
-          menu: "settings_permissions_access",
-        },
-        // {
-        //   icon: "mdi mdi-account-details",
-        //   title: "Permissions",
-        //   to: "/assign_permission",
-        //   menu: "settings_permissions_access",
-        // },
+    //     {
+    //       icon: "mdi mdi-calendar-month",
+    //       title: "All Reports",
+    //       to: "/management/report/monthly",
+    //       menu: "management_soldout_access",
+    //     },
 
-      ],
-    };
+    //   ],
+    // };
+
+    // let setting = {
+    //   icon: "mdi-tools",
+    //   title: `Setting`,
+    //   open_menu: false,
+    //   menu: "setting_access",
+    //   hasChildren: [
+    //     {
+    //       icon: "mdi mdi-bed",
+    //       title: "Room Category",
+    //       to: "/room_category",
+    //       menu: "settings_rooms_category_access",
+    //     },
+
+    //     {
+    //       icon: "mdi-tools",
+    //       title: "Price Setup",
+    //       to: "/manage",
+    //       menu: "settings_room_price_access",
+    //     },
+    //     {
+    //       icon: "mdi mdi-account-tie",
+    //       title: "User",
+    //       to: "/users",
+    //       menu: "settings_users_access",
+    //     },
+    //     {
+    //       icon: "mdi mdi-account-check-outline",
+    //       title: "Roles",
+    //       to: "/role",
+    //       menu: "settings_roles_access",
+    //     },
+    //     {
+    //       icon: "mdi mdi-account-check-outline",
+    //       title: "Report Emails",
+    //       to: "/emails",
+    //       menu: "settings_roles_access",
+    //     },
+    //     {
+    //       icon: "mdi mdi-account-details",
+    //       title: "Settings",
+    //       to: "/setting",
+    //       menu: "settings_permissions_access",
+    //     },
+    //     {
+    //       icon: "mdi mdi-account-details",
+    //       title: "Profile",
+    //       to: "/companies",
+    //       menu: "settings_permissions_access",
+    //     },
+
+    //   ],
+    // };
 
     let user = this.$auth.user;
+    let permissions = user.permissions;
+
+    console.log(user);
 
     this.items.push(das);
+
     this.menus.forEach((ele) => {
-      this.items.push(ele);
+
+      if (permissions.includes(ele.menu) || this.$auth.user.user_type == "company") {
+
+        this.items.push(ele);
+
+      }
+
     });
-    if (this.$auth.user.user_type == "company") {
-      this.items.push(Management);
-      this.items.push(setting);
-    }
+
+
+    // if (this.$auth.user.user_type == "company") {
+    //   this.items.push(Management);
+    //   this.items.push(setting);
+    // }
+
+
+    // this.menus.forEach((ele) => {
+    //   if (permissions.includes(ele.menu)) {
+    //     this.items.push(ele);
+    //   }
+    // });
+
+
+
+
     this.getCompanyDetails();
   },
 

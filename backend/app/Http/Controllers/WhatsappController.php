@@ -67,7 +67,7 @@ class WhatsappController extends Controller
 
             $number = env('COUNTRY_CODE') . $user->mobile;
             $token = env('WHATSAPP_ACCESS_TOKEN');
-            $instance_id = $user->company->whatsapp_instance_id;
+            $instance_id =  env('OTP_ID');
 
             $msg = $this->processMessage($user);
 

@@ -450,230 +450,6 @@
                             </div>
                             <v-divider color="#4390FC"></v-divider>
                           </v-col>
-                          <!-- <v-col md="12">
-                            <v-divider color="#4390FC"></v-divider>
-                            <div class="d-flex justify-space-around py-3">
-                              <span>
-                                <b>Room Price </b>:
-                                {{ (temp.priceList && temp.priceList[0].room_price) }}
-                              </span>
-                              <span>
-                                <b>Discount</b>:
-                                {{ convert_decimal(temp.room_discount) }}
-                              </span>
-                              <span>
-                                <b>Total</b>:
-                                {{ convert_decimal(temp.priceList && temp.priceList[0].room_price -
-                                  parseInt(temp.room_discount)) }}
-                              </span>
-
-                              <span>
-                                <b>Tax </b>:
-                                {{ convert_decimal(gst_calculation.recal_gst_total) }}
-                              </span>
-                              <span>
-                                <b>Final</b>:
-                                {{ convert_decimal(gst_calculation.recal_final) }}
-                              </span>
-                            </div>
-                            <v-divider color="#4390FC"></v-divider>
-                          </v-col> -->
-                          <!-- <v-col md="12">
-                            <v-card>
-                              <v-tabs
-                                v-model="roomTab"
-                                background-color="primary"
-                                centered
-                                dense
-                                dark
-                                icons-and-text
-                              >
-                                <v-tabs-slider></v-tabs-slider>
-                                <v-tab href="#tab-1">
-                                  Meals
-                                  <v-icon>mdi-food</v-icon>
-                                </v-tab>
-                                <v-tab href="#tab-2">
-                                  Price List
-                                  <v-icon>mdi mdi-currency-rupee</v-icon>
-                                </v-tab>
-                              </v-tabs>
-                              <v-tabs-items v-model="roomTab">
-                                <v-tab-item :value="'tab-1'">
-                                  <v-card flat>
-                                    <v-card-text>
-                                      <v-row
-                                        class="d-flex justify-center py-0 my-0"
-                                      >
-                                        <v-col
-                                          md="12"
-                                          sm="12"
-                                          cols="12"
-                                          dense
-                                          class="mb-0 pb-0 d-flex justify-center"
-                                        >
-                                          <v-radio-group
-                                            row
-                                            dense
-                                            class="py-0 my-0"
-                                          >
-                                            <v-checkbox
-                                              v-model="temp.breakfast"
-                                              label="Breakfast"
-                                              value="breakfast"
-                                              class="px-3 py-0 my-0"
-                                              @change="meal_cal(temp.breakfast)"
-                                            >
-                                            </v-checkbox>
-                                            <v-checkbox
-                                              v-model="temp.lunch"
-                                              label="Lunch"
-                                              value="lunch"
-                                              class="px-3 py-0 my-0"
-                                              @change="meal_cal(temp.lunch)"
-                                            >
-                                            </v-checkbox>
-                                            <v-checkbox
-                                              v-model="temp.dinner"
-                                              label="Dinner"
-                                              value="dinner"
-                                              class="px-3 py-0 my-0"
-                                              @change="meal_cal(temp.dinner)"
-                                            >
-                                            </v-checkbox>
-                                          </v-radio-group>
-                                        </v-col>
-                                        <v-col
-                                          md="12"
-                                          cols="12"
-                                          class="mt-0 pt-0 d-flex justify-center"
-                                        >
-                                          <table
-                                            class="styled-table"
-                                            style="width: 100%"
-                                          >
-                                            <thead>
-                                              <tr>
-                                                <th>Type</th>
-                                                <th>Breakfast</th>
-                                                <th>Lunch</th>
-                                                <th>Dinner</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr>
-                                                <th>Adult</th>
-                                                <td>
-                                                  {{ tempAdult.tot_ab }}
-                                                </td>
-                                                <td>
-                                                  {{ tempAdult.tot_al }}
-                                                </td>
-                                                <td>
-                                                  {{ tempAdult.tot_ad }}
-                                                </td>
-                                              </tr>
-                                              <tr>
-                                                <th>Child</th>
-                                                <td>
-                                                  {{ tempChild.tot_cb }}
-                                                </td>
-                                                <td>
-                                                  {{ tempChild.tot_cl }}
-                                                </td>
-                                                <td>
-                                                  {{ tempChild.tot_cd }}
-                                                </td>
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </v-col>
-                                      </v-row>
-                                    </v-card-text>
-                                  </v-card>
-                                </v-tab-item>
-                                <v-tab-item :value="'tab-2'">
-                                  <v-card flat>
-                                    <v-card-text>
-                                      <v-row>
-                                        <v-col
-                                          md="12"
-                                          cols="12"
-                                          class="d-flex py-0 my-0 justify-center"
-                                        >
-                                          <table
-                                            class="styled-table py-0 my-0"
-                                            style="width: 100%"
-                                          >
-                                            <thead>
-                                              <tr>
-                                                <th>Date</th>
-                                                <th>Day</th>
-                                                <th>Type</th>
-                                                <th>R/Amount</th>
-                                                <th>Tax</th>
-                                                <th>T/Amount</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr
-                                                v-for="(
-                                                  item, index
-                                                ) in temp.priceList"
-                                                :key="index"
-                                              >
-                                                <td>
-                                                  {{ item.date }}
-                                                </td>
-                                                <td>
-                                                  {{ item.day }}
-                                                </td>
-                                                <td>
-                                                  {{ item.day_type }}
-                                                </td>
-                                                <td>
-                                                  {{ item.room_price }}
-                                                </td>
-                                                <td>
-                                                  {{
-                                                    convert_decimal(item.tax)
-                                                  }}
-                                                </td>
-                                                <td>
-                                                  {{
-                                                    convert_decimal(item.price)
-                                                  }}
-                                                </td>
-                                              </tr>
-                                              <tr class="active-row">
-                                                <td>Total</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                  {{
-                                                    convert_decimal(
-                                                      temp.room_tax
-                                                    )
-                                                  }}
-                                                </td>
-                                                <td class="season-table">
-                                                  {{
-                                                    convert_decimal(temp.price)
-                                                  }}
-                                                </td>
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                         </v-col>
-                                      </v-row>
-                                    </v-card-text>
-                                  </v-card>
-                                </v-tab-item>
-                              </v-tabs-items>
-                            </v-card>
-                          </v-col> -->
-
                           <v-col md="3" sm="12" cols="12" dense>
                             <label class="col-form-label">
                               Discount/Extra
@@ -822,55 +598,7 @@
               </p> -->
               <v-divider class="px-5 py-0"></v-divider>
               <section class="payment-section pt-0 mt-1">
-                <!-- <v-row class="px-5 mt-0">
-                  <div class="input-group input-group-sm px-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">
-                      <v-autocomplete v-model="room.payment_mode_id" :items="[
-                        { id: 1, name: 'Cash' },
-                        { id: 2, name: 'Card' },
-                        { id: 3, name: 'Online' },
-                        { id: 4, name: 'Bank' },
-                        { id: 5, name: 'UPI' },
-                        { id: 6, name: 'Cheque' },
-                      ]" cache-items item-text="name" item-value="id" class="ma-0 pa-0" dense flat hide-no-data
-                        hide-details solo-inverted background-color="#E9ECEF"></v-autocomplete>
-                    </span>
-                    <input type="number" class="form-control" aria-label="Sizing example input"
-                      aria-describedby="inputGroup-sizing-sm" style="height: 48px" @keyup="runAllFunctions"
-                      :disabled="room.paid_by == '2' ? true : false" v-model="room.advance_price" />
-                  </div>
 
-                  <div class="input-group input-group-sm px-3" v-if="room.payment_mode_id != 1">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">
-                      Reference No
-                    </span>
-                    <input v-model="room.reference_number" type="text" class="form-control"
-                      aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" style="height: 39px" />
-                  </div>
-                  <v-col md="12">
-                    <v-divider></v-divider>
-                  </v-col>
-                </v-row> -->
-
-                <!-- <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Room Price
-                  </span>
-                  <div type="text" class="form-control" aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm" disabled>
-                    {{ convert_decimal(room.all_room_Total_amount) }}
-                  </div>
-                </div>
-                 <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Sub Total ({{ getDays() }} x
-                    {{ convert_decimal(room.all_room_Total_amount) }})
-                  </span>
-                  <div type="text" class="form-control" aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm" disabled>
-                    {{ convert_decimal(room.sub_total) }}
-                  </div>
-                </div> -->
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Total
@@ -944,30 +672,6 @@
                   </v-card>
                 </div>
 
-                <!-- <div class="input-group input-group-sm px-5 pt-2 text-center">
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ item.no_of_adult }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ item.no_of_child }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ item.no_of_baby }}
-                  </v-card>
-                </div>
-
-                <div class="input-group input-group-sm px-5 pt-2 text-center">
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ getMealSeparate(item.meal)[0] }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ getMealSeparate(item.meal)[1] }}
-                  </v-card>
-                  <v-card class="pa-2" style="width:33.33%" outlined tile>
-                    {{ getMealSeparate(item.meal)[2] }}
-                  </v-card>
-                </div> -->
-
                 <div class="input-group input-group-sm px-5 pt-2">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Amount
@@ -1006,29 +710,7 @@
                     {{ convert_decimal(item.after_discount) }}
                   </div>
                 </div>
-                <!-- <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    GST
-                  </span>
-                  <div type="text" class="form-control" aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm" disabled>
-                    {{ convert_decimal(item.room_tax) }}
-                  </div>
-                </div> -->
-                <!-- <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    T.R Rent
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.total_with_tax) }}
-                  </div>
-                </div> -->
+
                 <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     Adult Food
@@ -1959,18 +1641,6 @@ export default {
       this.room.all_room_Total_amount = res;
     },
 
-    // get_room_tax(amount) {
-    //   let per = amount < 3000 ? 12 : 18;
-    //   let tax = (amount / 100) * per;
-    //   this.temp.room_tax = tax;
-    //   this.temp.total_with_tax =
-    //     parseFloat(this.temp.after_discount) + parseFloat(tax);
-    //   let gst = parseFloat(tax) / 2;
-    //   this.temp.cgst = gst;
-    //   this.temp.sgst = gst;
-    //   return tax;
-    // },
-
     get_cs_gst(amount) {
       let gst = parseFloat(amount) / 2;
       this.temp.cgst = gst;
@@ -2113,12 +1783,6 @@ export default {
       this.isSelectRoom = false;
       return;
     },
-
-    // get_bed_with_tax_amount() {
-    //   let sum = this.temp.bed_amount || 0;
-    //   let tax = (sum / 100) * 12;
-    //   this.temp.bed_amount = parseInt(tax) + parseInt(sum);
-    // },
 
     get_total_amounts() {
       let tot_bed_amount = 0;
@@ -2263,12 +1927,20 @@ export default {
         });
     },
 
+    // can(per) {
+    //   let u = this.$auth.user;
+    //   console.log(u);
+    //   if (!u.permissions) return false;
+    //   return (
+    //     (u && u.permissions.some((e) => e.name == per || per == "/")) ||
+    //     u.is_master
+    //   );
+    // },
+
     can(per) {
       let u = this.$auth.user;
-      if (!u.permissions) return false;
       return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
 
