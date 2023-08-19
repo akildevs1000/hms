@@ -113,7 +113,7 @@
                                         :id="header.value" autocomplete="off" @input="applyFilters()"></v-text-field>
                                     <v-autocomplete outlined dense v-model="filters[header.value]"
                                         v-if="header.filterable && header.filterSpecial && header.key == 'status'"
-                                        :items="[{ value: '', title: 'All' }, { value: '0', title: 'Active' }, { value: '1', title: 'In-Active' }]"
+                                        :items="[{ value: '', title: 'All' }, { value: 0, title: 'Active' }, { value: 1, title: 'In-Active' }]"
                                         item-value="value" item-text="title" :hide-details="true" clearable
                                         @click:clear="filters[header.key] = ''; applyFilters()"
                                         @change="applyFilters()"></v-autocomplete>
@@ -355,7 +355,7 @@ export default
                             floor_no: this.editedItem.floor_no,
                         }
                     };
-                    console.log(this.$auth.user);
+
                     this.$axios.put(`${this.endpoint}/${this.editedItemIndex}`, options.params).then(({ data }) => {
                         if (data.status) {
                             this.getDataFromApi();

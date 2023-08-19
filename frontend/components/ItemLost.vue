@@ -2,7 +2,7 @@
     <div>
 
 
-        <v-dialog v-model="imgView" max-width="80%">
+        <v-dialog v-model="imgView" :width="imgPreviewWidth">
             <v-card>
                 <v-toolbar class="rounded-md" color="background" dense flat dark>
                     <span>Preview</span>
@@ -10,17 +10,56 @@
                     <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
                 </v-toolbar>
                 <v-container>
-                    <v-img :src="src" class="grey darken-4" v-if="isImg"></v-img>
-                    <embed v-else-if="isPdf" :src="src" width="100%" height="800px" />
+                    <v-img :src="src" v-if="isImg" cover></v-img>
+                </v-container>
+                <v-card-actions> </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="imgView1" width="500">
+            <v-card>
+                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                    <span>Item Image</span>
+                    <v-spacer></v-spacer>
+                    <v-icon dark class="pa-0" @click="imgView1 = false">mdi mdi-close-box</v-icon>
+                </v-toolbar>
+                <v-container>
+                    <v-img :src="src1" cover></v-img>
+                </v-container>
+                <v-card-actions> </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="imgView2" width="500">
+            <v-card>
+                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                    <span>Courier Receipt</span>
+                    <v-spacer></v-spacer>
+                    <v-icon dark class="pa-0" @click="imgView2 = false">mdi mdi-close-box</v-icon>
+                </v-toolbar>
+                <v-container>
+                    <v-img :src="src2" cover></v-img>
+                </v-container>
+                <v-card-actions> </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="imgView3" width="500">
+            <v-card>
+                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                    <span>Preview</span>
+                    <v-spacer></v-spacer>
+                    <v-icon dark class="pa-0" @click="imgView3 = false">mdi mdi-close-box</v-icon>
+                </v-toolbar>
+                <v-container>
+                    <v-img :src="src3" cover></v-img>
                 </v-container>
                 <v-card-actions> </v-card-actions>
             </v-card>
         </v-dialog>
         <v-row class="mb-2 mt=4">
             <v-col md="4" cols="12">
+                <v-img :src="getFoundImage()"></v-img>
 
-                <v-img cover style="height:300px; margin: 0 auto;    border-radius: 10%;  " :src="getFoundImage()"></v-img>
-                <v-row class="mt-3" align="center" justify="space-around">
+
+                <v-row class="mt-3" justify="space-around">
                     <v-row justify="center">
                         <v-col cols="auto">
                             <v-btn small dark @click="showFoundImage()" color="primary">
@@ -36,7 +75,7 @@
 
 
                         <v-col cols="auto">
-                            <v-btn download target="_blank" :href="showIDCard()" color="primary" elevation="2" small>View ID
+                            <v-btn target="_blank" @click="showIDCard()" color="primary" elevation="2" small>View ID
                                 Card</v-btn>
                         </v-col>
                     </v-row>
@@ -49,7 +88,7 @@
 
                     <v-col md="6">
                         <div class="text-box" style="float: left">
-                            <h6>Rese.No</h6>
+                            <h6>Resv.No</h6>
                             <p> {{ bookingData && bookingData.reservation_no ? bookingData.reservation_no : '---' }}
                             </p>
                         </div>
@@ -253,6 +292,10 @@ export default {
         previewImage: null,
         previewRetunedImage: null,
         imgView: false,
+        imgView1: false,
+        imgView2: false,
+        imgView3: false,
+        imgPreviewWidth: 300,
         documentObj: {
             fileExtension: null,
             file: null,
@@ -260,6 +303,8 @@ export default {
         isPdf: false,
         isImg: false,
         src: '',
+        src1: '',
+        src2: '',
 
     }),
     custom_options: {},
@@ -364,24 +409,31 @@ export default {
 
         },
         showFoundImage() {
+            this.imgPreviewWidth = 600;
             let returnFile = '';
             if (!this.editedItem.found_image) {
                 returnFile = "/no-image-display.png";
             } else
 
                 returnFile = this.editedItem.found_image;// + "?t=" + Math.random() * 100;
-            this.preview(returnFile);
+            //this.preview(returnFile);
+            this.imgView1 = true;
+            this.src1 = returnFile;
         },
         showRetunedImage() {
+            this.imgPreviewWidth = 300;
             let returnFile = '';
             if (!this.editedItem.recovered_image) {
                 returnFile = "/no-image-display.png";
             } else
 
                 returnFile = this.editedItem.recovered_image;//+ "?t=" + Math.random() * 100;
-            this.preview(returnFile);
+            //this.preview(returnFile);
+            this.imgView2 = true;
+            this.src2 = returnFile;
         },
         showIDCard() {
+            this.imgPreviewWidth = 400;
             let returnFile = '';
             if (!this.editedItem.document) {
                 returnFile = "/no-image-display.png";
@@ -389,7 +441,9 @@ export default {
 
             returnFile = this.editedItem.document;//+ "?t=" + Math.random() * 100;;
 
-            this.preview(returnFile);
+            //this.preview(returnFile);
+            this.imgView3 = true;
+            this.src3 = returnFile;
         },
         preview(file) {
 
@@ -409,7 +463,7 @@ export default {
                 this.isPdf = false;
                 this.isImg = true;
             }
-            this.src = this.documentObj.file;
+            this.src = this.documentObj.file + "?t=" + Math.random(0, 9999);
             this.imgView = true;
         },
     }

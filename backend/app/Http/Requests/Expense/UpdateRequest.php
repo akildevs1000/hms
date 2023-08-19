@@ -27,24 +27,23 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'price' => 'nullable',
-            'room_only_price' => 'nullable',
-            'Break_fast_price' => 'nullable',
-            'Break_fast_with_dinner_price' => 'nullable',
-            'Break_fast_with_lunch_price' => 'nullable',
-            'lunch_with_dinner_price' => 'nullable',
-            'full_board_price' => 'nullable',
-            'max_person' => 'nullable',
-            'created_at' => 'nullable',
-            'updated_at' => 'nullable',
+            'item' => 'required',
+            'amount' => 'required',
+            'payment_modes' => 'required',
+            'qty' => 'required',
             'company_id' => 'required',
-            'adult' => 'nullable',
-            'child' => 'nullable',
-            'baby' => 'nullable',
-            'holiday_price' => 'nullable',
-            'weekday_price' => 'nullable',
-            'weekend_price' => 'nullable',
+            'voucher' => 'required',
+
+            'reference' => 'nullable',
+            'total' => 'nullable',
+            'description' => 'nullable',
+            // 'document' => 'nullable',
+            // 'document1' => 'nullable',
+            // 'document2' => 'nullable',
+            // 'document3' => 'nullable',
+            'is_management' => 'nullable',
+            'user' => 'nullable',
+
         ];
     }
 }

@@ -33,6 +33,7 @@ class CompanyRequest extends FormRequest
             'max_employee' => ['required', 'integer'],
             'max_devices' => ['required', 'integer'],
             'location' => ['nullable', 'min:3', 'max:255'],
+            'currency' => ['nullable'],
             'logo' => ['image', 'mimes:jpeg,png,jpg,svg', 'max:2048', 'sometimes', 'nullable'],
 
         ];

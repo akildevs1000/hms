@@ -2,28 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Company\CompanyRequest;
+use App\Http\Requests\Company\CompanyUpdateRequest;
+use App\Http\Requests\Company\ContactRequest;
+use App\Http\Requests\Company\GeographicUpdateRequest;
+use App\Http\Requests\Company\StoreRequest;
+use App\Http\Requests\Company\UserRequest;
+use App\Http\Requests\Company\UserUpdateRequest;
+use App\Models\AssignModule;
+use App\Models\Branch;
+use App\Models\Company;
+use App\Models\CompanyContact;
+use App\Models\Device;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Branch;
-use App\Models\Device;
-use App\Models\Company;
-use App\Models\AssignModule;
-use Illuminate\Http\Request;
-use App\Models\CompanyContact;
-use TechTailor\RPG\Facade\RPG;
+use App\Notifications\CompanyCreationNotification;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
-use App\Http\Requests\Company\UserRequest;
-use App\Http\Requests\Company\StoreRequest;
-use App\Http\Requests\Company\ContactRequest;
-use App\Http\Requests\Company\CompanyRequest;
-use App\Http\Requests\Company\UserUpdateRequest;
-use App\Notifications\CompanyCreationNotification;
-use App\Http\Requests\Company\CompanyUpdateRequest;
-use App\Http\Requests\Company\GeographicUpdateRequest;
+use Illuminate\Support\Facades\Storage;
+use TechTailor\RPG\Facade\RPG;
 
 class CompanyController extends Controller
 {
@@ -234,6 +234,7 @@ class CompanyController extends Controller
     {
 
         $data = $request->validated();
+
         if ($request->logo_only == 1) {
             return $this->update_log($request, $id);
         }
@@ -253,6 +254,21 @@ class CompanyController extends Controller
         $company = Company::find($id)->update($data);
         if (!$company) {
             return $this->response('Company cannot updated.', null, false);
+        }
+
+        return $this->response('Company successfully updated.', $company, true);
+    }
+    public function updateSettings(Request $request, $id)
+    {
+
+        if (isset($request->currency)) {
+
+            $data["currency"] = $request->currency;
+            $company = Company::find($id)->update($data);
+
+            if (!$company) {
+                return $this->response('Company cannot updated.', null, false);
+            }
         }
 
         return $this->response('Company successfully updated.', $company, true);

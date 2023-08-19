@@ -100,7 +100,7 @@
 
             <v-data-table dense small :headers="headers_table" :items="data" :loading="loading" :options.sync="options"
                 :footer-props="{
-                    itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+                    itemsPerPageOptions: [50, 100, 500, 1000],
                 }" class="elevation-1" :server-items-length="totalRowsCount">
 
                 <template v-slot:item.sno="{ item, index }">

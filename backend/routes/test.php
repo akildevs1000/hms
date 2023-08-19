@@ -1,67 +1,57 @@
 <?php
 
-use App\Models\Food;
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\WhatsappController;
+use App\Mail\AuditReportMail;
+use App\Mail\ReportNotificationMail;
 use App\Models\Agent;
-use App\Mail\TestMail;
+use App\Models\BookedRoom;
 use App\Models\Booking;
+use App\Models\CancelRoom;
 use App\Models\Company;
 use App\Models\Expense;
+use App\Models\Food;
+use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Posting;
+use App\Models\Report;
+use App\Models\ReportNotification;
 use App\Models\Taxable;
-use App\Models\Customer;
-use App\Models\Employee;
-use App\Jobs\WhatsappJob;
-use App\Models\OrderRoom;
-use App\Mail\DbBackupMail;
-use App\Models\Attendance;
-use App\Models\BookedRoom;
-use App\Models\CancelRoom;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use App\Mail\AuditReportMail;
-use setasign\Fpdi\Tcpdf\Fpdi;
-use App\Models\ReportNotification;
 use Illuminate\Support\Facades\DB;
-use App\Mail\ReportNotificationMail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\TestController;
-use App\Http\Controllers\WhatsappController;
-use App\Http\Controllers\AttendanceController;
 
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
 
 Route::get('/test', function (Request $request) {
 
-
     $date = '2023-06-10';
 
     // return  $payment =  Payment::whereDate('created_at', $date)
-    $payment =  DB::table('payments')
+    $payment = DB::table('payments')
     // ->whereDate('created_at', $date)
-   ->get(['id', 'created_at']);
-
+        ->get(['id', 'created_at']);
 
     foreach ($payment as $key => $value) {
         $d = date('Y-m-d', strtotime($value->created_at));
         DB::table('payments')
-        ->where('id', $value->id)
-        ->update(['date'=>$d]);
+            ->where('id', $value->id)
+            ->update(['date' => $d]);
     }
 
-
     // $company_ids =    Company::orderBy('id', 'asc')->pluck("id");
-    $company_ids =    [1, 2];
+    $company_ids = [1, 2];
     foreach ($company_ids as $company_id) {
         $date = date('Y-m-13');
         // $folderPath = storage_path("app/pdf/$date/$company_id");
         // $pdfFiles = glob("$folderPath/*.pdf");
 
-        $pdfFiles =  storage_path("app/pdf/$date/$company_id/Today Checkin Report.pdf");
+        $pdfFiles = storage_path("app/pdf/$date/$company_id/Today Checkin Report.pdf");
 
         // return $pdfFiles;
 
@@ -75,14 +65,12 @@ Route::get('/test', function (Request $request) {
         Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new AuditReportMail($data));
     }
 
-
     return 'success';
 
-    return    collect(glob(storage_path("app/ezhms/*.zip")))->last();
+    return collect(glob(storage_path("app/ezhms/*.zip")))->last();
     $date = date('Y-m-13');
     return collect(glob(storage_path("app/pdf/$date*")))->last();
 });
-
 
 Route::get('/storage', function (Request $request) {
     Storage::put('example.csv', 'francis');
@@ -92,9 +80,8 @@ Route::post('/upload', function (Request $request) {
     $file = $request->file->getClientOriginalName();
     $request->file->move(public_path('media/employee/file/'), $file);
     return $product_image = url('media/employee/file/' . $file);
-    $data['file']         = $file;
+    $data['file'] = $file;
 });
-
 
 Route::get('/test_attachment', function () {
 
@@ -120,7 +107,7 @@ Route::get('/test_attachment', function () {
 });
 Route::get('/my_test', function (Request $request) {
 
-    $arr =   $request->allFoods;
+    $arr = $request->allFoods;
 
     // return $arr;
     $final_arr = [
@@ -162,22 +149,24 @@ Route::get('remove_booking/{id}', function ($id) {
 
 Route::get('truncate', function () {
 
-    // return now();
-    Booking::truncate();
-    Payment::truncate();
-    Posting::truncate();
-    Transaction::truncate();
-    BookedRoom::truncate();
-    OrderRoom::truncate();
-    CancelRoom::truncate();
-    Food::truncate();
-    Taxable::truncate();
-    Agent::truncate();
-    Expense::truncate();
-    // Customer::truncate();
-    return "truncate done";
-});
+    if (env('DB_HOST') == '127.0.0.1' && env('APP_ENV') == 'local') {
+        Booking::truncate();
+        Payment::truncate();
+        Posting::truncate();
+        Transaction::truncate();
+        BookedRoom::truncate();
+        OrderRoom::truncate();
+        CancelRoom::truncate();
+        Food::truncate();
+        Taxable::truncate();
+        Agent::truncate();
+        Expense::truncate();
+        Report::truncate();
+        // Customer::truncate();
+        return "truncate done";
+    }
 
+});
 
 Route::post('whatsapp-otp', [WhatsappController::class, 'sentWhatsappOtp']);
 Route::post('whatsapp-test', [WhatsappController::class, 'sentNotificationTest']);

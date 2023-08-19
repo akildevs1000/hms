@@ -67,6 +67,7 @@
                             <span v-if="errors && errors.role_id" class="error--text">{{ errors.role_id[0] }}</span>
                           </v-col>
                           <v-col md="12" cols="12">
+ 
                             <v-select v-model="editedItem.is_active" :items="[
                               { name: 'Active', value: '1' },
                               { name: 'Inactive', value: '0' }

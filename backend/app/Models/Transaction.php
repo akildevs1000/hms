@@ -12,7 +12,7 @@ class Transaction extends Model
     protected $guarded = [];
 
     protected $appends = [
-        'time'
+        'time',
     ];
 
     protected $casts = [
@@ -22,9 +22,11 @@ class Transaction extends Model
 
     public function getTimeAttribute()
     {
-        return date('H:i', strtotime($this->attributes['date']));
+        if (isset($this->attributes['date'])) {
+            return date('H:i', strtotime($this->attributes['date']));
+        }
+        return '';
     }
-
 
     public function paymentMode()
     {

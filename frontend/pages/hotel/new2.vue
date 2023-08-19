@@ -421,23 +421,24 @@
                               </tbody>
                             </table>
                           </v-col>
-                          <!-- <v-col md="12">
-                            <v-divider color="#4390FC"></v-divider>
-                            <div class="d-flex justify-space-around py-3">
+                          <v-col md="12" style="padding-top:0px;font-weight:bold">
+                            <!-- <v-divider color="#4390FC"></v-divider> -->
+                            <div class="d-flex justify-space-around py-3 styled-table" style=" margin-top:5px;   background: #4390fc;
+    color: #FFF;">
                               <span>
-                                <b>Sub Total</b>:
+                                Sub Total :
                                 {{ convert_decimal(temp.price) }}
                               </span>
-                              <span>
-                                <b>Discount</b>:
+                              <span style="color:rgb(196, 30, 30)">
+                                Discount :
                                 {{ convert_decimal(temp.room_discount) }}
                               </span>
                               <span>
-                                <b>Add</b>:
+                                Add :
                                 {{ convert_decimal(temp.room_extra_amount) }}
                               </span>
                               <span>
-                                <b>Total</b>:
+                                Total :
                                 {{
                                   convert_decimal(
                                     parseFloat(temp.room_extra_amount) +
@@ -448,8 +449,8 @@
                               </span>
                             </div>
                             <v-divider color="#4390FC"></v-divider>
-                          </v-col> -->
-                          <v-col md="12">
+                          </v-col>
+                          <!-- <v-col md="12">
                             <v-divider color="#4390FC"></v-divider>
                             <div class="d-flex justify-space-around py-3">
                               <span>
@@ -467,7 +468,7 @@
                               </span>
 
                               <span>
-                                <b>Tax ({{ gst_calculation.recal_gst_percentage }}%)</b>:
+                                <b>Tax </b>:
                                 {{ convert_decimal(gst_calculation.recal_gst_total) }}
                               </span>
                               <span>
@@ -476,7 +477,7 @@
                               </span>
                             </div>
                             <v-divider color="#4390FC"></v-divider>
-                          </v-col>
+                          </v-col> -->
                           <!-- <v-col md="12">
                             <v-card>
                               <v-tabs
@@ -1005,7 +1006,7 @@
                     {{ convert_decimal(item.after_discount) }}
                   </div>
                 </div>
-                <div class="input-group input-group-sm px-5">
+                <!-- <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     GST
                   </span>
@@ -1013,7 +1014,7 @@
                     aria-describedby="inputGroup-sizing-sm" disabled>
                     {{ convert_decimal(item.room_tax) }}
                   </div>
-                </div>
+                </div> -->
                 <!-- <div class="input-group input-group-sm px-5">
                   <span class="input-group-text" id="inputGroup-sizing-sm">
                     T.R Rent
@@ -2359,4 +2360,3 @@ export default {
   },
 };
 </script>
-

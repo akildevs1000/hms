@@ -1085,7 +1085,7 @@ export default {
     },
 
     redirect() {
-      this.$router.push("/");
+      this.$router.push("/hotel/calendar1");
     },
 
     get_payment() {

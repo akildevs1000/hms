@@ -91,11 +91,14 @@ class ExpenseController extends Controller
             // return $request->validated();
 
             $record = Expense::create($request->validated());
+
             if ($record) {
-                $this->storeDocument($request, $record, 'document');
-                $this->storeDocument($request, $record, 'document1');
-                $this->storeDocument($request, $record, 'document2');
-                $this->storeDocument($request, $record, 'document3');
+                $expense = Expense::where('id', $record->id);
+                $this->updateDocument($request, $expense, 'document', $record->id);
+                $this->updateDocument($request, $expense, 'document1', $record->id);
+                $this->updateDocument($request, $expense, 'document2', $record->id);
+                $this->updateDocument($request, $expense, 'document3', $record->id);
+
                 return $this->response($this->name . ' Successfully created.', $record, true);
             } else {
                 return $this->response($this->name . ' cannot create.', null, false);
@@ -105,26 +108,58 @@ class ExpenseController extends Controller
         }
     }
 
-    public function storeDocument($request, $model, $docFileName = false)
+    // public function storeDocument($request, $model, $docFileName, $id)
+    // {
+    //     if ($request->hasFile($docFileName)) {
+
+    //         $file = $request->file($docFileName);
+    //         $ext = $file->getClientOriginalExtension();
+    //         // $fileName = time() . '.' . $ext;
+    //         $fileName = time() . '_' . uniqid() . '.' . $ext;
+    //         $file->storeAs('public/documents/expense', $fileName);
+    //         $model->$docFileName = $fileName;
+    //         $model->save();
+
+    //         //$model->update([$docFileName => $fileName]);
+    //         return $fileName;
+    //     }
+    //     return null;
+    // }
+    public function updateDocument($request, $model, $docFileName, $id)
     {
         if ($request->hasFile($docFileName)) {
+
             $file = $request->file($docFileName);
             $ext = $file->getClientOriginalExtension();
             // $fileName = time() . '.' . $ext;
             $fileName = time() . '_' . uniqid() . '.' . $ext;
             $file->storeAs('public/documents/expense', $fileName);
-            $model->$docFileName = $fileName;
-            return $model->save();
+            // $model->$docFileName = $fileName;
+            // $model->save();
+
+            $model->update([$docFileName => $fileName]);
+            return $fileName;
         }
         return null;
     }
 
     public function update(UpdateRequest $request, Expense $expense)
     {
+
         try {
             $record = $expense->update($request->validated());
             if ($record) {
-                $this->storeDocument($request, $expense);
+
+                //$this->storeDocument($request, $expense);
+
+                //return $expense->first();
+                $expense = Expense::where('id', $request->id);
+                $this->updateDocument($request, $expense, 'document', $request->id);
+
+                $this->updateDocument($request, $expense, 'document1', $request->id);
+                $this->updateDocument($request, $expense, 'document2', $request->id);
+                $this->updateDocument($request, $expense, 'document3', $request->id);
+
                 return $this->response($this->name . ' successfully updated.', $record, true);
             } else {
                 return $this->response($this->name . ' cannot update.', null, false);

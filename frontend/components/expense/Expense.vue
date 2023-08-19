@@ -98,7 +98,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="imgView" max-width="80%">
+    <v-dialog v-model="imgView" :width="previewImageWidth">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Preview</span>
@@ -431,6 +431,7 @@ export default {
     ImagePreview,
   },
   data: () => ({
+    previewImageWidth: "500px",
     Model: "Expense",
 
     from_date: "",
@@ -608,14 +609,17 @@ export default {
       let file = doc ?? null;
       const fileExtension = file.split(".").pop().toLowerCase();
       fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
+      fileExtension == "pdf" ? (this.previewImageWidth = "70%") : this.previewImageWidth = "500px";
+
       this.documentObj = {
         fileExtension: fileExtension,
-        file: file,
+        file: file + "?t=" + Math.random(),
       };
       this.imgView = true;
     },
 
     editItem(item) {
+      console.log(item);
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       console.log(this.editedItem);
@@ -695,7 +699,19 @@ export default {
         this.loading = false;
       });
     },
-
+    deleteItem(item) {
+      confirm(
+        "Are you sure you wish to delete?"
+      ) &&
+        this.$axios
+          .delete(this.endpoint + "/" + item.id)
+          .then(({ data }) => {
+            this.getDataFromApi();
+            this.snackbar = data.status;
+            this.response = data.message;
+          })
+          .catch((err) => console.log(err));
+    },
     // searchIt(e) {
     //   if (e.length == 0) {
     //     this.getDataFromApi(this.endpoint);
@@ -726,7 +742,7 @@ export default {
     },
 
     save() {
-      this.loading = true;
+      // this.loading = true;
       let payload = this.mapper(this.editedItem);
 
       console.log(payload);

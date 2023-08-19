@@ -14,9 +14,8 @@ class Report extends Model
     ];
 
     protected $appends = [
-        'day'
+        'day',
     ];
-
 
     protected $fillable = [
         'company_id',
@@ -24,11 +23,12 @@ class Report extends Model
         'sold',
         'unsold',
         'order_room_id',
+        'sold_qty',
+        'unsold_qty',
     ];
-
 
     public function getDayAttribute()
     {
-        return  date('d', strtotime($this->date));
+        return date('d', strtotime($this->date));
     }
 }

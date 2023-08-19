@@ -37,11 +37,6 @@
                   </v-col>
                 </v-row>
 
-                <!-- <v-text-field @input="searchIt" v-model="search" label="Search" single-line hide-details></v-text-field>
-                <v-checkbox v-for="(pa, idx) in permissions" :key="idx" :value="pa.id" v-model="permission_ids"
-                  :label="`${pa.name}`">
-                </v-checkbox> -->
-
                 <table class="mb-15">
                   <tr style="text-align:center; ">
                     <th style="width:600px;text-align:center; padding: 5px 0 !important">
@@ -55,7 +50,7 @@
                       </v-checkbox></th>
                     <th style="text-align:center;padding-left:50px"> <v-checkbox label="Create"
                         @change="setAllIds('create', $event)">
-                      </v-checkbox></th>his.userList.unshift
+                      </v-checkbox></th>
                     <th style="text-align:center;padding-left:50px"> <v-checkbox label="Edit"
                         @change="setAllIds('edit', $event)">
                       </v-checkbox></th>
@@ -73,31 +68,7 @@
                   </tr>
                 </table>
 
-                <!-- <v-row class="mt-5">
-                  <v-col
-                    xs="12"
-                    sm="12"
-                    md="3"
-                    cols="12"
-                    v-for="(items, idx) in permissions"
-                    :key="idx"
-                  >
-                    <div class="componentWrapper my-3">
-                      <div class="header">
-                        {{ capsTitle(idx) }}
-                      </div>
-                      <v-checkbox
-                        v-for="(pa, idx) in items"
-                        :key="idx"
-                        :value="pa.id"
-                        v-model="permission_ids"
-                        :label="capsTitle(pa.name)"
-                        :hide-details="true"
-                      >
-                      </v-checkbox>
-                    </div>
-                  </v-col>
-                </v-row> -->
+
               </v-col>
               <v-col cols="12">
                 <span v-if="errors && errors.permission_ids" class="red--text">

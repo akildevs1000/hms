@@ -303,12 +303,7 @@ export default {
               menu: "inquiry_access",
             },
 
-            {
-              icon: "mdi mdi-file-document-edit-outline",
-              title: "Last & Found",
-              to: "/missing",
-              menu: "agent_access",
-            },
+
           ],
         },
 
@@ -409,7 +404,7 @@ export default {
         },
         {
           icon: "mdi-home-search-outline",
-          title: "Lost And Found Items",
+          title: "Lost & Found  ",
 
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
@@ -464,40 +459,40 @@ export default {
           to: "/management/report/user",
           menu: "management_payments_access",
         },
-        {
-          icon: "mdi mdi-finance",
-          title: "Summary",
-          to: "/management/report/summary",
-          menu: "management_summary_access",
-        },
+        // {
+        //   icon: "mdi mdi-finance",
+        //   title: "Summary",
+        //   to: "/management/report/summary",
+        //   menu: "management_summary_access",
+        // },
         {
           icon: "mdi mdi-calendar-month",
-          title: "Sold-out Report",
+          title: "All Reports",
           to: "/management/report/monthly",
           menu: "management_soldout_access",
         },
-        {
-          icon: "mdi mdi-account-group",
-          title: "Monhtly wise Revenue Report",
-          to: "/management/report/monthly_revenue",
-          menu: "management_revenue_report_access",
-        }, {
-          icon: "mdi mdi-account-group",
-          title: "Day wise Revenue Report  ",
-          to: "/management/report/daily_revenue",
-          menu: "management_revenue_report_access",
-        }, {
-          icon: "mdi mdi-briefcase-account",
-          title: "Top 10 Customers",
-          to: "/management/report/top-customers",
-          menu: "management_top_10_customers_access",
-        },
-        {
-          icon: "mdi mdi-chart-pie",
-          title: "Custom",
-          to: "/management/report/daily",
-          menu: "management_custom_soldout_access",
-        },
+        // {
+        //   icon: "mdi mdi-account-group",
+        //   title: "Monhtly wise Revenue Report",
+        //   to: "/management/report/monthly_revenue",
+        //   menu: "management_revenue_report_access",
+        // }, {
+        //   icon: "mdi mdi-account-group",
+        //   title: "Day wise Revenue Report  ",
+        //   to: "/management/report/daily_revenue",
+        //   menu: "management_revenue_report_access",
+        // }, {
+        //   icon: "mdi mdi-briefcase-account",
+        //   title: "Top 10 Customers",
+        //   to: "/management/report/top-customers",
+        //   menu: "management_top_10_customers_access",
+        // },
+        // {
+        //   icon: "mdi mdi-chart-pie",
+        //   title: "Custom",
+        //   to: "/management/report/daily",
+        //   menu: "management_custom_soldout_access",
+        // },
       ],
     };
 
@@ -513,12 +508,12 @@ export default {
           to: "/room_category",
           menu: "settings_rooms_category_access",
         },
-        {
-          icon: "mdi mdi-bed",
-          title: "Rooms",
-          to: "/rooms",
-          menu: "settings_rooms_access",
-        },
+        // {
+        //   icon: "mdi mdi-bed",
+        //   title: "Rooms",
+        //   to: "/rooms",
+        //   menu: "settings_rooms_access",
+        // },
         {
           icon: "mdi-tools",
           title: "Price Setup",
@@ -538,11 +533,29 @@ export default {
           menu: "settings_roles_access",
         },
         {
+          icon: "mdi mdi-account-check-outline",
+          title: "Report Emails",
+          to: "/emails",
+          menu: "settings_roles_access",
+        },
+        {
           icon: "mdi mdi-account-details",
-          title: "Permissions",
-          to: "/assign_permission",
+          title: "Settings",
+          to: "/setting",
           menu: "settings_permissions_access",
         },
+        {
+          icon: "mdi mdi-account-details",
+          title: "Profile",
+          to: "/companies",
+          menu: "settings_permissions_access",
+        },
+        // {
+        //   icon: "mdi mdi-account-details",
+        //   title: "Permissions",
+        //   to: "/assign_permission",
+        //   menu: "settings_permissions_access",
+        // },
 
       ],
     };
@@ -807,7 +820,7 @@ td {
 
 /* Datatable Sorting Icon color  */
 .mdi-arrow-up {
-  color: red !important;
+  color: #5fafa3 !important;
 }
 
 /* datepicker min height is required  */
@@ -913,5 +926,15 @@ select:focus {
   font-size: 12px;
 }
 </style>   -->
+
+<style>
+.apexcharts-active {
+  top: 0px !important;
+}
+
+.apexcharts-tooltip-text-y-value td {
+  padding: 0px !important;
+}
+</style>
 
 

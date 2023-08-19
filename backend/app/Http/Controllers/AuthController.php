@@ -12,10 +12,10 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $user = User::where('email', $request->email)->where('is_active', 1)->first();
+        $user = User::with(['role'])->where('email', $request->email)->where('is_active', 1)->first();
 
         //check user status
-        if(!$user) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['Your account is currently marked as inactive.'],
             ]);
@@ -58,7 +58,7 @@ class AuthController extends Controller
     }
     public function me(Request $request)
     {
-        $user = User::where('email', $request->user()->email)->first();
+        $user = User::with(['role'])->where('email', $request->user()->email)->first();
         $model = User::where('email', $user->email);
         if ($user && $user->assigned_permissions) {
             $user->permissions = $user->assigned_permissions->permission_names;
@@ -67,7 +67,7 @@ class AuthController extends Controller
         }
 
         $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company") : ($user->role_id > 0 ? "user" : "master");
-        $model = $model->with('company', 'employee')->first();
+        $model = $model->with('role', 'company', 'employee')->first();
         $obj = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
         $obj->user_type = $user->user_type;
         $obj->employee_permissions = $user->assigned_employee_permissions->permission_names ?? [];

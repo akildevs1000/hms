@@ -47,7 +47,11 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
-        // return $request->all();
+
+        $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
+        if ($diff_in_seconds < 0) {
+            return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        }
 
         return DB::transaction(function () use ($request) {
             // try {
@@ -426,17 +430,18 @@ class BookingController extends Controller
                 $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
                 $singleDayDiscount = ($room['room_discount'] / count($priceList));
                 $singleDayExtraAmount = ($room['room_extra_amount'] / count($priceList));
-                $singleDayPrice = ($room['price'] / count($priceList));
+                // $singleDayPrice = ($room['price'] / count($priceList));
 
                 foreach ($priceList as $list) {
-
+                    $singleDayPrice = $list['room_price'];
 // Recalculation start
-                    $taxArray = $this->reCalculatePrice($orderRooms['after_discount']);
+                    $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
 
-                    $singleDayPrice = $taxArray['basePrice'];
+                    $price_adjusted_after_dsicount = $taxArray['basePrice'];
                     $list['tax'] = $taxArray['gstAmount'];
 // Recalculation end
 
+                    $orderRooms['price_adjusted_after_dsicount'] = $price_adjusted_after_dsicount;
                     $orderRooms['date'] = $list['date'];
 
                     $orderRooms['room_discount'] = $singleDayDiscount;
@@ -464,6 +469,7 @@ class BookingController extends Controller
                     $orderRooms['no_of_child'] = $bookedRoomId->no_of_child;
                     $orderRooms['no_of_baby'] = $bookedRoomId->no_of_baby;
 
+                    // print_r($orderRooms);
                     OrderRoom::create($orderRooms);
                 }
             }
@@ -520,10 +526,10 @@ class BookingController extends Controller
 
         return ["basePrice" => round($basePrice, 2), "gstAmount" => round($gstAmount, 2), "tax" => $tax];
     }
-    public function reCalculatePriceTest($finalAmountWithDiscount)
+    public function reCalculatePriceTest()
     {
 
-        //$finalAmountWithDiscount = 4000;
+        $finalAmountWithDiscount = 4289;
         $tax = 12; //default
 
         $calculationStatus = false;
@@ -986,9 +992,15 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-        return BookedRoom::whereHas('booking', function ($q) use ($request) {
+        $days = ($request->prevCounter * 30);
+        $date_from = date('Y-m-01', strtotime($days . ' days'));
+        $date_to = date('Y-m-d', strtotime('+' . $request->defaultDaysCount . ' days', strtotime($date_from)));
+
+        return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to, ) {
             // $q->where('booking_status', '!=', 0);
             $q->where('company_id', $request->company_id);
+            $q->where('check_in', '>=', $date_from);
+            $q->where('check_in', '<=', $date_to);
         })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out', 'booking_status']);
     }
 
@@ -1008,6 +1020,64 @@ class BookingController extends Controller
         $bookedRoom->booking->contact_no = $bookedRoom->customer->contact_no;
         return $bookedRoom->booking;
         // return response()->json(['booking' => $bookedRoom->booking, 'status' => true]);
+    }
+
+    public function changeCheckIntoBookingAdmin(Request $request, $id)
+    {
+        try {
+            $company_id = $request->company_id;
+            $cancel_checkin_userid = $request->cancel_checkin_userid;
+            $cancel_checkin_reason = $request->cancel_checkin_reason;
+            $booking_id = $request->booking_id;
+            $booked_room_id = $request->booked_room_id;
+//change booking status
+            $bookingModel = Booking::where('company_id', $company_id)
+                ->where('id', $booking_id)
+                ->where('booking_status', 2) //only checkedin status
+            ;
+
+            $data1 = ['booking_status' => 1,
+                'cancel_checkin_reason' => $cancel_checkin_reason,
+                'cancel_checkin_datetime' => date('Y-m-d H:i:s'),
+                'cancel_checkin_userid' => $cancel_checkin_userid];
+            $updatedStatus = $bookingModel->update($data1);
+
+            if ($updatedStatus) {
+                //change status on booking_rooms table
+                $bookingRoomModel = BookedRoom::where('company_id', $company_id)
+                    ->where('id', $booked_room_id)
+                    ->where('booking_status', 2) //only checkedin status
+                ;
+                $data2 = ['booking_status' => 1,
+                    'cancel_checkin_reason' => $cancel_checkin_reason,
+                    'cancel_checkin_datetime' => date('Y-m-d H:i:s'),
+                    'cancel_checkin_userid' => $cancel_checkin_userid];
+                $bookingRoomModel->update($data2);
+
+                //change status on booking_rooms table
+                $transactionData = Transaction::where('company_id', $company_id)
+                    ->where('booking_id', $booking_id)
+                    ->where('desc', 'check in payment')
+                    ->where('credit', '0.0')
+                    ->where('debit', '0.0')
+                    ->where('payment_method_id', 1)
+                    ->latest()->first();
+
+                $transactionData->delete();
+
+                return $this->response('Room Checkin Information is changed to Booking', null, true);
+
+            } else {
+                return $this->response('Something is wrong. Room Checkin Information is not updated', null, false);
+            }
+
+            return $this->response('Something is wrong. Room Checkin Information is not updated2', null, false);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+
+            return $this->response(json_encode($th), null, false);
+        }
     }
 
     public function cancelRoom(Request $request, $id)
@@ -1102,7 +1172,11 @@ class BookingController extends Controller
     private function getRoomTax($amount)
     {
         $temp = [];
-        $per = $amount < 3000 ? 12 : 18;
+        $per = $amount < 2500 ? 12 : 18;
+        if ($amount > 7500) {
+            $per = 28;
+        }
+
         $tax = ($amount / 100) * $per;
         $temp['room_tax'] = $tax;
         $temp['total_with_tax'] = (float) $amount + (float) $tax;
@@ -1488,6 +1562,15 @@ class BookingController extends Controller
                 $bookedRoom->update([
                     'check_in' => $request->start,
                     'check_out' => $request->end,
+
+                    'room_tax' => $bookedRoom->room_tax - array_sum(array_column($cancel_date, 'room_tax')),
+                    'price' => $bookedRoom->price - array_sum(array_column($cancel_date, 'price')),
+                    'sgst' => $bookedRoom->sgst - array_sum(array_column($cancel_date, 'sgst')),
+                    'cgst' => $bookedRoom->cgst - array_sum(array_column($cancel_date, 'cgst')),
+                    'room_discount' => $bookedRoom->room_discount - array_sum(array_column($cancel_date, 'room_discount')),
+                    'after_discount' => $bookedRoom->after_discount - array_sum(array_column($cancel_date, 'after_discount')),
+                    'total' => $bookedRoom->total - array_sum(array_column($cancel_date, 'grand_total')),
+                    'grand_total' => $bookedRoom->grand_total - array_sum(array_column($cancel_date, 'grand_total')),
                 ]);
                 return [
                     'extend_room_price' => -$total_cancel_amount,
@@ -1572,6 +1655,10 @@ class BookingController extends Controller
         if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->WhereDate('check_out', '>=', $request->from);
             $model->whereDate('check_out', '<=', $request->to);
+        }
+        if ($request->guest_mode == '' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('check_in', '>=', $request->from);
+            $model->whereDate('check_in', '<=', $request->to);
         }
 
         $model->orderBy('id', 'desc');

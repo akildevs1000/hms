@@ -3,9 +3,44 @@
 
     <v-row>
 
-      <v-col md="2">
+      <!-- <v-col md="2">
         <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
+      </v-col> -->
+
+
+      <v-col md="2">
+        <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"
+          transition="scale-transition" offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field outlined dense v-model="filter_from_date" readonly v-bind="attrs" v-on="on"
+              label="From Date"></v-text-field>
+          </template>
+          <v-date-picker type="month" style="height: 400px" v-model="filter_from_date" no-title scrollable
+            @input="getDataFromApi(); menu_from_filter = false">
+
+
+          </v-date-picker>
+        </v-menu>
       </v-col>
+      <v-col md="2">
+        <v-menu ref="menu_to_filter" v-model="menu_to_filter" :close-on-content-click="false"
+          transition="scale-transition" offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field outlined dense v-model="filter_to_date" readonly v-bind="attrs" v-on="on"
+              label="To Date"></v-text-field>
+          </template>
+          <v-date-picker type="month" style="height: 400px" v-model="filter_to_date" no-title scrollable
+            @input="getDataFromApi(); menu_to_filter = false">
+
+
+          </v-date-picker>
+        </v-menu>
+
+      </v-col>
+      <!-- <v-col md="2">
+    <v-btn @click="getDataFromApi()" dense color="primary">Submit</v-btn>
+</v-col> -->
+
     </v-row>
 
     <div>
@@ -26,9 +61,11 @@
           </v-col>
         </v-toolbar>
         <v-row>
-          <v-col cols="8">
+          <v-col md="12" lg="6" cols="12">
+            <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
+                mdi mdi-printer</v-icon> </v-col> -->
             <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
-              itemsPerPageOptions: [12],
+              itemsPerPageOptions: [1000],
             }" class="elevation-1" :hide-default-footer="true">
 
 
@@ -59,7 +96,7 @@
               </template>
               <template slot="body.append">
                 <tr>
-                  <td class="text-center  font-weight-bold" colspan="2">TOTAL</td>
+                  <td class="text-center  font-weight-bold">TOTAL</td>
                   <td class="text-right font-weight-bold"> {{ grandTotal.totalRooms }}</td>
                   <td class="text-right font-weight-bold">{{ grandTotal.totalIncome }}</td>
                   <td class="text-right font-weight-bold">{{ grandTotal.totalExpenses }}</td>
@@ -72,9 +109,9 @@
             </v-data-table>
 
           </v-col>
-          <v-col cols="4">
-            <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptions" :series="barSeries" chart-id="bar"
-              :height="400" :key="chartKey" />
+          <v-col md="12" lg="6" cols="12">
+            <ApexCharts v-model="chart" ref="realtimeChart" :options="barChartOptionsNew" :series="barSeriesNew"
+              chart-id="bar" :key="chartKey" />
           </v-col>
         </v-row>
 
@@ -85,38 +122,69 @@
 </template>
 
 <script>
-import SourceReport from '../../../components/bookingSource/SourceReport.vue';
+// import SourceReport from '../../../components/bookingSource/SourceReport.vue';
 
 export default {
-  components: {
-    SourceReport,
-  },
+  // components: {
+  //   SourceReport,
+  // },
   data() {
     return {
+      menu_from_filter: '',
+      filter_from_date: '',
+
+      menu_to_filter: '',
+      filter_to_date: '',
       data_table: [],
       grandTotal: [],
       totalRowsCount: 0,
       series: [],
-
-
-      barSeries: [
+      barSeriesNew: [
         {
-          name: "Percentage %",
+          name: "Income",
+          data: [],
+        },
+        {
+          name: "Expences",
           data: [],
         },
       ],
-      barChartOptions: {
+      barChartOptionsNew: {
         customLabel: [],
         chart: {
           type: "bar",
-          id: 'basic-bar'
+          id: 'MonthlyReport'
 
+        },
+        colors: ['#0C9241', '#FF0000'],
+
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            dataLabels: {
+              position: 'top',
+            },
+          }
+        },
+        dataLabels: {
+          enabled: false,
+
+          style: {
+            fontSize: '12px',
+            colors: ['#fff']
+          }
+        },
+        stroke: {
+          show: true,
+          width: 1,
+          colors: ['#fff']
+        },
+        tooltip: {
+          shared: true,
+          intersect: false
         },
         xaxis: {
           categories: []
-        },
-        yaxis: {
-          max: 100 // Set the maximum value of the y-axis to 100
         },
         tooltip: {
           enabled: true,
@@ -133,22 +201,63 @@ export default {
             }
           }
         },
-        plotOptions: {
-          bar: {
-            distributed: true,
-            dataLabels: {
-              position: 'top', // Set the position of the labels on top of the bars
-              formatter: function (val) {
-                return val + '111 %'; // Customize the label format, e.g., add a percentage sign
-              }
-            }
-          }
-        },
-        colors: [],
-        legend: {
-          show: false
-        },
       },
+
+      // barSeries: [
+      //   {
+      //     name: "Income",
+      //     data: [],
+      //   },
+      //   {
+      //     name: "Expences",
+      //     data: [],
+      //   },
+      // ],
+      // barChartOptions: {
+      //   customLabel: [],
+      //   chart: {
+      //     type: "bar",
+      //     id: 'basic-bar'
+
+      //   },
+      //   xaxis: {
+      //     categories: []
+      //   },
+      //   yaxis: {
+      //     max: 100 // Set the maximum value of the y-axis to 100
+      //   },
+
+      //   tooltip: {
+      //     enabled: true,
+      //     y: {
+      //       formatter: function (val, opts) {
+
+
+      //         return opts.w.config.customLabel[opts.dataPointIndex]
+      //       },
+      //       title: {
+      //         formatter: function (seriesName) {
+      //           return ''
+      //         }
+      //       }
+      //     }
+      //   },
+      //   plotOptions: {
+      //     bar: {
+      //       distributed: true,
+      //       dataLabels: {
+      //         position: 'top', // Set the position of the labels on top of the bars
+      //         formatter: function (val) {
+      //           return val + '  %'; // Customize the label format, e.g., add a percentage sign
+      //         }
+      //       }
+      //     }
+      //   },
+      //   colors: ['#0C9241', '#FF0000'],
+      //   legend: {
+      //     show: false
+      //   },
+      // },
       series: [{
         name: 'series-1',
         data: []//[30, 40, 45, 50, 49, 60, 70, 91]
@@ -212,7 +321,7 @@ export default {
           value: "month_name",
         },
         {
-          text: "Room Sold",
+          text: "Rooms Sold",
           align: "right",
           sortable: false,
           key: "employee_id",
@@ -268,8 +377,13 @@ export default {
     this.loading = true;
 
     this.getYears();
-    this.month = new Date().getMonth() + 1;
+    this.month = new Date().getMonth();
     this.year = new Date().getFullYear();
+
+    this.filter_from_date = this.formatDate(new Date(this.year, 0, 1));
+    this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
+
     this.getDataFromApi();
   },
   mounted() {
@@ -286,12 +400,31 @@ export default {
   //   },
   // },
   methods: {
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+
+      return year + '-' + (month < 10 ? '0' : '') + month;//+ '-' + (day < 10 ? '0' : '') + day;
+    },
+    printTable() {
+
+
+      let htmlHeaderContent = '<center><h4>Revenue Report - Month wise -  ' + this.year + '</h4></center>';
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write('<html><head><title>Print</title></head><body>');
+      printWindow.document.write(htmlHeaderContent);
+      printWindow.document.write(document.querySelector('.v-data-table').outerHTML);
+      printWindow.document.write('<style>.text-right{text-align:right;} td,th {border-top:1px solid #DDD;border-left:1px solid #DDD} table{border-right:1px solid #DDD;border-bottom:1px solid #DDD;width:100%} body{width:95%}</style></body></html>');
+      printWindow.document.close();
+      printWindow.print();
+    },
     onPageChange() {
       this.getDataFromApi();
     },
     goToDailyReport(item) {
 
-      this.$store.dispatch('setData', { year: this.year, month: item.month_number });
+      this.$store.dispatch('setData', { year: item.year_number, month: item.month_number });
       this.$router.push({ path: '/management/report/daily_revenue' });
 
     },
@@ -336,8 +469,9 @@ export default {
           per_page: itemsPerPage,
           company_id: this.$auth.user.company.id,
 
-          year: this.year,
-
+          //year: this.year,
+          filter_from_date: this.filter_from_date,
+          filter_to_date: this.filter_to_date,
         },
       };
 
@@ -345,28 +479,35 @@ export default {
 
         this.data_table = data.data;
         this.loading = false;
-        this.totalRowsCount = 12;
+        this.totalRowsCount = data.data.length;;
         this.grandTotal = data.grandTotal;
 
         let counter = 0;
         this.data_table.forEach(item => {
 
-          this.barSeries[0]["data"][counter] = item.percentage;
-          this.barChartOptions.xaxis.categories[counter] = item.month;
-          this.barChartOptions.colors[counter] = item.color;
-          this.barChartOptions.customLabel[counter] = '<table><tr><td>Percentage</td><td> : ' + item.percentage + '%</td></tr> '
-            + "<tr><td>Rooms Sold</td><td> :  " + item.sold + '</td></tr> '
+          this.barSeriesNew[0]["data"][counter] = parseInt(item.income.replaceAll(',', ''));
+          this.barSeriesNew[1]["data"][counter] = parseInt(item.total_expenses.replaceAll(',', ''));
+          this.barChartOptionsNew.xaxis.categories[counter] = item.month;
+          // this.barChartOptionsNew.colors[counter] = item.color;
+          this.barChartOptionsNew.customLabel[counter] = "<table>"
             + "<tr><td>Income</td><td style='text-align:right;color:green'> :  " + item.income + '</td></tr> '
-            + "<tr><td>Non-Mng Expenses</td><td style='text-align:right;color:red'>   -" + item.expenses + '</td></tr> '
+            + "<tr><td>Non-Mng Expenses</td><td style='text-align:right;color:red'>   - " + item.expenses + '</td></tr> '
             + "<tr><td>Management Expenses</td><td style='text-align:right;color:red'>  - " + item.management_expenses + '</td></tr> '
-            + "<tr><td>Proffit</td><td style='text-align:right; '>   = " + item.profit + '</td></tr> </table>'
+            + "<tr><td>Proffit</td><td style='text-align:right; '>   = " + item.profit + '</td></tr>'
+            + "<tr><td>Rooms Sold</td><td> :  " + item.sold + "</td></tr> "
+            + "</table > "
 
           counter++;
+
+
+
 
         });
         try {
           this.$refs.realtimeChart.updateSeries([{
-            data: this.barSeries[0].data,
+            data: this.barSeriesNew[0].data,
+          }, {
+            data: this.barSeriesNew[1].data,
           }], false, true);
         }
         catch (e) { }

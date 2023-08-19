@@ -471,7 +471,7 @@
                 <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
 
 
-                    <v-toolbar-title><span> Lost and Found Items</span></v-toolbar-title>
+                    <v-toolbar-title><span> Lost & Found</span></v-toolbar-title>
 
 
                     <v-tooltip top color="primary">

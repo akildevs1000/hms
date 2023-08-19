@@ -6,16 +6,22 @@
         <v-card-text>
           <v-row>
             <v-col md="6" cols="12">
+
               <table>
                 <tr>
                   <th>Source</th>
-                  <th class="text-right">Total Revenue</th>
+                  <th class="text-right">Total Amount</th>
                 </tr>
                 <tr v-for="(value, key) in data" :key="key">
                   <th>{{ key }}</th>
-                  <td class="text-right">{{ convert_decimal(value) }}</td>
+                  <td class="text-right">{{ getPriceFormat(value) }}</td>
+                </tr>
+                <tr>
+                  <th style="text-align:right">Total</th>
+                  <th class="text-right"> {{ getPriceFormat(getTotal(data)) }}</th>
                 </tr>
               </table>
+              <span v-if="data.length == 0" style="color:red">No Data available</span>
             </v-col>
 
             <v-col md="6" cols="12">
@@ -33,7 +39,7 @@
 
 <script>
 export default {
-  props: ['parentMonth'],
+  props: ['parentMonth', 'filter_from_date', 'filter_to_date'],
   data() {
     return {
       series: [],
@@ -129,7 +135,15 @@ export default {
   watch: {
     parentMonth() {
       this.getDataFromApi();
-      console.log('watch');
+
+    },
+    filter_from_date() {
+      this.getDataFromApi();
+
+    },
+    filter_to_date() {
+      this.getDataFromApi();
+
     }
   },
 
@@ -141,7 +155,15 @@ export default {
   },
 
   methods: {
+    getTotal(data) {
 
+      return Object.values(data).reduce((sum, value) => sum + value, 0);
+
+
+
+
+      // return sum;
+    },
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
@@ -166,23 +188,23 @@ export default {
 
     getReportByMonth(month) {
       this.getDataFromApi();
-      this.getDaysInMonth(month);
+      //this.getDaysInMonth(month);
     },
 
-    getDaysInMonth(month = 2, year = new Date().getFullYear()) {
-      const date = new Date(year, month, 0);
-      let d = date.getDate();
+    // getDaysInMonth(month = 2, year = new Date().getFullYear()) {
+    //   const date = new Date(year, month, 0);
+    //   let d = date.getDate();
 
-      this.barChartOptions.xaxis.categories.splice(
-        0,
-        this.barChartOptions.xaxis.categories.length
-      );
+    //   this.barChartOptions.xaxis.categories.splice(
+    //     0,
+    //     this.barChartOptions.xaxis.categories.length
+    //   );
 
-      for (let i = 1; i <= d; i++) {
-        this.barChartOptions.xaxis.categories.push(i);
-      }
-      this.forceChartRerender();
-    },
+    //   for (let i = 1; i <= d; i++) {
+    //     this.barChartOptions.xaxis.categories.push(i);
+    //   }
+    //   this.forceChartRerender();
+    // },
 
     forceChartRerender() {
       this.chartKey += 1;
@@ -196,10 +218,13 @@ export default {
         params: {
           company_id: this.$auth.user.company.id,
           month: this.parentMonth,
+          filter_from_date: this.filter_from_date,
+          filter_to_date: this.filter_to_date,
         },
       };
 
       this.$axios.get(`${url}`, options).then(({ data }) => {
+        //console.log(data);
         this.data = data;
         const keys = Object.keys(data);
         const values = Object.values(data);
@@ -225,7 +250,12 @@ export default {
         colors.push(color);
       }
       return colors;
-    }
+    },
+    getPriceFormat(amount) {
+
+      amount = parseFloat(amount);
+      return amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    },
   },
 };
 </script>
