@@ -992,9 +992,15 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-        return BookedRoom::whereHas('booking', function ($q) use ($request) {
+        $days = ($request->prevCounter * 30);
+        $date_from = date('Y-m-01', strtotime($days . ' days'));
+        $date_to = date('Y-m-d', strtotime('+' . $request->defaultDaysCount . ' days', strtotime($date_from)));
+
+        return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to, ) {
             // $q->where('booking_status', '!=', 0);
             $q->where('company_id', $request->company_id);
+            $q->where('check_in', '>=', $date_from);
+            $q->where('check_in', '<=', $date_to);
         })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out', 'booking_status']);
     }
 
