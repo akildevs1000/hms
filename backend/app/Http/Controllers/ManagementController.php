@@ -10,6 +10,7 @@ use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Report;
 use App\Models\Room;
+use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -75,7 +76,7 @@ class ManagementController extends Controller
 
         $data = Booking::whereCompanyId($request->company_id)
         //->whereMonth('check_in', $request->month)
-            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
+            ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
             ->where('booking_status', '!=', -1)
             ->select('source', 'total_price')
             ->get()
@@ -160,6 +161,8 @@ class ManagementController extends Controller
                 'date' => $date,
                 'sold' => $soldRate,
                 'unsold' => $unsoldRate,
+                'sold_qty' => $numberOfSoldRooms,
+                'unsold_qty' => $totalRooms - $numberOfSoldRooms,
             ]);
         }
         return response()->json(['record' => null, 'message' => '', 'status' => true]);
@@ -175,12 +178,15 @@ class ManagementController extends Controller
             ->whereCompanyId($request->company_id)->count();
         $soldRate = round(($numberOfSoldRooms / $totalRooms) * 100);
         $unsoldRate = 100 - $soldRate;
+
         Report::whereDate('date', $date)->whereCompanyId($request->company_id)->delete();
         Report::create([
             'company_id' => $request->company_id,
             'date' => $date,
             'sold' => $soldRate,
             'unsold' => $unsoldRate,
+            'sold_qty' => $numberOfSoldRooms,
+            'unsold_qty' => $totalRooms - $numberOfSoldRooms,
         ]);
         return response()->json(['record' => null, 'message' => '', 'status' => true]);
     }
@@ -355,6 +361,7 @@ class ManagementController extends Controller
     }
     public function getReportMonthlyWiseGroup(Request $request)
     {
+        // session(['isMonthReport' => ])
 
         $model = Expense::query();
         $model->where('company_id', $request->company_id);
@@ -374,26 +381,28 @@ class ManagementController extends Controller
 
         $soldArray = Report::selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
-            ->selectRaw('sum(sold) as total')
+            ->selectRaw('sum(sold_qty) as total')
             ->where('company_id', $request->company_id)
         // ->whereYear('created_at', $year)
-            ->whereBetween('created_at', [$filter_from_date, $filter_to_date])
+            ->whereBetween('date', [$filter_from_date, $filter_to_date])
 
             ->groupByRaw("EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)")
             ->orderByRaw('year')
             ->orderByRaw('month')
+
             ->get()
             ->toArray();
 
-        $incomeArray = Payment::selectRaw("EXTRACT(MONTH FROM date) as month")
+        $incomeArray = Transaction::
+            selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
-            ->selectRaw('sum(amount) as total')
+            ->selectRaw('sum(credit) as total')
             ->where('company_id', $request->company_id)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             })
         // ->whereYear('created_at', $year)
-            ->whereBetween('created_at', [$filter_from_date, $filter_to_date])
+            ->whereBetween('date', [$filter_from_date . ' 00:00:00', $filter_to_date . ' 23:59:59'])
 
             ->groupByRaw("EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)")
             ->orderByRaw('year')
@@ -404,8 +413,8 @@ class ManagementController extends Controller
             ->selectRaw("EXTRACT(YEAR FROM created_at) as year")
             ->selectRaw('sum(total) as total')
             ->where('company_id', $request->company_id)
-            ->whereYear('created_at', 2023)
-        //   ->whereBetween('created_at', [$filter_from_date, $filter_to_date])
+
+            ->whereBetween('created_at', [$filter_from_date . ' 00:00:00', $filter_to_date . ' 23:59:59'])
 
             ->where('is_management', 1)
             ->groupByRaw("EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)")
@@ -418,7 +427,7 @@ class ManagementController extends Controller
             ->selectRaw('sum(total) as total')
             ->where('company_id', $request->company_id)
         // ->whereYear('created_at', $year)
-            ->whereBetween('created_at', [$filter_from_date, $filter_to_date])
+            ->whereBetween('created_at', [$filter_from_date . ' 00:00:00', $filter_to_date . ' 23:59:59'])
 
             ->where('is_management', 0)
             ->groupByRaw("EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)")
@@ -557,7 +566,7 @@ class ManagementController extends Controller
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
             ->selectRaw('sum(sold) as total')
             ->where('company_id', $request->company_id)
-            ->whereYear('created_at', $year)
+            ->whereYear('date', $year)
             ->groupByRaw("EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)")
             ->orderByRaw('year')
             ->orderByRaw('month')
@@ -568,6 +577,7 @@ class ManagementController extends Controller
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
             ->selectRaw('sum(amount) as total')
             ->where('company_id', $request->company_id)
+            ->where('payment_mode', "!=", 7)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             })
@@ -830,6 +840,7 @@ class ManagementController extends Controller
         $bookings = Booking::select(
             DB::raw("string_agg(rooms, ',') as rooms"),
             'bookings.customer_id',
+
             DB::raw('sum(total_price) as customer_total_price'),
             DB::raw('count(id) as number_of_visits'),
         )
@@ -837,26 +848,29 @@ class ManagementController extends Controller
             ->groupBy('bookings.customer_id')
             ->orderByDesc('customer_total_price')
             ->where('company_id', $request->company_id)
-        //->where('type', 'Walking')
-        // -1 cancel booking ;
             ->where('booking_status', "!=", -1)
-        // ->whereYear('created_at', $year)
-        // ->when($request->filled('month'), function ($q) use ($request) {
-        //     $q->whereMonth('created_at', $request->month);
-        // })
-            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
 
-            ->limit(10)
+            ->where(function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('check_in', '>=', $request->filter_from_date . ' 00:00:00')
+                        ->where('check_in', '<=', $request->filter_to_date . ' 23:59:59');
+                });
+                $query->orWhere(function ($query) use ($request) {
+                    $query->where('check_in', '<=', $request->filter_from_date . ' 00:00:00')
+                        ->where('check_out', '>=', $request->filter_to_date . ' 23:59:59');
+                });
+            })
+
+        //->limit(100)
             ->get();
 
-        $total_price = Booking::where('company_id', $request->company_id)
-        //->where('type', 'Walking')
-            ->where('booking_status', "!=", -1)
-            ->whereYear('created_at', $year)
-            ->when($request->filled('month'), function ($q) use ($request) {
-                $q->whereMonth('created_at', $request->month);
-            })
-            ->sum('total_price');
+        // $total_price = Payment::query() //transaction
+        //     ->where('company_id', $request->company_id)
+        //     ->whereHas('booking', function ($q) {
+        //         $q->where('booking_status', '!=', -1);
+        //     })
+        //     ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
+        //     ->sum('amount');
 
         $colorsArray = [["value" => "01", "text" => "Jan", "color" => "#3366CC"]
             , ["value" => "02", "text" => "Feb", "color" => "#FF69B4"]
@@ -870,7 +884,7 @@ class ManagementController extends Controller
             , ["value" => "10", "text" => "Oct", "color" => "#DC143C"]
             , ["value" => "11", "text" => "Nov", "color" => "#7CFC00"]
             , ["value" => "12", "text" => "Dec", "color" => "#4169E1"]];
-        return ["data" => $bookings, "colors" => $colorsArray, "total_price" => $total_price];
+        return ["data" => $bookings, "colors" => $colorsArray];
     }
 
     public function testcheckin(Request $request)
@@ -893,12 +907,8 @@ class ManagementController extends Controller
         $year = $request->year;
 
         $dayColorsArray = [];
-        // $colors = ["#3366CC", "#FF69B4", "#00FF00", "#FFD700", "#FF4500", "#800080", "#FF6347", "#008080", "#FFA500", "#DC143C", "#7CFC00", "#4169E1", "#FF1493", "#32CD32", "#FFD700", "#4682B4", "#800000", "#808000", "#FF4500", "#DA70D6", "#808080", "#2E8B57", "#BA55D3", "#ADFF2F", "#20B2AA", "#FF4500", "#87CEEB", "#3CB371", "#FA8072", "#9370DB", "#6A5ACD", "#00FA9A", "#FF69B4"];
-        $dayColorsArray = ["#3366CC"];
 
-        // for ($i = 1; $i <= 31; $i++) {
-        //     $dayColorsArray[$i] = $colors[$i - 1];
-        // }
+        $dayColorsArray = ["#3366CC"];
 
         $totalRooms = 0;
         $totalIncome = 0;
@@ -911,9 +921,8 @@ class ManagementController extends Controller
 
         $expencesModel = Expense::selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month, EXTRACT(DAY  FROM created_at) as date,  SUM(amount) as total_amount')
             ->where('company_id', $request->company_id)
-        // ->whereMonth('created_at', $request->month)
-        // ->whereYear('created_at', $request->year)
-            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
+
+            ->whereBetween('created_at', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
 
             ->groupBy(DB::raw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at) , EXTRACT(DAY FROM created_at)  '))
             ->orderBy(DB::raw('EXTRACT(YEAR FROM created_at)'), 'asc')
@@ -925,22 +934,38 @@ class ManagementController extends Controller
         $ExpencesManagementArray = $expencesModel->clone()->where('is_management', 1)->get()->toArray();
         $ExpencesNonManagementArray = $expencesModel->clone()->where('is_management', 0)->get()->toArray();
 
-        $soldArray = Report::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date ,sold')
+        $soldArray = Report::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date ,sold_qty')
             ->whereCompanyId($request->company_id)
-        // ->whereMonth('created_at', $request->month)
-        // ->whereYear('created_at', $request->year)
-            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
+            ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
             ->orderBy('date', 'ASC')->get()->toArray();
 
-        $incomeArray = Payment::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date,  SUM(amount) as total_amount')
+        // $incomeArray = Payment::selectRaw('EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as date,  SUM(amount) as total_amount')
+        //     ->where('company_id', $request->company_id)
+        //     ->where('payment_mode', "!=", 7)
+        //     ->whereHas('booking', function ($q) {
+        //         $q->where('booking_status', '!=', -1);
+        //     })
+        // // ->whereMonth('created_at', $request->month)
+        // // ->whereYear('created_at', $request->year)
+        //     ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
+        //     ->groupBy(DB::raw('year, month , date  '))->orderBy('date', 'ASC')->get()->toArray();
+
+        $incomeArray = Transaction::
+            selectRaw("EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as day ")
+            ->selectRaw('sum(credit) as total_amount')
             ->where('company_id', $request->company_id)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             })
-        // ->whereMonth('created_at', $request->month)
-        // ->whereYear('created_at', $request->year)
-            ->whereBetween('created_at', [$request->filter_from_date, $request->filter_to_date])
-            ->groupBy(DB::raw('year, month , date  '))->orderBy('date', 'ASC')->get()->toArray();
+        // ->whereYear('created_at', $year)
+            ->whereBetween('date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
+
+            ->groupByRaw("EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)  , EXTRACT(DAY FROM date)")
+            ->orderByRaw('year')
+            ->orderByRaw('month')
+        //->orderByRaw('date')
+            ->get()->toArray();
+
         $startTimestamp = strtotime($request->filter_from_date);
         $endTimestamp = strtotime($request->filter_to_date);
 
@@ -954,7 +979,7 @@ class ManagementController extends Controller
             $management_expenses = 0;
             $sold = 0;
             $income = array_filter($incomeArray, function ($item) use ($request, $year, $month, $day) {
-                return $item['year'] == $year && $item['month'] == $month && $item['date'] == $day;
+                return $item['year'] == $year && $item['month'] == $month && $item['day'] == $day;
             });
 
             $management_expenses = array_filter($ExpencesManagementArray, function ($item) use ($request, $year, $month, $day) {
@@ -985,20 +1010,12 @@ class ManagementController extends Controller
                 $expenses = 0;
             }
             if (!empty($sold)) {
-                $sold = reset($sold)["sold"];
+                $sold = reset($sold)["sold_qty"];
             } else {
                 $sold = 0;
             }
 
             $color = $dayColorsArray[0]; // $dayColorsArray[$day];
-
-            // $income = isset($income[0]) ? $income[0]['total_amount'] : 0;
-
-            // $expenses = isset($expenses[0]) ? $expenses[0]['total_amount'] : 0;
-
-            // $management_expenses = isset($management_expenses[0]) ? $management_expenses[0]['total_amount'] : 0;
-
-            // $sold = isset($sold[0]) ? $sold[0]['sold'] : 0;
 
             $income = round($income, 2);
             $expenses = round($expenses, 2);

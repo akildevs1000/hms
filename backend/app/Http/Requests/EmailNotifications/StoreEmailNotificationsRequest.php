@@ -27,8 +27,10 @@ class StoreEmailNotificationsRequest extends FormRequest
     {
         return [
             'company_id' => 'required',
-            'email' => 'required|email|min:3|max:191|unique:email_notifications',
+            'email' => 'required|email|min:10|max:191|unique:email_notifications',
             'status' => 'required',
+            'name' => 'required',
+            'whatsapp_number' => ['nullable', 'min:10', 'max:13'],
 
         ];
     }

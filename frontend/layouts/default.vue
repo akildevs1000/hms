@@ -303,12 +303,7 @@ export default {
               menu: "inquiry_access",
             },
 
-            {
-              icon: "mdi mdi-file-document-edit-outline",
-              title: "Last & Found",
-              to: "/missing",
-              menu: "agent_access",
-            },
+
           ],
         },
 
@@ -409,7 +404,7 @@ export default {
         },
         {
           icon: "mdi-home-search-outline",
-          title: "Lost And Found Items",
+          title: "Lost & Found  ",
 
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
@@ -513,12 +508,12 @@ export default {
           to: "/room_category",
           menu: "settings_rooms_category_access",
         },
-        {
-          icon: "mdi mdi-bed",
-          title: "Rooms",
-          to: "/rooms",
-          menu: "settings_rooms_access",
-        },
+        // {
+        //   icon: "mdi mdi-bed",
+        //   title: "Rooms",
+        //   to: "/rooms",
+        //   menu: "settings_rooms_access",
+        // },
         {
           icon: "mdi-tools",
           title: "Price Setup",
@@ -539,16 +534,28 @@ export default {
         },
         {
           icon: "mdi mdi-account-check-outline",
-          title: "Emails",
+          title: "Report Emails",
           to: "/emails",
           menu: "settings_roles_access",
         },
         {
           icon: "mdi mdi-account-details",
-          title: "Permissions",
-          to: "/assign_permission",
+          title: "Settings",
+          to: "/setting",
           menu: "settings_permissions_access",
         },
+        {
+          icon: "mdi mdi-account-details",
+          title: "Profile",
+          to: "/companies",
+          menu: "settings_permissions_access",
+        },
+        // {
+        //   icon: "mdi mdi-account-details",
+        //   title: "Permissions",
+        //   to: "/assign_permission",
+        //   menu: "settings_permissions_access",
+        // },
 
       ],
     };
@@ -813,7 +820,7 @@ td {
 
 /* Datatable Sorting Icon color  */
 .mdi-arrow-up {
-  color: red !important;
+  color: #5fafa3 !important;
 }
 
 /* datepicker min height is required  */
@@ -919,5 +926,15 @@ select:focus {
   font-size: 12px;
 }
 </style>   -->
+
+<style>
+.apexcharts-active {
+  top: 0px !important;
+}
+
+.apexcharts-tooltip-text-y-value td {
+  padding: 0px !important;
+}
+</style>
 
 

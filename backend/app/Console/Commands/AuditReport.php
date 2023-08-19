@@ -7,6 +7,7 @@ use App\Mail\AuditReportMail;
 use App\Models\Company;
 use App\Models\EmailNotifications;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Support\Facades\Mail;
 
@@ -33,6 +34,7 @@ class AuditReport extends Command
      */
     public function handle()
     {
+
         $script_name = "GenerateAuditReport";
 
         $date = date("Y-m-d H:i:s");
@@ -64,15 +66,27 @@ class AuditReport extends Command
                     'company' => Company::find($company_id),
                 ];
 
-                $emailsArray = EmailNotifications::where('company_id', $company_id)
-                    ->where('status', 1)
-                    ->where('email', '!=', '')
-                    ->get();
+                // $emailsArray = EmailNotifications::where('company_id', $company_id)
+                //     ->where('status', 1)
+                //     ->where('email', '!=', '')
+                //     ->get();
+
+                $model = EmailNotifications::with(['report_type_access.report_type'])->where('company_id', $company_id)->where('status', 1)
+                    ->where('email', '!=', '');
+
+                $emailsArray = $model->whereHas('report_type_access', function (Builder $query) {
+                    $query->whereHas('report_type', function (Builder $query1) {
+                        $query1->where('name', 'Night Audit');
+                    });
+                })->pluck('email');
 
                 // Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new AuditReportMail($data));
                 foreach ($emailsArray as $value) {
                     if (strpos($value, '@')) {
+
                         Mail::to($value)->send(new AuditReportMail($data));
+
+                        Logger::channel("custom")->error("Cron: $script_name. Night Audit mail sent to $value ");
                     }
 
                 }

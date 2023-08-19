@@ -479,7 +479,7 @@ export default {
 
         this.data_table = data.data;
         this.loading = false;
-        this.totalRowsCount = data.totalRowsCount;;
+        this.totalRowsCount = data.data.length;;
         this.grandTotal = data.grandTotal;
 
         let counter = 0;

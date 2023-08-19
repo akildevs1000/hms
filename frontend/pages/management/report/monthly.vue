@@ -49,20 +49,20 @@
 
           <v-spacer></v-spacer>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
-            Monthly Revenue {{ componentKey }}
+            Monthly Revenue
           </v-tab>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
-            Daily Revenue {{ componentKey }}
+            Daily Revenue
           </v-tab>
           <v-tab active-class="active-link" @click="getDataFromApi2()">
-            Top 10 Customers {{ componentKey }}
+            Customer wise
           </v-tab>
-          <v-tab active-class="active-link" @click="getDataFromApi2()">
+          <!-- <v-tab active-class="active-link" @click="getDataFromApi2()">
             Sold Graph1
           </v-tab>
           <v-tab active-class="active-link">
             Sold Graph2
-          </v-tab>
+          </v-tab> -->
           <v-tab active-class="active-link">
             <!-- <v-icon> mdi mdi-chart-pie </v-icon> -->
             Revenue Sources
@@ -72,8 +72,8 @@
             <v-card flat>
               <v-card-text>
                 <client-only>
-                  <MonthlyReport :filter_from_date="filter_from_date" :filter_to_date="filter_to_date"
-                    :key="componentKey" />
+                  <MonthlyReport @goToDailyReportTab="goToDailyReportTab" :filter_from_date="filter_from_date"
+                    :filter_to_date="filter_to_date" :key="componentKey" />
                 </client-only>
               </v-card-text>
             </v-card>
@@ -98,7 +98,7 @@
               </v-card-text>
             </v-card>
           </v-tab-item>
-          <v-tab-item>
+          <!-- <v-tab-item>
             <v-card flat>
               <v-card-text>
                 <client-only>
@@ -124,7 +124,7 @@
                 </client-only>
               </v-card-text>
             </v-card>
-          </v-tab-item>
+          </v-tab-item> -->
 
           <v-tab-item>
             <v-card flat>
@@ -379,11 +379,16 @@ export default {
     },
     getDataFromApi2() {
 
-      this.componentKey += 1;
-      this.getDataFromApi();
+      //this.componentKey += 1;
+      //this.getDataFromApi();
 
     },
+    goToDailyReportTab(obj) {
 
+      this.filter_from_date = obj.filter_from_date;
+      this.filter_to_date = obj.filter_to_date;
+      this.activeTab = obj.tab;
+    },
     getDataFromApi(url = this.endpoint) {
 
 
@@ -400,7 +405,7 @@ export default {
         },
       };
       this.barSeries[0]["data"] = [];
-      this.forceChartRerender();
+      //this.forceChartRerender();
       this.$axios.get(`${url}`, options).then(({ data }) => {
         let counter = 0;
         // try {

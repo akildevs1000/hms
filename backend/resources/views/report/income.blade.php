@@ -244,9 +244,6 @@
         .w-auto {
             width: auto !important;
         }
-
-
-        ,
         input {
             /* border: none; */
             /* border-bottom: 1px solid black; */

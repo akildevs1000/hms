@@ -6,6 +6,29 @@
 
         <v-row>
             <v-col md="12" lg="6" cols="12">
+                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                    <span> Month wise Report </span>
+                    <v-spacer></v-spacer>
+                    <v-tooltip top color="primary">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                @click="process('revenue_monthly_report_print', endpoint)">
+                                <v-icon class="white--text">mdi-printer-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>PRINT</span>
+                    </v-tooltip>
+
+                    <v-tooltip top color="primary">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                @click="process('revenue_monthly_report_download', endpoint)">
+                                <v-icon class="white--text">mdi-download-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span> DOWNLOAD </span>
+                    </v-tooltip>
+                </v-toolbar>
                 <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
                   mdi mdi-printer</v-icon> </v-col> -->
                 <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
@@ -15,7 +38,7 @@
 
 
                     <template v-slot:item.month_name="{ item }">
-                        <a @click="goToDailyReport(item)">{{ item.month }}</a>
+                        <a @click="goToDailyReport(item.year_number, item.month_number)">{{ item.month }}</a>
 
 
                     </template>
@@ -86,6 +109,10 @@ export default {
                     name: "Expences",
                     data: [],
                 },
+                {
+                    name: "Sold",
+                    data: [],
+                },
             ],
             barChartOptionsNew: {
                 customLabel: [],
@@ -94,7 +121,7 @@ export default {
                     id: 'MonthlyReport'
 
                 },
-                colors: ['#0C9241', '#FF0000'],
+                colors: ['#0C9241', '#FF0000', '#0815cb'],
 
                 plotOptions: {
                     bar: {
@@ -251,7 +278,7 @@ export default {
             headers_table: [
 
                 {
-                    text: "Month Name",
+                    text: "Month",
                     align: "left",
                     sortable: false,
                     key: "employee_id",
@@ -259,7 +286,7 @@ export default {
                     value: "month_name",
                 },
                 {
-                    text: "Rooms Sold",
+                    text: "Sold",
                     align: "right",
                     sortable: false,
                     key: "employee_id",
@@ -275,7 +302,7 @@ export default {
                     value: "income",
                 },
                 {
-                    text: "Non.Mng Expenses",
+                    text: "N_M Expenses",
                     align: "right",
                     sortable: false,
                     key: "employee_id",
@@ -283,7 +310,7 @@ export default {
                     value: "expenses",
                 },
                 {
-                    text: "Management Expenses",
+                    text: "M Expenses",
                     align: "right",
                     sortable: false,
                     key: "employee_id",
@@ -312,16 +339,16 @@ export default {
     },
     watch: {
 
-        filter_from_date() {
+        // filter_from_date() {
 
-            this.getDataFromApi();
+        //     this.getDataFromApi();
 
-        },
-        filter_to_date() {
+        // },
+        // filter_to_date() {
 
-            this.getDataFromApi();
+        //     this.getDataFromApi();
 
-        }
+        // }
 
     },
     created() {
@@ -352,6 +379,7 @@ export default {
     //   },
     // },
     methods: {
+
         formatDate(date) {
             var day = date.getDate();
             var month = date.getMonth() + 1; // Months are zero-based
@@ -374,10 +402,12 @@ export default {
         onPageChange() {
             this.getDataFromApi();
         },
-        goToDailyReport(item) {
+        goToDailyReport(year, month) {
+            //this.getDataFromApi();
+            this.$emit('goToDailyReportTab', { tab: 1, filter_from_date: year + '-' + month + '-01', filter_to_date: year + '-' + month + '-' + this.getTotalDays(year, month) });
 
-            this.$store.dispatch('setData', { year: item.year_number, month: item.month_number });
-            this.$router.push({ path: '/management/report/daily_revenue' });
+            // this.$store.dispatch('setData', { year: item.year_number, month: item.month_number });
+            // this.$router.push({ path: '/management/report/daily_revenue' });
 
         },
         can(per) {
@@ -393,6 +423,9 @@ export default {
 
         getDaysInMonth(month = 2, year = new Date().getFullYear()) {
 
+        },
+        getTotalDays(year, month) {
+            return new Date(year, month, 0).getDate();
         },
 
         forceChartRerender() {
@@ -424,6 +457,7 @@ export default {
                     //year: this.year,
                     filter_from_date: this.filter_from_date,
                     filter_to_date: this.filter_to_date,
+                    t: Math.random()
                 },
             };
 
@@ -439,6 +473,7 @@ export default {
 
                     this.barSeriesNew[0]["data"][counter] = parseInt(item.income.replaceAll(',', ''));
                     this.barSeriesNew[1]["data"][counter] = parseInt(item.total_expenses.replaceAll(',', ''));
+                    this.barSeriesNew[2]["data"][counter] = parseInt(item.sold);
                     this.barChartOptionsNew.xaxis.categories[counter] = item.month;
                     // this.barChartOptionsNew.colors[counter] = item.color;
                     this.barChartOptionsNew.customLabel[counter] = "<table>"
@@ -460,6 +495,8 @@ export default {
                         data: this.barSeriesNew[0].data,
                     }, {
                         data: this.barSeriesNew[1].data,
+                    }, {
+                        data: this.barSeriesNew[2].data,
                     }], false, true);
                 }
                 catch (e) { }
@@ -467,6 +504,21 @@ export default {
                 this.loading = false;
 
             });
+        },
+        process(type, model) {
+
+
+
+
+            let url =
+                process.env.BACKEND_URL +
+                `${type}?company_id=${this.$auth.user.company.id}&filter_from_date=${this.filter_from_date}&filter_to_date=${this.filter_to_date}`;
+            console.log(url);
+            let element = document.createElement("a");
+            element.setAttribute("target", "_blank");
+            element.setAttribute("href", `${url}`);
+            document.body.appendChild(element);
+            element.click();
         },
     },
 };

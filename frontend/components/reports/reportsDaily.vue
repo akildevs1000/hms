@@ -14,8 +14,29 @@
 
             <v-col cols="12">
 
-                <!-- <v-col class="text-right mr-10" mr="10"><v-icon color="blue" class="ml-2" dark @click="printTable">
-                                mdi mdi-printer</v-icon> </v-col> -->
+                <v-toolbar class="rounded-2" color="background" dense flat dark>
+                    <span> Month wise Report </span>
+                    <v-spacer></v-spacer>
+                    <v-tooltip top color="primary">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                @click="process('revenue_daily_report_print', endpoint)">
+                                <v-icon class="white--text">mdi-printer-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>PRINT</span>
+                    </v-tooltip>
+
+                    <v-tooltip top color="primary">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
+                                @click="process('revenue_daily_report_download', endpoint)">
+                                <v-icon class="white--text">mdi-download-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span> DOWNLOAD </span>
+                    </v-tooltip>
+                </v-toolbar>
 
                 <v-data-table dense :headers="headers_table" ref="dataTable" :items="data_table" :loading="loading"
                     :footer-props="{
@@ -23,7 +44,8 @@
                     }" class="elevation-1" :hide-default-footer="true">
 
                     <template v-slot:item.date="{ item }">
-                        <a @click="goToNightAuditReport(item)">{{ item.date }}</a>
+                        <!-- <a @click="goToNightAuditReport(item)">{{ item.date }}</a> -->
+                        {{ changeDateFormat(item.date) }}
                     </template>
 
 
@@ -89,6 +111,9 @@ export default {
                 {
                     name: "Expences",
                     data: [],
+                }, {
+                    name: "Sold",
+                    data: [],
                 },
             ],
             barChartOptionsNew: {
@@ -101,7 +126,7 @@ export default {
                     id: 'DailyReport'
 
                 },
-                colors: ['#0C9241', '#FF0000'],
+                colors: ['#0C9241', '#FF0000', '#0815cb'],
 
                 plotOptions: {
                     bar: {
@@ -272,7 +297,7 @@ export default {
 
 
                 {
-                    text: "Room Sold",
+                    text: "Sold",
                     align: "right",
                     sortable: true,
                     key: "employee_id",
@@ -288,7 +313,7 @@ export default {
                     value: "income",
                 },
                 {
-                    text: "Non.Mng Expenses",
+                    text: "N_M Expenses",
                     align: "right",
                     sortable: true,
                     key: "employee_id",
@@ -296,7 +321,7 @@ export default {
                     value: "expenses",
                 },
                 {
-                    text: "Management Expenses",
+                    text: "M Expenses",
                     align: "right",
                     sortable: true,
                     key: "employee_id",
@@ -341,44 +366,27 @@ export default {
 
         this.loading = true;
 
-
-        // this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
-        // this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
-
-        this.getYears();
-
-
-        let filters = this.$store.getters.getDataToSend;
-        if (filters.month) {
-            this.month = parseInt(filters.month) - 1;
-        }
-
-        if (filters.year) {
-            this.year = parseInt(filters.year);
-        }
-
-        this.filter_from_date = this.formatDate(new Date(this.year, this.month, 1));
-        this.filter_to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
-
-        this.getDataFromApi();
     },
     mounted() {
-        // this.getDataFromApi();
+        this.getDataFromApi();
 
     },
     computed: {
         // Use a computed property to calculate and return the filtered items
 
     },
-    // watch: {
+    watch: {
 
-    //   options: {
-    //     handler() {
-    //       this.getMonthlyWiseData();
-    //     },
-    //     deep: true,
-    //   },
-    // },
+        filter_from_date() {
+
+            this.getDataFromApi();
+
+        },
+        filter_to_date() {
+            this.getDataFromApi();
+
+        }
+    },
     methods: {
         formatDate(date) {
             var day = date.getDate();
@@ -440,6 +448,21 @@ export default {
             this.years = Array.from({ length: 10 }, (_, i) => year - i);
 
         },
+        changeDateFormat(date) {
+
+            var months = [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+
+            var dateParts = date.split("-");
+            var year = dateParts[0].slice(2); // Extract last two digits of the year
+            var month = months[parseInt(dateParts[1], 10) - 1]; // Month is 0-indexed
+            var day = dateParts[2];
+
+            return day + " " + month + " " + year;
+
+        },
         getDataFromApi(url = this.endpoint) {
 
 
@@ -466,22 +489,23 @@ export default {
 
                 },
             };
-            this.forceChartRerender();
+            // this.forceChartRerender();
             this.$axios.get('get_report_daily_wise_group', options).then(({ data }) => {
 
                 this.data_table = data.data;
                 this.loading = false;
-                this.totalRowsCount = 12;
+                // this.totalRowsCount = 12;
                 this.grandTotal = data.grandTotal;
 
                 let counter = 0;
-                this.forceChartRerender();
+                //this.forceChartRerender();
                 this.barSeriesNew[0]["data"] = [];
                 this.barSeriesNew[1]["data"] = [];
                 this.data_table.forEach(item => {
 
                     this.barSeriesNew[0]["data"][counter] = parseInt(item.income.replaceAll(',', ''));
                     this.barSeriesNew[1]["data"][counter] = parseInt(item.total_expenses.replaceAll(',', ''));
+                    this.barSeriesNew[2]["data"][counter] = parseInt(item.sold);
                     this.barChartOptionsNew.xaxis.categories[counter] = item.month + '-' + item.day;
                     // this.barChartOptionsNew.colors[counter] = item.color;
                     this.barChartOptionsNew.customLabel[counter] = "<table>"
@@ -500,6 +524,8 @@ export default {
                         data: this.barSeriesNew[0].data,
                     }, {
                         data: this.barSeriesNew[1].data,
+                    }, {
+                        data: this.barSeriesNew[2].data,
                     }], false, true);
                 }
                 catch (e) { }
@@ -507,6 +533,22 @@ export default {
                 this.loading = false;
 
             });
+        },
+
+        process(type, model) {
+
+
+
+
+            let url =
+                process.env.BACKEND_URL +
+                `${type}?company_id=${this.$auth.user.company.id}&filter_from_date=${this.filter_from_date}&filter_to_date=${this.filter_to_date}`;
+            console.log(url);
+            let element = document.createElement("a");
+            element.setAttribute("target", "_blank");
+            element.setAttribute("href", `${url}`);
+            document.body.appendChild(element);
+            element.click();
         },
     },
 };

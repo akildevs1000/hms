@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Revenue Report</title>
+    <title>Revenue Report - Monthly</title>
     <style>
         * {
             box-sizing: border-box;
@@ -15,6 +15,9 @@
             color: #212529;
             vertical-align: top;
             border-color: #dee2e6;
+        }
+        .th {
+           text-align: center;
         }
 
         .table-bordered {
@@ -314,11 +317,128 @@
         th.fnt-size {
             font-size: 10px
         }
+
+        .text-center
+        {
+            text-align: center;
+        }
+        .text-right
+        {
+            text-align: right;
+        }
+        .grand_total
+        {
+
+
+            font-size: 15px;
+            font-weight:bold;
+        }
+        .grand_total td{
+
+            border:1px solid black!important;
+
+
+        }
     </style>
 </head>
-
 <body>
 
+<div class="row">
+        <div class="col-4">
+            <p class="header-txt">{{ strtoupper($company->name)}}</p>
+            <span class="header-txt-span">The {{ explode(' - ',$company->company_code)[0]  }}</span>
+        </div>
+        <div class="col-4" style="margin: 0px">
+
+        @if (env("APP_ENV")=="production")
+        <img src="{{urldecode($company->logo)}}" height="100px" width="100"
+                    style="margin-left: 50px;margin-top: 0px">
+                    @elseif   ($company->id == 1)
+                <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
+                    style="margin-left: 50px;margin-top: 0px">
+            @elseif ($company->id == 2)
+                <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
+                    style="margin-left: 50px;margin-top: 0px">
+         @endif
+
+
+
+
+        </div>
+        <div class="col-4 header-txt-address" style="text-align:right">
+            <div style="text-align:left; margin-left:70px" class="header-txt-address">
+                <small> GST No: {{ $company->mol_id ?? '---' }} </small><br>
+
+                <small> Telephone No: {{ $company->contact->number ?? '---' }} </small><br>
+                <small> Email: {{ $company->user->email ?? '---' }}</small><br>
+                <small> Date: {{ date('Y/m/d') }}</small>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+
+    <div class="row">
+
+        <div class="col-12" style="margin: 0px;text-align:center">
+            Revenue Month wise Report {{$request->filter_from_date}} to {{$request->filter_to_date}}
+        </div>
+
+    </div>
+    </div>
+
+    <table class="mt-3 w-100">
+        <tr style="background-color: white; color: black" class="my-0 py-0">
+            <th class="my-0 py-0 fnt-size  "style="text-align:center"># </th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Month</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Sold</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Income</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">N_M_Expences</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">M Expences</th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">Profit  </th>
+            <th class="my-0 py-0 fnt-size" style="text-align:center">%</th>
+        </tr>
+        @php
+            $i = 1;
+        @endphp
+        @foreach ($data['data'] as $item)
+            {{-- @dd($item) --}}
+            <tr style="font-size:11px">
+                <td class="my-1 py-1 fnt-size ">{{ $i++ }}</td>
+                <td class="my-1 py-1 fnt-size">{{ $item['month'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['sold'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['income'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['expenses'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['management_expenses'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['profit'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $item['percentage'].'%' ?? '---' }}</td>
+            </tr>
+        @endforeach
+        <tr  class="grand_total">
+                <td class="my-1 py-1 fnt-size text-right " colspan="8" style="border-left:0px!important;border-right:0px!important" >&nbsp; </td>
+            </tr>
+        <tr  class="grand_total">
+                <td class="my-1 py-1 fnt-size text-right " colspan="2" style="border-top:1px solid red;">Total</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalRooms'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalIncome'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalExpenses'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalManagementExpenses'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalProfit'] ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size text-right">{{ $data['grandTotal']['totalPercentage'].'%' ?? '---' }}</td>
+            </tr>
+    </table>
+
+
+    @php
+        function numFormat($n = null)
+        {
+            if (!$n) {
+                return '---';
+            }
+            return number_format($n, 2) ?? '---';
+        }
+    @endphp
 </body>
 
 </html>

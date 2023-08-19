@@ -115,9 +115,16 @@ class RoomTypeController extends Controller
 
     public function getDataBySelectWithTax(Request $request)
     {
+
+        $diff_in_seconds = strtotime($request->checkin) - strtotime(date('Y-m-d'));
+        if ($diff_in_seconds < 0) {
+            return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        }
+
         // return app()->isProduction();
         $company_id = $request->company_id;
         $discount = $request->discount ?? 0;
+        $eachRoomDiscount = $discount;
         $room = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
         $prices = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
             ->first(['holiday_price', 'weekend_price', 'weekday_price']);
@@ -127,6 +134,9 @@ class RoomTypeController extends Controller
 
         $arr = [];
         $period = CarbonPeriod::create($request->checkin, $this->checkOutDate($request->checkout));
+
+        $eachRoomDiscount = $discount / count($period);
+
         foreach ($period as $date) {
             $iteration_date = $date->format('Y-m-d');
             $day = $date->format('D');
@@ -135,29 +145,32 @@ class RoomTypeController extends Controller
             if ($isHoliday) {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->holiday_price - $discount)['total_with_tax'],
+                    "price" => $this->getRoomTax($prices->holiday_price - $eachRoomDiscount)['total_with_tax'],
                     "day_type" => "holiday",
                     "day" => $day,
-                    "tax" => $this->getRoomTax($prices->holiday_price - $discount)['room_tax'],
+                    "tax" => $this->getRoomTax($prices->holiday_price - $eachRoomDiscount)['room_tax'],
                     "room_price" => $prices->holiday_price,
+                    "discount" => $eachRoomDiscount,
                 ];
             } elseif ($isWeekend) {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekend_price - $discount)['total_with_tax'],
-                    "tax" => $this->getRoomTax($prices->weekend_price - $discount)['room_tax'],
+                    "price" => $this->getRoomTax($prices->weekend_price - $eachRoomDiscount)['total_with_tax'],
+                    "tax" => $this->getRoomTax($prices->weekend_price - $eachRoomDiscount)['room_tax'],
                     "day_type" => "weekend",
                     "day" => $day,
                     "room_price" => $prices->weekend_price,
+                    "discount" => $eachRoomDiscount,
                 ];
             } else {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekday_price - $discount)['total_with_tax'],
+                    "price" => $this->getRoomTax($prices->weekday_price - $eachRoomDiscount)['total_with_tax'],
                     "day_type" => "weekday",
                     "day" => $day,
-                    "tax" => $this->getRoomTax($prices->weekday_price - $discount)['room_tax'],
+                    "tax" => $this->getRoomTax($prices->weekday_price - $eachRoomDiscount)['room_tax'],
                     "room_price" => $prices->weekday_price,
+                    "discount" => $eachRoomDiscount,
                 ];
             }
         }
@@ -167,6 +180,11 @@ class RoomTypeController extends Controller
             'data' => $arr,
             'total_price' => array_sum(array_column($arr, "price")),
             'total_tax' => array_sum(array_column($arr, "tax")),
+
+            'total_price_after_discount' => array_sum(array_column($arr, "price")),
+            'total_discount' => array_sum(array_column($arr, "discount")),
+            'status' => true,
+
         ];
 
         return Room::where('room_no', $request->room_no)
@@ -178,7 +196,11 @@ class RoomTypeController extends Controller
     private function getRoomTax($amount)
     {
         $temp = [];
-        $per = $amount < 3000 ? 12 : 18;
+        $per = $amount < 2499 ? 12 : 18;
+        if ($amount > 7499) {
+            $per = 28;
+        }
+
         $tax = ($amount / 100) * $per;
         $temp['room_tax'] = $tax;
         $temp['tax_percentage'] = $per;

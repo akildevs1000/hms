@@ -62,7 +62,7 @@
           <v-col cols="8">
 
             <v-data-table dense :headers="headers_table" :items="data_table" :loading="loading" :footer-props="{
-              itemsPerPageOptions: [12],
+              itemsPerPageOptions: [1000],
             }" class="elevation-1" :hide-default-footer="true">
 
 
@@ -439,13 +439,13 @@ export default {
 
 
 
-      this.$axios.get('get_report_top-ten-customers', options).then(({ data }) => {
+      this.$axios.get('get_report_top_ten_customers', options).then(({ data }) => {
 
         this.data_table = data.data;
         this.total_price = data.total_price;
         this.colors = data.colors;
         this.loading = false;
-        this.totalRowsCount = 12;
+        this.totalRowsCount = data.total;;
         this.grandTotal = data.grandTotal;
 
         this.series.splice(0, this.series.length);

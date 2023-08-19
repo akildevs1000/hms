@@ -8,13 +8,13 @@
     <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
     </v-row>
     <div>
       <v-dialog v-model="roomTypeDialog" max-width="40%">
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <v-toolbar color="background" dense flat dark>
             <v-toolbar color="background" dense flat dark>
               <span>{{ formTitle }} {{ Model }}</span>
             </v-toolbar>
@@ -79,89 +79,128 @@
 
       <div>
         <v-row>
-          <v-col xs="12" sm="12" md="2" cols="12">
-            <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" @input="searchIt"
-              v-model="search" hide-details></v-text-field>
+
+          <v-col md="12" lg="12">
+            <v-tabs v-model="activeTab" :vertical="vertical" background-color="background" dense flat dark show-arrows
+              class=" rounded-t-sm">
+
+              <v-spacer></v-spacer>
+              <v-tab active-class="active-link">
+                Categories
+              </v-tab>
+              <v-tab active-class="active-link">
+                Rooms
+              </v-tab>
+              <v-tabs-slider color="#1259a7"></v-tabs-slider>
+              <v-tab-item>
+
+                <v-col md="12" lg="12" class="pt-0">
+                  <v-col xs="12" sm="12" md="2" cols="12">
+                    <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify"
+                      @input="searchIt" v-model="search" hide-details></v-text-field>
+                  </v-col>
+                  <v-card>
+                    <v-toolbar class=" mb-2 white--text" color="background" dense flat>
+
+                      <v-spacer></v-spacer>
+                      <v-tooltip v-if="can('settings_rooms_create')" top color="background">
+                        <template v-slot:activator="{ on, attrs }">
+
+
+                          <v-btn v-if="can(`settings_rooms_category_create`)" x-small :ripple="false" text v-bind="attrs"
+                            v-on="on" @click="roomTypeDialog = true">
+                            <v-icon color="white" dark white>mdi-plus-circle</v-icon>
+                          </v-btn>
+                        </template>
+
+                      </v-tooltip>
+
+                    </v-toolbar>
+                    <v-row>
+                      <v-col cols="12">
+                        <table class="mt-0 ">
+                          <tr style="font-size: 13px">
+                            <th class="ps-5">#</th>
+                            <th>Name</th>
+                            <th>Adult</th>
+                            <th>Child</th>
+                            <th>Baby</th>
+                            <th>Weekday Rent</th>
+                            <th>Weekend Rent</th>
+                            <th>Holiday Rent</th>
+                            <th class="text-center">Action</th>
+                          </tr>
+                          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                            color="primary"></v-progress-linear>
+                          <tr v-for="(            item, index            ) in             data            " :key="index"
+                            style="font-size: 13px">
+                            <td>
+                              {{
+                                (pagination.current - 1) * pagination.per_page + index + 1
+                              }}
+                            </td>
+                            <td>{{ caps(item.name) }}</td>
+                            <td>{{ caps(item.adult) }}</td>
+                            <td>{{ caps(item.child) }}</td>
+                            <td>{{ caps(item.baby) }}</td>
+                            <td>{{ caps(item.weekday_price) }}</td>
+                            <td>{{ caps(item.weekend_price) }}</td>
+                            <td>{{ caps(item.holiday_price) }}</td>
+
+                            <td class="text-center">
+                              <v-menu bottom left v-if="can(`settings_rooms_category_edit`) || can(`settings_rooms_category_delete`)
+                                ">
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                  </v-btn>
+                                </template>
+                                <v-list width="120" dense>
+                                  <v-list-item v-if="can(`settings_rooms_category_edit`)
+                                    " @click="editItem(item)">
+                                    <v-list-item-title style="cursor: pointer">
+                                      <v-icon color="secondary" small>
+                                        mdi-pencil
+                                      </v-icon>
+                                      Edit
+                                    </v-list-item-title>
+                                  </v-list-item>
+                                  <v-list-item v-if="can(`settings_rooms_category_delete`)
+                                    " @click="deleteItem(item)">
+                                    <v-list-item-title style="cursor: pointer">
+                                      <v-icon color="error" small> mdi-delete </v-icon>
+                                      Delete
+                                    </v-list-item-title>
+                                  </v-list-item>
+                                </v-list>
+                              </v-menu>
+                            </td>
+                          </tr>
+                        </table>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                </v-col>
+                <v-col md="12" class="float-right">
+                  <div class="float-right">
+                    <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
+                      :total-visible="12"></v-pagination>
+                  </div>
+                </v-col>
+
+              </v-tab-item>
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-text>
+                    <client-only>
+                      <roomsComponent :key="componentKey" />
+                    </client-only>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
           </v-col>
 
-          <v-col md="12" lg="12" class="pt-0">
-            <v-card class="mb-5 rounded-md" elevation="0">
-              <v-toolbar class="rounded-md" color="background" dense flat dark>
-                <span> {{ Model }} List</span>
-                <v-spacer></v-spacer>
-                <v-btn v-if="can(`settings_rooms_category_create`)" class=" float-right py-3"
-                  @click="roomTypeDialog = true" x-small color="primary">
-                  <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-                  Add
-                </v-btn>
-              </v-toolbar>
-              <table class="mt-0">
-                <tr style="font-size: 13px">
-                  <th class="ps-5">#</th>
-                  <th>Name</th>
-                  <th>Adult</th>
-                  <th>Child</th>
-                  <th>Baby</th>
-                  <th>Weekday Rent</th>
-                  <th>Weekend Rent</th>
-                  <th>Holiday Rent</th>
-                  <th class="text-center">Action</th>
-                </tr>
-                <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                  color="primary"></v-progress-linear>
-                <tr v-for="(            item, index            ) in             data            " :key="index"
-                  style="font-size: 13px">
-                  <td>
-                    {{
-                      (pagination.current - 1) * pagination.per_page + index + 1
-                    }}
-                  </td>
-                  <td>{{ caps(item.name) }}</td>
-                  <td>{{ caps(item.adult) }}</td>
-                  <td>{{ caps(item.child) }}</td>
-                  <td>{{ caps(item.baby) }}</td>
-                  <td>{{ caps(item.weekday_price) }}</td>
-                  <td>{{ caps(item.weekend_price) }}</td>
-                  <td>{{ caps(item.holiday_price) }}</td>
-
-                  <td class="text-center">
-                    <v-menu bottom left v-if="can(`settings_rooms_category_edit`) || can(`settings_rooms_category_delete`)
-                      ">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                          <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list width="120" dense>
-                        <v-list-item v-if="can(`settings_rooms_category_edit`)
-                          " @click="editItem(item)">
-                          <v-list-item-title style="cursor: pointer">
-                            <v-icon color="secondary" small>
-                              mdi-pencil
-                            </v-icon>
-                            Edit
-                          </v-list-item-title>
-                        </v-list-item>
-                        <v-list-item v-if="can(`settings_rooms_category_delete`)
-                          " @click="deleteItem(item)">
-                          <v-list-item-title style="cursor: pointer">
-                            <v-icon color="error" small> mdi-delete </v-icon>
-                            Delete
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </td>
-                </tr>
-              </table>
-            </v-card>
-          </v-col>
-          <v-col md="12" class="float-right">
-            <div class="float-right">
-              <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-                :total-visible="12"></v-pagination>
-            </div>
-          </v-col>
         </v-row>
       </div>
     </div>
@@ -169,8 +208,16 @@
   <NoAccess v-else />
 </template>
 <script>
+// import roomsComponent from '../../components/roomsComponent.vue';
 export default {
+  // components: {
+  //   roomsComponent,
+  // },
   data: () => ({
+    componentKey: 0,
+    vertical: false,
+    activeTab: 0,
+
     pagination: {
       current: 1,
       total: 0,
@@ -249,7 +296,6 @@ export default {
     },
     getDataFromApi(url = this.endpoint) {
 
-      console.log(this.$auth.user);
       this.loading = true;
       let page = this.pagination.current;
       let options = {

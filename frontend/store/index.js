@@ -5,6 +5,7 @@ export const state = () => ({
   employee_id: "",
   reservation: "",
   dataToSend: "",
+  booking_payload: "",
 });
 
 // contains your mutations
@@ -20,6 +21,11 @@ export const mutations = {
   },
   reservation(state, value) {
     state.reservation = value;
+    // console.log(state.reservation);
+    // console.log(state);
+  },
+  booking_payload(state, value) {
+    state.booking_payload = value;
     // console.log(state.reservation);
     // console.log(state);
   },

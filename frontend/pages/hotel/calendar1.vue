@@ -294,7 +294,8 @@
     </v-dialog>
     <v-row>
       <v-col cols="12">
-        <FullCalendar :options="calendarOptions" style="background: #fff" />
+        <FullCalendar ref="fullCalendar" @datesRender="handleDatesRender" :options="calendarOptions"
+          style="background: #fff" />
       </v-col>
     </v-row>
   </div>
@@ -356,36 +357,70 @@ export default {
 
       dragObj: {},
       extendObj: {},
+      prevCounter: 0,
 
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
         locale: "en",
 
         customButtons: {
+          prev: { // this overrides the prev button
+            text: "PREV",
+            click: (e) => {
+              this.prevCounter = this.prevCounter - 1;
+              let calendarApi = this.$refs.fullCalendar.getApi();
+              calendarApi.prev();
+
+              //var start = calendarApi.view;
+              // var end = calendarApi.view.end;
+              //console.log(start);
+              // var date = this.$refs.fullCalendar.getDate();
+              // alert("The current date of the calendar is " + date.toISOString());
+              this.get_events();
+            }
+          },
+          next: { // this overrides the prev button
+            text: "NEXT",
+            click: (e) => {
+              this.prevCounter = this.prevCounter + 1;
+
+
+              let calendarApi = this.$refs.fullCalendar.getApi();
+              calendarApi.next();
+              this.get_events();
+            }
+          },
           first: {
             text: "30 Days",
             click: () => {
               // this.clearHeaderContent();
               this.calendarOptions.views.resourceTimelineYear.duration.days = 60;
               // this.changeTableHeaderContent();
+              // this.defaultDaysCount = 60;
+
+
+
+              this.get_events();
             },
           },
           second: {
-            text: "60 Days",
+            text: "45 Days",
             click: () => {
               // this.clearHeaderContent();
-              this.calendarOptions.views.resourceTimelineYear.duration.days = 90;
+              this.calendarOptions.views.resourceTimelineYear.duration.days = 75;
               // this.changeTableHeaderContent();
+              //this.defaultDaysCount = 75;
+              this.get_events();
             },
           },
-          third: {
-            text: "90 Days",
-            click: () => {
-              this.clearHeaderContent();
-              this.calendarOptions.views.resourceTimelineYear.duration.days = 120;
-              // this.changeTableHeaderContent();
-            },
-          },
+          // third: {
+          //   text: "90 Days",
+          //   click: () => {
+          //     this.clearHeaderContent();
+          //     this.calendarOptions.views.resourceTimelineYear.duration.days = 120;
+          //     // this.changeTableHeaderContent();
+          //   },
+          // },
         },
         headerToolbar: {
           start: "first,second,third",
@@ -424,7 +459,7 @@ export default {
           },
           resourceTimelineYear: {
             type: "resourceTimeline",
-            duration: { days: 30 },
+            duration: { days: 31 },
             buttonText: "10 days",
             weekday: "long",
             day: "numeric",
@@ -627,6 +662,8 @@ export default {
       transactions: [],
       newBookingRoom: [],
       changeRoomOptions: [],
+
+      defaultDaysCount: 31,
     };
   },
 
@@ -742,6 +779,12 @@ export default {
     },
   },
   methods: {
+    handleDatesRender(info) {
+      let start = info.view.activeStart;
+      let end = info.view.activeEnd;
+      console.log(start);
+      console.log(`${start.toLocaleDateString()} - ${end.toLocaleDateString()}`);
+    },
     can(per) {
       let u = this.$auth.user;
       if (!u.permissions) return false;
@@ -757,35 +800,35 @@ export default {
         elements[i].innerHTML = "";
       }
     },
-    changeTableHeaderContent() {
-      this.changetableheaderwaitprocess();
-      setTimeout(() => {
-        this.changetableheaderwaitprocess();
-      }, 1000 * 5);
-    },
-    changetableheaderwaitprocess() {
-      const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
-      setTimeout(() => {
-        for (let i = 0; i < elements.length; i++) {
-          //elements[i].style.backgroundColor = "red";
+    // changeTableHeaderContent() {
+    //   this.changetableheaderwaitprocess();
+    //   setTimeout(() => {
+    //     this.changetableheaderwaitprocess();
+    //   }, 1000 * 5);
+    // },
+    // changetableheaderwaitprocess() {
+    //   const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
+    //   setTimeout(() => {
+    //     for (let i = 0; i < elements.length; i++) {
+    //       //elements[i].style.backgroundColor = "red";
 
-          let content = elements[i].getAttribute("title");
-          let date = new Date(content);
-          date = date.toString().split(" "); //
+    //       let content = elements[i].getAttribute("title");
+    //       let date = new Date(content);
+    //       date = date.toString().split(" "); //
 
-          let [weekday, m, daydate] = date;
-          //     //content = date.getFullYear();
+    //       let [weekday, m, daydate] = date;
+    //       //     //content = date.getFullYear();
 
-          elements[i].innerHTML =
-            "<span style='font-size:12px'>" +
-            daydate +
-            "</span> <span style='font-size:10px'>(" +
-            weekday +
-            ")</span>"; //';content;
-          // return
-        }
-      }, 1000 * 3);
-    },
+    //       elements[i].innerHTML =
+    //         "<span style='font-size:12px'>" +
+    //         daydate +
+    //         "</span> <span style='font-size:10px'>(" +
+    //         weekday +
+    //         ")</span>"; //';content;
+    //       // return
+    //     }
+    //   }, 1000 * 3);
+    // },
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -822,6 +865,8 @@ export default {
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
+          prevCounter: this.prevCounter,
+          defaultDaysCount: this.defaultDaysCount
         },
       };
       this.$axios.get(`events_list`, payload).then(({ data }) => {
@@ -909,16 +954,30 @@ export default {
           checkout: this.reservation.check_out,
         },
       };
+      this.$store.commit("booking_payload", payload);
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
+          if (!data.status) {
+
+            this.alert("Failure!", data.data, "error");
+            return false;
+          }
+
           this.reservation.room_id = data.room.id;
           this.reservation.price = data.total_price;
           this.reservation.priceList = data.data;
           this.reservation.total_tax = data.total_tax;
+
+          this.reservation.total_price_after_discount = data.total_price_after_discount;
+          this.reservation.total_price = data.total_price;
+          this.reservation.total_discount = data.total_discount;
+
           let commitObj = {
             ...this.reservation,
+
           };
+          //console.log('reservation1', commitObj);
           this.$store.commit("reservation", commitObj);
           this.$router.push(`/hotel/new2`);
         });
