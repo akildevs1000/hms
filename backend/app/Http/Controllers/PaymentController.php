@@ -10,12 +10,13 @@ class PaymentController extends Controller
     public function store($data)
     {
         $model = Payment::query();
-        return  $model->create($data);
+        $data['date'] = date('Y-m-d');
+        return $model->create($data);
     }
 
     public function update($data, $found)
     {
-        return   $found->update(['amount' => $data['amount']]);
+        return $found->update(['amount' => $data['amount']]);
     }
 
     public function index(Request $request)
@@ -26,7 +27,6 @@ class PaymentController extends Controller
         $model->whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', -1);
         });
-        // $model->with("booking:id,reservation_no");
         $model->with(['booking:id,reservation_no,customer_id' => ['customer:id,first_name,last_name']]);
         $model->orderByDesc("id");
 

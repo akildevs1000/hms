@@ -22,21 +22,23 @@ class WordpressApiController extends Controller
 
         $bookedDates = BookedRoom::select('id', 'booking_id', 'room_no', 'room_type')->withOut('booking', 'postings')
             ->where('company_id', $request->company_id)
-            ->where('booking_status', '!=', 0)
-            ->where('booking_status', '<=', 2)
+        // ->where('booking_status', '!=', 0)
+        // ->where('booking_status', '<=', 2)
             ->where(function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
                     $query->where('check_in', '>=', $request->from_date . ' 00:00:00')
                         ->where('check_in', '<=', $request->from_date . ' 23:59:59');
                 });
                 $query->orWhere(function ($query) use ($request) {
-                    $query->where('check_in', '<=', $request->from_date . ' 00:00:00')
+                    $query->where('check_out', '<=', $request->from_date . ' 00:00:00')
                         ->where('check_out', '>=', $request->from_date . ' 23:59:59');
                 });
-            })->orderBy('room_no', 'ASC')->get()->toArray();
+            })
+        //->where('check_in', '>=', $request->from_date . ' 00:00:00')
+            ->orderBy('room_no', 'ASC')->get()->toArray();
 
         $bookedRoomNumbers = array_column($bookedDates, 'room_no');
-
+        return $bookedRoomNumbers;
         $allRoomNumbers = array_column($rooms, 'room_no');
 
         $unbookedRoomNumbers = array_diff($allRoomNumbers, $bookedRoomNumbers);
@@ -47,8 +49,19 @@ class WordpressApiController extends Controller
                 $unbookedRoomsInfo[] = $room;
             }
         }
+
+        usort($unbookedRoomsInfo, function ($room1, $room2) {
+            $price1 = floatval($room1['price']);
+            $price2 = floatval($room2['price']);
+
+            if ($price1 == $price2) {
+                return 0;
+            }
+            return ($price1 > $price2) ? -1 : 1; // Change comparison to sort in descending order
+        });
+        //return $unbookedRoomsInfo;
         // usort($unbookedRoomsInfo, function ($a, $b) {
-        //     return strcmp($a['room_no'], $b['room_no']);
+        //     return strcmp($a['price'], $b['price']);
         // });
 
         // Group unbooked room info by room type
@@ -67,6 +80,16 @@ class WordpressApiController extends Controller
         }
         return ["data" => $groupedRooms];
 
+    }
+    public function compareByPrice($room1, $room2)
+    {
+        $price1 = floatval($room1['price']);
+        $price2 = floatval($room2['price']);
+
+        if ($price1 == $price2) {
+            return 0;
+        }
+        return ($price1 < $price2) ? -1 : 1;
     }
     public function checkOutDate($date)
     {

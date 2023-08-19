@@ -188,5 +188,10 @@ class PermissionSeeder extends Seeder
         Permission::create(['module' => 'settings_permissions', 'title' => 'Settings Permissions Edit', 'name' => 'settings_permissions_edit']);
         Permission::create(['module' => 'settings_permissions', 'title' => 'Settings Permissions Delete', 'name' => 'settings_permissions_delete']);
 
+        Permission::create(['module' => 'setting_access', 'title' => 'Settings Access', 'name' => 'setting_access']);
+        Permission::create(['module' => 'history_menu', 'title' => 'History Menu', 'name' => 'history_menu']);
+        Permission::create(['module' => 'guest_menu', 'title' => 'Guest menu', 'name' => 'guest_menu']);
+        Permission::create(['module' => 'account_menu', 'title' => 'Account menu', 'name' => 'account_menu']);
+        Permission::create(['module' => 'management_access', 'title' => 'Management Access', 'name' => 'management_access']);
     }
 }
