@@ -10,12 +10,13 @@ class PaymentController extends Controller
     public function store($data)
     {
         $model = Payment::query();
-        return  $model->create($data);
+        $data['date'] = date('Y-m-d');
+        return $model->create($data);
     }
 
     public function update($data, $found)
     {
-        return   $found->update(['amount' => $data['amount']]);
+        return $found->update(['amount' => $data['amount']]);
     }
 
     public function index(Request $request)

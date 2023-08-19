@@ -39,13 +39,41 @@
             <v-col md="12">
                 <!-- {{ data }} -->
 
+                <table style="width:50%">
+                    <tr>
+                        <td>
+                            #
+                        </td>
 
-                <!-- <div v-for="items in data">{{ items }}
+                        <td>
+                            Category
+                        </td>
 
-                    {{ item[0] }}
+                        <td>
+                            Price
+                        </td>
 
-                </div> -->
-                <v-data-table v-model="ids" item-key="id" :headers="headers" :items="data" :loading="loading"
+                        <td>
+                            Rooms
+                        </td>
+                    </tr>
+                    <tr v-for="(items, key, index)   in  data ">
+                        <td>
+                            {{ ++index }}
+                        </td>
+                        <td>
+                            {{ key }}
+                        </td>
+                        <td>{{ items[0].price }}</td>
+                        <td> (
+                            <span v-for="rooms   in  items "> {{ rooms.room_no }}, </span>)
+
+                        </td>
+
+                    </tr>
+                </table>
+
+                <!-- <v-data-table v-model="ids" item-key="id" :headers="headers" :items="data" :loading="loading"
                     :options.sync="options" :footer-props="{
                         itemsPerPageOptions: [50, 100, 500, 1000],
                     }" class="elevation-1">
@@ -85,7 +113,7 @@
 
                     </template>
 
-                </v-data-table>
+                </v-data-table> -->
 
             </v-col>
         </v-row>
@@ -179,8 +207,7 @@ export default {
             .toISOString()
             .slice(0, 10);
 
-        //permissions
-        this.getPermissions();
+        this.getDataFromApi();
     },
 
     methods: {
@@ -221,10 +248,10 @@ export default {
             };
 
             this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-                //  this.data = data.data;
+                this.data = data.data;
 
-                this.data = Object.keys(data.data).flatMap((roomType) => data.data[roomType]);
-
+                //this.data = Object.keys(data.data).flatMap((roomType) => data.data[roomType]);
+                console.log(this.data);
                 this.loading = false;
             });
         },

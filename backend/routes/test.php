@@ -43,7 +43,8 @@ Route::get('/test', function (Request $request) {
             ->where('id', $value->id)
             ->update(['date' => $d]);
     }
-
+    
+    return;
     // $company_ids =    Company::orderBy('id', 'asc')->pluck("id");
     $company_ids = [1, 2];
     foreach ($company_ids as $company_id) {
