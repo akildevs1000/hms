@@ -172,6 +172,15 @@ export default {
               this.$router.push(`/otp`);
               return;
             }
+            else {
+              const updatedUser = Object.assign({}, this.$auth.user, {
+                is_verified: 1,
+              });
+              this.$auth.setUser(updatedUser);
+              setTimeout(() => {
+                this.$router.push(`/`);
+              }, 1000);
+            }
 
             if (data.user && data.user.user_type == "master") {
               this.$router.push(`/master/companies`);

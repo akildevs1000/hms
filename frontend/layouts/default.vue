@@ -629,7 +629,7 @@ export default {
       // return this.$auth.user.user_type == "employee"
       //   ? this.$auth.user.name
       //   : this.$auth.user.company.name;
-      return this.$auth.user.name;
+      return this.$auth.user.name + " " + this.$auth.user.last_name;
     },
 
     getLogo() {

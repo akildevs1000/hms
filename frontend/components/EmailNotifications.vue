@@ -64,10 +64,10 @@
 
                                 <label><strong>Reports</strong></label>
 
-                                <v-col md="6" cols="6" v-for="item1 in report_types  ">
+                                <v-col md="6" cols="6" v-for="item1 in report_types  " :key="item1.id">
 
-                                    <v-checkbox :disabled="viewMode" v-model="selectedReportTypes" :key="item1.id"
-                                        :value="item1.id" :label="item1.name" hide-details>
+                                    <v-checkbox :disabled="viewMode" v-model="selectedReportTypes" :value="item1.id"
+                                        :label="item1.name" hide-details>
                                     </v-checkbox>
 
                                 </v-col>
