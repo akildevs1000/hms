@@ -357,8 +357,8 @@ export default {
 
     save() {
       let payload = {
-        name: this.editedItem.name.toLowerCase(),
-        description: this.editedItem.description.toLowerCase(),
+        name: this.editedItem.name,
+        description: this.editedItem.description,
 
         company_id: this.$auth.user.company.id,
       };

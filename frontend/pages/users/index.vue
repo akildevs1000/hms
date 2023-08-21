@@ -145,18 +145,42 @@
         <v-card-actions> </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-toolbar class="rounded-md" color="background" dense flat dark>
-      <span> {{ Model }} List</span>
+
+
+    <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
+
+
+      <v-toolbar-title><span> Users</span></v-toolbar-title>
+
+
+      <v-tooltip top color="primary">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn dense class="ma-0 px-0" x-small :ripple="false" text v-bind="attrs" v-on="on">
+            <v-icon color="white" class="ml-2" @click="reload()" dark>mdi
+              mdi-reload</v-icon>
+          </v-btn>
+        </template>
+        <span>Reload</span>
+      </v-tooltip>
+      <v-tooltip top color="primary">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="toggleFilter">
+            <v-icon white color="#FFF">mdi-filter</v-icon>
+          </v-btn>
+        </template>
+        <span>Filter</span>
+      </v-tooltip>
       <v-spacer></v-spacer>
-      <v-btn class="float-right py-3" @click="toggleFilter" x-small color="primary">
-        <v-icon color="white" small class="py-5">mdi-magnify</v-icon>
-        Search
-      </v-btn>
-      <v-btn v-if="can('settings_users_create')" class="float-right py-3 ml-2" @click="userDialog = true; errors = []"
-        x-small color="primary">
-        <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-        Add
-      </v-btn>
+
+      <v-tooltip top color="primary">
+        <template v-if="can('lost_and_found_create')" v-slot:activator="{ on, attrs }">
+          <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="userDialog = true; errors = []">
+            <v-icon color="white" dark white>mdi-plus-circle</v-icon>
+          </v-btn>
+        </template>
+        <span>Add New Record</span>
+      </v-tooltip>
+
     </v-toolbar>
 
     <v-data-table :headers="headers" :items="userData" :options.sync="options" :server-items-length="totalUserData"
@@ -167,13 +191,27 @@
       }">
       <template v-slot:header="{ props: { headers } }">
         <tr v-if="isFilter">
-          <th v-for="header in headers" :key="header.text">
-            <v-text-field v-if="header.filterable" v-model="filters[header.value]" :label="header.text" clearable
-              @input="applyFilters" dense outlined flat append-icon="mdi-magnify"></v-text-field>
-            <!-- <template v-else>
-              {{ header.text }}
-            </template> -->
-          </th>
+          <td v-for="header in headers" :key="header.text">
+            <v-text-field clearable :hide-details="true" v-if="header.filterable && !header.filterSpecial"
+              v-model="filters[header.key]" :id="header.value" @input="applyFilters(header.key, $event)" outlined dense
+              autocomplete="off"></v-text-field>
+            <v-autocomplete v-else-if="header.filterable && header.key == 'status'" clearable
+              @click:clear="filters[header.value] = ''; applyFilters()" :hide-details="true"
+              @change="applyFilters('status', $event)" item-value="value" item-text="title"
+              v-model="filters[header.value]" outlined dense :items="[
+                { value: '', title: 'All' },
+                { value: '1', title: 'Active' },
+                {
+                  value: '0',
+                  title: 'In-Active',
+                }
+              ]" placeholder="Status"></v-autocomplete>
+            <v-autocomplete v-else-if="header.filterable && header.key == 'role_id'" clearable
+              @click:clear="filters[header.key] = ''; applyFilters()" :hide-details="true"
+              @change="applyFilters('status', $event)" item-value="id" item-text="name" v-model="filters[header.key]"
+              outlined dense :items="roles" placeholder="Role"></v-autocomplete>
+
+          </td>
         </tr>
       </template>
 
@@ -188,14 +226,15 @@
         </v-img>
 
       </template>
-      <template v-slot:item.role="{ item }">
 
-        {{ item.role && capsTitle(item.role.name) }}
-
-      </template>
       <template v-slot:item.name="{ item }">
 
-        {{ item.name }} {{ item.last_name }}
+        {{ item.title }} {{ item.name }} {{ item.last_name }}
+
+      </template>
+      <template v-slot:item.role.name="{ item }">
+
+        {{ item.role && item.role.name }}
 
       </template>
       <template v-slot:item.is_active="{ item }">
@@ -262,20 +301,16 @@ export default {
       options: {},
       filters: {},
       headers: [
-        // {
-        //   text: 'Dessert (100g serving)',
-        //   align: 'start',
-        //   sortable: false,
-        //   value: 'name',
-        // },
-        { text: 'Title', value: 'title', filterable: true },
-        { text: 'Photo', value: 'photo', filterable: true, align: "center" },
-        { text: 'Name', value: 'name', filterable: true },
-        { text: 'Email', value: 'email', filterable: true },
-        { text: 'Mobile', value: 'mobile', filterable: true },
-        { text: 'Role', value: 'role', filterable: false },
-        { text: 'Whatsapp OTP', value: 'enable_whatsapp_otp', filterable: false },
-        { text: 'Status', value: 'is_active', filterable: false },
+
+
+        { text: 'Photo', value: 'photo', sortable: false, filterable: false, align: "center" },
+
+        { text: 'Name', value: 'name', key: 'name', filterable: true },
+        { text: 'Email', value: 'email', key: 'email', filterable: true },
+        { text: 'Mobile', value: 'mobile', key: 'mobile', filterable: true },
+        { text: 'Role', value: 'role.name', key: "role_id", filterable: true, filterSpecial: true },
+        { text: 'Whatsapp OTP', value: 'enable_whatsapp_otp', key: "enable_whatsapp_otp", key: "status", filterable: true, filterSpecial: true },
+        { text: 'Status', value: 'is_active', key: "is_active", filterable: true, key: "status", filterSpecial: true },
         { text: 'Actions', value: 'actions', filterable: false, sortable: false },
       ],
       editedIndex: -1,
@@ -334,8 +369,20 @@ export default {
       return this.editedIndex === -1 ? "New" : "Edit";
     },
   },
+  created() {
+    this.getRolesList();
+  },
+
 
   methods: {
+    reload() {
+      this.isFilter = false;
+      this.filters = {};
+      this.$set(this.options, 'page', 1);
+      this.getDataFromApi(this.endpoint, 1);
+
+
+    },
     can(per) {
       let u = this.$auth.user;
       return (
@@ -437,13 +484,13 @@ export default {
         });
 
 
-      this.getRolesList();
+
     },
     getRolesList() {
       let options = { params: { company_id: this.$auth.user.company.id } };
       this.$axios.get('role', options).then((data) => {
         this.roles = data.data.data;
-        console.log(this.roles);
+
       });
     },
     save() {
