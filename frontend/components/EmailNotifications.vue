@@ -64,10 +64,10 @@
 
                                 <label><strong>Reports</strong></label>
 
-                                <v-col md="6" cols="6" v-for="item in report_types  ">
+                                <v-col md="6" cols="6" v-for="item1 in report_types  ">
 
-                                    <v-checkbox :disabled="viewMode" v-model="selectedReportTypes" :value="item.id"
-                                        :label="item.name" hide-details>
+                                    <v-checkbox :disabled="viewMode" v-model="selectedReportTypes" :key="item1.id"
+                                        :value="item1.id" :label="item1.name" hide-details>
                                     </v-checkbox>
 
                                 </v-col>
@@ -125,7 +125,7 @@
                         }" class="elevation-1" :server-items-length="totalTableRowsCount">
                         <template v-slot:header="{ props: { headers } }">
                             <tr v-if="isFilter">
-                                <td v-for="  header   in      headers     " :key="header.text">
+                                <td v-for="header in headers" :key="header.text">
                                     <v-text-field v-if="header.filterable && !header.filterSpecial" clearable
                                         :hide-details="true" v-model="filters[header.value]" no-title outlined dense small
                                         :id="header.value" autocomplete="off" @input="applyFilters()"></v-text-field>

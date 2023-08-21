@@ -10,7 +10,7 @@ use App\Models\Weekend;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
-class WordpressApiController extends Controller
+class WidgetApiController extends Controller
 {public function index(Request $request)
     {
     return ['1'];
@@ -38,7 +38,7 @@ class WordpressApiController extends Controller
             ->orderBy('room_no', 'ASC')->get()->toArray();
 
         $bookedRoomNumbers = array_column($bookedDates, 'room_no');
-        return $bookedRoomNumbers;
+
         $allRoomNumbers = array_column($rooms, 'room_no');
 
         $unbookedRoomNumbers = array_diff($allRoomNumbers, $bookedRoomNumbers);

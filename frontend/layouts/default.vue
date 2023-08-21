@@ -60,7 +60,7 @@
         nudge-left="20">
         <template v-slot:activator="{ on, attrs }">
           <label class="px-2" v-bind="attrs" v-on="on">
-            {{ getUser || "" }}
+            {{ getUser || "---" }}
           </label>
 
           <v-btn icon color="yellow" v-bind="attrs" v-on="on">
@@ -400,7 +400,7 @@ export default {
             },
             {
               icon: "mdi mdi-account-tie",
-              title: "User",
+              title: "Users",
               to: "/users",
               menu: "settings_users_access",
             },
@@ -546,9 +546,6 @@ export default {
 
     let user = this.$auth.user;
     let permissions = user.permissions;
-
-    console.log(user);
-
     this.items.push(das);
 
     this.menus.forEach((ele) => {
@@ -623,16 +620,20 @@ export default {
     },
 
     getUser() {
+
+
+
       if (!this.$auth.user) {
         return "";
       }
-      return this.$auth.user.user_type == "employee"
-        ? this.$auth.user.name
-        : this.$auth.user.company.name;
+      // return this.$auth.user.user_type == "employee"
+      //   ? this.$auth.user.name
+      //   : this.$auth.user.company.name;
+      return this.$auth.user.name;
     },
 
     getLogo() {
-      return this.$auth.user && this.$auth.user.company.logo;
+      return this.$auth.user && this.$auth.user.image || '/no-image.PNG';
     },
   },
   methods: {

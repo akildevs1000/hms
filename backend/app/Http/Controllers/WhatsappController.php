@@ -63,24 +63,30 @@ class WhatsappController extends Controller
     public function sentOTPNew($user)
     {
         // return $user->mobile == '918220312148';
-        try {
 
-            $number = env('COUNTRY_CODE') . $user->mobile;
-            $token = env('WHATSAPP_ACCESS_TOKEN');
-            $instance_id =  env('OTP_ID');
+        if ($user->enable_whatsapp_otp == 1) {
+            try {
 
-            $msg = $this->processMessage($user);
+                $number = env('COUNTRY_CODE') . $user->mobile;
+                $token = env('WHATSAPP_ACCESS_TOKEN');
+                $instance_id = env('OTP_ID');
 
-            $url = "https://ezwhat.com/api/send.php?number={$number}&type=text&message={$msg}&instance_id={$instance_id}&access_token={$token}";
+                $msg = $this->processMessage($user);
 
-            $response = Http::withoutVerifying()->get($url);
+                $url = "https://ezwhat.com/api/send.php?number={$number}&type=text&message={$msg}&instance_id={$instance_id}&access_token={$token}";
 
-            $response->status();
+                $response = Http::withoutVerifying()->get($url);
 
-            return ['message' => $response];
-        } catch (\Throwable $th) {
-            Log::channel("custom")->error("BookingController: " . $th);
+                $response->status();
+
+                return ['message' => $response];
+            } catch (\Throwable $th) {
+                Log::channel("custom")->error("BookingController: " . $th);
+            }
+        } else {
+
         }
+
     }
     public function sentTwilio($user = null)
     {

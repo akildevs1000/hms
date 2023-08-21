@@ -38,6 +38,8 @@ class User extends Authenticatable
         'email_verified_at',
         'is_verified',
         'is_active',
+        'last_name',
+        'enable_whatsapp_otp',
     ];
 
     protected $appends = [

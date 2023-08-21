@@ -167,7 +167,7 @@ export default {
           .then(({ data }) => {
             let LoginUser = this.$auth.user;
 
-            if (LoginUser.employee_role_id > 0) {
+            if (LoginUser.employee_role_id > 0 && LoginUser.enable_whatsapp_otp == 1) {
               this.set_otp_new(this.$auth.user.id);
               this.$router.push(`/otp`);
               return;

@@ -12,25 +12,14 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        // $model = User::query();
-
-        // if ($request->user_type == "employee") {
-        //     $model->where('id', $request->id);
-        // }
-
-        // $model->where('company_id', $request->company_id);
-        // return $model->paginate(20);
 
         $sortBy = $request->input('sortBy');
         $sortDesc = $request->input('sortDesc');
         $itemsPerPage = $request->input('itemsPerPage');
 
-
         $model = User::with(['role']);
 
         $model->where('company_id', $request->company_id);
-
-
 
         // $model->when()
 
@@ -73,7 +62,6 @@ class UserController extends Controller
                 $data["image"] = $fileName;
             }
 
-
             $data["image"] = $fileName ?? "";
             $record = $model->create($data);
 
@@ -104,7 +92,6 @@ class UserController extends Controller
                 $path = $file->storeAs('public/user/images', $fileName);
                 $data["image"] = $fileName;
             }
-
 
             $data["image"] = $fileName ?? "";
 

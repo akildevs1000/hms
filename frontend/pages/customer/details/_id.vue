@@ -820,6 +820,7 @@
                           <th>#</th>
                           <th>Date</th>
                           <th>Time</th>
+                          <th>Staff</th>
                           <th>payment Mode</th>
                           <th>Reference</th>
                           <th>Description</th>
@@ -837,6 +838,7 @@
                           </td>
                           <td>{{ item.date || "---" }}</td>
                           <td>{{ item.time || "---" }}</td>
+                          <td>{{ item.user.name || "---" }} {{ item.user.last_name }}</td>
                           <td>
                             {{
                               (item &&

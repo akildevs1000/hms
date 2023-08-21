@@ -23,17 +23,23 @@
                     <v-row>
                       <v-col md="8">
                         <v-row>
-                          <v-col md="3" cols="12" sm="12">
+                          <v-col md="2" cols="12" sm="12">
                             <v-select v-model="editedItem.title" :items="titleItems" dense item-text="name"
                               item-value="name" :hide-details="errors && !errors.title" :error="errors && errors.title"
                               :error-messages="errors && errors.title ?
                                 errors.title[0] : ''
                                 " outlined></v-select>
                           </v-col>
-                          <v-col md="9" cols="12">
+                          <v-col md="5" cols="12">
                             <v-text-field v-model="editedItem.name" placeholder="Name" label="Name" outlined
                               :hide-details="true" dense></v-text-field>
                             <span v-if="errors && errors.name" class="error--text">{{ errors.name[0]
+                            }}</span>
+                          </v-col>
+                          <v-col md="5" cols="12">
+                            <v-text-field v-model="editedItem.last_name" placeholder="Last Name" label="last Name"
+                              outlined :hide-details="true" dense></v-text-field>
+                            <span v-if="errors && errors.last_name" class="error--text">{{ errors.last_name[0]
                             }}</span>
                           </v-col>
                           <v-col md="12" cols="12">
@@ -43,14 +49,15 @@
                             }}</span>
                           </v-col>
                           <v-col md="12" cols="12">
-                            <v-text-field v-model="editedItem.password" placeholder="Password" label="Password" outlined
-                              :hide-details="true" type="password" dense></v-text-field>
+                            <v-text-field v-model="editedItem.password" placeholder="Password" autocomplete="false"
+                              label="Password" outlined :hide-details="true" type="password" dense></v-text-field>
                             <span v-if="errors && errors.password" class="error--text">{{ errors.password[0]
                             }}</span>
                           </v-col>
                           <v-col md="12" cols="12">
-                            <v-text-field v-model="editedItem.password_confirmation" placeholder="Confirm Password"
-                              label="Confirm Password" outlined :hide-details="true" type="password" dense></v-text-field>
+                            <v-text-field v-model="editedItem.password_confirmation" autocomplete="false"
+                              placeholder="Confirm Password" label="Confirm Password" outlined :hide-details="true"
+                              type="password" dense></v-text-field>
                             <span v-if="errors && errors.password_confirmation" class="error--text">{{
                               errors.password_confirmation[0]
                             }}</span>
@@ -66,9 +73,26 @@
                               outlined placeholder="Select Role" label="Role" :hide-details="true" dense></v-select>
                             <span v-if="errors && errors.role_id" class="error--text">{{ errors.role_id[0] }}</span>
                           </v-col>
+
+
                           <v-col md="12" cols="12">
- 
-                            <v-select v-model="editedItem.is_active" :items="[
+
+                            <v-select label="Whatsapp OTP" v-model="editedItem.enable_whatsapp_otp" :items="[
+                              { name: 'Enable', value: '1' },
+                              { name: 'Disable', value: '0' }
+                            ]" dense item-text="name" item-value="value"
+                              :hide-details="errors && !errors.enable_whatsapp_otp"
+                              :error="errors && errors.enable_whatsapp_otp" :error-messages="errors && errors.enable_whatsapp_otp ?
+                                errors.enable_whatsapp_otp[0] : ''
+                                " outlined></v-select>
+                            <span v-if="errors && errors.enable_whatsapp_otp" class="error--text">{{
+                              errors.enable_whatsapp_otp[0]
+                            }}</span>
+
+                          </v-col>
+                          <v-col md="12" cols="12">
+
+                            <v-select label="Status" v-model="editedItem.is_active" :items="[
                               { name: 'Active', value: '1' },
                               { name: 'Inactive', value: '0' }
                             ]" dense item-text="name" item-value="value" :hide-details="errors && !errors.is_active"
@@ -128,8 +152,8 @@
         <v-icon color="white" small class="py-5">mdi-magnify</v-icon>
         Search
       </v-btn>
-      <v-btn v-if="can('settings_users_create')" class="float-right py-3 ml-2" @click="userDialog = true" x-small
-        color="primary">
+      <v-btn v-if="can('settings_users_create')" class="float-right py-3 ml-2" @click="userDialog = true; errors = []"
+        x-small color="primary">
         <v-icon color="white" small class="py-5">mdi-plus</v-icon>
         Add
       </v-btn>
@@ -152,10 +176,39 @@
           </th>
         </tr>
       </template>
+
+      <template v-slot:item.photo="{ item }">
+
+        <v-img style="
+                    border-radius: 50%;
+                    height:100px;
+                    width: 100px;
+                    margin: 0 auto;
+                  " :src="item.image || '/no-image.PNG'">
+        </v-img>
+
+      </template>
       <template v-slot:item.role="{ item }">
+
         {{ item.role && capsTitle(item.role.name) }}
 
       </template>
+      <template v-slot:item.name="{ item }">
+
+        {{ item.name }} {{ item.last_name }}
+
+      </template>
+      <template v-slot:item.is_active="{ item }">
+
+        {{ item.is_active == 1 ? 'Active' : 'In-Active' }}
+
+      </template>
+      <template v-slot:item.enable_whatsapp_otp="{ item }">
+
+        {{ item.enable_whatsapp_otp == 1 ? 'Active' : 'In-Active' }}
+
+      </template>
+
       <template v-slot:item.actions="{ item }">
 
         <v-menu bottom left v-if="can('settings_users_edit') || can('settings_users_delete')">
@@ -164,6 +217,7 @@
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
+
           <v-list width="120" dense>
             <v-list-item v-if="can('settings_users_edit')" @click="editItem(item)">
               <v-list-item-title style="cursor: pointer">
@@ -215,21 +269,26 @@ export default {
         //   value: 'name',
         // },
         { text: 'Title', value: 'title', filterable: true },
+        { text: 'Photo', value: 'photo', filterable: true, align: "center" },
         { text: 'Name', value: 'name', filterable: true },
         { text: 'Email', value: 'email', filterable: true },
         { text: 'Mobile', value: 'mobile', filterable: true },
         { text: 'Role', value: 'role', filterable: false },
+        { text: 'Whatsapp OTP', value: 'enable_whatsapp_otp', filterable: false },
+        { text: 'Status', value: 'is_active', filterable: false },
         { text: 'Actions', value: 'actions', filterable: false, sortable: false },
       ],
       editedIndex: -1,
       editedItem: {
-        title: "",
+        title: "Mr",
         name: "",
         password: "",
         password_confirmation: "",
         email: "",
         mobile: "",
         is_active: 1,
+        enable_whatsapp_otp: 1,
+        last_name: ''
       },
 
       defaultItem: {
@@ -259,7 +318,7 @@ export default {
   },
   watch: {
     userDialog(val) {
-      !val ? this.editedItem = {} : ''
+      !val ? this.editedItem = [] : ''
     },
 
     options: {
@@ -298,8 +357,17 @@ export default {
     },
 
     editItem(item) {
+
+      this.errors = [];
       this.editedIndex = this.userData.indexOf(item);
       this.editedItem = Object.assign({}, item);
+
+      if (this.editedItem.title == null) {
+        this.editedItem.title = "Mr"
+      }
+      if (this.editedItem.last_name == null) {
+        this.editedItem.last_name = ""
+      }
       this.previewImage = item.image;
       this.userDialog = true;
     },
@@ -400,14 +468,16 @@ export default {
         payload.append("role_id", this.editedItem.role_id);
         //payload.append("employee_role_id", this.editedItem.role_id);
       }
-
-
-      payload.append("title", this.editedItem.title);
+      if (this.editedItem.title)
+        payload.append("title", this.editedItem.title);
       payload.append("name", this.editedItem.name);
       payload.append("email", this.editedItem.email);
       payload.append("is_active", this.editedItem.is_active);
 
       payload.append("company_id", this.$auth.user.company.id);
+      payload.append("enable_whatsapp_otp", this.editedItem.enable_whatsapp_otp);
+      payload.append("last_name", this.editedItem.last_name);
+
 
 
       if (this.editedIndex > -1) {
@@ -417,6 +487,7 @@ export default {
           .post('users' + "/" + this.editedItem.id, payload)
           .then(({ data }) => {
             if (!data.status) {
+              this.error = true;
               this.errors = data.errors;
             } else {
               this.userDialog = false;
@@ -432,6 +503,7 @@ export default {
           .post('users', payload)
           .then(({ data }) => {
             if (!data.status) {
+              this.error = true;
               this.errors = data.errors;
             } else {
               this.getDataFromApi();
