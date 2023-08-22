@@ -19,7 +19,11 @@
                         <div class="tm_invoice_head tm_mb0">
                             <div class="tm_invoice_left">
                                 <div class="tm_logo">
-                                    @if ($booking->company_id == 1)
+
+                                @if (env("APP_ENV")=="production")
+        <img src="{{urldecode($booking->company->logo)}}" height="100px" width="100"
+                    style="margin-left: 50px;margin-top: 0px">
+                    @elseif ($booking->company_id == 1)
                                         <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
                                             style="max-height:70px!important;margin-top:10px">
                                     @elseif ($booking->company_id == 2)

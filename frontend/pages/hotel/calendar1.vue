@@ -954,6 +954,7 @@ export default {
           checkout: this.reservation.check_out,
         },
       };
+
       this.$store.commit("booking_payload", payload);
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)

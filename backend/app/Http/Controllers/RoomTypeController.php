@@ -37,9 +37,16 @@ class RoomTypeController extends Controller
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
-        $data['holiday_price'] = $data['weekday_price'] = $data['weekend_price'] = $data['price'];
+        $data['holiday_price'] = $data['weekday_price'] = $data['price'];
 
-        // return $data;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $ext = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $ext;
+            $path = $file->storeAs('public/rooms/', $fileName);
+
+            $data["pic"] = $fileName ?? "";
+        }
 
         try {
             $record = RoomType::create($data);
@@ -55,9 +62,23 @@ class RoomTypeController extends Controller
 
     public function update(UpdateRequest $request, RoomType $roomType)
     {
+
         try {
+
             $data = $request->validated();
+
             $data['holiday_price'] = $data['weekday_price'] = $data['weekend_price'] = $data['price'];
+
+            if ($request->hasFile('image')) {
+
+                $file = $request->file('image');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $path = $file->storeAs('public/rooms', $fileName);
+
+                $data["pic"] = $fileName ?? "";
+            }
+
             $record = $roomType->update($data);
             if ($record) {
                 return $this->response('Room Category successfully updated.', $record, true);

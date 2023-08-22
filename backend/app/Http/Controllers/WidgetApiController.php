@@ -18,7 +18,7 @@ class WidgetApiController extends Controller
     public function getAvailableRoomList(Request $request)
     {
 
-        $rooms = Room::where('company_id', $request->company_id)->get()->toArray();
+        $rooms = Room::with('roomType')->where('company_id', $request->company_id)->get()->toArray();
 
         $bookedDates = BookedRoom::select('id', 'booking_id', 'room_no', 'room_type')->withOut('booking', 'postings')
             ->where('company_id', $request->company_id)
