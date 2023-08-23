@@ -195,8 +195,20 @@
 
 
                                                                 $subtotal_price+=$room->price_adjusted_after_dsicount+($room->tot_adult_food +   $room->tot_child_food-$foodGstAmount) ;
-                                                                $subtotal_sgst+=$room->sgst +($foodGstAmount/2);
-                                                                $subtotal_cgst+=$room->cgst +($foodGstAmount/2);
+ //for old formate
+ $old_format_room_price=0;
+ /*$old_format_room_price=$room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)-$foodGstAmount-($room->cgst-($foodGstAmount/2)+$room->sgst-($foodGstAmount/2));
+  if ( $room->price_adjusted_after_dsicount==0)
+ {
+    $subtotal_price+=$old_format_room_price;
+ }*/
+
+
+
+
+
+                                                                $subtotal_sgst+=$room->sgst;
+                                                                $subtotal_cgst+=$room->cgst ;
 
 
                                                                 $subtotal_total+=$room->total;
@@ -227,19 +239,19 @@
                                                     </td> -->
 
                                                     <td class="  tm_text_right">
+                                                    {{  number_format($room->price_adjusted_after_dsicount,2)   }}
+                                                    <!-- {{ $room->price_adjusted_after_dsicount>0?number_format($room->price_adjusted_after_dsicount,2) :number_format($old_format_room_price,2) }}
+                                                    <!-- {{ number_format($room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)-$foodGstAmount-($room->cgst-($foodGstAmount/2)+$room->sgst-($foodGstAmount/2)) , 2) }} -->
 
-                                                    {{ number_format($room->price_adjusted_after_dsicount,2) }}
-                                                    <!-- {{ number_format($room->price-$room->room_discount,2) }} -->
-<!-- <br/>
-                                                    {{ number_format($room->after_discount,2) }} -->
+
                                                     </td>
 
 
                                                     <td class="  tm_text_right">
-                                                        {{ $room->cgst-($foodGstAmount/2) }}
+                                                        {{ number_format($room->cgst-($foodGstAmount/2),2) }}
                                                     </td>
                                                     <td class="  tm_text_right">
-                                                        {{ $room->sgst-($foodGstAmount/2) }}
+                                                        {{ number_format($room->sgst-($foodGstAmount/2),2) }}
                                                     </td>
                                                     <!-- <td class="tm_width_2 tm_text_right">
                                                         {{ number_format($room->room_discount, 2) }}
@@ -263,10 +275,10 @@
                                                     </td>
 
                                                     <td class="  tm_text_right">
-                                                    {{  $foodGstAmount/2 }}
+                                                    {{   number_format($foodGstAmount/2,2) }}
                                                     </td>
                                                     <td class="  tm_text_right">
-                                                    {{  $foodGstAmount/2 }}
+                                                    {{   number_format($foodGstAmount/2,2) }}
                                                     </td>
                                                     <td class="  tm_text_right">
                                                         {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food , 2) }}
@@ -284,13 +296,14 @@
                                                         ->get();
                                                 @endphp
                                                 @foreach ($postings as $post)
-                                                    <tr class="inv-posting-td-txt">
+                                                    <tr class=" inv-tr-txt">
                                                         <td class=" ">
                                                             {{ date('d M Y', strtotime($post->posting_date)) }}
                                                         </td>
-                                                        <td class="  ">
+                                                        <!-- <td class="  ">
                                                             {{ $room->room_no }}
-                                                        </td>
+                                                        </td> -->
+
                                                         <td class="  ">
                                                             {{ $post->item }}
                                                         </td>
@@ -301,15 +314,13 @@
                                                             {{ $post->amount }}
                                                         </td>
 
-                                                        <td class="  ">
-                                                            ---
-                                                        </td>
+
                                                         <td class="  tm_text_right">
-                                                            {{ $post->sgst }} <br>
+                                                            {{  number_format($post->sgst,2) }} <br>
                                                             {{-- ({{ (float) $post->tax_type / 2 }}%) --}}
                                                         </td>
                                                         <td class="  tm_text_right">
-                                                            {{ $post->cgst }} <br>
+                                                            {{  number_format($post->cgst,2) }} <br>
                                                             {{-- ({{ (float) $post->tax_type / 2 }} %) --}}
                                                         </td>
                                                         <td class="  tm_text_right">
@@ -322,6 +333,13 @@
                                                         $totalPostingsgst += $post->sgst;
 
                                                         $subtotal_price+= $post->amount;
+
+                                                        $subtotal_sgst+=$post->cgst;
+                                                                $subtotal_cgst+=$post->sgst ;
+
+
+
+
 
                                                         $subtotal_total+=$post->amount_with_tax;
                                                     @endphp
@@ -338,14 +356,14 @@
 
 </td>
                                                     <td class="  tm_text_right">
-{{$subtotal_price}}
+{{number_format($subtotal_price,2)}}
                                                     </td>
 
                                                     <td class="  tm_text_right">
-                                                    {{$subtotal_sgst}}
+                                                    {{number_format($subtotal_sgst,2)}}
                                                      </td>
                                                     <td class="  tm_text_right">
-                                                    {{$subtotal_cgst}}
+                                                    {{number_format($subtotal_cgst,2)}}
                                                      </td>
                                                     <td class="  tm_text_right">
                                                     {{number_format($subtotal_total,2)}}

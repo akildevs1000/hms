@@ -95,9 +95,10 @@
                           <tr class="bg-white amt-border-full">
                             <td>Room:</td>
                             <td class="text-right">
+
                               ₹{{
                                 transactionSummary &&
-                                transactionSummary.sumDebit
+                                numFormat(transactionSummary.sumDebit - transactionSummary.tot_posting)
                               }}
                             </td>
                           </tr>
@@ -110,10 +111,19 @@
                               }}
                             </td>
                           </tr>
-                          <tr class="bg-white amt-border">
-                            <td>Paid :</td>
+                          <tr class="bg-white amt-border bold" style="font-weight:bold">
+                            <td>Total :</td>
                             <td class="text-right">
                               ₹{{
+                                transactionSummary &&
+                                transactionSummary.sumDebit
+                              }}
+                            </td>
+                          </tr>
+                          <tr class="bg-white amt-border  ">
+                            <td>Paid :</td>
+                            <td class="text-right">
+                              - ₹{{
                                 transactionSummary &&
                                 transactionSummary.sumCredit
                               }}
@@ -1101,7 +1111,6 @@ export default {
 
     getData() {
       let id = this.$route.params.id;
-      console.log(id);
       this.$axios.get(`booking_customer/${id}`).then(({ data }) => {
         //assign booking
         this.totalPostingAmount = data.totalPostingAmount;
