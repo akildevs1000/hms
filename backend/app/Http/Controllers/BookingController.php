@@ -493,28 +493,33 @@ class BookingController extends Controller
         $tax = 12; //default
 
         $calculationStatus = false;
-
+        $tax = 12;
+        if ($finalAmountWithDiscount >= 2800) {
+            $tax = 18;
+        } else if ($finalAmountWithDiscount >= 9600) {
+            $tax = 28;
+        }
         $array = $this->gstTax($finalAmountWithDiscount, $tax);
 
-        if ($array['basePrice'] <= 2499 && $tax == 12) {
-            $calculationStatus = true;
-        }
-        if ($calculationStatus == false) {
-            $tax = 18;
-            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+        // if ($array['basePrice'] <= 2499 && $tax == 12) {
+        //     $calculationStatus = true;
+        // }
+        // if ($calculationStatus == false) {
+        //     $tax = 18;
+        //     $array = $this->gstTax($finalAmountWithDiscount, $tax);
 
-            if ($array['basePrice'] > 2499 && $array['basePrice'] <= 7499) {
-                $calculationStatus = true;
-            }
-        }
-        if ($calculationStatus == false) {
-            $tax = 28;
-            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+        //     if ($array['basePrice'] > 2499 && $array['basePrice'] <= 7499) {
+        //         $calculationStatus = true;
+        //     }
+        // }
+        // if ($calculationStatus == false) {
+        //     $tax = 28;
+        //     $array = $this->gstTax($finalAmountWithDiscount, $tax);
 
-            if ($array['basePrice'] > 7499) {
-                $calculationStatus = true;
-            }
-        }
+        //     if ($array['basePrice'] > 7499) {
+        //         $calculationStatus = true;
+        //     }
+        // }
 
         return $array;
 
@@ -524,37 +529,45 @@ class BookingController extends Controller
         $basePrice = ($finalAmountWithDiscount * 100) / (100 + $tax);
         $gstAmount = $finalAmountWithDiscount - $basePrice;
 
+        // $gstAmount = ($finalAmountWithDiscount / (1 + $tax));
+        // $basePrice = $finalAmountWithDiscount - $gstAmount;
+
         return ["basePrice" => round($basePrice, 2), "gstAmount" => round($gstAmount, 2), "tax" => $tax];
     }
     public function reCalculatePriceTest()
     {
 
-        $finalAmountWithDiscount = 4289;
+        $finalAmountWithDiscount = 3360;
         $tax = 12; //default
 
         $calculationStatus = false;
-
+        $tax = 12;
+        if ($finalAmountWithDiscount >= 2800) {
+            $tax = 18;
+        } else if ($finalAmountWithDiscount >= 9600) {
+            $tax = 28;
+        }
         $array = $this->gstTax($finalAmountWithDiscount, $tax);
 
-        if ($array['basePrice'] <= 2499 && $tax == 12) {
-            $calculationStatus = true;
-        }
-        if ($calculationStatus == false) {
-            $tax = 18;
-            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+        // if ($array['basePrice'] <= 2499 && $tax == 12) {
+        //     $calculationStatus = true;
+        // }
+        // if ($calculationStatus == false) {
+        //     $tax = 18;
+        //     $array = $this->gstTax($finalAmountWithDiscount, $tax);
 
-            if ($array['basePrice'] > 2499 && $array['basePrice'] <= 7499) {
-                $calculationStatus = true;
-            }
-        }
-        if ($calculationStatus == false) {
-            $tax = 28;
-            $array = $this->gstTax($finalAmountWithDiscount, $tax);
+        //     if ($array['basePrice'] > 2499 && $array['basePrice'] <= 7499) {
+        //         $calculationStatus = true;
+        //     }
+        // }
+        // if ($calculationStatus == false) {
+        //     $tax = 28;
+        //     $array = $this->gstTax($finalAmountWithDiscount, $tax);
 
-            if ($array['basePrice'] > 7499) {
-                $calculationStatus = true;
-            }
-        }
+        //     if ($array['basePrice'] > 7499) {
+        //         $calculationStatus = true;
+        //     }
+        // }
 
         return $array;
     }

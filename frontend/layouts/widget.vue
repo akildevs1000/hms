@@ -4,23 +4,73 @@
     </v-app>
 </template>
 
-<style>
+<style scoped>
+body {
+
+    border-radius: 1%;
+    border: 3px solid green;
+    padding: 10px;
+    max-width: 1600px;
+}
+
 .fixed {
     min-height: 100%;
     position: fixed;
 
-    overflow: hidden;
-    width: 24%;
+    /* overflow: hidden; */
+    /* width: 24%; */
 }
 
-@media (max-width:950px) {
+.fixed .fixed-content {
+    width: 150%;
+}
+
+@media (max-width:1500px) {
 
     .fixed {
         min-height: 100%;
-        position: fixed;
+        position: relative;
 
-        overflow: hidden;
-        width: 50%;
+        /* overflow: hidden; */
+        /* width: 50%; */
+    }
+
+    .fixed .fixed-content {
+        width: 100% !important;
     }
 }
+
+@media (max-width:1000px) {
+
+    .fixed {
+        min-height: 100%;
+        position: relative;
+
+        /* overflow: hidden; */
+        /* width: 50%; */
+    }
+
+    .fixed .fixed-content {
+        width: 100% !important;
+        padding-right: 13%;
+    }
+
+}
+
+/* 
+@media (max-width:500px) {
+
+    .fixed {
+        min-height: 100%;
+        position: relative;
+
+         
+}
+
+.fixed .fixed-content {
+    width: 100% !important;
+}
+}
+
+*/
 </style> 

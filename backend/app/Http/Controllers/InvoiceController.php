@@ -35,6 +35,17 @@ class InvoiceController extends Controller
             return $room->room_discount;
         });
 
+        $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-01'));
+
+        if ($is_old_bill <= 0) {
+            return view('invoice.invoice_old_bills', compact("invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+
+            return Pdf::loadView('invoice_old_bills', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
+            // ->setPaper('a4', 'landscape')
+                ->setPaper('a4', 'portrait')
+                ->stream();
+        }
+
         return view('invoice.invoice', compact("invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
 
         return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))

@@ -7,110 +7,112 @@
         </div>
         <v-row>
 
-            <v-col md="3" xs="6">
+            <v-col md="4" sm="12" xs="12" cols="12">
                 <div class="fixed">
-                    <v-row>
-                        <v-col md="4" class="text-right"> <span>Check in</span></v-col>
-                        <v-col md="8">
-                            <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40"
-                                transition="scale-transition" offset-y min-width="auto">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense
-                                        :hide-details="true" class="custom-text-box shadow-none" solo flat label="From"
-                                        append-icon=" mdi-calendar-arrow-left" variant="outlined"></v-text-field>
+                    <div class="fixed-content">
+                        <v-row>
+                            <v-col md="4" class="text-right"> <span>Check in</span></v-col>
+                            <v-col md="8">
+                                <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40"
+                                    transition="scale-transition" offset-y min-width="auto">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense
+                                            :hide-details="true" class="custom-text-box shadow-none" solo flat label="From"
+                                            append-icon=" mdi-calendar-arrow-left" variant="outlined"></v-text-field>
 
-                                </template>
-                                <v-date-picker :min="today_date" v-model="from_date"
-                                    @input="from_menu = false"></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                    </v-row>
+                                    </template>
+                                    <v-date-picker :min="today_date" v-model="from_date"
+                                        @input="from_menu = false"></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                        </v-row>
 
-                    <v-row>
-                        <v-col md="4" class="text-right"> <span>Check Out</span></v-col>
-                        <v-col md="8">
-                            <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40"
-                                transition="scale-transition" offset-y min-width="auto">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense
-                                        class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"
-                                        append-icon=" mdi-calendar-arrow-right" variant="outlined"></v-text-field>
-                                </template>
-                                <v-date-picker :min="addOneDay()" v-model="to_date"
-                                    @input="to_menu = false"></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                    </v-row>
-
-
-
+                        <v-row>
+                            <v-col md="4" class="text-right"> <span>Check Out</span></v-col>
+                            <v-col md="8">
+                                <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40"
+                                    transition="scale-transition" offset-y min-width="auto">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense
+                                            class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"
+                                            append-icon=" mdi-calendar-arrow-right" variant="outlined"></v-text-field>
+                                    </template>
+                                    <v-date-picker :min="addOneDay()" v-model="to_date"
+                                        @input="to_menu = false"></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                        </v-row>
 
 
 
-                    <v-row>
-                        <v-col md="4" class="text-right"> <span>Rooms</span></v-col>
-                        <v-col md="8">
 
-                            <!-- <v-select label="Guests" dense small outlined append-icon=" mdi-account" variant="outlined"
+
+
+                        <v-row>
+                            <v-col md="4" class="text-right"> <span>Rooms</span></v-col>
+                            <v-col md="8">
+
+                                <!-- <v-select label="Guests" dense small outlined append-icon=" mdi-account" variant="outlined"
                             :items="rooms"></v-select> -->
-                            <v-menu v-model="guest_menu" :close-on-content-click="false" :nudge-right="40"
-                                transition="scale-transition" offset-y min-width="auto">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="search.no_of_room" readonly v-bind="attrs" v-on="on" dense
-                                        class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"
-                                        append-icon="mdi-bed" variant="outlined"></v-text-field>
-                                </template>
+                                <v-menu v-model="guest_menu" :close-on-content-click="false" :nudge-right="40"
+                                    transition="scale-transition" offset-y min-width="auto">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field v-model="search.no_of_room" readonly v-bind="attrs" v-on="on" dense
+                                            class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"
+                                            append-icon="mdi-bed" variant="outlined"></v-text-field>
+                                    </template>
 
 
-                                <div class="wrapper" @input="guest_menu = false" style="width:200px">
-                                    <span class="minus" @mouseup=" 
-                                        search.no_of_room == 1 ? 1 : --search.no_of_room"
-                                        @click="search.no_of_room < 1 || search.no_of_room">-</span>
-                                    <span class="num">{{ search.no_of_room }}</span>
-                                    <span class="plus" @mouseup=" search.no_of_room < 10 ? ++search.no_of_room : 10"
-                                        @click=" search.no_of_room > 9 || search.no_of_room">+</span>
-                                </div>
-                            </v-menu>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col md="4" class="text-right"> <span>Adult</span></v-col>
-                        <v-col md="8">
-                            <!-- <v-select label="Total Rooms" :items="rooms" dense small outlined append-icon="mdi-bed"
+                                    <div class="wrapper" @input="guest_menu = false" style="width:200px">
+                                        <span class="minus" @mouseup=" 
+                                            search.no_of_room == 1 ? 1 : --search.no_of_room"
+                                            @click="search.no_of_room < 1 || search.no_of_room">-</span>
+                                        <span class="num">{{ search.no_of_room }}</span>
+                                        <span class="plus" @mouseup=" search.no_of_room < 10 ? ++search.no_of_room : 10"
+                                            @click=" search.no_of_room > 9 || search.no_of_room">+</span>
+                                    </div>
+                                </v-menu>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col md="4" class="text-right"> <span>Adult</span></v-col>
+                            <v-col md="8">
+                                <!-- <v-select label="Total Rooms" :items="rooms" dense small outlined append-icon="mdi-bed"
                             variant="outlined"></v-select> -->
-                            <v-menu v-model="adult_menu" :close-on-content-click="false" :nudge-right="40"
-                                transition="scale-transition" offset-y min-width="auto">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="search.no_of_adult" readonly v-bind="attrs" v-on="on" dense
-                                        class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"
-                                        append-icon="mdi-account" variant="outlined"></v-text-field>
-                                </template>
+                                <v-menu v-model="adult_menu" :close-on-content-click="false" :nudge-right="40"
+                                    transition="scale-transition" offset-y min-width="auto">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field v-model="search.no_of_adult" readonly v-bind="attrs" v-on="on" dense
+                                            class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"
+                                            append-icon="mdi-account" variant="outlined"></v-text-field>
+                                    </template>
 
 
-                                <div class="wrapper" @input="adult_menu = false" style="width:200px">
-                                    <span class="minus" @mouseup=" 
-                                        search.no_of_adult == 1 ? 1 : --search.no_of_adult"
-                                        @click="search.no_of_adult < 1 || search.no_of_adult">-</span>
-                                    <span class="num">{{ search.no_of_adult }}</span>
-                                    <span class="plus" @mouseup=" search.no_of_adult < 4 ? ++search.no_of_adult : 4"
-                                        @click=" search.no_of_adult > 4 || search.no_of_adult">+</span>
-                                </div>
-                            </v-menu>
+                                    <div class="wrapper" @input="adult_menu = false" style="width:200px">
+                                        <span class="minus" @mouseup=" 
+                                            search.no_of_adult == 1 ? 1 : --search.no_of_adult"
+                                            @click="search.no_of_adult < 1 || search.no_of_adult">-</span>
+                                        <span class="num">{{ search.no_of_adult }}</span>
+                                        <span class="plus" @mouseup=" search.no_of_adult < 2 ? ++search.no_of_adult : 2"
+                                            @click=" search.no_of_adult > 2 || search.no_of_adult">+</span>
+                                    </div>
+                                </v-menu>
 
-                        </v-col>
+                            </v-col>
 
-                    </v-row>
-                    <v-row class="text-center">
-                        <v-col cols="12"><v-btn size="100px" @click="getDataFromApi()" :loading="loading" color="primary"
-                                dence small>{{ btn_message
-                                }}</v-btn></v-col>
+                        </v-row>
+                        <v-row class="text-center">
+                            <v-col cols="12"><v-btn size="100px" @click="getDataFromApi()" :loading="loading"
+                                    color="primary" dence small>{{ btn_message
+                                    }}</v-btn></v-col>
 
-                    </v-row>
+                        </v-row>
+                    </div>
                 </div>
             </v-col>
 
 
-            <v-col md="9" xs="6">
+            <v-col md="8" xs="12" sm="12">
                 <v-row v-for="( item, key )   in   data  " height="350px" v-if="search.no_of_room <= item.length">
 
                     <v-col md="6" cols="12"><img :src="item[0].room_type.pic || '/noimage.png'"

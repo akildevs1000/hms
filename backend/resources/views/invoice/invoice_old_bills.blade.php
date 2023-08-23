@@ -194,29 +194,36 @@
                                                                 $totalFoodGst += $foodGstAmount;
 
 
-                                                                $subtotal_price+=$room->price_adjusted_after_dsicount+($room->tot_adult_food +   $room->tot_child_food-$foodGstAmount) ;
- //for old formate
- $old_format_room_price=0;
- if($room->price_adjusted_after_dsicount==0)
- {
+                                                              //recalculating room base price and GST
 
- $old_format_room_price=$room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)-$foodGstAmount-($room->cgst-($foodGstAmount/2)+$room->sgst-($foodGstAmount/2));
-  if ( $room->price_adjusted_after_dsicount==0)
- {
-    $subtotal_price+=$old_format_room_price;
- }
 
+$tax=12;
+ if($room->total>=2800)
+{
+    $tax=18;
+}else if($room->total>=9600)
+{
+    $tax=28;
 }
+$roomTotal=$room->total-($room->tot_adult_food + (float) $room->tot_child_food);
+$roomBasePrice = ($roomTotal * 100) / (100 + $tax);
+$roomGSTAmount = $roomTotal - $roomBasePrice;
 
 
 
 
 
-                                                                $subtotal_sgst+=$room->sgst+($foodGstAmount/2);
-                                                                $subtotal_cgst+=$room->cgst+($foodGstAmount/2) ;
+//---------------------------------------
+
+$subtotal_price+=$roomBasePrice+($room->tot_adult_food +   $room->tot_child_food-$foodGstAmount) ;
+
+                                                                $subtotal_sgst+=($roomGSTAmount/2)+($foodGstAmount/2);
+                                                                $subtotal_cgst+=($roomGSTAmount/2)+($foodGstAmount/2) ;
 
 
                                                                 $subtotal_total+=$room->total;
+
+
 
 
                                                                   $totalWithoutDiscounts += $room->after_discount;
@@ -250,8 +257,8 @@
                                                     </td> -->
 
                                                     <td class="  tm_text_right">
-                                                    <!-- {{  number_format($room->price_adjusted_after_dsicount,2)   }} -->
-                                                      {{ $room->price_adjusted_after_dsicount>0?number_format($room->price_adjusted_after_dsicount,2) :number_format($old_format_room_price,2) }}
+                                                      {{  number_format($roomBasePrice,2)   }}
+
                                                     <!-- {{ number_format($room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)-$foodGstAmount-($room->cgst-($foodGstAmount/2)+$room->sgst-($foodGstAmount/2)) , 2) }} -->
 
 
@@ -259,10 +266,10 @@
 
 
                                                     <td class="  tm_text_right">
-                                                        {{ number_format($room->cgst,2) }}
+                                                        {{ number_format($roomGSTAmount/2,2) }}
                                                     </td>
                                                     <td class="  tm_text_right">
-                                                        {{ number_format($room->sgst,2) }}
+                                                        {{ number_format($roomGSTAmount/2,2) }}
                                                     </td>
                                                     <!-- <td class="tm_width_2 tm_text_right">
                                                         {{ number_format($room->room_discount, 2) }}
