@@ -59,23 +59,7 @@
                         </div>
 
                         <div class="tm_invoice_info tm_mb25">
-                            <!-- <div class="tm_invoice_info_left">
-                                <p class="tm_mb17">
-                                    <b class="tm_f18 tm_primary_color">
-                                        Tax Invoice
-                                    </b>
-                                    <br>
-                                    Invoice Number - {{ $invNo }}
-                                </p>
 
-                                {{-- <b class="tm_f30 tm_medium tm_primary_color">Tax Invoice</b>
-                                <p class="tm_m0">Invoice Number - {{ $invNo }}</p> --}}
-
-                            </div>
-
-                            <div>
-
-                            </div> -->
                             <div class="" style="width:100%">
                                 <div class="tm_grid_row tm_col_4 tm_col_2_sm tm_invoice_info_in tm_gray_bg tm_round_border">
                                     <div>
@@ -146,33 +130,18 @@
                                                 <th class="  tm_semi_bold tm_primary_color">Pax</th>
                                                 <th class="  tm_semi_bold tm_primary_color tm_text_right">Price</th>
 
-                                                <!-- <th class="tm_width_6 tm_semi_bold tm_primary_color">Amount</th> -->
 
 
                                                 <th class="  tm_semi_bold tm_primary_color tm_text_right">SGST</th>
                                                 <th class=" tm_semi_bold tm_primary_color tm_text_right">CGST</th>
-                                                <!--<th class="tm_width_6 tm_semi_bold tm_primary_color">Discount</th>-->
+
                                                 <th class="  tm_semi_bold tm_primary_color tm_text_right">Total
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
 
-
                                             @php
-                                            $totalWithoutDiscounts = 0;
-                                            $totalWithTax = 0;
-                                            $totalcgst = 0;
-                                            $totalsgst = 0;
-
-                                            $totalPostingWithTax = 0;
-                                            $totalPostingcgst = 0;
-                                            $totalPostingsgst = 0;
-
-                                            $totalFoodGst=0;
-
-                                            $grandTotal = 0;
-
 
                                             $subtotal_price=0;
                                             $subtotal_cgst=0;
@@ -183,53 +152,15 @@
 
                                             @endphp
                                             @foreach ($orderRooms as $room)
+
                                             @php
+                                            $subtotal_price+= $room->inv_room_price_after_discount;
+                                            $subtotal_sgst+=$room->inv_room_cgst;
+                                            $subtotal_cgst+=$room->inv_room_sgst ;
 
-                                            $totalFoodCost=$room->tot_adult_food+$room->tot_child_food;
-                                            $tax=5;
-                                            $basePrice = ($totalFoodCost * 100) / (100 +5);
-                                            $foodGstAmount = $totalFoodCost - $basePrice;
-
-                                            $totalFoodGst += $foodGstAmount;
-
-
-                                            $subtotal_price+=$room->price_adjusted_after_dsicount+($room->tot_adult_food + $room->tot_child_food-$foodGstAmount) ;
-                                            /*
-                                            //for old formate
-                                            $old_format_room_price=0;
-                                            if($room->price_adjusted_after_dsicount==0)
-                                            {
-
-                                            $old_format_room_price=$room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)-$foodGstAmount-($room->cgst-($foodGstAmount/2)+$room->sgst-($foodGstAmount/2));
-                                            if ( $room->price_adjusted_after_dsicount==0)
-                                            {
-                                            $subtotal_price+=$old_format_room_price;
-                                            }
-
-                                            }*/
-
-
-
-
-
-                                            $subtotal_sgst+=$room->sgst+($foodGstAmount/2);
-                                            $subtotal_cgst+=$room->cgst+($foodGstAmount/2) ;
-
-
-                                            $subtotal_total+=$room->total;
-
-
-                                            $totalWithoutDiscounts += $room->after_discount;
-                                            $totalWithTax += $room->total;
-                                            $totalcgst += $room->cgst;
-                                            $totalsgst += $room->sgst;
-
+                                            $subtotal_total+=$room->inv_room_price_with_tax;
 
                                             @endphp
-
-
-
-
                                             <tr class="inv-tr-txt">
                                                 <td>
                                                     {{ date('d M Y', strtotime($room->date)) }}
@@ -242,36 +173,36 @@
                                                 <td>
                                                     {{$room->no_of_adult+$room->no_of_child}}
                                                 </td>
-                                                <!-- <td class="tm_width_2 ">
-                                                    {{ $room->room_type }}
-                                                    </td> -->
-                                                <!-- <td class="tm_width_2 tm_text_right" >
-                                                    {{ number_format($room->price, 2) }}
-                                                    </td> -->
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->price_adjusted_after_dsicount,2)   }}
-
-                                                    <!-- {{ number_format($room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)-$foodGstAmount-($room->cgst-($foodGstAmount/2)+$room->sgst-($foodGstAmount/2)) , 2) }} -->
+                                                    {{ number_format($room->inv_room_price_after_discount,2)   }}
 
 
                                                 </td>
 
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->cgst,2) }}
+                                                    {{ number_format($room->inv_room_cgst,2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->sgst,2) }}
+                                                    {{ number_format($room->inv_room_sgst,2) }}
                                                 </td>
-                                                <!-- <td class="tm_width_2 tm_text_right">
-                                                        {{ number_format($room->room_discount, 2) }}
-                                                    </td> -->
+
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->total-((float) $room->tot_adult_food + (float) $room->tot_child_food)  , 2) }}
+                                                    {{ number_format($room->inv_room_price_with_tax  , 2) }}
                                                 </td>
                                             </tr>
-                                            @if ($room->tot_adult_food >0 || $room->tot_child_food>0)
+                                            @php
+                                            if ($room->tot_adult_food >0 || $room->tot_child_food>0)
+
+                                            {
+                                            $subtotal_price+= $room->inv_food_listing_price;
+                                            $subtotal_sgst+=$room->inv_food_sgst;
+                                            $subtotal_cgst+=$room->inv_food_sgst ;
+
+                                            $subtotal_total+=$room->inv_food_price_with_tax;
+                                            @endphp
+
                                             <tr class="inv-tr-txt">
                                                 <td class=" ">
                                                     {{ date('d M Y', strtotime($room->date)) }}
@@ -281,23 +212,25 @@
                                                 </td>
                                                 <td>---</td>
                                                 <td class="  tm_text_right">
-                                                    {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food-$foodGstAmount, 2) }}
+                                                    {{ number_format($room->inv_food_listing_price, 2) }}
 
                                                 </td>
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($foodGstAmount/2,2) }}
+                                                    {{ number_format($room->inv_food_sgst,2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($foodGstAmount/2,2) }}
+                                                    {{ number_format($room->inv_food_cgst,2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                    {{ number_format((float) $room->tot_adult_food + (float) $room->tot_child_food , 2) }}
+                                                    {{ number_format($room->inv_food_price_with_tax , 2) }}
                                                 </td>
                                             </tr>
-                                            @endif
-                                            @php
 
+
+
+                                            @php
+                                            }
 
 
 
@@ -341,22 +274,25 @@
                                                 </td>
                                             </tr>
                                             @php
-                                            $totalPostingWithTax += $post->amount_with_tax;
-                                            $totalPostingcgst += $post->cgst;
-                                            $totalPostingsgst += $post->sgst;
+
 
                                             $subtotal_price+= $post->amount;
-
                                             $subtotal_sgst+=$post->cgst;
                                             $subtotal_cgst+=$post->sgst ;
 
-
-
-
-
                                             $subtotal_total+=$post->amount_with_tax;
                                             @endphp
+
+
+
+
+
+
+
+
+
                                             @endforeach
+
                                             @endforeach
                                             <tr class="inv-tr-txt" style="font-weight:bold;border-top:groove;">
                                                 <td class=" ">
@@ -420,60 +356,14 @@ $basePrice = ($totalFoodCost * 100) / (100 +5);
                                     <table class="tm_mb0">
                                         <tbody>
                                             <tr>
-                                                <!-- <td class="tm_width_3 tm_primary_color tm_border_none tm_bold"
-                                                    style="font-size:11px">
-                                                    Price(excl GST)
-                                                </td>
 
-                                                <td
-                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_bold">
-                                                    @php
-                                                        $gtot = (float) $totalWithTax + (float) $totalPostingWithTax;
-                                                        $gsgst = (float) $totalPostingsgst + (float) $totalsgst;
-                                                        $gcgst = (float) $totalPostingcgst + (float) $totalcgst;
-                                                        $gwithoutgst = $gtot - ($gsgst + $gcgst)-($totalFoodGst);
-                                                    @endphp
-                                                     {{$company->currency ? $company->currency:''}}{{ number_format($gwithoutgst+$roomsDiscount, 2) ?? 0 }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="tm_width_3 tm_danger_color tm_border_none tm_pt0">
-                                                    Discount
-                                                </td>
-                                                <td
-                                                    class="tm_width_3 tm_danger_color tm_text_right tm_border_none tm_pt0">
-                                                     {{$company->currency ? $company->currency:''}}{{ number_format($roomsDiscount, 2) ?? 0 }}
-                                                </td>
-                                            </tr> -->
-                                                <!-- <tr>
-                                                <td class="tm_width_3 tm_primary_color tm_border_none  "
-                                                     >
-                                                    Total(After Disc)
-                                                </td>
-
-                                                <td
-                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none  ">
-
-                                                     {{$company->currency ? $company->currency:''}}{{ number_format($gwithoutgst, 2) ?? 0 }}
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
-                                                    Tax
-                                                </td>
-                                                <td
-                                                    class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
-                                                     {{$company->currency ? $company->currency:''}}{{ number_format((float) $totalPostingsgst + (float) $totalsgst + (float) $totalPostingcgst + (float) $totalcgst, 2) }}
-                                                </td>
-                                            </tr> -->
 
                                             <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_bold tm_border_none tm_pt0 ">
                                                     Total
                                                 </td>
                                                 <td class="tm_width_3 tm_primary_color tm_bold tm_text_right tm_border_none tm_pt0">
-                                                    {{$company->currency ? $company->currency:''}} {{ number_format((float) $totalWithTax + (float) $totalPostingWithTax, 2) }}
+                                                    {{$company->currency ? $company->currency:''}} {{ number_format(  $subtotal_total  , 2) }}
                                                 </td>
                                             </tr>
                                             <tr>

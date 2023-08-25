@@ -16,6 +16,7 @@ use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Models\TaxSlabs;
 use App\Models\Transaction;
 use App\Models\Weekend;
 use Carbon\CarbonPeriod;
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
+
+
     public function index(Request $request)
     {
         return Booking::with(["customer:id,first_name,last_name", "room"])
@@ -434,12 +437,12 @@ class BookingController extends Controller
 
                 foreach ($priceList as $list) {
                     $singleDayPrice = $list['room_price'];
-// Recalculation start
+                    // Recalculation start
                     $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
 
                     $price_adjusted_after_dsicount = $taxArray['basePrice'];
                     $list['tax'] = $taxArray['gstAmount'];
-// Recalculation end
+                    // Recalculation end
 
                     $orderRooms['price_adjusted_after_dsicount'] = $price_adjusted_after_dsicount;
                     $orderRooms['date'] = $list['date'];
@@ -522,7 +525,6 @@ class BookingController extends Controller
         // }
 
         return $array;
-
     }
     public function gstTax($finalAmountWithDiscount, $tax)
     {
@@ -1009,7 +1011,7 @@ class BookingController extends Controller
         $date_from = date('Y-m-01', strtotime($days . ' days'));
         $date_to = date('Y-m-d', strtotime('+' . $request->defaultDaysCount . ' days', strtotime($date_from)));
 
-        return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to, ) {
+        return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to,) {
             // $q->where('booking_status', '!=', 0);
             $q->where('company_id', $request->company_id);
             $q->where('check_in', '>=', $date_from);
@@ -1043,16 +1045,18 @@ class BookingController extends Controller
             $cancel_checkin_reason = $request->cancel_checkin_reason;
             $booking_id = $request->booking_id;
             $booked_room_id = $request->booked_room_id;
-//change booking status
+            //change booking status
             $bookingModel = Booking::where('company_id', $company_id)
                 ->where('id', $booking_id)
                 ->where('booking_status', 2) //only checkedin status
             ;
 
-            $data1 = ['booking_status' => 1,
+            $data1 = [
+                'booking_status' => 1,
                 'cancel_checkin_reason' => $cancel_checkin_reason,
                 'cancel_checkin_datetime' => date('Y-m-d H:i:s'),
-                'cancel_checkin_userid' => $cancel_checkin_userid];
+                'cancel_checkin_userid' => $cancel_checkin_userid
+            ];
             $updatedStatus = $bookingModel->update($data1);
 
             if ($updatedStatus) {
@@ -1061,10 +1065,12 @@ class BookingController extends Controller
                     ->where('id', $booked_room_id)
                     ->where('booking_status', 2) //only checkedin status
                 ;
-                $data2 = ['booking_status' => 1,
+                $data2 = [
+                    'booking_status' => 1,
                     'cancel_checkin_reason' => $cancel_checkin_reason,
                     'cancel_checkin_datetime' => date('Y-m-d H:i:s'),
-                    'cancel_checkin_userid' => $cancel_checkin_userid];
+                    'cancel_checkin_userid' => $cancel_checkin_userid
+                ];
                 $bookingRoomModel->update($data2);
 
                 //change status on booking_rooms table
@@ -1079,13 +1085,11 @@ class BookingController extends Controller
                 $transactionData->delete();
 
                 return $this->response('Room Checkin Information is changed to Booking', null, true);
-
             } else {
                 return $this->response('Something is wrong. Room Checkin Information is not updated', null, false);
             }
 
             return $this->response('Something is wrong. Room Checkin Information is not updated2', null, false);
-
         } catch (\Throwable $th) {
             //throw $th;
 
@@ -1182,13 +1186,29 @@ class BookingController extends Controller
         return $string;
     }
 
-    private function getRoomTax($amount)
+    public function getTaxSlab($amount, $company_id)
+    {
+
+        $tax = env('GST_TAX_DEFAULT');
+        $TaxSlab = TaxSlabs::where('company_id', $company_id)
+            ->where('start_price', '<=', $amount)->where('end_price', '>=', $amount)->pluck('tax');
+
+        if (isset($TaxSlab[0])) {
+            $tax = $TaxSlab[0];
+        }
+
+        return  $tax;
+    }
+
+    private function getRoomTax($amount, $company_id)
     {
         $temp = [];
-        $per = $amount < 2500 ? 12 : 18;
-        if ($amount > 7500) {
-            $per = 28;
-        }
+        // $per = $amount < 2500 ? 12 : 18;
+        // if ($amount > 7500) {
+        //     $per = 28;
+        // }
+
+        $per = $this->getTaxSlab($amount, $company_id);
 
         $tax = ($amount / 100) * $per;
         $temp['room_tax'] = $tax;
@@ -1203,7 +1223,7 @@ class BookingController extends Controller
     private function getRoomAmtWithTax($oldRoom, $newRoom, $request)
     {
         $afterDiscount = (float) $newRoom->room_type->price - (float) $oldRoom->room_discount;
-        $data = $this->getRoomTax($afterDiscount);
+        $data = $this->getRoomTax($afterDiscount, $request->company_id);
         $data['total'] = (float) $data['total_with_tax'] + (float) $oldRoom->tot_adult_food + (float) $oldRoom->tot_child_food;
         $data['grand_total'] = (float) $data['total'] * $oldRoom->days;
         $data['price'] = $newRoom->price;
@@ -1604,7 +1624,6 @@ class BookingController extends Controller
                 $orderRoomModel['date'] = $date->format('Y-m-d');
                 OrderRoom::create($orderRoomModel);
                 $orderRooms_arr[] = $orderRoomModel;
-
             }
 
             $bookedRoom->update([
@@ -1779,12 +1798,9 @@ class BookingController extends Controller
             $sortDesc = $request->sortDesc == 'true' ? 'DESC' : 'ASC';
             if (strpos($request->sortBy, '.')) {
                 $model->orderBy(Customer::select('first_name')->whereColumn('customers.id', 'bookings.customer_id'), $sortDesc);
-
             } else {
                 $model->orderBy($request->sortBy, $sortDesc);
-
             }
-
         } else {
             $model->orderBy('created_at', 'DESC');
         }
@@ -1911,6 +1927,8 @@ class BookingController extends Controller
 
     public function getDataBySelectWithTax($oldRoom, $newRoom, $request)
     {
+
+
         // dd($newRoom->roomType->name);
         $company_id = $request->company_id;
         $discount = $request->discount ?? 0;
@@ -1931,17 +1949,17 @@ class BookingController extends Controller
             if ($isHoliday) {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->holiday_price - $discount)['total_with_tax'],
+                    "price" => $this->getRoomTax($prices->holiday_price - $discount, $request->company_id)['total_with_tax'],
                     "day_type" => "holiday",
                     "day" => $day,
-                    "tax" => $this->getRoomTax($prices->holiday_price - $discount)['room_tax'],
+                    "tax" => $this->getRoomTax($prices->holiday_price - $discount, $request->company_id)['room_tax'],
                     "room_price" => $prices->holiday_price,
                 ];
             } elseif ($isWeekend) {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekend_price - $discount)['total_with_tax'],
-                    "tax" => $this->getRoomTax($prices->weekend_price - $discount)['room_tax'],
+                    "price" => $this->getRoomTax($prices->weekend_price - $discount, $request->company_id)['total_with_tax'],
+                    "tax" => $this->getRoomTax($prices->weekend_price - $discount, $request->company_id)['room_tax'],
                     "day_type" => "weekend",
                     "day" => $day,
                     "room_price" => $prices->weekend_price,
@@ -1949,10 +1967,10 @@ class BookingController extends Controller
             } else {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekday_price - $discount)['total_with_tax'],
+                    "price" => $this->getRoomTax($prices->weekday_price - $discount, $request->company_id)['total_with_tax'],
                     "day_type" => "weekday",
                     "day" => $day,
-                    "tax" => $this->getRoomTax($prices->weekday_price - $discount)['room_tax'],
+                    "tax" => $this->getRoomTax($prices->weekday_price - $discount, $request->company_id)['room_tax'],
                     "room_price" => $prices->weekday_price,
                 ];
             }
@@ -1978,5 +1996,4 @@ class BookingController extends Controller
             $q->where('to', '>=', $date);
         })->whereCompanyId($company_id)->exists();
     }
-
 }

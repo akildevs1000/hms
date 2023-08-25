@@ -124,7 +124,7 @@
 
           <v-col md="12" lg="12">
             <v-tabs v-model="activeTab" :vertical="vertical" background-color="background" dense flat dark show-arrows
-              class=" rounded-t-sm">
+              class=" rounded-md">
 
               <v-spacer></v-spacer>
               <v-tab active-class="active-link">
@@ -268,6 +268,7 @@ export default {
   //   roomsComponent,
   // },
   data: () => ({
+
     upload: {
       name: "",
     },

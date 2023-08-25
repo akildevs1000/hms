@@ -1214,6 +1214,16 @@ export default {
     },
     nextTab() {
       // if (this.activeTab) {
+
+      if (this.room.type == '') {
+        this.alert(
+          "oops",
+          "Select Source Type",
+          "error"
+        );
+
+        return false;
+      }
       this.activeTab += 1;
       // }
     },

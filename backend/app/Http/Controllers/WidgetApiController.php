@@ -6,15 +6,17 @@ use App\Models\BookedRoom;
 use App\Models\Holiday;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Models\TaxSlabs;
 use App\Models\Weekend;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
 class WidgetApiController extends Controller
-{public function index(Request $request)
+{
+    public function index(Request $request)
     {
-    return ['1'];
-}
+        return ['1'];
+    }
     public function getAvailableRoomList(Request $request)
     {
 
@@ -22,8 +24,8 @@ class WidgetApiController extends Controller
 
         $bookedDates = BookedRoom::select('id', 'booking_id', 'room_no', 'room_type')->withOut('booking', 'postings')
             ->where('company_id', $request->company_id)
-        // ->where('booking_status', '!=', 0)
-        // ->where('booking_status', '<=', 2)
+            // ->where('booking_status', '!=', 0)
+            // ->where('booking_status', '<=', 2)
             ->where(function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
                     $query->where('check_in', '>=', $request->from_date . ' 00:00:00')
@@ -34,7 +36,7 @@ class WidgetApiController extends Controller
                         ->where('check_out', '>=', $request->from_date . ' 23:59:59');
                 });
             })
-        //->where('check_in', '>=', $request->from_date . ' 00:00:00')
+            //->where('check_in', '>=', $request->from_date . ' 00:00:00')
             ->orderBy('room_no', 'ASC')->get()->toArray();
 
         $bookedRoomNumbers = array_column($bookedDates, 'room_no');
@@ -79,7 +81,6 @@ class WidgetApiController extends Controller
 
         }
         return ["data" => $groupedRooms];
-
     }
     public function compareByPrice($room1, $room2)
     {
@@ -106,13 +107,29 @@ class WidgetApiController extends Controller
         })->whereCompanyId($company_id)->exists();
     }
 
-    private function getRoomTax($amount)
+    public function getTaxSlab($amount, $company_id)
+    {
+
+        $tax = env('GST_TAX_DEFAULT');
+        $TaxSlab = TaxSlabs::where('company_id', $company_id)
+            ->where('start_price', '<=', $amount)->where('end_price', '>=', $amount)->pluck('tax');
+
+        if (isset($TaxSlab[0])) {
+            $tax = $TaxSlab[0];
+        }
+
+        return  $tax;
+    }
+
+    private function getRoomTax($amount, $company_id)
     {
         $temp = [];
-        $per = $amount < 2500 ? 12 : 18;
-        if ($amount > 7500) {
-            $per = 28;
-        }
+        // $per = $amount < 2500 ? 12 : 18;
+        // if ($amount > 7500) {
+        //     $per = 28;
+        // }
+
+        $per = $this->getTaxSlab($amount, $company_id);
 
         $tax = ($amount / 100) * $per;
         $temp['room_tax'] = $tax;
@@ -146,17 +163,17 @@ class WidgetApiController extends Controller
             if ($isHoliday) {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->holiday_price - $discount)['total_with_tax'],
+                    "price" => $this->getRoomTax($prices->holiday_price - $discount, $request->company_id)['total_with_tax'],
                     "day_type" => "holiday",
                     "day" => $day,
-                    "tax" => $this->getRoomTax($prices->holiday_price - $discount)['room_tax'],
+                    "tax" => $this->getRoomTax($prices->holiday_price - $discount, $request->company_id)['room_tax'],
                     "room_price" => $prices->holiday_price,
                 ];
             } elseif ($isWeekend) {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekend_price - $discount)['total_with_tax'],
-                    "tax" => $this->getRoomTax($prices->weekend_price - $discount)['room_tax'],
+                    "price" => $this->getRoomTax($prices->weekend_price - $discount, $request->company_id)['total_with_tax'],
+                    "tax" => $this->getRoomTax($prices->weekend_price - $discount, $request->company_id)['room_tax'],
                     "day_type" => "weekend",
                     "day" => $day,
                     "room_price" => $prices->weekend_price,
@@ -164,10 +181,10 @@ class WidgetApiController extends Controller
             } else {
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekday_price - $discount)['total_with_tax'],
+                    "price" => $this->getRoomTax($prices->weekday_price - $discount, $request->company_id)['total_with_tax'],
                     "day_type" => "weekday",
                     "day" => $day,
-                    "tax" => $this->getRoomTax($prices->weekday_price - $discount)['room_tax'],
+                    "tax" => $this->getRoomTax($prices->weekday_price - $discount, $request->company_id)['room_tax'],
                     "room_price" => $prices->weekday_price,
                 ];
             }
@@ -183,6 +200,5 @@ class WidgetApiController extends Controller
 
     public function test()
     {
-
     }
 }

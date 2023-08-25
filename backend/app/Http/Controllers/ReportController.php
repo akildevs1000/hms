@@ -282,38 +282,44 @@ class ReportController extends Controller
 
     public function gstInvoiceReportProcess($request)
     {
-        $model = Taxable::query();
 
-        $model->whereCompanyId($request->company_id)
-            ->whereHas('booking', function ($q) {
-                $q->where('booking_status', '!=', -1);
-            });
+        $taxable = new TaxableController();
+        $model = $taxable->getTaxableProcess($request);
 
-        if (($request->filled('search') && $request->search)) {
-            $model->whereHas('booking', function ($q) use ($request) {
-                $q->where('gst_number', 'Like', '%' . $request->search . '%');
-                $q->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
-            });
-        }
+        return  $model->get();
 
-        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->whereHas('booking', function ($q) use ($request) {
-                $q->WhereDate('check_in', '>=', $request->from);
-                $q->whereDate('check_in', '<=', $request->to);
-            });
-        }
+        // $model = Taxable::query();
 
-        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->whereHas('booking', function ($q) use ($request) {
-                $q->WhereDate('check_out', '>=', $request->from);
-                $q->whereDate('check_out', '<=', $request->to);
-            });
-        }
+        // $model->whereCompanyId($request->company_id)
+        //     ->whereHas('booking', function ($q) {
+        //         $q->where('booking_status', '!=', -1);
+        //     });
 
-        $model->with('booking.customer');
-        $model->orderBy('id', 'asc');
+        // if (($request->filled('search') && $request->search)) {
+        //     $model->whereHas('booking', function ($q) use ($request) {
+        //         $q->where('gst_number', 'Like', '%' . $request->search . '%');
+        //         $q->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+        //     });
+        // }
 
-        return $model->get();
+        // if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+        //     $model->whereHas('booking', function ($q) use ($request) {
+        //         $q->WhereDate('check_in', '>=', $request->from);
+        //         $q->whereDate('check_in', '<=', $request->to);
+        //     });
+        // }
+
+        // if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+        //     $model->whereHas('booking', function ($q) use ($request) {
+        //         $q->WhereDate('check_out', '>=', $request->from);
+        //         $q->whereDate('check_out', '<=', $request->to);
+        //     });
+        // }
+
+        // $model->with('booking.customer');
+        // $model->orderBy('id', 'asc');
+
+        // return $model->get();
     }
 
     public function gstInvoiceReport(Request $request)
@@ -330,6 +336,60 @@ class ReportController extends Controller
         return Pdf::loadView('report.gst_invoice', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'landscape')
             ->download();
+    }
+
+    public function gstInvoiceReportCSVDownload(Request $request)
+    {
+        $data = $this->gstInvoiceReportProcess($request);
+
+
+
+        $columns = array('#', 'Invoice Number', 'Resr.No', 'GST', 'Customer', 'Inv Amount(inc.gst)', 'Tax Collected', 'Check-in', 'Check-out');
+        $csvDataRowArr = [];
+        $counter = 1;
+        $inv_grand_total_amount = 0;
+        $inv_grand_tax_total_amount = 0;
+        foreach ($data as  $bookingObj) {
+            $invTotal = $bookingObj->booking->inv_total_tax_collected + $bookingObj->booking->inv_total_without_tax_collected;
+
+            $rowData = [
+
+                $counter++,
+                $bookingObj->show_taxable_invoice_number,
+                $bookingObj->reservation_no,
+                $bookingObj->booking->customer->gst_number,
+                $bookingObj->booking->customer->full_name,
+                $invTotal,
+                $bookingObj->booking->inv_total_tax_collected,
+                $bookingObj->booking->check_in,
+                $bookingObj->booking->check_out,
+
+
+
+
+            ];
+            $csvDataRowArr[] = $rowData;
+            $inv_grand_total_amount += $invTotal;
+            $inv_grand_tax_total_amount += $bookingObj->booking->inv_total_tax_collected;
+        }
+
+        $rowData = [
+
+            '',
+            '',
+            '',
+            '',
+            'Total',
+            $inv_grand_total_amount,
+            $inv_grand_tax_total_amount,
+            '',
+            '',
+        ];
+        $csvDataRowArr[] = $rowData;
+
+
+
+        return $this->exportCsv($csvDataRowArr, $columns, 'GST Report ' . $request->from . '-' . $request->to . '.csv');
     }
 
     public function incomingReportProcess($request)
@@ -547,5 +607,36 @@ class ReportController extends Controller
             'request' => $request,
             'company' => Company::find($request->company_id),
         ])->setPaper('a4', 'landscape');
+    }
+
+    public function exportCsv($data, $columns, $fileName)
+    {
+        //$fileName = 'tasks.csv';
+        //$tasks = Task::all();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+
+
+        $callback = function () use ($data, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($data as $task) {
+
+
+                fputcsv($file, $task);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
