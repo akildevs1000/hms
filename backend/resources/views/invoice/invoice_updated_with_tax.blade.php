@@ -332,16 +332,7 @@
                                     </p> -->
 
 
-                                    <!-- @php
 
-$totalFoodCost=$room->tot_adult_food+$room->tot_child_food;
-$tax=5;
-$basePrice = ($totalFoodCost * 100) / (100 +5);
-        $gstAmount = $totalFoodCost - $basePrice;
-@endphp
-
-
-                                                  <p style="margin-top:20px">Food Tax:   {{ number_format((float)   $gstAmount, 2) }}</p> -->
                                     <p style="margin-top:20px"> Tax Collected: {{number_format((float) ($subtotal_sgst+$subtotal_cgst),2)}} <br />
                                         SGST {{$company->currency ? $company->currency:''}}
                                         {{ number_format((float) $subtotal_sgst,2)    }}<br />

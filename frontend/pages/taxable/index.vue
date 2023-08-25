@@ -248,7 +248,7 @@
           <td colspan="7" style="text-align: right;">
             Inv Total(inc.gst)
           </td>
-          <td>
+          <td style="text-align:right">
             {{ getPriceFormat(parseFloat(inv_total_without_tax_collected) + parseFloat(inv_total_tax_collected)) }}
           </td>
           <td>
@@ -259,7 +259,7 @@
 
             GST Total:
           </td>
-          <td>
+          <td style="text-align: right;">
             {{ getPriceFormat(inv_total_tax_collected) }}
           </td>
           <td>
@@ -464,9 +464,12 @@ export default {
       let from = this.from_date;
       let to = this.to_date;
       let guest_mode = this.guest_mode;
+
+      let search = this.search;
+
       let url =
         process.env.BACKEND_URL +
-        `${type}?company_id=${comId}&from=${from}&to=${to}&guest_mode=${guest_mode}`;
+        `${type}?company_id=${comId}&from=${from}&to=${to}&guest_mode=${guest_mode}&search=${search}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

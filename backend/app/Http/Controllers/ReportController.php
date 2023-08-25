@@ -325,7 +325,7 @@ class ReportController extends Controller
     public function gstInvoiceReport(Request $request)
     {
         $data = $this->gstInvoiceReportProcess($request);
-        return Pdf::loadView('report.gst_invoice', ['data' => $data, 'company' => Company::find($request->company_id)])
+        return Pdf::loadView('report.gst_invoice', ['data' => $data, 'request' => $request, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'landscape')
             ->stream();
     }
@@ -333,7 +333,7 @@ class ReportController extends Controller
     public function gstInvoiceReportDownload(Request $request)
     {
         $data = $this->gstInvoiceReportProcess($request);
-        return Pdf::loadView('report.gst_invoice', ['data' => $data, 'company' => Company::find($request->company_id)])
+        return Pdf::loadView('report.gst_invoice', ['data' => $data, 'request' => $request, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'landscape')
             ->download();
     }
@@ -344,7 +344,7 @@ class ReportController extends Controller
 
 
 
-        $columns = array('#', 'Invoice Number', 'Resr.No', 'GST', 'Customer', 'Inv Amount(inc.gst)', 'Tax Collected', 'Check-in', 'Check-out');
+        $columns = array('#', 'Invoice Number', 'Resr.No', 'GST', 'Customer', 'Check-in', 'Check-out', 'Inv Amount ', 'Tax Collected', 'Total');
         $csvDataRowArr = [];
         $counter = 1;
         $inv_grand_total_amount = 0;
@@ -359,17 +359,19 @@ class ReportController extends Controller
                 $bookingObj->reservation_no,
                 $bookingObj->booking->customer->gst_number,
                 $bookingObj->booking->customer->full_name,
-                $invTotal,
-                $bookingObj->booking->inv_total_tax_collected,
+
                 $bookingObj->booking->check_in,
                 $bookingObj->booking->check_out,
+                $bookingObj->booking->inv_total_without_tax_collected,
 
+                $bookingObj->booking->inv_total_tax_collected,
+                $invTotal,
 
 
 
             ];
             $csvDataRowArr[] = $rowData;
-            $inv_grand_total_amount += $invTotal;
+            $inv_grand_total_amount += $bookingObj->booking->inv_total_without_tax_collected;
             $inv_grand_tax_total_amount += $bookingObj->booking->inv_total_tax_collected;
         }
 
@@ -379,11 +381,14 @@ class ReportController extends Controller
             '',
             '',
             '',
+            '',
+            '',
             'Total',
+
             $inv_grand_total_amount,
             $inv_grand_tax_total_amount,
-            '',
-            '',
+            $inv_grand_tax_total_amount + $inv_grand_total_amount,
+
         ];
         $csvDataRowArr[] = $rowData;
 

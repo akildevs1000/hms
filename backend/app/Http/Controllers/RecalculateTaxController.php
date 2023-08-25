@@ -19,13 +19,13 @@ class RecalculateTaxController extends Controller
         $bookings = Booking::with(['orderRooms'])->where('tax_recalculated_status', 0)
             ->where('booking_status', '!=', -1)
             ->orderBy('check_in', 'DESC')
-            ->limit(100)->get();
+            ->limit(1)->get();
 
 
 
 
         foreach ($bookings as   $booking) {
-            $this->UpdateTaxWithID($booking->id);
+            $this->UpdateTaxWithID(3180);
         }
     }
 
@@ -158,6 +158,6 @@ class RecalculateTaxController extends Controller
         $data['inv_total_tax_collected'] = $inv_total_tax_collected;
         $status = Booking::whereId($id)->update($data);
 
-        echo ('Updated Booking id ' . $id . '-' . $booking->check_in . '<br/>');
+        //echo ('Updated Booking id ' . $id . '-' . $booking->check_in . '<br/>');
     }
 }

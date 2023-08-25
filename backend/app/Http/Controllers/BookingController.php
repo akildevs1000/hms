@@ -56,15 +56,18 @@ class BookingController extends Controller
             return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
         }
 
-        return DB::transaction(function () use ($request) {
+        $booking_id = DB::transaction(function () use ($request) {
             // try {
             $customer_id = $this->customerStore($request->only(Customer::customerAttributes()));
             $request['customer_id'] = $customer_id;
             $booking = $this->storeBooking($request);
             if ($booking) {
+
+
+
                 $this->storeBookedRooms($request, $booking);
                 (new ManagementController())->generateOccupancyRateByBooking($request);
-                return response()->json(['data' => $booking->id, 'status' => true]);
+                return $booking->id;
             }
             // } catch (\Throwable $th) {
             //     // return $th->getMessage();
@@ -72,6 +75,12 @@ class BookingController extends Controller
             //     return response()->json(['error' => 'An error occurred. Please try again.' . $th->getMessage()]); // return a user-friendly error message
             // }
         });
+
+        //recalculating Tax based on discount 
+        $RecalObj = new RecalculateTaxController();
+        $RecalObj->UpdateTaxWithID($booking_id);
+
+        return response()->json(['data' => $booking_id, 'status' => true]);
     }
 
     public function storeBooking($request)
@@ -472,6 +481,9 @@ class BookingController extends Controller
                     $orderRooms['no_of_child'] = $bookedRoomId->no_of_child;
                     $orderRooms['no_of_baby'] = $bookedRoomId->no_of_baby;
 
+
+
+
                     // print_r($orderRooms);
                     OrderRoom::create($orderRooms);
                 }
@@ -481,6 +493,8 @@ class BookingController extends Controller
                 $customer = Customer::find($booking->customer_id);
                 (new WhatsappNotificationController())->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
             }
+
+
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
@@ -1251,6 +1265,12 @@ class BookingController extends Controller
 
             if ($numberOfRoom == 1) {
                 $this->changeSingleRoom($oldRoom, $newRoom, $request);
+
+
+                //recalculating Tax based on discount 
+                $RecalObj = new RecalculateTaxController();
+                $RecalObj->UpdateTaxWithID($oldRoom->booking_id);
+
                 return $this->response('Room changed Successfully.', false, true);
             }
 
@@ -1563,6 +1583,11 @@ class BookingController extends Controller
                 $payment->amount = (int) $payment->amount + (int) $extraDaysAmount;
                 $payment->save();
             }
+
+            //recalculating Tax based on discount 
+            $RecalObj = new RecalculateTaxController();
+            $RecalObj->UpdateTaxWithID($bookedRoom->booking_id);
+
 
             return $this->response('Date changed Successfully.', null, true);
 
