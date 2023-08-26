@@ -8,25 +8,24 @@ use App\Models\Posting;
 
 class RecalculateTaxController extends Controller
 {
-
     public function UpdateTax()
     {
 
-        // $id = 3056;
+        $id = 2877;
         // $this->UpdateTaxWithID($id);
 
         // return;
         $bookings = Booking::with(['orderRooms'])->where('tax_recalculated_status', 0)
             ->where('booking_status', '!=', -1)
             ->orderBy('check_in', 'DESC')
-            ->limit(1)->get();
-
+            ->limit(500)->get();
 
 
 
         foreach ($bookings as   $booking) {
-            $this->UpdateTaxWithID(3180);
+            echo '  ' . $booking->id . '--'  .  $this->UpdateTaxWithID($booking->id);
         }
+
     }
 
     public function exportCsv($tasks)

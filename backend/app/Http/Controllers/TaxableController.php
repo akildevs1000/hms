@@ -102,15 +102,13 @@ class TaxableController extends Controller
     // }
     public function getTaxableProcess($request)
     {
-        $model = Taxable::query();
-
-        $model->where('taxables.company_id', $request->company_id)
+        $model = Taxable::where('taxables.company_id', $request->company_id)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
+            })
+            ->whereHas('booking.customer', function ($q) {
+                $q->where('gst_number', '!=', null);
             });
-        $model->whereHas('booking.customer', function ($q) {
-            $q->where('gst_number', '!=', null);
-        });
 
 
 
@@ -151,7 +149,7 @@ class TaxableController extends Controller
 
         $model->with('booking.customer');
 
-        return  $model->orderBy(Booking::select('check_in')->whereColumn('bookings.id', 'taxables.booking_id'), 'ASC');
+        return  $model;//->orderBy(Booking::select('check_in')->whereColumn('bookings.id', 'taxables.booking_id'), 'ASC');
     }
 
     /**
