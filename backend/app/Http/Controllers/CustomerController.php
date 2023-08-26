@@ -177,7 +177,7 @@ class CustomerController extends Controller
         $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'orderRooms')->first();
         $postings = Posting::with('room')->whereBookingId($id)->get();
         // $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
-        $transaction = Transaction::with('paymentMode')->whereBookingId($id);
+        $transaction = Transaction::with(['paymentMode', 'user'])->whereBookingId($id);
         $transactions = $transaction->clone()->orderBy('id', 'asc')->get();
         $totalTransactionAmount = $transaction->clone()->orderBy('id', 'desc')->first();
 

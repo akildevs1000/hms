@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RecalculateTaxController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\WhatsappController;
 use App\Mail\AuditReportMail;
@@ -27,14 +28,16 @@ use Illuminate\Support\Facades\Storage;
 
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
-
+Route::get('UpdateTax/{id}', [RecalculateTaxController::class, 'UpdateTax']);
+Route::get('UpdateTax', [RecalculateTaxController::class, 'UpdateTax']);
 Route::get('/test', function (Request $request) {
 
+    return;
     $date = '2023-06-10';
 
     // return  $payment =  Payment::whereDate('created_at', $date)
     $payment = DB::table('payments')
-    // ->whereDate('created_at', $date)
+        // ->whereDate('created_at', $date)
         ->get(['id', 'created_at']);
 
     foreach ($payment as $key => $value) {
@@ -43,7 +46,7 @@ Route::get('/test', function (Request $request) {
             ->where('id', $value->id)
             ->update(['date' => $d]);
     }
-    
+
     return;
     // $company_ids =    Company::orderBy('id', 'asc')->pluck("id");
     $company_ids = [1, 2];
@@ -166,7 +169,6 @@ Route::get('truncate', function () {
         // Customer::truncate();
         return "truncate done";
     }
-
 });
 
 Route::post('whatsapp-otp', [WhatsappController::class, 'sentWhatsappOtp']);

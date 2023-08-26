@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,25 +13,14 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        // $model = User::query();
-
-        // if ($request->user_type == "employee") {
-        //     $model->where('id', $request->id);
-        // }
-
-        // $model->where('company_id', $request->company_id);
-        // return $model->paginate(20);
 
         $sortBy = $request->input('sortBy');
         $sortDesc = $request->input('sortDesc');
         $itemsPerPage = $request->input('itemsPerPage');
 
-
         $model = User::with(['role']);
 
         $model->where('company_id', $request->company_id);
-
-
 
         // $model->when()
 
@@ -41,13 +31,36 @@ class UserController extends Controller
         if ($request->filled('email') && $request->email != "") {
             $model->Where('email', 'ILIKE', '%' . $request->email . '%');
         }
-
         if ($request->filled('mobile') && $request->mobile != "") {
             $model->Where('mobile', 'ILIKE', '%' . $request->mobile . '%');
         }
 
-        if ($sortBy && $sortDesc) {
-            $model->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
+        if ($request->filled('role_id') && $request->role_id != "") {
+            $model->Where('role_id', $request->role_id);
+        }
+        if ($request->filled('enable_whatsapp_otp') && $request->enable_whatsapp_otp != "") {
+            $model->Where('enable_whatsapp_otp', $request->enable_whatsapp_otp);
+        }
+        if ($request->filled('is_active') && $request->is_active != "") {
+            $model->Where('is_active', $request->is_active);
+        }
+
+        $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
+
+        if ($request->filled('sortBy')) {
+            $sortBy = $request->sortBy;
+            if (strpos($sortBy, '.')) {
+
+                if ($request->sortBy == 'role.name') {
+                    $model->orderBy(Role::select('name')->whereColumn('roles.id', 'users.role_id'), $sortDesc);
+                }
+
+            } else {
+                $model->orderBy($sortBy, $sortDesc);
+            }
+
+        } else {
+            $model->orderBy('name', 'ASC');
         }
 
         $desserts = $model->paginate($itemsPerPage);
@@ -72,7 +85,6 @@ class UserController extends Controller
                 $path = $file->storeAs('public/user/images', $fileName);
                 $data["image"] = $fileName;
             }
-
 
             $data["image"] = $fileName ?? "";
             $record = $model->create($data);
@@ -104,7 +116,6 @@ class UserController extends Controller
                 $path = $file->storeAs('public/user/images', $fileName);
                 $data["image"] = $fileName;
             }
-
 
             $data["image"] = $fileName ?? "";
 

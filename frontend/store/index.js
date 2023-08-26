@@ -6,6 +6,8 @@ export const state = () => ({
   reservation: "",
   dataToSend: "",
   booking_payload: "",
+  widget_data: "",
+  widget_data_booking_confirmation: "",
 });
 
 // contains your mutations
@@ -31,6 +33,13 @@ export const mutations = {
   },
   setDataToSend(state, data) {
     state.dataToSend = data;
+  },
+  widget_data(state, value) {
+    state.widget_data = value;
+  },
+
+  widget_data_booking_confirmation(state, value) {
+    state.widget_data_booking_confirmation = value;
   },
 };
 export const actions = {

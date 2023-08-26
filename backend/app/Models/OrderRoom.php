@@ -42,6 +42,21 @@ class OrderRoom extends Model
         "date",
         "booked_room_id",
         "price_adjusted_after_dsicount",
+
+        "inv_room_listing_price",
+        "inv_room_discount",
+        "inv_room_price_after_discount",
+        "inv_room_cgst",
+        "inv_room_sgst",
+        "inv_food_listing_price",
+        "inv_food_sgst",
+        "inv_food_cgst",
+        "inv_room_food_gst_grand_total",
+        "inv_room_price_with_tax",
+        "inv_food_price_with_tax",
+
+        "inv_room_tax_per",
+        "inv_food_tax_per",
     ];
 
     /**
