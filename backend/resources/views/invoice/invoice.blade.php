@@ -476,10 +476,10 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="tm_width_3 tm_border_top_0 tm_bold tm_f18 tm_primary_color tm_gray_bg tm_radius_6_0_0_6">
+                                                <td class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_gray_bg tm_radius_6_0_0_6">
                                                     Balance
                                                 </td>
-                                                <td class="tm_width_3 tm_border_top_0 tm_bold tm_f18 tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
+                                                <td class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
                                                     {{$company->currency ? $company->currency:''}}{{ number_format($transactions->sum('debit') - $transactions->sum('credit'), 2) ?? 0 }}
                                                 </td>
                                             </tr>

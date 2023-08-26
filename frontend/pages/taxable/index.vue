@@ -149,10 +149,10 @@
           <template v-slot:activator="{ on, attrs }">
             <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
               @click="process('gst_invoice_report_csv_download')">
-              <v-icon class="">mdi-file-excel-box-outline</v-icon>
+              <v-icon class="">mdi-file-excel-outline</v-icon>
             </v-btn>
           </template>
-          <span> DOWNLOAD </span>
+          <span> EXPORT </span>
         </v-tooltip>
 
 
@@ -488,5 +488,23 @@ export default {
   },
 };
 </script>
+<style  scoped>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 7px;
+  border: 1px solid #e9e9e9;
+}
+
+tr:nth-child(even) {
+  background-color: #e9e9e9;
+}
+</style>
 
 

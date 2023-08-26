@@ -945,23 +945,6 @@ select:focus {
 }
 </style>
 
-<style  >
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
 
-td,
-th {
-  text-align: left;
-  padding: 7px;
-  border: 1px solid #e9e9e9;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
-</style>
 
 
