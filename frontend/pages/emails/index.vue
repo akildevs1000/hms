@@ -5,7 +5,7 @@
         <v-tabs background-color="background" class="rounded-t-sm" dark show-arrows>
             <v-spacer></v-spacer>
             <v-tab active-class="active-link"> Emails </v-tab>
-            <v-tab active-class="active-link"> Report Types </v-tab>
+            <!-- <v-tab active-class="active-link"> Report Types </v-tab> -->
 
             <v-tabs-slider color="#1259a7"></v-tabs-slider>
             <!-- today checkin -->

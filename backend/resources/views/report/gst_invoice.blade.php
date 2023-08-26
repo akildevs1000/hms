@@ -246,7 +246,7 @@
         }
 
 
-        ,
+
         input {
             /* border: none; */
             /* border-bottom: 1px solid black; */
@@ -327,12 +327,15 @@
             <span class="header-txt-span">{{ $company->id == 1 ? 'The Business Hotel' : 'The Luxuery Hotel' }}</span>
         </div>
         <div class="col-4" style="margin: 0px">
-            @if ($company->id == 1)
-                <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
+            @if (env('APP_ENV') == 'production')
+                <img src="{{ urldecode($company->logo) }}" height="100px" width="100"
                     style="margin-left: 50px;margin-top: 0px">
+            @elseif ($company->id == 1)
+                <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
+                    style="max-height:70px!important;margin-top:10px">
             @elseif ($company->id == 2)
-                <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
-                    style="margin-left: 50px;margin-top: 0px">
+                <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
+                    style="max-height:100px!important">
             @endif
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
@@ -352,7 +355,7 @@
         <div class="col-5">
         </div>
         <div class="col-4" style="margin: 0px">
-            Invoice Report
+            Invoice Report - {{ $request->from }} - {{ $request->to }}
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
         </div>
@@ -369,11 +372,22 @@
             <th class="my-0 py-0 fnt-size">Customer</th>
             <th class="my-0 py-0 fnt-size">Arrival Date</th>
             <th class="my-0 py-0 fnt-size">Departure Date</th>
+            <th class="my-0 py-0 fnt-size">InvTotal</th>
+            <th class="my-0 py-0 fnt-size">GST </th>
+            <th class="my-0 py-0 fnt-size">Grand Total</th>
         </tr>
         @php
             $i = 1;
+            
+            $inv_total_without_tax_collected_total = 0;
+            $inv_total_tax_collected_total = 0;
+            
         @endphp
         @foreach ($data as $item)
+            @php
+                $inv_total_without_tax_collected_total += $item->booking->inv_total_without_tax_collected;
+                $inv_total_tax_collected_total += $item->booking->inv_total_tax_collected;
+            @endphp
             {{-- @dd($item) --}}
             <tr style="font-size:11px">
                 <td class="my-1 py-1 fnt-size">{{ $i++ }}</td>
@@ -384,8 +398,22 @@
                 <td class="my-1 py-1 fnt-size">{{ $item->booking->customer->full_name ?? '---' }}</td>
                 <td class="my-1 py-1 fnt-size">{{ $item->booking->check_in_date ?? '---' }}</td>
                 <td class="my-1 py-1 fnt-size">{{ $item->booking->check_out_date ?? '---' }}</td>
+                <td class="my-1 py-1 fnt-size" style="text-align:right">
+                    {{ $item->booking->inv_total_without_tax_collected }}</td>
+                <td class="my-1 py-1 fnt-size" style="text-align:right">{{ $item->booking->inv_total_tax_collected }}
+                </td>
+                <td class="my-1 py-1 fnt-size" style="text-align:right">
+                    {{ $item->booking->inv_total_without_tax_collected + $item->booking->inv_total_tax_collected }}</td>
             </tr>
         @endforeach
+
+        <tr>
+            <td colspan="8" style="text-align:right">Total</td>
+            <td style="text-align:right">{{ number_format($inv_total_without_tax_collected_total, 2) }}</td>
+            <td style="text-align:right">{{ number_format($inv_total_tax_collected_total, 2) }}</td>
+            <td style="text-align:right">
+                {{ number_format($inv_total_without_tax_collected_total + $inv_total_tax_collected_total, 2) }}</td>
+        </tr>
     </table>
 
 

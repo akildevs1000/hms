@@ -22,10 +22,9 @@ class RoomController extends Controller
             $model->where('status', $request->status);
         }
 
-        $model = $model->where('company_id', $request->company_id)
-        ;
+        $model = $model->where('company_id', $request->company_id);
 
-//datatable Filters
+        //datatable Filters
         if ($request->filled('room_no')) {
             $model->where('room_no', 'like', "$request->room_no%");
         }
@@ -42,14 +41,13 @@ class RoomController extends Controller
         //     $model->where('status', 0);
         // }
 
-//datatable sorty by
+        //datatable sorty by
         if ($request->filled('sortBy')) {
 
             $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
             if (strpos($request->sortBy, '.')) {
 
                 $model->orderBy(RoomType::select('name')->whereColumn('room_types.id', 'rooms.room_type_id'), $sortDesc);
-
             } else {
                 $model->orderBy($request->sortBy, $sortDesc);
             }
@@ -117,11 +115,9 @@ class RoomController extends Controller
                 } else {
                     return $this->response('Room Details are not Updated', $status, false);
                 }
-
             } else {
                 return $this->response('Error Occured', $data, false);
             }
-
         } catch (\Throwable $th) {
             return $this->response('Something wrong.', $th, false);
         }
@@ -141,7 +137,7 @@ class RoomController extends Controller
     {
         $arr = [];
         $data = Room::with('roomType')
-        // ->where('status', 0)
+            // ->where('status', 0)
             ->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
             // $color =  $this->get_color($d->roomType->name);
@@ -500,32 +496,31 @@ class RoomController extends Controller
     }
 
     public function store(StoreRequest $request)
-    {try {
-        $data = $request->validated();
+    {
+        try {
+            $data = $request->validated();
 
-        if ($data) {
+            if ($data) {
 
-            $verifyIsRoom = Room::where('company_id', $request->company_id)->where('room_no', $request->room_no)->count();
-            if ($verifyIsRoom == 0) {
+                $verifyIsRoom = Room::where('company_id', $request->company_id)->where('room_no', $request->room_no)->count();
+                if ($verifyIsRoom == 0) {
 
-                $record = Room::create($data);
+                    $record = Room::create($data);
 
-                if ($record) {
-                    return $this->response('Room details are successfully created', $record, true);
+                    if ($record) {
+                        return $this->response('Room details are successfully created', $record, true);
+                    } else {
+                        return $this->response('Room details not created', $record, false);
+                    }
                 } else {
-                    return $this->response('Room details not created', $record, false);
+                    return $this->response($request->room_no . ' : Room number is already exist. ', $data, false);
                 }
-
             } else {
-                return $this->response($request->room_no . ' : Room number is already exist. ', $data, false);
+                return $this->response('Data is not validated', $data, false);
             }
-
-        } else {
-            return $this->response('Data is not validated', $data, false);
+        } catch (\Throwable $th) {
+            throw $th;
         }
-    } catch (\Throwable $th) {
-        throw $th;
-    }
     }
 
     public function show($id)
@@ -541,5 +536,4 @@ class RoomController extends Controller
             return $this->response('Record   cannot delete.', null, false);
         }
     }
-
 }

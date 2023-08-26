@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Taxable;
 use Illuminate\Http\Request;
 
@@ -12,28 +13,125 @@ class TaxableController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index(Request $request)
     {
-        $model = Taxable::query();
+        $model = $this->getTaxableProcess($request);
 
-        $model->whereCompanyId($request->company_id)
-            ->whereHas('booking', function ($q) {
-                $q->where('booking_status', '!=', -1);
-            });
 
+
+        return $model->paginate($request->per_page ?? 30);
+    }
+    public function getInvoiceGrandTotal(Request $request)
+    {
+        //$model = $this->getTaxableProcess($request)->get();
+
+        $model = Booking::where('company_id', $request->company_id)
+            ->where('booking_status', '!=', -1)
+            ->where('gst_number', '!=', null);
+
+        $model->whereHas('customer', function ($q) {
+            $q->where('gst_number', '!=', null);
+        });
         if (($request->filled('search') && $request->search)) {
-            $model->whereHas('booking', function ($q) use ($request) {
-                $q->where('gst_number', 'Like', '%' . $request->search . '%');
-                $q->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+
+            $model->where(function ($q1) use ($request) {
+                $q1->orWhere('gst_number', 'Like', '%' . $request->search . '%');
+                $q1->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
             });
         }
 
-        // if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-        //     $model->whereHas('booking', function ($q) use ($request) {
-        //         $q->whereDate('check_in', '<=', $request->to);
-        //         $q->WhereDate('check_out', '>=', $request->from);
-        //     });
-        // }
+        if ($request->filled('from')   && ($request->filled('to'))) {
+
+
+            $model->whereDate('check_in', '>=', $request->from);
+            $model->WhereDate('check_in', '<=', $request->to);
+        }
+
+        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+
+            $model->WhereDate('check_in', '>=', $request->from);
+            $model->whereDate('check_in', '<=', $request->to);
+        }
+
+        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+
+            $model->WhereDate('check_out', '>=', $request->from);
+            $model->whereDate('check_out', '<=', $request->to);
+        }
+        $model->with('customer');
+
+        $inv_total_tax_collected = $model->sum('inv_total_tax_collected');
+        $inv_total_without_tax_collected = $model->sum('inv_total_without_tax_collected');
+
+        return ['inv_total_without_tax_collected' => $inv_total_without_tax_collected, 'inv_total_tax_collected' => $inv_total_tax_collected,];
+    }
+    // public function getTaxableProcess($request)
+    // {
+    //     $model = Booking::where('company_id', $request->company_id)
+    //         ->where('booking_status', '!=', -1)
+    //         ->where('gst_number', '!=', null);
+
+    //     if (($request->filled('search') && $request->search)) {
+
+    //         $model->where('gst_number', 'Like', '%' . $request->search . '%');
+    //         $model->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+    //     }
+
+    //     if ($request->filled('from')   && ($request->filled('to'))) {
+
+
+    //         $model->whereDate('check_in', '>=', $request->from);
+    //         $model->WhereDate('check_in', '<=', $request->to);
+    //     }
+
+    //     if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+
+    //         $model->WhereDate('check_in', '>=', $request->from);
+    //         $model->whereDate('check_in', '<=', $request->to);
+    //     }
+
+    //     if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+
+    //         $model->WhereDate('check_out', '>=', $request->from);
+    //         $model->whereDate('check_out', '<=', $request->to);
+    //     }
+    //     $model->with('customer');
+
+    //     return  $model->orderBy('check_in', 'ASC');
+    // }
+    public function getTaxableProcess($request)
+    {
+        $model = Taxable::where('taxables.company_id', $request->company_id)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            })
+            ->whereHas('booking.customer', function ($q) {
+                $q->where('gst_number', '!=', null);
+            });
+
+
+
+        if (($request->filled('search') && $request->search)) {
+            $model->whereHas('booking', function ($q) use ($request) {
+
+                // $q->where('gst_number', 'Like', '%' . $request->search . '%');
+                // $q->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+
+                $q->where(function ($q1) use ($request) {
+                    $q1->orWhere('gst_number', 'Like', '%' . $request->search . '%');
+                    $q1->orWhere('reservation_no', 'Like', '%' . $request->search . '%');
+                });
+            });
+        }
+
+        if ($request->filled('from')   && ($request->filled('to'))) {
+
+            $model->whereHas('booking', function ($q) use ($request) {
+                $q->whereDate('check_in', '>=', $request->from);
+                $q->WhereDate('check_in', '<=', $request->to);
+            });
+        }
 
         if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->whereHas('booking', function ($q) use ($request) {
@@ -50,7 +148,8 @@ class TaxableController extends Controller
         }
 
         $model->with('booking.customer');
-        return $model->paginate($request->per_page ?? 30);
+
+        return  $model;//->orderBy(Booking::select('check_in')->whereColumn('bookings.id', 'taxables.booking_id'), 'ASC');
     }
 
     /**

@@ -58,7 +58,7 @@ class ManagementController extends Controller
         $arr = [];
         $data = $reportModel->select('sold', 'unsold', 'date')
             ->whereCompanyId($request->company_id)
-        // ->whereMonth('date', $request->month)
+            // ->whereMonth('date', $request->month)
             ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
             ->orderBy('date', 'ASC')
             ->get()->toArray();
@@ -75,7 +75,7 @@ class ManagementController extends Controller
     {
 
         $data = Booking::whereCompanyId($request->company_id)
-        //->whereMonth('check_in', $request->month)
+            //->whereMonth('check_in', $request->month)
             ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
             ->where('booking_status', '!=', -1)
             ->select('source', 'total_price')
@@ -235,13 +235,13 @@ class ManagementController extends Controller
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')->with('transactions', function ($q) use ($request) {
-            $q->where('is_posting', 0);
-            // $q->where('credit', '>', 0);
-            $q->whereDate('date', $request->date);
-            $q->where('payment_method_id', '!=', 7);
-            $q->where('company_id', $request->company_id)
-                ->with('paymentMode');
-        })->get();
+                $q->where('is_posting', 0);
+                // $q->where('credit', '>', 0);
+                $q->whereDate('date', $request->date);
+                $q->where('payment_method_id', '!=', 7);
+                $q->where('company_id', $request->company_id)
+                    ->with('paymentMode');
+            })->get();
     }
 
     private function continueAudit($model, $request)
@@ -376,14 +376,13 @@ class ManagementController extends Controller
 
             $year_number = date('Y', strtotime($filter_from_date));
         } else {
-
         }
 
         $soldArray = Report::selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
             ->selectRaw('sum(sold_qty) as total')
             ->where('company_id', $request->company_id)
-        // ->whereYear('created_at', $year)
+            // ->whereYear('created_at', $year)
             ->whereBetween('date', [$filter_from_date, $filter_to_date])
 
             ->groupByRaw("EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)")
@@ -393,15 +392,14 @@ class ManagementController extends Controller
             ->get()
             ->toArray();
 
-        $incomeArray = Transaction::
-            selectRaw("EXTRACT(MONTH FROM date) as month")
+        $incomeArray = Transaction::selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
             ->selectRaw('sum(credit) as total')
             ->where('company_id', $request->company_id)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             })
-        // ->whereYear('created_at', $year)
+            // ->whereYear('created_at', $year)
             ->whereBetween('date', [$filter_from_date . ' 00:00:00', $filter_to_date . ' 23:59:59'])
 
             ->groupByRaw("EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)")
@@ -426,7 +424,7 @@ class ManagementController extends Controller
             ->selectRaw("EXTRACT(YEAR FROM created_at) as year")
             ->selectRaw('sum(total) as total')
             ->where('company_id', $request->company_id)
-        // ->whereYear('created_at', $year)
+            // ->whereYear('created_at', $year)
             ->whereBetween('created_at', [$filter_from_date . ' 00:00:00', $filter_to_date . ' 23:59:59'])
 
             ->where('is_management', 0)
@@ -465,26 +463,22 @@ class ManagementController extends Controller
             $soldTemp = array_filter($soldArray, function ($result) use ($month, $year) {
                 if ($result['month'] == $month && $result['year'] == $year) {
                     return $result;
-                }
-                ;
+                };
             });
             $incomeTemp = array_filter($incomeArray, function ($result) use ($month, $year) {
                 if ($result['month'] == $month && $result['year'] == $year) {
                     return $result;
-                }
-                ;
+                };
             });
             $managementExpensesTemp = array_filter($management_expensesArray, function ($result) use ($month, $year) {
                 if ($result['month'] == $month && $result['year'] == $year) {
                     return $result;
-                }
-                ;
+                };
             });
             $ExpensesTemp = array_filter($expensesArray, function ($result) use ($month, $year) {
                 if ($result['month'] == $month && $result['year'] == $year) {
                     return $result;
-                }
-                ;
+                };
             });
             if (!empty($soldTemp)) {
                 $sold = reset($soldTemp)["total"];
@@ -549,18 +543,9 @@ class ManagementController extends Controller
         $returnArray = [];
         $year = $request->year;
 
-        $monthArray = [["value" => "01", "text" => "Jan", "color" => "#3366CC"]
-            , ["value" => "02", "text" => "Feb", "color" => "#FF69B4"]
-            , ["value" => "03", "text" => "Mar", "color" => "#00FF00"]
-            , ["value" => "04", "text" => "Apr", "color" => "#FFD700"]
-            , ["value" => "05", "text" => "May", "color" => "#FF4500"]
-            , ["value" => "06", "text" => "Jun", "color" => "#800080"]
-            , ["value" => "07", "text" => "Jul", "color" => "#FF6347"]
-            , ["value" => "08", "text" => "Aug", "color" => "#008080"]
-            , ["value" => "09", "text" => "Sep", "color" => "#FFA500"]
-            , ["value" => "10", "text" => "Oct", "color" => "#DC143C"]
-            , ["value" => "11", "text" => "Nov", "color" => "#7CFC00"]
-            , ["value" => "12", "text" => "Dec", "color" => "#4169E1"]];
+        $monthArray = [
+            ["value" => "01", "text" => "Jan", "color" => "#3366CC"], ["value" => "02", "text" => "Feb", "color" => "#FF69B4"], ["value" => "03", "text" => "Mar", "color" => "#00FF00"], ["value" => "04", "text" => "Apr", "color" => "#FFD700"], ["value" => "05", "text" => "May", "color" => "#FF4500"], ["value" => "06", "text" => "Jun", "color" => "#800080"], ["value" => "07", "text" => "Jul", "color" => "#FF6347"], ["value" => "08", "text" => "Aug", "color" => "#008080"], ["value" => "09", "text" => "Sep", "color" => "#FFA500"], ["value" => "10", "text" => "Oct", "color" => "#DC143C"], ["value" => "11", "text" => "Nov", "color" => "#7CFC00"], ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
+        ];
 
         $soldArray = Report::selectRaw("EXTRACT(MONTH FROM date) as month")
             ->selectRaw("EXTRACT(YEAR FROM date) as year")
@@ -631,27 +616,23 @@ class ManagementController extends Controller
             $soldTemp = array_filter($soldArray, function ($result) use ($monthStr) {
                 if ($result['month'] == $monthStr) {
                     return $result;
-                }
-                ;
+                };
             });
             $incomeTemp = array_filter($incomeArray, function ($result) use ($monthStr) {
                 if ($result['month'] == $monthStr) {
                     return $result;
-                }
-                ;
+                };
             });
             $managementExpensesTemp = array_filter($management_expensesArray, function ($result) use ($monthStr) {
                 if ($result['month'] == $monthStr) {
                     return $result;
-                }
-                ;
+                };
             });
             $ExpensesTemp = array_filter($expensesArray, function ($result) use ($monthStr) {
 
                 if ($result['month'] == $monthStr) {
                     return $result;
-                }
-                ;
+                };
             });
             if (!empty($soldTemp)) {
                 $sold = reset($soldTemp)["total"];
@@ -714,7 +695,8 @@ class ManagementController extends Controller
 
         return Pdf::loadView('report.revenue_report_monthlywise', [
 
-            'company' => Company::find($request->company_id)])->setPaper('a4', 'landscape');
+            'company' => Company::find($request->company_id)
+        ])->setPaper('a4', 'landscape');
     }
     public function getReportMonthlyWise(Request $request)
     {
@@ -725,18 +707,8 @@ class ManagementController extends Controller
         $year = $request->year;
 
         $monthArray = [
-            ["value" => "01", "text" => "Jan", "color" => "#3366CC"]
-            , ["value" => "02", "text" => "Feb", "color" => "#FF69B4"]
-            , ["value" => "03", "text" => "Mar", "color" => "#00FF00"]
-            , ["value" => "04", "text" => "Apr", "color" => "#FFD700"]
-            , ["value" => "05", "text" => "May", "color" => "#FF4500"]
-            , ["value" => "06", "text" => "Jun", "color" => "#800080"]
-            , ["value" => "07", "text" => "Jul", "color" => "#FF6347"]
-            , ["value" => "08", "text" => "Aug", "color" => "#008080"]
-            , ["value" => "09", "text" => "Sep", "color" => "#FFA500"]
-            , ["value" => "10", "text" => "Oct", "color" => "#DC143C"]
-            , ["value" => "11", "text" => "Nov", "color" => "#7CFC00"]
-            , ["value" => "12", "text" => "Dec", "color" => "#4169E1"]];
+            ["value" => "01", "text" => "Jan", "color" => "#3366CC"], ["value" => "02", "text" => "Feb", "color" => "#FF69B4"], ["value" => "03", "text" => "Mar", "color" => "#00FF00"], ["value" => "04", "text" => "Apr", "color" => "#FFD700"], ["value" => "05", "text" => "May", "color" => "#FF4500"], ["value" => "06", "text" => "Jun", "color" => "#800080"], ["value" => "07", "text" => "Jul", "color" => "#FF6347"], ["value" => "08", "text" => "Aug", "color" => "#008080"], ["value" => "09", "text" => "Sep", "color" => "#FFA500"], ["value" => "10", "text" => "Oct", "color" => "#DC143C"], ["value" => "11", "text" => "Nov", "color" => "#7CFC00"], ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
+        ];
 
         $totalRooms = 0;
         $totalIncome = 0;
@@ -804,7 +776,6 @@ class ManagementController extends Controller
                 $totalExpenses += $expenses;
                 $totalManagementExpenses += $management_expenses;
                 $totalProfit += $profit;
-
             }
         }
         $totalPercentage += $totalIncome > 0 ? ($totalProfit / $totalIncome) * 100 : 0;
@@ -861,7 +832,7 @@ class ManagementController extends Controller
                 });
             })
 
-        //->limit(100)
+            //->limit(100)
             ->get();
 
         // $total_price = Payment::query() //transaction
@@ -872,18 +843,9 @@ class ManagementController extends Controller
         //     ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
         //     ->sum('amount');
 
-        $colorsArray = [["value" => "01", "text" => "Jan", "color" => "#3366CC"]
-            , ["value" => "02", "text" => "Feb", "color" => "#FF69B4"]
-            , ["value" => "03", "text" => "Mar", "color" => "#00FF00"]
-            , ["value" => "04", "text" => "Apr", "color" => "#FFD700"]
-            , ["value" => "05", "text" => "May", "color" => "#FF4500"]
-            , ["value" => "06", "text" => "Jun", "color" => "#800080"]
-            , ["value" => "07", "text" => "Jul", "color" => "#FF6347"]
-            , ["value" => "08", "text" => "Aug", "color" => "#008080"]
-            , ["value" => "09", "text" => "Sep", "color" => "#FFA500"]
-            , ["value" => "10", "text" => "Oct", "color" => "#DC143C"]
-            , ["value" => "11", "text" => "Nov", "color" => "#7CFC00"]
-            , ["value" => "12", "text" => "Dec", "color" => "#4169E1"]];
+        $colorsArray = [
+            ["value" => "01", "text" => "Jan", "color" => "#3366CC"], ["value" => "02", "text" => "Feb", "color" => "#FF69B4"], ["value" => "03", "text" => "Mar", "color" => "#00FF00"], ["value" => "04", "text" => "Apr", "color" => "#FFD700"], ["value" => "05", "text" => "May", "color" => "#FF4500"], ["value" => "06", "text" => "Jun", "color" => "#800080"], ["value" => "07", "text" => "Jul", "color" => "#FF6347"], ["value" => "08", "text" => "Aug", "color" => "#008080"], ["value" => "09", "text" => "Sep", "color" => "#FFA500"], ["value" => "10", "text" => "Oct", "color" => "#DC143C"], ["value" => "11", "text" => "Nov", "color" => "#7CFC00"], ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
+        ];
         return ["data" => $bookings, "colors" => $colorsArray];
     }
 
@@ -896,7 +858,6 @@ class ManagementController extends Controller
         return Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find(1)])
             ->setPaper('a4', 'landscape')
             ->stream();
-
     }
     public function getReportDailyWiseGroup(Request $request)
     {
@@ -927,9 +888,7 @@ class ManagementController extends Controller
             ->groupBy(DB::raw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at) , EXTRACT(DAY FROM created_at)  '))
             ->orderBy(DB::raw('EXTRACT(YEAR FROM created_at)'), 'asc')
             ->orderBy(DB::raw('EXTRACT(MONTH FROM created_at)'), 'asc')
-            ->orderBy(DB::raw('EXTRACT(DAY  FROM created_at)'), 'asc')
-
-        ;
+            ->orderBy(DB::raw('EXTRACT(DAY  FROM created_at)'), 'asc');
 
         $ExpencesManagementArray = $expencesModel->clone()->where('is_management', 1)->get()->toArray();
         $ExpencesNonManagementArray = $expencesModel->clone()->where('is_management', 0)->get()->toArray();
@@ -950,20 +909,19 @@ class ManagementController extends Controller
         //     ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
         //     ->groupBy(DB::raw('year, month , date  '))->orderBy('date', 'ASC')->get()->toArray();
 
-        $incomeArray = Transaction::
-            selectRaw("EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as day ")
+        $incomeArray = Transaction::selectRaw("EXTRACT(YEAR FROM date) as year, EXTRACT(MONTH FROM date) as month, EXTRACT(DAY  FROM date) as day ")
             ->selectRaw('sum(credit) as total_amount')
             ->where('company_id', $request->company_id)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
             })
-        // ->whereYear('created_at', $year)
+            // ->whereYear('created_at', $year)
             ->whereBetween('date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
 
             ->groupByRaw("EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)  , EXTRACT(DAY FROM date)")
             ->orderByRaw('year')
             ->orderByRaw('month')
-        //->orderByRaw('date')
+            //->orderByRaw('date')
             ->get()->toArray();
 
         $startTimestamp = strtotime($request->filter_from_date);
@@ -1089,9 +1047,7 @@ class ManagementController extends Controller
             ->groupBy(DB::raw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at) , EXTRACT(DAY FROM created_at)  '))
             ->orderBy(DB::raw('EXTRACT(YEAR FROM created_at)'), 'asc')
             ->orderBy(DB::raw('EXTRACT(MONTH FROM created_at)'), 'asc')
-            ->orderBy(DB::raw('EXTRACT(DAY  FROM created_at)'), 'asc')
-
-        ;
+            ->orderBy(DB::raw('EXTRACT(DAY  FROM created_at)'), 'asc');
 
         $ExpencesManagementArray = $expencesModel->clone()->where('is_management', 1)->get()->toArray();
         $ExpencesNonManagementArray = $expencesModel->clone()->where('is_management', 0)->get()->toArray();

@@ -16,4 +16,5 @@ include 'agents.php';
 include 'transaction.php';
 include 'lost_and_found_items.php';
 include 'email_notifications.php';
-include 'api_wordpress.php';
+include 'api_widget.php';
+include 'tax_slabs.php';

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class RoomType extends Model
 {
@@ -33,13 +33,23 @@ class RoomType extends Model
         'holiday_price',
         'weekday_price',
         'weekend_price',
+        'description',
+        'short_description',
+        'pic',
     ];
 
     public function room()
     {
         return $this->hasOne(Room::class);
     }
+    public function getPicAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return asset('storage/rooms/' . $value);
 
+    }
     protected static function boot()
     {
         parent::boot();

@@ -35,20 +35,32 @@ class InvoiceController extends Controller
             return $room->room_discount;
         });
 
-        return view('invoice.invoice', compact("invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+        $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-31'));
 
-        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
-        // ->setPaper('a4', 'landscape')
+        $bladeName = 'invoice.invoice';
+
+        if ($booking->tax_recalculated_status) {
+            $bladeName = 'invoice.invoice_updated_with_tax';
+        } else if ($is_old_bill <= 0) {
+
+            $bladeName = 'invoice.invoice_old_bills';
+        }
+
+        return view($bladeName, compact("invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+
+        return Pdf::loadView($bladeName, compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
+            // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
     }
+
     public function printInvoice($id)
     {
         // return $booking = Booking::with('orderRooms.postings', 'customer')->find($id);
         $booking = Booking::with('orderRooms', 'customer')->find($id);
         $orderRooms = $booking->orderRooms;
         return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms"))
-        // ->setPaper('a4', 'landscape')
+            // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
     }

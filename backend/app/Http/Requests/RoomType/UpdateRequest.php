@@ -33,9 +33,12 @@ class UpdateRequest extends FormRequest
             'adult' => 'required',
             'child' => 'required',
             'baby' => 'required',
+            'description' => 'nullable',
+            'short_description' => 'nullable',
             'holiday_price' => 'nullable',
             'weekday_price' => 'nullable',
             'weekend_price' => 'nullable',
+            'image' => 'nullable',
         ];
     }
 }

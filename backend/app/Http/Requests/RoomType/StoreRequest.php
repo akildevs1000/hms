@@ -43,6 +43,8 @@ class StoreRequest extends FormRequest
             'holiday_price' => 'nullable',
             'weekday_price' => 'nullable',
             'weekend_price' => 'nullable',
+            'description' => 'nullable',
+            'short_description' => 'nullable',
         ];
     }
 }

@@ -12,7 +12,7 @@
       </v-col>
     </v-row>
     <div>
-      <v-dialog v-model="roomTypeDialog" max-width="40%">
+      <v-dialog v-model="roomTypeDialog" max-width="50%">
         <v-card>
           <v-toolbar color="background" dense flat dark>
             <v-toolbar color="background" dense flat dark>
@@ -28,34 +28,76 @@
                   <v-card-text>
                     <v-container>
                       <v-row>
-                        <v-col md="6" cols="12">
-                          <v-text-field v-model="editedItem.name" placeholder="Name" label="Name" outlined
-                            :hide-details="true" dense></v-text-field>
-                          <span v-if="errors && errors.name" class="error--text">{{ errors.name[0]
-                          }}</span>
-                        </v-col>
-                        <v-col md="6" cols="12">
-                          <v-text-field v-model="editedItem.price" placeholder="Amount" label="Amount" outlined
-                            :hide-details="true" type="number" dense></v-text-field>
-                          <span v-if="errors && errors.price" class="error--text">{{ errors.price[0]
-                          }}</span>
-                        </v-col>
-                        <v-col md="4" cols="12">
-                          <v-select v-model="editedItem.adult" :items="[1, 2, 3, 4]" placeholder="Adult" dense
-                            label="Adult" item-text="name" item-value="value" outlined :hide-details="true"></v-select>
-                          <span v-if="errors && errors.adult" class="error--text">{{ errors.adult[0] }}</span>
-                        </v-col>
+                        <v-col md="8">
+                          <v-row>
+                            <v-col md="6" cols="12">
+                              <v-text-field v-model="editedItem.name" placeholder="Name" label="Name" outlined
+                                :hide-details="true" dense></v-text-field>
+                              <span v-if="errors && errors.name" class="error--text">{{ errors.name[0]
+                              }}</span>
+                            </v-col>
+                            <v-col md="6" cols="12">
+                              <v-text-field v-model="editedItem.price" placeholder="Amount" label="Amount" outlined
+                                :hide-details="true" type="number" dense></v-text-field>
+                              <span v-if="errors && errors.price" class="error--text">{{ errors.price[0]
+                              }}</span>
+                            </v-col>
+                            <v-col md="4" cols="12">
+                              <v-select v-model="editedItem.adult" :items="[1, 2, 3, 4]" placeholder="Adult" dense
+                                label="Adult" item-text="name" item-value="value" outlined
+                                :hide-details="true"></v-select>
+                              <span v-if="errors && errors.adult" class="error--text">{{ errors.adult[0] }}</span>
+                            </v-col>
 
-                        <v-col md="4" cols="12">
-                          <v-select v-model="editedItem.child" :items="[1, 2, 3, 4]" placeholder="Child" dense
-                            label="Child" item-text="name" item-value="value" outlined :hide-details="true"></v-select>
-                          <span v-if="errors && errors.child" class="error--text">{{ errors.child[0] }}</span>
-                        </v-col>
+                            <v-col md="4" cols="12">
+                              <v-select v-model="editedItem.child" :items="[1, 2, 3, 4]" placeholder="Child" dense
+                                label="Child" item-text="name" item-value="value" outlined
+                                :hide-details="true"></v-select>
+                              <span v-if="errors && errors.child" class="error--text">{{ errors.child[0] }}</span>
+                            </v-col>
 
-                        <v-col md="4" cols="12">
-                          <v-select v-model="editedItem.baby" :items="[1, 2, 3]" placeholder="Baby" dense label="Baby"
-                            item-text="name" item-value="value" outlined :hide-details="true"></v-select>
-                          <span v-if="errors && errors.baby" class="error--text">{{ errors.baby[0] }}</span>
+                            <v-col md="4" cols="12">
+                              <v-select v-model="editedItem.baby" :items="[1, 2, 3]" placeholder="Baby" dense label="Baby"
+                                item-text="name" item-value="value" outlined :hide-details="true"></v-select>
+                              <span v-if="errors && errors.baby" class="error--text">{{ errors.baby[0] }}</span>
+                            </v-col>
+                            <v-col md="12" cols="12">
+                              <v-text-field v-model="editedItem.short_description" placeholder="Short Description"
+                                label="Short Description" outlined :hide-details="true" dense></v-text-field>
+                            </v-col>
+                            <v-col md="12" cols="12">
+                              <v-textarea outlined v-model="editedItem.description" placeholder="Description"
+                                label="Long Description"></v-textarea>
+                            </v-col>
+
+                          </v-row>
+                        </v-col>
+                        <v-col cols="4">
+
+
+                          <div class="form-group" style="margin: 0 auto; width: 200px">
+                            <v-img style="
+                            width: 100%;
+                            height: 200px;
+                            border: 1px solid #5fafa3;
+                            border-radius: 10%;
+                            margin: 0 auto;
+                    " :src="previewImage || '/noimage.png'"></v-img>
+                            <br />
+                            <v-btn small class="form-control primary" @click="onpick_attachment">{{ !upload.name ?
+                              "Upload"
+                              :
+                              "Change" }} Room Image
+                              <v-icon right dark>mdi-cloud-upload</v-icon>
+                            </v-btn>
+                            <input required type="file" @change="attachment" style="display: none" accept="image/*"
+                              ref="attachment_input" />
+
+                            <span v-if="errors && errors.profile_picture" class="text-danger mt-2">{{
+                              errors.profile_picture[0]
+                            }}</span>
+                          </div>
+
                         </v-col>
 
 
@@ -82,7 +124,7 @@
 
           <v-col md="12" lg="12">
             <v-tabs v-model="activeTab" :vertical="vertical" background-color="background" dense flat dark show-arrows
-              class=" rounded-t-sm">
+              class=" rounded-md">
 
               <v-spacer></v-spacer>
               <v-tab active-class="active-link">
@@ -108,7 +150,7 @@
 
 
                           <v-btn v-if="can(`settings_rooms_category_create`)" x-small :ripple="false" text v-bind="attrs"
-                            v-on="on" @click="roomTypeDialog = true">
+                            v-on="on" @click="roomTypeDialog = true; previewImage = null;">
                             <v-icon color="white" dark white>mdi-plus-circle</v-icon>
                           </v-btn>
                         </template>
@@ -121,6 +163,7 @@
                         <table class="mt-0 ">
                           <tr style="font-size: 13px">
                             <th class="ps-5">#</th>
+                            <th style="width:50px;text-align:center">Photo</th>
                             <th>Name</th>
                             <th>Adult</th>
                             <th>Child</th>
@@ -139,6 +182,17 @@
                                 (pagination.current - 1) * pagination.per_page + index + 1
                               }}
                             </td>
+                            <td>
+
+                              <v-img style="
+            border-radius: 50%;
+            height:100px;
+            width: 100px;
+            margin: 0 auto;
+          " :src="item.pic || '/noimage.png'">
+                              </v-img>
+                            </td>
+
                             <td>{{ caps(item.name) }}</td>
                             <td>{{ caps(item.adult) }}</td>
                             <td>{{ caps(item.child) }}</td>
@@ -214,6 +268,11 @@ export default {
   //   roomsComponent,
   // },
   data: () => ({
+
+    upload: {
+      name: "",
+    },
+    previewImage: null,
     componentKey: 0,
     vertical: false,
     activeTab: 0,
@@ -241,6 +300,8 @@ export default {
       child: "",
       baby: "",
       price: "",
+      short_description: "",
+      description: "",
     },
 
     defaultItem: {
@@ -249,11 +310,14 @@ export default {
       child: "",
       baby: "",
       price: "",
+      short_description: "",
+      description: "",
     },
 
     response: "",
     data: [],
 
+    selectedFile: "",
     errors: [],
   }),
 
@@ -294,6 +358,36 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
+    onpick_attachment() {
+      this.$refs.attachment_input.click();
+    },
+    attachment(e) {
+      this.upload.name = e.target.files[0] || "";
+
+      let input = this.$refs.attachment_input;
+      let file = input.files;
+
+      if (file[0].size > 1024 * 1024) {
+        e.preventDefault();
+        this.errors["profile_picture"] = [
+          "File too big (> 1MB). Upload less than 1MB",
+        ];
+        return;
+      }
+
+      if (file && file[0]) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.previewImage = e.target.result;
+          this.selectedFile = event.target.result;
+          //this.$refs.cropper.replace(this.selectedFile);
+        };
+        reader.readAsDataURL(file[0]);
+        this.$emit("input", file[0]);
+
+        this.dialogCropping = true;
+      }
+    },
     getDataFromApi(url = this.endpoint) {
 
       this.loading = true;
@@ -320,10 +414,12 @@ export default {
     },
 
     editItem(item) {
+
+
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
 
-
+      this.previewImage = item.pic;
       this.roomTypeDialog = true;
     },
 
@@ -374,17 +470,46 @@ export default {
     },
 
     save() {
-      let payload = {
-        name: this.editedItem.name,
-        price: this.editedItem.price,
-        adult: this.editedItem.adult,
-        child: this.editedItem.child,
-        baby: this.editedItem.baby,
-        company_id: this.$auth.user.company.id,
-      };
+
+
+      // let payload1 = {
+      //   name: this.editedItem.name,
+      //   price: this.editedItem.price,
+      //   adult: this.editedItem.adult,
+      //   child: this.editedItem.child,
+      //   baby: this.editedItem.baby,
+      //   company_id: this.$auth.user.company.id,
+      //   short_description: this.editedItem.short_description,
+      //   description: this.editedItem.description,
+
+      // };
+
+      let payload = new FormData();
+
+      if (this.upload.name) {
+        payload.append("image", this.upload.name);
+      }
+      payload.append("name", this.editedItem.name);
+      payload.append("price", this.editedItem.price);
+      payload.append("adult", this.editedItem.adult);
+      payload.append("child", this.editedItem.child);
+      payload.append("baby", this.editedItem.baby);
+      payload.append("company_id", this.$auth.user.company.id);
+      payload.append("short_description", this.editedItem.short_description);
+      payload.append("description", this.editedItem.description);
+
+
+
+
+
+
+      // if (this.upload.name) {
+      //   payload.append("image", this.upload.name);
+      // }
       if (this.editedIndex > -1) {
+        payload.append("_method", 'PUT');
         this.$axios
-          .put('room_types' + "/" + this.editedItem.id, payload)
+          .post('room_types' + "/" + this.editedItem.id, payload)
           .then(({ data }) => {
             console.log(data);
             if (!data.status) {
@@ -439,4 +564,4 @@ tr:nth-child(even) {
 input[type="text"]:focus.custom-text-box {
   border: 2px solid #5fafa3 !important;
 }
-</style>
+</style> 

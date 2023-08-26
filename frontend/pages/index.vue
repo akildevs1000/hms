@@ -1062,8 +1062,10 @@ export default {
     },
 
     mouseOver(bookedRoomId, bookingStatus) {
+
       this.evenIid = bookedRoomId;
       this.bookingStatus = bookingStatus;
+
     },
 
     touchstart(e, bookedRoomId, bookingStatus) {

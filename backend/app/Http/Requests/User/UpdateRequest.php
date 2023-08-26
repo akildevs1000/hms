@@ -46,6 +46,8 @@ class UpdateRequest extends FormRequest
             'mobile' => 'nullable',
             'image' => 'nullable',
             'is_active' => 'nullable',
+            'last_name' => 'required',
+            'enable_whatsapp_otp' => 'required',
         ];
     }
 

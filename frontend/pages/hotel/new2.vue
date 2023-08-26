@@ -73,7 +73,7 @@
                           :hide-details="true"></v-select>
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
-                        <v-select v-model="customer.title" :items="titleItems" label="Tittle *" dense item-text="name"
+                        <v-select v-model="customer.title" :items="titleItems" label="Title *" dense item-text="name"
                           item-value="name" :hide-details="errors && !errors.title" :error="errors && errors.title"
                           :error-messages="errors && errors.title ? errors.title[0] : ''
                             " outlined></v-select>
@@ -1214,6 +1214,16 @@ export default {
     },
     nextTab() {
       // if (this.activeTab) {
+
+      if (this.room.type == '') {
+        this.alert(
+          "oops",
+          "Select Source Type",
+          "error"
+        );
+
+        return false;
+      }
       this.activeTab += 1;
       // }
     },
