@@ -20,6 +20,7 @@
               <v-card elevation="0">
                 <v-card-text>
                   <v-container>
+
                     <v-row>
                       <v-col md="8">
                         <v-row>
@@ -78,8 +79,8 @@
                           <v-col md="12" cols="12">
 
                             <v-select label="Whatsapp OTP" v-model="editedItem.enable_whatsapp_otp" :items="[
-                              { name: 'Enable', value: '1' },
-                              { name: 'Disable', value: '0' }
+                              { name: 'Enable', value: 1 },
+                              { name: 'Disable', value: 0 }
                             ]" dense item-text="name" item-value="value"
                               :hide-details="errors && !errors.enable_whatsapp_otp"
                               :error="errors && errors.enable_whatsapp_otp" :error-messages="errors && errors.enable_whatsapp_otp ?
@@ -333,6 +334,9 @@ export default {
         password_confirmation: "",
         email: "",
         mobile: "",
+        is_active: 1,
+        enable_whatsapp_otp: 1,
+        last_name: ''
       },
 
       upload: {
@@ -409,7 +413,7 @@ export default {
       this.editedIndex = this.userData.indexOf(item);
       this.editedItem = Object.assign({}, item);
 
-      if (this.editedItem.title == null) {
+      if (this.editedItem.title == null || this.editedItem.title == '') {
         this.editedItem.title = "Mr"
       }
       if (this.editedItem.last_name == null) {
