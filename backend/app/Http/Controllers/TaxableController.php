@@ -26,6 +26,8 @@ class TaxableController extends Controller
     {
         //$model = $this->getTaxableProcess($request)->get();
 
+
+
         $model = Booking::where('company_id', $request->company_id)
             ->where('booking_status', '!=', -1)
             ->where('gst_number', '!=', null);

@@ -5,88 +5,58 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row class="mt-5 mb-1">
+    <v-row>
+      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
+        <div class="card px-2 available">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-ddoor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Invoice</h6>
+              <span class="data-1">
+                {{ getPriceFormat(inv_total_without_tax_collected) }}
 
-      <v-col cols="3">
-
-        <div class="col-md-12 col-lg-12 col-xlg-12 py-0">
-
-          <v-row class="box text-center" style="background-color: rgb(50, 161, 92); border-radius: 7px">
-            <v-col md="12" class="p-0 m-0">
-              <h1 class="font-light text-white">
-
-                <h4 class="text-white pb-0 mb-0   text-left dash-font-size text-center  "
-                  style="color:white;font-size: 30px;">
-                  Invoice(exl) : {{ getPriceFormat(inv_total_without_tax_collected) }}
-                </h4>
-              </h1>
-            </v-col>
-
-          </v-row>
-
+              </span>
+            </div>
+          </div>
         </div>
+      </div>
 
-      </v-col>
-      <v-col cols="3">
-
-        <div class="col-md-11 col-lg-11 col-xlg-11 py-0">
-
-          <v-row class="box text-center" style="background-color: rgb(255, 0, 0); border-radius: 7px">
-            <v-col md="12" class="p-0 m-0">
-              <h1 class="font-light text-white">
-
-                <h4 class="text-white pb-0 mb-0   text-left dash-font-size text-center  "
-                  style="color:white;font-size: 30px;">
-                  SGST : {{ getPriceFormat(inv_total_tax_collected / 2) }}
-                </h4>
-              </h1>
-            </v-col>
-
-          </v-row>
-
+      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
+        <div class="card px-2 booked">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-dosor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">GST</h6>
+              <span class="data-1"> {{ getPriceFormat(inv_total_tax_collected) }}
+              </span>
+            </div>
+          </div>
         </div>
+      </div>
 
-      </v-col>
-      <v-col cols="3">
-
-        <div class="col-md-11 col-lg-11 col-xlg-11 py-0">
-
-          <v-row class="box text-center" style="background-color: rgb(255, 0, 0); border-radius: 7px">
-            <v-col md="12" class="p-0 m-0">
-              <h1 class="font-light text-white">
-
-                <h4 class="text-white pb-0 mb-0   text-left dash-font-size text-center  "
-                  style="color:white;font-size: 30px;">
-                  CGST : {{ getPriceFormat(inv_total_tax_collected / 2) }}
-                </h4>
-              </h1>
-            </v-col>
-
-          </v-row>
-
+      <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('management_income_view')">
+        <div class="card px-2" style="background-color: #ce008e">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-dosor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">CGST</h6>
+              <span class="data-1"> {{ getPriceFormat(inv_total_tax_collected / 2) }}
+              </span>
+            </div>
+          </div>
         </div>
-
-      </v-col>
-      <v-col cols="3">
+      </div>
 
 
-        <v-row class="box text-center" style="background-color: rgb(2, 173, 164); border-radius: 7px">
-          <v-col md="12" class="p-0 m-0">
-            <h1 class="font-light text-white">
 
-              <h4 class="text-white pb-0 mb-0   text-left dash-font-size text-center  "
-                style="color:white;font-size: 30px;">
-                Total(inc): {{ getPriceFormat(parseFloat(inv_total_without_tax_collected) +
-                  parseFloat(inv_total_tax_collected)) }}
-              </h4>
-            </h1>
-          </v-col>
-
-        </v-row>
-
-
-      </v-col>
     </v-row>
+
 
 
     <v-row>
@@ -99,7 +69,7 @@
           dense outlined placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi()"></v-select>
       </v-col>
 
-      <v-col md="3">
+      <!-- <v-col md="3">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
           offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -118,8 +88,13 @@
           </template>
           <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
+      </v-col> -->
+      <v-col md="3">
+        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
       </v-col>
     </v-row>
+
 
 
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
@@ -282,7 +257,9 @@
   </div>
 </template>
 <script>
+
 export default {
+
   data: () => ({
 
     inv_total_without_tax_collected: 0,
@@ -310,6 +287,7 @@ export default {
     data: [],
     loading: false,
     total: 0,
+    dateTimePickerheader: { key: "", type: "date_range_picker" },
     headers: [
       { text: "&nbsp Invoice No" },
       { text: "&nbsp Resr. No" },
@@ -357,8 +335,19 @@ export default {
   },
 
   methods: {
+    handleDatesFilter(dates) {
+
+      this.from_date = dates[0];
+      this.to_date = dates[1];
+      if (this.to_date != '')
+        this.getDataFromApi();
+    },
     getPriceFormat(price) {
-      return price.toLocaleString("en-IN", { maximumFractionDigits: 2 });
+
+      return parseFloat(price).toLocaleString('en-IN', {
+        maximumFractionDigits: 2,
+
+      });
     },
     formatDate(date) {
       var day = date.getDate();
@@ -421,40 +410,44 @@ export default {
         this.inv_total_tax_collected = 0;
         this.inv_total_without_tax_collected = 0;
       }
-      let options = {
-        params: {
-          per_page: this.pagination.per_page,
-          company_id: this.$auth.user.company.id,
-          search: this.search,
-          from: this.from_date,
-          to: this.to_date,
-          guest_mode: this.guest_mode,
-        },
-      };
 
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        this.data = data.data;
-        this.pagination.current = data.current_page;
-        this.pagination.total = data.last_page;
-        this.loading = false;
+      if (this.from_date && this.to_date) {
+        let options = {
+          params: {
+            per_page: this.pagination.per_page,
+            company_id: this.$auth.user.company.id,
+            search: this.search,
+            from: this.from_date,
+            to: this.to_date,
+            guest_mode: this.guest_mode,
+          },
+        };
 
-        if (data.current_page == 1) {
-          this.$axios.get('get_invoice_grand_total', options).then(({ data }) => {
+        this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+          this.data = data.data;
+          this.pagination.current = data.current_page;
+          this.pagination.total = data.last_page;
+          this.loading = false;
 
-
-            this.inv_total_tax_collected = data.inv_total_tax_collected;
-            this.inv_total_without_tax_collected = data.inv_total_without_tax_collected;
+          if (data.current_page == 1) {
+            this.$axios.get('get_invoice_grand_total', options).then(({ data }) => {
 
 
+              this.inv_total_tax_collected = data.inv_total_tax_collected;
+              this.inv_total_without_tax_collected = data.inv_total_without_tax_collected;
 
 
-          });
-        }
 
 
-      });
+            });
+          }
 
 
+        });
+
+      } else {
+        return false;
+      }
 
 
     },
@@ -470,7 +463,7 @@ export default {
       let url =
         process.env.BACKEND_URL +
         `${type}?company_id=${comId}&from=${from}&to=${to}&guest_mode=${guest_mode}&search=${search}`;
-      console.log(url);
+
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}`);
@@ -506,5 +499,6 @@ tr:nth-child(even) {
   background-color: #e9e9e9;
 }
 </style>
+<style scoped src="@/assets/dashtem.css"></style>
 
 

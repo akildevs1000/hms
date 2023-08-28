@@ -9,7 +9,7 @@
     <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
       <v-col cols="6">
         <v-spacer></v-spacer>
@@ -20,7 +20,21 @@
         </v-btn>
       </v-col>
     </v-row>
-
+    <v-row>
+      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+        <div class="card px-2" style="background-color: #800000">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-ddoor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">Total</h6>
+              <span class="data-1"> {{ $auth.user.company.currency }} {{ getPriceFormat(totalAmount) || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </v-row>
     <!-- <v-row>
 
       <v-col cols="12" md="6" xl="3">
@@ -34,15 +48,18 @@
     </v-row> -->
 
     <v-row>
-      <v-col md="3">
-        <div class="ml-4">Search</div>
-        <v-col md="12">
-          <v-text-field dense outlined placeholder="Search..." @input="commonMethod" v-model="search"
-            hide-details></v-text-field>
-        </v-col>
-      </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
 
-      <v-col md="3">
+
+        <v-text-field dense outlined placeholder="Search..." @input="commonMethod" v-model="search"
+          hide-details></v-text-field>
+
+      </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
+      </v-col>
+      <!-- <v-col md="3">
         <div class="ml-4">Filter</div>
         <v-col md="12">
           <v-select v-model="filterType" :items="[
@@ -95,7 +112,7 @@
             <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
           </v-menu>
         </v-col>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <v-dialog v-model="imgView" :width="previewImageWidth">
@@ -540,11 +557,36 @@ export default {
   },
 
   created() {
+    this.month = new Date().getMonth();
+    this.year = new Date().getFullYear();
+    this.from_date = this.formatDate(new Date(this.year, this.month, 1));
+    this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
     this.loading = true;
     this.commonMethod();
   },
 
   methods: {
+    getPriceFormat(price) {
+
+      return parseFloat(price).toLocaleString('en-IN', {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      });
+    },
+    handleDatesFilter(dates) {
+      this.filterType = 5;
+      this.from_date = dates[0];
+      this.to_date = dates[1];
+      if (this.from_date && this.to_date)
+        this.commonMethod();
+    },
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
     limitedStr(str) {
       if (!str) return "---";
       return str.slice(0, 10) + "...";
@@ -791,7 +833,7 @@ export default {
   },
 };
 </script>
-<!-- <style scoped src="@/assets/dashtem.css"></style> -->
+<style scoped src="@/assets/dashtem.css"></style>
 <style scoped>
 table {
   font-family: arial, sans-serif;

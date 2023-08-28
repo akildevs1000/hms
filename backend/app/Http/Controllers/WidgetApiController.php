@@ -13,18 +13,53 @@ use Illuminate\Http\Request;
 
 class WidgetApiController extends Controller
 {
-    public function index(Request $request)
+    public function getAvailableRoomList2(Request $request)
     {
-        return ['1'];
+        $model = BookedRoom::query();
+        $roomIds = $model
+            ->whereDate('check_in', '<=', $request->from_date)
+            ->WhereDate('check_out', '>=', $request->to_date)
+            ->whereHas('booking', function ($q) use ($request) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('company_id', $request->company_id);
+            })
+            ->pluck('room_id');
+        $unbookedRoomsInfo = Room::whereNotIn('id', $roomIds)
+            ->where('company_id', $request->company_id)
+            ->get();
+
+        $groupedRooms = [];
+        foreach ($unbookedRoomsInfo as $roomInfo) {
+
+            $roomType = $roomInfo['room_type']['name'];
+
+            if ($groupedRooms && !isset($groupedRooms[$roomType])) {
+                $groupedRooms[$roomType] = [];
+            }
+
+            $groupedRooms[$roomType][] = $roomInfo;
+            //$groupedRooms[$roomType][] = $this->getRoomPrice($request, $roomInfo);
+
+        }
+        return ["data" => $groupedRooms];
     }
     public function getAvailableRoomList(Request $request)
     {
+
+
+
+
+
+
 
         $rooms = Room::with('roomType')->where('company_id', $request->company_id)->get()->toArray();
 
         $bookedDates = BookedRoom::select('id', 'booking_id', 'room_no', 'room_type')->withOut('booking', 'postings')
             ->where('company_id', $request->company_id)
-            // ->where('booking_status', '!=', 0)
+            ->whereHas('booking', function ($q) use ($request) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('company_id', $request->company_id);
+            })
             // ->where('booking_status', '<=', 2)
             ->where(function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
@@ -61,7 +96,7 @@ class WidgetApiController extends Controller
             }
             return ($price1 > $price2) ? -1 : 1; // Change comparison to sort in descending order
         });
-        //return $unbookedRoomsInfo;
+        return $unbookedRoomsInfo;
         // usort($unbookedRoomsInfo, function ($a, $b) {
         //     return strcmp($a['price'], $b['price']);
         // });

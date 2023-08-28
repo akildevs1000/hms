@@ -21,8 +21,7 @@
                                             append-icon=" mdi-calendar-arrow-left" variant="outlined"></v-text-field>
 
                                     </template>
-                                    <v-date-picker :min="today_date" v-model="from_date"
-                                        @input="from_menu = false"></v-date-picker>
+                                    <v-date-picker v-model="from_date" @input="from_menu = false"></v-date-picker>
                                 </v-menu>
                             </v-col>
                         </v-row>
@@ -113,7 +112,8 @@
 
 
             <v-col md="8" xs="12" sm="12">
-                <v-row v-for="( item, key )   in   data  " height="350px" v-if="search.no_of_room <= item.length">
+                <v-row :key="key" v-for="( item, key )   in   data  " height="350px"
+                    v-if="search.no_of_room <= item.length">
 
                     <v-col md="6" cols="12"><img :src="item[0].room_type.pic || '/noimage.png'"
                             class="rounded-shaped rounded-xl " width="100%" height="400px" elevation="12" />
