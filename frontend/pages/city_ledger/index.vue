@@ -112,7 +112,7 @@
     <v-row class="mt-5 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
     </v-row>
 
@@ -125,8 +125,11 @@
         <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
           dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi()"></v-select>
       </v-col>
-
-      <v-col md="3">
+      <v-col md="2">
+        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
+      </v-col>
+      <!-- <v-col md="3">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
           offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -145,7 +148,7 @@
           </template>
           <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
-      </v-col>
+      </v-col> -->
     </v-row>
 
 
@@ -344,6 +347,12 @@ export default {
     },
   },
   created() {
+    this.month = new Date().getMonth();
+    this.year = new Date().getFullYear();
+    this.from_date = this.formatDate(new Date(this.year, this.month, 1));
+    this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
+
     this.loading = true;
   },
   mounted() {
@@ -351,6 +360,26 @@ export default {
   },
 
   methods: {
+    handleDatesFilter(dates) {
+
+      this.from_date = dates[0];
+      this.to_date = dates[1];
+      if (this.from_date && this.to_date)
+        this.getDataFromApi();
+    },
+    getPriceFormat(price) {
+
+      return parseFloat(price).toLocaleString('en-IN', {
+        maximumFractionDigits: 2,
+
+      });
+    },
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
     onPageChange() {
       this.getDataFromApi();
     },

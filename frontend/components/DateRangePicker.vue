@@ -14,19 +14,22 @@
       <v-date-picker style="margin-top:40px" @input="secondPicker" no-title color="primary" v-model="endDates" range
         :min="min">
       </v-date-picker>
-      <v-card class="text-right pa-2">
-        <v-btn dark color="background" x-small @click="clearDates">
+      <v-card class="text-right  pb-2">
+
+        <v-btn dark color="primary" small @click="clearDates">
           clear
         </v-btn>
 
-        <v-btn dark color="background" x-small @click="menu = false">
+        <v-btn dark color="primary" small @click="menu = false">
           close
         </v-btn>
 
-        <v-btn dark color="background" x-small @click="$refs.menu.save(secondPicker)">
+        <v-btn dark color="primary" small @click="$refs.menu.save(secondPicker)">
           OK
         </v-btn>
+
       </v-card>
+
     </div>
   </v-menu>
 </template>

@@ -466,7 +466,72 @@
                 </v-card>
 
             </v-dialog>
+            <v-row class="mt-5 mb-5">
+                <v-col cols="6">
+                    <h3>Lost & Found</h3>
 
+                </v-col>
+                <v-col cols="6"> </v-col>
+            </v-row>
+            <v-row>
+                <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
+                    <div class="card px-2 available">
+                        <div class="card-statistic-3">
+                            <div class="card-icon card-icon-large">
+                                <i class="fas fa-ddoor-open"></i>
+                            </div>
+                            <div class="card-content">
+                                <h6 class="card-title text-capitalize">Lost </h6>
+                                <span class="data-1">
+                                    {{ 10 }}
+
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
+                    <div class="card px-2 booked">
+                        <div class="card-statistic-3">
+                            <div class="card-icon card-icon-large">
+                                <i class="fas fa-dosor-open"></i>
+                            </div>
+                            <div class="card-content">
+                                <h6 class="card-title text-capitalize">Recovered</h6>
+                                <span class="data-1"> 10
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('management_income_view')">
+                    <div class="card px-2" style="background-color: #ce008e">
+                        <div class="card-statistic-3">
+                            <div class="card-icon card-icon-large">
+                                <i class="fas fa-dosor-open"></i>
+                            </div>
+                            <div class="card-content">
+                                <h6 class="card-title text-capitalize">Pending</h6>
+                                <span class="data-1"> 10
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </v-row>
+
+            <v-row class=" text-center">
+
+                <v-col md="2" class="p-2 text-center">
+                    <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+                        column="date_range" @selected-dates="handleDatesFilter" />
+                </v-col>
+            </v-row>
             <v-card class="mb-5" elevation="0">
                 <v-toolbar class="rounded-md mb-2 white--text" color="background" dense flat>
 
@@ -476,9 +541,9 @@
 
                     <v-tooltip top color="primary">
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn dense class="ma-0 px-0" x-small :ripple="false" text v-bind="attrs" v-on="on">
-                                <v-icon color="white" class="ml-2" @click="reload()" dark>mdi
-                                    mdi-reload</v-icon>
+
+                            <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="reload()">
+                                <v-icon white color="#FFF">mdi-reload</v-icon>
                             </v-btn>
                         </template>
                         <span>Reload</span>
@@ -591,13 +656,35 @@
                                                 </v-btn>
                                             </v-date-picker>
                                         </v-menu>
+                                        <v-menu v-if="header.filterSpecial && header.value == 'missing_datetime'"
+                                            ref="to_menu_filter3" v-model="to_menu_filter3" :close-on-content-click="false"
+                                            transition="scale-transition" offset-y min-width="auto">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field clearable
+                                                    @click:clear="filters[header.value] = ''; applyFilters()"
+                                                    :hide-details="!to_date_filter" outlined dense
+                                                    v-model="filters[header.value]" readonly v-bind="attrs" v-on="on"
+                                                    placeholder="Select Date"></v-text-field>
+                                            </template>
+                                            <v-date-picker style="height: 400px" v-model="filters[header.value]" no-title
+                                                scrollable @input="applyFilters()">
+                                                <v-spacer></v-spacer>
+
+                                                <v-btn text color="primary"
+                                                    @click="filters[header.value] = ''; to_menu_filter3 = false; applyFilters()">
+                                                    Clear
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
                                     </td>
                                 </tr>
 
 
                             </template>
                             <template v-slot:item.sno="{ item, index }">
-                                {{ currentPage ? ((currentPage - 1) * perPage) + (cumulativeIndex + itemIndex(item)) : '' }}
+                                {{ currentPage ? ((currentPage - 1) * perPage) + (cumulativeIndex + itemIndex(item))
+                                    :
+                                    '' }}
                             </template>
                             <template v-slot:item.booking.reservation_no="{ item }">
                                 {{ item.booking.reservation_no }}
@@ -610,7 +697,9 @@
                                 {{ item.booking.customer.title }} {{ item.booking.customer.first_name }} {{
                                     item.booking.customer.last_name }}
                             </template>
-
+                            <template v-slot:item.missing_datetime="{ item }">
+                                {{ formatDateTime(item.missing_datetime) }}
+                            </template>
                             <template v-slot:item.found_datetime="{ item }">
                                 {{ item.found_datetime }}
                             </template>
@@ -621,7 +710,7 @@
                                 {{ item.returned_remarks }}
                             </template>
                             <template v-slot:item.created_at="{ item }">
-                                {{ formatDate(item.created_at) }}
+                                {{ formatDateTime(item.created_at) }}
                             </template>
 
 
@@ -749,6 +838,15 @@ export default {
                 key: 'item_name',
                 filterable: true,
                 value: "item_name",
+            },
+            {
+                text: "Missing From",
+                align: "left",
+                sortable: true,
+                key: 'missing_datetime',
+                filterable: true,
+                value: "missing_datetime",
+                filterSpecial: true,
             },
             {
                 text: "Date Found",
@@ -984,6 +1082,13 @@ export default {
     },
 
     created() {
+
+        this.month = new Date().getMonth();
+        this.year = new Date().getFullYear();
+        this.from_date = this.formatDate(new Date(this.year, this.month, 1));
+        this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
+
         this.loading = true;
         this.getDataFromApi();
 
@@ -991,7 +1096,27 @@ export default {
     },
 
     methods: {
-        formatDate(dateString) {
+        formatDate(date) {
+            var day = date.getDate();
+            var month = date.getMonth() + 1; // Months are zero-based
+            var year = date.getFullYear();
+            return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+        },
+        handleDatesFilter(dates) {
+
+            this.from_date = dates[0];
+            this.to_date = dates[1];
+            if (this.from_date && this.to_date)
+                this.getDataFromApi();
+        },
+        getPriceFormat(price) {
+
+            return parseFloat(price).toLocaleString('en-IN', {
+                maximumFractionDigits: 2,
+
+            });
+        },
+        formatDateTime(dateString) {
             const date = new Date(dateString);
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -1414,6 +1539,8 @@ export default {
                     per_page: itemsPerPage,
                     company_id: this.$auth.user.company.id,
                     search: this.search,
+                    from: this.from_date,
+                    to: this.to_date,
                     ...this.filters,
                 },
             };
@@ -1424,6 +1551,25 @@ export default {
                 this.pagination.total = data.last_page;
                 this.loading = false;
                 this.totalRowsCount = data.total;
+            });
+        },
+        getStatissticsApi(url = this.endpoint, customPage = 0) {
+
+
+            let options = {
+                params: {
+
+                    company_id: this.$auth.user.company.id,
+
+                    from: this.from_date,
+                    to: this.to_date,
+
+                },
+            };
+
+            this.$axios.get(`lost_and_found_items/statistics`, options).then(({ data }) => {
+
+
             });
         },
         // searchIt(e) {
@@ -1531,8 +1677,59 @@ export default {
     },
 };
 </script> 
+<style scoped src="@/assets/dashtem.css"></style>
+<style scoped>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
 
- 
+td,
+th {
+    text-align: left;
+    padding: 7px;
+}
+
+tr:nth-child(even) {
+    background-color: #e9e9e9;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #e9e9e9;
+}
+
+td,
+th {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #e9e9e9;
+}
+
+tr:nth-child(even) {
+    background-color: #e9e9e9;
+}
+
+.fc-license-message {
+    display: none !important;
+}
+
+.bg-background {
+    background-color: #34444c !important;
+}
+
+.bg-background th,
+td {
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+}
+</style>
+
+<!-- <style scoped src="@/assets/dashtem.css"></style>
 <style scoped >
 .no-bg {
     background-color: white !important;
@@ -1627,4 +1824,4 @@ select:focus {
 .table-header-text {
     font-size: 12px;
 }
-</style>  
+</style>   -->

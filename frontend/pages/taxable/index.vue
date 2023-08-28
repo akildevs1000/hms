@@ -89,7 +89,7 @@
           <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col> -->
-      <v-col md="3">
+      <v-col md="2">
         <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
           column="date_range" @selected-dates="handleDatesFilter" />
       </v-col>
@@ -339,7 +339,7 @@ export default {
 
       this.from_date = dates[0];
       this.to_date = dates[1];
-      if (this.to_date != '')
+      if (this.from_date && this.to_date)
         this.getDataFromApi();
     },
     getPriceFormat(price) {
