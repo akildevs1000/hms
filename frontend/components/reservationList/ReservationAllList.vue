@@ -12,6 +12,21 @@
             </v-col>
             <v-col cols="6"> </v-col>
         </v-row>
+        <v-row>
+            <div class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase">
+                <div class="card px-2" style="background-color: #3366CC;">
+                    <div class="card-statistic-3">
+                        <div class="card-icon card-icon-large">
+                            <i class="fas fa-ddoor-open"></i>
+                        </div>
+                        <div class="card-content">
+                            <h6 class="card-title text-capitalize">Total</h6>
+                            <span class="data-1"> {{ totalRowsCount }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </v-row>
 
         <v-dialog v-model="payingDialog" persistent max-width="1000px">
             <v-card>
@@ -706,4 +721,5 @@ export default {
     },
 };
 </script>
+<style scoped src="@/assets/dashtem.css"></style>
   

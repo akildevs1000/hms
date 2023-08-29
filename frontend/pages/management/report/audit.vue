@@ -1,11 +1,11 @@
 <template>
   <div v-if="can(`night_audit_access`)">
-    <!-- <v-row class="mt-5 mb-5">
+    <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Management / {{ Model }}</div>
+
       </v-col>
-    </v-row> -->
+    </v-row>
     <v-row>
       <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
         <div class="card px-2" style="background-color: #800000">
@@ -15,7 +15,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Cash</h6>
-              <span class="data-1">₹{{ GrandTotalCash || 0 }}</span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalCash || 0 }}</span>
             </div>
           </div>
         </div>
@@ -29,7 +29,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Card</h6>
-              <span class="data-1">₹{{ GrandTotalCard || 0 }} <br /> </span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalCard || 0 }} <br /> </span>
             </div>
           </div>
         </div>
@@ -43,7 +43,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Bank</h6>
-              <span class="data-1">₹{{ GrandTotalBank || 0 }} </span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalBank || 0 }} </span>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Online</h6>
-              <span class="data-1">₹{{ GrandTotalTodayOnline || 0 }} </span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalTodayOnline || 0 }} </span>
             </div>
           </div>
         </div>
@@ -70,7 +70,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">UPI</h6>
-              <span class="data-1">₹{{ GrandTotalTodayUPI || 0 }} </span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalTodayUPI || 0 }} </span>
             </div>
           </div>
         </div>
@@ -83,7 +83,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">City Ledger</h6>
-              <span class="data-1">₹{{ GrandTotalBalance || 0 }} </span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalBalance || 0 }} </span>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Expenses</h6>
-              <span class="data-1">₹{{ totExpense || 0 }} </span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ totExpense || 0 }} </span>
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Income</h6>
-              <span class="data-1">₹{{ GrandTotal || 0 }} </span>
+              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotal || 0 }} </span>
             </div>
           </div>
         </div>

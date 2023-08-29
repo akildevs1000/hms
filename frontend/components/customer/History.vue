@@ -5,7 +5,7 @@
         <v-card class="px-2" color="#800000">
           <v-card-text class="text-center white--text">
             <h6 class="text-uppercase">Revenue</h6>
-            <div class="mb-0" style="font-size: 20px">₹{{ revenue || 0 }}</div>
+            <div class="mb-0" style="font-size: 20px">{{ $auth.user.company.currency }}{{ revenue || 0 }}</div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -14,7 +14,7 @@
           <v-card-text class="text-center white--text">
             <h6 class="text-uppercase">City Ledger</h6>
             <div class="mb-0" style="font-size: 20px">
-              ₹{{ city_ledger || 0 }}
+              {{ $auth.user.company.currency }}{{ city_ledger || 0 }}
             </div>
           </v-card-text>
         </v-card>
@@ -115,11 +115,7 @@
                 <b>{{ ++index }}</b>
               </th>
               <td scope="row">
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
+                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
                   {{ item.reservation_no || "---" }}
                 </span>
               </td>
@@ -273,6 +269,7 @@ tr:nth-child(even) {
 }
 
 @media only screen and (min-width: 1025px) and (max-width: 1199px) {
+
   /* Adjust layout for iPad pro landscape mode */
   .ipad-font-grid {
     font-size: 12px !important;
@@ -306,6 +303,7 @@ tr:nth-child(even) {
 }
 
 @media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
+
   /* ipad mini Air */
   .ipad-font-qty-grid {
     font-size: 55px !important;

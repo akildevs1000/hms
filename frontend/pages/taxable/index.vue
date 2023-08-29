@@ -45,8 +45,9 @@
               <i class="fas fa-dosor-open"></i>
             </div>
             <div class="card-content">
-              <h6 class="card-title text-capitalize">CGST</h6>
-              <span class="data-1"> {{ getPriceFormat(inv_total_tax_collected / 2) }}
+              <h6 class="card-title text-capitalize">Total</h6>
+              <span class="data-1"> {{ getPriceFormat(parseFloat(inv_total_without_tax_collected) +
+                parseFloat(inv_total_tax_collected)) }}
               </span>
             </div>
           </div>

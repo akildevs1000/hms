@@ -474,8 +474,8 @@
                 <v-col cols="6"> </v-col>
             </v-row>
             <v-row>
-                <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
-                    <div class="card px-2 available">
+                <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-3 text-uppercase">
+                    <div class="card px-2  " style="background-color: #800000">
                         <div class="card-statistic-3">
                             <div class="card-icon card-icon-large">
                                 <i class="fas fa-ddoor-open"></i>
@@ -483,7 +483,7 @@
                             <div class="card-content">
                                 <h6 class="card-title text-capitalize">Lost </h6>
                                 <span class="data-1">
-                                    {{ 10 }}
+                                    {{ totalLostCount }}
 
                                 </span>
                             </div>
@@ -491,30 +491,44 @@
                     </div>
                 </div>
 
-                <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase">
-                    <div class="card px-2 booked">
+                <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-3 text-uppercase">
+                    <div class="card px-2  " style="background-color: #ce008e">
                         <div class="card-statistic-3">
                             <div class="card-icon card-icon-large">
                                 <i class="fas fa-dosor-open"></i>
                             </div>
                             <div class="card-content">
                                 <h6 class="card-title text-capitalize">Recovered</h6>
-                                <span class="data-1"> 10
+                                <span class="data-1"> {{ totalRecoveredCount }}
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-4 my-0 py-0 col-lg-4 col-md-4 text-uppercase" v-if="can('management_income_view')">
-                    <div class="card px-2" style="background-color: #ce008e">
+                <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-3 text-uppercase" v-if="can('management_income_view')">
+                    <div class="card px-2" style="background-color: #00b300">
+                        <div class="card-statistic-3">
+                            <div class="card-icon card-icon-large">
+                                <i class="fas fa-dosor-open"></i>
+                            </div>
+                            <div class="card-content">
+                                <h6 class="card-title text-capitalize">Handovered</h6>
+                                <span class="data-1"> {{ totalReturnedCount }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-3 text-uppercase" v-if="can('management_income_view')">
+                    <div class="card px-2" style="background-color: #ffbe00">
                         <div class="card-statistic-3">
                             <div class="card-icon card-icon-large">
                                 <i class="fas fa-dosor-open"></i>
                             </div>
                             <div class="card-content">
                                 <h6 class="card-title text-capitalize">Pending</h6>
-                                <span class="data-1"> 10
+                                <span class="data-1"> {{ totalPendingCount }}
                                 </span>
                             </div>
                         </div>
@@ -780,6 +794,11 @@ export default {
         ItemLost,
     },
     data: () => ({
+
+        totalLostCount: 0,
+        totalPendingCount: 0,
+        totalRecoveredCount: 0,
+        totalReturnedCount: 0,
         viewDialog: false,
         snackbarColor: "black",
 
@@ -1551,6 +1570,8 @@ export default {
                 this.pagination.total = data.last_page;
                 this.loading = false;
                 this.totalRowsCount = data.total;
+
+                this.getStatissticsApi();
             });
         },
         getStatissticsApi(url = this.endpoint, customPage = 0) {
@@ -1558,17 +1579,17 @@ export default {
 
             let options = {
                 params: {
-
                     company_id: this.$auth.user.company.id,
-
                     from: this.from_date,
                     to: this.to_date,
-
                 },
             };
 
-            this.$axios.get(`lost_and_found_items/statistics`, options).then(({ data }) => {
-
+            this.$axios.get(`lost_and_found_items_statistics`, options).then(({ data }) => {
+                this.totalLostCount = data.missing;
+                this.totalPendingCount = this.totalLostCount - data.returned;
+                this.totalRecoveredCount = data.recovered;
+                this.totalReturnedCount = data.returned;
 
             });
         },

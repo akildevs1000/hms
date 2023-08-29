@@ -103,18 +103,21 @@ class LostAndFoundItemsController extends Controller
     public function getStaticstics(Request $request)
     {
 
-        // return $request;
-        // $model = LostAndFoundItems::query();
-        // return  $model->get();
-        // // $model->with(['booking.customer'])->where('company_id', $request->company_id);
-        // // if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-        // //     $model->WhereDate('missing_datetime', '>=', $request->from);
-        // //     $model->whereDate('missing_datetime', '<=', $request->to);
-        // // }
 
-        // return  $missingTotal = $model->count();
+        $model = LostAndFoundItems::query();
 
-        // return $model;
+        $model->with(['booking.customer'])->where('company_id', $request->company_id);
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('missing_datetime', '>=', $request->from);
+            $model->whereDate('missing_datetime', '<=', $request->to);
+        }
+        $model_copy = $model->clone();
+
+        $missingTotal = $model_copy->count();
+        $recovered = $model_copy->where('found_datetime', '!=', null)->count();
+        $returned = $model_copy->where('returned_datetime', '!=', null)->count();
+
+        return  ['missing' => $missingTotal, 'recovered' => $recovered, 'returned' => $returned];
     }
 
     /**

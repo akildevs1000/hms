@@ -1,11 +1,35 @@
 <template>
   <div v-if="can('management_income_access') && can('management_income_view')">
+    <v-row class="mt-0 mb-0">
+      <v-col cols="6">
+        <h3>Payments</h3>
 
+      </v-col>
+      <v-col cols="6">
+        <v-spacer></v-spacer>
+
+      </v-col>
+    </v-row>
     <v-row>
-      <v-col md="3">
-        <div class="ml-4">Filter</div>
-        <v-col md="12">
-          <v-select v-model="filterType" :items="[
+      <div class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase" v-for="(user, index) in  paymentReportsByUser "
+        :key="index">
+        <div class="card px-2" :style="{ backgroundColor: colors[index] || '#3366CC' }">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-ddoor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">{{ user.name }}</h6>
+              <span class="data-1"> {{ getUserTotal(user) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </v-row>
+    <v-row>
+      <v-col md="2">
+
+        <v-select v-model="filterType" :items="[
             {
               id: 1,
               name: 'Today',
@@ -26,11 +50,16 @@
               id: 5,
               name: 'Custom',
             },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
-            @change="commonMethod"></v-select>
-        </v-col>
+          ]
+          " dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+          @change="commonMethod"></v-select>
+
       </v-col>
-      <v-col md="3" v-if="filterType == 5">
+      <v-col md="2" class="p-2 text-center" v-if="filterType == 5">
+        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
+      </v-col>
+      <!-- <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
           <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
@@ -55,7 +84,7 @@
             <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
           </v-menu>
         </v-col>
-      </v-col>
+      </v-col> -->
 
       <v-col md="3" v-if="userList.length > 0">
         <div class="ml-4">Users</div>
@@ -68,7 +97,8 @@
 
     <v-row class="mt-0 mt-0">
       <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0" v-for="(user, index) in paymentReportsByUser" :key="index">
+        <v-card class="mb-5 rounded-md mt-3" elevation="0" v-for="( user, index ) in  paymentReportsByUser "
+          :key="index">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <label class="white--text">{{ user.name }}</label>
             <v-spacer></v-spacer>
@@ -84,7 +114,8 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
+                  @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -93,14 +124,14 @@
           </v-toolbar>
           <table>
             <tr>
-              <th v-for="(item, index) in Header" :key="index">
+              <th v-for="( item, index ) in  Header " :key="index">
                 <span v-html="item.text"></span>
               </th>
             </tr>
             <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
               color="primary"></v-progress-linear>
 
-            <tr v-for="(trans, index) in user.transactions" :key="index">
+            <tr v-for="( trans, index ) in  user.transactions " :key="index">
               <td>{{ ++index }}</td>
               <td>
                 <span class="blue--text" @click="goToRevView(trans)" style="cursor: pointer">
@@ -118,7 +149,7 @@
               <td>{{ trans.time }}</td>
               <td>{{ trans.credit }}</td>
               <td>{{ trans.debit }}</td>
-              <td v-for="i in 7" :key="i" class="text-right">
+              <td v-for=" i  in  7 " :key="i" class="text-right">
                 <span v-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
                   'Cash' && i == 1
                   ">
@@ -222,6 +253,28 @@ export default {
       { text: "Cheque" },
       { text: "City Ledger" },
     ],
+    colors: [
+      "#3366CC",
+      "#FF69B4",
+      "#FF4500",
+      "#800080",
+      "#FF6347",
+      "#008080",
+      "#FFA500",
+      "#DC143C",
+      "#4169E1",
+      "#3366CC",
+      "#3366CC",
+      "#FF69B4",
+      "#FF4500",
+      "#800080",
+      "#FF6347",
+      "#008080",
+      "#FFA500",
+      "#DC143C",
+      "#4169E1",
+      "#3366CC",
+    ],
     editedIndex: -1,
     response: "",
     loss: "",
@@ -273,6 +326,46 @@ export default {
   },
 
   methods: {
+    getUserTotal(user) {
+      return this.getPriceFormat(parseFloat(user.cash_sum) + parseFloat(user.card_sum) + parseFloat(user.online_sum) + parseFloat(user.bank_sum) + parseFloat(user.UPI_sum) + parseFloat(user.cheque_sum) + parseFloat(user.City_ledger_sum));
+    },
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
+    handleDatesFilter(dates) {
+
+      this.from_date = dates[0];
+      this.to_date = dates[1];
+      if (this.from_date && this.to_date) {
+        if (this.$auth.user.user_type != "employee") {
+          this.get_users();
+        } else {
+          this.user_id = this.$auth.user.id;
+        }
+        this.getPaymentReportsByUser();
+      }
+    },
+    getPriceFormat(price) {
+
+      return this.$auth.user.company.currency + " " + parseFloat(price).toLocaleString('en-IN', {
+        maximumFractionDigits: 2,
+
+      });
+    },
+    formatDateTime(dateString) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    },
     onPageChange() {
       this.getExpenseData();
     },
