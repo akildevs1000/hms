@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Expense\StoreRequest;
 use App\Http\Requests\Expense\UpdateRequest;
+use App\Models\ExpensesDocuments;
 use App\Models\Expense;
+use App\Models\ExpensesCategories;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
@@ -23,11 +26,16 @@ class ExpenseController extends Controller
     public function index(Request $request)
     {
         $model = Expense::query();
+        $model->with('category');
         $model->where('company_id', $request->company_id);
         $model->where(function ($q) use ($request) {
             $q->where('voucher', 0);
             $q->orWhere('item', 'ILIKE', "%$request->search%");
         });
+
+        if ($request->filled('category_id')) {
+            $model->where('category_id',   $request->category_id);
+        }
 
         if ($request->filled('from') && $request->filled('to')) {
             $model->whereDate('created_at', '>=', $request->from . ' 00:00:00');
@@ -68,7 +76,6 @@ class ExpenseController extends Controller
         }
 
         return $model->paginate($request->per_page ?? 50);
-
     }
 
     public function search(Request $request, $key)
@@ -93,11 +100,14 @@ class ExpenseController extends Controller
             $record = Expense::create($request->validated());
 
             if ($record) {
-                $expense = Expense::where('id', $record->id);
-                $this->updateDocument($request, $expense, 'document', $record->id);
-                $this->updateDocument($request, $expense, 'document1', $record->id);
-                $this->updateDocument($request, $expense, 'document2', $record->id);
-                $this->updateDocument($request, $expense, 'document3', $record->id);
+                //$expense = Expense::where('id', $record->id);
+                // $this->updateDocument($request, $expense, 'document', $record->id);
+                // $this->updateDocument($request, $expense, 'document1', $record->id);
+                // $this->updateDocument($request, $expense, 'document2', $record->id);
+                // $this->updateDocument($request, $expense, 'document3', $record->id);
+
+                $this->storeDocuments($request, $record->id);
+
 
                 return $this->response($this->name . ' Successfully created.', $record, true);
             } else {
@@ -107,7 +117,47 @@ class ExpenseController extends Controller
             throw $th;
         }
     }
+    public function getStaticstics(Request $request)
+    {
 
+        $categoriesWithExpenses = ExpensesCategories::leftJoin('expenses', 'expenses_categories.id', '=', 'expenses.category_id');
+        $categoriesWithExpenses =  $categoriesWithExpenses->select('expenses_categories.name', DB::raw('COALESCE(SUM(expenses.amount), 0) as total'));
+        if ($request->filled('from') && $request->filled('to')) {
+            $categoriesWithExpenses->whereDate('expenses.created_at', '>=', $request->from . ' 00:00:00');
+            $categoriesWithExpenses->whereDate('expenses.created_at', '<=', $request->to . ' 23:59:00');
+        }
+        $categoriesWithExpenses =  $categoriesWithExpenses->groupBy('expenses_categories.id', 'expenses_categories.name');
+        $categoriesWithExpenses =  $categoriesWithExpenses->get();
+
+
+
+        return $categoriesWithExpenses;
+    }
+    public function storeDocuments($request, $expenses_id)
+    {
+        $arr = [];
+        if ($request->items)
+            foreach ($request->items as $item) {
+                $arr[] = [
+                    "title" => $item["title"],
+                    "file_name" => $this->saveFile($item["file"], $request->company_id),
+                    "expenses_id" => $expenses_id,
+                    "company_id" => $request->company_id,
+                ];
+            }
+        ExpensesDocuments::insert($arr);
+
+        return $arr;
+    }
+    public function saveFile($file, $id)
+    {
+
+        $ext = $file->getClientOriginalExtension();
+        $fileName = time() . '_' . uniqid() . '.' . $ext;
+        $file->storeAs('public/expenses_documents/' . $id . '/', $fileName);
+
+        return $fileName;
+    }
     // public function storeDocument($request, $model, $docFileName, $id)
     // {
     //     if ($request->hasFile($docFileName)) {
@@ -150,15 +200,18 @@ class ExpenseController extends Controller
             $record = $expense->update($request->validated());
             if ($record) {
 
+
+                $this->storeDocuments($request, $request->id);
+
                 //$this->storeDocument($request, $expense);
 
                 //return $expense->first();
-                $expense = Expense::where('id', $request->id);
-                $this->updateDocument($request, $expense, 'document', $request->id);
+                // $expense = Expense::where('id', $request->id);
+                // $this->updateDocument($request, $expense, 'document', $request->id);
 
-                $this->updateDocument($request, $expense, 'document1', $request->id);
-                $this->updateDocument($request, $expense, 'document2', $request->id);
-                $this->updateDocument($request, $expense, 'document3', $request->id);
+                // $this->updateDocument($request, $expense, 'document1', $request->id);
+                // $this->updateDocument($request, $expense, 'document2', $request->id);
+                // $this->updateDocument($request, $expense, 'document3', $request->id);
 
                 return $this->response($this->name . ' successfully updated.', $record, true);
             } else {
@@ -254,12 +307,29 @@ class ExpenseController extends Controller
 
     public function getSumByModel($model, $id)
     {
-        return $model->clone()->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('amount');
+        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
     }
 
     public function getSumByExpenseModel($model, $id, $is_management = 0)
     {
-        return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('total');
+        return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('total');
     }
 
+    public function expensesDocuments($expenses_id)
+    {
+
+        return ExpensesDocuments::where('expenses_id', $expenses_id)->get();
+    }
+
+    public function expensesDocumentsDelete(Request $request, $expenses_document_id)
+    {
+
+
+        $record = ExpensesDocuments::where('company_id', $request->company_id)->whereId($expenses_document_id)->delete();
+        if ($record) {
+            return $this->response($this->name . ' Document is  successfully deleted.', $record, true);
+        } else {
+            return $this->response($this->name . ' Document cannot delete.', null, false);
+        }
+    }
 }

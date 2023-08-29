@@ -14,9 +14,9 @@
       <v-col cols="6">
         <v-spacer></v-spacer>
         <v-btn v-if="can('accounts_expences_create') || can('management_expenses_create')" class="float-right py-3"
-          @click="expenseDialog = true" color="primary">
+          @click="newDialog()" color="primary">
           <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-          Add
+          Add Expenses
         </v-btn>
       </v-col>
     </v-row>
@@ -35,85 +35,9 @@
         </div>
       </div>
     </v-row>
-    <!-- <v-row>
-
-      <v-col cols="12" md="6" xl="3">
-        <v-card class="px-2" color="#800000">
-          <v-card-text class="text-center white--text">
-            <h6 class="text-uppercase">Total</h6>
-            <div class="display-1 mb-2">₹{{ totalAmount || 0 }}</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row> -->
-
-    <v-row>
-      <v-col xs="12" sm="12" md="2" cols="12">
 
 
-        <v-text-field dense outlined placeholder="Search..." @input="commonMethod" v-model="search"
-          hide-details></v-text-field>
 
-      </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
-        <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
-          column="date_range" @selected-dates="handleDatesFilter" />
-      </v-col>
-      <!-- <v-col md="3">
-        <div class="ml-4">Filter</div>
-        <v-col md="12">
-          <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
-            @change="commonMethod"></v-select></v-col>
-      </v-col>
-
-      <v-col md="3" v-if="filterType == 5">
-        <div class="ml-4">From</div>
-        <v-col cols="12" sm="12" md="12">
-          <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-            offset-y min-width="auto">
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" outlined dense
-                :hide-details="true"></v-text-field>
-            </template>
-            <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
-          </v-menu>
-        </v-col>
-      </v-col>
-      <v-col md="3" v-if="filterType == 5">
-        <div class="ml-4">To</div>
-        <v-col cols="12" sm="12" md="12">
-          <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-            offset-y min-width="auto">
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" outlined dense
-                :hide-details="true"></v-text-field>
-            </template>
-            <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
-          </v-menu>
-        </v-col>
-      </v-col> -->
-    </v-row>
 
     <v-dialog v-model="imgView" :width="previewImageWidth">
       <v-card>
@@ -137,50 +61,50 @@
             <span>{{ formTitle }} {{ Model }}</span>
           </v-toolbar>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="expenseDialog = false">
+          <v-icon size="large" dark class="pa-0" @click="expenseDialog = false">
             mdi mdi-close-box
           </v-icon>
         </v-toolbar>
         <v-container>
           <v-row class="mt-0 px-2">
             <v-col cols="6">
-              <v-text-field v-model="editedItem.voucher" placeholder="Voucher" label="Voucher" outlined
-                :hide-details="true" dense>
+              <v-text-field :disabled="viewMode" v-model="editedItem.voucher" placeholder="Voucher" label="Voucher"
+                outlined dense>
               </v-text-field>
               <span v-if="errors && errors.voucher" class="error--text">
                 {{ errors.voucher[0] }}
               </span>
             </v-col>
-            <v-col cols="6" class="m-0 p-0">
-              <v-text-field v-model="editedItem.item" placeholder="Item" label="Item" outlined :hide-details="true"
-                dense></v-text-field>
+            <v-col cols="6">
+              <v-text-field :disabled="viewMode" v-model="editedItem.item" placeholder="Item" label="Item" outlined
+                :hide-details="true" dense></v-text-field>
               <span v-if="errors && errors.item" class="error--text">
                 {{ errors.item[0] }}
               </span>
             </v-col>
-            <v-col cols="6" class="m-0 p-0">
-              <v-text-field v-model="editedItem.amount" placeholder="Amount" label="Amount" :hide-details="true"
-                @keyup="calSum" outlined dense type="number"></v-text-field>
+            <v-col cols="44">
+              <v-text-field :disabled="viewMode" v-model="editedItem.amount" placeholder="Amount" label="Amount"
+                :hide-details="true" @keyup="calSum" outlined dense type="number"></v-text-field>
               <span v-if="errors && errors.amount" class="error--text">
                 {{ errors.amount[0] }}
               </span>
             </v-col>
-            <v-col cols="6">
-              <v-text-field v-model="editedItem.qty" placeholder="QTY" label="QTY" :hide-details="true" outlined dense
-                @keyup="calSum" type="number"></v-text-field>
+            <v-col cols="4">
+              <v-text-field :disabled="viewMode" v-model="editedItem.qty" placeholder="QTY" label="QTY"
+                :hide-details="true" outlined dense @keyup="calSum" type="number"></v-text-field>
               <span v-if="errors && errors.qty" class="error--text">{{
                 errors.qty[0]
               }}</span>
             </v-col>
-            <v-col cols="6">
-              <v-text-field v-model="editedItem.total" placeholder="Total Amount" label="Total Amount" readonly
-                :hide-details="true" outlined dense type="number"></v-text-field>
-              <span v-if="errors && errors.amount" class="error--text">{{
-                errors.amount[0]
+            <v-col cols="4">
+              <v-text-field :disabled="viewMode" v-model="editedItem.total" placeholder="Total Amount"
+                label="Total Amount" readonly :hide-details="true" outlined dense type="number"></v-text-field>
+              <span v-if="errors && errors.total" class="error--text">{{
+                errors.total[0]
               }}</span>
             </v-col>
-            <v-col cols="6">
-              <v-autocomplete v-model="editedItem.payment_modes" :items="[
+            <v-col cols="4">
+              <v-autocomplete :disabled="viewMode" v-model="editedItem.payment_modes" :items="[
                 { id: 1, name: 'Cash' },
                 { id: 2, name: 'Card' },
                 { id: 3, name: 'Online' },
@@ -191,129 +115,188 @@
                 outlined :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
-                errors.department_id[0]
+                errors.payment_modes[0]
               }}</span>
             </v-col>
 
-            <v-col cols="12" v-if="is_management">
-              <v-autocomplete v-model="editedItem.user" :items="['Nadia', 'Ariff', 'Ansari']" item-text="name"
-                item-value="id" placeholder="Select User" label="Select User" outlined :hide-details="true" dense>
+            <v-col cols="4" v-if="is_management">
+              <v-autocomplete :disabled="viewMode" v-model="editedItem.user" :items="['Nadia', 'Ariff', 'Ansari']"
+                item-text="name" item-value="id" placeholder="Select User" label="Select User" outlined
+                :hide-details="true" dense>
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
-                errors.department_id[0]
+                errors.user[0]
               }}</span>
             </v-col>
-
-            <v-col cols="6" v-if="editedItem.payment_modes != 1">
-              <v-text-field v-model="editedItem.reference" placeholder="Reference" label="Reference" :hide-details="true"
-                outlined dense type="text"></v-text-field>
+            <v-col cols="4">
+              <v-autocomplete :disabled="viewMode" v-model="editedItem.category_id" :items="expensesCategories"
+                item-text="name" item-value="id" placeholder="Select Category" label="Select Category" outlined
+                :hide-details="true" dense>
+              </v-autocomplete>
+              <span v-if="errors && errors.department_id" class="error--text">{{
+                errors.category_id[0]
+              }}</span>
+            </v-col>
+            <v-col cols="4" v-if="editedItem.payment_modes != 1">
+              <v-text-field :disabled="viewMode" v-model="editedItem.reference" placeholder="Reference" label="Reference"
+                :hide-details="true" outlined dense type="text"></v-text-field>
               <span v-if="errors && errors.amount" class="error--text">{{
-                errors.amount[0]
+                errors.reference[0]
               }}</span>
             </v-col>
 
-            <v-col :md="3">
-              <v-file-input dense v-model="editedItem.document" color="primary" counter placeholder="Invoice"
-                :hide-details="true" outlined :show-size="1000">
-                <template v-slot:selection="{ index, text }">
-                  <v-chip v-if="index < 2" color="primary" dark label small>
-                    {{ text }}
-                  </v-chip>
 
-                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
-                    +{{ editedItem.document.length - 2 }} File(s)
-                  </span>
-                </template>
-              </v-file-input>
-              <small class="red--text" v-if="errors && errors.document">
-                {{ errors && errors.document ? errors.document[0] : "" }}
-              </small>
-            </v-col>
-
-            <v-col :md="3">
-              <v-file-input dense v-model="editedItem.document1" color="primary" counter placeholder="Receipt"
-                :hide-details="true" outlined :show-size="1000">
-                <template v-slot:selection="{ index, text }">
-                  <v-chip v-if="index < 2" color="primary" dark label small>
-                    {{ text }}
-                  </v-chip>
-
-                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
-                    +{{ editedItem.document1.length - 2 }} File(s)
-                  </span>
-                </template>
-              </v-file-input>
-              <small class="red--text" v-if="errors && errors.document1">
-                {{ errors && errors.document1 ? errors.document1[0] : "" }}
-              </small>
-            </v-col>
-
-            <v-col :md="3">
-              <v-file-input dense v-model="editedItem.document2" color="primary" counter placeholder="Bank Slip"
-                :hide-details="true" outlined :show-size="1000">
-                <template v-slot:selection="{ index, text }">
-                  <v-chip v-if="index < 2" color="primary" dark label small>
-                    {{ text }}
-                  </v-chip>
-                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
-                    +{{ editedItem.document2.length - 2 }} File(s)
-                  </span>
-                </template>
-              </v-file-input>
-              <small class="red--text" v-if="errors && errors.document2">
-                {{ errors && errors.document2 ? errors.document2[0] : "" }}
-              </small>
-            </v-col>
-
-            <v-col :md="3">
-              <v-file-input dense v-model="editedItem.document3" color="primary" counter placeholder="Other"
-                :hide-details="true" outlined :show-size="1000">
-                <template v-slot:selection="{ index, text }">
-                  <v-chip v-if="index < 2" color="primary" dark label small>
-                    {{ text }}
-                  </v-chip>
-
-                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
-                    +{{ editedItem.document3.length - 2 }} File(s)
-                  </span>
-                </template>
-              </v-file-input>
-              <small class="red--text" v-if="errors && errors.document3">
-                {{ errors && errors.document3 ? errors.document3[0] : "" }}
-              </small>
-            </v-col>
-            <!-- <div class="mt-2 ml-4" v-if="getDocType(editedItem.document)">
-              <v-btn
-                small
-                dark
-                class="primary lg-pt-4 lg-pb-4 doc-btn"
-                @click="preview(editedItem.document)"
-              >
-                Preview
-                <v-icon right dark>mdi-file</v-icon>
-              </v-btn>
-            </div> -->
             <v-col cols="12">
-              <v-textarea filled placeholder="Description" label="Description" :hide-details="true"
-                v-model="editedItem.description" outlined dense rows="4" row-height="15"></v-textarea>
+              <v-textarea :disabled="viewMode" filled placeholder="Description" label="Description" :hide-details="true"
+                v-model="editedItem.description" outlined dense rows="2" row-height="5"></v-textarea>
               <span v-if="errors && errors.description" class="error--text">{{
                 errors.description[0]
               }}</span>
             </v-col>
-            <v-card-actions>
-              <v-btn class="primary" :loading="loading" @click="save">Save</v-btn>
-            </v-card-actions>
+            <v-col cols="12">
+              <v-container>
+                <v-col class="text-right" md="12" cols="12">
+                  <v-btn v-if="!viewMode" @click="addDocumentInfo" class="primary mb-2 text-right">Add
+                    Document +
+                  </v-btn>
+                </v-col>
+                <v-row v-if="!viewMode" v-for="(d, index) in Document.items" :key="index">
+                  <v-col cols="4">
+                    <label class="col-form-label">Title </label>
+                    <v-text-field dense outlined v-model="d.title"></v-text-field>
+
+                  </v-col>
+                  <v-col cols="6">
+                    <label class="col-form-label">File </label>
+                    <v-file-input dense outlined v-model="d.file">
+                      <template v-slot:selection="{ text }">
+                        <v-chip v-if="text" small label color="primary" class="ma-1">
+                          {{ text }}
+                        </v-chip>
+                      </template>
+                    </v-file-input>
+
+
+                  </v-col>
+                  <v-col cols="2">
+                    <v-icon small v-if="!viewMode" class="error--text mt-10"
+                      @click="removeItem(index)">mdi-delete</v-icon>
+                  </v-col>
+                </v-row>
+                <!-- <v-row>
+                  <v-col cols="12">
+                    <v-btn :disabled="!Document.items.length" class="primary" small
+                      @click="save_document_info">Save</v-btn>
+                  </v-col>
+                </v-row> -->
+                <v-row>
+                  <v-col cols="12">
+                    <table style="border-collapse: collapse; width: 100%">
+                      <thead>
+                        <tr>
+                          <th style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                            Title
+                          </th>
+                          <th style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                            File
+                          </th>
+                          <th style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(d, index) in document_list" :key="index">
+                          <td style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                            {{ d.title }}
+                          </td>
+                          <td style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+
+                            <v-btn @click="preview(d.file_name)" small class="primary">
+                              View <v-icon>mdi-open-window</v-icon>
+                            </v-btn>
+
+                          </td>
+                          <td style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                            <v-icon v-if="!viewMode" color="error" @click="delete_document(d.id, d.expenses_id)">
+                              mdi-delete
+                            </v-icon>
+                          </td>
+                        </tr>
+                        <!-- Add more rows as needed -->
+                      </tbody>
+                    </table>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-col>
+
           </v-row>
         </v-container>
-        <v-card-actions> </v-card-actions>
+        <v-card-actions v-if="!viewMode">
+          <v-spacer></v-spacer>
+          <v-col class="text-right" md="12" cols="12">
+            <v-btn class="primary" :loading="loading" @click="save">Save</v-btn>
+          </v-col>
+
+        </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-row>
+      <v-col xs="12" sm="12" md="2" cols="12">
 
+
+        <v-text-field dense outlined placeholder="Search..." @input="commonMethod" v-model="search"
+          hide-details></v-text-field>
+
+      </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
+      </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <v-select v-model="category_id" clearable :items="expensesCategories" item-text="name" item-value="id"
+          placeholder="All Categories" label="Select Category" @change="commonMethod" outlined :hide-details="true" dense>
+        </v-select>
+
+      </v-col>
+
+
+    </v-row>
     <v-row>
       <v-col md="12" class="float-right">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
+
+
+        <v-tabs v-model="activeTab" :vertical="vertical" background-color="background" dense flat dark show-arrows
+          class="  rounded-t-sm rounded-t-md">
+
+          <span class="p-3" style="padding:5px"> Today {{ Model }} List</span>
+          <v-spacer></v-spacer>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span> Today {{ Model }} List</span>
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
@@ -334,48 +317,84 @@
               <span> DOWNLOAD </span>
             </v-tooltip>
           </v-toolbar>
-          <table>
-            <tr style="font-size: 12px">
-              <!-- <th v-for="(item, index) in   headers" :key="index" style="font-size: 12px">
+          <v-tab active-class="active-link">
+            Expenses
+          </v-tab>
+          <v-tab active-class="active-link">
+            Categories
+          </v-tab>
+          <v-tabs-slider color="#1259a7"></v-tabs-slider>
+          <v-tab-item>
+            <v-row>
+              <v-col>
+                <v-card class="mb-5 rounded-md mt-3" elevation="0">
+                  <!-- <v-toolbar class="rounded-md" color="background" dense flat dark>
+                    <span> Today {{ Model }} List</span>
+                    <v-spacer></v-spacer>
+                    <v-tooltip top color="primary">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
+                          @click="process('expense_report_print')">
+                          <v-icon class="white--text">mdi-printer-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>PRINT</span>
+                    </v-tooltip>
+
+                    <v-tooltip top color="primary">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
+                          @click="process('expense_report_download')">
+                          <v-icon class="white--text">mdi-download-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span> DOWNLOAD </span>
+                    </v-tooltip>
+                  </v-toolbar> -->
+                  <table>
+                    <tr style="font-size: 12px">
+                      <!-- <th v-for="(item, index) in   headers" :key="index" style="font-size: 12px">
                 <span v-html="item.text"></span>
               </th> -->
-              <th>#</th>
-              <th>Date</th>
-              <th>Voucher</th>
-              <th v-if="is_management">User</th>
-              <th>Item</th>
-              <th>QTY</th>
-              <th>Amount</th>
-              <th>Total</th>
-              <th>Mode</th>
-              <th>Reference</th>
-              <th>Description</th>
-              <th>Document</th>
-            </tr>
-            <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-              color="primary"></v-progress-linear>
-            <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
-              <td>{{ ++index }}</td>
-              <td style="width: 100px;">{{ item.created_at }}</td>
-              <td>{{ item.voucher || "" }}</td>
-              <td v-if="is_management">{{ item.user || "" }}</td>
-              <td>{{ item.item || "" }}</td>
-              <td>{{ item.qty || "" }}</td>
-              <td>{{ item.amount || "---" }}</td>
-              <td>{{ item.total || "---" }}</td>
-              <td>{{ (item && item.payment_mode.name) || "---" }}</td>
-              <td>{{ (item && item.reference) || "---" }}</td>
-              <td>
-                <v-tooltip bottom color="primary">
-                  <template v-slot:activator="{ on, attrs }">
-                    <span v-bind="attrs" v-on="on">{{
-                      limitedStr(item && item.description) || "---"
-                    }}</span>
-                  </template>
-                  <span>{{ (item && item.description) || "---" }}</span>
-                </v-tooltip>
-              </td>
-              <td>
+                      <th>#</th>
+                      <th>Date</th>
+                      <th>Category</th>
+                      <th>Voucher</th>
+                      <th v-if="is_management">User</th>
+                      <th>Item</th>
+                      <th>QTY</th>
+                      <th>Amount</th>
+                      <th>Total</th>
+                      <th>Mode</th>
+                      <!-- <th>Reference</th> -->
+                      <th>Description</th>
+                      <!-- <th>Document</th> -->
+                    </tr>
+                    <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
+                      color="primary"></v-progress-linear>
+                    <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
+                      <td>{{ ++index }}</td>
+                      <td style="width: 100px;">{{ item.created_at }}</td>
+                      <td>{{ item.category && item.category.name || "" }}</td>
+                      <td>{{ item.voucher || "" }}</td>
+                      <td v-if="is_management">{{ item.user || "" }}</td>
+                      <td>{{ item.item || "" }}</td>
+                      <td>{{ item.qty || "" }}</td>
+                      <td>{{ item.amount || "---" }}</td>
+                      <td>{{ item.total || "---" }}</td>
+                      <td>{{ (item && item.payment_mode.name) || "---" }}</td>
+                      <!-- <td>{{ (item && item.reference) || "---" }}</td> -->
+                      <td>
+                        <v-tooltip bottom color="primary">
+                          <template v-slot:activator="{ on, attrs }">
+                            <span v-bind="attrs" v-on="on">{{
+                              limitedStr(item && item.description) || "---"
+                            }}</span>
+                          </template>
+                          <span>{{ (item && item.description) || "---" }}</span>
+                        </v-tooltip>
+                      </td>
+                      <!-- <td>
                 <v-icon v-if="item.document" @click="preview(item.document)" right>mdi
                   mdi-alpha-i-circle
                 </v-icon>
@@ -389,41 +408,74 @@
 
                 <v-icon v-if="item.document3" @click="preview(item.document3)" right> mdi-alpha-o-circle</v-icon>
                 <span v-else> --- </span>
-              </td>
-              <td class="text-center">
-                <v-menu bottom left
-                  v-if="can('accounts_expences_edit') || can('accounts_expences_delete') || can('management_expenses_edit') || can('management_expenses_delete')">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list width="120" dense>
-                    <v-list-item v-if="can('accounts_expences_edit') || can('management_expenses_edit')"
-                      @click="editItem(item)">
-                      <v-list-item-title style="cursor: pointer">
-                        <v-icon color="secondary" small> mdi-pencil </v-icon>
-                        Edit
-                      </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item v-if="can('accounts_expences_delete') || can('management_expenses_delete')"
-                      @click="deleteItem(item)">
-                      <v-list-item-title style="cursor: pointer">
-                        <v-icon color="error" small> mdi-delete </v-icon>
-                        Delete
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </td>
-            </tr>
-            <tr style="background-color:white;font-size: 12px">
-              <td colspan="7" class="text-right">
-                <b>Total:</b>{{ totalAmount || 0 }}
-              </td>
-            </tr>
-          </table>
-        </v-card>
+              </td> -->
+                      <td class="text-center">
+                        <v-menu bottom left
+                          v-if="can('accounts_expences_edit') || can('accounts_expences_delete') || can('management_expenses_edit') || can('management_expenses_delete')">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                              <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list width="120" dense>
+                            <v-list-item v-if="can('accounts_expences_edit') || can('management_expenses_edit')"
+                              @click="viewItem(item)">
+                              <v-list-item-title style="cursor: pointer">
+                                <v-icon color="secondary" small> mdi-information </v-icon>
+                                View
+                              </v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="can('accounts_expences_edit') || can('management_expenses_edit')"
+                              @click="editItem(item)">
+                              <v-list-item-title style="cursor: pointer">
+                                <v-icon color="secondary" small> mdi-pencil </v-icon>
+                                Edit
+                              </v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="can('accounts_expences_delete') || can('management_expenses_delete')"
+                              @click="deleteItem(item)">
+                              <v-list-item-title style="cursor: pointer">
+                                <v-icon color="error" small> mdi-delete </v-icon>
+                                Delete
+                              </v-list-item-title>
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
+                      </td>
+                    </tr>
+                    <tr style="background-color:white;font-size: 12px">
+                      <td colspan="7" class="text-right">
+                        <b>Total:</b>{{ totalAmount || 0 }}
+                      </td>
+                    </tr>
+                  </table>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-tab-item>
+          <v-tab-item>
+            <v-row>
+              <v-col>
+                <ExpensesCategories />
+              </v-col>
+            </v-row>
+          </v-tab-item>
+        </v-tabs>
+
+      </v-col>
+      <v-col>
+
+
+
+
+
+
+
+
+
+
+
+
       </v-col>
     </v-row>
     <v-row>
@@ -448,7 +500,26 @@ export default {
     ImagePreview,
   },
   data: () => ({
-    previewImageWidth: "500px",
+    expensesCategories: [],
+    activeTab: 0,
+    vertical: false,
+    viewMode: false,
+
+    documents: false,
+    FileRules: [
+      (value) =>
+        !value ||
+        value.size < 200000 ||
+        "File size should be less than 200 KB!",
+    ],
+    TitleRules: [(v) => !!v || "Title is required"],
+    Document: {
+      items: [{ title: "", file: "" }],
+    },
+    document_list: [],
+
+
+    previewImageWidth: "1000px",
     Model: "Expense",
 
     from_date: "",
@@ -494,6 +565,7 @@ export default {
     editedIndex: -1,
     response: "",
     errors: [],
+    category_id: '',
     editedItem: {
       item: null,
       amount: 0,
@@ -508,6 +580,7 @@ export default {
       document2: null,
       document3: null,
       user: "",
+
     },
   }),
 
@@ -521,6 +594,7 @@ export default {
 
   computed: {
     formTitle() {
+
       return this.editedIndex === -1 ? "New" : "Edit";
     },
     totalAmount() {
@@ -564,9 +638,79 @@ export default {
 
     this.loading = true;
     this.commonMethod();
+    this.getCategoriesList();
+
   },
 
   methods: {
+    newDialog() {
+      this.expenseDialog = true;
+      this.viewMode = false;
+      this.close_document_info();
+
+    },
+    getInfo(expenses_id) {
+      this.$axios
+        .get(`expenses_documents/${expenses_id}`, {
+          params: { company_id: this.$auth?.user?.company?.id, expenses_id: expenses_id },
+
+        })
+        .then(({ data }) => {
+          this.document_list = data;
+          this.loading = false;
+        });
+    },
+    addDocumentInfo() {
+      this.Document.items.push({
+        title: "",
+        file: "",
+      });
+    },
+
+    close_document_info() {
+      this.document_list = [];
+      this.Document.items = [];
+      this.documents = false;
+      this.errors = [];
+
+      // this.Document = {
+      //   items: [{ title: "", file: "" }],
+      // };
+    },
+
+    removeItem(index) {
+      this.Document.items.splice(index, 1);
+    },
+
+    delete_document(id, expenses_id) {
+
+      let options = {
+        params: {
+
+          company_id: this.$auth.user.company.id,
+
+        },
+      };
+      confirm(
+        "Are you sure you wish to delete , to mitigate any inconvenience in future."
+      ) &&
+        this.$axios
+          .post(`expenses_document_delete/${id}`, options.params)
+          .then(({ data }) => {
+            this.loading = false;
+
+            if (!data.status) {
+              this.errors = data.errors;
+            } else {
+              this.errors = [];
+              this.snackbar = true;
+              this.response = data.message;
+              this.getInfo(expenses_id);
+              this.close_document_info();
+            }
+          })
+          .catch((e) => console.log(e));
+    },
     getPriceFormat(price) {
 
       return parseFloat(price).toLocaleString('en-IN', {
@@ -608,7 +752,7 @@ export default {
       let url =
         process.env.BACKEND_URL +
         `${type}?company_id=${comId}&is_management=${is_management}`;
-      console.log(url);
+
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}`);
@@ -647,11 +791,11 @@ export default {
 
     preview(doc) {
       // let file = this.editedItem.document ?? null;
-      console.log(doc);
+
       let file = doc ?? null;
       const fileExtension = file.split(".").pop().toLowerCase();
       fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
-      fileExtension == "pdf" ? (this.previewImageWidth = "70%") : this.previewImageWidth = "500px";
+      fileExtension == "pdf" ? (this.previewImageWidth = "70%") : this.previewImageWidth = "1000px";
 
       this.documentObj = {
         fileExtension: fileExtension,
@@ -659,15 +803,46 @@ export default {
       };
       this.imgView = true;
     },
-
-    editItem(item) {
-      console.log(item);
+    viewItem(item) {
+      this.formTitle = 'View ';
+      this.viewMode = true;
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      console.log(this.editedItem);
-      this.expenseDialog = true;
-    },
 
+      this.expenseDialog = true;
+      this.getInfo(item.id);
+    },
+    editItem(item) {
+      this.viewMode = false;
+
+      this.editedIndex = this.data.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+
+      this.expenseDialog = true;
+      this.getInfo(item.id);
+      this.Document.items = [];
+    },
+    getCategoriesList() {
+
+      this.loading = true;
+
+
+      let options = {
+        params: {
+
+          company_id: this.$auth.user.company.id,
+
+        }
+      };
+      this.$axios.get(`expenses_categories`, options).then(({ data }) => {
+
+        this.expensesCategories = data.data;
+
+      });
+
+
+
+    },
     getFirstAndLastDay() {
       const currentDate = new Date();
       const day = currentDate.getDate();
@@ -731,6 +906,7 @@ export default {
           to: this.to_date,
           search: this.search,
           is_management: this.is_management,
+          category_id: this.category_id
         },
       };
 
@@ -787,8 +963,11 @@ export default {
       // this.loading = true;
       let payload = this.mapper(this.editedItem);
 
-      console.log(payload);
-      // return;
+      this.Document.items.forEach((e) => {
+        payload.append(`items[][title]`, e.title);
+        payload.append(`items[][file]`, e.file || {});
+      });
+
 
       if (this.editedIndex > -1) {
         this.$axios
@@ -813,7 +992,7 @@ export default {
         this.$axios
           .post(this.endpoint, payload)
           .then(({ data }) => {
-            console.log(data);
+
             if (!data.status) {
               this.errors = data.errors;
               this.loading = false;
@@ -833,7 +1012,7 @@ export default {
   },
 };
 </script>
-<style scoped src="@/assets/dashtem.css"></style>
+<style scoped src="@/assets/stylishbox.css"></style>
 <style scoped>
 table {
   font-family: arial, sans-serif;
@@ -850,4 +1029,4 @@ th {
 tr:nth-child(even) {
   background-color: #e9e9e9;
 }
-</style>
+</style>  
