@@ -248,7 +248,7 @@
                       <v-divider class="p-0 m-0" dense></v-divider>
                       <div class="mt-3">
                         <v-row>
-                          <v-col md="4" sm="12" cols="12" dense>
+                          <v-col md="2" sm="12" cols="12" dense>
                             <label class="col-form-label">Adult <span class="text-danger">*</span>
                             </label>
 
@@ -256,13 +256,13 @@
                               <span class="minus" @mouseup="
                                 get_food_price_cal(
                                   'adult',
-                                  temp.no_of_adult == 0
-                                    ? 0
+                                  temp.no_of_adult == 1
+                                    ? 1
                                     : --temp.no_of_adult
                                 )
                                 " @click="
-    temp.no_of_adult < 1 || temp.no_of_adult
-    ">-</span>
+    temp.no_of_adult < 2 || temp.no_of_adult; reCalFood('adult');
+  ">-</span>
                               <span class="num">{{ temp.no_of_adult }}</span>
                               <span class="plus" @mouseup="
                                 get_food_price_cal(
@@ -272,11 +272,11 @@
                                     : 4
                                 )
                                 " @click="
-    temp.no_of_adult > 3 || temp.no_of_adult
-    ">+</span>
+    temp.no_of_adult > 3 || temp.no_of_adult; reCalFood('adult');
+  ">+</span>
                             </div>
                           </v-col>
-                          <v-col md="4" sm="12" cols="12" dense>
+                          <v-col md="2" sm="12" cols="12" dense>
                             <label class="col-form-label">Child </label>
                             <div class="wrapper">
                               <span class="minus" @mouseup="
@@ -287,8 +287,8 @@
                                     : --temp.no_of_child
                                 )
                                 " @click="
-    temp.no_of_child < 1 || temp.no_of_child
-    ">-</span>
+    temp.no_of_child < 1 || temp.no_of_child; reCalFood('child');
+  ">-</span>
                               <span class="num">{{ temp.no_of_child }}</span>
                               <span class="plus" @mouseup="
                                 get_food_price_cal(
@@ -298,11 +298,11 @@
                                     : 3
                                 )
                                 " @click="
-    temp.no_of_child > 1 || temp.no_of_child
-    ">+</span>
+    temp.no_of_child > 1 || temp.no_of_child; reCalFood('child');
+  ">+</span>
                             </div>
                           </v-col>
-                          <v-col md="4" sm="12" cols="12" dense>
+                          <!-- <v-col md="4" sm="12" cols="12" dense>
                             <label class="col-form-label">Baby </label>
                             <div class="wrapper">
                               <span class="minus" @mouseup="
@@ -319,9 +319,9 @@
                                 )
                                 " @click="temp.no_of_baby > 1 || temp.no_of_baby">+</span>
                             </div>
-                          </v-col>
+                          </v-col> -->
 
-                          <v-col md="12" sm="12" cols="12" dense class="mb-0 pb-0 d-flex justify-center">
+                          <v-col md="5" sm="5" cols="5" dense class="mb-0 pt-10 pb-0 d-flex justify-center">
                             <v-radio-group row dense class="py-0 my-0">
                               <v-checkbox v-model="temp.breakfast" label="Breakfast" value="breakfast"
                                 class="px-3 py-0 my-0" @change="meal_cal(temp.breakfast)" :hide-details="true">
@@ -333,6 +333,14 @@
                                 @change="meal_cal(temp.dinner)" :hide-details="true">
                               </v-checkbox>
                             </v-radio-group>
+                          </v-col>
+                          <v-col md="3" sm="3" cols="3" dense class="mb-0 pt-10 pb-0 d-flex justify-center">
+
+                            <v-checkbox style="color:red" v-model="merge_food_in_room_price"
+                              label="Corporate(Merge Food)  " value="1" class="px-3 py-0 my-0" :hide-details="true">
+                            </v-checkbox>
+
+
                           </v-col>
                           <v-col md="12" cols="12" class="mt-0 pt-0 d-flex justify-center">
                             <table class="styled-table" style="width: 100%">
@@ -382,7 +390,7 @@
                                   <th>Type</th>
                                   <th>Tariff</th>
                                   <th>Tax</th>
-                                  <th>T/Amount</th>
+                                  <th class="text-right">T/Amount</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -402,7 +410,7 @@
                                   <td>
                                     {{ convert_decimal(item.tax) }}
                                   </td>
-                                  <td>
+                                  <td class="text-right">
                                     {{ convert_decimal(item.price) }}
                                   </td>
                                 </tr>
@@ -414,7 +422,7 @@
                                   <td>
                                     {{ convert_decimal(temp.room_tax) }}
                                   </td>
-                                  <td class="season-table">
+                                  <td class="season-table text-right">
                                     {{ convert_decimal(temp.price) }}
                                   </td>
                                 </tr>
@@ -423,30 +431,125 @@
                           </v-col>
                           <v-col md="12" style="padding-top:0px;font-weight:bold">
                             <!-- <v-divider color="#4390FC"></v-divider> -->
-                            <div class="d-flex justify-space-around py-3 styled-table" style=" margin-top:5px;   background: #4390fc;
+                            <!-- <div class="d-flex justify-space-around py-3 styled-table" style=" margin-top:5px;   background: #4390fc;
     color: #FFF;">
                               <span>
                                 Sub Total :
                                 {{ convert_decimal(temp.price) }}
                               </span>
-                              <span style="color:rgb(196, 30, 30)">
-                                Discount :
-                                {{ convert_decimal(temp.room_discount) }}
+
+
+                              <span>
+                                Food :
+                                {{ parseFloat(tempAdult.tot_ab) +
+                                  parseFloat(tempAdult.tot_al) +
+                                  parseFloat(tempAdult.tot_ad) +
+                                  parseFloat(tempChild.tot_cb) +
+                                  parseFloat(tempChild.tot_cl) +
+                                  parseFloat(tempChild.tot_cd) }}
                               </span>
                               <span>
                                 Add :
                                 {{ convert_decimal(temp.room_extra_amount) }}
                               </span>
+                              <span style="color:rgb(196, 30, 30)">
+                                Discount :
+                                {{ convert_decimal(temp.room_discount) }}
+                              </span>
+
+
                               <span>
                                 Total :
                                 {{
                                   convert_decimal(
                                     parseFloat(temp.room_extra_amount) +
                                     parseFloat(temp.price) +
-                                    parseFloat(-temp.room_discount)
+                                    parseFloat(-temp.room_discount) +
+                                    parseFloat(tempAdult.tot_ab) +
+                                    parseFloat(tempAdult.tot_al) +
+                                    parseFloat(tempAdult.tot_ad) +
+                                    parseFloat(tempChild.tot_cb) +
+                                    parseFloat(tempChild.tot_cl) +
+                                    parseFloat(tempChild.tot_cd)
                                   )
                                 }}
                               </span>
+
+
+                            </div>
+
+                            <v-divider color="#4390FC"></v-divider> -->
+
+                            <div class="d-flex justify-space-around py-3 styled-table" style=" margin-top:5px; ">
+                              <v-col cols=" 11" class="text-right">
+                                <div>
+                                  Sub Total:
+
+                                </div>
+                                <div>
+                                  Food:
+
+                                </div>
+                                <div>
+                                  Add :
+
+                                </div>
+                                <div>
+                                  Discount :
+
+                                </div>
+                                <v-divider color="#4390FC"></v-divider>
+                                <div style="font-size:18px;font-weight:bold">
+                                  Total :
+
+                                </div>
+                              </v-col>
+                              <v-col cols="1" class="text-right">
+
+                                <div>
+                                  {{ convert_decimal(temp.price) }}
+
+                                </div>
+                                <div>
+
+                                  {{ parseFloat(tempAdult.tot_ab) +
+                                    parseFloat(tempAdult.tot_al) +
+                                    parseFloat(tempAdult.tot_ad) +
+                                    parseFloat(tempChild.tot_cb) +
+                                    parseFloat(tempChild.tot_cl) +
+                                    parseFloat(tempChild.tot_cd) }}
+
+                                </div>
+                                <div>
+
+                                  {{ convert_decimal(temp.room_extra_amount) }}
+
+                                </div>
+                                <div style="color:red">
+
+                                  -{{ convert_decimal(temp.room_discount) }}
+
+                                </div>
+                                <v-divider color="#4390FC"></v-divider>
+                                <div style="font-size:18px;font-weight:bold">
+
+                                  {{
+                                    convert_decimal(
+                                      parseFloat(temp.room_extra_amount) +
+                                      parseFloat(temp.price) +
+                                      parseFloat(-temp.room_discount) +
+                                      parseFloat(tempAdult.tot_ab) +
+                                      parseFloat(tempAdult.tot_al) +
+                                      parseFloat(tempAdult.tot_ad) +
+                                      parseFloat(tempChild.tot_cb) +
+                                      parseFloat(tempChild.tot_cl) +
+                                      parseFloat(tempChild.tot_cd)
+                                    )
+                                  }}
+
+                                </div>
+                              </v-col>
+
                             </div>
                             <v-divider color="#4390FC"></v-divider>
                           </v-col>
@@ -1031,6 +1134,7 @@ export default {
 
 
       },
+      merge_food_in_room_price: '',
       gst_calculation: {
         recal_basePrice: 0,
         recal_gst_percentage: 0,
@@ -1349,18 +1453,21 @@ export default {
 
     meal_cal(meal_type) {
       this.person_type_arr.find((e) => {
-        if (e.type == "adult") {
+        if (e.type == "adult" || meal_type == "adult") {
           this.get_adult_cal(e);
         }
-        if (e.type == "child") {
+        if (e.type == "child" || meal_type == "child") {
           this.get_child_cal(e);
         }
-        if (e.type == "baby") {
+        if (e.type == "baby" || meal_type == "baby") {
           this.get_baby_cal(e);
         }
       });
     },
+    reCalFood(temp) {
+      this.meal_cal(temp);
 
+    },
     get_adult_cal(e) {
       let tab, tax_tab, tal, tax_tal, tad, tax_tad;
       if (this.temp.breakfast) {
@@ -2002,7 +2109,12 @@ export default {
         selectedRooms: this.selectedRooms,
         ...this.customer,
         user_id: this.$auth.user.id,
+        merge_food_in_room_price: this.merge_food_in_room_price,
       };
+
+
+      this.subLoad = false;
+
       this.$axios
         .post("/booking", payload)
         .then(({ data }) => {

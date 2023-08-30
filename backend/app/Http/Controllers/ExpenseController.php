@@ -8,6 +8,8 @@ use App\Models\ExpensesDocuments;
 use App\Models\Expense;
 use App\Models\ExpensesCategories;
 use App\Models\Payment;
+use Carbon\Carbon;
+use Database\Seeders\ExpenseSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,13 +30,12 @@ class ExpenseController extends Controller
         $model = Expense::query();
         $model->with('category');
         $model->where('company_id', $request->company_id);
-        $model->where(function ($q) use ($request) {
-            $q->where('voucher', 0);
-            $q->orWhere('item', 'ILIKE', "%$request->search%");
-        });
-
-        if ($request->filled('category_id')) {
-            $model->where('category_id',   $request->category_id);
+        // $model->where(function ($q) use ($request) {
+        //     $q->where('voucher', 0);
+        //     $q->orWhere('item', 'ILIKE', "%$request->search%");
+        // });
+        if ($request->filled('search')) {
+            $model->Where('item', 'ILIKE', "%$request->search%");
         }
 
         if ($request->filled('from') && $request->filled('to')) {
@@ -44,11 +45,13 @@ class ExpenseController extends Controller
         } else {
             $model->orderBy("created_at", 'desc');
         }
-
-        if ($request->is_management == 1 && $request->has('is_management') && $request->filled('is_management')) {
-            $model->where('is_management', 1);
+        if ($request->filled('category_id')) {
+            $model->where('category_id',   $request->category_id);
+        }
+        if ($request->filled('is_management')) {
+            $model->where('is_management', $request->is_management);
         } else {
-            $model->where('is_management', 0);
+            //  $model->where('is_management', 0);
         }
 
         if ($request->is_account && $request->has('is_account') && $request->filled('is_account')) {
@@ -120,14 +123,41 @@ class ExpenseController extends Controller
     public function getStaticstics(Request $request)
     {
 
-        $categoriesWithExpenses = ExpensesCategories::leftJoin('expenses', 'expenses_categories.id', '=', 'expenses.category_id');
-        $categoriesWithExpenses =  $categoriesWithExpenses->select('expenses_categories.name', DB::raw('COALESCE(SUM(expenses.amount), 0) as total'));
-        if ($request->filled('from') && $request->filled('to')) {
-            $categoriesWithExpenses->whereDate('expenses.created_at', '>=', $request->from . ' 00:00:00');
-            $categoriesWithExpenses->whereDate('expenses.created_at', '<=', $request->to . ' 23:59:00');
+
+
+        $categoriesWithExpenses = Expense::select('category_id', DB::raw('COALESCE(SUM(total), 0) as total'))
+            ->where('company_id', $request->company_id)
+
+            ->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
+                // $from = Carbon::parse($request->from)->startOfDay();
+                // $to = Carbon::parse($request->to)->endOfDay();
+                // $query->whereBetween('created_at', [$from, $to]);
+
+                $query->whereDate('created_at', '>=', $request->from . ' 00:00:00');
+                $query->whereDate('created_at', '<=', $request->to . ' 23:59:00');
+            })
+            ->when($request->filled('is_management'), function ($query) use ($request) {
+                $query->where('is_management', $request->is_management);
+            });
+
+        if ($request->filled('category_id')) {
+            $categoriesWithExpenses->where('category_id',   $request->category_id);
         }
-        $categoriesWithExpenses =  $categoriesWithExpenses->groupBy('expenses_categories.id', 'expenses_categories.name');
-        $categoriesWithExpenses =  $categoriesWithExpenses->get();
+        if ($request->filled('is_management')) {
+            $categoriesWithExpenses->where('is_management', $request->is_management);
+        }
+        $categoriesWithExpenses = $categoriesWithExpenses->groupBy('category_id')
+            ->get();
+        return $categoriesWithExpenses;
+
+        // $categoriesWithExpenses = ExpensesCategories::leftJoin('expenses', 'expenses_categories.id', '=', 'expenses.category_id');
+        // $categoriesWithExpenses =  $categoriesWithExpenses->select('expenses_categories.name', 'expenses_categories.id', DB::raw('COALESCE(SUM(expenses.amount), 0) as total'));
+        // if ($request->filled('from') && $request->filled('to')) {
+        //     $categoriesWithExpenses->whereDate('expenses.created_at', '>=', $request->from . ' 00:00:00');
+        //     $categoriesWithExpenses->whereDate('expenses.created_at', '<=', $request->to . ' 23:59:00');
+        // }
+        // $categoriesWithExpenses =  $categoriesWithExpenses->groupBy('expenses_categories.id', 'expenses_categories.name');
+        // $categoriesWithExpenses =  $categoriesWithExpenses->get();
 
 
 

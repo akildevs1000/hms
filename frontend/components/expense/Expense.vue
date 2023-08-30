@@ -21,7 +21,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <div class="col-xl-3 my-0 py-0 col-lg-6 text-uppercase">
+      <div class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase">
         <div class="card px-2" style="background-color: #800000">
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
@@ -29,7 +29,20 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Total</h6>
-              <span class="data-1"> {{ $auth.user.company.currency }} {{ getPriceFormat(totalAmount) || 0 }}</span>
+              <span class="data-1"> {{ $auth.user.company.currency }} {{ getPriceFormat(totalAmount) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase" v-for="(item, index) in expensesCategories">
+        <div class="card px-2" :style="{ backgroundColor: colors[index] || '#3366CC' }">
+          <div class="card-statistic-3">
+            <div class="card-icon card-icon-large">
+              <i class="fas fa-ddoor-open"></i>
+            </div>
+            <div class="card-content">
+              <h6 class="card-title text-capitalize">{{ item.name }}</h6>
+              <span class="data-1"> {{ getCategoryAmount(item.id) }}</span>
             </div>
           </div>
         </div>
@@ -284,7 +297,14 @@
         </v-select>
 
       </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <v-select v-model="is_management" clearable
+          :items="[{ id: '', name: 'All' }, { id: 0, name: 'Non-Management' }, { id: 1, name: 'Management' }]"
+          item-text="name" item-value="id" placeholder="All" label="Select Management" @change="commonMethod" outlined
+          :hide-details="true" dense>
+        </v-select>
 
+      </v-col>
 
     </v-row>
     <v-row>
@@ -360,11 +380,11 @@
                       <th>Date</th>
                       <th>Category</th>
                       <th>Voucher</th>
-                      <th v-if="is_management">User</th>
+                      <th>User</th>
                       <th>Item</th>
                       <th>QTY</th>
-                      <th>Amount</th>
-                      <th>Total</th>
+                      <th style="text-align:right">Amount</th>
+                      <th style="text-align:right">Total</th>
                       <th>Mode</th>
                       <!-- <th>Reference</th> -->
                       <th>Description</th>
@@ -372,16 +392,16 @@
                     </tr>
                     <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
                       color="primary"></v-progress-linear>
-                    <tr v-for="(item, index) in data" :key="index" style="font-size: 12px">
+                    <tr v-for="(  item, index  ) in   data  " :key="index" style="font-size: 12px">
                       <td>{{ ++index }}</td>
                       <td style="width: 100px;">{{ item.created_at }}</td>
                       <td>{{ item.category && item.category.name || "" }}</td>
                       <td>{{ item.voucher || "" }}</td>
-                      <td v-if="is_management">{{ item.user || "" }}</td>
+                      <td>{{ item.user || "" }}</td>
                       <td>{{ item.item || "" }}</td>
                       <td>{{ item.qty || "" }}</td>
-                      <td>{{ item.amount || "---" }}</td>
-                      <td>{{ item.total || "---" }}</td>
+                      <td style="text-align:right">{{ item.amount || "---" }}</td>
+                      <td style="text-align:right;font-weight:bold">{{ item.total || "---" }}</td>
                       <td>{{ (item && item.payment_mode.name) || "---" }}</td>
                       <!-- <td>{{ (item && item.reference) || "---" }}</td> -->
                       <td>
@@ -444,7 +464,7 @@
                       </td>
                     </tr>
                     <tr style="background-color:white;font-size: 12px">
-                      <td colspan="7" class="text-right">
+                      <td colspan="9" class="text-right">
                         <b>Total:</b>{{ totalAmount || 0 }}
                       </td>
                     </tr>
@@ -492,14 +512,17 @@
 </template>
 <script>
 import ImagePreview from "../images/ImagePreview.vue";
-import CustomFilter from "../filter/CustomFilter.vue";
+// import CustomFilter from "../filter/CustomFilter.vue";
 export default {
-  props: ["is_management"],
+  // props: ["is_management"],
   components: {
-    CustomFilter,
+    // CustomFilter,
     ImagePreview,
   },
   data: () => ({
+    is_management: '',
+    totalAmount: 0,
+    expenses_statistics: [],
     expensesCategories: [],
     activeTab: 0,
     vertical: false,
@@ -582,6 +605,28 @@ export default {
       user: "",
 
     },
+    colors: [
+      "#3366CC",
+      "#FF69B4",
+      "#FF4500",
+      "#800080",
+      "#FF6347",
+      "#008080",
+      "#FFA500",
+      "#DC143C",
+      "#4169E1",
+      "#3366CC",
+      "#3366CC",
+      "#FF69B4",
+      "#FF4500",
+      "#800080",
+      "#FF6347",
+      "#008080",
+      "#FFA500",
+      "#DC143C",
+      "#4169E1",
+      "#3366CC",
+    ],
   }),
 
   watch: {
@@ -591,17 +636,19 @@ export default {
       this.search = "";
     },
   },
-
+  mounted() {
+    this.getCategoriesList();
+  },
   computed: {
     formTitle() {
 
       return this.editedIndex === -1 ? "New" : "Edit";
     },
-    totalAmount() {
-      let sum = 0;
-      this.data.map((e) => (sum += parseFloat(e.total)));
-      return sum.toFixed(2);
-    },
+    // totalAmount() {
+    //   let sum = 0;
+    //   this.data.map((e) => (sum += parseFloat(e.total)));
+    //   return sum.toFixed(2);
+    // },
 
     currentDate() {
       return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -643,6 +690,21 @@ export default {
   },
 
   methods: {
+    getCategoryAmount(category_id) {
+
+      //console.log(this.expenses_statistics);
+      if (this.expenses_statistics) {
+        let filterData = this.expenses_statistics.filter(item => item.category_id === category_id);
+
+        let amount = filterData[0] ? filterData[0].total : 0;
+        return this.getPriceFormat(amount);
+        // console.log('total', filterData[0].total);
+
+      }
+
+
+
+    },
     newDialog() {
       this.expenseDialog = true;
       this.viewMode = false;
@@ -824,6 +886,8 @@ export default {
     },
     getCategoriesList() {
 
+      //this.getStatistics();
+
       this.loading = true;
 
 
@@ -838,7 +902,11 @@ export default {
 
         this.expensesCategories = data.data;
 
+
       });
+
+
+
 
 
 
@@ -895,27 +963,62 @@ export default {
     },
 
     getDataFromApi(url = this.endpoint) {
-      this.loading = true;
-      let page = this.pagination.current;
+
+      if (this.from_date && this.to_date) {
+        this.loading = true;
+        let page = this.pagination.current;
+        let options = {
+          params: {
+            status: this.pagination.status,
+            per_page: this.pagination.per_page,
+            company_id: this.$auth.user.company.id,
+            from: this.from_date,
+            to: this.to_date,
+            search: this.search,
+            is_management: this.is_management,
+            category_id: this.category_id
+          },
+        };
+
+        this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+          this.data = data.data;
+          this.pagination.current = data.current_page;
+          this.pagination.total = data.last_page;
+          this.loading = false;
+
+          this.getStatistics();
+
+          let sum = 0;
+          this.data.map((e) => (sum += parseFloat(e.total)));
+          this.totalAmount = sum.toFixed(2);
+
+          //this.totalAmount = 100;
+
+
+        });
+      }
+    },
+    getStatistics() {
       let options = {
         params: {
-          status: this.pagination.status,
-          per_page: this.pagination.per_page,
+
           company_id: this.$auth.user.company.id,
           from: this.from_date,
           to: this.to_date,
-          search: this.search,
+
           is_management: this.is_management,
           category_id: this.category_id
+
         },
       };
+      this.$axios.get(`expenses_statistics`, options).then(({ data }) => {
+        this.expenses_statistics = data;
 
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        this.data = data.data;
-        this.pagination.current = data.current_page;
-        this.pagination.total = data.last_page;
-        this.loading = false;
+        let filterData = this.expenses_statistics.filter(item => item.category_id === 2);
+
+
       });
+
     },
     deleteItem(item) {
       confirm(

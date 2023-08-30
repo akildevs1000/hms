@@ -87,9 +87,13 @@ class BookingController extends Controller
     {
         try {
             return DB::transaction(function () use ($request) {
+
+
+                $merge_food_in_room_price = (int)$request->merge_food_in_room_price;
                 $data = [];
                 $data = $request->only(Booking::bookingAttributes());
                 $data['booking_date'] = now();
+                $data['merge_food_in_room_price'] =   $merge_food_in_room_price;
                 $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
                 $data['remaining_price'] = (float) $request->total_price - (float) $request->advance_price;
                 $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
@@ -1202,10 +1206,16 @@ class BookingController extends Controller
 
     public function getTaxSlab($amount, $company_id)
     {
-
+        $amount = (int) $amount;
         $tax = env('GST_TAX_DEFAULT');
+
+
         $TaxSlab = TaxSlabs::where('company_id', $company_id)
-            ->where('start_price', '<=', $amount)->where('end_price', '>=', $amount)->pluck('tax');
+            ->where('start_price', '<=', $amount)
+            ->where('end_price', '>=', $amount)
+            ->pluck('tax');
+
+
 
         if (isset($TaxSlab[0])) {
             $tax = $TaxSlab[0];

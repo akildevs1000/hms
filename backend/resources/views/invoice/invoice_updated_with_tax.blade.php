@@ -193,7 +193,7 @@
                                                 </td>
                                             </tr>
                                             @php
-                                            if ($room->tot_adult_food >0 || $room->tot_child_food>0)
+                                            if ($room->inv_food_listing_price>0)
 
                                             {
                                             $subtotal_price+= $room->inv_food_listing_price;

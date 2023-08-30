@@ -30,27 +30,27 @@
       <v-col md="2">
 
         <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]
+          {
+            id: 1,
+            name: 'Today',
+          },
+          {
+            id: 2,
+            name: 'Yesterday',
+          },
+          {
+            id: 3,
+            name: 'This Week',
+          },
+          {
+            id: 4,
+            name: 'This Month',
+          },
+          {
+            id: 5,
+            name: 'Custom',
+          },
+        ]
           " dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
           @change="commonMethod"></v-select>
 
@@ -97,8 +97,7 @@
 
     <v-row class="mt-0 mt-0">
       <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0" v-for="( user, index ) in  paymentReportsByUser "
-          :key="index">
+        <v-card class="mb-5 rounded-md mt-3" elevation="0" v-for="( user, index ) in  paymentReportsByUser " :key="index">
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <label class="white--text">{{ user.name }}</label>
             <v-spacer></v-spacer>
@@ -114,8 +113,7 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on"
-                  @click="process('income_report_download')">
+                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>

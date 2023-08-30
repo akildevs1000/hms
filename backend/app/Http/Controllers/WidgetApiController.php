@@ -47,11 +47,6 @@ class WidgetApiController extends Controller
     {
 
 
-
-
-
-
-
         $rooms = Room::with('roomType')->where('company_id', $request->company_id)->get()->toArray();
 
         $bookedDates = BookedRoom::select('id', 'booking_id', 'room_no', 'room_type')->withOut('booking', 'postings')
@@ -96,7 +91,7 @@ class WidgetApiController extends Controller
             }
             return ($price1 > $price2) ? -1 : 1; // Change comparison to sort in descending order
         });
-        return $unbookedRoomsInfo;
+
         // usort($unbookedRoomsInfo, function ($a, $b) {
         //     return strcmp($a['price'], $b['price']);
         // });
