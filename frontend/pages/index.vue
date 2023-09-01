@@ -428,10 +428,13 @@
         <v-menu v-model="showMenuForNewBooking" :position-x="x" :position-y="y" absolute offset-y>
           <v-list>
             <v-list-item-group>
-              <!-- {{ newBookingRoom.status }} -->
-              <v-list-item link v-if="newBookingRoom.status == 0" @click="NewBooking = true">
+              <!-- {{ newBookingRoom.status }}  NewBooking=true -->
+              <v-list-item link v-if="newBookingRoom.status == 0" @click="goToBookingPage();">
                 <v-list-item-title>CheckIn</v-list-item-title>
               </v-list-item>
+              <!-- <v-list-item link v-if="newBookingRoom.status == 0" @click=" NewBooking = true;">
+                <v-list-item-title>CheckIn old</v-list-item-title>
+              </v-list-item> -->
               <v-list-item link v-if="newBookingRoom.status == 0" @click="roomStatus('1')">
                 <v-list-item-title>Block</v-list-item-title>
               </v-list-item>
@@ -813,7 +816,7 @@ export default {
   },
   data() {
     return {
-
+      reservation: [],
       rightClickRoomId: '',
       selected_booked_room_id: '',
       selected_booking_id: '',
@@ -986,6 +989,76 @@ export default {
   computed: {},
   mounted() { },
   methods: {
+    get_next_day() {
+      // const today = new Date();
+      // const tomorrow = new Date(today);
+      // tomorrow.setDate(tomorrow.getDate() + 1);
+      // this.check_out_date = tomorrow.toISOString().substr(0, 10);
+
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const year = tomorrow.getFullYear();
+      const month = String(tomorrow.getMonth() + 1).padStart(2, "0");
+      const day = String(tomorrow.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+
+      return formattedDate;
+
+    },
+    goToBookingPage() {
+
+      console.log(" this.newBookingRoom", this.newBookingRoom);
+      let currentDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10);
+
+      this.reservation.isCalculate = true;
+      this.reservation.room_id = this.newBookingRoom.id;
+      this.reservation.room_type = this.newBookingRoom.room_type.name;
+      this.reservation.room_no = this.newBookingRoom.room_no;
+      this.reservation.check_in = currentDate;
+      this.reservation.booking_status = 2;
+
+      this.reservation.check_out = this.get_next_day();
+
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          roomType: this.reservation.room_type,
+          room_no: this.reservation.room_no,
+          checkin: this.reservation.check_in,
+          checkout: this.reservation.check_out,
+        },
+      };
+
+      this.$store.commit("booking_payload", payload);
+      this.$axios
+        .get(`get_data_by_select_with_tax`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+
+            this.alert("Failure!", data.data, "error");
+            return false;
+          }
+
+          this.reservation.room_id = data.room.id;
+          this.reservation.price = data.total_price;
+          this.reservation.priceList = data.data;
+          this.reservation.total_tax = data.total_tax;
+
+          this.reservation.total_price_after_discount = data.total_price_after_discount;
+          this.reservation.total_price = data.total_price;
+          this.reservation.total_discount = data.total_discount;
+
+          let commitObj = {
+            ...this.reservation,
+
+          };
+          //console.log('reservation1', commitObj);
+          this.$store.commit("reservation", commitObj);
+          this.$router.push(`/hotel/new2`);
+        });
+    },
     async logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();

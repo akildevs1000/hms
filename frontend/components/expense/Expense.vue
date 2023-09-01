@@ -192,8 +192,8 @@
 
                   </v-col>
                   <v-col cols="2">
-                    <v-icon small v-if="!viewMode" class="error--text mt-10"
-                      @click="removeItem(index)">mdi-delete</v-icon>
+
+                    <v-icon v-if="!viewMode" class="error--text mt-7" @click="removeItem(index)">mdi-delete</v-icon>
                   </v-col>
                 </v-row>
                 <!-- <v-row>
@@ -723,7 +723,7 @@ export default {
         });
     },
     addDocumentInfo() {
-      this.Document.items.push({
+      this.Document.items.unshift({
         title: "",
         file: "",
       });
