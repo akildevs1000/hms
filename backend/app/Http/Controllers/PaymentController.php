@@ -27,7 +27,6 @@ class PaymentController extends Controller
         $model->whereHas('booking', function ($q) {
             $q->where('booking_status', '!=', -1);
         });
-        // $model->with("booking:id,reservation_no");
         $model->with(['booking:id,reservation_no,customer_id' => ['customer:id,first_name,last_name']]);
         $model->orderByDesc("id");
 

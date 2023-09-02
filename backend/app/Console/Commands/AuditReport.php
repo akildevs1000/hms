@@ -40,7 +40,7 @@ class AuditReport extends Command
         $date = date("Y-m-d H:i:s");
 
         try {
-            $reportGenerate = new ReportGenerateController;
+            $reportGenerate = new ReportGenerateController();
 
             if (!$reportGenerate->generateAuditReport()) {
                 echo "[" . $date . "] Cron: $script_name. cannot generated.\n";
@@ -81,6 +81,7 @@ class AuditReport extends Command
                 })->pluck('email');
 
                 // Mail::to(env("ADMIN_MAIL_RECEIVERS"))->send(new AuditReportMail($data));
+
                 foreach ($emailsArray as $value) {
                     if (strpos($value, '@')) {
 

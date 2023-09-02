@@ -192,11 +192,11 @@ export default {
               name = data.user?.name;
             }
 
-            // if (LoginUser.employee_role_id > 0) {
-            //   this.set_otp(this.$auth.user.id);
-            //   this.$router.push(`/otp`);
-            //   return;
-            // }
+            if (LoginUser.employee_role_id > 0) {
+              this.set_otp(this.$auth.user.id);
+              this.$router.push(`/otp`);
+              return;
+            }
           })
           .catch(({ response }) => {
             if (!response) {
