@@ -1025,9 +1025,21 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-        $days = ($request->prevCounter * 30);
-        $date_from = date('Y-m-01', strtotime($days . ' days'));
-        $date_to = date('Y-m-d', strtotime('+' . $request->defaultDaysCount . ' days', strtotime($date_from)));
+
+        // $calender_display_days = 30;
+        // if ($request->calender_display_days > 30) {
+        //     $calender_display_days = $request->calender_display_days - 30;
+        // }
+        // $days = ($request->prevCounter * $calender_display_days);
+        // //echo  $days;
+        // $date_from = date('Y-m-01', strtotime($days . ' days'));
+        // $date_from = date('Y-m-d', strtotime('-7 days', strtotime($date_from)));
+        // $date_to = date('Y-m-t', strtotime('+' . $calender_display_days . ' days', strtotime($date_from)));
+
+        $date_from = $request->startDateString;
+        $date_to =  $request->endDateString;
+
+        //return   $date_from . '-' . $date_to;
 
         return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to,) {
             // $q->where('booking_status', '!=', 0);
@@ -1127,6 +1139,11 @@ class BookingController extends Controller
                 $bookedRoom->reason = $request->reason;
                 $bookedRoom->cancel_by = $request->cancel_by;
                 $bookedRoom->action = $request->action ?? "Cancel by manual";
+
+                $bookedRoom->status_before_cancelation = $model->booking_status;
+
+                $status_before_cancelation_msg = $model->booking_status == 1 ? "Cancelled Before Check-in" : "Cancelled After Check-in";
+                $bookedRoom->status_before_cancelation_msg = $status_before_cancelation_msg;
 
                 $arr = $bookedRoom->toArray();
                 $cancel = CancelRoom::create($arr);

@@ -455,12 +455,14 @@
                     <th>Rev. No</th>
                     <th>Room No</th>
                     <th>Room Type</th>
+                    <th>Booking</th>
                     <th>C/In Time</th>
                     <th>Cancel Time</th>
                     <th>Amount</th>
                     <th>Reason</th>
                     <th>Action</th>
                     <th>Cancel By</th>
+                    <th>Status</th>
                   </tr>
                   <tr v-for="(item, index) in cancelRooms" :key="index">
                     <td class="room-width">
@@ -470,12 +472,15 @@
                     </td>
                     <td>{{ item && item.room_no }}</td>
                     <td>{{ item && item.room_type }}</td>
-                    <td>{{ getTimeFromCheckIn(item.check_in) }}</td>
-                    <td>{{ item && item.time }}</td>
+                    <td>{{ item && item.booking.created_at }}</td>
+                    <td> {{ item.status_before_cancelation == 2 ? item.check_in : '---'
+                    }}</td>
+                    <td> {{ item && item.time }}</td>
                     <td class="text-right">{{ item && item.grand_total }}</td>
                     <td>{{ item && item.reason }}</td>
                     <td>{{ item && item.action }}</td>
                     <td>{{ item && item.user && item.user.name }}</td>
+                    <td>{{ item && item.status_before_cancelation_msg }}</td>
                   </tr>
                 </table>
               </v-card>

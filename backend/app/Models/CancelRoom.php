@@ -40,6 +40,8 @@ class CancelRoom extends Model
         "booking_id",
         "action",
         "customer_id",
+        "status_before_cancelation",
+        "status_before_cancelation_msg",
     ];
 
     protected $appends = [
@@ -48,7 +50,7 @@ class CancelRoom extends Model
 
     public function getTImeAttribute()
     {
-        return date('H:i', strtotime($this->created_at));
+        return date('Y-m-d H:i', strtotime($this->created_at));
     }
 
 

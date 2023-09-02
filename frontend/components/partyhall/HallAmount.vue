@@ -29,8 +29,8 @@
                         </v-col>
                         <v-col md="3" cols="12">
 
-                            <v-text-field dense label="Contact Person Name" outlined type="text"
-                                v-model="customer.contact_person_name" required :rules="nameRules"></v-text-field>
+                            <v-text-field dense label="Price" outlined type="text" v-model="customer.contact_person_name"
+                                required :rules="nameRules"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -42,8 +42,8 @@
                         </v-col>
                         <v-col md="3" cols="12">
 
-                            <v-text-field dense label="Contact Person Name" outlined type="text"
-                                v-model="customer.contact_person_name" required :rules="nameRules"></v-text-field>
+                            <v-text-field dense label="Price" outlined type="text" v-model="customer.contact_person_name"
+                                required :rules="nameRules"></v-text-field>
                         </v-col>
                     </v-row>
 
@@ -56,8 +56,8 @@
                         </v-col>
                         <v-col md="3" cols="12">
 
-                            <v-text-field dense label="Contact Person Name" outlined type="text"
-                                v-model="customer.contact_person_name" required :rules="nameRules"></v-text-field>
+                            <v-text-field dense label="Price" outlined type="text" v-model="customer.contact_person_name"
+                                required :rules="nameRules"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -69,8 +69,8 @@
                         </v-col>
                         <v-col md="3" cols="12">
 
-                            <v-text-field dense label="Contact Person Name" outlined type="text"
-                                v-model="customer.contact_person_name" required :rules="nameRules"></v-text-field>
+                            <v-text-field dense label="Price" outlined type="text" v-model="customer.contact_person_name"
+                                required :rules="nameRules"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -82,8 +82,8 @@
                         </v-col>
                         <v-col md="3" cols="12">
 
-                            <v-text-field dense label="Contact Person Name" outlined type="text"
-                                v-model="customer.contact_person_name" required :rules="nameRules"></v-text-field>
+                            <v-text-field dense label="Price" outlined type="text" v-model="customer.contact_person_name"
+                                required :rules="nameRules"></v-text-field>
                         </v-col>
                     </v-row>
 
