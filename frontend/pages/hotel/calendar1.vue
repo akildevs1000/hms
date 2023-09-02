@@ -399,8 +399,10 @@ export default {
               // this.defaultDaysCount = 60;
 
 
+              setTimeout(() => {
+                this.get_events();
+              }, 2000);
 
-              this.get_events();
             },
           },
           second: {
@@ -410,7 +412,9 @@ export default {
               this.calendarOptions.views.resourceTimelineYear.duration.days = 75;
               // this.changeTableHeaderContent();
               //this.defaultDaysCount = 75;
-              this.get_events();
+              setTimeout(() => {
+                this.get_events();
+              }, 2000);
             },
           },
           // third: {
@@ -861,12 +865,139 @@ export default {
       });
     },
 
+    getCalenderDateFromat2(inputString) {
+      // Input string
+      //const inputString = "Aug 1 – 31, 2023";
+
+      // Split the input string by the "–" (en dash) character to get date range parts
+      const dateParts = inputString.split("–").map(part => part.trim());
+
+      // Extract the year from the end date part
+      const endDate = dateParts[1];
+      const yearRegex = /(\d{4})/; // Regular expression to match a 4-digit year
+      const match = endDate.match(yearRegex);
+
+      if (!match) {
+        let date = new Date();
+        match = date.getFullYear();
+      }
+
+      let year = parseInt(match[0]);
+
+      let monthMap = {
+        "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+        "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+      };
+
+
+      // Split the start date part into month and day
+      const startDateParts = dateParts[0].split(" ");
+      const startMonth = monthMap[startDateParts[0]];
+      const startDay = parseInt(startDateParts[1]);
+
+
+
+      // Format the start date in "dd-mm-yyyy" format
+      const startDateString = `${year}-${startMonth}-${startDay}`;
+
+      // Format the end date in "dd-mm-yyyy" format
+      const endDateString = `${year}-${startMonth}-${dateParts[1].split(',')[0]}`;
+
+      // Display the extracted year and the formatted dates
+      // console.log("Year:", year);
+      // console.log("Start Date:", startDateString);
+      // console.log("End Date:", endDateString);
+
+      return { startDateString: startDateString, endDateString: endDateString };
+
+    },
+    getCalenderDateFromat(inputString1) {
+      console.log(inputString1);
+
+      try {
+
+
+        let inputString = inputString1;//"Aug 1 – Oct 14, 2023";
+
+        // Split the input string by the "–" (en dash) character to get start and end date parts
+        let dateParts = inputString.split("–").map(part => part.trim());
+
+        // Extract the year from the end date part
+        let endDate = dateParts[1];
+        let yearRegex = /(\d{4})/; // Regular expression to match a 4-digit year
+        let match = endDate.match(yearRegex);
+
+        if (!match) {
+          let date = new Date();
+          match = date.getFullYear();
+        }
+
+        let year = parseInt(match[0]);
+
+        // Create a mapping of month names to their numeric representation
+        let monthMap = {
+          "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+          "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+        };
+
+        // Split the start date part into month and day
+        let startMonthDay = dateParts[0].split(" ");
+        let startMonth = monthMap[startMonthDay[0]];
+        let startDay = parseInt(startMonthDay[1]);
+
+        // Split the end date part into month and day
+        let endMonthDay = endDate.split(" ");
+        let endMonth = monthMap[endMonthDay[0]];
+        let endDay = 30;
+        if (endMonthDay[1]) {
+
+          endDay = parseInt(endMonthDay[1]);
+        }
+        else {
+          endDay = endMonth;
+          endMonth = startMonth;
+        }
+
+
+
+        // if (!endMonth) endMonth = startMonth;
+        // Assuming you want to use the extracted year
+        // Format the start and end dates in "dd-mm-yyyy" format
+        let startDateString = `${year}-${startMonth}-${startDay}`;
+        let endDateString = `${year}-${endMonth}-${endDay}`;
+
+        // Display the extracted year and the formatted dates
+
+        console.log("Start Date:", startDateString);
+        console.log("End Date:", endDateString);
+        return { startDateString: startDateString, endDateString: endDateString };
+      } catch (error) {
+        console.log('error', error);
+
+      }
+    },
     get_events() {
+      let calendarApi = this.$refs.fullCalendar.getApi();
+
+      console.log(calendarApi.view.title);
+
+      let dateRagenge = {};
+      if (calendarApi.view.title.length <= 17) {
+        dateRagenge = this.getCalenderDateFromat2(calendarApi.view.title);
+      } else {
+        dateRagenge = this.getCalenderDateFromat(calendarApi.view.title);
+      }
+
+
+
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
           prevCounter: this.prevCounter,
-          defaultDaysCount: this.defaultDaysCount
+          defaultDaysCount: this.defaultDaysCount,
+          calender_display_days: this.calendarOptions.views.resourceTimelineYear.duration.days,
+          startDateString: dateRagenge.startDateString,
+          endDateString: dateRagenge.endDateString
         },
       };
       this.$axios.get(`events_list`, payload).then(({ data }) => {
