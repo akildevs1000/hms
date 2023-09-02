@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\PaymentMode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Expense extends Model
 {
@@ -22,6 +23,7 @@ class Expense extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+
     public function paymentMode()
     {
         return $this->belongsTo(PaymentMode::class, 'payment_modes', 'id');
@@ -62,5 +64,9 @@ class Expense extends Model
             return null;
         }
         return asset('storage/documents/expense/' . $value);
+    }
+    public function category()
+    {
+        return $this->belongsTo(ExpensesCategories::class);
     }
 }

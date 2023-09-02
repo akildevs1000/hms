@@ -96,7 +96,7 @@
                             <td>Room:</td>
                             <td class="text-right">
 
-                              ₹{{
+                              {{ $auth.user.company.currency }}{{
                                 transactionSummary &&
                                 numFormat(transactionSummary.sumDebit - transactionSummary.tot_posting)
                               }}
@@ -105,7 +105,7 @@
                           <tr class="bg-white amt-border">
                             <td>Posting :</td>
                             <td class="text-right">
-                              ₹{{
+                              {{ $auth.user.company.currency }}{{
                                 transactionSummary &&
                                 transactionSummary.tot_posting
                               }}
@@ -114,7 +114,7 @@
                           <tr class="bg-white amt-border bold" style="font-weight:bold">
                             <td>Total :</td>
                             <td class="text-right">
-                              ₹{{
+                              {{ $auth.user.company.currency }}{{
                                 transactionSummary &&
                                 transactionSummary.sumDebit
                               }}
@@ -123,7 +123,7 @@
                           <tr class="bg-white amt-border  ">
                             <td>Paid :</td>
                             <td class="text-right">
-                              - ₹{{
+                              - {{ $auth.user.company.currency }}{{
                                 transactionSummary &&
                                 transactionSummary.sumCredit
                               }}
@@ -132,7 +132,7 @@
                           <tr class="bg-white amt-border">
                             <td>Balance :</td>
                             <td class="red--text text-right">
-                              ₹{{ numFormat(transactionSummary.balance) }}
+                              {{ $auth.user.company.currency }}{{ numFormat(transactionSummary.balance) }}
                             </td>
                           </tr>
                         </table>

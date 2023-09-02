@@ -72,73 +72,118 @@ class RecalculateTaxController extends Controller
         $orderRooms = $booking->orderRooms;
 
 
-
-
-        // $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
-        //     return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
-        // });
-
-        // $roomsDiscount = $booking->bookedRooms->sum(function ($room) {
-        //     return $room->room_discount;
-        // });
-
-
-
         $totalFoodGst = 0;
 
         $inv_total_tax_collected = 0;
         $inv_total_without_tax_collected = 0;
+        //include food and room price in single bill(room)
+
+        $merge_food_in_room_price = $booking->merge_food_in_room_price;
 
         foreach ($orderRooms as $room) {
-            $totalFoodCost = $room->tot_adult_food + $room->tot_child_food;
 
-            $food_tax = 5;
-            $foodBasePrice = ($totalFoodCost * 100) / (100 + $food_tax);
-            $foodGstAmount = $totalFoodCost - $foodBasePrice;
+            //include food and room price in single bill(room)
+            if ($merge_food_in_room_price) {
+                $totalFoodCost = $room->tot_adult_food + $room->tot_child_food;
 
-            $totalFoodGst += $foodGstAmount;
 
-            //recalculating room base price and GST
+                $food_tax = 0;
+                $foodBasePrice = 0;
+                $foodGstAmount = 0;
 
-            $roomTotal = $room->total - ($room->tot_adult_food + (float) $room->tot_child_food);
+                $totalFoodGst += $foodGstAmount;
 
-            $room_tax = 12;
-            if ($roomTotal > 8850) {
-                $room_tax = 18;
+                //recalculating room base price and GST
+
+                $roomTotal = $room->total;
+
+                $BookingObj = new BookingController();
+                $room_tax =   $BookingObj->getTaxSlab(($roomTotal + 900), $booking->company_id);
+
+
+                $roomBasePrice = ($roomTotal * 100) / (100 + $room_tax);
+                $roomGSTAmount = $roomTotal - $roomBasePrice;
+
+                $room_discount = $room->disocunt && 0;
+
+                $roomExtraColumns = [];
+                $roomExtraColumns['inv_room_listing_price'] = $roomBasePrice + $room->disocunt;
+                $roomExtraColumns['inv_room_discount'] = $room_discount;
+                $roomExtraColumns['inv_room_price_after_discount'] = $roomBasePrice;
+
+                $roomExtraColumns['inv_room_cgst'] = $roomGSTAmount / 2;
+                $roomExtraColumns['inv_room_sgst'] = $roomGSTAmount / 2;
+
+                $roomExtraColumns['inv_room_tax_per'] = $room_tax;
+
+                $roomExtraColumns['inv_room_price_with_tax'] = $roomBasePrice + $roomGSTAmount;
+                //-------------FOOD-----
+                $roomExtraColumns['inv_food_listing_price'] = 0;
+                $roomExtraColumns['inv_food_sgst'] = 0;
+                $roomExtraColumns['inv_food_cgst'] = 0;
+
+                $roomExtraColumns['inv_food_tax_per'] = 0;
+
+                $roomExtraColumns['inv_food_price_with_tax'] = 0;
+
+                $roomExtraColumns['inv_room_food_gst_grand_total'] = $roomExtraColumns['inv_room_price_with_tax'] + $roomExtraColumns['inv_food_price_with_tax'];
+
+                OrderRoom::whereId($room->id)->update($roomExtraColumns);
+
+
+                $inv_total_tax_collected += ($foodGstAmount + $roomGSTAmount);
+                $inv_total_without_tax_collected += ($foodBasePrice + $roomBasePrice);
+            } else {
+                //food and room seperate in bill 
+                $totalFoodCost = $room->tot_adult_food + $room->tot_child_food;
+
+
+                $food_tax = 5;
+                $foodBasePrice = ($totalFoodCost * 100) / (100 + $food_tax);
+                $foodGstAmount = $totalFoodCost - $foodBasePrice;
+
+                $totalFoodGst += $foodGstAmount;
+
+                //recalculating room base price and GST
+
+                $roomTotal = $room->total - ($room->tot_adult_food + (float) $room->tot_child_food);
+                $BookingObj = new BookingController();
+                $room_tax =   $BookingObj->getTaxSlab($roomTotal + 900, $booking->company_id);
+
+
+                $roomBasePrice = ($roomTotal * 100) / (100 + $room_tax);
+                $roomGSTAmount = $roomTotal - $roomBasePrice;
+
+                $room_discount = $room->disocunt && 0;
+
+                $roomExtraColumns = [];
+                $roomExtraColumns['inv_room_listing_price'] = $roomBasePrice + $room->disocunt;
+                $roomExtraColumns['inv_room_discount'] = $room_discount;
+                $roomExtraColumns['inv_room_price_after_discount'] = $roomBasePrice;
+
+                $roomExtraColumns['inv_room_cgst'] = $roomGSTAmount / 2;
+                $roomExtraColumns['inv_room_sgst'] = $roomGSTAmount / 2;
+
+                $roomExtraColumns['inv_room_tax_per'] = $room_tax;
+
+                $roomExtraColumns['inv_room_price_with_tax'] = $roomBasePrice + $roomGSTAmount;
+                //-------------FOOD-----
+                $roomExtraColumns['inv_food_listing_price'] = $foodBasePrice;
+                $roomExtraColumns['inv_food_sgst'] = $foodGstAmount / 2;
+                $roomExtraColumns['inv_food_cgst'] = $foodGstAmount / 2;
+
+                $roomExtraColumns['inv_food_tax_per'] = $food_tax;
+
+                $roomExtraColumns['inv_food_price_with_tax'] = $foodBasePrice + $foodGstAmount;
+
+                $roomExtraColumns['inv_room_food_gst_grand_total'] = $roomExtraColumns['inv_room_price_with_tax'] + $roomExtraColumns['inv_food_price_with_tax'];
+
+                OrderRoom::whereId($room->id)->update($roomExtraColumns);
+
+
+                $inv_total_tax_collected += ($foodGstAmount + $roomGSTAmount);
+                $inv_total_without_tax_collected += ($foodBasePrice + $roomBasePrice);
             }
-
-            $roomBasePrice = ($roomTotal * 100) / (100 + $room_tax);
-            $roomGSTAmount = $roomTotal - $roomBasePrice;
-
-            $room_discount = $room->disocunt && 0;
-
-            $roomExtraColumns = [];
-            $roomExtraColumns['inv_room_listing_price'] = $roomBasePrice + $room->disocunt;
-            $roomExtraColumns['inv_room_discount'] = $room_discount;
-            $roomExtraColumns['inv_room_price_after_discount'] = $roomBasePrice;
-
-            $roomExtraColumns['inv_room_cgst'] = $roomGSTAmount / 2;
-            $roomExtraColumns['inv_room_sgst'] = $roomGSTAmount / 2;
-
-            $roomExtraColumns['inv_room_tax_per'] = $room_tax;
-
-            $roomExtraColumns['inv_room_price_with_tax'] = $roomBasePrice + $roomGSTAmount;
-            //-------------FOOD-----
-            $roomExtraColumns['inv_food_listing_price'] = $foodBasePrice;
-            $roomExtraColumns['inv_food_sgst'] = $foodGstAmount / 2;
-            $roomExtraColumns['inv_food_cgst'] = $foodGstAmount / 2;
-
-            $roomExtraColumns['inv_food_tax_per'] = $food_tax;
-
-            $roomExtraColumns['inv_food_price_with_tax'] = $foodBasePrice + $foodGstAmount;
-
-            $roomExtraColumns['inv_room_food_gst_grand_total'] = $roomExtraColumns['inv_room_price_with_tax'] + $roomExtraColumns['inv_food_price_with_tax'];
-
-            OrderRoom::whereId($room->id)->update($roomExtraColumns);
-
-
-            $inv_total_tax_collected += ($foodGstAmount + $roomGSTAmount);
-            $inv_total_without_tax_collected += ($foodBasePrice + $roomBasePrice);
         }
         $postings = Posting::where('booking_id', $id)->get();
 

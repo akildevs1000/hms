@@ -118,6 +118,8 @@ class TransactionController extends Controller
             $query->with('paymentMode', 'booking:id,reservation_no,rooms');
         }]);
 
+
+
         return $model->get();
     }
 }

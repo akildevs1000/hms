@@ -5,149 +5,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <!-- <v-dialog v-model="agentPaymentDialog" persistent max-width="800px">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Agent Payment</span>
-        </v-toolbar>
-        <v-card-text>
-          <v-container>
-            <table>
-              <v-progress-linear
-                v-if="loading"
-                :active="loading"
-                :indeterminate="loading"
-                absolute
-                color="primary"
-              ></v-progress-linear>
-              <tr>
-                <th>Customer Name</th>
-                <td style="width: 490px">
-                  {{ booking && booking.title }}
-                </td>
-              </tr>
 
-              <tr>
-                <th>Check In</th>
-                <td>
-                  {{ booking && booking.check_in_date }}
-                </td>
-              </tr>
-              <tr>
-                <th>Check Out</th>
-                <td>
-                  {{ booking && booking.check_out_date }}
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  Payment Mode
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-select
-                    v-model="booking.payment_mode_id"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' },
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                  ></v-select>
-                </td>
-              </tr>
-              <tr v-if="booking.payment_mode_id != 1">
-                <th>
-                  Reference Number
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="text"
-                    v-model="booking.transaction"
-                    :hide-details="true"
-                  ></v-text-field>
-                </td>
-              </tr>
-              <tr>
-                <th>Total Amount</th>
-                <td>{{ booking && booking.total_price }}</td>
-              </tr>
-
-              <tr>
-                <th>Posting Amount</th>
-                <td>
-                  {{ booking.total_posting_amount }}
-                </td>
-              </tr>
-              <tr>
-                <th>Total (Booking + Posting)</th>
-                <td>
-                  {{ booking.grand_remaining_price }}
-                </td>
-              </tr>
-              <tr>
-                <th>Payment</th>
-                <td>
-                  <v-container fluid>
-                    <v-radio-group
-                      v-model="paid_status"
-                      @change="getFullPayment"
-                      row
-                      dense
-                      :hide-details="errors && !errors.paid_status"
-                      :error="errors && errors.paid_status"
-                      :error-messages="
-                        errors && errors.paid_status
-                          ? errors.paid_status[0]
-                          : ''
-                      "
-                    >
-                      <v-radio label="Only Rooms" :value="1"></v-radio>
-                      <v-radio label="Only Posting" :value="2"></v-radio>
-                      <v-radio label="Rooms + Posting" :value="3"></v-radio>
-                    </v-radio-group>
-                  </v-container>
-                </td>
-              </tr>
-              <tr></tr>
-              <tr></tr>
-              <tr>
-                <th>
-                  Full Payment
-                  <span class="text-danger">*</span>
-                </th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="booking.full_payment"
-                    :hide-details="true"
-                  ></v-text-field>
-                </td>
-              </tr>
-            </table>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn class="primary" small @click="store_agent_payment">Pay</v-btn>
-          <v-btn class="error" small @click="agentPaymentDialog = false">
-            Cancel
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
 
     <v-dialog v-model="payingDialog" persistent max-width="1000px">
       <v-card>
@@ -165,7 +23,7 @@
     <v-row class="mt-5 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
     </v-row>
 
@@ -193,8 +51,12 @@
         <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
           dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi('agents')"></v-select>
       </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
+      </v-col>
 
-      <v-col md="2">
+      <!-- <v-col md="2">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
           offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -213,7 +75,7 @@
           </template>
           <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <div>
@@ -405,6 +267,11 @@ export default {
     },
   },
   created() {
+    this.month = new Date().getMonth();
+    this.year = new Date().getFullYear();
+    this.from_date = this.formatDate(new Date(this.year, this.month, 1));
+    this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
     this.loading = true;
     this.get_agents();
     this.get_online();
@@ -414,6 +281,26 @@ export default {
   },
 
   methods: {
+    handleDatesFilter(dates) {
+
+      this.from_date = dates[0];
+      this.to_date = dates[1];
+      if (this.from_date && this.to_date)
+        this.getDataFromApi();
+    },
+    getPriceFormat(price) {
+
+      return parseFloat(price).toLocaleString('en-IN', {
+        maximumFractionDigits: 2,
+
+      });
+    },
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
     onPageChange() {
       this.getDataFromApi();
     },

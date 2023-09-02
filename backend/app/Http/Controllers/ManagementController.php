@@ -327,8 +327,8 @@ class ManagementController extends Controller
             ->with('user')
             ->whereDate('created_at', $request->date)
             ->where('company_id', $company_id)
-            ->with('booking:id,reservation_no')
-            ->get(['booking_id', 'room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in']);
+            ->with('booking:id,reservation_no,created_at')
+            ->get(['booking_id', 'room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in', 'status_before_cancelation', 'status_before_cancelation_msg']);
     }
 
     private function cityLedgerPaymentsAudit($model, $request)

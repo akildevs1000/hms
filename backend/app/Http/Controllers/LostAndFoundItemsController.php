@@ -36,13 +36,13 @@ class LostAndFoundItemsController extends Controller
             $q->where('booking_id', 'ILIKE', "$request->booking_id%");
         });
         $data->when($request->filled('reservation_no'), function ($q) use ($request) {
-            $q->whereHas('booking', fn(Builder $query) => $query->where('reservation_no', 'ILIKE', "$request->reservation_no%"));
+            $q->whereHas('booking', fn (Builder $query) => $query->where('reservation_no', 'ILIKE', "$request->reservation_no%"));
         });
         $data->when($request->filled('bookings_rooms'), function ($q) use ($request) {
-            $q->whereHas('booking', fn(Builder $query) => $query->where('rooms', 'ILIKE', "%$request->bookings_rooms%"));
+            $q->whereHas('booking', fn (Builder $query) => $query->where('rooms', 'ILIKE', "%$request->bookings_rooms%"));
         });
         $data->when($request->filled('customer_name'), function ($q) use ($request) {
-            $q->whereHas('booking.customer', fn(Builder $query) => $query->where('first_name', 'ILIKE', "%$request->customer_name%"));
+            $q->whereHas('booking.customer', fn (Builder $query) => $query->where('first_name', 'ILIKE', "%$request->customer_name%"));
         });
         $data->when($request->filled('item_name'), function ($q) use ($request) {
             $q->where('item_name', 'ILIKE', "$request->item_name%");
@@ -63,20 +63,18 @@ class LostAndFoundItemsController extends Controller
             $q->whereDate('created_at', $request->created);
         });
 
-        // $data = $data->when($request->filled('sortBy'), function ($q) use ($request) {
-        //     $sortDesc = $request->input('sortDesc');
-        //     if (strpos($request->sortBy, '.')) {
-        //         // if ($request->sortBy == 'department.name.id') {
-        //         //     $q->orderBy(Department::select("name")->whereColumn("departments.id", "employees.department_id"), $sortDesc == 'true' ? 'desc' : 'asc');
+        $data->when($request->filled('missing_datetime'), function ($q) use ($request) {
+            $q->whereDate('missing_datetime', $request->created);
+        });
 
-        //         // }
 
-        //     } else {
-        //         $q->orderBy($request->sortBy . "", $sortDesc == 'true' ? 'desc' : 'asc');{}
 
-        //     }
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $data->WhereDate('missing_datetime', '>=', $request->from);
+            $data->whereDate('missing_datetime', '<=', $request->to);
+        }
 
-        // });
+
 
         $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
 
@@ -91,17 +89,35 @@ class LostAndFoundItemsController extends Controller
                 } else if ($request->sortBy == 'customer.name') {
                     // $data->orderBy(Booking::select('customer:first_name')->whereColumn('bookings.id', 'lost_and_found_items.booking_id'), $sortDesc);
                 }
-
             } else {
                 $data->orderBy($sortBy, $sortDesc);
             }
-
         } else {
             $data->orderBy('updated_at', 'DESC');
         }
 
         $data = $data->paginate($request->per_page ?? 100);
         return $data;
+    }
+
+    public function getStaticstics(Request $request)
+    {
+
+
+        $model = LostAndFoundItems::query();
+
+        $model->with(['booking.customer'])->where('company_id', $request->company_id);
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('missing_datetime', '>=', $request->from);
+            $model->whereDate('missing_datetime', '<=', $request->to);
+        }
+        $model_copy = $model->clone();
+
+        $missingTotal = $model_copy->count();
+        $recovered = $model_copy->where('found_datetime', '!=', null)->count();
+        $returned = $model_copy->where('returned_datetime', '!=', null)->count();
+
+        return  ['missing' => $missingTotal, 'recovered' => $recovered, 'returned' => $returned];
     }
 
     /**
@@ -163,17 +179,16 @@ class LostAndFoundItemsController extends Controller
         $model = LostAndFoundItems::with(['booking.customer'])->where('id', $id)->first();
 
         return $model;
-
     }
     public function showRecord(Request $request, LostAndFoundItems $lostAndFoundItems, $id)
-    {$lostItem = null;
+    {
+        $lostItem = null;
         $booking = Booking::with(['customer'])->where('reservation_no', $id)->first();
         if ($request->missingItemId) {
             $lostItem = LostAndFoundItems::with(['booking'])->where('id', $request->missingItemId)->first();
         }
 
         return ["booking" => $booking, 'missingItem' => $lostItem];
-
     }
 
     public function searchBookingDetails(Request $request, $id)
@@ -186,7 +201,6 @@ class LostAndFoundItemsController extends Controller
         }
 
         return ["booking" => $booking, 'missingItem' => $lostItem];
-
     }
     public function find($id)
     {
@@ -217,31 +231,18 @@ class LostAndFoundItemsController extends Controller
         try {
             $record = null;
             if ($request['update_type'] == "missing") {
-                $record = LostAndFoundItems::where('id', $id)->update(['item_name' => $request['item_name']
-                    , 'missing_datetime' => $request['missing_datetime']
-                    , 'missing_remarks' => $request['missing_remarks']
-                    , 'missing_notes' => $request['missing_notes'],
+                $record = LostAndFoundItems::where('id', $id)->update([
+                    'item_name' => $request['item_name'], 'missing_datetime' => $request['missing_datetime'], 'missing_remarks' => $request['missing_remarks'], 'missing_notes' => $request['missing_notes'],
                 ]);
-
             } else if ($request['update_type'] == "found") {
-                $record = LostAndFoundItems::where('id', $id)->update(['found_datetime' => $request['found_datetime']
-                    , 'found_person_name' => $request['found_person_name']
-                    , 'found_location' => $request['found_location']
-                    , 'found_remarks' => $request['found_remarks']
-                    , 'found_notes' => $request['found_notes']
-                    , 'status' => 1,
+                $record = LostAndFoundItems::where('id', $id)->update([
+                    'found_datetime' => $request['found_datetime'], 'found_person_name' => $request['found_person_name'], 'found_location' => $request['found_location'], 'found_remarks' => $request['found_remarks'], 'found_notes' => $request['found_notes'], 'status' => 1,
                 ]);
-
             } else if ($request['update_type'] == "return") {
 
-                $record = LostAndFoundItems::where('id', $id)->update(['returned_datetime' => $request['returned_datetime']
-                    , 'returned_person_name' => $request['returned_person_name']
-                    , 'returned_remarks' => $request['returned_remarks']
-                    , 'returned_notes' => $request['returned_notes']
-                    , 'approved_person_name' => $request['approved_person_name']
-                    , 'status' => 2,
+                $record = LostAndFoundItems::where('id', $id)->update([
+                    'returned_datetime' => $request['returned_datetime'], 'returned_person_name' => $request['returned_person_name'], 'returned_remarks' => $request['returned_remarks'], 'returned_notes' => $request['returned_notes'], 'approved_person_name' => $request['approved_person_name'], 'status' => 2,
                 ]);
-
             }
 
             if ($record) {
@@ -278,7 +279,8 @@ class LostAndFoundItemsController extends Controller
             $fileName = $request->booking_id . '_' . $id . '_found.' . $ext;
             $path = $file->storeAs('public/documents/customer/lost_and_found', $fileName);
 
-            $record = LostAndFoundItems::where('id', $id)->update(['found_image' => $fileName,
+            $record = LostAndFoundItems::where('id', $id)->update([
+                'found_image' => $fileName,
 
             ]);
 
@@ -286,7 +288,6 @@ class LostAndFoundItemsController extends Controller
         } else {
             return false;
         }
-
     }
     public function uploadReturnedImage(Request $request, $id)
     {
@@ -296,7 +297,8 @@ class LostAndFoundItemsController extends Controller
             $fileName = $request->booking_id . '_' . $id . '_returned.' . $ext;
             $path = $file->storeAs('public/documents/customer/lost_and_found', $fileName);
 
-            $record = LostAndFoundItems::where('id', $id)->update(['recovered_image' => $fileName,
+            $record = LostAndFoundItems::where('id', $id)->update([
+                'recovered_image' => $fileName,
 
             ]);
 
@@ -304,7 +306,5 @@ class LostAndFoundItemsController extends Controller
         } else {
             return false;
         }
-
     }
-
 }

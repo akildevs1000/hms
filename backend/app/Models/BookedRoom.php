@@ -107,6 +107,14 @@ class BookedRoom extends Model
     {
         return $this->hasMany(Posting::class);
     }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
+
+
     /**
      * Get all of the comments for the BookedRoom
      *

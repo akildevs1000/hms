@@ -10,7 +10,7 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">Income</h6>
               <span class="data-1">
-                ₹{{ convert_decimal(totalIncomes.OverallTotal) || 0 }}</span>
+                {{ getPriceFormat(totalIncomes.OverallTotal) || 0 }}</span>
             </div>
           </div>
         </div>
@@ -24,7 +24,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Expense</h6>
-              <span class="data-1">₹{{ totalExpenses.OverallTotal || "0.00" }}
+              <span class="data-1"> {{ getPriceFormat(totalExpenses.OverallTotal) || "0.00" }}
               </span>
             </div>
           </div>
@@ -39,7 +39,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Management Expense</h6>
-              <span class="data-1">₹{{ totalExpenses.ManagementOverallTotal || 0 }}
+              <span class="data-1"> {{ getPriceFormat(totalExpenses.ManagementOverallTotal) || 0 }}
               </span>
             </div>
           </div>
@@ -55,7 +55,7 @@
             <div class="card-content">
               <h6 class="card-title text-capitalize">Profit</h6>
               <!-- <span class="data-1"> RS. {{ profit }}</span> -->
-              <span class="data-1">₹{{ convert_decimal(profit) }}</span>
+              <span class="data-1"> {{ getPriceFormat(profit) }}</span>
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Loss</h6>
-              <span class="data-1">₹{{ loss }}</span>
+              <span class="data-1"> {{ getPriceFormat(loss) }}</span>
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">City Ledger</h6>
-              <span class="data-1"> ₹{{ totalIncomes.City_ledger || 0 }}</span>
+              <span class="data-1"> {{ getPriceFormat(totalIncomes.City_ledger) || 0 }}</span>
             </div>
           </div>
         </div>
@@ -94,34 +94,34 @@
 
     <v-row>
       <v-col md="3">
-        <div class="ml-4">Filter</div>
-        <v-col md="12">
-          <v-select v-model="filterType" :items="[
-            {
-              id: 1,
-              name: 'Today',
-            },
-            {
-              id: 2,
-              name: 'Yesterday',
-            },
-            {
-              id: 3,
-              name: 'This Week',
-            },
-            {
-              id: 4,
-              name: 'This Month',
-            },
-            {
-              id: 5,
-              name: 'Custom',
-            },
-          ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
-            @change="commonMethod"></v-select></v-col>
+        <!-- <div class="ml-4">Filter</div> -->
+
+        <v-select v-model="filterType" :items="[
+          {
+            id: 1,
+            name: 'Today',
+          },
+          {
+            id: 2,
+            name: 'Yesterday',
+          },
+          {
+            id: 3,
+            name: 'This Week',
+          },
+          {
+            id: 4,
+            name: 'This Month',
+          },
+          {
+            id: 5,
+            name: 'Custom',
+          },
+        ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
+          @change="commonMethod"></v-select>
       </v-col>
 
-      <v-col md="3" v-if="filterType == 5">
+      <!-- <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
           <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
@@ -146,6 +146,10 @@
             <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
           </v-menu>
         </v-col>
+      </v-col> -->
+      <v-col md="2" class="p-2 text-center" v-if="filterType == 5">
+        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
       </v-col>
     </v-row>
 
@@ -509,6 +513,8 @@ export default {
   }),
 
   created() {
+
+
     this.loading = true;
     this.getExpenseData();
     this.getManagementExpenseData();
@@ -545,6 +551,41 @@ export default {
   },
 
   methods: {
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
+    handleDatesFilter(dates) {
+
+      this.from_date = dates[0];
+      this.to_date = dates[1];
+      if (this.from_date && this.to_date) {
+        this.getExpenseData();
+        this.getManagementExpenseData();
+        this.getIncomeData();
+        this.get_counts();
+      }
+    },
+    getPriceFormat(price) {
+
+      return this.$auth.user.company.currency + " " + parseFloat(price).toLocaleString('en-IN', {
+        maximumFractionDigits: 2,
+
+      });
+    },
+    formatDateTime(dateString) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    },
     onPageChange() {
       this.getExpenseData();
     },

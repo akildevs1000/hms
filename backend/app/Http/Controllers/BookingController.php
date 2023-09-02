@@ -87,9 +87,13 @@ class BookingController extends Controller
     {
         try {
             return DB::transaction(function () use ($request) {
+
+
+                $merge_food_in_room_price = (int)$request->merge_food_in_room_price;
                 $data = [];
                 $data = $request->only(Booking::bookingAttributes());
                 $data['booking_date'] = now();
+                $data['merge_food_in_room_price'] =   $merge_food_in_room_price;
                 $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
                 $data['remaining_price'] = (float) $request->total_price - (float) $request->advance_price;
                 $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
@@ -1021,9 +1025,21 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-        $days = ($request->prevCounter * 30);
-        $date_from = date('Y-m-01', strtotime($days . ' days'));
-        $date_to = date('Y-m-d', strtotime('+' . $request->defaultDaysCount . ' days', strtotime($date_from)));
+
+        // $calender_display_days = 30;
+        // if ($request->calender_display_days > 30) {
+        //     $calender_display_days = $request->calender_display_days - 30;
+        // }
+        // $days = ($request->prevCounter * $calender_display_days);
+        // //echo  $days;
+        // $date_from = date('Y-m-01', strtotime($days . ' days'));
+        // $date_from = date('Y-m-d', strtotime('-7 days', strtotime($date_from)));
+        // $date_to = date('Y-m-t', strtotime('+' . $calender_display_days . ' days', strtotime($date_from)));
+
+        $date_from = $request->startDateString;
+        $date_to =  $request->endDateString;
+
+        //return   $date_from . '-' . $date_to;
 
         return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to,) {
             // $q->where('booking_status', '!=', 0);
@@ -1124,6 +1140,11 @@ class BookingController extends Controller
                 $bookedRoom->cancel_by = $request->cancel_by;
                 $bookedRoom->action = $request->action ?? "Cancel by manual";
 
+                $bookedRoom->status_before_cancelation = $model->booking_status;
+
+                $status_before_cancelation_msg = $model->booking_status == 1 ? "Cancelled Before Check-in" : "Cancelled After Check-in";
+                $bookedRoom->status_before_cancelation_msg = $status_before_cancelation_msg;
+
                 $arr = $bookedRoom->toArray();
                 $cancel = CancelRoom::create($arr);
                 if ($cancel) {
@@ -1202,10 +1223,16 @@ class BookingController extends Controller
 
     public function getTaxSlab($amount, $company_id)
     {
-
+        $amount = (int) $amount;
         $tax = env('GST_TAX_DEFAULT');
+
+
         $TaxSlab = TaxSlabs::where('company_id', $company_id)
-            ->where('start_price', '<=', $amount)->where('end_price', '>=', $amount)->pluck('tax');
+            ->where('start_price', '<=', $amount)
+            ->where('end_price', '>=', $amount)
+            ->pluck('tax');
+
+
 
         if (isset($TaxSlab[0])) {
             $tax = $TaxSlab[0];

@@ -8,7 +8,7 @@
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
+
       </v-col>
       <v-col cols="6"> </v-col>
     </v-row>
@@ -122,13 +122,25 @@
             </div>
             <div class="card-content">
               <h6 class="card-title text-capitalize">Total</h6>
-              <span class="data-1"> RS. {{ totalAmount || 0 }}</span>
+              <span class="data-1"> {{ $auth.user.company.currency }} {{ totalAmount || 0 }}</span>
             </div>
           </div>
         </div>
       </div>
     </v-row>
-    <CustomFilter @filter-attr="filterAttr" />
+    <!-- <CustomFilter @filter-attr="filterAttr" /> -->
+    <v-row>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" v-model="search"
+          hide-details></v-text-field>
+      </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
+      </v-col>
+
+
+    </v-row>
     <v-card class="mb-5 rounded-md mt-6" elevation="0">
       <v-toolbar class="rounded-md" color="background" dense flat dark>
         <span> {{ Model }} List</span>
@@ -211,8 +223,8 @@ export default {
     customer_name: "",
     room_no: "",
     search: "",
-    from: "",
-    to: "",
+    from_date: "",
+    to_date: "",
     filterType: 1,
     snackbar: false,
     postingDialog: false,
@@ -256,6 +268,11 @@ export default {
   }),
 
   created() {
+    this.month = new Date().getMonth();
+    this.year = new Date().getFullYear();
+    this.from_date = this.formatDate(new Date(this.year, this.month, 1));
+    this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
     this.loading = true;
     this.room_list();
     this.getDataFromApi();
@@ -277,6 +294,19 @@ export default {
   },
 
   methods: {
+    handleDatesFilter(dates) {
+      this.filterType = 5;
+      this.from_date = dates[0];
+      this.to_date = dates[1];
+      if (this.from_date && this.to_date)
+        this.getDataFromApi();
+    },
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
     can(per) {
       let u = this.$auth.user;
       return (
@@ -296,8 +326,8 @@ export default {
     },
 
     filterAttr(data) {
-      this.from = data.from;
-      this.to = data.to;
+      this.from_date = data.from;
+      this.to_date = data.to;
       this.filterType = data.type;
       this.search = data.search;
       this.getDataFromApi();
@@ -316,8 +346,8 @@ export default {
           per_page: this.pagination.per_page,
           search: this.search,
           company_id: this.$auth.user.company.id,
-          from: this.from,
-          to: this.to,
+          from: this.from_date,
+          to: this.to_date,
           filterType: this.filterType,
         },
       };
