@@ -1036,10 +1036,10 @@ class BookingController extends Controller
         // $date_from = date('Y-m-d', strtotime('-7 days', strtotime($date_from)));
         // $date_to = date('Y-m-t', strtotime('+' . $calender_display_days . ' days', strtotime($date_from)));
 
-        $date_from = $request->startDateString;
+        $date_from = date('Y-m-d', strtotime('-7 days', strtotime($request->startDateString)));
         $date_to =  $request->endDateString;
 
-        //return   $date_from . '-' . $date_to;
+        // return   $date_from . '-' . $date_to;
 
         return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to,) {
             // $q->where('booking_status', '!=', 0);
