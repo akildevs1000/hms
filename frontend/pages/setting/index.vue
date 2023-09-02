@@ -166,6 +166,7 @@
 <script>
 export default {
   data: () => ({
+    vertical: false,
     activeTab: 0,
     color: "primary",
     preloader: false,
@@ -201,7 +202,7 @@ export default {
     this.preloader = false;
     this.id = this.$auth?.user?.company?.id;
     this.getImage();
-    console.log(this.imgPath, this.previewImage);
+
     this.getDataFromApi();
   },
   computed: {
@@ -218,13 +219,15 @@ export default {
   methods: {
     getDataFromApi() {
       this.id = this.$auth.user?.company?.id; //this.$route.params.id;
-      this.$axios.get(`company/${this.id}`).then(({ data }) => {
-        let r = data.record;
+      this.company_payload.currency = this.$auth.user.company.currency;
 
-        this.company_payload.currency = r.currency;
+      // this.$axios.get(`company/${this.id}`).then(({ data }) => {
+      //   let r = data.record;
 
-        this.preloader = false;
-      });
+      //   this.company_payload.currency = r.currency;
+
+      //   this.preloader = false;
+      // });
     },
     changeTopBarColor(color) {
       this.color = color;

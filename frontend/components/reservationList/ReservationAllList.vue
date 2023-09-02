@@ -8,9 +8,24 @@
         <v-row class="mt-5 mb-5">
             <v-col cols="6">
                 <h3>{{ Model }}</h3>
-                <div>Dashboard / {{ Model }}</div>
+
             </v-col>
             <v-col cols="6"> </v-col>
+        </v-row>
+        <v-row>
+            <div class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase">
+                <div class="card px-2" style="background-color: #3366CC;">
+                    <div class="card-statistic-3">
+                        <div class="card-icon card-icon-large">
+                            <i class="fas fa-ddoor-open"></i>
+                        </div>
+                        <div class="card-content">
+                            <h6 class="card-title text-capitalize">Total</h6>
+                            <span class="data-1"> {{ totalRowsCount }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </v-row>
 
         <v-dialog v-model="payingDialog" persistent max-width="1000px">
@@ -42,7 +57,7 @@
                     :items="type == 'Online' ? sources : agentList" dense item-value="name" item-text="name"
                     placeholder="Sources" solo flat :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
             </v-col>
-            <v-col md="2">
+            <!-- <v-col md="2">
                 <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
                     offset-y min-width="auto">
                     <template v-slot:activator="{ on, attrs }">
@@ -63,6 +78,10 @@
                     <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"
                         no-title></v-date-picker>
                 </v-menu>
+            </v-col> -->
+            <v-col md="2">
+                <DateRangePicker key="reservationList" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
+                    column="date_range" @selected-dates="handleDatesFilter" />
             </v-col>
             <v-col xs="12" sm="12" md="2" cols="12">
                 <v-select class="custom-text-box shadow-none" v-model="guest_mode"
@@ -455,12 +474,31 @@ export default {
     },
     created() {
         // this.loading = true;
+        this.month = new Date().getMonth();
+        this.year = new Date().getFullYear();
+        this.from_date = this.formatDate(new Date(this.year, this.month, 1));
+        this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+
+
         this.getDataFromApi();
         this.get_agents();
         this.get_online();
     },
 
     methods: {
+        handleDatesFilter(dates) {
+
+            this.from_date = dates[0];
+            this.to_date = dates[1];
+            if (this.from_date && this.to_date)
+                this.getDataFromApi();
+        },
+        formatDate(date) {
+            var day = date.getDate();
+            var month = date.getMonth() + 1; // Months are zero-based
+            var year = date.getFullYear();
+            return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+        },
         can(per) {
             let u = this.$auth.user;
             return (
@@ -622,51 +660,55 @@ export default {
             this.getDataFromApi(this.endpoint, 1);
         },
         getDataFromApi(url = this.endpoint, customPage = 0) {
-            // :items="type == 'Online' ? sources : agentList"
 
-            let newSource;
+            if (this.from_date && this.to_date) {
+                // :items="type == 'Online' ? sources : agentList"
 
-            if (this.type == "Walking") {
-                newSource = "walking";
-            } else if (this.type == "Select All") {
-                newSource = "";
-            } else {
-                newSource = this.source;
-            }
-            this.loading = true;
+                let newSource;
 
-            let { sortBy, sortDesc, page, itemsPerPage } = this.options;
+                if (this.type == "Walking") {
+                    newSource = "walking";
+                } else if (this.type == "Select All") {
+                    newSource = "";
+                } else {
+                    newSource = this.source;
+                }
+                this.loading = true;
 
-            let sortedBy = sortBy ? sortBy[0] : "";
-            let sortedDesc = sortDesc ? sortDesc[0] : "";
-            if (customPage == 1) page = 1;
-            this.currentPage = page;
+                let { sortBy, sortDesc, page, itemsPerPage } = this.options;
 
-            let options = {
-                params: {
-                    page: page,
-                    sortBy: sortedBy,
-                    sortDesc: sortedDesc,
-                    per_page: itemsPerPage,
-                    company_id: this.$auth.user.company.id,
-                    search: this.search,
-                    guest_mode: this.guest_mode,
-                    from: this.from_date,
-                    to: this.to_date,
-                    source: newSource,
-                    ...this.filters,
-                },
-            };
-
-            this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-                this.data = data.data;
-                this.pagination.current = data.current_page;
-                this.pagination.total = data.last_page;
-                this.loading = false;
-                this.totalRowsCount = data.total;
+                let sortedBy = sortBy ? sortBy[0] : "";
+                let sortedDesc = sortDesc ? sortDesc[0] : "";
+                if (customPage == 1) page = 1;
                 this.currentPage = page;
-                this.perPage = itemsPerPage;
-            });
+
+                let options = {
+                    params: {
+                        page: page,
+                        sortBy: sortedBy,
+                        sortDesc: sortedDesc,
+                        per_page: itemsPerPage,
+                        company_id: this.$auth.user.company.id,
+                        search: this.search,
+                        guest_mode: this.guest_mode,
+                        from: this.from_date,
+                        to: this.to_date,
+                        source: newSource,
+                        ...this.filters,
+                    },
+                };
+
+                this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+                    this.data = data.data;
+                    this.pagination.current = data.current_page;
+                    this.pagination.total = data.last_page;
+                    this.loading = false;
+                    this.totalRowsCount = data.total;
+                    this.currentPage = page;
+                    this.perPage = itemsPerPage;
+                });
+
+            }
         },
 
         searchIt() {
@@ -679,4 +721,5 @@ export default {
     },
 };
 </script>
+<style scoped src="@/assets/dashtem.css"></style>
   

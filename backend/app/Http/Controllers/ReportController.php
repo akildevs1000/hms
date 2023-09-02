@@ -399,6 +399,7 @@ class ReportController extends Controller
 
     public function incomingReportProcess($request)
     {
+        // ini_set('memory_limit', '1024M');
         $model = Payment::query();
         $model->where('company_id', $request->company_id);
         $model->whereHas('booking', function ($q) {

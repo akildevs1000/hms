@@ -49,7 +49,12 @@ class AgentsController extends Controller
             $s = $request->paid_status_type == "Pending" ? '>' : '<';
             $model->where('balance', $s, 0);
         }
-
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->where(function ($q) use ($request) {
+                $q->WhereDate('check_in', '>=', $request->from);
+                $q->whereDate('check_in', '<=', $request->to);
+            });
+        }
         if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->where(function ($q) use ($request) {
                 $q->WhereDate('check_in', '>=', $request->from);
@@ -145,7 +150,10 @@ class AgentsController extends Controller
                 });
             }
         }
-
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereDate('check_in', '>=', $request->from);
+            $model->whereDate('check_in', '<=', $request->to);
+        }
         if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $model->WhereDate('check_in', '>=', $request->from);
             $model->whereDate('check_in', '<=', $request->to);

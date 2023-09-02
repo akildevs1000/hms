@@ -13,14 +13,14 @@ class DocumentInfoController extends Controller
     {
         // $this->cleanRecord($request->employee_id);
         $arr = [];
-            foreach ($request->items as $item) {
-                $arr[] = [
-                    "title" => $item["title"],
-                    "attachment" => $this->saveFile($item["file"], $request->employee_id),
-                    "employee_id" => $request->employee_id,
-                    "company_id" => $request->company_id,
-                ];
-            }
+        foreach ($request->items as $item) {
+            $arr[] = [
+                "title" => $item["title"],
+                "attachment" => $this->saveFile($item["file"], $request->employee_id),
+                "employee_id" => $request->employee_id,
+                "company_id" => $request->company_id,
+            ];
+        }
 
         try {
 
@@ -29,7 +29,6 @@ class DocumentInfoController extends Controller
                 "message" => "Record has been successfully added",
                 "record" => DocumentInfo::insert($arr),
             ]);
-
         } catch (\Throwable $th) {
             return response()->json([
                 "status" => true,
@@ -37,7 +36,6 @@ class DocumentInfoController extends Controller
                 "record" => null,
             ]);
         }
-
     }
 
     public function show(DocumentInfo $DocumentInfo, $id)
@@ -62,22 +60,19 @@ class DocumentInfoController extends Controller
     public function destroy($id)
     {
         $record = DocumentInfo::find($id);
-        
+
         if ($record->delete()) {
             return response()->json([
                 "status" => true,
                 "message" => "Record has been successfully deleted",
                 "record" => null,
             ]);
-
         } else {
             return response()->json([
                 "status" => false,
                 "message" => "Record cannot delete",
                 "record" => null,
             ]);
-
         }
-
     }
 }

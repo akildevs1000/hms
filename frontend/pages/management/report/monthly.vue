@@ -12,7 +12,7 @@
         <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
           @change="getReportByMonth(month)"></v-select>
       </v-col> -->
-      <v-col md="2">
+      <!-- <v-col md="2">
         <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"
           transition="scale-transition" offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -40,6 +40,10 @@
           </v-date-picker>
         </v-menu>
 
+      </v-col> -->
+      <v-col md="2" class="p-2 text-center">
+        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="filter_from_date" :DPEnd_date="filter_to_date"
+          column="date_range" @selected-dates="handleDatesFilter" />
       </v-col>
     </v-row>
 
@@ -327,6 +331,38 @@ export default {
   },
 
   methods: {
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
+    handleDatesFilter(dates) {
+
+      this.filter_from_date = dates[0];
+      this.filter_to_date = dates[1];
+      if (this.filter_from_date && this.filter_to_date) {
+        this.getReportByMonth(this.month);
+      }
+    },
+    getPriceFormat(price) {
+
+      return this.$auth.user.company.currency + " " + parseFloat(price).toLocaleString('en-IN', {
+        maximumFractionDigits: 2,
+
+      });
+    },
+    formatDateTime(dateString) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    },
     updateFilterValues() {
       this.$emit('filter_from_date');
       this.$emit('filter_to_date');

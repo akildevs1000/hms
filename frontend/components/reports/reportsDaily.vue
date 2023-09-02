@@ -348,18 +348,7 @@ export default {
 
         };
     },
-    watch: {
-
-        filter_from_date() {
-
-            this.getDataFromApi();
-
-        },
-        filter_to_date() {
-            this.getDataFromApi();
-
-        }
-    },
+     
     created() {
         this.month = new Date().getMonth();
         this.year = new Date().getFullYear();

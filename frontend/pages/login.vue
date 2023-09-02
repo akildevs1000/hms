@@ -167,7 +167,10 @@ export default {
           .then(({ data }) => {
             let LoginUser = this.$auth.user;
 
-            if (LoginUser.employee_role_id > 0 && LoginUser.enable_whatsapp_otp == 1) {
+
+            if (LoginUser.employee_role_id != 0 && LoginUser.enable_whatsapp_otp == 1) {
+
+
               this.set_otp_new(this.$auth.user.id);
               this.$router.push(`/otp`);
               return;
@@ -177,9 +180,10 @@ export default {
                 is_verified: 1,
               });
               this.$auth.setUser(updatedUser);
-              setTimeout(() => {
-                this.$router.push(`/`);
-              }, 1000);
+              // setTimeout(() => {
+              //   this.$router.push(`/`);
+              // }, 1000);
+              this.$router.push(`/`);
             }
 
             if (data.user && data.user.user_type == "master") {

@@ -244,6 +244,7 @@
         .w-auto {
             width: auto !important;
         }
+
         input {
             /* border: none; */
             /* border-bottom: 1px solid black; */
@@ -329,11 +330,9 @@
         </div>
         <div class="col-4" style="margin: 0px">
             @if ($company->id == 1)
-                <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
-                    style="margin-left: 50px;margin-top: 0px">
+            <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100" style="margin-left: 50px;margin-top: 0px">
             @elseif ($company->id == 2)
-                <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
-                    style="margin-left: 50px;margin-top: 0px">
+            <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100" style="margin-left: 50px;margin-top: 0px">
             @endif
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
@@ -408,36 +407,35 @@
         </tr>
 
         @foreach ($data as $index => $item)
-            <tr>
-                <td class="my-1 py-1 fnt-size">{{ ++$index }}</td>
-                <td class="my-1 py-1 fnt-size">{{ date('d-m-Y', strtotime($item['created_at'])) }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item['time'] }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item['booking']['reservation_no'] }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item['type'] }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item['room'] }}</td>
-                <td class="my-1 py-1 fnt-size">{{ $item['description'] }}</td>
-                @for ($i = 1; $i <= 7; $i++)
-                    <td class="text-right my-1 py-1 fnt-size">
-                        @if ($item['paymentMode']['name'] == 'Cash' && $i == 1)
-                            {{ $item['amount'] }}
-                        @elseif($item['paymentMode']['name'] == 'Bank' && $i == 4)
-                            {{ $item['amount'] }}
-                        @elseif($item['paymentMode']['name'] == 'Online' && $i == 3)
-                            {{ $item['amount'] }}
-                        @elseif($item['paymentMode']['name'] == 'UPI' && $i == 5)
-                            {{ $item['amount'] }}
-                        @elseif($item['paymentMode']['name'] == 'Card' && $i == 2)
-                            {{ $item['amount'] }}
-                        @elseif($item['paymentMode']['name'] == 'Cheque' && $i == 6)
-                            {{ $item['amount'] }}
-                        @elseif($item['paymentMode']['name'] == 'City Ledger' && $i == 7)
-                            {{ $item['amount'] }}
-                        @else
-                            ---
-                        @endif
-                    </td>
+        <tr>
+            <td class="my-1 py-1 fnt-size">{{ ++$index }}</td>
+            <td class="my-1 py-1 fnt-size">{{ date('d-m-Y', strtotime($item['created_at'])) }}</td>
+            <td class="my-1 py-1 fnt-size">{{ $item['time'] }}</td>
+            <td class="my-1 py-1 fnt-size">{{ $item['booking']['reservation_no'] }}</td>
+            <td class="my-1 py-1 fnt-size">{{ $item['type'] }}</td>
+            <td class="my-1 py-1 fnt-size">{{ $item['room'] }}</td>
+            <td class="my-1 py-1 fnt-size">{{ $item['description'] }}</td>
+            @for ($i = 1; $i <= 7; $i++) <td class="text-right my-1 py-1 fnt-size">
+                @if ($item['paymentMode']['name'] == 'Cash' && $i == 1)
+                {{ $item['amount'] }}
+                @elseif($item['paymentMode']['name'] == 'Bank' && $i == 4)
+                {{ $item['amount'] }}
+                @elseif($item['paymentMode']['name'] == 'Online' && $i == 3)
+                {{ $item['amount'] }}
+                @elseif($item['paymentMode']['name'] == 'UPI' && $i == 5)
+                {{ $item['amount'] }}
+                @elseif($item['paymentMode']['name'] == 'Card' && $i == 2)
+                {{ $item['amount'] }}
+                @elseif($item['paymentMode']['name'] == 'Cheque' && $i == 6)
+                {{ $item['amount'] }}
+                @elseif($item['paymentMode']['name'] == 'City Ledger' && $i == 7)
+                {{ $item['amount'] }}
+                @else
+                ---
+                @endif
+                </td>
                 @endfor
-            </tr>
+        </tr>
         @endforeach
         <tr class="text-right">
             <th colspan="7">Total</th>
@@ -455,13 +453,13 @@
 
 
     @php
-        function numFormat($n = null)
-        {
-            if (!$n) {
-                return '---';
-            }
-            return number_format($n, 2) ?? '---';
-        }
+    function numFormat($n = null)
+    {
+    if (!$n) {
+    return '---';
+    }
+    return number_format($n, 2) ?? '---';
+    }
     @endphp
 </body>
 

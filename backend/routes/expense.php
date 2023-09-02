@@ -11,3 +11,6 @@ Route::get('management_expense', [ExpenseController::class, 'managementExpense']
 Route::get('account_count', [ExpenseController::class, 'counts']);
 
 Route::resource('payments', PaymentController::class);
+Route::get('expenses_documents/{key}', [ExpenseController::class, 'expensesDocuments']);
+Route::post('expenses_document_delete/{key}', [ExpenseController::class, 'expensesDocumentsDelete']);
+Route::get('expenses_statistics', [ExpenseController::class, 'getStaticstics']);

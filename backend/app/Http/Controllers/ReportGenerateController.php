@@ -16,7 +16,7 @@ class ReportGenerateController extends Controller
     {
         $company_ids = $this->getNotificationCompanyIds();
         $date = date('Y-m-d');
-        //$date = date('Y-07-04');
+        //$date = date('Y-07-01');
 
         foreach ($company_ids as $company_id) {
             $model = Booking::query();
@@ -52,32 +52,33 @@ class ReportGenerateController extends Controller
 
         //if (count($todayCheckin) > 0)
         ///Today Check-in Report
-        { $fileName = "Today Check-in Report";
+        {
+            $fileName = "Today Check-in Report";
             $pdf = Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
                 ->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-//Continue Report
+            //Continue Report
             $fileName = "Continue Report";
             $pdf = Pdf::loadView('report.audit.continue_report', ['data' => $continueRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
                 ->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-//Check-out Report
+            //Check-out Report
             $fileName = "Check-out Report";
             $pdf = Pdf::loadView('report.audit.check_out_report', ['data' => $todayCheckOut, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-//Today Booking Report
+            //Today Booking Report
             $fileName = "Today Booking Report";
             $pdf = Pdf::loadView('report.audit.today_booking_report', ['data' => $todayPayments, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-//City Ledger Report
+            //City Ledger Report
             $fileName = "City Ledger Report";
             $pdf = Pdf::loadView('report.audit.city_ledger_report', ['data' => $cityLedgerPaymentsAudit, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-//Cancel Rooms Report
+            //Cancel Rooms Report
             $fileName = "Cancel Rooms Report";
             $pdf = Pdf::loadView('report.audit.cancel_rooms', ['data' => $cancelRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-//Food Order list
+            //Food Order list
             $fileName = "Food Order list";
             $pdf = Pdf::loadView('report.audit.food_order_list', ['data' => $foodOrderList, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
@@ -210,13 +211,13 @@ class ReportGenerateController extends Controller
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')->with('transactions', function ($q) use ($request) {
-            $q->where('is_posting', 0);
-            // $q->where('credit', '>', 0);
-            $q->whereDate('date', $request->date);
-            $q->where('payment_method_id', '!=', 7);
-            $q->where('company_id', $request->company_id)
-                ->with('paymentMode');
-        })->get();
+                $q->where('is_posting', 0);
+                // $q->where('credit', '>', 0);
+                $q->whereDate('date', $request->date);
+                $q->where('payment_method_id', '!=', 7);
+                $q->where('company_id', $request->company_id)
+                    ->with('paymentMode');
+            })->get();
     }
 
     private function continueAudit($model, $request)
@@ -302,8 +303,8 @@ class ReportGenerateController extends Controller
             ->with('user')
             ->whereDate('created_at', $request->date)
             ->where('company_id', $company_id)
-            ->with('booking:id,reservation_no')
-            ->get(['booking_id', 'room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in']);
+            ->with('booking:id,reservation_no,created_at')
+            ->get(['booking_id', 'room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in', 'status_before_cancelation', 'status_before_cancelation_msg']);
     }
 
     private function cityLedgerPaymentsAudit($model, $request)

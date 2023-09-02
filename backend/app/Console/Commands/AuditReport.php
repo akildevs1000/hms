@@ -89,9 +89,7 @@ class AuditReport extends Command
 
                         Logger::channel("custom")->error("Cron: $script_name. Night Audit mail sent to $value ");
                     }
-
                 }
-
             }
 
             echo "[" . $date . "] Cron: $script_name.   generated.\n";
