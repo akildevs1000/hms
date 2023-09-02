@@ -8,7 +8,7 @@
     </div>
     <v-row class="mt-0 mb-0">
       <v-col cols="6">
-        <h3>{{ Model }}</h3>
+        <h3>{{ is_management == 1 ? '' : 'Non-' }} Management {{ Model }}</h3>
 
       </v-col>
       <v-col cols="6">
@@ -297,14 +297,14 @@
         </v-select>
 
       </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
+      <!-- <v-col xs="12" sm="12" md="2" cols="12">
         <v-select v-model="is_management" clearable
           :items="[{ id: '', name: 'All' }, { id: 0, name: 'Non-Management' }, { id: 1, name: 'Management' }]"
           item-text="name" item-value="id" placeholder="All" label="Select Management" @change="commonMethod" outlined
           :hide-details="true" dense>
         </v-select>
 
-      </v-col>
+      </v-col> -->
 
     </v-row>
     <v-row>
@@ -380,7 +380,7 @@
                       <th>Date</th>
                       <th>Category</th>
                       <th>Voucher</th>
-                      <th>User</th>
+                      <th v-if="is_management == 1">User</th>
                       <th>Item</th>
                       <th>QTY</th>
                       <th style="text-align:right">Amount</th>
@@ -397,7 +397,7 @@
                       <td style="width: 100px;">{{ item.created_at }}</td>
                       <td>{{ item.category && item.category.name || "" }}</td>
                       <td>{{ item.voucher || "" }}</td>
-                      <td>{{ item.user || "" }}</td>
+                      <td v-if="is_management == 1">{{ item.user || "" }}</td>
                       <td>{{ item.item || "" }}</td>
                       <td>{{ item.qty || "" }}</td>
                       <td style="text-align:right">{{ item.amount || "---" }}</td>
@@ -514,13 +514,13 @@
 import ImagePreview from "../images/ImagePreview.vue";
 // import CustomFilter from "../filter/CustomFilter.vue";
 export default {
-  // props: ["is_management"],
+  props: ["is_management"],
   components: {
     // CustomFilter,
     ImagePreview,
   },
   data: () => ({
-    is_management: '',
+    //is_management: '',
     totalAmount: 0,
     expenses_statistics: [],
     expensesCategories: [],
@@ -706,6 +706,7 @@ export default {
 
     },
     newDialog() {
+      this.getCategoriesList();
       this.expenseDialog = true;
       this.viewMode = false;
       this.close_document_info();
@@ -875,6 +876,7 @@ export default {
       this.getInfo(item.id);
     },
     editItem(item) {
+      this.getCategoriesList();
       this.viewMode = false;
 
       this.editedIndex = this.data.indexOf(item);
