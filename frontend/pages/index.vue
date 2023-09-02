@@ -418,9 +418,6 @@
                   <v-list-item-title color="red">Cancel Check-in(admin)
                   </v-list-item-title>
                 </v-list-item>
-
-
-
               </div>
             </v-list-item-group>
           </v-list>
