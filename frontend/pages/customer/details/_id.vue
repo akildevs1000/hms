@@ -743,7 +743,7 @@
                     <td>{{ item.no_of_adult || "---" }}</td>
                     <td>{{ item.no_of_child || "---" }}</td>
                     <td>{{ item.no_of_baby || "---" }}</td>
-                    <td>{{ capsTitle(item.meal) || "---" }}</td>
+                    <td> {{ (item.meal.toUpperCase()) }}</td>
                     <td class="text-right">
                       {{ item.tot_adult_food || "---" }}
                     </td>

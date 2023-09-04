@@ -205,42 +205,6 @@
 
             </v-col>
             <v-col cols="12" v-if="!viewMode">
-
-
-              <v-row v-if="!viewMode" v-for="(d, index) in Document.items" :key="'E' + index">
-                <v-col cols="4">
-                  <label class="col-form-label">Title </label>
-                  <v-text-field dense outlined v-model="d.title"></v-text-field>
-
-                </v-col>
-                <v-col cols="6">
-                  <label class="col-form-label">File </label>
-                  <v-file-input dense outlined v-model="d.file">
-                    <template v-slot:selection="{ text }">
-                      <v-chip v-if="text" small label color="primary" class="ma-1">
-                        {{ text }}
-                      </v-chip>
-                    </template>
-                  </v-file-input>
-
-
-                </v-col>
-                <v-col cols="2">
-
-                  <v-icon v-if="!viewMode" class="error--text mt-7" @click="removeItem(index)">mdi-delete</v-icon>
-                </v-col>
-              </v-row>
-              <v-col class="text-left" md="12" cols="12">
-                <v-btn v-if="!viewMode" @click="addDocumentInfo" class="primary mb-2 text-right">Add
-                  Document +
-                </v-btn>
-              </v-col>
-              <!-- <v-row>
-                  <v-col cols="12">
-                    <v-btn :disabled="!Document.items.length" class="primary" small
-                      @click="save_document_info">Save</v-btn>
-                  </v-col>
-                </v-row> -->
               <v-row>
                 <v-col cols="12">
                   <table style="border-collapse: collapse; width: 100%">
@@ -312,6 +276,42 @@
                   </table>
                 </v-col>
               </v-row>
+
+              <v-row v-if="!viewMode" v-for="(d, index) in Document.items" :key="'E' + index">
+                <v-col cols="4">
+                  <label class="col-form-label">Title </label>
+                  <v-text-field dense outlined v-model="d.title"></v-text-field>
+
+                </v-col>
+                <v-col cols="6">
+                  <label class="col-form-label">File </label>
+                  <v-file-input dense outlined v-model="d.file">
+                    <template v-slot:selection="{ text }">
+                      <v-chip v-if="text" small label color="primary" class="ma-1">
+                        {{ text }}
+                      </v-chip>
+                    </template>
+                  </v-file-input>
+
+
+                </v-col>
+                <v-col cols="2">
+
+                  <v-icon v-if="!viewMode" class="error--text mt-7" @click="removeItem(index)">mdi-delete</v-icon>
+                </v-col>
+              </v-row>
+              <v-col class="text-right" md="12" cols="12">
+                <v-btn v-if="!viewMode" @click="addDocumentInfo" class="primary mb-2 text-right">Add
+                  Document +
+                </v-btn>
+              </v-col>
+              <!-- <v-row>
+                  <v-col cols="12">
+                    <v-btn :disabled="!Document.items.length" class="primary" small
+                      @click="save_document_info">Save</v-btn>
+                  </v-col>
+                </v-row> -->
+
 
             </v-col>
 
@@ -774,6 +774,10 @@ export default {
 
       this.formTitle = "New";
       this.loading = false;
+      this.Document.items.unshift({
+        title: "",
+        file: "",
+      });
 
     },
     getInfo(expenses_id) {
@@ -950,7 +954,8 @@ export default {
 
       this.expenseDialog = true;
       this.getInfo(item.id);
-      this.Document.items = [];
+
+      //this.Document.items = [];
       this.formTitle = 'Edit ';
     },
     getCategoriesList() {
