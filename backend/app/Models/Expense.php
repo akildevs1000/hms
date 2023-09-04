@@ -69,4 +69,8 @@ class Expense extends Model
     {
         return $this->belongsTo(ExpensesCategories::class);
     }
+    public function expenese_docuemnts()
+    {
+        return $this->hasMany(ExpensesDocuments::class,   "expenses_id");
+    }
 }
