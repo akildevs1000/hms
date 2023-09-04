@@ -25,6 +25,11 @@ class ExpensesDocuments extends Model
         'created_at' => 'datetime:d-M-y',
     ];
 
+    public function expences()
+    {
+        return $this->belongsTo(Expense::class, 'expenses_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();

@@ -28,8 +28,9 @@ class ExpenseController extends Controller
     public function index(Request $request)
     {
         $model = Expense::query();
-        $model->with('category');
+        $model->with(['category', 'expenese_docuemnts']);
         $model->where('company_id', $request->company_id);
+
         // $model->where(function ($q) use ($request) {
         //     $q->where('voucher', 0);
         //     $q->orWhere('item', 'ILIKE', "%$request->search%");

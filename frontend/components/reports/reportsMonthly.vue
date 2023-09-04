@@ -302,7 +302,7 @@ export default {
                     value: "income",
                 },
                 {
-                    text: "N_M Expenses",
+                    text: "Expenses",
                     align: "right",
                     sortable: false,
                     key: "employee_id",

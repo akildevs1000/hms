@@ -314,7 +314,7 @@ export default {
           icon: "mdi-account-cash",
           title: `Ledger`,
           open_menu: false,
-          menu: "customer_access",
+          menu: "ledger_access",
           hasChildren: [
             {
               icon: "mdi mdi-human-male-board-poll",
@@ -944,5 +944,7 @@ select:focus {
   padding: 0px !important;
 }
 </style>
+
+
  
 

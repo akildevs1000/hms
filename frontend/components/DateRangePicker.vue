@@ -24,8 +24,8 @@
           close
         </v-btn>
 
-        <v-btn dark color="primary" small @click="$refs.menu.save(secondPicker)">
-          OK
+        <v-btn dark color="primary" small @click="applyFilter()">
+          Apply
         </v-btn>
 
       </v-card>
@@ -95,7 +95,7 @@ export default {
       this.startDates.sort((a, b) => a.localeCompare(b));
       this.endDates = [];
       this.finalDates = this.startDates;
-      this.$emit("selected-dates", this.finalDates);
+      //this.$emit("selected-dates", this.finalDates);
       this.min = this.startDates[0];
     },
     secondPicker() {
@@ -110,10 +110,16 @@ export default {
       this.startDates = this.finalDates;
       this.endDates = this.finalDates;
 
+      //this.$emit("selected-dates", this.finalDates);
+
+      //this.menu = false;
+
+    },
+    applyFilter() {
+      this.$refs.menu.save(this.secondPicker);
       this.$emit("selected-dates", this.finalDates);
 
       this.menu = false;
-
     },
     clearDates() {
       this.clearStartDates();

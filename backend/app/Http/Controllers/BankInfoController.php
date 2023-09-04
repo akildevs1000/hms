@@ -14,7 +14,7 @@ class BankInfoController extends Controller
         return $this->process('added', $record, class_basename($model));
     }
 
-    public function show(BankInfo $model,$id)
+    public function show(BankInfo $model, $id)
     {
         return $model->whereEmployeeId($id)->first();
     }
