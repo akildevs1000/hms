@@ -30,7 +30,7 @@
                         mdi mdi-close-box
                     </v-icon>
                     <v-tabs-slider color="#1259a7"></v-tabs-slider>
-                    <v-tab-item>
+                    <!-- <v-tab-item>
                         <v-card flat>
                             <v-card-text>
                                 <v-col cols="12">
@@ -38,7 +38,7 @@
                                 </v-col>
                             </v-card-text>
                         </v-card>
-                    </v-tab-item>
+                    </v-tab-item> -->
 
                     <v-tab-item>
                         <v-card flat>
@@ -135,14 +135,14 @@
     <NoAccess v-else />
 </template>
 <script>
-import HallCustomer from "../../components/partyhall/hallcustomer.vue";
+// import HallCustomer from "../../components/partyhall/hallcustomer.vue";
 import HallEvent from "../../components/partyhall/HallEvent.vue";
 import HallFood from "../../components/partyhall/HallFood.vue";
 import HallAmount from "../../components/partyhall/HallAmount.vue";
 
 export default {
     components: {
-        HallCustomer,
+        // HallCustomer,
         HallEvent,
         HallFood,
         HallAmount,
