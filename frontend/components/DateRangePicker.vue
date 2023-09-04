@@ -7,7 +7,7 @@
     </template>
 
     <div class="text-center">
-      <v-date-picker style="margin-top:20px" @input="firstPicker" persistant no-title color="primary" v-model="startDates"
+      <v-date-picker style="margin-top:40px" @input="firstPicker" persistant no-title color="primary" v-model="startDates"
         range scrollable>
       </v-date-picker>
 
