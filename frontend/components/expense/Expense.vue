@@ -166,106 +166,153 @@
                 errors.description[0]
               }}</span>
             </v-col>
-            <v-col cols="12">
-              <v-container>
-                <v-col class="text-right" md="12" cols="12">
-                  <v-btn v-if="!viewMode" @click="addDocumentInfo" class="primary mb-2 text-right">Add
-                    Document +
-                  </v-btn>
+
+            <v-col cols="12" v-if="viewMode" style="color:rgba(0, 0, 0, 0.38)">
+              Documents ({{ (document_list.length) }})
+              <table>
+                <tr v-for="(d, index) in document_list" :key="'D' + index">
+                  <td style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                    color:rgba(0, 0, 0, 0.38)
+                  ">
+                    {{ index + 1 }}
+                  </td>
+                  <td style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                    color:rgba(0, 0, 0, 0.38)
+                  ">
+                    {{ d.title }}
+                  </td>
+                  <td style="
+                    border: 1px solid #dddddd;
+                    text-align: center;
+                    padding: 8px;
+                    color:rgba(0, 0, 0, 0.38)
+                  ">
+
+                    <v-btn @click="preview(d.file_name)" small class="primary">
+                      <v-icon>mdi-paperclip</v-icon>
+                    </v-btn>
+
+                  </td>
+
+                </tr>
+              </table>
+
+            </v-col>
+            <v-col cols="12" v-if="!viewMode">
+              <v-row>
+                <v-col cols="12">
+                  <table style="border-collapse: collapse; width: 100%">
+                    <!-- <thead>
+                      <tr>
+                        <th style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                          Title
+                        </th>
+                        <th style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                          Attachement
+                        </th>
+                        <th style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                          Action
+                        </th>
+                      </tr>
+                    </thead> -->
+                    <tbody>
+                      <tr v-for="(d, index) in document_list" :key="'A' + index">
+                        <td style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                          {{ index + 1 }}
+                        </td>
+                        <td style="
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                  ">
+                          {{ d.title }}
+                        </td>
+                        <td style="
+                    border: 1px solid #dddddd;
+                    text-align: center;
+                    padding: 8px;
+                  ">
+
+                          <v-btn @click="preview(d.file_name)" small class="primary">
+                            <v-icon>mdi-paperclip</v-icon>
+
+                          </v-btn>
+
+                        </td>
+                        <td style="
+                    border: 1px solid #dddddd;
+                    text-align: center;
+                    padding: 8px;
+                  ">
+                          <v-icon v-if="!viewMode" color="error" @click="delete_document(d.id, d.expenses_id)">
+                            mdi-delete
+                          </v-icon>
+                        </td>
+                      </tr>
+                      <!-- Add more rows as needed -->
+                    </tbody>
+                  </table>
                 </v-col>
-                <v-row v-if="!viewMode" v-for="(d, index) in Document.items" :key="index">
-                  <v-col cols="4">
-                    <label class="col-form-label">Title </label>
-                    <v-text-field dense outlined v-model="d.title"></v-text-field>
+              </v-row>
 
-                  </v-col>
-                  <v-col cols="6">
-                    <label class="col-form-label">File </label>
-                    <v-file-input dense outlined v-model="d.file">
-                      <template v-slot:selection="{ text }">
-                        <v-chip v-if="text" small label color="primary" class="ma-1">
-                          {{ text }}
-                        </v-chip>
-                      </template>
-                    </v-file-input>
+              <v-row v-if="!viewMode" v-for="(d, index) in Document.items" :key="'E' + index">
+                <v-col cols="4">
+                  <label class="col-form-label">Title </label>
+                  <v-text-field dense outlined v-model="d.title"></v-text-field>
+
+                </v-col>
+                <v-col cols="6">
+                  <label class="col-form-label">File </label>
+                  <v-file-input dense outlined v-model="d.file">
+                    <template v-slot:selection="{ text }">
+                      <v-chip v-if="text" small label color="primary" class="ma-1">
+                        {{ text }}
+                      </v-chip>
+                    </template>
+                  </v-file-input>
 
 
-                  </v-col>
-                  <v-col cols="2">
+                </v-col>
+                <v-col cols="2">
 
-                    <v-icon v-if="!viewMode" class="error--text mt-7" @click="removeItem(index)">mdi-delete</v-icon>
-                  </v-col>
-                </v-row>
-                <!-- <v-row>
+                  <v-icon v-if="!viewMode" class="error--text mt-7" @click="removeItem(index)">mdi-delete</v-icon>
+                </v-col>
+              </v-row>
+              <v-col class="text-right" md="12" cols="12">
+                <v-btn v-if="!viewMode" @click="addDocumentInfo" class="primary mb-2 text-right">Add
+                  Document +
+                </v-btn>
+              </v-col>
+              <!-- <v-row>
                   <v-col cols="12">
                     <v-btn :disabled="!Document.items.length" class="primary" small
                       @click="save_document_info">Save</v-btn>
                   </v-col>
                 </v-row> -->
-                <v-row>
-                  <v-col cols="12">
-                    <table style="border-collapse: collapse; width: 100%">
-                      <thead>
-                        <tr>
-                          <th style="
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                  ">
-                            Title
-                          </th>
-                          <th style="
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                  ">
-                            File
-                          </th>
-                          <th style="
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                  ">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(d, index) in document_list" :key="index">
-                          <td style="
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                  ">
-                            {{ d.title }}
-                          </td>
-                          <td style="
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                  ">
 
-                            <v-btn @click="preview(d.file_name)" small class="primary">
-                              View <v-icon>mdi-open-window</v-icon>
-                            </v-btn>
 
-                          </td>
-                          <td style="
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                  ">
-                            <v-icon v-if="!viewMode" color="error" @click="delete_document(d.id, d.expenses_id)">
-                              mdi-delete
-                            </v-icon>
-                          </td>
-                        </tr>
-                        <!-- Add more rows as needed -->
-                      </tbody>
-                    </table>
-                  </v-col>
-                </v-row>
-              </v-container>
             </v-col>
 
           </v-row>
@@ -273,7 +320,7 @@
         <v-card-actions v-if="!viewMode">
           <v-spacer></v-spacer>
           <v-col class="text-right" md="12" cols="12">
-            <v-btn class="primary" :loading="loading" @click="save">Save</v-btn>
+            <v-btn class="primary" :loading="loadingAddDocument" @click="save">Save</v-btn>
           </v-col>
 
         </v-card-actions>
@@ -314,7 +361,7 @@
         <v-tabs v-model="activeTab" :vertical="vertical" background-color="background" dense flat dark show-arrows
           class="  rounded-t-sm rounded-t-md">
 
-          <span class="p-3" style="padding:5px"> Today {{ Model }} List</span>
+          <span class="p-3 pt-3" style="padding:5px"> Today {{ Model }} List</span>
           <v-spacer></v-spacer>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <v-spacer></v-spacer>
@@ -388,11 +435,11 @@
                       <th>Mode</th>
                       <!-- <th>Reference</th> -->
                       <th>Description</th>
-                      <!-- <th>Document</th> -->
+                      <th>Document</th>
                     </tr>
                     <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
                       color="primary"></v-progress-linear>
-                    <tr v-for="(  item, index  ) in   data  " :key="index" style="font-size: 12px">
+                    <tr v-for="(  item, index  ) in   data  " :key="'B' + index" style="font-size: 12px">
                       <td>{{ ++index }}</td>
                       <td style="width: 100px;">{{ item.created_at }}</td>
                       <td>{{ item.category && item.category.name || "" }}</td>
@@ -414,21 +461,33 @@
                           <span>{{ (item && item.description) || "---" }}</span>
                         </v-tooltip>
                       </td>
-                      <!-- <td>
-                <v-icon v-if="item.document" @click="preview(item.document)" right>mdi
-                  mdi-alpha-i-circle
-                </v-icon>
-                <span v-else> --- </span>
+                      <td>
+                        <div v-if="item.document || item.document1 || item.document2 || item.document3">
+                          <v-icon v-if="item.document" @click="preview(item.document)" right>mdi
+                            mdi-alpha-i-circle
+                          </v-icon>
+                          <!-- <span v-else> --- </span> -->
 
-                <v-icon v-if="item.document1" @click="preview(item.document1)" right> mdi-alpha-r-circle</v-icon>
-                <span v-else> --- </span>
+                          <v-icon v-if="item.document1" @click="preview(item.document1)" right>
+                            mdi-alpha-r-circle</v-icon>
+                          <!-- <span v-else> --- </span> -->
 
-                <v-icon v-if="item.document2" @click="preview(item.document2)" right> mdi-alpha-b-circle</v-icon>
-                <span v-else> --- </span>
+                          <v-icon v-if="item.document2" @click="preview(item.document2)" right>
+                            mdi-alpha-b-circle</v-icon>
+                          <!-- <span v-else> --- </span> -->
 
-                <v-icon v-if="item.document3" @click="preview(item.document3)" right> mdi-alpha-o-circle</v-icon>
-                <span v-else> --- </span>
-              </td> -->
+                          <v-icon v-if="item.document3" @click="preview(item.document3)" right>
+                            mdi-alpha-o-circle</v-icon>
+                          <!-- <span v-else> --- </span> -->
+
+                        </div>
+
+                        <v-icon :title="attachment.title" v-for="attachment in item.expenese_docuemnts"
+                          @click="preview(attachment.file_name)" right :key="'P' + item.id">mdi
+                          mdi-alpha-a-circle
+                        </v-icon>
+
+                      </td>
                       <td class="text-center">
                         <v-menu bottom left
                           v-if="can('accounts_expences_edit') || can('accounts_expences_delete') || can('management_expenses_edit') || can('management_expenses_delete')">
@@ -438,7 +497,7 @@
                             </v-btn>
                           </template>
                           <v-list width="120" dense>
-                            <v-list-item v-if="can('accounts_expences_edit') || can('management_expenses_edit')"
+                            <v-list-item v-if="can('accounts_expences_view') || can('management_expenses_view')"
                               @click="viewItem(item)">
                               <v-list-item-title style="cursor: pointer">
                                 <v-icon color="secondary" small> mdi-information </v-icon>
@@ -520,6 +579,8 @@ export default {
     ImagePreview,
   },
   data: () => ({
+    formTitle: '',
+    loadingAddDocument: false,
     //is_management: '',
     totalAmount: 0,
     expenses_statistics: [],
@@ -640,10 +701,10 @@ export default {
     this.getCategoriesList();
   },
   computed: {
-    formTitle() {
+    // formTitle() {
 
-      return this.editedIndex === -1 ? "New" : "Edit";
-    },
+    //   return this.editedIndex === -1 ? "New" : "Edit";
+    // },
     // totalAmount() {
     //   let sum = 0;
     //   this.data.map((e) => (sum += parseFloat(e.total)));
@@ -710,6 +771,13 @@ export default {
       this.expenseDialog = true;
       this.viewMode = false;
       this.close_document_info();
+
+      this.formTitle = "New";
+      this.loading = false;
+      this.Document.items.unshift({
+        title: "",
+        file: "",
+      });
 
     },
     getInfo(expenses_id) {
@@ -867,13 +935,15 @@ export default {
       this.imgView = true;
     },
     viewItem(item) {
-      this.formTitle = 'View ';
+
       this.viewMode = true;
+
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
 
       this.expenseDialog = true;
       this.getInfo(item.id);
+      this.formTitle = 'View ';
     },
     editItem(item) {
       this.getCategoriesList();
@@ -884,7 +954,9 @@ export default {
 
       this.expenseDialog = true;
       this.getInfo(item.id);
-      this.Document.items = [];
+
+      //this.Document.items = [];
+      this.formTitle = 'Edit ';
     },
     getCategoriesList() {
 
@@ -998,6 +1070,7 @@ export default {
 
 
         });
+
       }
     },
     getStatistics() {
@@ -1068,6 +1141,7 @@ export default {
       // this.loading = true;
       let payload = this.mapper(this.editedItem);
 
+      this.loadingAddDocument = true;
       this.Document.items.forEach((e) => {
         payload.append(`items[][title]`, e.title);
         payload.append(`items[][file]`, e.file || {});
@@ -1113,6 +1187,8 @@ export default {
           })
           .catch((res) => console.log(res));
       }
+
+      this.loadingAddDocument = false;
     },
   },
 };
@@ -1134,4 +1210,10 @@ th {
 tr:nth-child(even) {
   background-color: #e9e9e9;
 }
+
+input:disabled {
+  color: black;
+}
 </style>  
+
+ 

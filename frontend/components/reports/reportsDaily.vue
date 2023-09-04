@@ -313,7 +313,7 @@ export default {
                     value: "income",
                 },
                 {
-                    text: "N_M Expenses",
+                    text: "Expenses",
                     align: "right",
                     sortable: true,
                     key: "employee_id",
@@ -348,7 +348,7 @@ export default {
 
         };
     },
-     
+
     created() {
         this.month = new Date().getMonth();
         this.year = new Date().getFullYear();
