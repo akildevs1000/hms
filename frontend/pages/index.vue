@@ -418,9 +418,6 @@
                   <v-list-item-title color="red">Cancel Check-in(admin)
                   </v-list-item-title>
                 </v-list-item>
-
-
-
               </div>
             </v-list-item-group>
           </v-list>
@@ -429,12 +426,12 @@
           <v-list>
             <v-list-item-group>
               <!-- {{ newBookingRoom.status }}  NewBooking=true -->
-              <v-list-item link v-if="newBookingRoom.status == 0" @click="goToBookingPage();">
+              <!-- <v-list-item link v-if="newBookingRoom.status == 0" @click="goToBookingPage();">
+                <v-list-item-title>CheckIn</v-list-item-title>
+              </v-list-item>-->
+              <v-list-item link v-if="newBookingRoom.status == 0" @click=" NewBooking = true;">
                 <v-list-item-title>CheckIn</v-list-item-title>
               </v-list-item>
-              <!-- <v-list-item link v-if="newBookingRoom.status == 0" @click=" NewBooking = true;">
-                <v-list-item-title>CheckIn old</v-list-item-title>
-              </v-list-item> -->
               <v-list-item link v-if="newBookingRoom.status == 0" @click="roomStatus('1')">
                 <v-list-item-title>Block</v-list-item-title>
               </v-list-item>
