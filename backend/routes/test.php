@@ -26,6 +26,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
+Route::get('/datetest', function (Request $request) {
+
+    return date('Y-m-d H:i:s');
+});
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
 Route::get('UpdateTax/{id}', [RecalculateTaxController::class, 'UpdateTax']);
