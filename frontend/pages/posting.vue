@@ -128,15 +128,16 @@
         </div>
       </div>
     </v-row>
-    <!-- <CustomFilter @filter-attr="filterAttr" /> -->
+
     <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
         <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" v-model="search"
           hide-details></v-text-field>
       </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
-        <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
-          column="date_range" @selected-dates="handleDatesFilter" />
+      <v-col xs="12" sm="12" md="4" cols="12">
+        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
+        <!-- <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" /> -->
       </v-col>
 
 
@@ -204,11 +205,9 @@
   <NoAccess v-else />
 </template>
 <script>
-import CustomFilter from "../components/filter/CustomFilter.vue";
+import CustomFilter from '../components/filter/CustomFilter.vue';
+
 export default {
-  components: {
-    CustomFilter,
-  },
   data: () => ({
     Model: "Posting",
     pagination: {
@@ -266,19 +265,19 @@ export default {
       tax_type: -1,
     },
   }),
-
   created() {
-    this.month = new Date().getMonth();
-    this.year = new Date().getFullYear();
-    this.from_date = this.formatDate(new Date(this.year, this.month, 1));
-    this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
-
+    // this.month = new Date().getMonth();
+    // this.year = new Date().getFullYear();
+    // this.from_date = this.formatDate(new Date(this.year, this.month, 1));
+    // this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
+    const today = new Date();
+    this.from_date = today.toISOString().slice(0, 10);
+    this.to_date = today.toISOString().slice(0, 10);
     this.loading = true;
     this.room_list();
     this.getDataFromApi();
     this.booked_room_list();
   },
-
   computed: {
     totalAmount() {
       let sum = 0;
@@ -286,13 +285,11 @@ export default {
       return sum.toFixed(2);
     },
   },
-
   watch: {
     search() {
       this.getDataFromApi();
     },
   },
-
   methods: {
     handleDatesFilter(dates) {
       this.filterType = 5;
@@ -301,6 +298,7 @@ export default {
       if (this.from_date && this.to_date)
         this.getDataFromApi();
     },
+
     formatDate(date) {
       var day = date.getDate();
       var month = date.getMonth() + 1; // Months are zero-based
@@ -309,14 +307,13 @@ export default {
     },
     can(per) {
       let u = this.$auth.user;
-      return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
-      );
+      return ((u && u.permissions.some(e => e == per || per == "/")) || u.is_master);
     },
     caps(str) {
       if (str == "" || str == null) {
         return "---";
-      } else {
+      }
+      else {
         let res = str.toString();
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
@@ -324,19 +321,17 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
-
     filterAttr(data) {
       this.from_date = data.from;
       this.to_date = data.to;
       this.filterType = data.type;
-      this.search = data.search;
-      this.getDataFromApi();
+      //this.search = data.search;
+      if (this.from_date && this.to_date)
+        this.getDataFromApi();
     },
-
     goToRevView(item) {
       this.$router.push(`/customer/details/${item.booking_id}`);
     },
-
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
@@ -351,7 +346,6 @@ export default {
           filterType: this.filterType,
         },
       };
-
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
@@ -359,17 +353,14 @@ export default {
         this.loading = false;
       });
     },
-
     get_booked_room_details(id) {
       let room = this.bookedRooms.find((e) => e.id == id);
       this.posting.booked_room_id = room.id;
       this.posting.booking_id = room.booking_id;
       this.posting.room_id = room.room_id;
-
       this.room_type = room.room_type.name;
       this.customer_name = room.title;
     },
-
     booked_room_list() {
       let payload = {
         params: {
@@ -380,7 +371,6 @@ export default {
         this.bookedRooms = data;
       });
     },
-
     get_amount_with_tax(clause) {
       let per = clause == "Food" ? 5 : 12;
       let res = this.getPercentage(this.posting.amount, per);
@@ -391,19 +381,15 @@ export default {
       this.posting.amount_with_tax =
         parseFloat(res) + parseFloat(this.posting.amount);
     },
-
     getPercentage(amount, clause) {
       return (amount / 100) * clause;
     },
-
     store_posting() {
-      let rule =
-        Object.keys(this.posting.item).length == 0 ||
+      let rule = Object.keys(this.posting.item).length == 0 ||
         Object.keys(this.posting.amount).length == 0 ||
         Object.keys(this.posting.qty).length == 0 ||
         Object.keys(this.posting.bill_no).length == 0 ||
         this.posting.tax_type == -1;
-
       if (rule) {
         alert("Please enter required fields");
         return;
@@ -416,13 +402,13 @@ export default {
         company_id: this.$auth.user.company.id,
         tax_type: per,
       };
-
       this.$axios
         .post("/posting", payload)
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
-          } else {
+          }
+          else {
             this.getDataFromApi();
             this.loading = false;
             this.snackbar = true;
@@ -431,14 +417,12 @@ export default {
         })
         .catch((e) => console.log(e));
     },
-
     room_list() {
       this.$axios.get(`room_list_menu`).then(({ data }) => {
         this.rooms = data;
         this.rooms.unshift({ id: "", room_no: "Select All" });
       });
     },
-
     searchIt(e) {
       // if (e.length == 0) {
       //   this.getDataFromApi(this.endpoint);
@@ -447,6 +431,7 @@ export default {
       // }
     },
   },
+  components: { CustomFilter }
 };
 </script>
 <style scoped src="@/assets/dashtem.css"></style>

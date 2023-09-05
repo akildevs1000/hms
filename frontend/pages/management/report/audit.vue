@@ -116,7 +116,7 @@
       </div>
     </v-row>
     <v-row>
-      <v-col md="3">
+      <v-col md="2">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
           offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
