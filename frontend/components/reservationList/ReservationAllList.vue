@@ -94,7 +94,7 @@
 
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
             <v-toolbar class="rounded-md" color="background" dense flat dark>
-                <span> {{ Model }} List</span>
+                <span style="line-height:20px"> {{ Model }} List</span>
                 <v-spacer></v-spacer>
                 <v-tooltip top color="primary">
                     <template v-slot:activator="{ on, attrs }">
