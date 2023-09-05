@@ -128,6 +128,10 @@ class BookedRoom extends Model
     {
         $model = Booking::find($this->booking_id);
 
+
+        if (!$model) {
+            return  "green";
+        }
         if ($model->booking_status == 1 && $model->advance_price == 0) {
             (int) $status = 6;
         } else if (($model->booking_status == 2) && (date('Y-m-d', strtotime($model->check_out)) <= date('Y-m-d'))) {
