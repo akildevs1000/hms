@@ -48,14 +48,21 @@
                     v-model="search" hide-details></v-text-field>
             </v-col>
             <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select class="custom-text-box shadow-none" v-model="type" :items="types" dense placeholder="Type" solo
-                    flat :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
+                <v-select outlined v-model="type" :items="types" dense placeholder="Type" flat :hide-details="true"
+                    @change="getDataFromApi(endpoint)"></v-select>
             </v-col>
 
             <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select class="custom-text-box shadow-none" v-model="source"
-                    :items="type == 'Online' ? sources : agentList" dense item-value="name" item-text="name"
-                    placeholder="Sources" solo flat :hide-details="true" @change="getDataFromApi(endpoint)"></v-select>
+                <v-select v-model="source" :items="type == 'Online' ? sources : agentList" item-value="name"
+                    item-text="name" placeholder="Sources" @change="getDataFromApi(endpoint)" dense outlined
+                    :hide-details="true"></v-select>
+
+
+
+            </v-col>
+            <v-col xs="12" sm="12" md="2" cols="12">
+                <v-select v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']" dense outlined
+                    placeholder="Type" solo flat :hide-details="true" @change="reload()"></v-select>
             </v-col>
             <!-- <v-col md="2">
                 <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
@@ -79,15 +86,12 @@
                         no-title></v-date-picker>
                 </v-menu>
             </v-col> -->
-            <v-col md="2">
-                <DateRangePicker key="reservationList" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
-                    column="date_range" @selected-dates="handleDatesFilter" />
+            <v-col md="4">
+                <CustomFilter @filter-attr="filterAttr" :defaultFilterType="4" />
+                <!-- <DateRangePicker key="reservationList" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
+                    column="date_range" @selected-dates="handleDatesFilter" /> -->
             </v-col>
-            <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select class="custom-text-box shadow-none" v-model="guest_mode"
-                    :items="['Select All', 'Arrival', 'Departure']" dense placeholder="Type" solo flat :hide-details="true"
-                    @change="reload()"></v-select>
-            </v-col>
+
 
 
         </v-row>
@@ -254,12 +258,15 @@
 </template>
 <script>
 import Paying from "../../components/booking/Paying.vue";
+import CustomFilter from "../filter/CustomFilter.vue";
 export default {
     props: ["endpoint", "Model"],
     components: {
         Paying,
+        CustomFilter
     },
     data: () => ({
+
         cumulativeIndex: 1,
         perPage: 20,
         currentPage: 1,
@@ -490,6 +497,15 @@ export default {
 
             this.from_date = dates[0];
             this.to_date = dates[1];
+            if (this.from_date && this.to_date)
+                this.getDataFromApi();
+        },
+
+        filterAttr(data) {
+            this.from_date = data.from;
+            this.to_date = data.to;
+            //this.filterType = data.type;
+            this.search = data.search;
             if (this.from_date && this.to_date)
                 this.getDataFromApi();
         },

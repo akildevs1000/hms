@@ -41,9 +41,10 @@
         </v-menu>
 
       </v-col> -->
-      <v-col md="2" class="p-2 text-center">
-        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="filter_from_date" :DPEnd_date="filter_to_date"
-          column="date_range" @selected-dates="handleDatesFilter" />
+      <v-col md="4" class="p-2 text-center">
+        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
+        <!-- <DateRangePicker :disabled="false" key="taxable" :DPStart_date="filter_from_date" :DPEnd_date="filter_to_date"
+          column="date_range" @selected-dates="handleDatesFilter" /> -->
       </v-col>
     </v-row>
 
@@ -152,6 +153,7 @@ import SourceReport from '../../../components/bookingSource/SourceReport.vue';
 import MonthlyReport from '../../../components/reports/reportsMonthly.vue';
 import DailyReport from '../../../components/reports/reportsDaily.vue';
 import Top10Report from '../../../components/reports/top10Report.vue';
+import CustomFilter from '../../../components/filter/CustomFilter.vue';
 
 export default {
   components: {
@@ -159,6 +161,7 @@ export default {
     MonthlyReport,
     DailyReport,
     Top10Report,
+    CustomFilter
   },
   data() {
     return {
@@ -336,6 +339,16 @@ export default {
       var month = date.getMonth() + 1; // Months are zero-based
       var year = date.getFullYear();
       return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+    },
+    filterAttr(data) {
+      this.filter_from_date = data.from;
+      this.filter_to_date = data.to;
+
+      //this.filterType = data.type;
+      //this.search = data.search;
+      if (this.filter_from_date && this.filter_to_date) {
+        this.getReportByMonth(this.month);
+      }
     },
     handleDatesFilter(dates) {
 

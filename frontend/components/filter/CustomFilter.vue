@@ -1,11 +1,12 @@
 <template>
   <div>
+
     <v-row>
-      <v-col xs="12" sm="12" md="2" cols="12">
+      <!-- <v-col xs="12" sm="12" md="2" cols="12">
         <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" v-model="search"
           hide-details></v-text-field>
-      </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
+      </v-col> -->
+      <v-col xs="12" sm="12" md="4" cols="12">
         <v-select v-model="filterType" :items="[
           {
             id: 1,
@@ -27,10 +28,15 @@
             id: 5,
             name: 'Custom',
           },
-        ]" dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"></v-select>
+        ]" dense placeholder="Date" outlined :hide-details="true" item-text="name" item-value="id"></v-select>
       </v-col>
+      <v-col md="6" v-if="filterType == 5" class="box">
 
-      <v-col md="3" v-if="filterType == 5">
+        <date-picker value-type="format" format="YYYY-MM-DD" type="date" v-model="time3" @change="CustomFilter()"
+          range></date-picker>
+
+      </v-col>
+      <!-- <v-col md="3" v-if="filterType == 5">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
           offset-y min-width="auto">
           <template v-slot:activator="{ on, attrs }">
@@ -49,24 +55,31 @@
           </template>
           <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
-      </v-col>
+      </v-col> -->
     </v-row>
   </div>
 </template>
 
 <script>
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 export default {
+  components: {
+
+    DatePicker
+  },
+  props: ["defaultFilterType"],
   data() {
     return {
       // -------------------end chart ----------------
-
+      time3: null,
       from_date: "",
       from_menu: false,
 
       to_date: "",
       to_menu: false,
       loading: false,
-
+      showTimePanel: false,
       filterType: 1,
       search: "",
     };
@@ -74,73 +87,148 @@ export default {
 
   watch: {
     filterType() {
+
+      this.showTimePanel = true;
       this.FilterData();
     },
-    search() {
-      this.FilterData();
-    },
-    from_date() {
-      this.FilterData();
-    },
-    to_date() {
-      this.FilterData();
-    },
+    // search() {
+    //   this.FilterData();
+    // },
+    // from_date() {
+    //   this.FilterData();
+    // },
+    // to_date() {
+    //   this.FilterData();
+    // },
   },
 
   mounted() { },
+  created() {
+    if (this.defaultFilterType) {
+      this.filterType = this.defaultFilterType;
+    }
 
+    const today = new Date();
+
+    this.from_date = today.toISOString().slice(0, 10);
+    this.to_date = today.toISOString().slice(0, 10);
+
+    this.time3 = [this.from_date, this.to_date];
+
+
+
+  },
   methods: {
     commonMethod() {
       if (this.from_date && this.to_date) {
       }
     },
+    CustomFilter() {
+      this.from_date = this.time3[0];
+      this.to_date = this.time3[1];
+      if (this.from_date && this.to_date) {
+        let data = {
+          from: this.from_date,
+          to: this.to_date,
+          type: this.filterType,
+          search: this.search,
+        };
 
+        this.$emit("filter-attr", data);
+
+
+      }
+    },
     FilterData() {
-      let data = {
-        from: this.from_date,
-        to: this.to_date,
-        type: this.filterType,
-        search: this.search,
-      };
-      this.$emit("filter-attr", data);
+
+      this.from_date = this.time3[0];
+      this.to_date = this.time3[1];
+      const today = new Date();
+
+      if (this.filterType == 1) {
+
+        // Get today's date
+        this.from_date = today.toISOString().slice(0, 10);
+        this.to_date = today.toISOString().slice(0, 10);
+
+      }
+      else if (this.filterType == 2) {
+
+        // Get yesterday's date
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        this.from_date = yesterday.toISOString().slice(0, 10);
+        this.to_date = yesterday.toISOString().slice(0, 10);
+      }
+      else if (this.filterType == 3) {
+
+        // Get the first day of the current week (Sunday)
+        const firstDayOfWeek = new Date(today);
+        firstDayOfWeek.setDate(today.getDate() - today.getDay());
+
+        // Get the last day of the current week (Saturday)
+        const lastDayOfWeek = new Date(today);
+        lastDayOfWeek.setDate(today.getDate() - today.getDay() + 6);
+
+        this.from_date = firstDayOfWeek.toISOString().slice(0, 10);
+        this.to_date = lastDayOfWeek.toISOString().slice(0, 10);
+      }
+      else if (this.filterType == 4) {
+
+
+        // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        // // Get the last day of the current month
+        // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+
+        // this.from_date = firstDayOfMonth.toISOString().slice(0, 10);
+        // this.to_date = lastDayOfMonth.toISOString().slice(0, 10);
+
+        this.from_date = this.formatDate(new Date(today.getFullYear(), today.getMonth(), 1));
+        this.to_date = this.formatDate(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+      }
+      else if (this.filterType == 5) {
+        this.time3 = [];
+
+        return;
+      }
+
+      if (this.from_date && this.to_date) {
+        let data = {
+          from: this.from_date,
+          to: this.to_date,
+          type: this.filterType,
+          search: this.search,
+        };
+
+        this.$emit("filter-attr", data);
+
+        console.log('data', data);
+      }
+
+    },
+
+    formatDate(date) {
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Months are zero-based
+      var year = date.getFullYear();
+      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
     },
   },
 };
 </script>
-
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+ 
+<style  >
+.mx-input {
+  height: 40px !important;
+  border: 1px solid #9e9e9e !important;
+  color: black !important;
 }
 
-td,
-th {
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
-
-.custom-text-box {
-  border-radius: 2px !important;
-  border: 1px solid #dbdddf !important;
-}
-
-input[type="text"]:focus.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select:focus {
-  outline: none !important;
-  border-color: #5fafa3;
-  box-shadow: 0 0 0px #5fafa3;
+.mx-table-date td,
+.mx-table-date th {
+  text-align: center !important;
 }
 </style>
+ 

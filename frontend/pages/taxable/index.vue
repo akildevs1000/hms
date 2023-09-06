@@ -66,8 +66,8 @@
           outlined flat append-icon="mdi-magnify"></v-text-field>
       </v-col>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
-          dense outlined placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi()"></v-select>
+        <v-select v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']" dense outlined placeholder="Type"
+          solo flat :hide-details="true" @change="getDataFromApi()"></v-select>
       </v-col>
 
       <!-- <v-col md="3">
@@ -90,9 +90,11 @@
           <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
         </v-menu>
       </v-col> -->
-      <v-col md="2">
-        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
-          column="date_range" @selected-dates="handleDatesFilter" />
+      <v-col md="4">
+        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="4" />
+
+        <!-- <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" /> -->
       </v-col>
     </v-row>
 
@@ -258,14 +260,13 @@
   </div>
 </template>
 <script>
+import CustomFilter from '../../components/filter/CustomFilter.vue';
+
 
 export default {
-
   data: () => ({
-
     inv_total_without_tax_collected: 0,
     inv_total_tax_collected: 0,
-
     Model: "GST Bill",
     checkOutDialog: false,
     pagination: {
@@ -273,13 +274,10 @@ export default {
       total: 0,
       per_page: 30,
     },
-
     from_date: "",
     from_menu: false,
-
     to_date: "",
     to_menu: false,
-
     options: {},
     endpoint: "taxable_invoice",
     search: "",
@@ -315,9 +313,7 @@ export default {
     guest_mode: "",
     errors: [],
   }),
-
   computed: {},
-
   watch: {
     search() {
       this.getDataFromApi();
@@ -325,29 +321,30 @@ export default {
   },
   created() {
     // this.loading = true;
-
     this.month = new Date().getMonth();
     this.year = new Date().getFullYear();
     this.from_date = this.formatDate(new Date(this.year, this.month, 1));
     this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
-
-
     this.getDataFromApi();
   },
-
   methods: {
     handleDatesFilter(dates) {
-
       this.from_date = dates[0];
       this.to_date = dates[1];
       if (this.from_date && this.to_date)
         this.getDataFromApi();
     },
+    filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      //this.filterType = data.type;
+      //this.search = data.search;
+      if (this.from_date && this.to_date)
+        this.getDataFromApi();
+    },
     getPriceFormat(price) {
-
       return parseFloat(price).toLocaleString('en-IN', {
         maximumFractionDigits: 2,
-
       });
     },
     formatDate(date) {
@@ -358,24 +355,22 @@ export default {
     },
     can(per) {
       let u = this.$auth.user;
-      return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
-      );
+      return ((u && u.permissions.some(e => e == per || per == "/")) || u.is_master);
     },
-
     convert_date_format(val) {
-      if (!val) return "---";
+      if (!val)
+        return "---";
       const date = new Date(val);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
-
       return [year, month, day].join("-");
     },
     caps(str) {
       if (str == "" || str == null) {
         return "---";
-      } else {
+      }
+      else {
         let res = str.toString();
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
@@ -383,15 +378,12 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
-
     commonMethod() {
       this.getDataFromApi();
     },
-
     goToRevView(item) {
       this.$router.push(`/customer/details/${item.booking_id}`);
     },
-
     redirect_to_invoice(id, inv) {
       let url = process.env.BACKEND_URL + "invoice";
       let element = document.createElement("a");
@@ -400,18 +392,13 @@ export default {
       document.body.appendChild(element);
       element.click();
     },
-
     getDataFromApi(url = this.endpoint) {
-
-
-
       this.loading = true;
       let page = this.pagination.current;
       if (page == 1) {
         this.inv_total_tax_collected = 0;
         this.inv_total_without_tax_collected = 0;
       }
-
       if (this.from_date && this.to_date) {
         let options = {
           params: {
@@ -423,66 +410,51 @@ export default {
             guest_mode: this.guest_mode,
           },
         };
-
         this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
           this.data = data.data;
           this.pagination.current = data.current_page;
           this.pagination.total = data.last_page;
           this.loading = false;
-
           if (data.current_page == 1) {
             this.$axios.get('get_invoice_grand_total', options).then(({ data }) => {
-
-
               this.inv_total_tax_collected = data.inv_total_tax_collected;
               this.inv_total_without_tax_collected = data.inv_total_without_tax_collected;
-
-
-
-
             });
           }
-
-
         });
-
-      } else {
+      }
+      else {
         return false;
       }
-
-
     },
-
     process(type) {
       let comId = this.$auth.user.company.id; //company id
       let from = this.from_date;
       let to = this.to_date;
       let guest_mode = this.guest_mode;
-
       let search = this.search;
-
-      let url =
-        process.env.BACKEND_URL +
+      let url = process.env.BACKEND_URL +
         `${type}?company_id=${comId}&from=${from}&to=${to}&guest_mode=${guest_mode}&search=${search}`;
-
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}`);
       document.body.appendChild(element);
       element.click();
     },
-
     searchIt() {
       if (this.search.length == 0) {
         this.getDataFromApi();
-      } else if (this.search.length > 2) {
+      }
+      else if (this.search.length > 2) {
         this.getDataFromApi();
       }
     },
   },
+  components: { CustomFilter }
 };
 </script>
-<style  scoped>
+ 
+<style scoped>
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -493,32 +465,16 @@ td,
 th {
   text-align: left;
   padding: 7px;
-  border: 1px solid #e9e9e9;
 }
 
 tr:nth-child(even) {
   background-color: #e9e9e9;
 }
-</style>
-<style scoped src="@/assets/dashtem.css"></style>
 
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+input:disabled {
+  color: black;
 }
-
-td,
-th {
-  text-align: left;
-  padding: 7px;
-  border: 1px solid #e9e9e9;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
+</style>  
 </style>
 
 
