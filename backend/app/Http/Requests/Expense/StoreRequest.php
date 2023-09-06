@@ -43,7 +43,7 @@ class StoreRequest extends FormRequest
             // 'document3'      => 'nullable',
             'is_management' => 'nullable',
             'user' => 'nullable',
-            'category_id' => 'nullable',
+            'category_id' => 'required',
 
         ];
     }
