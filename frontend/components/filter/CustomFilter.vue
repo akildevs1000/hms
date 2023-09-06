@@ -90,6 +90,21 @@ export default {
 
       this.showTimePanel = true;
       this.FilterData();
+
+
+
+      // if (this.filterType == 5) {
+      //   setTimeout(() => {
+      //     document.addEventListener("DOMContentLoaded", function () {
+      //       const textBox = document.querySelector('.mx-input');
+
+      //       if (textBox) {
+      //         textBox.focus();
+      //       }
+      //     });
+      //   }, 5000);
+
+      // }
     },
     // search() {
     //   this.FilterData();
@@ -102,7 +117,11 @@ export default {
     // },
   },
 
-  mounted() { },
+  mounted() {
+
+    if (this.filterType == 5)
+      document.querySelector('.mx-input').focus();
+  },
   created() {
     if (this.defaultFilterType) {
       this.filterType = this.defaultFilterType;
@@ -204,7 +223,6 @@ export default {
 
         this.$emit("filter-attr", data);
 
-        console.log('data', data);
       }
 
     },

@@ -171,17 +171,39 @@ class ExpenseController extends Controller
 
         if ($request->items)
             foreach ($request->items as $item) {
-                if ($item)
-                    if (isset($item["title"]) &&   isset($item["file"])) {
-                        $arr[] = [
+
+
+                if (isset($item["title"]) && isset($item["file"])) {
+                    if ($item["title"] && $item["file"]) {
+                        $arr  = [
                             "title" => $item["title"],
                             "file_name" => $this->saveFile($item["file"], $request->company_id),
                             "expenses_id" => $expenses_id,
                             "company_id" => $request->company_id,
                         ];
+                        ExpensesDocuments::insert($arr);
                     }
+
+
+                    //  ExpensesDocuments::insert($arr);
+                }
+                // if (isset($item["title"]) &&   isset($item["file"])) {
+                //     if ($item["title"] != null) {
+                //         $arr[] = [
+                //             "title" => $item["title"],
+                //             "file_name" => $this->saveFile($item["file"], $request->company_id),
+                //             "expenses_id" => $expenses_id,
+                //             "company_id" => $request->company_id,
+                //         ];
+                //     }
+
+
+                //     //  ExpensesDocuments::insert($arr);
+                // }
+
+
             }
-        ExpensesDocuments::insert($arr);
+
 
         return $arr;
     }
