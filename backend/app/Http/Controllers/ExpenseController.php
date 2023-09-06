@@ -167,14 +167,19 @@ class ExpenseController extends Controller
     public function storeDocuments($request, $expenses_id)
     {
         $arr = [];
+
+
         if ($request->items)
             foreach ($request->items as $item) {
-                $arr[] = [
-                    "title" => $item["title"],
-                    "file_name" => $this->saveFile($item["file"], $request->company_id),
-                    "expenses_id" => $expenses_id,
-                    "company_id" => $request->company_id,
-                ];
+                if ($item)
+                    if (isset($item["title"]) &&   isset($item["file"])) {
+                        $arr[] = [
+                            "title" => $item["title"],
+                            "file_name" => $this->saveFile($item["file"], $request->company_id),
+                            "expenses_id" => $expenses_id,
+                            "company_id" => $request->company_id,
+                        ];
+                    }
             }
         ExpensesDocuments::insert($arr);
 
