@@ -146,7 +146,7 @@
                 item-text="name" item-value="id" placeholder="Select Category" label="Select Category" outlined
                 :hide-details="true" dense>
               </v-autocomplete>
-              <span v-if="errors && errors.department_id" class="error--text">{{
+              <span v-if="errors && errors.category_id" class="error--text">{{
                 errors.category_id[0]
               }}</span>
             </v-col>
@@ -264,7 +264,7 @@
                         <td style="
                     border: 1px solid #dddddd;
                     text-align: center;
-                    padding: 8px;
+                    padding: 8px;width:150px
                   ">
                           <v-icon v-if="!viewMode" color="error" @click="delete_document(d.id, d.expenses_id)">
                             mdi-delete
@@ -278,15 +278,18 @@
               </v-row>
 
               <v-row v-if="!viewMode" v-for="(d, index) in Document.items" :key="'E' + index">
-                <v-col cols="4">
+                <v-col cols="7">
                   <label class="col-form-label">Title </label>
                   <v-text-field dense outlined v-model="d.title"></v-text-field>
 
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="3">
                   <label class="col-form-label">File </label>
+
                   <v-file-input dense outlined v-model="d.file">
-                    <template v-slot:selection="{ text }">
+
+
+                    <template v-slot:selection="{ text }" :ref="'attachment_input' + index">
                       <v-chip v-if="text" small label color="primary" class="ma-1">
                         {{ text }}
                       </v-chip>
@@ -295,14 +298,14 @@
 
 
                 </v-col>
-                <v-col cols="2">
+                <v-col cols="2" class="text-center">
 
                   <v-icon v-if="!viewMode" class="error--text mt-7" @click="removeItem(index)">mdi-delete</v-icon>
                 </v-col>
               </v-row>
               <v-col class="text-right" md="12" cols="12">
                 <v-btn v-if="!viewMode" @click="addDocumentInfo" class="primary mb-2 text-right">Add
-                  Document +
+                  +
                 </v-btn>
               </v-col>
               <!-- <v-row>
@@ -771,6 +774,7 @@ export default {
 
     },
     newDialog() {
+
       this.getCategoriesList();
       this.expenseDialog = true;
       this.viewMode = false;
@@ -958,6 +962,7 @@ export default {
       this.formTitle = 'View ';
     },
     editItem(item) {
+
       this.getCategoriesList();
       this.viewMode = false;
 
@@ -967,8 +972,12 @@ export default {
       this.expenseDialog = true;
       this.getInfo(item.id);
 
-      //this.Document.items = [];
+      this.Document.items = [];
       this.formTitle = 'Edit ';
+      // this.Document.items.push({
+      //   title: "",
+      //   file: "",
+      // });
     },
     getCategoriesList() {
 
@@ -1155,8 +1164,11 @@ export default {
 
       this.loadingAddDocument = true;
       this.Document.items.forEach((e) => {
-        payload.append(`items[][title]`, e.title);
-        payload.append(`items[][file]`, e.file || {});
+        if (e.file) {
+          payload.append(`items[][title]`, e.title);
+          payload.append(`items[][file]`, e.file || {});
+        }
+
       });
 
 
