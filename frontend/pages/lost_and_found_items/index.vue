@@ -539,11 +539,12 @@
 
             </v-row>
 
-            <v-row class=" text-center">
+            <v-row class=" text-center mb-1">
 
-                <v-col md="2" class="p-2 text-center">
-                    <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
-                        column="date_range" @selected-dates="handleDatesFilter" />
+                <v-col md="4" class="p-2 m-1 text-center">
+                    <CustomFilter @filter-attr="filterAttr" :defaultFilterType="4" />
+                    <!-- <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+                        column="date_range" @selected-dates="handleDatesFilter" /> -->
                 </v-col>
             </v-row>
             <v-card class="mb-5" elevation="0">
@@ -787,11 +788,12 @@
     <NoAccess v-else />
 </template>
 <script>
+import CustomFilter from "../../components/filter/CustomFilter.vue";
 import ItemLost from "/components/ItemLost.vue";
 export default {
     components: {
-
         ItemLost,
+        CustomFilter
     },
     data: () => ({
 
@@ -1109,7 +1111,7 @@ export default {
 
 
         this.loading = true;
-        this.getDataFromApi();
+        //this.getDataFromApi();
 
 
     },
@@ -1125,6 +1127,14 @@ export default {
 
             this.from_date = dates[0];
             this.to_date = dates[1];
+            if (this.from_date && this.to_date)
+                this.getDataFromApi();
+        },
+        filterAttr(data) {
+            this.from_date = data.from;
+            this.to_date = data.to;
+            // this.filterType = data.type;
+            //this.search = data.search;
             if (this.from_date && this.to_date)
                 this.getDataFromApi();
         },

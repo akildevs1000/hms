@@ -125,9 +125,10 @@
         <v-select class="custom-text-box shadow-none" v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']"
           dense placeholder="Type" solo flat :hide-details="true" @change="getDataFromApi()"></v-select>
       </v-col>
-      <v-col md="2">
-        <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
-          column="date_range" @selected-dates="handleDatesFilter" />
+      <v-col md="4">
+        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="4" />
+        <!-- <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" /> -->
       </v-col>
       <!-- <v-col md="3">
         <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
@@ -232,18 +233,17 @@
   <NoAccess v-else />
 </template>
 <script>
+import CustomFilter from '../../components/filter/CustomFilter.vue';
+
 export default {
   data: () => ({
     agentPaymentDialog: false,
     snackbar: false,
     response: "",
-
     from_date: "",
     from_menu: false,
-
     to_date: "",
     to_menu: false,
-
     pagination: {
       current: 1,
       total: 0,
@@ -277,7 +277,6 @@ export default {
       "Booking.com",
       "TripAdvisor.in",
     ],
-
     headers: [
       {
         text: "#",
@@ -321,11 +320,9 @@ export default {
       {
         text: "C/Out",
       },
-
       {
         text: "Paid/Status",
       },
-
       {
         text: "Action",
       },
@@ -340,7 +337,6 @@ export default {
     totalCredit: 0,
     errors: [],
   }),
-
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
@@ -351,27 +347,29 @@ export default {
     this.year = new Date().getFullYear();
     this.from_date = this.formatDate(new Date(this.year, this.month, 1));
     this.to_date = this.formatDate(new Date(this.year, this.month + 1, 0));
-
-
     this.loading = true;
   },
   mounted() {
-    this.getDataFromApi();
+    // this.getDataFromApi();
   },
-
   methods: {
     handleDatesFilter(dates) {
-
       this.from_date = dates[0];
       this.to_date = dates[1];
       if (this.from_date && this.to_date)
         this.getDataFromApi();
     },
+    filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      //this.filterType = data.type;
+      //this.search = data.search;
+      if (this.from_date && this.to_date)
+        this.getDataFromApi();
+    },
     getPriceFormat(price) {
-
       return parseFloat(price).toLocaleString('en-IN', {
         maximumFractionDigits: 2,
-
       });
     },
     formatDate(date) {
@@ -383,14 +381,10 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
-
     can(per) {
       let u = this.$auth.user;
-      return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
-      );
+      return ((u && u.permissions.some(e => e == per || per == "/")) || u.is_master);
     },
-
     paidAmount(cityLedgerData) {
       this.cityLedgerData = cityLedgerData;
       let payload = {
@@ -410,20 +404,15 @@ export default {
         }
       });
     },
-
     viewAgentsBilling(item) {
       this.$router.push(`/agents/details/${item.source}`);
     },
-
     commonMethod() {
       this.getDataFromApi();
     },
-
-
     goToRevView(item) {
       this.$router.push(`/customer/details/${item.id}`);
     },
-
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
       let page = this.pagination.current;
@@ -444,7 +433,6 @@ export default {
         this.loading = false;
       });
     },
-
     store_customer_payment() {
       if (this.booking.full_payment == "") {
         alert("enter full payment");
@@ -466,7 +454,8 @@ export default {
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
-          } else {
+          }
+          else {
             this.snackbar = true;
             this.response = "Payment successfully paid";
             this.agentPaymentDialog = false;
@@ -475,15 +464,16 @@ export default {
         })
         .catch((e) => console.log(e));
     },
-
     searchIt() {
       if (this.search.length == 0) {
         this.getDataFromApi();
-      } else if (this.search.length > 2) {
+      }
+      else if (this.search.length > 2) {
         this.getDataFromApi();
       }
     },
   },
+  components: { CustomFilter }
 };
 </script>
 

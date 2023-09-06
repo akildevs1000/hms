@@ -335,15 +335,17 @@
 
       </v-col>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
-          column="date_range" @selected-dates="handleDatesFilter" />
-      </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
         <v-select v-model="category_id" clearable :items="expensesCategories" item-text="name" item-value="id"
           placeholder="All Categories" label="Select Category" @change="commonMethod" outlined :hide-details="true" dense>
         </v-select>
 
       </v-col>
+      <v-col xs="12" sm="12" md="4" cols="12">
+        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
+        <!-- <DateRangePicker key="postings" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
+          column="date_range" @selected-dates="handleDatesFilter" /> -->
+      </v-col>
+
       <!-- <v-col xs="12" sm="12" md="2" cols="12">
         <v-select v-model="is_management" clearable
           :items="[{ id: '', name: 'All' }, { id: 0, name: 'Non-Management' }, { id: 1, name: 'Management' }]"
@@ -570,6 +572,7 @@
   <NoAccess v-else />
 </template>
 <script>
+import CustomFilter from "../filter/CustomFilter.vue";
 import ImagePreview from "../images/ImagePreview.vue";
 // import CustomFilter from "../filter/CustomFilter.vue";
 export default {
@@ -577,6 +580,7 @@ export default {
   components: {
     // CustomFilter,
     ImagePreview,
+    CustomFilter
   },
   data: () => ({
     formTitle: '',
@@ -853,6 +857,14 @@ export default {
       this.filterType = 5;
       this.from_date = dates[0];
       this.to_date = dates[1];
+      if (this.from_date && this.to_date)
+        this.commonMethod();
+    },
+    filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      this.filterType = data.type;
+      //this.search = data.search;
       if (this.from_date && this.to_date)
         this.commonMethod();
     },

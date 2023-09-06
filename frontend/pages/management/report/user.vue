@@ -27,7 +27,7 @@
       </div>
     </v-row>
     <v-row>
-      <v-col md="2">
+      <!-- <v-col md="2">
 
         <v-select v-model="filterType" :items="[
           {
@@ -58,7 +58,9 @@
       <v-col md="2" class="p-2 text-center" v-if="filterType == 5">
         <DateRangePicker :disabled="false" key="taxable" :DPStart_date="from_date" :DPEnd_date="to_date"
           column="date_range" @selected-dates="handleDatesFilter" />
-      </v-col>
+      </v-col> -->
+
+
       <!-- <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
@@ -85,7 +87,10 @@
           </v-menu>
         </v-col>
       </v-col> -->
+      <v-col xs="12" sm="12" md="4" cols="12">
+        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
 
+      </v-col>
       <v-col md="3" v-if="userList.length > 0">
         <div class="ml-4">Users</div>
         <v-col cols="12" sm="12" md="12">
@@ -203,15 +208,15 @@
 </template>
 
 <script>
+import CustomFilter from '../../../components/filter/CustomFilter.vue';
+
 export default {
   data: () => ({
     Model: "Expense",
-
     from_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
     from_menu: false,
-
     to_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
@@ -233,7 +238,6 @@ export default {
     counts: [],
     loading: false,
     total: 0,
-
     Header: [
       { text: "#" },
       { text: "Rev. No." },
@@ -284,45 +288,33 @@ export default {
     totalExpenses: {},
     totalIncomes: {},
   }),
-
   created() {
     this.loading = true;
     if (this.$auth.user.user_type != "employee") {
       this.get_users();
-    } else {
+    }
+    else {
       this.user_id = this.$auth.user.id;
     }
     this.getPaymentReportsByUser();
   },
-
   computed: {
     currentDate() {
       return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10);
     },
-
     week() {
       const today = new Date();
       const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-      const startOfWeek = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - dayOfWeek
-      );
-      const endOfWeek = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        startOfWeek.getDate() + 6
-      );
-
+      const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
+      const endOfWeek = new Date(today.getFullYear(), today.getMonth(), startOfWeek.getDate() + 6);
       return [
         startOfWeek.toISOString().slice(0, 10),
         endOfWeek.toISOString().slice(0, 10),
       ];
     },
   },
-
   methods: {
     getUserTotal(user) {
       return this.getPriceFormat(parseFloat(user.cash_sum) + parseFloat(user.card_sum) + parseFloat(user.online_sum) + parseFloat(user.bank_sum) + parseFloat(user.UPI_sum) + parseFloat(user.cheque_sum) + parseFloat(user.City_ledger_sum));
@@ -333,24 +325,37 @@ export default {
       var year = date.getFullYear();
       return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
     },
+    filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      // this.filterType = data.type;
+      //this.search = data.search;
+      if (this.from_date && this.to_date) {
+        if (this.$auth.user.user_type != "employee") {
+          this.get_users();
+        }
+        else {
+          this.user_id = this.$auth.user.id;
+        }
+        this.getPaymentReportsByUser();
+      }
+    },
     handleDatesFilter(dates) {
-
       this.from_date = dates[0];
       this.to_date = dates[1];
       if (this.from_date && this.to_date) {
         if (this.$auth.user.user_type != "employee") {
           this.get_users();
-        } else {
+        }
+        else {
           this.user_id = this.$auth.user.id;
         }
         this.getPaymentReportsByUser();
       }
     },
     getPriceFormat(price) {
-
       return this.$auth.user.company.currency + " " + parseFloat(price).toLocaleString('en-IN', {
         maximumFractionDigits: 2,
-
       });
     },
     formatDateTime(dateString) {
@@ -361,7 +366,6 @@ export default {
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const seconds = String(date.getSeconds()).padStart(2, '0');
-
       return `${year}-${month}-${day} ${hours}:${minutes}`;
     },
     onPageChange() {
@@ -369,75 +373,59 @@ export default {
     },
     can(per) {
       let u = this.$auth.user;
-      return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
-      );
+      return ((u && u.permissions.some(e => e == per || per == "/")) || u.is_master);
     },
     caps(str) {
       if (str == "" || str == null) {
         return "---";
-      } else {
+      }
+      else {
         let res = str.toString();
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
-
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
-      } else {
+      }
+      else {
         return n + ".00";
       }
     },
-
     onPageChange() {
       this.getExpenseData();
     },
-
     goToRevView(item) {
       this.$router.push(`/customer/details/${item.booking_id}`);
     },
-
     // getFirstAndLastDay() {
     //   const currentDate = new Date();
     //   const day = currentDate.getDate();
     //   const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
     //   const year = currentDate.getFullYear();
     //   const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
-
     //   let firstDay = `${year}-${month}-0${1}`;
     //   let lastDay = `${year}-${month}-0${last}`;
-
     //   return [
     //     firstDay,
     //     lastDay
     //   ]
     // },
-
-
     getFirstAndLastDay() {
       const currentDate = new Date();
       const day = currentDate.getDate();
       const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
       const year = currentDate.getFullYear();
       const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
-
       let firstDay = `${year}-${month}-0${1}`;
-
-
       let lastDayFirst = last > 9 ? `${last}` : `0${last}`;
-
       console.log('date' + last);
-
-
       let lastDay = `${year}-${month}-${lastDayFirst}`;
-
       return [
         firstDay,
         lastDay
-      ]
+      ];
     },
-
     commonMethod() {
       // alert('ff');
       const today = new Date();
@@ -463,26 +451,21 @@ export default {
           this.from_date = this.getFirstAndLastDay()[0];
           this.to_date = this.getFirstAndLastDay()[1];
           break;
-
         // default:
         //   this.from_date = new Date().toJSON().slice(0, 10);
         //   this.to_date = new Date().toJSON().slice(0, 10);
         //   break;
       }
-
       // console.log(this.from_date + "from");
       // console.log(this.to_date + "to");
       // console.log(this.filterType + "type");
-
       this.getPaymentReportsByUser();
     },
-
     process(type) {
       let comId = this.$auth.user.company.id; //company id
       let from = this.from_date;
       let to = this.to_date;
-      let url =
-        process.env.BACKEND_URL +
+      let url = process.env.BACKEND_URL +
         `${type}?company_id=${comId}&from=${from}&to=${to}`;
       console.log(url);
       let element = document.createElement("a");
@@ -491,10 +474,8 @@ export default {
       document.body.appendChild(element);
       element.click();
     },
-
     get_users() {
       console.log(this.$auth.user.user_type);
-
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -507,7 +488,6 @@ export default {
         this.userList.unshift({ id: "", name: "Select All" });
       });
     },
-
     getPaymentReportsByUser(url = "get_transaction_by_users") {
       this.loading = true;
       let page = this.pagination.current;
@@ -522,13 +502,13 @@ export default {
           to_date: this.to_date,
         },
       };
-
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.paymentReportsByUser = data;
         this.loading = false;
       });
     },
   },
+  components: { CustomFilter }
 };
 </script>
 
