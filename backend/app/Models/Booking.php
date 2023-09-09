@@ -100,6 +100,13 @@ class Booking extends Model
         } else {
             $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
         }
+
+        if (isset($this->attributes['room_category_type'])) {
+            if ($this->attributes['room_category_type'] == 'Hall') {
+
+                $this->attributes['check_in'] = $value;
+            }
+        }
     }
 
     public function SetReferenceNoAttribute($value)
@@ -116,6 +123,12 @@ class Booking extends Model
             $cod = $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
         }
 
+        if (isset($this->attributes['room_category_type'])) {
+            if ($this->attributes['room_category_type'] == 'Hall') {
+
+                $this->attributes['check_out'] = $value;
+            }
+        }
         // dd($cod);
 
         // $date = Carbon::parse($value);
@@ -186,6 +199,7 @@ class Booking extends Model
     {
         return [
             "customer_id",
+            "room_category_type",
             "booking_status",
             "customer_type",
             "customer_status",
@@ -213,6 +227,7 @@ class Booking extends Model
             "paid_by",
             "purpose",
             "gst_number",
+
         ];
     }
 

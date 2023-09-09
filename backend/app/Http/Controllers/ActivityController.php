@@ -22,7 +22,7 @@ class ActivityController extends Controller
             } else {
                 return $this->response('Activity cannot create.', null, false);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }

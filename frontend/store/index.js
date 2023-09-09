@@ -8,6 +8,11 @@ export const state = () => ({
   booking_payload: "",
   widget_data: "",
   widget_data_booking_confirmation: "",
+  partyHallBookingCustomer: {},
+  partyHallBookingEvents: {},
+  partyHallBookingFood: {},
+  partyHallBookingAmount: {},
+  partyHallBookingExtra: {},
 });
 
 // contains your mutations
@@ -30,6 +35,21 @@ export const mutations = {
     state.booking_payload = value;
     // console.log(state.reservation);
     // console.log(state);
+  },
+  partyHallBookingCustomer(state, value) {
+    state.partyHallBookingCustomer = value;
+  },
+  partyHallBookingExtra(state, value) {
+    state.partyHallBookingExtra = value;
+  },
+  partyHallBookingEvents(state, value) {
+    state.partyHallBookingEvents = value;
+  },
+  partyHallBookingFood(state, value) {
+    state.partyHallBookingFood = value;
+  },
+  partyHallBookingAmount(state, value) {
+    state.partyHallBookingAmount = value;
   },
   setDataToSend(state, data) {
     state.dataToSend = data;

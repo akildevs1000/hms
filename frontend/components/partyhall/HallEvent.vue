@@ -11,50 +11,65 @@
                             <v-menu v-model="date_menu" :close-on-content-click="false" :nudge-right="40"
                                 transition="scale-transition" offset-y min-width="auto">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="event.date" readonly label="Date Of event" v-on="on"
-                                        v-bind="attrs" :hide-details="true" dense outlined required
-                                        :rules="nameRules"></v-text-field>
+                                    <v-text-field v-model="event.date" readonly label="Date Of event *" v-on="on"
+                                        v-bind="attrs" :hide-details="true" dense outlined required :rules="nameRules"
+                                        append-icon="mdi-calendar-month"></v-text-field>
                                 </template>
-                                <v-date-picker v-model="event.date" @input="date_menu = false"></v-date-picker>
+                                <v-date-picker style="height:470px" v-model="event.date"
+                                    @input="date_menu = false"></v-date-picker>
                             </v-menu>
                         </v-col>
                         <v-col md="4" cols="12">
-                            <v-text-field dense label="Type of Event" outlined type="text" v-model="event.event_type"
-                                required :rules="nameRules"></v-text-field>
+
+                            <v-select v-model="event.event_type" :items="event_type_names" item-text="name" item-value="id"
+                                label="Type of Event *" append-icon="mdi-party-popper" dense flat outlined required
+                                :rules="nameRules">
+                            </v-select>
                         </v-col>
                         <v-col md="4" cols="12">
-                            <v-text-field dense label="Number of Pax" outlined type="text" v-model="event.pax" required
-                                :rules="nameRules"></v-text-field>
+                            <v-text-field dense label="Number of Pax" outlined type="number" v-model="event.pax" required
+                                :rules="nameRules" append-icon="mdi-account-details-outline"></v-text-field>
                         </v-col>
                         <v-col md="4" cols="12">
-                            <v-select v-model="event.start_time" :items="hours" item-text="name" item-value="id" item
-                                label="Start Time" dense flat outlined required :rules="nameRules">
+                            <v-select v-model="event.start_time" :items="hours" item-text="name" item-value="id"
+                                label="Start Time" append-icon="mdi-clock-outline" dense flat outlined required
+                                :rules="nameRules">
                             </v-select>
                         </v-col>
                         <v-col md="4" cols="12">
                             <v-select v-model="event.end_time" :items="hours" item-text="name" item-value="id" item
-                                label="End Time" dense flat outlined required :rules="nameRules">
+                                label="End Time" append-icon="mdi-clock-outline" :min="event.start_time" dense flat outlined
+                                required :rules="nameRules">
                             </v-select>
                         </v-col>
 
 
 
                         <v-col md="4" cols="12">
-                            <v-text-field dense label="Special Setup" outlined type="text"
-                                v-model="event.special_setup"></v-text-field>
+                            <v-text-field dense label="Special Setup" outlined type="text" v-model="event.special_setup"
+                                append-icon="mdi-folder-star"></v-text-field>
                         </v-col>
 
                         <v-col md="4" cols="12">
-                            <v-text-field dense label="Audio System" outlined type="text"
-                                v-model="event.audio_system"></v-text-field>
+
+                            <v-select v-model="event.audio_system" label="Audio System" :items="YesOrNO" item-text="name"
+                                item-value="id" dense flat outlined required :rules="nameRules"
+                                append-icon="mdi-surround-sound">
+                            </v-select>
                         </v-col>
                         <v-col md="4" cols="12">
-                            <v-text-field dense label="Projector" outlined type="text"
-                                v-model="event.projector"></v-text-field>
+
+
+                            <v-select v-model="event.projector" label="Projector" :items="YesOrNO" item-text="name"
+                                item-value="id" append-icon="mdi-projector" dense flat outlined required :rules="nameRules">
+                            </v-select>
                         </v-col>
                         <v-col md="4" cols="12">
-                            <v-text-field dense label="Stage Decoration" outlined type="text"
-                                v-model="event.stage_decoration"></v-text-field>
+
+                            <v-select v-model="event.stage_decoration" label="Stage Decoration" :items="YesOrNO"
+                                item-text="name" append-icon="mdi-postage-stamp" item-value="id" dense flat outlined
+                                required :rules="nameRules">
+                            </v-select>
                         </v-col>
 
 
@@ -69,7 +84,7 @@
 
 
 
-                        <v-btn color="primary" fill dense @click="validate">
+                        <v-btn color="primary" fill dense @click="nextTab()">
                             Next
                         </v-btn>
                     </v-col>
@@ -89,14 +104,14 @@
 <script>
 
 export default {
-
+    props: ["nextTabTrigger"],
     data() {
         return {
             date_menu: false,
             valid: true,
 
             nameRules: [
-                v => !!v || 'Name is required',
+                v => v !== undefined && v !== null && v !== '' ? true : 'Required',
 
             ],
 
@@ -110,41 +125,83 @@ export default {
             vertical: false,
 
 
-            event: { date: '', event_type: '', start_time: '', end_time: '' },
+            event: {},
+            event_type_names: [{ id: 1, name: "Marriage" }
+                , { id: 2, name: "Reception" }
+                , { id: 3, name: "Office Meeting" }],
+            YesOrNO: [{ id: 1, name: "Yes" }, { id: 0, name: "No" }],
             hours: [
-                { id: 10, name: "10AM" }
-                , { id: 11, name: "11AM" }
-                , { id: 12, name: "12PM" }
-                , { id: 13, name: "01PM" }
-                , { id: 14, name: "02PM" }
-                , { id: 15, name: "03PM" }
-                , { id: 16, name: "04PM" }
-                , { id: 17, name: "05PM" }
-                , { id: 18, name: "06PM" }
-                , { id: 19, name: "07PM" }
-                , { id: 20, name: "08PM" }
-                , { id: 21, name: "09PM" }
-                , { id: 22, name: "010PM" }
-                , { id: 23, name: "011PM" }
-                , { id: 0, name: "12AM" }
-                , { id: 1, name: "01AM" }
-                , { id: 2, name: "02AM" }
-                , { id: 3, name: "03AM" }
-                , { id: 4, name: "04AM" }
-                , { id: 5, name: "05AM" }
-                , { id: 6, name: "06AM" }
-                , { id: 7, name: "07AM" }
-                , { id: 8, name: "08AM" }
-                , { id: 9, name: "09AM" }
+                { id: 9, name: "09 AM" }
+                , { id: 10, name: "10 AM" }
+                , { id: 11, name: "11 AM" }
+                , { id: 12, name: "12 PM" }
+                , { id: 13, name: "01 PM" }
+                , { id: 14, name: "02 PM" }
+                , { id: 15, name: "03 PM" }
+                , { id: 16, name: "04 PM" }
+                , { id: 17, name: "05 PM" }
+                , { id: 18, name: "06 PM" }
+                , { id: 19, name: "07 PM" }
+                , { id: 20, name: "08 PM" }
+                , { id: 21, name: "09 PM" }
+                , { id: 22, name: "10 PM" }
+                , { id: 23, name: "11 PM" }
+                // , { id: 0, name: "12 AM" }
+                // , { id: 1, name: "01 AM" }
+                // , { id: 2, name: "02 AM" }
+                // , { id: 3, name: "03 AM" }
+                // , { id: 4, name: "04 AM" }
+                // , { id: 5, name: "05 AM" }
+                // , { id: 6, name: "06 AM" }
+                // , { id: 7, name: "07 AM" }
+                // , { id: 8, name: "08 AM" }
+
 
             ],
 
         };
     },
+    watch: {
+
+
+        // event() {
+        //     let obj = { ...this.event };
+        //     Object.assign({}, obj)
+        //     obj = JSON.parse(JSON.stringify(obj))
+
+        //     this.$store.commit("partyHallBookingEvents", obj);
+
+        // },
+        nextTabTrigger() {
+            let obj = { ...this.event };
+            Object.assign({}, obj)
+            obj = JSON.parse(JSON.stringify(obj))
+
+            this.$store.commit("partyHallBookingEvents", obj);
+
+        },
+
+    },
     created() {
 
     },
     methods: {
+        nextTab() {
+
+
+
+            if (this.validate()) {
+
+                let obj = { ...this.event };
+                Object.assign({}, obj)
+                obj = JSON.parse(JSON.stringify(obj))
+
+                this.$store.commit("partyHallBookingEvents", obj);
+                this.$emit("c-next-tab", null);
+
+            }
+
+        },
         can(per) {
             let u = this.$auth.user;
             return (
@@ -152,7 +209,7 @@ export default {
             );
         },
         validate() {
-            this.$refs.form.validate()
+            return this.$refs.form.validate()
         },
         // reset() {
         //     this.$refs.form.reset()

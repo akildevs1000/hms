@@ -175,15 +175,31 @@ class BookedRoom extends Model
 
     public function SetCheckInAttribute($value)
     {
+        if (isset($this->attributes['room_category_type'])) {
+            if ($this->attributes['room_category_type'] == 'Hall') {
+
+                $this->attributes['check_in'] = $value;
+            }
+        } else {
+            $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+        }
         // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
 
-        $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+
     }
 
     public function SetCheckOutAttribute($value)
     {
         // dd($this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value)));
-        $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
+
+        if (isset($this->attributes['room_category_type'])) {
+            if ($this->attributes['room_category_type'] == 'Hall') {
+
+                $this->attributes['check_out'] = $value;
+            }
+        } else {
+            $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
+        }
 
         // $date = Carbon::parse($value);
         // $date->addDays(1);
