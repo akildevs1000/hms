@@ -51,25 +51,56 @@
                         </v-col>
 
                         <v-col md="4" cols="12">
-
-                            <v-select v-model="event.audio_system" label="Audio System" :items="YesOrNO" item-text="name"
+                            <h4> Audio System</h4> <v-radio-group v-model="event.audio_system" lable="Test" outlined row>
+                                <v-radio label="Yes" value="1">
+                                    <template v-slot:label>
+                                        <div> <strong class="success--text">Yes </strong></div>
+                                    </template>
+                                </v-radio>
+                                <v-radio label="No" value="0">
+                                    <template v-slot:label>
+                                        <div> <strong class="error--text">No </strong></div>
+                                    </template></v-radio>
+                            </v-radio-group>
+                            <!-- <v-select v-model="event.audio_system" label="Audio System" :items="YesOrNO" item-text="name"
                                 item-value="id" dense flat outlined required :rules="nameRules"
                                 append-icon="mdi-surround-sound">
-                            </v-select>
+                            </v-select> -->
                         </v-col>
                         <v-col md="4" cols="12">
+                            <h4> Projector</h4> <v-radio-group v-model="event.projector" lable="Test" outlined row>
+                                <v-radio label="Yes" value="1">
+                                    <template v-slot:label>
+                                        <div> <strong class="success--text">Yes </strong></div>
+                                    </template>
+                                </v-radio>
+                                <v-radio label="No" value="0">
+                                    <template v-slot:label>
+                                        <div> <strong class="error--text">No </strong></div>
+                                    </template></v-radio>
+                            </v-radio-group>
 
-
-                            <v-select v-model="event.projector" label="Projector" :items="YesOrNO" item-text="name"
+                            <!-- <v-select v-model="event.projector" label="Projector" :items="YesOrNO" item-text="name"
                                 item-value="id" append-icon="mdi-projector" dense flat outlined required :rules="nameRules">
-                            </v-select>
+                            </v-select> -->
                         </v-col>
                         <v-col md="4" cols="12">
-
-                            <v-select v-model="event.stage_decoration" label="Stage Decoration" :items="YesOrNO"
+                            <h4>Stage Decoration</h4> <v-radio-group v-model="event.stage_decoration" lable="Test" outlined
+                                row>
+                                <v-radio label="Yes" value="1">
+                                    <template v-slot:label>
+                                        <div> <strong class="success--text">Yes </strong></div>
+                                    </template>
+                                </v-radio>
+                                <v-radio label="No" value="0">
+                                    <template v-slot:label>
+                                        <div> <strong class="error--text">No </strong></div>
+                                    </template></v-radio>
+                            </v-radio-group>
+                            <!-- <v-select v-model="event.stage_decoration" label="Stage Decoration" :items="YesOrNO"
                                 item-text="name" append-icon="mdi-postage-stamp" item-value="id" dense flat outlined
                                 required :rules="nameRules">
-                            </v-select>
+                            </v-select> -->
                         </v-col>
 
 
@@ -183,6 +214,17 @@ export default {
 
     },
     created() {
+
+        let booking_payload = this.$store.state.booking_payload;
+
+        if (booking_payload)
+
+            if (booking_payload.params.checkin) {
+                this.event.date = booking_payload.params.checkin;
+                this.room_no = booking_payload.params.room_no;
+            }
+
+
 
     },
     methods: {

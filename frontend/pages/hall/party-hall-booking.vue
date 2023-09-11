@@ -9,8 +9,8 @@
                     <div class="py-3" style="background-color: #1259a7">
                         <span class="mx-2">Party Hall booking </span>
                     </div>
-                    <v-col cols="6" class="mx-2 text-center">
-                        <h2>Customer </h2>
+                    <v-col cols="6" class="  text-center">
+                        <h2>{{ tabName[activeTab] }} Information - {{ room_no }}</h2>
                     </v-col>
 
                     <v-spacer></v-spacer>
@@ -192,7 +192,7 @@ export default {
                 'Item 4',
             ],
             checkbox: false,
-
+            tabName: ['Guest', 'Event', 'Food ', 'Price List'],
             hours: [
                 { id: 9, name: "09 AM" }
                 , { id: 10, name: "10 AM" }
@@ -227,7 +227,7 @@ export default {
             customer: {},
             snackbar_response: '',
             snackbar: false,
-
+            room_no: '',
         };
     },
     watch: {
@@ -240,6 +240,20 @@ export default {
 
     },
     created() {
+        let booking_payload = this.$store.state.booking_payload;
+
+
+        if (booking_payload)
+            if (booking_payload.params.room_no) {
+
+                this.room_no = booking_payload.params.room_no;
+            }
+        this.$store.commit("partyHallBookingCustomer", {});
+        this.$store.commit("partyHallBookingEvents", {});
+        this.$store.commit("partyHallBookingFood", {});
+        this.$store.commit("partyHallBookingAmount", {});
+        this.$store.commit("partyHallBookingExtra", {});
+
 
     },
     methods: {

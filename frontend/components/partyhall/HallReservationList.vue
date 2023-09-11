@@ -452,6 +452,7 @@ export default {
         errors: [],
         checkData: {},
         new_payment: 0,
+
     }),
 
     computed: {},
@@ -468,6 +469,8 @@ export default {
         },
     },
     created() {
+
+
         // this.loading = true;
         this.month = new Date().getMonth();
         this.year = new Date().getFullYear();

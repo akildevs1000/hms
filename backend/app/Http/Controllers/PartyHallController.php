@@ -97,7 +97,7 @@ class PartyHallController extends Controller
         $company_id = $request->company_id;
 
 
-        $prices = RoomType::whereCompanyId($request->company_id)->whereName('HALL')
+        $prices = RoomType::whereCompanyId($request->company_id)->whereName('Hall')
             ->first(['holiday_price', 'weekend_price', 'weekday_price', 'projector_charges', 'cleaning_charges', 'electricity_charges', 'audio_charges']);
 
         $weekModel = Weekend::where('company_id', $request->company_id)->first();

@@ -168,9 +168,17 @@
 
 
                                 </v-row>
+
+                                <v-row>
+                                    <v-col cols="12">
+                                        <hr />
+                                    </v-col>
+                                </v-row>
+
+
                                 <v-row>
 
-                                    <hr />
+
                                     <v-col cols="9" class="text-right bold  "
                                         style="font-weight:bold;text-decoration: :underline; ">
                                         Total
@@ -178,7 +186,7 @@
 
                                     </v-col>
                                     <v-col cols="2" class="text-right bold ;text-decoration: :underline;">
-                                        {{ hallTaxableTotalAmount }}
+                                        {{ getPriceFormat(hallTaxableTotalAmount) }}
                                     </v-col>
                                 </v-row>
 
@@ -192,7 +200,7 @@
 
                                     </v-col>
                                     <v-col cols="2" class="text-right bold ;color:red">
-                                        {{ room_tax_amount }}
+                                        {{ getPriceFormat(room_tax_amount) }}
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -204,7 +212,7 @@
 
                                     </v-col>
                                     <v-col cols="2" class="text-right bold ;color:red">
-                                        -{{ discount }}
+                                        -{{ getPriceFormat(discount) }}
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -216,7 +224,7 @@
 
                                     </v-col>
                                     <v-col cols="2" class="text-right bold">
-                                        {{ AmountGrandTotal }}
+                                        {{ getPriceFormat(AmountGrandTotal) }}
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -417,8 +425,7 @@ export default {
             var partyHallBookingFood = Object.keys(obj).map(function (key) { return obj[key]; });
 
 
-            console.log("partyHallBookingFood", partyHallBookingFood);
-            if ((partyHallBookingFood)) {
+            if ((partyHallBookingFood[0])) {
                 partyHallBookingFood[0].forEach(item => {
                     if (parseInt(item.qty) > 0 && parseInt(item.price_per_item)) {
                         item.total = parseInt(item.qty) * parseInt(item.price_per_item);
@@ -525,6 +532,11 @@ export default {
 
         storeHallInformation() {
 
+            let booking_payload = this.$store.state.booking_payload;
+
+
+
+
             let totlRoomAmount = this.hallRentTotalAmount + this.cleaningTotalAmount + this.electricityTotalAmount + this.audioTotalAmount + this.projecterTotalAmount;
 
             let room_discount = this.discount;
@@ -545,8 +557,8 @@ export default {
                 , partyHallBookingFood: partyHallBookingFood
                 , partyHallBookingAmount: partyHallBookingAmount
                 , partyHallBookingExtra: partyHallBookingExtra
-                , hallRoomNumber: 900
-                , hallRoomId: 900
+                , hallRoomNumber: booking_payload.params.room_no
+                , hallRoomId: booking_payload.params.room_no
                 , company_id: this.$auth.user.company.id
                 , user_id: this.$auth.user.id
                 , discount: room_discount
@@ -558,7 +570,6 @@ export default {
             let total_amount_without_food_after_discount_with_tax = parseFloat(total_amount_with_food_after_discount_with_tax) + parseFloat(room_discount) - parseFloat(this.foodTotalAmount);
 
             this.subLoad = true;
-            console.log('payload', payload);
             let roomNumber = 900;
             let roomNumberId = 102;
 

@@ -164,7 +164,7 @@ export default {
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          room_type: 'hall',
+          room_type: 'Hall',
         },
       };
       this.$axios

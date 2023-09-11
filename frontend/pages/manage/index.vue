@@ -123,7 +123,7 @@
                 </v-text-field>
               </v-col>
             </v-row>
-            <v-row v-if="editPriceList.name == 'HALL'">
+            <v-row v-if="editPriceList.name == 'Hall'">
               <v-col md="3">
                 <v-text-field v-model="editPriceList.projector_charges" label="Projector Charges"
                   placeholder="Projector Charges" id="id" outlined dense>

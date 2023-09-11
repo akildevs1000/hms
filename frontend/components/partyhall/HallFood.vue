@@ -158,7 +158,7 @@ export default {
                 name: "", price_per_item: "", qty: "", total: ""
             });
 
-            console.log("this.Food.items", this.Food.items);
+
 
         },
 
@@ -197,11 +197,11 @@ export default {
 
 
             if (this.validate()) {
-                console.log(this.Food);
+
                 let obj = this.Food.items;
                 Object.assign({}, obj)
                 obj = JSON.parse(JSON.stringify(obj));
-                console.log(obj);
+
                 this.$store.commit("partyHallBookingFood", obj);
                 this.$emit("c-next-tab", null);
 
