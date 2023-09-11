@@ -90,5 +90,6 @@ class HallBookings extends Model
         'hall_extra_amounts_total',
         'booking_id',
         'event_type_id',
+        'discount',
     ];
 }

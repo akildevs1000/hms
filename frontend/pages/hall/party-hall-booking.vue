@@ -159,6 +159,7 @@ export default {
     },
     data() {
         return {
+
             eventAdvanceAmount: 0,
             eventBalanceAmount: 0,
 

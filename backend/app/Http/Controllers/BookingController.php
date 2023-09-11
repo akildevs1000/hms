@@ -613,12 +613,14 @@ class BookingController extends Controller
     public function storeDocument(Request $request)
     {
 
-        // return $request->all();
+
 
         $booking = Booking::find($request->booking_id);
         $customer = Customer::find($booking->customer_id);
         if ($request->hasFile('document')) {
             $file = $request->file('document');
+
+            return  $file;
             $ext = $file->getClientOriginalExtension();
             $fileName = time() . '.' . $ext;
             $path = $file->storeAs('public/documents/booking', $fileName);
@@ -1745,6 +1747,8 @@ class BookingController extends Controller
         $model = Booking::query()
             ->latest()
             ->filter(request('search'));
+
+        $model->where('room_category_type', null);
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
             $model->where('source', $request->source);

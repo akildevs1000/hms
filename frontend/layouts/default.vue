@@ -268,13 +268,13 @@ export default {
             },
             {
               icon: "mdi mdi-home-account",
-              title: "On Going",
+              title: "In House",
               to: "/hall/ongoing",
               menu: "guest_access",
             },
             {
               icon: "mdi mdi-home-export-outline",
-              title: "Completed",
+              title: "Check Out",
               to: "/hall/completed",
               menu: "reservation_access",
             },

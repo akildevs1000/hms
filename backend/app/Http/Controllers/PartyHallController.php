@@ -8,6 +8,9 @@ use App\Models\HallBookingExtraAmounts;
 use App\Models\HallBookingFood;
 use App\Models\HallBookings;
 use App\Models\IdCardType;
+use App\Models\RoomType;
+use App\Models\Weekend;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
 class PartyHallController extends Controller
@@ -87,6 +90,70 @@ class PartyHallController extends Controller
         $this->storeBookingInfoHall($hallBookingRequest, $booking_id);
         return  $booking_id;
     }
+
+    public function getHallPriceList(Request $request)
+    {
+
+        $company_id = $request->company_id;
+
+
+        $prices = RoomType::whereCompanyId($request->company_id)->whereName('HALL')
+            ->first(['holiday_price', 'weekend_price', 'weekday_price', 'projector_charges', 'cleaning_charges', 'electricity_charges', 'audio_charges']);
+
+        $weekModel = Weekend::where('company_id', $request->company_id)->first();
+        $weekends = $weekModel->day;
+
+        $arr = [];
+        $period = CarbonPeriod::create($request->start, $request->start);
+        foreach ($period as $date) {
+            $iteration_date = $date->format('Y-m-d');
+            $day = $date->format('D');
+            $isWeekend = in_array($day, $weekends);
+            $isHoliday = (new BookingController)->checkHoliday($iteration_date, $company_id);
+            if ($isHoliday) {
+                $arr[] = [
+                    "date" => $iteration_date,
+                    "price" => $prices->holiday_price,
+                    "day_type" => "holiday",
+                    "day" => $day,
+                    "tax" => (new BookingController)->getTaxSlab($prices->holiday_price, $company_id),
+                    "room_price" => $prices->holiday_price,
+                    "projector_charges" => $prices->projector_charges,
+                    "cleaning_charges" => $prices->cleaning_charges,
+                    "electricity_charges" => $prices->electricity_charges,
+                    "audio_charges" => $prices->audio_charges,
+                ];
+            } elseif ($isWeekend) {
+                $arr[] = [
+                    "date" => $iteration_date,
+                    "price" => $prices->weekend_price,
+                    "tax" => (new BookingController)->getTaxSlab($prices->weekend_price, $company_id),
+                    "day_type" => "weekend",
+                    "day" => $day,
+                    "room_price" => $prices->weekend_price,
+                    "projector_charges" => $prices->projector_charges,
+                    "cleaning_charges" => $prices->cleaning_charges,
+                    "electricity_charges" => $prices->electricity_charges,
+                    "audio_charges" => $prices->audio_charges,
+                ];
+            } else {
+                $arr[] = [
+                    "date" => $iteration_date,
+                    "price" => $prices->weekday_price,
+                    "day_type" => "weekday",
+                    "day" => $day,
+                    "tax" => (new BookingController)->getTaxSlab($prices->weekday_price, $company_id),
+                    "room_price" => $prices->weekday_price,
+                    "projector_charges" => $prices->projector_charges,
+                    "cleaning_charges" => $prices->cleaning_charges,
+                    "electricity_charges" => $prices->electricity_charges,
+                    "audio_charges" => $prices->audio_charges,
+                ];
+            }
+        }
+
+        return  $arr;
+    }
     public function storeBookingInfoHall($request, $booking_id)
     {
 
@@ -152,8 +219,9 @@ class PartyHallController extends Controller
         $array['event_stage_decoration'] = $request->partyHallBookingEvents['stage_decoration'];;
 
 
-        $hall_rent_amount_per_hour = 20000;
+        $hall_rent_amount_per_hour = $request->partyHallBookingAmount['hall_rent_amount_per_hour'];;;
         $hall_rent_amount = $request->partyHallBookingAmount['hallRentTotalAmount'];;
+        $discount = $request->partyHallBookingAmount['discount'];;
         $hall_electricity_amount = $request->partyHallBookingAmount['electricityTotalAmount'];;
         $hall_projector_amount = $request->partyHallBookingAmount['projecterTotalAmount'];;
         $hall_audio_system = $request->partyHallBookingAmount['audioTotalAmount'];;
@@ -162,6 +230,7 @@ class PartyHallController extends Controller
         $array['hall_total_hours'] = $request->partyHallBookingEvents['end_time'];
         -$request->partyHallBookingEvents['start_time'];;
         $array['hall_rent_amount'] = $hall_rent_amount;
+        $array['discount'] = $discount;
 
         $array['hall_rent_per_hour'] = $hall_rent_amount_per_hour;
         $array['hall_electricity_amount'] = $hall_electricity_amount;
@@ -178,37 +247,43 @@ class PartyHallController extends Controller
         //others 
         foreach ($request->partyHallBookingExtra as $extraitem) {
 
-
-            $othersTotal += $extraitem[0]['total'];
+            if (isset($extraitem[0]))
+                $othersTotal += $extraitem[0]['total'];
         }
 
-
+        $hall_total_amount_without_food_without_tax = 0;
         $array['hall_extra_amounts_total'] = $othersTotal;
-        $hall_total_amount_without_food = $array['hall_rent_amount']
-            + $hall_electricity_amount
-            + $hall_projector_amount
-            + $hall_audio_system
-            + $hall_cleaning_charges
-            + $othersTotal;
-
-
-        $hall_tax_per = $BookingObj->getTaxSlab($hall_total_amount_without_food, $request->company_id);;
-        $hall_tax_amount = 1;
-        if ($hall_total_amount_without_food > 0 && $hall_tax_per)
-            $hall_tax_amount = ($hall_total_amount_without_food * $hall_tax_per) / 100;
 
         //food 
         $foodTotal = 0;
 
         foreach ($request->partyHallBookingFood as $foodItem) {
-            $foodTotal += $foodItem[0]['total'];
+            if (isset($foodItem[0]))
+                $foodTotal += $foodItem[0]['total'];
         }
 
-        $food_tax_per = 5;
-        $food_tax_amount = 1;
-        if ($foodTotal > 0 && $food_tax_per)
-            $food_tax_amount = ($foodTotal * $food_tax_per) / 100;
 
+        $hall_total_amount_without_food = $request->partyHallBookingAmount['AmountGrandTotalWithFood'] - $foodTotal;
+
+
+        $hall_tax_per = $BookingObj->getTaxSlab($hall_total_amount_without_food, $request->company_id);;
+        $hall_tax_amount = 1;
+
+        if ($hall_total_amount_without_food > 0 && $hall_tax_per) {
+            $hall_total_amount_without_food_without_tax = ($hall_total_amount_without_food * 100) / (100 + $hall_tax_per);
+            $hall_tax_amount = $hall_total_amount_without_food - $hall_total_amount_without_food_without_tax;
+        }
+
+
+        $food_tax_per = 5;
+        $food_tax_amount = 0;
+        $food_total_without_tax = 0;
+        // if ($foodTotal > 0 && $food_tax_per)
+        //     $food_tax_amount = ($foodTotal * $food_tax_per) / 100;
+        if ($foodTotal > 0 && $food_tax_per) {
+            $food_total_without_tax = ($foodTotal * 100) / (100 + $hall_tax_per);
+            $food_tax_amount = $foodTotal - $food_total_without_tax;
+        }
 
         $array['hall_tax_per'] = $hall_tax_per;
         $array['hall_sgst_amount'] = $hall_tax_amount / 2;
@@ -219,7 +294,7 @@ class PartyHallController extends Controller
         $array['food_cgst_amount'] =  $food_tax_amount / 2;
         $array['food_sgst_amount'] = $food_tax_amount / 2;
         $array['inv_total_tax'] = $hall_tax_amount + $food_tax_amount;
-        $array['inv_total_without_tax'] = $hall_total_amount_without_food + $foodTotal;
+        $array['inv_total_without_tax'] = $hall_total_amount_without_food_without_tax + $food_total_without_tax;
         $array['inv_total'] = $array['inv_total_without_tax'] + $array['inv_total_tax'];
         $array['booking_id'] = $booking_id;
 
@@ -231,13 +306,18 @@ class PartyHallController extends Controller
 
         //partyHallBookingExtra
         foreach ($request->partyHallBookingExtra as $extraitem) {
-            $extraitem[0]['booking_id'] = $hallBookingId;
-            $hallBookingObj =  HallBookingExtraAmounts::create($extraitem[0]);
+            if ($extraitem[0]['total'] > 0) {
+                $extraitem[0]['booking_id'] = $hallBookingId;
+                $hallBookingObj =  HallBookingExtraAmounts::create($extraitem[0]);
+            }
         }
         //food 
         foreach ($request->partyHallBookingFood as $extraitem) {
-            $extraitem[0]['booking_id'] = $hallBookingId;
-            $hallBookingObj =  HallBookingFood::create($extraitem[0]);
+            if (isset($extraitem[0]))
+                if ($extraitem[0]['total'] > 0) {
+                    $extraitem[0]['booking_id'] = $hallBookingId;
+                    $hallBookingObj =  HallBookingFood::create($extraitem[0]);
+                }
         }
 
         return $array;

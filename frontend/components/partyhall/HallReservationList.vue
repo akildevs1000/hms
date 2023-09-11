@@ -36,7 +36,7 @@
                     <v-icon dark class="pa-0" @click="payingDialog = false">mdi mdi-close-box</v-icon>
                 </v-toolbar>
                 <v-card-text>
-                    <HallPaying :BookingData="checkData" @close-dialog="closeDialogs"></HallPaying>
+                    <Paying :BookingData="checkData" @close-dialog="closeDialogs"></Paying>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -160,18 +160,18 @@
                     {{ item.item.inv_total - 0 }}
                 </template>
                 <template v-slot:item.view="item">
-                    <v-icon @click="viewCustomerBilling(item.item)" x-small color="primary" class="mr-2">
+                    <v-icon @click="viewCustomerBilling(item.item.booking)" x-small color="primary" class="mr-2">
                         mdi-eye
                     </v-icon>
                 </template>
                 <template v-slot:item.payment="item">
                     <v-icon v-if="can('reservation_edit') || can('in_house_edit') || can('checkout_edit')"
-                        @click="get_payment(item.item)" x-small color="primary" class="mr-2">
+                        @click="get_payment(item.item.booking)" x-small color="primary" class="mr-2">
                         mdi-cash-multiple
                     </v-icon>
                 </template>
                 <template v-slot:item.invoice="item">
-                    <v-icon @click="redirect_to_invoice(item.item.id)" x-small color="primary" class="mr-2">
+                    <v-icon @click="redirect_to_invoice(item.item.booking.id)" x-small color="primary" class="mr-2">
                         mdi-cash-multiple
                     </v-icon>
                 </template>
@@ -420,6 +420,14 @@ export default {
                 key: "employee_id",
                 filterable: true,
                 value: "booking_date",
+            },
+            {
+                text: "View",
+                align: "left",
+                sortable: false,
+                key: "employee_id",
+                filterable: true,
+                value: "view",
             },
             {
                 text: "Pay",

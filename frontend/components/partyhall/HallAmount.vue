@@ -29,13 +29,13 @@
                     <v-row>
                         <v-col md="3" cols="12"><label>Hall rent</label>
                         </v-col>
-                        <v-col md="3" cols="12"><label>{{ hallRentPerHour }} Per Hour</label>
+                        <v-col md="3" cols="12"><label>{{ getPriceFormat(hallRentPerHour) }} Per Hour</label>
                         </v-col>
                         <v-col md="3" cols="12"><label>{{ durationInHours }} Hours</label>
                         </v-col>
                         <v-col md="2" cols="12" class="text-right">
 
-                            {{ hallRentTotalAmount }}
+                            {{ getPriceFormat(hallRentTotalAmount) }}
                         </v-col>
                         <v-col md="1" cols="12" class="text-right">
 
@@ -45,13 +45,13 @@
                     <v-row>
                         <v-col md="3" cols="12"><label>Electricity (EB) Charges</label>
                         </v-col>
-                        <v-col md="3" cols="12"><label>{{ electricityTotalAmount }}</label>
+                        <v-col md="3" cols="12"><label>{{ getPriceFormat(electricityTotalAmount) }}</label>
                         </v-col>
                         <v-col md="3" cols="12"><label>1 Day</label>
                         </v-col>
                         <v-col md="2" cols="12" class="text-right">
 
-                            {{ electricityTotalAmount }}
+                            {{ getPriceFormat(electricityTotalAmount) }}
                         </v-col>
                         <v-col md="1" cols="12" class="text-right">
 
@@ -62,13 +62,13 @@
                     <v-row>
                         <v-col md="3" cols="12"><label>Sound System </label>
                         </v-col>
-                        <v-col md="3" cols="12"><label>{{ audioTotalAmount }}</label>
+                        <v-col md="3" cols="12"><label>{{ getPriceFormat(audioTotalAmount) }}</label>
                         </v-col>
                         <v-col md="3" cols="12"><label>1 Day</label>
                         </v-col>
                         <v-col md="2" cols="12" class="text-right">
 
-                            {{ audioTotalAmount }}
+                            {{ getPriceFormat(audioTotalAmount) }}
                         </v-col>
                         <v-col md="1" cols="12" class="text-right">
 
@@ -78,13 +78,13 @@
                     <v-row>
                         <v-col md="3" cols="12"><label> Projector</label>
                         </v-col>
-                        <v-col md="3" cols="12"><label>{{ projecterTotalAmount }}</label>
+                        <v-col md="3" cols="12"><label>{{ getPriceFormat(projecterTotalAmount) }}</label>
                         </v-col>
                         <v-col md="3" cols="12"><label>1 Day</label>
                         </v-col>
                         <v-col md="2" cols="12" class="text-right">
 
-                            {{ projecterTotalAmount }}
+                            {{ getPriceFormat(projecterTotalAmount) }}
                         </v-col>
                         <v-col md="1" cols="12" class="text-right">
 
@@ -94,13 +94,13 @@
                     <v-row>
                         <v-col md="3" cols="12"><label>Setting arrangment & Cleaning charges</label>
                         </v-col>
-                        <v-col md="3" cols="12"><label> {{ cleaningTotalAmount }}</label>
+                        <v-col md="3" cols="12"><label> {{ getPriceFormat(cleaningTotalAmount) }}</label>
                         </v-col>
                         <v-col md="3" cols="12"><label>1 Day</label>
                         </v-col>
                         <v-col md="2" cols="12" class="text-right">
 
-                            {{ cleaningTotalAmount }}
+                            {{ getPriceFormat(cleaningTotalAmount) }}
                         </v-col>
                         <v-col md="1" cols="12" class="text-right">
 
@@ -116,7 +116,7 @@
                         </v-col>
                         <v-col md="2" cols="12" class="text-right">
 
-                            {{ foodTotalAmount }}
+                            {{ getPriceFormat(foodTotalAmount) }}
                         </v-col>
                         <v-col md="1" cols="12" class="text-right">
 
@@ -170,9 +170,48 @@
                                 </v-row>
                                 <v-row>
 
+                                    <hr />
+                                    <v-col cols="9" class="text-right bold  "
+                                        style="font-weight:bold;text-decoration: :underline; ">
+                                        Total
+
+
+                                    </v-col>
+                                    <v-col cols="2" class="text-right bold ;text-decoration: :underline;">
+                                        {{ hallTaxableTotalAmount }}
+                                    </v-col>
+                                </v-row>
+
+
+                                <v-row>
+
+
+                                    <v-col cols="9" class="text-right bold  " style="font-weight:bold;color:red">
+                                        Tax
+
+
+                                    </v-col>
+                                    <v-col cols="2" class="text-right bold ;color:red">
+                                        {{ room_tax_amount }}
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+
+
+                                    <v-col cols="9" class="text-right bold  " style="font-weight:bold;color:red">
+                                        Discount
+
+
+                                    </v-col>
+                                    <v-col cols="2" class="text-right bold ;color:red">
+                                        -{{ discount }}
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+
 
                                     <v-col cols="9" class="text-right bold" style="font-weight:bold">
-                                        Total
+                                        Grand Total
 
 
                                     </v-col>
@@ -190,6 +229,22 @@
 
 
 
+
+
+                    </v-row>
+
+                    <v-row>
+                        <v-col cols="1" class="text-left bold" style="font-weight:bold">
+                            Discount
+
+
+                        </v-col>
+                        <v-col cols="1" class="text-left bold" style="font-weight:bold">
+                            <v-text-field dense type="number" outlined v-model="discount" style="text-align:left"
+                                class="text-box-left-input bold"></v-text-field>
+
+
+                        </v-col>
 
 
                     </v-row>
@@ -226,15 +281,24 @@ export default {
     props: ["nextTabTrigger"],
     data() {
         return {
-            projecterTotalAmount: 1000,
-            hallRentPerHour: 20000,
+            discount: 0,
+            hallRentPerHour: 0,
+            projecterTotalAmount: 0,
+            cleaningTotalAmount: 0,
+            electricityTotalAmount: 0,
+            audioTotalAmount: 0,
+            tax_percentage: 0,
+            room_tax_amount: 0,
+
+
             durationInHours: 1,
             foodTotalAmount: 0,
-            cleaningTotalAmount: 1000,
-            electricityTotalAmount: 1000,
+
+
             hallRentTotalAmount: 0,
-            audioTotalAmount: 1000,
+
             AmountGrandTotal: 0,
+            hallTaxableTotalAmount: 0,
             ExtraCharges: {
                 items: [{ name: "", price_per_item: "", qty: "", total: "" }],
             },
@@ -261,40 +325,70 @@ export default {
         };
     },
     watch: {
-        nextTabTrigger() {
 
+        discount() {
             this.calculateGrandTotalAmount();
 
-            let amount = {
-                'hallRentTotalAmount': this.hallRentTotalAmount
-                , 'foodTotalAmount': this.foodTotalAmount
-                , 'cleaningTotalAmount': this.cleaningTotalAmount
-                , 'electricityTotalAmount': this.electricityTotalAmount
-                , 'audioTotalAmount': this.audioTotalAmount
-            };
+        },
+        nextTabTrigger() {
 
-            // this.$store.commit("partyHallBookingAmount", amount);
-            // this.$store.commit("partyHallBookingExtra", this.ExtraCharges);
+            //     this.calculateGrandTotalAmount();
 
-            let obj = { ...amount };
-            Object.assign({}, obj)
-            obj = JSON.parse(JSON.stringify(obj));
-            this.$store.commit("partyHallBookingAmount", amount);
+            //     let amount = {
+            //         'hallRentTotalAmount': this.hallRentTotalAmount
+            //         , 'foodTotalAmount': this.foodTotalAmount
+            //         , 'cleaningTotalAmount': this.cleaningTotalAmount
+            //         , 'electricityTotalAmount': this.electricityTotalAmount
+            //         , 'audioTotalAmount': this.audioTotalAmount
+            //     };
 
-            let obj2 = { ...this.ExtraCharges };
-            Object.assign({}, obj2)
-            obj = JSON.parse(JSON.stringify(obj2));
-            this.$store.commit("partyHallBookingExtra", obj2);
+            //     // this.$store.commit("partyHallBookingAmount", amount);
+            //     // this.$store.commit("partyHallBookingExtra", this.ExtraCharges);
+
+            //     let obj = { ...amount };
+            //     Object.assign({}, obj)
+            //     obj = JSON.parse(JSON.stringify(obj));
+            //     this.$store.commit("partyHallBookingAmount", amount);
+
+            //     let obj2 = { ...this.ExtraCharges };
+            //     Object.assign({}, obj2)
+            //     obj = JSON.parse(JSON.stringify(obj2));
+            //     this.$store.commit("partyHallBookingExtra", obj2);
         },
 
     },
     created() {
-        this.calculateGrandTotalAmount();
+
+        this.getHallPriceDetails();
+
 
 
     },
     methods: {
+        getHallPriceDetails() {
 
+            let partyHallBookingEvents = this.$store.state.partyHallBookingEvents;
+            let payload = {
+                params: {
+                    company_id: this.$auth.user.company.id,
+                    start: partyHallBookingEvents.date,
+                },
+            };
+            this.$axios.get(`hall/get_hall_prices`, payload).then(({ data }) => {
+
+                this.hallRentPerHour = parseFloat(data[0].price);
+                this.cleaningTotalAmount = parseFloat(data[0].cleaning_charges);
+
+                this.electricityTotalAmount = parseFloat(data[0].electricity_charges);
+
+                this.audioTotalAmount = parseFloat(data[0].audio_charges);
+
+                this.projecterTotalAmount = parseFloat(data[0].projector_charges);
+                this.tax_percentage = parseFloat(data[0].tax);
+
+                this.calculateGrandTotalAmount();
+            });
+        },
         calculateGrandTotalAmount() {
 
 
@@ -354,13 +448,13 @@ export default {
         // },
         calculateGrandPrice() {
 
-            this.AmountGrandTotal = this.hallRentTotalAmount + this.foodTotalAmount + this.cleaningTotalAmount + this.electricityTotalAmount + this.audioTotalAmount;
+            let AmountGrandTotalTemp = this.hallRentTotalAmount + this.foodTotalAmount + this.cleaningTotalAmount + this.electricityTotalAmount + this.audioTotalAmount + this.projecterTotalAmount;
 
 
             this.ExtraCharges.items.forEach(item => {
                 if (parseInt(item.qty) > 0 && parseInt(item.price_per_item)) {
                     item.total = parseInt(item.qty) * parseInt(item.price_per_item);
-                    this.AmountGrandTotal += item.total;
+                    AmountGrandTotalTemp += item.total;
 
                 }
                 else {
@@ -368,6 +462,12 @@ export default {
                 }
 
             });
+            this.hallTaxableTotalAmount = AmountGrandTotalTemp + this.foodTotalAmount;
+
+            this.room_tax_amount = AmountGrandTotalTemp * this.tax_percentage / 100;
+
+            this.AmountGrandTotal = AmountGrandTotalTemp + this.room_tax_amount - this.discount;
+
 
 
         },
@@ -392,6 +492,14 @@ export default {
                     , 'electricityTotalAmount': this.electricityTotalAmount
                     , 'audioTotalAmount': this.audioTotalAmount
                     , 'projecterTotalAmount': this.projecterTotalAmount
+                    , 'hall_rent_amount_per_hour': this.hallRentPerHour
+                    , 'discount': this.discount
+
+                    , 'AmountGrandTotalWithFood': this.AmountGrandTotal
+                    , 'AmountGrandTotalWithOutFood': this.AmountGrandTotal - this.foodTotalAmount
+                    , 'AmountRoomPriceWithTax_before_discount': this.hallTaxableTotalAmount + this.room_tax_amount + this.discount
+
+
                 };
                 let obj = { ...amount };
                 Object.assign({}, obj)
@@ -419,11 +527,10 @@ export default {
 
             let totlRoomAmount = this.hallRentTotalAmount + this.cleaningTotalAmount + this.electricityTotalAmount + this.audioTotalAmount + this.projecterTotalAmount;
 
-            let room_discount = 500;
-            let tax = 500;
+            let room_discount = this.discount;
+            let tax = this.tax_percentage;
             let totlRoomAmount_after_discount_with_tax = totlRoomAmount - room_discount + tax;
 
-            let total_amount_with_food_after_discount_with_tax = totlRoomAmount_after_discount_with_tax + this.foodTotalAmount;;
 
 
 
@@ -440,9 +547,15 @@ export default {
                 , partyHallBookingExtra: partyHallBookingExtra
                 , hallRoomNumber: 900
                 , hallRoomId: 900
-                , company_id: this.$auth.user.company.id,
-                user_id: this.$auth.user.id,
+                , company_id: this.$auth.user.company.id
+                , user_id: this.$auth.user.id
+                , discount: room_discount
             };
+
+            let total_amount_with_food_after_discount_with_tax = partyHallBookingAmount.AmountGrandTotalWithFood;;
+            let AmountRoomPriceWithTax_before_discount = partyHallBookingAmount.AmountGrandTotalWithFood;;
+
+
             this.subLoad = true;
             console.log('payload', payload);
             let roomNumber = 900;
@@ -484,7 +597,7 @@ export default {
                         "room_type": "Hall",
                         "room_category_type": "Hall",
                         "room_id": roomNumberId,
-                        "price": totlRoomAmount,
+                        "price": total_amount_with_food_after_discount_with_tax,
                         "days": 1,
                         "sgst": 0,
                         "cgst": 0,
@@ -494,7 +607,7 @@ export default {
                         "room_extra_amount": 0,
                         "extra_amount_reason": "",
                         "room_discount": room_discount,
-                        "after_discount": totlRoomAmount,
+                        "after_discount": total_amount_with_food_after_discount_with_tax,
                         "room_tax": tax,
                         "total_with_tax": 0,
                         "total": total_amount_with_food_after_discount_with_tax,
@@ -508,12 +621,12 @@ export default {
                         "discount_reason": "",
                         "priceList": [
                             {
-                                "date": "2023-09-10",
-                                "price": totlRoomAmount,
+                                "date": partyHallBookingEvents.date,
+                                "price": parseFloat(total_amount_with_food_after_discount_with_tax) + parseFloat(room_discount),
                                 "day_type": "weekday",
                                 "day": "Sun",
                                 "tax": tax,
-                                "room_price": totlRoomAmount,
+                                "room_price": parseFloat(total_amount_with_food_after_discount_with_tax) + parseFloat(room_discount),
                                 "discount": room_discount
                             }
                         ],
@@ -533,7 +646,7 @@ export default {
                 "id_card_type_id": partyHallBookingCustomer.id_card_type_id,
                 "id_card_no": partyHallBookingCustomer.id_card_no,
                 "car_no": partyHallBookingCustomer.car_no,
-                "no_of_adult": "1",
+                "no_of_adult": partyHallBookingEvents.pax,
                 "no_of_child": "0",
                 "no_of_baby": "0",
                 "address": partyHallBookingCustomer.address,
@@ -550,19 +663,52 @@ export default {
             };
 
 
+
+
+
             this.$axios.post(`hall-booking`, { Payload1: payload, Payload2: Payload2 }).then(({ data }) => {
 
+
+                //this.store_document(data.data);
                 this.snackbar = true;
                 this.snackbar_response = "Event Booking completed Succesfully";
 
                 setTimeout(() => {
                     this.subLoad = false;
-                    this.$router.push('../hall/upcoming');
+                    // this.$router.push('../hall/upcoming');
                 }, 1000);
 
 
             });
         },
+        getPriceFormat(price) {
+
+            return parseFloat(price).toLocaleString('en-IN', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2,
+            });
+        },
+        store_document(id) {
+            let payload = new FormData();
+            // payload.append("document", partyHallBookingCustomer.document);
+            //payload.append("image", partyHallBookingCustomer.image);
+
+            payload.append("document", (this.$store.state.customerImage));
+            payload.append("image", (this.$store.state.customerImage));
+
+            payload.append("booking_id", id);
+            this.$axios
+                .post("/store_document", payload)
+                .then(({ data }) => {
+                    this.loading = false;
+                    if (!data.status) {
+                        this.errors = data.errors;
+                        this.subLoad = false;
+                    }
+                })
+                .catch((e) => console.log(e));
+        },
+
     },
 };
 </script>

@@ -647,6 +647,11 @@ export default {
             this.$store.commit("partyHallBookingCustomer", obj);
 
         },
+        // requestUploadBookingId() {
+
+        //     console.log(val);
+        //     this.store_document(val);
+        // }
 
     },
     created() {
@@ -726,12 +731,31 @@ export default {
                 obj = JSON.parse(JSON.stringify(obj))
 
                 this.$store.commit("partyHallBookingCustomer", obj);
+                // const document = this._arrayBufferToBase64(this.customer.document);
+                // const image = this._arrayBufferToBase64(this.customer.image);
+
+                // Pass it to the state
+                this.$store.commit('customerImage', this.customer.document);
+                this.$store.commit('customerDocument', this.customer.image);
+                this.$store.commit("partyHallBookingCustomer", obj);
+
+                this.store_document("");
 
 
                 this.$emit("c-next-tab", null);
 
             }
 
+        },
+
+        _arrayBufferToBase64(buffer) {
+            var binary = '';
+            var bytes = new Uint8Array(buffer);
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
         },
         store_document_new() {
             this.documentDialog = false;
@@ -1565,7 +1589,7 @@ export default {
 
         store_document(id) {
             let payload = new FormData();
-            payload.append("document", this.room.document);
+            payload.append("document", this.customer.document);
             payload.append("image", this.customer.image);
             payload.append("booking_id", id);
             this.$axios
