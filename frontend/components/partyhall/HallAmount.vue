@@ -687,7 +687,7 @@ export default {
 
                 setTimeout(() => {
                     this.subLoad = false;
-                    // this.$router.push('../hall/upcoming');
+                    this.$router.push('../hall/upcoming');
                 }, 1000);
 
 

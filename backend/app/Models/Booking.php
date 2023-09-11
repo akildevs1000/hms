@@ -96,6 +96,8 @@ class Booking extends Model
 
     public function SetCheckInAttribute($value)
     {
+
+
         // $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
         if (session('isCheckInSes')) {
             $cod = $this->attributes['check_in'] = date('Y-m-d H:i', strtotime($value));

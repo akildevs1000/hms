@@ -154,10 +154,10 @@
                     {{ item.item.inv_total }}
                 </template>
                 <template v-slot:item.paid="item">
-                    0
+                    {{ item.item.booking.paid_amounts || 0 }}
                 </template>
                 <template v-slot:item.due="item">
-                    {{ item.item.inv_total - 0 }}
+                    {{ item.item.booking.balance }}
                 </template>
                 <template v-slot:item.view="item">
                     <v-icon @click="viewCustomerBilling(item.item.booking)" x-small color="primary" class="mr-2">
