@@ -332,28 +332,28 @@ export default {
         },
         nextTabTrigger() {
 
-            //     this.calculateGrandTotalAmount();
+            this.calculateGrandTotalAmount();
 
-            //     let amount = {
-            //         'hallRentTotalAmount': this.hallRentTotalAmount
-            //         , 'foodTotalAmount': this.foodTotalAmount
-            //         , 'cleaningTotalAmount': this.cleaningTotalAmount
-            //         , 'electricityTotalAmount': this.electricityTotalAmount
-            //         , 'audioTotalAmount': this.audioTotalAmount
-            //     };
+            // let amount = {
+            //     'hallRentTotalAmount': this.hallRentTotalAmount
+            //     , 'foodTotalAmount': this.foodTotalAmount
+            //     , 'cleaningTotalAmount': this.cleaningTotalAmount
+            //     , 'electricityTotalAmount': this.electricityTotalAmount
+            //     , 'audioTotalAmount': this.audioTotalAmount
+            // };
 
-            //     // this.$store.commit("partyHallBookingAmount", amount);
-            //     // this.$store.commit("partyHallBookingExtra", this.ExtraCharges);
+            // // this.$store.commit("partyHallBookingAmount", amount);
+            // // this.$store.commit("partyHallBookingExtra", this.ExtraCharges);
 
-            //     let obj = { ...amount };
-            //     Object.assign({}, obj)
-            //     obj = JSON.parse(JSON.stringify(obj));
-            //     this.$store.commit("partyHallBookingAmount", amount);
+            // let obj = { ...amount };
+            // Object.assign({}, obj)
+            // obj = JSON.parse(JSON.stringify(obj));
+            // this.$store.commit("partyHallBookingAmount", amount);
 
-            //     let obj2 = { ...this.ExtraCharges };
-            //     Object.assign({}, obj2)
-            //     obj = JSON.parse(JSON.stringify(obj2));
-            //     this.$store.commit("partyHallBookingExtra", obj2);
+            // let obj2 = { ...this.ExtraCharges };
+            // Object.assign({}, obj2)
+            // obj = JSON.parse(JSON.stringify(obj2));
+            // this.$store.commit("partyHallBookingExtra", obj2);
         },
 
     },
@@ -419,7 +419,7 @@ export default {
 
             console.log("partyHallBookingFood", partyHallBookingFood);
             if ((partyHallBookingFood)) {
-                partyHallBookingFood.forEach(item => {
+                partyHallBookingFood[0].forEach(item => {
                     if (parseInt(item.qty) > 0 && parseInt(item.price_per_item)) {
                         item.total = parseInt(item.qty) * parseInt(item.price_per_item);
                         this.foodTotalAmount += item.total;
@@ -462,7 +462,7 @@ export default {
                 }
 
             });
-            this.hallTaxableTotalAmount = AmountGrandTotalTemp + this.foodTotalAmount;
+            this.hallTaxableTotalAmount = AmountGrandTotalTemp;
 
             this.room_tax_amount = AmountGrandTotalTemp * this.tax_percentage / 100;
 
@@ -555,6 +555,7 @@ export default {
             let total_amount_with_food_after_discount_with_tax = partyHallBookingAmount.AmountGrandTotalWithFood;;
             let AmountRoomPriceWithTax_before_discount = partyHallBookingAmount.AmountGrandTotalWithFood;;
 
+            let total_amount_without_food_after_discount_with_tax = parseFloat(total_amount_with_food_after_discount_with_tax) + parseFloat(room_discount) - parseFloat(this.foodTotalAmount);
 
             this.subLoad = true;
             console.log('payload', payload);
@@ -622,11 +623,11 @@ export default {
                         "priceList": [
                             {
                                 "date": partyHallBookingEvents.date,
-                                "price": parseFloat(total_amount_with_food_after_discount_with_tax) + parseFloat(room_discount),
+                                "price": total_amount_without_food_after_discount_with_tax,
                                 "day_type": "weekday",
                                 "day": "Sun",
                                 "tax": tax,
-                                "room_price": parseFloat(total_amount_with_food_after_discount_with_tax) + parseFloat(room_discount),
+                                "room_price": total_amount_without_food_after_discount_with_tax,
                                 "discount": room_discount
                             }
                         ],
