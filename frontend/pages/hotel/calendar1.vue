@@ -538,6 +538,7 @@ export default {
           //   end: "2023-02-20 23:00:00",
           //   title: "e",
           // },
+
         ],
 
         eventDidMount: (arg) => {
@@ -677,6 +678,11 @@ export default {
   },
 
   mounted() {
+    this.calendarOptions.height = window.innerHeight - 90;
+    window.addEventListener('resize', () => {
+
+      this.calendarOptions.height = window.innerHeight - 90;
+    });
     this.room_list();
     this.get_events();
 

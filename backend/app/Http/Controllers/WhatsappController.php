@@ -14,12 +14,17 @@ class WhatsappController extends Controller
     {
         try {
             if ($data['instance_id']) {
+
+                if ($data['whatsapp_access_token'] == '') {
+                    $data['whatsapp_access_token'] = env('WHATSAPP_ACCESS_TOKEN');
+                }
+
                 $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
                     'number' => $data['to'],
                     'type' => 'text',
                     'message' => $data['message'],
                     'instance_id' => $data['instance_id'],
-                    'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+                    'access_token' => $data['whatsapp_access_token'], //env('WHATSAPP_ACCESS_TOKEN'),
                 ]);
 
                 $msg = 'company Id: ' . $data['company']['id'] . ' Rev. No: ' . $data['revNo'] . ' '
@@ -84,9 +89,7 @@ class WhatsappController extends Controller
                 Log::channel("custom")->error("BookingController: " . $th);
             }
         } else {
-
         }
-
     }
     public function sentTwilio($user = null)
     {
@@ -101,7 +104,8 @@ class WhatsappController extends Controller
         $twilio = new Client($sid, $token);
 
         $message = $twilio->messages
-            ->create("whatsapp:{$number}", // to
+            ->create(
+                "whatsapp:{$number}", // to
                 array(
                     "from" => "whatsapp:+14155238886",
                     "body" => $msg,
@@ -109,7 +113,6 @@ class WhatsappController extends Controller
             );
         Log::channel('whatsapp_logs')->info($message);
         return ['message' => $message->sid, 'mobile_number' => $number, 'msg' => $msg];
-
     }
 
     // public function sentNotification($data)
@@ -146,7 +149,8 @@ class WhatsappController extends Controller
         $twilio = new Client($sid, $token);
 
         $message = $twilio->messages
-            ->create("whatsapp:+919701226007", // to
+            ->create(
+                "whatsapp:+919701226007", // to
                 array(
                     "from" => "whatsapp:+14155238886",
                     "body" => "Your appointment is coming up on July 21 at 3PM",

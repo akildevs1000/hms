@@ -5,7 +5,7 @@
                 {{ snackbarResponse }}
             </v-snackbar>
         </div>
-        <v-dialog v-model="newItemDialog" max-width="20%">
+        <v-dialog v-model="newItemDialog" max-width="40%">
             <v-card>
                 <v-card-title dense class=" primary  white--text background">
 
@@ -17,7 +17,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-container>
-                        <v-row>
+                        <v-row v-if="rowid == 1">
 
                             <v-col md="12" cols="12">
                                 <label>Whatsapp Instanace ID</label>
@@ -32,7 +32,21 @@
 
 
                         </v-row>
+                        <v-row v-else>
 
+                            <v-col md="12" cols="12">
+                                <label>Whatsapp Token ID</label>
+
+                                <v-text-field v-model="whatsapp_access_token" outlined dense small :hide-details="true"
+                                    placeholder="Whatsapp Token ID"></v-text-field>
+                                <span dense v-if="errors && errors.whatsapp_access_token" class="error--text">{{
+                                    errors.whatsapp_access_token[0]
+                                }}</span>
+                            </v-col>
+
+
+
+                        </v-row>
                         <v-card-actions class="mt-5" v-if="!viewMode">
                             <v-btn dark filled color="red" @click="newItemDialog = false">Cancel</v-btn>
                             <v-spacer></v-spacer>
@@ -57,7 +71,7 @@
                     <label>: {{ company_payload.whatsapp_instance_id }}</label>
                 </v-col>
                 <v-col md="4" cols="12">
-                    <span @click="editItem()" style="cursor: pointer;">
+                    <span @click="editItem(1)" style="cursor: pointer;">
                         <v-icon color="secondary" small> mdi-pencil </v-icon>
                         Edit
 
@@ -65,7 +79,26 @@
 
                 </v-col>
             </v-row>
+            <v-row>
 
+                <v-col md="4" cols="12" class="pl-5">
+                    <label>Whatsapp Access Token</label>
+
+
+                </v-col>
+
+                <v-col md="4" cols="12">
+                    <label>: {{ company_payload.whatsapp_access_token }}</label>
+                </v-col>
+                <v-col md="4" cols="12">
+                    <span @click="editItem(2)" style="cursor: pointer;">
+                        <v-icon color="secondary" small> mdi-pencil </v-icon>
+                        Edit
+
+                    </span>
+
+                </v-col>
+            </v-row>
         </v-card>
     </div>
     <NoAccess v-else />
@@ -75,8 +108,10 @@ export default
     {
         data: () => ({
             whatsapp_instance_id: '',
+            whatsapp_access_token: '',
             company_payload: {
                 whatsapp_instance_id: "",
+                whatsapp_access_token: '',
             },
             //datatable varables
             page: 1,
@@ -106,7 +141,7 @@ export default
             snackbarColor: "red",
             snackbarResponse: "",
             viewMode: false,
-
+            rowid: 1,
         }),
         watch: {
 
@@ -121,6 +156,8 @@ export default
         },
         created() {
             this.company_payload.whatsapp_instance_id = this.$auth.user.company.whatsapp_instance_id;
+            this.company_payload.whatsapp_access_token = this.$auth.user.company.whatsapp_access_token;
+
             //this.getDataFromApi();
 
 
@@ -133,17 +170,19 @@ export default
                 );
             },
 
-            editItem() {
+            editItem(id) {
                 this.whatsapp_instance_id = this.$auth.user.company.whatsapp_instance_id;;
+                this.whatsapp_access_token = this.$auth.user.company.whatsapp_access_token;;
                 this.errors = {};
                 this.newItemDialog = true;
-
+                this.rowid = id;
             },
             save() {
 
                 let payload = new FormData();
 
                 payload.append("whatsapp_instance_id", this.whatsapp_instance_id);
+                payload.append("whatsapp_access_token", this.whatsapp_access_token);
 
                 let company_id = this.$auth?.user?.company?.id
                 this.$axios
@@ -157,6 +196,7 @@ export default
                         } else {
 
                             this.company_payload.whatsapp_instance_id = this.whatsapp_instance_id;
+                            this.company_payload.whatsapp_access_token = this.whatsapp_access_token;
                             this.snackbarColor = "primary";
                             this.snackbar = true;
                             this.snackbarResponse = " updated successfully";

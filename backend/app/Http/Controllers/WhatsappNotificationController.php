@@ -24,6 +24,7 @@ class WhatsappNotificationController extends Controller
         $title           = $data['title'];
         $guest           = ucfirst($data['guest']) ?? 'Guest';
         $instance_id     = $company->whatsapp_instance_id;
+        $access_token = $company->whatsapp_access_token;
 
         $msg .= "Dear $title. $guest, \n";
         $msg .= "\n";
@@ -67,7 +68,7 @@ class WhatsappNotificationController extends Controller
         $date         = date('d-M-y');
         $time         = date('H:i');
         $instance_id  = $company->whatsapp_instance_id;
-
+        $access_token = $company->whatsapp_access_token;
         $payMode = $this->getPayMode($payMode) ?? "";
 
         $msg .= "Dear $customerName, \n";
@@ -114,6 +115,7 @@ class WhatsappNotificationController extends Controller
 
         $location    = $company->map;
         $instance_id = $company->whatsapp_instance_id;
+        $access_token = $company->whatsapp_access_token;
         $comName     = $company->company_code;
         $video       = $company->video;
 
@@ -173,6 +175,7 @@ class WhatsappNotificationController extends Controller
 
         $location    = $company->map;
         $instance_id = $company->whatsapp_instance_id;
+        $access_token = $company->whatsapp_access_token;
         $comName     = $company->company_code;
         $video       = $company->video;
         $review      = $company->review;
@@ -229,6 +232,7 @@ class WhatsappNotificationController extends Controller
 
         $location    = $company->map;
         $instance_id = $company->whatsapp_instance_id;
+        $access_token = $company->whatsapp_access_token;
         $comName     = $company->company_code;
         $video       = $company->video;
 

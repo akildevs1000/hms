@@ -273,6 +273,7 @@ class CompanyController extends Controller
         if (isset($request->whatsapp_instance_id)) {
             if ($request->whatsapp_instance_id != '') {
                 $data["whatsapp_instance_id"] = $request->whatsapp_instance_id;
+                $data["whatsapp_access_token"] = $request->whatsapp_access_token;
                 $company = Company::find($id)->update($data);
 
                 if (!$company) {
