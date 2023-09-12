@@ -36,6 +36,10 @@ class RoomType extends Model
         'description',
         'short_description',
         'pic',
+        'projector_charges',
+        'cleaning_charges',
+        'electricity_charges',
+        'audio_charges',
     ];
 
     public function room()
@@ -48,7 +52,6 @@ class RoomType extends Model
             return null;
         }
         return asset('storage/rooms/' . $value);
-
     }
     protected static function boot()
     {

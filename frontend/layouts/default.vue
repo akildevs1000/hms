@@ -248,7 +248,38 @@ export default {
             },
           ],
         },
-
+        {
+          icon: "mdi-bed",
+          title: `Party Hall`,
+          open_menu: false,
+          menu: "party_hall",
+          hasChildren: [
+            // {
+            //   icon: "mdi mdi-home-import-outline",
+            //   title: "New",
+            //   to: "/hall/party-hall-booking",
+            //   menu: "reservation_access",
+            // },
+            {
+              icon: "mdi mdi-home-import-outline",
+              title: "Reservation",
+              to: "/hall/upcoming",
+              menu: "party_hall",
+            },
+            {
+              icon: "mdi mdi-home-account",
+              title: "In House",
+              to: "/hall/ongoing",
+              menu: "party_hall",
+            },
+            {
+              icon: "mdi mdi-home-export-outline",
+              title: "Check Out",
+              to: "/hall/completed",
+              menu: "party_hall",
+            },
+          ],
+        },
         {
           icon: "mdi mdi-human-male-female-child",
           title: `Guest`,
@@ -942,6 +973,11 @@ select:focus {
 
 .apexcharts-tooltip-text-y-value td {
   padding: 0px !important;
+}
+
+
+.text-box-right-input input {
+  text-align: right;
 }
 </style>
 

@@ -151,7 +151,7 @@ class TaxableController extends Controller
 
         $model->with('booking.customer');
 
-        return  $model;//->orderBy(Booking::select('check_in')->whereColumn('bookings.id', 'taxables.booking_id'), 'ASC');
+        return  $model; //->orderBy(Booking::select('check_in')->whereColumn('bookings.id', 'taxables.booking_id'), 'ASC');
     }
 
     /**

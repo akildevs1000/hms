@@ -25,7 +25,6 @@ class RecalculateTaxController extends Controller
         foreach ($bookings as   $booking) {
             echo '  ' . $booking->id . '--'  .  $this->UpdateTaxWithID($booking->id);
         }
-
     }
 
     public function exportCsv($tasks)

@@ -35,7 +35,10 @@ class Booking extends Model
     {
         return $this->belongsTo(Room::class);
     }
-
+    public function hallBooking()
+    {
+        return $this->belongsTo(HallBookings::class, 'id', 'booking_id');
+    }
     public function bookedRooms()
     {
         return $this->hasMany(BookedRoom::class);
@@ -93,12 +96,21 @@ class Booking extends Model
 
     public function SetCheckInAttribute($value)
     {
+
+
         // $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
         if (session('isCheckInSes')) {
             $cod = $this->attributes['check_in'] = date('Y-m-d H:i', strtotime($value));
             BookedRoom::whereBookingId($this->attributes['id'])->update(['check_in' => $cod, 'booking_status' => 2]);
         } else {
             $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+        }
+
+        if (isset($this->attributes['room_category_type'])) {
+            if ($this->attributes['room_category_type'] == 'Hall') {
+
+                $this->attributes['check_in'] = $value;
+            }
         }
     }
 
@@ -116,6 +128,12 @@ class Booking extends Model
             $cod = $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
         }
 
+        if (isset($this->attributes['room_category_type'])) {
+            if ($this->attributes['room_category_type'] == 'Hall') {
+
+                $this->attributes['check_out'] = $value;
+            }
+        }
         // dd($cod);
 
         // $date = Carbon::parse($value);
@@ -186,6 +204,7 @@ class Booking extends Model
     {
         return [
             "customer_id",
+            "room_category_type",
             "booking_status",
             "customer_type",
             "customer_status",
@@ -213,6 +232,7 @@ class Booking extends Model
             "paid_by",
             "purpose",
             "gst_number",
+
         ];
     }
 
