@@ -620,7 +620,7 @@ class BookingController extends Controller
         if ($request->hasFile('document')) {
             $file = $request->file('document');
 
-            return  $file;
+
             $ext = $file->getClientOriginalExtension();
             $fileName = time() . '.' . $ext;
             $path = $file->storeAs('public/documents/booking', $fileName);
@@ -1067,7 +1067,7 @@ class BookingController extends Controller
             $q->where('company_id', $request->company_id);
             $q->where('check_in', '>=', $date_from);
             $q->where('check_in', '<=', $date_to);
-        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out', 'booking_status']);
+        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out', 'booking_status', 'room_category_type as className']);
     }
 
     public function events_list1(Request $request)

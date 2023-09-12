@@ -339,7 +339,7 @@ export default {
         History,
         ImagePreview,
     },
-    props: ["nextTabTrigger"],
+    props: ["nextTabTrigger", "booking_id"],
     data() {
         return {
 
@@ -646,6 +646,14 @@ export default {
 
             this.$store.commit("partyHallBookingCustomer", obj);
 
+
+
+        },
+        booking_id(val) {
+
+            this.store_document(val);
+
+
         },
         // requestUploadBookingId() {
 
@@ -701,6 +709,7 @@ export default {
 
 
 
+
             if (this.validate()) {
 
                 if (
@@ -739,7 +748,7 @@ export default {
                 this.$store.commit('customerDocument', this.customer.image);
                 this.$store.commit("partyHallBookingCustomer", obj);
 
-                this.store_document("");
+                //this.store_document("");
 
 
                 this.$emit("c-next-tab", null);

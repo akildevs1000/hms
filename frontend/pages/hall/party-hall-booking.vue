@@ -4,7 +4,7 @@
             {{ snackbar_response }}
         </v-snackbar>
         <v-row>
-            <v-col md="12">
+            <v-col md="12">{{ booking_id }}
                 <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
                     <div class="py-3" style="background-color: #1259a7">
                         <span class="mx-2">Party Hall booking </span>
@@ -36,7 +36,8 @@
                         <v-card flat>
                             <v-card-text>
                                 <v-col cols="12">
-                                    <HallCustomer @c-next-tab="nextTab" :nextTabTrigger="activeTab" :key1="componentKey" />
+                                    <HallCustomer @c-next-tab="nextTab" :nextTabTrigger="activeTab" :key1="componentKey"
+                                        :booking_id="booking_id" />
                                 </v-col>
                             </v-card-text>
                         </v-card>
@@ -64,7 +65,8 @@
                         <v-card flat>
                             <v-card-text>
                                 <v-col cols="12">
-                                    <HallAmount @c-next-tab="nextTab" :nextTabTrigger="activeTab" :key1="componentKey" />
+                                    <HallAmount @c-next-tab="nextTab" @bookingIdUpdated="bookingIdUpdated"
+                                        :nextTabTrigger="activeTab" :key1="componentKey" />
                                 </v-col>
                             </v-card-text>
                         </v-card>
@@ -159,7 +161,7 @@ export default {
     },
     data() {
         return {
-
+            booking_id: 0,
             eventAdvanceAmount: 0,
             eventBalanceAmount: 0,
 
@@ -257,6 +259,10 @@ export default {
 
     },
     methods: {
+
+        bookingIdUpdated(data) {
+            this.booking_id = data;
+        },
         rightContentUpdate() {
             this.eventFoodTotal = 0;
             this.eventGrandTotal = 0;

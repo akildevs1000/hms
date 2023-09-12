@@ -8,7 +8,9 @@
 
 
                         <v-col md="4" cols="12">
-                            <v-menu v-model="date_menu" :close-on-content-click="false" :nudge-right="40"
+                            <v-text-field v-model="event.date" readonly label="Date Of event *" :hide-details="true" dense
+                                outlined required :rules="nameRules" append-icon="mdi-calendar-month"></v-text-field>
+                            <!-- <v-menu v-model="date_menu" :close-on-content-click="false" :nudge-right="40"
                                 transition="scale-transition" offset-y min-width="auto">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-text-field v-model="event.date" readonly label="Date Of event *" v-on="on"
@@ -17,7 +19,7 @@
                                 </template>
                                 <v-date-picker style="height:470px" v-model="event.date"
                                     @input="date_menu = false"></v-date-picker>
-                            </v-menu>
+                            </v-menu> -->
                         </v-col>
                         <v-col md="4" cols="12">
 

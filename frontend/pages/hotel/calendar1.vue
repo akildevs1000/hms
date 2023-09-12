@@ -1435,9 +1435,19 @@ export default {
   overflow: hidden;
 }
 
+.fc-timeline-event {
+  border-radius: 5px;
+}
+
 .fc-timeline-event-harness {
   margin-left: 14px;
   margin-right: -15px;
+
+}
+
+.Hall {
+  margin-left: -9px !important;
+  margin-right: 21px !important;
 }
 
 .fc-datagrid-cell-frame {

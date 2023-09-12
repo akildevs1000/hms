@@ -1,6 +1,6 @@
 <template>
   <div class="text-right">
-    <v-icon class="float-right" @click="downloadImage()" fill color="primary" size="50">mdi-cloud-download</v-icon>
+    <!-- <v-icon class="float-right" @click="downloadImage()" fill color="primary" size="50">mdi-cloud-download</v-icon> -->
     <v-img :src="src" class="grey darken-4" v-if="isImg"></v-img>
     <embed v-else-if="isPdf" :src="src" width="100%" height="800px" />
   </div>

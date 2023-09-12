@@ -87,7 +87,7 @@ class PartyHallController extends Controller
 
         $booking_id = $data->original['data'];
 
-        return $this->storeBookingInfoHall($hallBookingRequest, $booking_id);
+        $this->storeBookingInfoHall($hallBookingRequest, $booking_id);
         return  $booking_id;
     }
 
@@ -214,9 +214,10 @@ class PartyHallController extends Controller
         $array['event_type_id'] = $request->partyHallBookingEvents['event_type'];;
         $array['event_pax'] = $request->partyHallBookingEvents['pax'];;
         $array['event_special_setup'] = $request->partyHallBookingEvents['special_setup'];;
-        $array['event_audio_system'] = $request->partyHallBookingEvents['audio_system'];;
-        $array['event_projector'] = $request->partyHallBookingEvents['projector'];;
-        $array['event_stage_decoration'] = $request->partyHallBookingEvents['stage_decoration'];;
+        $array['event_audio_system'] = $request->partyHallBookingEvents['audio_system'] && 0;
+
+        $array['event_projector'] = $request->partyHallBookingEvents['projector'] && 0;
+        $array['event_stage_decoration'] = $request->partyHallBookingEvents['stage_decoration'] && 0;
 
 
         $hall_rent_amount_per_hour = $request->partyHallBookingAmount['hall_rent_amount_per_hour'];;;

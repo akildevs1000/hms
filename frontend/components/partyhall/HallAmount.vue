@@ -685,7 +685,7 @@ export default {
 
             this.$axios.post(`hall-booking`, { Payload1: payload, Payload2: Payload2 }).then(({ data }) => {
 
-
+                this.$emit("bookingIdUpdated", data);
                 //this.store_document(data.data);
                 this.snackbar = true;
                 this.snackbar_response = "Event Booking completed Succesfully";

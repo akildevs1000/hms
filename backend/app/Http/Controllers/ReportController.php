@@ -525,7 +525,7 @@ class ReportController extends Controller
             case 'hall/upcoming_reservation_list':
                 $model->where('booking_status', '=', 1);
                 $model->where('room_category_type', '=', 'Hall');
-                $reservationTYpe = 'In House';
+                $reservationTYpe = 'Upcoming';
                 break;
             case 'hall/in_house_reservation_list':
                 $model->where('booking_status', '=', 2);
