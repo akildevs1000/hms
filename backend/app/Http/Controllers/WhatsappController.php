@@ -13,10 +13,10 @@ class WhatsappController extends Controller
     public function sentNotification($data)
     {
         try {
-            if ($data['instance_id']) {
+            if ($data['instance_id'] && $data['access_token']) {
 
-                if ($data['whatsapp_access_token'] == '') {
-                    $data['whatsapp_access_token'] = env('WHATSAPP_ACCESS_TOKEN');
+                if ($data['access_token'] == '') {
+                    $data['access_token'] = env('WHATSAPP_ACCESS_TOKEN');
                 }
 
                 $response = Http::withoutVerifying()->get(env('WHATSAPP_URL'), [
@@ -24,7 +24,7 @@ class WhatsappController extends Controller
                     'type' => 'text',
                     'message' => $data['message'],
                     'instance_id' => $data['instance_id'],
-                    'access_token' => $data['whatsapp_access_token'], //env('WHATSAPP_ACCESS_TOKEN'),
+                    'access_token' => $data['access_token'], //env('WHATSAPP_ACCESS_TOKEN'),
                 ]);
 
                 $msg = 'company Id: ' . $data['company']['id'] . ' Rev. No: ' . $data['revNo'] . ' '
