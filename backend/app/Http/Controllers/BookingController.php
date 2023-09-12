@@ -976,7 +976,7 @@ class BookingController extends Controller
             return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
         } catch (\Throwable $th) {
 
-            Logger::channel("custom")->error("BookingController: " . $th);
+
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
             // throw $th;
         }
