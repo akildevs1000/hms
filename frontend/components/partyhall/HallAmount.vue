@@ -374,12 +374,16 @@ export default {
     },
     methods: {
         getHallPriceDetails() {
+            let booking_payload = this.$store.state.booking_payload;
+
 
             let partyHallBookingEvents = this.$store.state.partyHallBookingEvents;
             let payload = {
                 params: {
                     company_id: this.$auth.user.company.id,
                     start: partyHallBookingEvents.date,
+                    roomType: booking_payload.params.roomType,
+
                 },
             };
             this.$axios.get(`hall/get_hall_prices`, payload).then(({ data }) => {
@@ -559,6 +563,7 @@ export default {
                 , partyHallBookingExtra: partyHallBookingExtra
                 , hallRoomNumber: booking_payload.params.room_no
                 , hallRoomId: booking_payload.params.room_no
+                , roomType: booking_payload.params.roomType
                 , company_id: this.$auth.user.company.id
                 , user_id: this.$auth.user.id
                 , discount: room_discount
@@ -570,8 +575,8 @@ export default {
             let total_amount_without_food_after_discount_with_tax = parseFloat(total_amount_with_food_after_discount_with_tax) + parseFloat(room_discount) - parseFloat(this.foodTotalAmount);
 
             this.subLoad = true;
-            let roomNumber = 900;
-            let roomNumberId = 102;
+            let roomNumber = booking_payload.params.room_no;
+            let roomNumberId = booking_payload.params.room_no;
 
             let Payload2 = {
                 "customer_type": partyHallBookingCustomer.customer_type,

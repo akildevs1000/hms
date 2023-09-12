@@ -971,9 +971,6 @@
               <v-card flat>
                 <v-row>
                   <v-col cols="6">
-
-                  </v-col>
-                  <v-col cols="6">
                     <v-row style="background-color: #e3e3e3;">
                       <v-col md="3" cols="12"><label class="text-h6">Name</label>
                       </v-col>
@@ -1086,8 +1083,43 @@
                         <hr />
                       </v-col>
                     </v-row>
-                    <v-row>
+                    <v-row style="font-weight:bold">
                       <v-col md="3" cols="12"><label>Total</label>
+                      </v-col>
+
+                      <v-col md="2" cols="12" class="text-right">
+
+                        {{ getPriceFormat(hallItemsTotal) }}
+                      </v-col>
+                      <v-col md="1" cols="12" class="text-right">
+
+
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="6">
+
+                    <v-row>
+                      <v-col cols="12">
+                        <hr />
+                      </v-col>
+                    </v-row>
+
+                    <!-- <v-row>
+                      <v-col md="3" cols="12"><label>Discount Applied</label>
+                      </v-col>
+
+                      <v-col md="2" cols="12" class="text-right text-red" style="color:red">
+
+                        {{ getPriceFormat(discount) }}
+                      </v-col>
+                      <v-col md="1" cols="12" class="text-right">
+
+
+                      </v-col>
+                    </v-row> -->
+                    <v-row>
+                      <v-col md="3" cols="12"><label>Adjusted Final Amount(After Discount)</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
@@ -1100,7 +1132,7 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Tax</label>
+                      <v-col md="3" cols="12"><label>Tax Collected with Food tax</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
@@ -1112,6 +1144,7 @@
 
                       </v-col>
                     </v-row>
+
                     <v-row>
                       <v-col cols="12">
                         <hr />
@@ -1220,7 +1253,7 @@ export default {
     audioTotalAmount: 0,
     tax_percentage: 0,
     room_tax_amount: 0,
-
+    hallItemsTotal: 0,
 
     durationInHours: 1,
     foodTotalAmount: 0,
@@ -1234,6 +1267,7 @@ export default {
     inv_total_without_tax: 0,
     inv_total: 0,
     inv_total_tax: 0,
+    discount: 0,
 
 
     hours: [
@@ -1500,7 +1534,7 @@ export default {
 
           this.hallRentTotalAmount = data.booking.hall_booking.hall_rent_amount;
           this.electricityTotalAmount = data.booking.hall_booking.hall_electricity_amount;
-          this.audioTotalAmount = data.booking.hall_booking.hall_electricity_amount;
+
           this.audioTotalAmount = data.booking.hall_booking.hall_audio_system;
           this.projecterTotalAmount = data.booking.hall_booking.hall_projector_amount;
           this.cleaningTotalAmount = data.booking.hall_booking.hall_cleaning_charges;
@@ -1509,6 +1543,17 @@ export default {
           this.inv_total_tax = data.booking.hall_booking.inv_total_tax;
           this.inv_total_without_tax = data.booking.hall_booking.inv_total_without_tax;
           this.inv_total = data.booking.hall_booking.inv_total;
+          this.discount = data.booking.hall_booking.discount;
+
+
+          this.hallItemsTotal = parseFloat(this.hallRentTotalAmount)
+            + parseFloat(this.electricityTotalAmount)
+            + parseFloat(this.audioTotalAmount)
+            + parseFloat(this.projecterTotalAmount)
+            + parseFloat(this.cleaningTotalAmount)
+            + parseFloat(this.foodTotalAmount)
+            + parseFloat(this.otherCharges)
+            ;
 
         }
         else {

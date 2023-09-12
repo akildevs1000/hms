@@ -254,12 +254,12 @@ export default {
           open_menu: false,
           menu: "history_menu",
           hasChildren: [
-            {
-              icon: "mdi mdi-home-import-outline",
-              title: "New",
-              to: "/hall/party-hall-booking",
-              menu: "reservation_access",
-            },
+            // {
+            //   icon: "mdi mdi-home-import-outline",
+            //   title: "New",
+            //   to: "/hall/party-hall-booking",
+            //   menu: "reservation_access",
+            // },
             {
               icon: "mdi mdi-home-import-outline",
               title: "Reservation",

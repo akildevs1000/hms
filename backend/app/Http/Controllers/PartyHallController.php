@@ -87,7 +87,7 @@ class PartyHallController extends Controller
 
         $booking_id = $data->original['data'];
 
-        $this->storeBookingInfoHall($hallBookingRequest, $booking_id);
+        return $this->storeBookingInfoHall($hallBookingRequest, $booking_id);
         return  $booking_id;
     }
 
@@ -97,7 +97,7 @@ class PartyHallController extends Controller
         $company_id = $request->company_id;
 
 
-        $prices = RoomType::whereCompanyId($request->company_id)->whereName('Hall')
+        $prices = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
             ->first(['holiday_price', 'weekend_price', 'weekday_price', 'projector_charges', 'cleaning_charges', 'electricity_charges', 'audio_charges']);
 
         $weekModel = Weekend::where('company_id', $request->company_id)->first();
@@ -245,10 +245,10 @@ class PartyHallController extends Controller
 
         $othersTotal = 0;
         //others 
-        foreach ($request->partyHallBookingExtra as $extraitem) {
+        foreach ($request->partyHallBookingExtra['items'] as $extraitem) {
 
-            if (isset($extraitem[0]))
-                $othersTotal += $extraitem[0]['total'];
+            if (isset($extraitem))
+                $othersTotal += $extraitem['total'];
         }
 
         $hall_total_amount_without_food_without_tax = 0;
@@ -256,10 +256,12 @@ class PartyHallController extends Controller
 
         //food 
         $foodTotal = 0;
+        $testarray = [];
+        foreach ($request->partyHallBookingFood['items'] as $foodItem) {
 
-        foreach ($request->partyHallBookingFood as $foodItem) {
-            if (isset($foodItem[0]))
-                $foodTotal += $foodItem[0]['total'];
+            $testarray[] = $foodItem;
+            if (isset($foodItem))
+                $foodTotal += $foodItem['total'];
         }
 
 
@@ -281,7 +283,7 @@ class PartyHallController extends Controller
         // if ($foodTotal > 0 && $food_tax_per)
         //     $food_tax_amount = ($foodTotal * $food_tax_per) / 100;
         if ($foodTotal > 0 && $food_tax_per) {
-            $food_total_without_tax = ($foodTotal * 100) / (100 + $hall_tax_per);
+            $food_total_without_tax = ($foodTotal * 100) / (100 + $food_tax_per);
             $food_tax_amount = $foodTotal - $food_total_without_tax;
         }
 
@@ -305,18 +307,18 @@ class PartyHallController extends Controller
         $hallBookingId = $hallBookingObj->id;
 
         //partyHallBookingExtra
-        foreach ($request->partyHallBookingExtra as $extraitem) {
-            if ($extraitem[0]['total'] > 0) {
-                $extraitem[0]['booking_id'] = $hallBookingId;
-                $hallBookingObj =  HallBookingExtraAmounts::create($extraitem[0]);
+        foreach ($request->partyHallBookingExtra['items'] as $extraitem) {
+            if ($extraitem['total'] > 0) {
+                $extraitem['booking_id'] = $hallBookingId;
+                $hallBookingObj =  HallBookingExtraAmounts::create($extraitem);
             }
         }
         //food 
-        foreach ($request->partyHallBookingFood as $extraitem) {
-            if (isset($extraitem[0]))
-                if ($extraitem[0]['total'] > 0) {
-                    $extraitem[0]['booking_id'] = $hallBookingId;
-                    $hallBookingObj =  HallBookingFood::create($extraitem[0]);
+        foreach ($request->partyHallBookingFood['items'] as $extraitem) {
+            if (isset($extraitem))
+                if ($extraitem['total'] > 0) {
+                    $extraitem['booking_id'] = $hallBookingId;
+                    $hallBookingObj =  HallBookingFood::create($extraitem);
                 }
         }
 
