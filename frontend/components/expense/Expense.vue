@@ -7,6 +7,7 @@
       </v-snackbar>
     </div>
     <v-row class="mt-0 mb-0">
+
       <v-col cols="6">
         <h3>{{ is_management == 1 ? '' : 'Non-' }} Management {{ Model }}</h3>
 
@@ -946,7 +947,7 @@ export default {
 
       this.documentObj = {
         fileExtension: fileExtension,
-        file: file + "?t=" + Math.random(),
+        file: file,// + "?t=" + Math.random(),
       };
       this.imgView = true;
     },

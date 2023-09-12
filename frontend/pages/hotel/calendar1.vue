@@ -538,6 +538,7 @@ export default {
           //   end: "2023-02-20 23:00:00",
           //   title: "e",
           // },
+
         ],
 
         eventDidMount: (arg) => {
@@ -677,6 +678,11 @@ export default {
   },
 
   mounted() {
+    this.calendarOptions.height = window.innerHeight - 90;
+    window.addEventListener('resize', () => {
+
+      this.calendarOptions.height = window.innerHeight - 90;
+    });
     this.room_list();
     this.get_events();
 
@@ -1066,6 +1072,8 @@ export default {
     },
 
     get_room_types(e, obj) {
+
+      console.log(obj.room_type);
       this.reservation.isCalculate = true;
       this.reservation.room_id = this.RoomList.find(
         (e) => e.room_no == obj.room_no
@@ -1087,6 +1095,12 @@ export default {
       };
 
       this.$store.commit("booking_payload", payload);
+
+      if (obj.room_type == "Hall") {
+        this.$router.push(`/hall/party-hall-booking`);
+
+        return false;
+      }
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
@@ -1427,9 +1441,19 @@ export default {
   overflow: hidden;
 }
 
+.fc-timeline-event {
+  border-radius: 5px;
+}
+
 .fc-timeline-event-harness {
   margin-left: 14px;
   margin-right: -15px;
+
+}
+
+.Hall {
+  margin-left: -9px !important;
+  margin-right: 21px !important;
 }
 
 .fc-datagrid-cell-frame {

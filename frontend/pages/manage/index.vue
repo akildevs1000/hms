@@ -123,6 +123,29 @@
                 </v-text-field>
               </v-col>
             </v-row>
+            <v-row v-if="editPriceList.name == 'Hall'">
+              <v-col md="3">
+                <v-text-field v-model="editPriceList.projector_charges" label="Projector Charges"
+                  placeholder="Projector Charges" id="id" outlined dense>
+                </v-text-field>
+              </v-col>
+              <v-col md="3">
+                <v-text-field v-model="editPriceList.cleaning_charges" label="Cleaning Charges"
+                  placeholder="Cleaning Charges" id="id" outlined dense>
+                </v-text-field>
+              </v-col>
+              <v-col md="3">
+                <v-text-field v-model="editPriceList.electricity_charges" label="E&B Charges" placeholder="E&B Charges"
+                  id="id" outlined dense>
+                </v-text-field>
+              </v-col>
+              <v-col md="3">
+                <v-text-field v-model="editPriceList.audio_charges" label="Audio Charges" placeholder="Audio Charges"
+                  id="id" outlined dense>
+                </v-text-field>
+              </v-col>
+            </v-row>
+
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
@@ -719,6 +742,10 @@ export default {
         weekday_price: this.editPriceList.weekday_price,
         weekend_price: this.editPriceList.weekend_price,
         holiday_price: this.editPriceList.holiday_price,
+        projector_charges: this.editPriceList.projector_charges,
+        cleaning_charges: this.editPriceList.cleaning_charges,
+        electricity_charges: this.editPriceList.electricity_charges,
+        audio_charges: this.editPriceList.audio_charges,
         company_id: this.$auth.user.company.id,
       };
       console.log(payload);

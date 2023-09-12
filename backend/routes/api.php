@@ -19,3 +19,4 @@ include 'email_notifications.php';
 include 'api_widget.php';
 include 'tax_slabs.php';
 include 'expenses_categories.php';
+include 'party_hall.php';

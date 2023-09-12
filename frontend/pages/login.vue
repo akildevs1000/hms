@@ -184,6 +184,7 @@ export default {
               //   this.$router.push(`/`);
               // }, 1000);
               this.$router.push(`/`);
+              return;
             }
 
             if (data.user && data.user.user_type == "master") {

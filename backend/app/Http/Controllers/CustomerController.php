@@ -28,16 +28,12 @@ class CustomerController extends Controller
 
             if (strpos($sortBy, '.') === -1 || strpos($sortBy, '.') == '') {
                 $model->orderBy($sortBy, $sortDesc);
-
             } else {
                 if ($sortBy == 'id_card_type.name') {
                     $model->orderBy(IdCardType::select('name')
-                            ->whereRaw('id_card_types.id = CAST(customers.id_card_type_id AS bigint)'), $sortDesc);
-
+                        ->whereRaw('id_card_types.id = CAST(customers.id_card_type_id AS bigint)'), $sortDesc);
                 }
-
             }
-
         } else {
             $model->orderBy('updated_at', 'DESC');
         }
@@ -174,7 +170,7 @@ class CustomerController extends Controller
 
     public function viewBookingCustomerBill($id)
     {
-        $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'orderRooms')->first();
+        $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'orderRooms', 'hallBooking.food', 'hallBooking.extraAmounts')->first();
         $postings = Posting::with('room')->whereBookingId($id)->get();
         // $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
         $transaction = Transaction::with(['paymentMode', 'user'])->whereBookingId($id);

@@ -522,6 +522,24 @@ class ReportController extends Controller
                 $model->where('booking_status', '=', 2);
                 $reservationTYpe = 'In House';
                 break;
+            case 'hall/upcoming_reservation_list':
+                $model->where('booking_status', '=', 1);
+                $model->where('room_category_type', '=', 'Hall');
+                $reservationTYpe = 'Upcoming';
+                break;
+            case 'hall/in_house_reservation_list':
+                $model->where('booking_status', '=', 2);
+                $model->where('room_category_type', '=', 'Hall');
+                $reservationTYpe = 'In House';
+                break;
+            case 'hall/check_out_reservation_list':
+                $model->where(function ($q) {
+                    $q->where('booking_status', '=', 3);
+                    $q->orWhere('booking_status', '=', 0);
+                });
+                $model->where('room_category_type', '=', 'Hall');
+                $reservationTYpe = 'Checkout';
+                break;
             default:
                 abort(400, 'Invalid status');
         }
