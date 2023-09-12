@@ -270,6 +270,28 @@ class CompanyController extends Controller
                 return $this->response('Company cannot updated.', null, false);
             }
         }
+        if (isset($request->whatsapp_instance_id)) {
+            if ($request->whatsapp_instance_id != '') {
+                $data["whatsapp_instance_id"] = $request->whatsapp_instance_id;
+                $company = Company::find($id)->update($data);
+
+                if (!$company) {
+                    return [
+                        "status" => false,
+                        "errors" => ['whatsapp_instance_id' =>  ['Invalid Details']],
+                    ];
+                }
+            } else {
+                return [
+                    "status" => false,
+                    "errors" => ['whatsapp_instance_id' => ['Invalid Details']],
+                ];
+            }
+        } else
+            return [
+                "status" => false,
+                "errors" => ['whatsapp_instance_id' => ['Invalid Details']],
+            ];
 
         return $this->response('Company successfully updated.', $company, true);
     }

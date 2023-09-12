@@ -25,6 +25,9 @@
           <v-tab active-class="active-link">
             Tax Slabs
           </v-tab>
+          <v-tab active-class="active-link">
+            Whatsapp Settings
+          </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
           <v-tab-item>
             <v-row>
@@ -112,6 +115,10 @@
           <v-tab-item>
 
             <TaxSlabs />
+          </v-tab-item>
+          <v-tab-item>
+
+            <WhatsappInstance />
           </v-tab-item>
         </v-tabs>
       </v-col>
