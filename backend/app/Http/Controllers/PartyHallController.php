@@ -214,10 +214,10 @@ class PartyHallController extends Controller
         $array['event_type_id'] = $request->partyHallBookingEvents['event_type'];;
         $array['event_pax'] = $request->partyHallBookingEvents['pax'];;
         $array['event_special_setup'] = $request->partyHallBookingEvents['special_setup'];;
-        $array['event_audio_system'] = $request->partyHallBookingEvents['audio_system'] && 0;
+        $array['event_audio_system'] = isset($request->partyHallBookingEvents['audio_system']) ? $request->partyHallBookingEvents['audio_system'] : 0;
 
-        $array['event_projector'] = $request->partyHallBookingEvents['projector'] && 0;
-        $array['event_stage_decoration'] = $request->partyHallBookingEvents['stage_decoration'] && 0;
+        $array['event_projector'] = isset($request->partyHallBookingEvents['projector']) ? $request->partyHallBookingEvents['projector'] : 0;
+        $array['event_stage_decoration'] = isset($request->partyHallBookingEvents['stage_decoration']) ? $request->partyHallBookingEvents['stage_decoration'] : 0;
 
 
         $hall_rent_amount_per_hour = $request->partyHallBookingAmount['hall_rent_amount_per_hour'];;;
