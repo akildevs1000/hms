@@ -200,5 +200,7 @@ class PermissionSeeder extends Seeder
         // Permission::create(['module' => 'account_menu', 'title' => 'Account menu Access', 'name' => 'account_menu_access']);
         // Permission::create(['module' => 'management_access', 'title' => 'Management Access', 'name' => 'management_access']);
         //Permission::create(['module' => 'ledger_access', 'title' => 'Ledger Access', 'name' => 'ledger_access']);
+
+        Permission::create(['module' => 'party_hall', 'title' => 'Party Hall', 'name' => 'party_hall']);
     }
 }

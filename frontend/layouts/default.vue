@@ -252,7 +252,7 @@ export default {
           icon: "mdi-bed",
           title: `Party Hall`,
           open_menu: false,
-          menu: "history_menu",
+          menu: "party_hall",
           hasChildren: [
             // {
             //   icon: "mdi mdi-home-import-outline",
@@ -264,19 +264,19 @@ export default {
               icon: "mdi mdi-home-import-outline",
               title: "Reservation",
               to: "/hall/upcoming",
-              menu: "reservation_access",
+              menu: "party_hall",
             },
             {
               icon: "mdi mdi-home-account",
               title: "In House",
               to: "/hall/ongoing",
-              menu: "guest_access",
+              menu: "party_hall",
             },
             {
               icon: "mdi mdi-home-export-outline",
               title: "Check Out",
               to: "/hall/completed",
-              menu: "reservation_access",
+              menu: "party_hall",
             },
           ],
         },

@@ -1,7 +1,7 @@
 
 
 <template>
-    <div v-if="can('in_house_access') && can('in_house_view')">
+    <div v-if="can('party_hall') && can('party_hall')">
         <HallReservationList :endpoint="'hall/upcoming_reservation_list'" :Model="'Upcoming Reservation'" />
     </div>
     <NoAccess v-else />

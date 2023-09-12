@@ -1,5 +1,5 @@
 <template>
-    <div v-if="can('calendar_create')">
+    <div v-if="can('party_hall')">
         <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
             {{ snackbar_response }}
         </v-snackbar>
