@@ -83,7 +83,7 @@
         <v-dialog v-model="BookedRoomReportDialog" persistent max-width="700px">
           <v-card>
             <v-toolbar class="rounded-md" color="background" dense flat dark>
-              <span>Booked Room Report</span>
+              <span>Reserved Room Report (Unpaid)</span>
               <v-spacer></v-spacer>
               <v-icon dark class="pa-0" @click="BookedRoomReportDialog = false">
                 mdi mdi-close-box
@@ -173,7 +173,7 @@
         <v-dialog v-model="AvailableRoomsReportDialog" persistent max-width="700px">
           <v-card>
             <v-toolbar class="rounded-md" color="background" dense flat dark>
-              <span>Expect Checkout Rooms Report</span>
+              <span>Available Rooms Report</span>
               <v-spacer></v-spacer>
               <v-icon dark class="pa-0" @click="AvailableRoomsReportDialog = false">
                 mdi mdi-close-box
