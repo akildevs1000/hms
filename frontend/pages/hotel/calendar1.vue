@@ -6,13 +6,12 @@
       </v-snackbar>
     </div>
 
-
     <v-dialog v-model="confirmationDialog" persistent max-width="290">
       <v-card>
-        <v-card-title class="text-h5">
-          Action
-        </v-card-title>
-        <v-card-text>Are you sure you want to proceed(Change the Room)?</v-card-text>
+        <v-card-title class="text-h5"> Action </v-card-title>
+        <v-card-text
+          >Are you sure you want to proceed(Change the Room)?</v-card-text
+        >
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="change_room_by_drag">
@@ -27,16 +26,20 @@
 
     <v-dialog v-model="extendConfirmationDialog" persistent max-width="290">
       <v-card>
-        <v-card-title class="text-h5">
-          Action
-        </v-card-title>
-        <v-card-text>Are you sure you want to proceed(Change the Date)?</v-card-text>
+        <v-card-title class="text-h5"> Action </v-card-title>
+        <v-card-text
+          >Are you sure you want to proceed(Change the Date)?</v-card-text
+        >
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="change_date_by_drag">
             Yes
           </v-btn>
-          <v-btn color="green darken-1" text @click="closeExtendConfirmationDialog">
+          <v-btn
+            color="green darken-1"
+            text
+            @click="closeExtendConfirmationDialog"
+          >
             No
           </v-btn>
         </v-card-actions>
@@ -48,7 +51,9 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="checkOutDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="checkOutDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
           <check-out :BookingData="checkData" @close-dialog="closeDialogs" />
@@ -63,10 +68,21 @@
           Are you sure you want to cancel this
         </v-card-title>
         <v-container grid-list-xs>
-          <v-textarea placeholder="Reason" rows="3" dense outlined v-model="reason"></v-textarea>
+          <v-textarea
+            placeholder="Reason"
+            rows="3"
+            dense
+            outlined
+            v-model="reason"
+          ></v-textarea>
         </v-container>
         <v-card-actions>
-          <v-btn class="primary" small :loading="cancelLoad" @click="cancelItem">
+          <v-btn
+            class="primary"
+            small
+            :loading="cancelLoad"
+            @click="cancelItem"
+          >
             Yes
           </v-btn>
           <v-btn class="error" small @click="cancelDialog = false">
@@ -87,7 +103,11 @@
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <Posting :BookingData="checkData" :evenIid="evenIid" @close-dialog="closeDialogs"></Posting>
+            <Posting
+              :BookingData="checkData"
+              :evenIid="evenIid"
+              @close-dialog="closeDialogs"
+            ></Posting>
           </v-container>
         </v-card-text>
       </v-card>
@@ -106,8 +126,13 @@
                   <span v-html="item.text"></span>
                 </th>
               </tr>
-              <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                color="primary"></v-progress-linear>
+              <v-progress-linear
+                v-if="loading"
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                color="primary"
+              ></v-progress-linear>
               <tr v-for="(item, index) in postings" :key="index">
                 <td>{{ ++index }}</td>
                 <td>{{ caps(item.bill_no) }}</td>
@@ -130,7 +155,12 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="checkInDialog" persistent :width="1366" class="checkin-models">
+    <v-dialog
+      v-model="checkInDialog"
+      persistent
+      :width="1366"
+      class="checkin-models"
+    >
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
@@ -151,11 +181,16 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingAdvance = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="payingAdvance = false"
+            >mdi mdi-close-box</v-icon
+          >
         </v-toolbar>
         <v-card-text>
           <v-container>
-            <PayAdvance :BookingData="checkData" @close-dialog="closeDialogs"></PayAdvance>
+            <PayAdvance
+              :BookingData="checkData"
+              @close-dialog="closeDialogs"
+            ></PayAdvance>
           </v-container>
         </v-card-text>
       </v-card>
@@ -166,21 +201,36 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Change Room</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="changeRoomDialog = closeChangeRoom()">mdi mdi-close-box
+          <v-icon
+            dark
+            class="pa-0"
+            @click="changeRoomDialog = closeChangeRoom()"
+            >mdi mdi-close-box
           </v-icon>
         </v-toolbar>
         <!-- <v-card-text v-if="NewBooking"> -->
         <!-- <new-check-in :reservation="newBookingRoom" /> -->
         <!-- {{ changeRoomOptions }} -->
-        <ChangeRoom :reservation="newBookingRoom" :changeRoomOptions="changeRoomOptions"
-          @close-dialog="closeChangeRoom" />
+        <ChangeRoom
+          :reservation="newBookingRoom"
+          :changeRoomOptions="changeRoomOptions"
+          @close-dialog="closeChangeRoom"
+        />
         <!-- </v-card-text> -->
         <v-card-actions> </v-card-actions>
       </v-card>
     </v-dialog>
 
     <div>
-      <v-tooltip bottom color="background" :position-x="tx" :position-y="ty" absolute offset-y v-model="showTooltip">
+      <v-tooltip
+        bottom
+        color="background"
+        :position-x="tx"
+        :position-y="ty"
+        absolute
+        offset-y
+        v-model="showTooltip"
+      >
         <table style="border: none !important">
           <tr class="bg-background">
             <th>Customer Name</th>
@@ -228,15 +278,30 @@
         </table>
       </v-tooltip>
       <v-row class="flex" justify="center"> </v-row>
-      <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+      <v-menu
+        v-model="showMenu"
+        :position-x="x"
+        :position-y="y"
+        absolute
+        offset-y
+      >
         <v-list>
           <v-list-item-group v-model="selectedItem">
-            <v-list-item v-if="bookingStatus == 1 && getDateOnly(checkInDate) === currentDate
-              " link @click="checkInDialog = true">
+            <v-list-item
+              v-if="
+                bookingStatus == 1 && getDateOnly(checkInDate) === currentDate
+              "
+              link
+              @click="checkInDialog = true"
+            >
               <v-list-item-title>Check In </v-list-item-title>
             </v-list-item>
 
-            <v-list-item v-else-if="bookingStatus == 2" link @click="get_check_out">
+            <v-list-item
+              v-else-if="bookingStatus == 2"
+              link
+              @click="get_check_out"
+            >
               <v-list-item-title>Check Out</v-list-item-title>
             </v-list-item>
 
@@ -269,14 +334,23 @@
               </v-list-item>
             </div>
 
-            <v-list-item link @click="payingAdvance = true" v-if="bookingStatus <= 2 &&
-              bookingStatus != 0 &&
-              checkData.paid_by != 2
-              ">
+            <v-list-item
+              link
+              @click="payingAdvance = true"
+              v-if="
+                bookingStatus <= 2 &&
+                bookingStatus != 0 &&
+                checkData.paid_by != 2
+              "
+            >
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
 
-            <v-list-item link @click="cancelDialog = true" v-if="bookingStatus == 1">
+            <v-list-item
+              link
+              @click="cancelDialog = true"
+              v-if="bookingStatus == 1"
+            >
               <v-list-item-title>Cancel Room </v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -288,14 +362,22 @@
       <v-card color="primary" dark>
         <v-card-text class="py-3">
           Loading...
-          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
         </v-card-text>
       </v-card>
     </v-dialog>
     <v-row>
       <v-col cols="12">
-        <FullCalendar ref="fullCalendar" @datesRender="handleDatesRender" :options="calendarOptions"
-          style="background: #fff" />
+        <FullCalendar
+          ref="fullCalendar"
+          @datesRender="handleDatesRender"
+          :options="calendarOptions"
+          style="background: #fff"
+        />
       </v-col>
     </v-row>
   </div>
@@ -364,7 +446,8 @@ export default {
         locale: "en",
 
         customButtons: {
-          prev: { // this overrides the prev button
+          prev: {
+            // this overrides the prev button
             text: "PREV",
             click: (e) => {
               this.prevCounter = this.prevCounter - 1;
@@ -377,18 +460,18 @@ export default {
               // var date = this.$refs.fullCalendar.getDate();
               // alert("The current date of the calendar is " + date.toISOString());
               this.get_events();
-            }
+            },
           },
-          next: { // this overrides the prev button
+          next: {
+            // this overrides the prev button
             text: "NEXT",
             click: (e) => {
               this.prevCounter = this.prevCounter + 1;
 
-
               let calendarApi = this.$refs.fullCalendar.getApi();
               calendarApi.next();
               this.get_events();
-            }
+            },
           },
           first: {
             text: "30 Days",
@@ -398,11 +481,9 @@ export default {
               // this.changeTableHeaderContent();
               // this.defaultDaysCount = 60;
 
-
               setTimeout(() => {
                 this.get_events();
               }, 2000);
-
             },
           },
           second: {
@@ -468,10 +549,8 @@ export default {
             weekday: "long",
             day: "numeric",
             slotLabelFormat: [
-
               { day: "2-digit", weekday: "short", omitCommas: true },
             ],
-
           },
           dayGrid: {
             weekday: "long",
@@ -505,7 +584,6 @@ export default {
             field: "room_type",
             width: "4%",
           },
-
         ],
         resources: [
           // { id: "103", room_no: "103", room_type: "king", eventColor: "green" },
@@ -538,7 +616,6 @@ export default {
           //   end: "2023-02-20 23:00:00",
           //   title: "e",
           // },
-
         ],
 
         eventDidMount: (arg) => {
@@ -599,7 +676,6 @@ export default {
         },
 
         eventDrop: (arg, delta) => {
-
           let obj = {
             eventId: arg.event.id,
             start: this.convert_date_format(arg.event.start),
@@ -679,8 +755,7 @@ export default {
 
   mounted() {
     this.calendarOptions.height = window.innerHeight - 90;
-    window.addEventListener('resize', () => {
-
+    window.addEventListener("resize", () => {
       this.calendarOptions.height = window.innerHeight - 90;
     });
     this.room_list();
@@ -691,9 +766,7 @@ export default {
       // entire view has been rendered
       try {
         document.querySelector(".fc-license-message").style.display = "none";
-      } catch (error) {
-
-      }
+      } catch (error) {}
 
       // const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
       // setTimeout(() => {
@@ -719,7 +792,7 @@ export default {
       // this.changeTableHeaderContent();
     });
   },
-  activated() { },
+  activated() {},
 
   watch: {
     checkInDialog() {
@@ -793,13 +866,15 @@ export default {
       let start = info.view.activeStart;
       let end = info.view.activeEnd;
       console.log(start);
-      console.log(`${start.toLocaleDateString()} - ${end.toLocaleDateString()}`);
+      console.log(
+        `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`
+      );
     },
     can(per) {
       let u = this.$auth.user;
       if (!u.permissions) return false;
       return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
     clearHeaderContent() {
@@ -876,7 +951,7 @@ export default {
       //const inputString = "Aug 1 – 31, 2023";
 
       // Split the input string by the "–" (en dash) character to get date range parts
-      const dateParts = inputString.split("–").map(part => part.trim());
+      const dateParts = inputString.split("–").map((part) => part.trim());
 
       // Extract the year from the end date part
       const endDate = dateParts[1];
@@ -891,23 +966,32 @@ export default {
       let year = parseInt(match[0]);
 
       let monthMap = {
-        "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
-        "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+        Jan: 1,
+        Feb: 2,
+        Mar: 3,
+        Apr: 4,
+        May: 5,
+        Jun: 6,
+        Jul: 7,
+        Aug: 8,
+        Sep: 9,
+        Oct: 10,
+        Nov: 11,
+        Dec: 12,
       };
-
 
       // Split the start date part into month and day
       const startDateParts = dateParts[0].split(" ");
       const startMonth = monthMap[startDateParts[0]];
       const startDay = parseInt(startDateParts[1]);
 
-
-
       // Format the start date in "dd-mm-yyyy" format
       const startDateString = `${year}-${startMonth}-${startDay}`;
 
       // Format the end date in "dd-mm-yyyy" format
-      const endDateString = `${year}-${startMonth}-${dateParts[1].split(',')[0]}`;
+      const endDateString = `${year}-${startMonth}-${
+        dateParts[1].split(",")[0]
+      }`;
 
       // Display the extracted year and the formatted dates
       // console.log("Year:", year);
@@ -915,18 +999,15 @@ export default {
       // console.log("End Date:", endDateString);
 
       return { startDateString: startDateString, endDateString: endDateString };
-
     },
     getCalenderDateFromat(inputString1) {
       console.log(inputString1);
 
       try {
-
-
-        let inputString = inputString1;//"Aug 1 – Oct 14, 2023";
+        let inputString = inputString1; //"Aug 1 – Oct 14, 2023";
 
         // Split the input string by the "–" (en dash) character to get start and end date parts
-        let dateParts = inputString.split("–").map(part => part.trim());
+        let dateParts = inputString.split("–").map((part) => part.trim());
 
         // Extract the year from the end date part
         let endDate = dateParts[1];
@@ -938,12 +1019,43 @@ export default {
           match = date.getFullYear();
         }
 
-        let year = parseInt(match[0]);
+        let endYear = parseInt(match[0]);
+
+        //-------------------
+        // Extract the year from the end date part
+        let startDate = dateParts[0];
+        yearRegex = /(\d{4})/; // Regular expression to match a 4-digit year
+        let Startmatch = startDate.match(yearRegex);
+
+        if (!Startmatch) {
+          let date = new Date();
+          Startmatch = date.getFullYear();
+        }
+
+        let startYear = parseInt(Startmatch[0]);
+
+        if (
+          startYear == "NaN" ||
+          startYear == NaN ||
+          Startmatch[0] == undefined
+        ) {
+          startYear = endYear;
+        }
 
         // Create a mapping of month names to their numeric representation
         let monthMap = {
-          "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
-          "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+          Jan: 1,
+          Feb: 2,
+          Mar: 3,
+          Apr: 4,
+          May: 5,
+          Jun: 6,
+          Jul: 7,
+          Aug: 8,
+          Sep: 9,
+          Oct: 10,
+          Nov: 11,
+          Dec: 12,
         };
 
         // Split the start date part into month and day
@@ -956,30 +1068,28 @@ export default {
         let endMonth = monthMap[endMonthDay[0]];
         let endDay = 30;
         if (endMonthDay[1]) {
-
           endDay = parseInt(endMonthDay[1]);
-        }
-        else {
+        } else {
           endDay = endMonth;
           endMonth = startMonth;
         }
 
-
-
         // if (!endMonth) endMonth = startMonth;
         // Assuming you want to use the extracted year
         // Format the start and end dates in "dd-mm-yyyy" format
-        let startDateString = `${year}-${startMonth}-${startDay}`;
-        let endDateString = `${year}-${endMonth}-${endDay}`;
+        let startDateString = `${startYear}-${startMonth}-${startDay}`;
+        let endDateString = `${endYear}-${endMonth}-${endDay}`;
 
         // Display the extracted year and the formatted dates
 
         console.log("Start Date:", startDateString);
         console.log("End Date:", endDateString);
-        return { startDateString: startDateString, endDateString: endDateString };
+        return {
+          startDateString: startDateString,
+          endDateString: endDateString,
+        };
       } catch (error) {
-        console.log('error', error);
-
+        console.log("error", error);
       }
     },
     get_events() {
@@ -994,16 +1104,15 @@ export default {
         dateRagenge = this.getCalenderDateFromat(calendarApi.view.title);
       }
 
-
-
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
           prevCounter: this.prevCounter,
           defaultDaysCount: this.defaultDaysCount,
-          calender_display_days: this.calendarOptions.views.resourceTimelineYear.duration.days,
+          calender_display_days:
+            this.calendarOptions.views.resourceTimelineYear.duration.days,
           startDateString: dateRagenge.startDateString,
-          endDateString: dateRagenge.endDateString
+          endDateString: dateRagenge.endDateString,
         },
       };
       this.$axios.get(`events_list`, payload).then(({ data }) => {
@@ -1072,7 +1181,6 @@ export default {
     },
 
     get_room_types(e, obj) {
-
       console.log(obj.room_type);
       this.reservation.isCalculate = true;
       this.reservation.room_id = this.RoomList.find(
@@ -1105,7 +1213,6 @@ export default {
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
           if (!data.status) {
-
             this.alert("Failure!", data.data, "error");
             return false;
           }
@@ -1115,13 +1222,13 @@ export default {
           this.reservation.priceList = data.data;
           this.reservation.total_tax = data.total_tax;
 
-          this.reservation.total_price_after_discount = data.total_price_after_discount;
+          this.reservation.total_price_after_discount =
+            data.total_price_after_discount;
           this.reservation.total_price = data.total_price;
           this.reservation.total_discount = data.total_discount;
 
           let commitObj = {
             ...this.reservation,
-
           };
           //console.log('reservation1', commitObj);
           this.$store.commit("reservation", commitObj);
@@ -1321,7 +1428,6 @@ export default {
             if (data.record) {
               this.getChangeRoomMethod(data);
             }
-
           }
         })
         .catch((e) => console.log(e));
@@ -1448,7 +1554,6 @@ export default {
 .fc-timeline-event-harness {
   margin-left: 14px;
   margin-right: -15px;
-
 }
 
 .Hall {
