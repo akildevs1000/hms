@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can('settings_rooms_access') && can('settings_rooms_view')">
+  <div v-if="can('devices_permissions_access') && can('devices_view')">
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -13,9 +13,9 @@
     <v-dialog v-model="newItemDialog" max-width="20%">
       <v-card>
         <v-card-title dense class="primary white--text background">
-          <span v-if="viewMode">View Room Info </span>
-          <span v-else-if="editedItemIndex == -1">Add Room </span>
-          <span v-else>Edit Room Info </span>
+          <span v-if="viewMode">View Device Info </span>
+          <span v-else-if="editedItemIndex == -1">Add Device </span>
+          <span v-else>Edit Device Info </span>
           <v-spacer></v-spacer>
           <v-icon @click="newItemDialog = false" outlined dark color="white">
             mdi mdi-close-circle
@@ -25,84 +25,55 @@
           <v-container>
             <v-row>
               <v-col md="12" cols="12">
-                <label>Room No</label>
+                <label>Serial Number</label>
                 <v-text-field
                   :disabled="viewMode"
-                  v-model="editedItem.room_no"
+                  v-model="editedItem.serial_number"
                   outlined
                   dense
                   small
                   :hide-details="true"
-                  placeholder="Room No"
+                  placeholder="Serial Number"
                 ></v-text-field>
                 <span
                   dense
-                  v-if="errors && errors.room_no"
+                  v-if="errors && errors.serial_number"
                   class="error--text"
-                  >{{ errors.room_no[0] }}</span
+                  >{{ errors.serial_number[0] }}</span
                 >
               </v-col>
               <v-col md="12" cols="12">
-                <label>Floor No</label>
-                <v-select
-                  v-model="editedItem.floor_no"
+                <label>Device Type Name</label>
+                <v-text-field
                   :disabled="viewMode"
+                  v-model="editedItem.name"
                   outlined
                   dense
                   small
                   :hide-details="true"
-                  :items="floors"
-                  placeholder="Select Floor"
-                ></v-select>
-                <span v-if="errors && errors.floor_no" class="error--text">{{
-                  errors.floor_no[0]
+                  placeholder="Device Type Name"
+                ></v-text-field>
+                <span v-if="errors && errors.name" class="error--text">{{
+                  errors.name[0]
                 }}</span>
               </v-col>
               <v-col md="12" cols="12">
-                <label> Category</label>
+                <label> Assign Room </label>
                 <v-select
                   :disabled="viewMode"
-                  :items="roomTypesData"
-                  v-model="editedItem.room_type_id"
+                  :items="roomList"
+                  v-model="editedItem.room_id"
                   outlined
                   dense
                   small
                   :hide-details="true"
-                  item-text="name"
-                  item-value="id"
-                  placeholder="Select Category"
+                  item-text="room_no"
+                  item-value="table_id"
+                  placeholder="Assign Room"
                 >
                 </v-select>
-                <span
-                  v-if="errors && errors.room_type_id"
-                  class="error--text"
-                  >{{ errors.room_type_id[0] }}</span
-                >
-              </v-col>
-              <v-col md="12" cols="12">
-                <label> Status</label>
-                <v-select
-                  :disabled="viewMode"
-                  selected="0"
-                  :items="[
-                    { id: '0', name: 'Active' },
-                    {
-                      id: '1',
-                      name: 'In-Active',
-                    },
-                  ]"
-                  v-model="editedItem.status"
-                  outlined
-                  dense
-                  small
-                  :hide-details="true"
-                  item-text="name"
-                  item-value="id"
-                  placeholder="Select status"
-                >
-                </v-select>
-                <span v-if="errors && errors.status" class="error--text">{{
-                  errors.status[0]
+                <span v-if="errors && errors.room_id" class="error--text">{{
+                  errors.room_id[0]
                 }}</span>
               </v-col>
             </v-row>
@@ -125,7 +96,7 @@
         dense
         flat
       >
-        <v-toolbar-title><span>Rooms</span></v-toolbar-title>
+        <v-toolbar-title><span>Devices</span></v-toolbar-title>
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -160,7 +131,7 @@
           <span>Filter</span>
         </v-tooltip>
         <v-spacer></v-spacer>
-        <v-tooltip v-if="can('settings_rooms_create')" top color="primary">
+        <v-tooltip v-if="can('devices_create')" top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               x-small
@@ -281,21 +252,29 @@
                   : ""
               }}
             </template>
-            <template v-slot:item.floor_no="{ item }">
-              {{ item.floor_no }}</template
+            <template v-slot:item.room.room_no="{ item }">
+              {{ item.room.room_no }}</template
             >
             <template v-slot:item.room_type.name="{ item }">
               {{ item.room_type.name }}</template
-            ><template v-slot:item.status="{ item }">
-              {{ item.status == "0" ? "Active" : "In-active" }}
+            >
+            <template v-slot:item.latest_status="{ item }">
+              <v-icon v-if="item.latest_status == 0" color="red"
+                >mdi-alpha-x-circle
+              </v-icon>
+              <v-icon v-else-if="item.latest_status == 1" color="green"
+                >mdi-alpha-y-circle
+              </v-icon>
             </template>
-
+            <template v-slot:item.latest_status_time="{ item }">
+              {{ item.latest_status_time }}
+            </template>
             <template
               v-slot:item.options="{ item }"
               v-if="
-                can('settings_rooms_view') ||
-                can('settings_rooms_edit') ||
-                can('settings_rooms_delete')
+                can('devices_view') ||
+                can('devices_edit') ||
+                can('devices_delete')
               "
             >
               <v-menu bottom left>
@@ -306,7 +285,7 @@
                 </template>
                 <v-list width="120" dense>
                   <v-list-item
-                    v-if="can('settings_rooms_view')"
+                    v-if="can('devices_view')"
                     @click="editItem(item, true)"
                   >
                     <v-list-item-title style="cursor: pointer">
@@ -315,7 +294,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
-                    v-if="can('settings_rooms_edit')"
+                    v-if="can('devices_edit')"
                     @click="editItem(item, false)"
                   >
                     <v-list-item-title style="cursor: pointer">
@@ -324,7 +303,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
-                    v-if="can('settings_rooms_delete')"
+                    v-if="can('devices_delete')"
                     @click="deleteItem(item)"
                   >
                     <v-list-item-title style="cursor: pointer">
@@ -365,45 +344,56 @@ export default {
         filterable: false,
       },
       {
-        text: "Room No",
-        value: "room_no",
+        text: "Serial Number",
+        value: "serial_number",
         align: "left",
         sortable: true,
         filterable: true,
       },
       {
-        text: "Floor No",
-        value: "floor_no",
+        text: "Device Name",
+        value: "name",
+        key: "name",
         align: "left",
         sortable: true,
-        key: "floor_no",
         filterable: true,
         filterSpecial: true,
       },
       {
-        text: "Room Type",
-        value: "room_type.name",
-        key: "room_type",
+        text: "Roo No",
+        value: "room.room_no",
         align: "left",
         sortable: true,
+        key: "room_id",
         filterable: true,
         filterSpecial: true,
       },
 
       {
         text: "Status",
-        value: "status",
+        value: "latest_status",
         align: "left",
-        key: "status",
         sortable: true,
+        key: "room_id",
         filterable: true,
         filterSpecial: true,
       },
+
+      {
+        text: "Status Time",
+        value: "latest_status_time",
+        align: "left",
+        sortable: true,
+        key: "room_id",
+        filterable: true,
+        filterSpecial: true,
+      },
+
       { text: "Options", value: "options", align: "left", sortable: false },
     ],
-    roomTypesData: [],
+    roomList: [],
 
-    endpoint: "room",
+    endpoint: "devices",
 
     newItemDialog: false,
 
@@ -430,7 +420,7 @@ export default {
   },
   created() {
     this.getDataFromApi();
-    this.getRoomTypesData();
+    this.getroomList();
   },
   methods: {
     can(per) {
@@ -440,6 +430,7 @@ export default {
       );
     },
     AddNewRoom() {
+      this.errors = {};
       this.editedItem = {};
       this.editedItemIndex = -1;
       this.viewMode = false;
@@ -493,11 +484,10 @@ export default {
       });
     },
 
-    getRoomTypesData() {
+    getroomList() {
       let options = { params: { company_id: this.$auth.user.company.id } };
-      this.$axios.get(`get_room_type_list`, options).then(({ data }) => {
-        this.roomTypesForSelectOptions = data.data;
-        this.roomTypesData = data.data;
+      this.$axios.get(`room_list`, options).then(({ data }) => {
+        this.roomList = data;
         //this.roomTypesForSelectOptions.unshift({ id: '', name: "All" });
       });
     },
@@ -505,6 +495,7 @@ export default {
       this.editItem(item, true);
     },
     editItem(item, viewMode = false) {
+      this.errors = {};
       this.viewMode = viewMode;
       this.editedItem = {};
       let options = { params: { company_id: this.$auth.user.company.id } };
@@ -522,11 +513,10 @@ export default {
         let options = {
           params: {
             company_id: this.$auth.user.company.id,
-            room_no: this.editedItem.room_no,
-            room_type_id: this.editedItem.room_type_id,
-            status: this.editedItem.status,
+            serial_number: this.editedItem.serial_number,
+            room_id: this.editedItem.room_id,
+            name: this.editedItem.name,
             user_id: this.$auth.user.id,
-            floor_no: this.editedItem.floor_no,
           },
         };
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Device\StoreRequest;
 use App\Http\Requests\Device\UpdateRequest;
 use App\Models\AttendanceLog;
+use App\Models\DeviceLogs;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -15,7 +16,7 @@ class DeviceController extends Controller
 {
     public function index(Device $model, Request $request)
     {
-        return $model->with(['status', 'company'])->where('company_id', $request->company_id)->paginate($request->per_page ?? 1000);
+        return $model->with(['room', 'company'])->where('company_id', $request->company_id)->paginate($request->per_page ?? 1000);
     }
 
     public function getDeviceList(Device $model, Request $request)
@@ -26,17 +27,9 @@ class DeviceController extends Controller
     public function store(Device $model, StoreRequest $request)
     {
 
-        // $record = false;
-        try {
-            // $response = Http::post(env("LOCAL_IP") .':'. env("LOCAL_PORT") . '/Register', [
-            //     'sn' => $request->device_id, //OX-8862021010010
-            //     'ip' => $request->ip,
-            //     'port' => $request->port,
-            // ]);
 
-            // if ($response->status() == 200) {
-            //     $record = $model->create($request->validated());
-            // }
+        try {
+
 
             $record = $model->create($request->validated());
 
@@ -158,5 +151,27 @@ class DeviceController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function updateDevicRoomFileStatus(Request $request)
+    {
+
+        $device_room_number = $request->room_number;
+        $device_status = $request->status;
+        $date_time = date('Y-m-d H:i:s');
+        if ($device_room_number != ''  && $device_status != '') {
+
+            $logs["serial_number"] = $device_room_number;
+            $logs["status"] = $device_status;
+            $logs["raw_data"] = json_encode($request->all());
+            DeviceLogs::create($logs);
+
+            $row["latest_status"] = $device_status;
+            Device::where("serial_number", $device_room_number)
+                ->update($row);
+            return $this->response('Successfully Updated', null, true);
+        }
+
+        return $this->response('Data error', null, false);
     }
 }

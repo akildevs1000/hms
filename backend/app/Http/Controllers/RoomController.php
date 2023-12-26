@@ -17,7 +17,7 @@ class RoomController extends Controller
 {
     public function index(Request $request)
     {
-        $model = Room::query();
+        $model = Room::query()->with("device");
         if ($request->filled('status') && $request->status != "-1") {
             $model->where('status', $request->status);
         }
@@ -37,6 +37,14 @@ class RoomController extends Controller
         if ($request->filled('status')) {
             $model->where('status', $request->status);
         }
+        if ($request->filled('latest_status')) {
+            $model->whereHas('device', function ($q) use ($request) {
+                return  $q->where('latest_status',    $request->latest_status);
+            });
+        }
+
+
+
         //  else {
         //     $model->where('status', 0);
         // }
@@ -143,6 +151,7 @@ class RoomController extends Controller
             // $color =  $this->get_color($d->roomType->name);
             $arr[] = [
                 'id' => $d->room_no,
+                'table_id' => $d->id,
                 'room_no' => $d->room_no,
                 'room_type' => $d->roomType->name,
                 // 'eventColor' => $color,
@@ -404,7 +413,7 @@ class RoomController extends Controller
 
         $roomIds = array_merge($dirtyRooms->pluck('room_id')->toArray(), $roomIds->toArray());
 
-        $notAvailableRooms = Room::whereIn('id', $roomIds)
+        $notAvailableRooms = Room::with('device')->whereIn('id', $roomIds)
             ->with('bookedRoom', function ($q) use ($company_id, $request, $todayDate) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '<=', 4);
@@ -422,7 +431,7 @@ class RoomController extends Controller
 
             'notAvailableRooms' => $notAvailableRooms,
             // 'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(), //$notAvailableRooms,
-            'availableRooms' => Room::whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
+            'availableRooms' => Room::with('device')->whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
             'confirmedBooking' => $confirmedBooking->count(),
             'confirmedBookingList' => $confirmedBooking->get(),
             'waitingBooking' => $waitingBooking,
