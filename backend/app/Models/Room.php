@@ -37,7 +37,10 @@ class Room extends Model
     {
         return $this->belongsTo(RoomType::class);
     }
-
+    public function device()
+    {
+        return $this->hasOne(Device::class);
+    }
     /**
      * Get the bookedRoom associated with the Room
      *

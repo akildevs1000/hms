@@ -26,19 +26,20 @@ class UpdateRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
+
+
+
+            'serial_number' => ['required', Rule::unique('devices')->ignore($this->input('id'))->where(function ($query) {
+                return $query->where('company_id', $this->input('company_id'));
+            })],
+
             'name' => ['required', 'min:2', 'max:50'],
-            'short_name' => ['required', 'nullable', 'min:3', 'max:4'],
-            'device_id' => ['required', 'min:3', 'max:100'],
-            'location' => ['nullable', 'min:5', 'max:300'],
-            'company_id' => ['required', 'min:1', 'integer'],
-            'status_id' => ['required', 'min:1', 'integer'],
+            'company_id' => ['required'],
+            'room_id' => ['required'],
 
-            'model_number' => ['nullable', 'min:6', 'max:50'],
-            'device_type' => ['required'],
 
-            'ip' => 'required|ip',
-            'port' => 'required',
         ];
     }
 }
