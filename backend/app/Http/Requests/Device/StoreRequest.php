@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-        $deviceId = $this->device_id;
+        $deviceId = $this->serial_number;
         $companyId = $this->company_id;
         return [
 
