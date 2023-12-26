@@ -318,11 +318,9 @@
         </div>
         <div class="col-4" style="margin: 0px">
             @if ($company->id == 1)
-                <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
-                    style="margin-left: 50px;margin-top: 0px">
+            <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100" style="margin-left: 50px;margin-top: 0px">
             @elseif ($company->id == 2)
-                <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
-                    style="margin-left: 50px;margin-top: 0px">
+            <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100" style="margin-left: 50px;margin-top: 0px">
             @endif
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
@@ -338,43 +336,43 @@
     <hr>
 
     @foreach ($data as $item)
-        <table class="mt-3 w-100">
-            <tr style="background-color: white; color: black" class="my-0 py-0">
-                <th class="my-0 py-0">Room No - {{ $item->room_no ?? '---' }}</th>
-                <th class="my-0 py-0">Adult</th>
-                <th class="my-0 py-0">Child</th>
-                <th class="my-0 py-0">Baby</th>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-                <td class="my-0 py-0">{{ $item['breakfast']['title'] ?? 'Breakfast' }}</td>
-                <td class="my-0 py-0">{{ $item['breakfast']['no_of_adult'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['breakfast']['no_of_child'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['breakfast']['no_of_baby'] ?? '---' }}</td>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-                <td class="my-0 py-0">{{ $item['lunch']['title'] ?? 'Lunch' }}</td>
-                <td class="my-0 py-0">{{ $item['lunch']['no_of_adult'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['lunch']['no_of_child'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['lunch']['no_of_baby'] ?? '---' }}</td>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-                <td class="my-0 py-0">{{ $item['dinner']['title'] ?? 'Dinner' }}</td>
-                <td class="my-0 py-0">{{ $item['dinner']['no_of_adult'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['dinner']['no_of_child'] ?? '---' }}</td>
-                <td class="my-0 py-0">{{ $item['dinner']['no_of_baby'] ?? '---' }}</td>
-            </tr>
-        </table>
+    <table class="mt-3 w-100">
+        <tr style="background-color: white; color: black" class="my-0 py-0">
+            <th class="my-0 py-0">Room No - {{ $item->room_no ?? '---' }}</th>
+            <th class="my-0 py-0">Adult</th>
+            <th class="my-0 py-0">Child</th>
+            <th class="my-0 py-0">Baby</th>
+        </tr>
+        <tr style="background-color: white" class="my-0 py-0">
+            <td class="my-0 py-0">{{ $item['breakfast']['title'] ?? 'Breakfast' }}</td>
+            <td class="my-0 py-0">{{ $item['breakfast']['no_of_adult'] ?? '---' }}</td>
+            <td class="my-0 py-0">{{ $item['breakfast']['no_of_child'] ?? '---' }}</td>
+            <td class="my-0 py-0">{{ $item['breakfast']['no_of_baby'] ?? '---' }}</td>
+        </tr>
+        <tr style="background-color: white" class="my-0 py-0">
+            <td class="my-0 py-0">{{ $item['lunch']['title'] ?? 'Lunch' }}</td>
+            <td class="my-0 py-0">{{ $item['lunch']['no_of_adult'] ?? '---' }}</td>
+            <td class="my-0 py-0">{{ $item['lunch']['no_of_child'] ?? '---' }}</td>
+            <td class="my-0 py-0">{{ $item['lunch']['no_of_baby'] ?? '---' }}</td>
+        </tr>
+        <tr style="background-color: white" class="my-0 py-0">
+            <td class="my-0 py-0">{{ $item['dinner']['title'] ?? 'Dinner' }}</td>
+            <td class="my-0 py-0">{{ $item['dinner']['no_of_adult'] ?? '---' }}</td>
+            <td class="my-0 py-0">{{ $item['dinner']['no_of_child'] ?? '---' }}</td>
+            <td class="my-0 py-0">{{ $item['dinner']['no_of_baby'] ?? '---' }}</td>
+        </tr>
+    </table>
     @endforeach
 
 
     @php
-        function numFormat($n = null)
-        {
-            if (!$n) {
-                return '---';
-            }
-            return number_format($n, 2) ?? '---';
-        }
+    function numFormat($n = null)
+    {
+    if (!$n) {
+    return '---';
+    }
+    return number_format($n, 2) ?? '---';
+    }
     @endphp
 </body>
 
