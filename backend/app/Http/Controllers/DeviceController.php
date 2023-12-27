@@ -197,6 +197,7 @@ class DeviceController extends Controller
         $model->when($request->filled('created_at'), function ($q) use ($request) {
             $q->where('latest_status_time',  "<=", $request->to_date . ' 23:59:59');
         });
+
         $model->orderByDesc("created_at", 'DESC');
         return $model->paginate($request->per_page ? $request->per_page : 100);
     }
