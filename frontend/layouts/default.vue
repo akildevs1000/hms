@@ -1,36 +1,69 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" dark :mini-variant="miniVariant" :clipped="clipped" fixed app
-      :color="sideBarcolor" :style="miniVariant ? 'width: 60px' : ''">
+    <v-navigation-drawer
+      v-model="drawer"
+      dark
+      :mini-variant="miniVariant"
+      :clipped="clipped"
+      fixed
+      app
+      :color="sideBarcolor"
+      :style="miniVariant ? 'width: 60px' : ''"
+    >
       <br />
       <v-list v-for="(i, idx) in items" :key="idx" style="padding: 5px 0 0 0px">
-        <v-list-item :to="i.to" router v-if="!i.hasChildren" :class="!miniVariant || 'pl-2'">
+        <v-list-item
+          :to="i.to"
+          router
+          v-if="!i.hasChildren"
+          :class="!miniVariant || 'pl-2'"
+        >
           <v-list-item-icon class="ma-2">
-            <v-icon @mouseover="showTooltipMenu(i.title)" @mouseleave="show = false">{{ i.icon }}
+            <v-icon
+              @mouseover="showTooltipMenu(i.title)"
+              @mouseleave="show = false"
+              >{{ i.icon }}
             </v-icon>
           </v-list-item-icon>
           <v-list-item-title> {{ i.title }}&nbsp; </v-list-item-title>
         </v-list-item>
-        <v-list-item v-else :class="!miniVariant || 'pl-2'" @click="i.open_menu = !i.open_menu">
+        <v-list-item
+          v-else
+          :class="!miniVariant || 'pl-2'"
+          @click="i.open_menu = !i.open_menu"
+        >
           <v-list-item-icon class="ma-2">
             <v-icon>{{ i.icon }}</v-icon>
-            <v-icon v-if="miniVariant" small>{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
+            <v-icon v-if="miniVariant" small
+              >{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
             </v-icon>
           </v-list-item-icon>
           <v-list-item-title>{{ i.title }} </v-list-item-title>
-          <v-icon small>{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
+          <v-icon small
+            >{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
           </v-icon>
         </v-list-item>
         <div v-if="i.open_menu">
-          <div style="margin-left: 54px" v-for="(j, jdx) in i.hasChildren" :key="jdx">
+          <div
+            style="margin-left: 54px"
+            v-for="(j, jdx) in i.hasChildren"
+            :key="jdx"
+          >
             <!-- v-show="!miniVariant" -->
             <v-list-item style="min-height: 0" :to="j.to">
-              <v-list-item-title v-if="!miniVariant">{{ j.title }}
+              <v-list-item-title v-if="!miniVariant"
+                >{{ j.title }}
               </v-list-item-title>
 
-              <v-list-item-icon :style="miniVariant ? 'margin-left: -54px;' : ''">
-                <v-icon :to="j.to" :style="miniVariant ? 'margin-left: 12px;' : ''" @mouseover="showTooltipMenu(j.title)"
-                  @mouseleave="show = false">
+              <v-list-item-icon
+                :style="miniVariant ? 'margin-left: -54px;' : ''"
+              >
+                <v-icon
+                  :to="j.to"
+                  :style="miniVariant ? 'margin-left: 12px;' : ''"
+                  @mouseover="showTooltipMenu(j.title)"
+                  @mouseleave="show = false"
+                >
                   {{ j.icon }}
                 </v-icon>
               </v-list-item-icon>
@@ -40,7 +73,14 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar elevation="0" color="#5FAFA3" dark :clipped-left="clipped" fixed app>
+    <v-app-bar
+      elevation="0"
+      color="#5FAFA3"
+      dark
+      :clipped-left="clipped"
+      fixed
+      app
+    >
       <!-- :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''" -->
 
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
@@ -53,11 +93,19 @@
       {{ title }}
       <v-spacer></v-spacer>
       <strong style="font-size: 18px">
-        {{ currentTime }} / {{ currentDate }}</strong>
+        {{ currentTime }} / {{ currentDate }}</strong
+      >
       <v-spacer></v-spacer>
 
-      <v-menu nudge-bottom="50" transition="scale-transition" origin="center center" bottom left min-width="200"
-        nudge-left="20">
+      <v-menu
+        nudge-bottom="50"
+        transition="scale-transition"
+        origin="center center"
+        bottom
+        left
+        min-width="200"
+        nudge-left="20"
+      >
         <template v-slot:activator="{ on, attrs }">
           <label class="px-2" v-bind="attrs" v-on="on">
             {{ getUser || "---" }}
@@ -77,7 +125,9 @@
                 <v-icon>mdi-account-multiple-outline</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="black--text">Profile</v-list-item-title>
+                <v-list-item-title class="black--text"
+                  >Profile</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
 
@@ -86,7 +136,9 @@
                 <v-icon>mdi mdi-text-account</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="black--text">Report</v-list-item-title>
+                <v-list-item-title class="black--text"
+                  >Report</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
 
@@ -106,7 +158,9 @@
                 <v-icon>mdi-logout</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="black--text">Logout</v-list-item-title>
+                <v-list-item-title class="black--text"
+                  >Logout</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
@@ -116,7 +170,15 @@
 
     <v-main class="main_bg">
       <!-- <v-container> -->
-      <v-tooltip v-model="show" top :position-x="x" :position-y="y" absolute offset-y color="primary">
+      <v-tooltip
+        v-model="show"
+        top
+        :position-x="x"
+        :position-y="y"
+        absolute
+        offset-y
+        color="primary"
+      >
         <span>{{ menuName }}</span>
       </v-tooltip>
 
@@ -136,7 +198,13 @@
       <v-icon class="spin" dark size="25">mdi-cog</v-icon>
     </v-btn> -->
     <!-- setting -->
-    <v-navigation-drawer v-model="rightDrawer" :clipped="true" :right="right" fixed style="z-index: 1000">
+    <v-navigation-drawer
+      v-model="rightDrawer"
+      :clipped="true"
+      :right="right"
+      fixed
+      style="z-index: 1000"
+    >
       <v-row style="margin-top: 50px">
         <v-col>
           <v-card class="pa-2" elevation="0">
@@ -144,13 +212,31 @@
               <div class="mb-3">
                 <Strong>Theme</Strong>
               </div>
-              <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="theme" id="light" autocomplete="off"
-                  @click="changeTheme('light')" />
-                <label class="btn" :class="'btn-outline-dark'" for="light">Light</label>
+              <div
+                class="btn-group"
+                role="group"
+                aria-label="Basic radio toggle button group"
+              >
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="theme"
+                  id="light"
+                  autocomplete="off"
+                  @click="changeTheme('light')"
+                />
+                <label class="btn" :class="'btn-outline-dark'" for="light"
+                  >Light</label
+                >
 
-                <input type="radio" class="btn-check" name="theme" id="dark" autocomplete="off"
-                  @click="changeTheme('dark')" />
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="theme"
+                  id="dark"
+                  autocomplete="off"
+                  @click="changeTheme('dark')"
+                />
                 <label class="btn btn-outline-dark" for="dark">Dark</label>
               </div>
             </v-col>
@@ -160,14 +246,38 @@
                 <Strong>Top Bar</Strong>
               </div>
               <div class="d-flex">
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="primary"
-                  @click="changeTopBarColor('primary')"></v-btn>
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="error"
-                  @click="changeTopBarColor('error')"></v-btn>
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="indigo"
-                  @click="changeTopBarColor('indigo')"></v-btn>
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="background"
-                  @click="changeTopBarColor('background')"></v-btn>
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="primary"
+                  @click="changeTopBarColor('primary')"
+                ></v-btn>
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="error"
+                  @click="changeTopBarColor('error')"
+                ></v-btn>
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="indigo"
+                  @click="changeTopBarColor('indigo')"
+                ></v-btn>
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="background"
+                  @click="changeTopBarColor('background')"
+                ></v-btn>
               </div>
             </v-col>
             <v-divider></v-divider>
@@ -176,14 +286,38 @@
                 <Strong>Side Bar</Strong>
               </div>
               <div class="d-flex">
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="primary"
-                  @click="changeSideBarColor('primary')"></v-btn>
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="error"
-                  @click="changeSideBarColor('error')"></v-btn>
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="indigo"
-                  @click="changeSideBarColor('indigo')"></v-btn>
-                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="background"
-                  @click="changeSideBarColor('background')">
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="primary"
+                  @click="changeSideBarColor('primary')"
+                ></v-btn>
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="error"
+                  @click="changeSideBarColor('error')"
+                ></v-btn>
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="indigo"
+                  @click="changeSideBarColor('indigo')"
+                ></v-btn>
+                <v-btn
+                  class="mx-2 stg-color-icon"
+                  fab
+                  dark
+                  x-small
+                  color="background"
+                  @click="changeSideBarColor('background')"
+                >
                 </v-btn>
               </div>
             </v-col>
@@ -306,8 +440,6 @@ export default {
               to: "/inquiry",
               menu: "inquiry_access",
             },
-
-
           ],
         },
 
@@ -317,7 +449,6 @@ export default {
           open_menu: false,
           menu: "account_menu",
           hasChildren: [
-
             {
               icon: "mdi mdi-food",
               title: "Posting",
@@ -361,7 +492,6 @@ export default {
             },
           ],
         },
-
 
         {
           icon: "mdi mdi-file-chart-outline",
@@ -407,7 +537,6 @@ export default {
               to: "/management/report/monthly",
               menu: "management_soldout_access",
             },
-
           ],
         },
         {
@@ -459,9 +588,14 @@ export default {
               to: "/companies",
               menu: "settings_permissions_access",
             },
-
+            {
+              icon: "mdi mdi-account-details",
+              title: "Devices",
+              to: "/devices",
+              menu: "devices_permissions_access",
+            },
           ],
-        }
+        },
       ],
       items: [],
       modules: {
@@ -471,7 +605,7 @@ export default {
       clipped: true,
       currentTime: "",
       miniVariant: false,
-      title: this.$auth.user.company.company_code,
+      title: "",
       logout_btn: {
         icon: "mdi-logout",
         label: "Logout",
@@ -480,6 +614,7 @@ export default {
   },
 
   created() {
+    this.title = "EZHMS"; // this.$auth.user?.company?.company_code;
     let das = {
       icon: "mdi-home",
       title: "Dashboard",
@@ -580,30 +715,24 @@ export default {
     this.items.push(das);
 
     this.menus.forEach((ele) => {
-
-      if (permissions.includes(ele.menu) || this.$auth.user.user_type == "company") {
-
+      if (
+        permissions.includes(ele.menu) ||
+        this.$auth.user.user_type == "company"
+      ) {
         this.items.push(ele);
-
       }
-
     });
-
 
     // if (this.$auth.user.user_type == "company") {
     //   this.items.push(Management);
     //   this.items.push(setting);
     // }
 
-
     // this.menus.forEach((ele) => {
     //   if (permissions.includes(ele.menu)) {
     //     this.items.push(ele);
     //   }
     // });
-
-
-
 
     this.getCompanyDetails();
   },
@@ -651,9 +780,6 @@ export default {
     },
 
     getUser() {
-
-
-
       if (!this.$auth.user) {
         return "";
       }
@@ -664,7 +790,7 @@ export default {
     },
 
     getLogo() {
-      return this.$auth.user && this.$auth.user.image || '/no-image.PNG';
+      return (this.$auth.user && this.$auth.user.image) || "/no-image.PNG";
     },
   },
   methods: {
@@ -854,7 +980,6 @@ select:focus {
 td {
   text-align: left;
   padding: 8px;
-
 }
 
 /* Datatable Sorting Icon color  */
@@ -975,12 +1100,7 @@ select:focus {
   padding: 0px !important;
 }
 
-
 .text-box-right-input input {
   text-align: right;
 }
 </style>
-
-
- 
-

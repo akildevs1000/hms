@@ -27,19 +27,20 @@ class DeviceController extends Controller
     public function store(Device $model, StoreRequest $request)
     {
 
+        if ($request->validated()) {
+            try {
 
-        try {
 
+                $record = $model->create($request->validated());
 
-            $record = $model->create($request->validated());
-
-            if ($record) {
-                return $this->response('Device successfully added.', $record, true);
-            } else {
-                return $this->response('Device cannot add.', null, 'device_api_error');
+                if ($record) {
+                    return $this->response('Device successfully added.', $record, true);
+                } else {
+                    return $this->response('Device cannot add.', null, 'device_api_error');
+                }
+            } catch (\Throwable $th) {
+                throw $th;
             }
-        } catch (\Throwable $th) {
-            throw $th;
         }
     }
 
