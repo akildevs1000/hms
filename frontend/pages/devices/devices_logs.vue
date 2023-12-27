@@ -202,9 +202,14 @@
             <template v-slot:item.room.room_no="{ item }">
               {{ item.room.room_no }}</template
             >
-            <template v-slot:item.room_type.name="{ item }">
-              {{ item.room_type.name }}</template
-            >
+            <template v-slot:item.status="{ item }">
+              <v-icon v-if="item.status == 0" color="red"
+                >mdi-alpha-x-circle
+              </v-icon>
+              <v-icon v-else-if="item.latest_status == 1" color="green"
+                >mdi-alpha-y-circle
+              </v-icon>
+            </template>
           </v-data-table>
         </v-col>
       </v-row>
