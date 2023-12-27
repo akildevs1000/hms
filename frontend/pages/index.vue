@@ -1024,6 +1024,7 @@
                 </div>
               </div>
             </div>
+            <Deviceslist :addNew="false"></Deviceslist>
             <ReservationList />
           </div>
         </div>
@@ -1063,6 +1064,8 @@ import PaidRoomsReport from "../components/summary_reports/PaidRoomsReport.vue";
 import CheckOutRoomsReport from "../components/summary_reports/CheckOutRoomsReport.vue";
 import DirtyRoomsReport from "../components/summary_reports/DirtyRoomsReport.vue";
 import Grc from "../components/booking/GRC.vue";
+
+import Deviceslist from "../components/devices/deviceslist.vue";
 export default {
   layout({ $auth }) {
     if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {
@@ -1097,6 +1100,7 @@ export default {
     Dirty,
     PaidBookedSvg,
     AvailableRoomsReport,
+    Deviceslist,
   },
   data() {
     return {
@@ -1268,6 +1272,10 @@ export default {
   created() {
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
+
+    setInterval(() => {
+      this.room_list();
+    }, 1000 * 60 * 5);
   },
 
   computed: {},

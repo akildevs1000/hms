@@ -12,12 +12,14 @@ class DeviceLogs extends Model
 
     protected $casts = [
         'created_at' => 'datetime:d-M-y H:m',
+
     ];
     protected $fillable = [
 
         'serial_number',
         'status',
         'raw_data',
+        'log_time',
 
 
     ];

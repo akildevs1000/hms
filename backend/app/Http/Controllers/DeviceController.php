@@ -166,9 +166,13 @@ class DeviceController extends Controller
             $logs["serial_number"] = $device_room_number;
             $logs["status"] = $device_status;
             $logs["raw_data"] = json_encode($request->all());
+            $logs["log_time"] = $date_time;
+
             DeviceLogs::create($logs);
 
             $row["latest_status"] = $device_status;
+            $row["latest_status_time"] = $date_time;
+
             Device::where("serial_number", $device_room_number)
                 ->update($row);
             return $this->response('Successfully Updated', null, true);
@@ -191,14 +195,19 @@ class DeviceController extends Controller
         //     $q->where('room_id',   $request->room_id);
         // });
 
-        $model->when($request->filled('created_at'), function ($q) use ($request) {
-            $q->where('latest_status_time',  ">=", $request->from_date . ' 00:00:00');
+        $model->when($request->filled('from_date'), function ($q) use ($request) {
+            $q->where('log_time',  ">=", $request->from_date . ' 00:00:00');
         });
-        $model->when($request->filled('created_at'), function ($q) use ($request) {
-            $q->where('latest_status_time',  "<=", $request->to_date . ' 23:59:59');
+        $model->when($request->filled('to_date'), function ($q) use ($request) {
+            $q->where('log_time',  "<=", $request->to_date . ' 23:59:59');
         });
 
-        $model->orderByDesc("created_at", 'DESC');
+        $model->orderByDesc("log_time", 'DESC');
         return $model->paginate($request->per_page ? $request->per_page : 100);
+    }
+
+    public function getDevicesList(Request $request)
+    {
+        return Devices::query()->where("company_id", $request->company_id)->get();
     }
 }
