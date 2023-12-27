@@ -10,6 +10,36 @@
         {{ snackbarResponse }}
       </v-snackbar>
     </div>
+
+    <v-row>
+      <v-col cols="7"></v-col>
+
+      <v-col cols="3">
+        <Calender2
+          style="float: right"
+          @filter-attr="filterAttr"
+          :default_date_from="date_from"
+          :default_date_to="date_to"
+          :defaultFilterType="1"
+          :height="'35px '"
+        />
+      </v-col>
+      <v-col cols="2">
+        <v-autocomplete
+          v-model="device_id"
+          :items="[{ serial_number: `All Rooms` }, ...devices_list]"
+          item-text="serial_number"
+          item-value="serial_number"
+          placeholder="Select Room"
+          label="Room"
+          outlined
+          :hide-details="true"
+          dense
+          @change="getDataFromApi()"
+        >
+        </v-autocomplete>
+      </v-col>
+    </v-row>
     <!-- <v-dialog v-model="newItemDialog" max-width="20%">
       <v-card>
         <v-card-title dense class="primary white--text background">
@@ -161,89 +191,6 @@
             class="elevation-1"
             :server-items-length="totalTableRowsCount"
           >
-            <template v-slot:header="{ props: { headers } }">
-              <tr v-if="isFilter">
-                <td v-for="header in headers" :key="header.text">
-                  <v-text-field
-                    v-if="header.filterable && !header.filterSpecial"
-                    clearable
-                    :hide-details="true"
-                    v-model="filters[header.value]"
-                    no-title
-                    outlined
-                    dense
-                    small
-                    :id="header.value"
-                    autocomplete="off"
-                    @input="applyFilters()"
-                  ></v-text-field>
-                  <v-autocomplete
-                    outlined
-                    dense
-                    v-model="filters[header.value]"
-                    v-if="
-                      header.filterable &&
-                      header.filterSpecial &&
-                      header.key == 'status'
-                    "
-                    :items="[
-                      { value: '', title: 'All' },
-                      { value: 0, title: 'Active' },
-                      { value: 1, title: 'In-Active' },
-                    ]"
-                    item-value="value"
-                    item-text="title"
-                    :hide-details="true"
-                    clearable
-                    @click:clear="
-                      filters[header.key] = '';
-                      applyFilters();
-                    "
-                    @change="applyFilters()"
-                  ></v-autocomplete>
-
-                  <v-autocomplete
-                    v-model="filters[header.key]"
-                    v-if="
-                      header.filterable &&
-                      header.filterSpecial &&
-                      header.key == 'room_type'
-                    "
-                    @change="applyFilters()"
-                    clearable
-                    @click:clear="
-                      filters[header.key] = '';
-                      applyFilters();
-                    "
-                    outlined
-                    dense
-                    :hide-details="true"
-                    :items="roomTypesForSelectOptions"
-                    item-text="name"
-                    item-value="id"
-                  >
-                  </v-autocomplete>
-                  <v-select
-                    v-model="filters[header.key]"
-                    v-if="
-                      header.filterable &&
-                      header.filterSpecial &&
-                      header.key == 'floor_no'
-                    "
-                    :items="floors"
-                    outlined
-                    dense
-                    clearable
-                    @click:clear="
-                      filters[header.kye] = '';
-                      applyFilters();
-                    "
-                    :hide-details="true"
-                    @change="applyFilters()"
-                  ></v-select>
-                </td>
-              </tr>
-            </template>
             <template v-slot:item.sno="{ item, index }">
               {{
                 currentPage
@@ -258,62 +205,6 @@
             <template v-slot:item.room_type.name="{ item }">
               {{ item.room_type.name }}</template
             >
-            <template v-slot:item.latest_status="{ item }">
-              <v-icon v-if="item.latest_status == 0" color="red"
-                >mdi-alpha-x-circle
-              </v-icon>
-              <v-icon v-else-if="item.latest_status == 1" color="green"
-                >mdi-alpha-y-circle
-              </v-icon>
-            </template>
-            <template v-slot:item.latest_status_time="{ item }">
-              {{ item.latest_status_time }}
-            </template>
-            <template
-              v-slot:item.options="{ item }"
-              v-if="
-                can('devices_view') ||
-                can('devices_edit') ||
-                can('devices_delete')
-              "
-            >
-              <v-menu bottom left>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </template>
-                <v-list width="120" dense>
-                  <v-list-item
-                    v-if="can('devices_view')"
-                    @click="editItem(item, true)"
-                  >
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="primary" small> mdi-eye </v-icon>
-                      View
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item
-                    v-if="can('devices_edit')"
-                    @click="editItem(item, false)"
-                  >
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="secondary" small> mdi-pencil </v-icon>
-                      Edit
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item
-                    v-if="can('devices_delete')"
-                    @click="deleteItem(item)"
-                  >
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="error" small> mdi-delete </v-icon>
-                      Delete
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </template>
           </v-data-table>
         </v-col>
       </v-row>
@@ -322,8 +213,11 @@
   <NoAccess v-else />
 </template>
 <script>
+import Calender2 from "../../components/Calender2.vue";
 export default {
+  components: { Calender2 },
   data: () => ({
+    devices_list: [],
     //datatable varables
     page: 1,
     perPage: 0,
@@ -360,9 +254,9 @@ export default {
         filterSpecial: true,
       },
       {
-        text: "created_at",
-        value: "created_at",
-        key: "created_at",
+        text: "log_time",
+        value: "log_time",
+        key: "log_time",
         align: "left",
         sortable: true,
         filterable: true,
@@ -397,8 +291,24 @@ export default {
     },
   },
   created() {
+    //console.log("device_id", this.$store.state.devices_logs_id);
+
+    this.device_id = this.$store.state.devices_logs_id;
     this.getDataFromApi();
-    this.getroomList();
+    //this.getroomList();
+    this.getDevicesList();
+    // Get today's date
+    let today = new Date();
+
+    // Subtract 7 days from today
+    let sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 2);
+
+    // Format the dates (optional)
+    this.date_to = today.toISOString().split("T")[0];
+    this.date_from = sevenDaysAgo.toISOString().split("T")[0];
+    // this.display_title =
+    //   "Attendance : " + this.date_from + " to " + this.date_to;
   },
   methods: {
     can(per) {
@@ -406,6 +316,12 @@ export default {
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
+    },
+    filterAttr(data) {
+      this.date_from = data.from;
+      this.date_to = data.to;
+
+      this.getDataFromApi();
     },
     AddNewRoom() {
       this.errors = {};
@@ -444,7 +360,9 @@ export default {
       if (customPage == 1) page = 1;
       this.currentPage = page;
       this.perPage = itemsPerPage;
-
+      if (this.device_id == "All Rooms") {
+        this.device_id = null;
+      }
       let options = {
         params: {
           page: page,
@@ -452,7 +370,9 @@ export default {
           sortDesc: sortedDesc,
           per_page: itemsPerPage,
           company_id: this.$auth.user.company.id,
-          ...this.filters,
+          serial_number: this.device_id,
+          from_date: this.date_from,
+          to_date: this.date_to,
         },
       };
       this.$axios.get(`devices_logs?page=${page}`, options).then(({ data }) => {
@@ -466,6 +386,14 @@ export default {
       let options = { params: { company_id: this.$auth.user.company.id } };
       this.$axios.get(`room_list`, options).then(({ data }) => {
         this.roomList = data;
+        //this.roomTypesForSelectOptions.unshift({ id: '', name: "All" });
+      });
+    },
+
+    getDevicesList() {
+      let options = { params: { company_id: this.$auth.user.company.id } };
+      this.$axios.get(`devices_list`, options).then(({ data }) => {
+        this.devices_list = data;
         //this.roomTypesForSelectOptions.unshift({ id: '', name: "All" });
       });
     },

@@ -115,7 +115,7 @@
           </template>
           <span>Reload</span>
         </v-tooltip>
-        <v-tooltip top color="primary">
+        <!-- <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               x-small
@@ -129,7 +129,7 @@
             </v-btn>
           </template>
           <span>Filter</span>
-        </v-tooltip>
+        </v-tooltip> -->
         <v-spacer></v-spacer>
         <v-tooltip v-if="can('devices_create') && addNew" top color="primary">
           <template v-slot:activator="{ on, attrs }">
@@ -161,7 +161,7 @@
             class="elevation-1"
             :server-items-length="totalTableRowsCount"
           >
-            <template v-slot:header="{ props: { headers } }">
+            <!-- <template v-slot:header="{ props: { headers } }">
               <tr v-if="isFilter">
                 <td v-for="header in headers" :key="header.text">
                   <v-text-field
@@ -243,7 +243,7 @@
                   ></v-select>
                 </td>
               </tr>
-            </template>
+            </template> -->
             <template v-slot:item.sno="{ item, index }">
               {{
                 currentPage
@@ -291,6 +291,17 @@
                     <v-list-item-title style="cursor: pointer">
                       <v-icon color="primary" small> mdi-eye </v-icon>
                       View
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    v-if="can('devices_view')"
+                    @click="viewStatusLogs(item)"
+                  >
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="warning" small>
+                        mdi-format-list-checkbox
+                      </v-icon>
+                      View Logs
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
@@ -498,6 +509,10 @@ export default {
     },
     viewItem(item) {
       this.editItem(item, true);
+    },
+    viewStatusLogs(item) {
+      this.$store.commit("devices_logs_id", item.serial_number);
+      this.$router.push(`/devices/devices_logs`);
     },
     editItem(item, viewMode = false) {
       this.errors = {};
