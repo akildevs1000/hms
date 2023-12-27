@@ -206,7 +206,7 @@
               <v-icon v-if="item.status == 0" color="red"
                 >mdi-alpha-x-circle
               </v-icon>
-              <v-icon v-else-if="item.latest_status == 1" color="green"
+              <v-icon v-else-if="item.status == 1" color="green"
                 >mdi-alpha-y-circle
               </v-icon>
             </template>
