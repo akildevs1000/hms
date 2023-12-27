@@ -9,6 +9,7 @@ use App\Http\Requests\Device\StoreRequest;
 use App\Http\Requests\Device\UpdateRequest;
 use App\Models\AttendanceLog;
 use App\Models\DeviceLogs;
+use App\Models\Devices;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -174,5 +175,29 @@ class DeviceController extends Controller
         }
 
         return $this->response('Data error', null, false);
+    }
+
+    public function getDevicesLogs(Request $request)
+    {
+
+        // $modelDevicesArray = Devices::query()->where("company_id", $request->company_id)->get()->pluck("serial_number");
+        $model = DeviceLogs::query();
+
+        $model->whereIn("serial_number", Devices::query()->where("company_id", $request->company_id)->get()->pluck("serial_number"));
+        $model->when($request->filled('serial_number'), function ($q) use ($request) {
+            $q->where('serial_number',   $request->serial_number);
+        });
+        // $model->when($request->filled('room_id'), function ($q) use ($request) {
+        //     $q->where('room_id',   $request->room_id);
+        // });
+
+        $model->when($request->filled('created_at'), function ($q) use ($request) {
+            $q->where('latest_status_time',  ">=", $request->from_date . ' 00:00:00');
+        });
+        $model->when($request->filled('created_at'), function ($q) use ($request) {
+            $q->where('latest_status_time',  "<=", $request->to_date . ' 23:59:59');
+        });
+
+        return $model->paginate($request->per_page ? $request->per_page : 100);
     }
 }

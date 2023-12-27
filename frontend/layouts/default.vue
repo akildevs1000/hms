@@ -594,6 +594,12 @@ export default {
               to: "/devices",
               menu: "devices_permissions_access",
             },
+            {
+              icon: "mdi mdi-account-details",
+              title: "Devices Logs",
+              to: "/devices/devices_logs",
+              menu: "devices_permissions_access",
+            },
           ],
         },
       ],
