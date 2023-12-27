@@ -1065,7 +1065,7 @@ import CheckOutRoomsReport from "../components/summary_reports/CheckOutRoomsRepo
 import DirtyRoomsReport from "../components/summary_reports/DirtyRoomsReport.vue";
 import Grc from "../components/booking/GRC.vue";
 
-import Deviceslist from "../components/devices/deviceslist.vue";
+import Deviceslist from "../components/devices/List.vue";
 export default {
   layout({ $auth }) {
     if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {

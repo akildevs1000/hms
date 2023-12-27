@@ -15,12 +15,16 @@ export const state = () => ({
   partyHallBookingExtra: {},
   customerImage: null,
   customerDocument: null,
+  devices_logs_id: "",
 });
 
 // contains your mutations
 export const mutations = {
   customerImage(state, value) {
     state.customerImage = value;
+  },
+  devices_logs_id(state, value) {
+    state.devices_logs_id = value;
   },
   customerDocument(state, value) {
     state.customerDocument = value;
