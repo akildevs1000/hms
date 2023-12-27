@@ -166,9 +166,13 @@ class DeviceController extends Controller
             $logs["serial_number"] = $device_room_number;
             $logs["status"] = $device_status;
             $logs["raw_data"] = json_encode($request->all());
+            $logs["log_time"] = $date_time;
+
             DeviceLogs::create($logs);
 
             $row["latest_status"] = $device_status;
+            $row["latest_status_time"] = $date_time;
+
             Device::where("serial_number", $device_room_number)
                 ->update($row);
             return $this->response('Successfully Updated', null, true);
