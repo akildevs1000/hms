@@ -10,7 +10,9 @@ class DeviceLogs extends Model
     use HasFactory;
     protected $table = 'device_logs';
 
-
+    protected $casts = [
+        'created_at' => 'datetime:d-M-y H:m',
+    ];
     protected $fillable = [
 
         'serial_number',
