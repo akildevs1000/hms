@@ -1024,7 +1024,7 @@
                 </div>
               </div>
             </div>
-            <Deviceslist :addNew="false"></Deviceslist>
+            <Deviceslist :key="key" :addNew="false"></Deviceslist>
             <ReservationList />
           </div>
         </div>
@@ -1104,6 +1104,7 @@ export default {
   },
   data() {
     return {
+      key: 1,
       reservation: [],
       rightClickRoomId: "",
       selected_booked_room_id: "",
@@ -1274,8 +1275,9 @@ export default {
     this.first_login_auth = this.$auth.user.first_login;
 
     setInterval(() => {
+      this.key = this.key + 1;
       this.room_list();
-    }, 1000 * 60 * 5);
+    }, 1000 * 60 * 2);
   },
 
   computed: {},
