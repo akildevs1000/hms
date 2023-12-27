@@ -5,7 +5,7 @@
   <NoAccess v-else />
 </template>
 <script>
-import Deviceslist from "../../components/devices/deviceslist.vue";
+import Deviceslist from "../../components/devices/List.vue";
 
 export default {
   data: () => ({}),
