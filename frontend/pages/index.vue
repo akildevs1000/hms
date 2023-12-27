@@ -1275,8 +1275,8 @@ export default {
     this.first_login_auth = this.$auth.user.first_login;
 
     setInterval(() => {
-      this.key = this.key + 1;
       this.room_list();
+      this.key = this.key + 1;
     }, 1000 * 60 * 2);
   },
 
