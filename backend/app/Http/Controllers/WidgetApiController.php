@@ -13,10 +13,10 @@ use Illuminate\Http\Request;
 
 class WidgetApiController extends Controller
 {
-    public function getAvailableRoomList2(Request $request)
+    public function getAvailableRoomList(Request $request)
     {
         $model = BookedRoom::query();
-        $roomIds = $model
+        $bookedRoomIds = $model
             ->whereDate('check_in', '<=', $request->from_date)
             ->WhereDate('check_out', '>=', $request->to_date)
             ->whereHas('booking', function ($q) use ($request) {
@@ -24,7 +24,28 @@ class WidgetApiController extends Controller
                 $q->where('company_id', $request->company_id);
             })
             ->pluck('room_id');
-        $unbookedRoomsInfo = Room::whereNotIn('id', $roomIds)
+
+
+        // $bookedRoomIds = BookedRoom::withOut('booking', 'postings')
+        //     ->where('company_id', $request->company_id)
+        //     ->whereHas('booking', function ($q) use ($request) {
+        //         $q->where('booking_status', '!=', 0);
+        //         $q->where('company_id', $request->company_id);
+        //     })
+        //     // ->where('booking_status', '<=', 2)
+        //     ->where(function ($query) use ($request) {
+        //         $query->where(function ($query) use ($request) {
+        //             $query->where('check_in', '>=', $request->from_date . ' 00:00:00')
+        //                 ->where('check_in', '<=', $request->from_date . ' 23:59:59');
+        //         });
+        //         $query->orWhere(function ($query) use ($request) {
+        //             $query->where('check_out', '<=', $request->from_date . ' 00:00:00')
+        //                 ->where('check_out', '>=', $request->from_date . ' 23:59:59');
+        //         });
+        //     })
+        //     ->pluck('room_id');
+
+        $unbookedRoomsInfo = Room::whereNotIn('id', $bookedRoomIds)
             ->where('company_id', $request->company_id)
             ->get();
 
@@ -43,7 +64,7 @@ class WidgetApiController extends Controller
         }
         return ["data" => $groupedRooms];
     }
-    public function getAvailableRoomList(Request $request)
+    public function getAvailableRoomList_old(Request $request)
     {
 
 
