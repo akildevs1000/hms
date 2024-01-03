@@ -52,7 +52,7 @@ class WidgetApiController extends Controller
         $groupedRooms = [];
         foreach ($unbookedRoomsInfo as $roomInfo) {
 
-            $roomType = $roomInfo['room_type']['name'];
+            $roomType = strtolower($roomInfo['room_type']['name']);
 
             if ($groupedRooms && !isset($groupedRooms[$roomType])) {
                 $groupedRooms[$roomType] = [];
