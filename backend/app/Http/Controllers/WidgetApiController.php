@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookedRoom;
+use App\Models\Booking;
 use App\Models\Holiday;
 use App\Models\Room;
 use App\Models\RoomType;
@@ -13,6 +14,32 @@ use Illuminate\Http\Request;
 
 class WidgetApiController extends Controller
 {
+
+    public function widgetRoomsListWithPrice(Request $request)
+    {
+
+
+        //return request()->ip(); // it will return the server IP if the client IP is not found using this method.
+        if ($request->filled("company_id")) {
+            return   RoomType::where('company_id', $request->company_id)->get();
+        }
+    }
+
+    public function widgetRoomBooking(Request $request)
+    {
+        $response =  (new BookingController)->store($request);
+
+        $responseArray = json_decode($response, true);
+        if (isset($responseArray['data'])) {
+            $booking_id = $responseArray['data'];
+            if (isset($request['api_json_reference_number'])) {
+                $api_json_reference_number = $request['api_json_reference_number'];
+                Booking::where("id", $booking_id)->update(["widget_confirmation_number" => $api_json_reference_number]);
+            }
+        }
+
+        return   $response;
+    }
     public function getAvailableRoomList(Request $request)
     {
         $model = BookedRoom::query();
@@ -58,81 +85,81 @@ class WidgetApiController extends Controller
                 $groupedRooms[$roomType] = [];
             }
 
-            $groupedRooms[$roomType][] = $roomInfo;
-            //$groupedRooms[$roomType][] = $this->getRoomPrice($request, $roomInfo);
 
+            $roomInfo = $this->getRoomPrice($request, $roomInfo);
+            $groupedRooms[$roomType][] = $roomInfo;
         }
         return ["data" => $groupedRooms];
     }
-    public function getAvailableRoomList_old(Request $request)
-    {
+    // public function getAvailableRoomList_old(Request $request)
+    // {
 
 
-        $rooms = Room::with('roomType')->where('company_id', $request->company_id)->get()->toArray();
+    //     $rooms = Room::with('roomType')->where('company_id', $request->company_id)->get()->toArray();
 
-        $bookedDates = BookedRoom::select('id', 'booking_id', 'room_no', 'room_type')->withOut('booking', 'postings')
-            ->where('company_id', $request->company_id)
-            ->whereHas('booking', function ($q) use ($request) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('company_id', $request->company_id);
-            })
-            // ->where('booking_status', '<=', 2)
-            ->where(function ($query) use ($request) {
-                $query->where(function ($query) use ($request) {
-                    $query->where('check_in', '>=', $request->from_date . ' 00:00:00')
-                        ->where('check_in', '<=', $request->from_date . ' 23:59:59');
-                });
-                $query->orWhere(function ($query) use ($request) {
-                    $query->where('check_out', '<=', $request->from_date . ' 00:00:00')
-                        ->where('check_out', '>=', $request->from_date . ' 23:59:59');
-                });
-            })
-            //->where('check_in', '>=', $request->from_date . ' 00:00:00')
-            ->orderBy('room_no', 'ASC')->get()->toArray();
+    //     $bookedDates = BookedRoom::select('id', 'booking_id', 'room_no', 'room_type')->withOut('booking', 'postings')
+    //         ->where('company_id', $request->company_id)
+    //         ->whereHas('booking', function ($q) use ($request) {
+    //             $q->where('booking_status', '!=', 0);
+    //             $q->where('company_id', $request->company_id);
+    //         })
+    //         // ->where('booking_status', '<=', 2)
+    //         ->where(function ($query) use ($request) {
+    //             $query->where(function ($query) use ($request) {
+    //                 $query->where('check_in', '>=', $request->from_date . ' 00:00:00')
+    //                     ->where('check_in', '<=', $request->from_date . ' 23:59:59');
+    //             });
+    //             $query->orWhere(function ($query) use ($request) {
+    //                 $query->where('check_out', '<=', $request->from_date . ' 00:00:00')
+    //                     ->where('check_out', '>=', $request->from_date . ' 23:59:59');
+    //             });
+    //         })
+    //         //->where('check_in', '>=', $request->from_date . ' 00:00:00')
+    //         ->orderBy('room_no', 'ASC')->get()->toArray();
 
-        $bookedRoomNumbers = array_column($bookedDates, 'room_no');
+    //     $bookedRoomNumbers = array_column($bookedDates, 'room_no');
 
-        $allRoomNumbers = array_column($rooms, 'room_no');
+    //     $allRoomNumbers = array_column($rooms, 'room_no');
 
-        $unbookedRoomNumbers = array_diff($allRoomNumbers, $bookedRoomNumbers);
+    //     $unbookedRoomNumbers = array_diff($allRoomNumbers, $bookedRoomNumbers);
 
-        $unbookedRoomsInfo = [];
-        foreach ($rooms as $room) {
-            if (in_array($room['room_no'], $unbookedRoomNumbers)) {
-                $unbookedRoomsInfo[] = $room;
-            }
-        }
+    //     $unbookedRoomsInfo = [];
+    //     foreach ($rooms as $room) {
+    //         if (in_array($room['room_no'], $unbookedRoomNumbers)) {
+    //             $unbookedRoomsInfo[] = $room;
+    //         }
+    //     }
 
-        usort($unbookedRoomsInfo, function ($room1, $room2) {
-            $price1 = floatval($room1['price']);
-            $price2 = floatval($room2['price']);
+    //     usort($unbookedRoomsInfo, function ($room1, $room2) {
+    //         $price1 = floatval($room1['price']);
+    //         $price2 = floatval($room2['price']);
 
-            if ($price1 == $price2) {
-                return 0;
-            }
-            return ($price1 > $price2) ? -1 : 1; // Change comparison to sort in descending order
-        });
+    //         if ($price1 == $price2) {
+    //             return 0;
+    //         }
+    //         return ($price1 > $price2) ? -1 : 1; // Change comparison to sort in descending order
+    //     });
 
-        // usort($unbookedRoomsInfo, function ($a, $b) {
-        //     return strcmp($a['price'], $b['price']);
-        // });
+    //     // usort($unbookedRoomsInfo, function ($a, $b) {
+    //     //     return strcmp($a['price'], $b['price']);
+    //     // });
 
-        // Group unbooked room info by room type
-        $groupedRooms = [];
-        foreach ($unbookedRoomsInfo as $roomInfo) {
+    //     // Group unbooked room info by room type
+    //     $groupedRooms = [];
+    //     foreach ($unbookedRoomsInfo as $roomInfo) {
 
-            $roomType = $roomInfo['room_type']['name'];
+    //         $roomType = $roomInfo['room_type']['name'];
 
-            if ($groupedRooms && !isset($groupedRooms[$roomType])) {
-                $groupedRooms[$roomType] = [];
-            }
+    //         if ($groupedRooms && !isset($groupedRooms[$roomType])) {
+    //             $groupedRooms[$roomType] = [];
+    //         }
 
-            $groupedRooms[$roomType][] = $roomInfo;
-            //$groupedRooms[$roomType][] = $this->getRoomPrice($request, $roomInfo);
+    //         $groupedRooms[$roomType][] = $roomInfo;
+    //         //$groupedRooms[$roomType][] = $this->getRoomPrice($request, $roomInfo);
 
-        }
-        return ["data" => $groupedRooms];
-    }
+    //     }
+    //     return ["data" => $groupedRooms];
+    // }
     public function compareByPrice($room1, $room2)
     {
         $price1 = floatval($room1['price']);
@@ -206,47 +233,59 @@ class WidgetApiController extends Controller
         $arr = [];
         $period = CarbonPeriod::create($request->from_date, $this->checkOutDate($request->to_date));
 
+        $total_price = 0;
         foreach ($period as $date) {
             $iteration_date = $date->format('Y-m-d');
             $day = $date->format('D');
             $isWeekend = in_array($day, $weekends);
             $isHoliday = $this->checkHoliday($iteration_date, $company_id);
             if ($isHoliday) {
+                $totalPrice = $this->getRoomTax($prices->holiday_price - $discount, $request->company_id)['total_with_tax'];
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->holiday_price - $discount, $request->company_id)['total_with_tax'],
+                    "price" => $totalPrice,
                     "day_type" => "holiday",
                     "day" => $day,
                     "tax" => $this->getRoomTax($prices->holiday_price - $discount, $request->company_id)['room_tax'],
                     "room_price" => $prices->holiday_price,
                 ];
+                $total_price = $total_price + $totalPrice;
             } elseif ($isWeekend) {
+                $totalPrice = $this->getRoomTax($prices->weekend_price - $discount, $request->company_id)['total_with_tax'];
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekend_price - $discount, $request->company_id)['total_with_tax'],
+                    "price" =>  $totalPrice,
                     "tax" => $this->getRoomTax($prices->weekend_price - $discount, $request->company_id)['room_tax'],
                     "day_type" => "weekend",
                     "day" => $day,
                     "room_price" => $prices->weekend_price,
                 ];
+                $total_price = $total_price + $totalPrice;
             } else {
+                $totalPrice = $this->getRoomTax($prices->weekday_price - $discount, $request->company_id)['total_with_tax'];
                 $arr[] = [
                     "date" => $iteration_date,
-                    "price" => $this->getRoomTax($prices->weekday_price - $discount, $request->company_id)['total_with_tax'],
+                    "price" => $totalPrice,
                     "day_type" => "weekday",
                     "day" => $day,
                     "tax" => $this->getRoomTax($prices->weekday_price - $discount, $request->company_id)['room_tax'],
                     "room_price" => $prices->weekday_price,
                 ];
+                $total_price = $total_price + $totalPrice;
             }
         }
 
-        return [
-            'room' => $room,
-            'price_list' => $arr,
-            'total_price' => array_sum(array_column($arr, "price")),
-            'total_tax' => array_sum(array_column($arr, "tax")),
-        ];
+        $newRoom['price_list'] = $arr;
+        $newRoom['total_price'] = $total_price;
+
+        return  $newRoom;
+
+        // return [
+        //     'room' => $room,
+        //     'price_list' => $arr,
+        //     'total_price' => array_sum(array_column($arr, "price")),
+        //     'total_tax' => array_sum(array_column($arr, "tax")),
+        // ];
     }
 
     public function test()
