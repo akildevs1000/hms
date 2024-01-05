@@ -434,9 +434,9 @@ export default {
     this.getDataFromApi();
     this.getroomList();
 
-    setInterval(() => {
-      this.getDataFromApi();
-    }, 1000 * 60 * 2);
+    // setInterval(() => {
+    //   this.getDataFromApi();
+    // }, 1000 * 60 * 2);
   },
   methods: {
     can(per) {

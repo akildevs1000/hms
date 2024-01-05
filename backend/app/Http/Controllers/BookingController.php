@@ -48,21 +48,21 @@ class BookingController extends Controller
     {
         return $this->response('Document validated.', null, true);
     }
-    public function widgetRoomBooking(Request $request)
-    {
-        $response =  $this->store($request);
+    // public function widgetRoomBooking(Request $request)
+    // {
+    //     $response =  $this->store($request);
 
-        $responseArray = json_decode($response, true);
-        if (isset($responseArray['data'])) {
-            $booking_id = $responseArray['data'];
-            if (isset($request['api_json_reference_number'])) {
-                $api_json_reference_number = $request['api_json_reference_number'];
-                Booking::where("id", $booking_id)->update(["widget_confirmation_number" => $api_json_reference_number]);
-            }
-        }
+    //     $responseArray = json_decode($response, true);
+    //     if (isset($responseArray['data'])) {
+    //         $booking_id = $responseArray['data'];
+    //         if (isset($request['api_json_reference_number'])) {
+    //             $api_json_reference_number = $request['api_json_reference_number'];
+    //             Booking::where("id", $booking_id)->update(["widget_confirmation_number" => $api_json_reference_number]);
+    //         }
+    //     }
 
-        return   $response;
-    }
+    //     return   $response;
+    // }
     public function store(Request $request)
     {
 
