@@ -43,18 +43,18 @@ class WidgetApiController extends Controller
         } catch (\Throwable $th) {
             echo $th;
         }
-        $responseArray = json_decode($response, true);
+        // $responseArray = json_decode($response, true);
 
-        if (isset($responseArray['data'])) {
+        // if (isset($responseArray['data'])) {
 
-            $booking_id = $responseArray['data'];
-            //if (isset($request['api_json_reference_number'])) {
-            $api_json_reference_number = $request['api_json_reference_number'];
-            Booking::where("id", $booking_id)->update(["widget_confirmation_number" => $api_json_reference_number]);
+        //     $booking_id = $responseArray['data'];
+        //     //if (isset($request['api_json_reference_number'])) {
+        //     $api_json_reference_number = $request['api_json_reference_number'];
+        //     Booking::where("id", $booking_id)->update(["widget_confirmation_number" => $api_json_reference_number]);
 
 
-            //}
-        }
+        //     //}
+        // }
 
         return   $response;
     }
