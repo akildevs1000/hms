@@ -73,8 +73,7 @@ class BookingController extends Controller
         $model->where('company_id', $request->company_id);
 
         $model->whereNot('widget_confirmation_number',   null);
-        // $model->where('booking_date', "=", date('Y-m-d'));
-        $model->where('booking_date', "=", '2024-01-05');
+        $model->where('booking_date', "=", date('Y-m-d'));
 
 
         $data['online_booking_count'] =  $model->pluck("id");
