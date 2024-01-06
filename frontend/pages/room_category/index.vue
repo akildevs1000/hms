@@ -1,5 +1,10 @@
 <template>
-  <div v-if="can(`settings_rooms_category_access`) && can(`settings_rooms_category_view`)">
+  <div
+    v-if="
+      can(`settings_rooms_category_access`) &&
+      can(`settings_rooms_category_view`)
+    "
+  >
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -8,7 +13,16 @@
     <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-
+      </v-col>
+      <v-col cols="6" class="text--right">
+        <v-btn
+          dense
+          small
+          class="primary"
+          style="float: right"
+          @click="updatePriceToWordpress()"
+          >Upload Prices To Wordpress Site</v-btn
+        >
       </v-col>
     </v-row>
     <div>
@@ -19,7 +33,9 @@
               <span>{{ formTitle }} {{ Model }}</span>
             </v-toolbar>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="roomTypeDialog = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="roomTypeDialog = false"
+              >mdi mdi-close-box</v-icon
+            >
           </v-toolbar>
           <v-container>
             <v-row>
@@ -31,75 +47,152 @@
                         <v-col md="8">
                           <v-row>
                             <v-col md="6" cols="12">
-                              <v-text-field v-model="editedItem.name" placeholder="Name" label="Name" outlined
-                                :hide-details="true" dense></v-text-field>
-                              <span v-if="errors && errors.name" class="error--text">{{ errors.name[0]
-                              }}</span>
+                              <v-text-field
+                                v-model="editedItem.name"
+                                placeholder="Name"
+                                label="Name"
+                                outlined
+                                :hide-details="true"
+                                dense
+                              ></v-text-field>
+                              <span
+                                v-if="errors && errors.name"
+                                class="error--text"
+                                >{{ errors.name[0] }}</span
+                              >
                             </v-col>
                             <v-col md="6" cols="12">
-                              <v-text-field v-model="editedItem.price" placeholder="Amount" label="Amount" outlined
-                                :hide-details="true" type="number" dense></v-text-field>
-                              <span v-if="errors && errors.price" class="error--text">{{ errors.price[0]
-                              }}</span>
+                              <v-text-field
+                                v-model="editedItem.price"
+                                placeholder="Amount"
+                                label="Amount"
+                                outlined
+                                :hide-details="true"
+                                type="number"
+                                dense
+                              ></v-text-field>
+                              <span
+                                v-if="errors && errors.price"
+                                class="error--text"
+                                >{{ errors.price[0] }}</span
+                              >
                             </v-col>
                             <v-col md="4" cols="12">
-                              <v-select v-model="editedItem.adult" :items="[1, 2, 3, 4]" placeholder="Adult" dense
-                                label="Adult" item-text="name" item-value="value" outlined
-                                :hide-details="true"></v-select>
-                              <span v-if="errors && errors.adult" class="error--text">{{ errors.adult[0] }}</span>
+                              <v-select
+                                v-model="editedItem.adult"
+                                :items="[1, 2, 3, 4]"
+                                placeholder="Adult"
+                                dense
+                                label="Adult"
+                                item-text="name"
+                                item-value="value"
+                                outlined
+                                :hide-details="true"
+                              ></v-select>
+                              <span
+                                v-if="errors && errors.adult"
+                                class="error--text"
+                                >{{ errors.adult[0] }}</span
+                              >
                             </v-col>
 
                             <v-col md="4" cols="12">
-                              <v-select v-model="editedItem.child" :items="[1, 2, 3, 4]" placeholder="Child" dense
-                                label="Child" item-text="name" item-value="value" outlined
-                                :hide-details="true"></v-select>
-                              <span v-if="errors && errors.child" class="error--text">{{ errors.child[0] }}</span>
+                              <v-select
+                                v-model="editedItem.child"
+                                :items="[1, 2, 3, 4]"
+                                placeholder="Child"
+                                dense
+                                label="Child"
+                                item-text="name"
+                                item-value="value"
+                                outlined
+                                :hide-details="true"
+                              ></v-select>
+                              <span
+                                v-if="errors && errors.child"
+                                class="error--text"
+                                >{{ errors.child[0] }}</span
+                              >
                             </v-col>
 
                             <v-col md="4" cols="12">
-                              <v-select v-model="editedItem.baby" :items="[1, 2, 3]" placeholder="Baby" dense label="Baby"
-                                item-text="name" item-value="value" outlined :hide-details="true"></v-select>
-                              <span v-if="errors && errors.baby" class="error--text">{{ errors.baby[0] }}</span>
+                              <v-select
+                                v-model="editedItem.baby"
+                                :items="[1, 2, 3]"
+                                placeholder="Baby"
+                                dense
+                                label="Baby"
+                                item-text="name"
+                                item-value="value"
+                                outlined
+                                :hide-details="true"
+                              ></v-select>
+                              <span
+                                v-if="errors && errors.baby"
+                                class="error--text"
+                                >{{ errors.baby[0] }}</span
+                              >
                             </v-col>
                             <v-col md="12" cols="12">
-                              <v-text-field v-model="editedItem.short_description" placeholder="Short Description"
-                                label="Short Description" outlined :hide-details="true" dense></v-text-field>
+                              <v-text-field
+                                v-model="editedItem.short_description"
+                                placeholder="Short Description"
+                                label="Short Description"
+                                outlined
+                                :hide-details="true"
+                                dense
+                              ></v-text-field>
                             </v-col>
                             <v-col md="12" cols="12">
-                              <v-textarea outlined v-model="editedItem.description" placeholder="Description"
-                                label="Long Description"></v-textarea>
+                              <v-textarea
+                                outlined
+                                v-model="editedItem.description"
+                                placeholder="Description"
+                                label="Long Description"
+                              ></v-textarea>
                             </v-col>
-
                           </v-row>
                         </v-col>
                         <v-col cols="4">
-
-
-                          <div class="form-group" style="margin: 0 auto; width: 200px">
-                            <v-img style="
-                            width: 100%;
-                            height: 200px;
-                            border: 1px solid #5fafa3;
-                            border-radius: 10%;
-                            margin: 0 auto;
-                    " :src="previewImage || '/noimage.png'"></v-img>
+                          <div
+                            class="form-group"
+                            style="margin: 0 auto; width: 200px"
+                          >
+                            <v-img
+                              style="
+                                width: 100%;
+                                height: 200px;
+                                border: 1px solid #5fafa3;
+                                border-radius: 10%;
+                                margin: 0 auto;
+                              "
+                              :src="previewImage || '/noimage.png'"
+                            ></v-img>
                             <br />
-                            <v-btn small class="form-control primary" @click="onpick_attachment">{{ !upload.name ?
-                              "Upload"
-                              :
-                              "Change" }} Room Image
+                            <v-btn
+                              small
+                              class="form-control primary"
+                              @click="onpick_attachment"
+                              >{{ !upload.name ? "Upload" : "Change" }} Room
+                              Image
                               <v-icon right dark>mdi-cloud-upload</v-icon>
                             </v-btn>
-                            <input required type="file" @change="attachment" style="display: none" accept="image/*"
-                              ref="attachment_input" />
+                            <input
+                              required
+                              type="file"
+                              @change="attachment"
+                              style="display: none"
+                              accept="image/*"
+                              ref="attachment_input"
+                            />
 
-                            <span v-if="errors && errors.profile_picture" class="text-danger mt-2">{{
-                              errors.profile_picture[0]
-                            }}</span>
+                            <span
+                              v-if="errors && errors.profile_picture"
+                              class="text-danger mt-2"
+                              >{{ errors.profile_picture[0] }}</span
+                            >
                           </div>
-
                         </v-col>
-
 
                         <v-card-actions>
                           <v-btn class="error" @click="roomTypeDialog = false">
@@ -107,7 +200,6 @@
                           </v-btn>
                           <v-btn class="primary" @click="save">Save</v-btn>
                         </v-card-actions>
-
                       </v-row>
                     </v-container>
                   </v-card-text>
@@ -121,49 +213,77 @@
 
       <div>
         <v-row>
-
           <v-col md="12" lg="12">
-            <v-tabs v-model="activeTab" :vertical="vertical" background-color="background" dense flat dark show-arrows
-              class=" rounded-md">
-
+            <v-tabs
+              v-model="activeTab"
+              :vertical="vertical"
+              background-color="background"
+              dense
+              flat
+              dark
+              show-arrows
+              class="rounded-md"
+            >
               <v-spacer></v-spacer>
-              <v-tab active-class="active-link">
-                Categories
-              </v-tab>
-              <v-tab active-class="active-link">
-                Rooms
-              </v-tab>
+              <v-tab active-class="active-link"> Categories </v-tab>
+              <v-tab active-class="active-link"> Rooms </v-tab>
               <v-tabs-slider color="#1259a7"></v-tabs-slider>
               <v-tab-item>
-
                 <v-col md="12" lg="12" class="pt-0">
                   <v-col xs="12" sm="12" md="2" cols="12">
-                    <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify"
-                      @input="searchIt" v-model="search" hide-details></v-text-field>
+                    <v-text-field
+                      class=""
+                      label="Search..."
+                      dense
+                      outlined
+                      flat
+                      append-icon="mdi-magnify"
+                      @input="searchIt"
+                      v-model="search"
+                      hide-details
+                    ></v-text-field>
                   </v-col>
                   <v-card>
-                    <v-toolbar class=" mb-2 white--text" color="background" dense flat>
-
+                    <v-toolbar
+                      class="mb-2 white--text"
+                      color="background"
+                      dense
+                      flat
+                    >
                       <v-spacer></v-spacer>
-                      <v-tooltip v-if="can('settings_rooms_create')" top color="background">
+                      <v-tooltip
+                        v-if="can('settings_rooms_create')"
+                        top
+                        color="background"
+                      >
                         <template v-slot:activator="{ on, attrs }">
-
-
-                          <v-btn v-if="can(`settings_rooms_category_create`)" x-small :ripple="false" text v-bind="attrs"
-                            v-on="on" @click="roomTypeDialog = true; previewImage = null;">
-                            <v-icon color="white" dark white>mdi-plus-circle</v-icon>
+                          <v-btn
+                            v-if="can(`settings_rooms_category_create`)"
+                            x-small
+                            :ripple="false"
+                            text
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="
+                              roomTypeDialog = true;
+                              previewImage = null;
+                            "
+                          >
+                            <v-icon color="white" dark white
+                              >mdi-plus-circle</v-icon
+                            >
                           </v-btn>
                         </template>
-
                       </v-tooltip>
-
                     </v-toolbar>
                     <v-row>
                       <v-col cols="12">
-                        <table class="mt-0 ">
+                        <table class="mt-0">
                           <tr style="font-size: 13px">
                             <th class="ps-5">#</th>
-                            <th style="width:50px;text-align:center">Photo</th>
+                            <th style="width: 50px; text-align: center">
+                              Photo
+                            </th>
                             <th>Name</th>
                             <th>Adult</th>
                             <th>Child</th>
@@ -173,23 +293,35 @@
                             <th>Holiday Rent</th>
                             <th class="text-center">Action</th>
                           </tr>
-                          <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                            color="primary"></v-progress-linear>
-                          <tr v-for="(            item, index            ) in             data            " :key="index"
-                            style="font-size: 13px">
+                          <v-progress-linear
+                            v-if="loading"
+                            :active="loading"
+                            :indeterminate="loading"
+                            absolute
+                            color="primary"
+                          ></v-progress-linear>
+                          <tr
+                            v-for="(item, index) in data"
+                            :key="index"
+                            style="font-size: 13px"
+                          >
                             <td>
                               {{
-                                (pagination.current - 1) * pagination.per_page + index + 1
+                                (pagination.current - 1) * pagination.per_page +
+                                index +
+                                1
                               }}
                             </td>
                             <td>
-
-                              <v-img style="
-            border-radius: 50%;
-            height:100px;
-            width: 100px;
-            margin: 0 auto;
-          " :src="item.pic || '/noimage.png'">
+                              <v-img
+                                style="
+                                  border-radius: 50%;
+                                  height: 100px;
+                                  width: 100px;
+                                  margin: 0 auto;
+                                "
+                                :src="item.pic || '/noimage.png'"
+                              >
                               </v-img>
                             </td>
 
@@ -202,16 +334,24 @@
                             <td>{{ caps(item.holiday_price) }}</td>
 
                             <td class="text-center">
-                              <v-menu bottom left v-if="can(`settings_rooms_category_edit`) || can(`settings_rooms_category_delete`)
-                                ">
+                              <v-menu
+                                bottom
+                                left
+                                v-if="
+                                  can(`settings_rooms_category_edit`) ||
+                                  can(`settings_rooms_category_delete`)
+                                "
+                              >
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-btn dark-2 icon v-bind="attrs" v-on="on">
                                     <v-icon>mdi-dots-vertical</v-icon>
                                   </v-btn>
                                 </template>
                                 <v-list width="120" dense>
-                                  <v-list-item v-if="can(`settings_rooms_category_edit`)
-                                    " @click="editItem(item)">
+                                  <v-list-item
+                                    v-if="can(`settings_rooms_category_edit`)"
+                                    @click="editItem(item)"
+                                  >
                                     <v-list-item-title style="cursor: pointer">
                                       <v-icon color="secondary" small>
                                         mdi-pencil
@@ -219,10 +359,14 @@
                                       Edit
                                     </v-list-item-title>
                                   </v-list-item>
-                                  <v-list-item v-if="can(`settings_rooms_category_delete`)
-                                    " @click="deleteItem(item)">
+                                  <v-list-item
+                                    v-if="can(`settings_rooms_category_delete`)"
+                                    @click="deleteItem(item)"
+                                  >
                                     <v-list-item-title style="cursor: pointer">
-                                      <v-icon color="error" small> mdi-delete </v-icon>
+                                      <v-icon color="error" small>
+                                        mdi-delete
+                                      </v-icon>
                                       Delete
                                     </v-list-item-title>
                                   </v-list-item>
@@ -237,11 +381,14 @@
                 </v-col>
                 <v-col md="12" class="float-right">
                   <div class="float-right">
-                    <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-                      :total-visible="12"></v-pagination>
+                    <v-pagination
+                      v-model="pagination.current"
+                      :length="pagination.total"
+                      @input="onPageChange"
+                      :total-visible="12"
+                    ></v-pagination>
                   </div>
                 </v-col>
-
               </v-tab-item>
               <v-tab-item>
                 <v-card flat>
@@ -254,7 +401,6 @@
               </v-tab-item>
             </v-tabs>
           </v-col>
-
         </v-row>
       </div>
     </div>
@@ -268,7 +414,6 @@ export default {
   //   roomsComponent,
   // },
   data: () => ({
-
     upload: {
       name: "",
     },
@@ -341,6 +486,21 @@ export default {
   },
 
   methods: {
+    updatePriceToWordpress() {
+      //console.log(this.$auth.user.company);
+      window.open(
+        this.$auth.user.company.wordpress_push_prices_url,
+        "blank",
+        "noreferrer"
+      );
+      // //update price to wordpress
+      this.$axios
+        .get(this.$auth.user.company.wordpress_push_prices_url, null)
+        .then(({ data }) => {
+          console.log(data);
+        })
+        .catch((res) => console.log(res));
+    },
     can(per) {
       let u = this.$auth.user;
       return (
@@ -389,7 +549,6 @@ export default {
       }
     },
     getDataFromApi(url = this.endpoint) {
-
       this.loading = true;
       let page = this.pagination.current;
       let options = {
@@ -414,8 +573,6 @@ export default {
     },
 
     editItem(item) {
-
-
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
 
@@ -470,8 +627,6 @@ export default {
     },
 
     save() {
-
-
       // let payload1 = {
       //   name: this.editedItem.name,
       //   price: this.editedItem.price,
@@ -498,24 +653,19 @@ export default {
       payload.append("short_description", this.editedItem.short_description);
       payload.append("description", this.editedItem.description);
 
-
-
-
-
-
       // if (this.upload.name) {
       //   payload.append("image", this.upload.name);
       // }
       if (this.editedIndex > -1) {
-        payload.append("_method", 'PUT');
+        payload.append("_method", "PUT");
         this.$axios
-          .post('room_types' + "/" + this.editedItem.id, payload)
+          .post("room_types" + "/" + this.editedItem.id, payload)
           .then(({ data }) => {
             console.log(data);
             if (!data.status) {
               this.errors = data.errors;
             } else {
-              console.log('suc');
+              console.log("suc");
               this.getDataFromApi();
               this.snackbar = data.status;
               this.response = data.message;
@@ -525,7 +675,7 @@ export default {
           .catch((err) => console.log(err));
       } else {
         this.$axios
-          .post('room_types', payload)
+          .post("room_types", payload)
           .then(({ data }) => {
             if (!data.status) {
               this.errors = data.errors;
@@ -564,4 +714,4 @@ tr:nth-child(even) {
 input[type="text"]:focus.custom-text-box {
   border: 2px solid #5fafa3 !important;
 }
-</style> 
+</style>

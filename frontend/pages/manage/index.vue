@@ -967,13 +967,12 @@ export default {
     },
     updatePriceToWordpress() {
       //console.log(this.$auth.user.company);
-
       window.open(
         this.$auth.user.company.wordpress_push_prices_url,
         "blank",
         "noreferrer"
       );
-      // //update price to wordpress
+      //update price to wordpress
       this.$axios
         .get(this.$auth.user.company.wordpress_push_prices_url, null)
         .then(({ data }) => {

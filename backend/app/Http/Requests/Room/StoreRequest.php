@@ -30,8 +30,10 @@ class StoreRequest extends FormRequest
             'company_id' => 'required',
             'room_no' => 'required',
             'room_type_id' => 'required',
-            'floor_no' => 'required',
+            'floor_no' => 'nullable',
             'user_id' => 'nullable',
+            'online_available' => 'required',
+
 
         ];
     }

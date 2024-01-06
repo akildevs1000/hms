@@ -976,7 +976,9 @@
                               noAvailableRoom.device &&
                               noAvailableRoom.device.latest_status == 1
                             "
-                          ></div>
+                          >
+                            <!-- <v-icon color="green">mdi-lightbulb-on-90 </v-icon> -->
+                          </div>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -1016,7 +1018,9 @@
                           <div
                             class="bottomright"
                             v-if="room.device && room.device.latest_status == 1"
-                          ></div>
+                          >
+                            <!-- <v-icon color="green">mdi-lightbulb-on-90 </v-icon> -->
+                          </div>
                         </v-col>
                       </v-row>
                     </div>

@@ -31,9 +31,9 @@ class UpdateRequest extends FormRequest
             'room_type_id' => 'required',
             'company_id' => 'required',
             'status' => 'required',
-            'floor_no' => 'required',
+            'floor_no' => 'nullable',
             'user_id' => 'nullable',
-
+            'online_available' => 'required',
         ];
     }
 }

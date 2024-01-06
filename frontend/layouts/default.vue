@@ -166,6 +166,40 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
+      <v-badge
+        :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
+        :content="
+          pendingNotificationsCount == '' ? '0' : pendingNotificationsCount
+        "
+        style="padding-left: 50px; top: 0px; left: 0px"
+        overlap
+      >
+        <v-icon @click="gotoReservationPage()"> mdi-bell-ring </v-icon>
+      </v-badge>
+      <!-- <v-badge
+        :content="pendingNotificationsCount"
+        :value="pendingNotificationsCount"
+        color="green"
+        overlap
+      >
+        <v-icon large @click="pendingNotificationsCount = 0">
+          mdi-vuetify
+        </v-icon>
+      </v-badge> -->
+      <!-- <v-btn icon dark v-bind="attrs" v-on="on">
+        <v-badge
+          @click="pendingNotificationsCount = 0"
+          :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
+          :content="
+            pendingNotificationsCount == '' ? '0' : pendingNotificationsCount
+          "
+          style="top: 10px; left: -19px"
+        >
+          <v-icon style="top: -10px; left: 10px" class="violet--text"
+            >mdi mdi-bell-ring</v-icon
+          >
+        </v-badge>
+      </v-btn> -->
     </v-app-bar>
 
     <v-main class="main_bg">
@@ -332,6 +366,7 @@
 export default {
   data() {
     return {
+      pendingNotificationsCount: 0,
       menuName: "",
       show: false,
       y: 0,
@@ -627,6 +662,10 @@ export default {
       to: "/",
       menu: "dashboard",
     };
+    this.loadNotificationMenu();
+    setInterval(() => {
+      this.loadNotificationMenu();
+    }, 1000 * 60 * 5);
 
     // let Management = {
     //   icon: "mdi mdi-account-tie",
@@ -804,7 +843,54 @@ export default {
       this.show = true;
       this.menuName = e;
     },
+    gotoReservationPage() {
+      this.pendingNotificationsCount = 0;
+      this.$router.push("reservation/up_coming");
+    },
+    loadNotificationMenu() {
+      let company_id = this.$auth.user?.company?.id || 0;
+      //console.log("company_id", company_id);
+      if (company_id == 0) {
+        return false;
+      }
+      let options = {
+        params: {
+          company_id: company_id,
+        },
+      };
+      //this.pendingNotificationsCount = 0;
+      let pendingcount = 0;
+      this.$axios.get(`get-notifications-count`, options).then(({ data }) => {
+        try {
+          pendingcount = 0;
+          console.log("data.online_booking_count", data.online_booking_count);
+          if (data.online_booking_count) {
+            let storedRecords = localStorage.getItem("online_booking_count");
 
+            console.log("storedRecords", storedRecords);
+
+            let nonMatching = [];
+
+            for (let num of data.online_booking_count) {
+              if (!storedRecords.includes(num) && !nonMatching.includes(num)) {
+                nonMatching.push(num);
+              }
+            }
+
+            console.log("nonMatching", nonMatching);
+
+            localStorage.setItem(
+              "online_booking_count",
+              data.online_booking_count
+            );
+
+            pendingcount = nonMatching.length; // += data.online_booking_count;
+          }
+
+          this.pendingNotificationsCount = pendingcount;
+        } catch (Exp) {}
+      });
+    },
     updateMouseLocation(event) {
       this.x = event.clientX;
       this.y = event.clientY;
