@@ -46,6 +46,14 @@ class RoomType extends Model
     {
         return $this->hasOne(Room::class);
     }
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
+    public function widget_available_rooms()
+    {
+        return $this->hasMany(Room::class)->where('online_available',   1)->where('status', 0);;
+    }
     public function getPicAttribute($value)
     {
         if (!$value) {

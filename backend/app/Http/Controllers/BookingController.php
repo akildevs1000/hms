@@ -63,6 +63,26 @@ class BookingController extends Controller
 
     //     return   $response;
     // }
+
+
+
+    public function getNotificationCount(Request $request)
+    {
+
+        $model = Booking::query();
+        $model->where('company_id', $request->company_id);
+
+        $model->whereNot('widget_confirmation_number',   null);
+        // $model->where('booking_date', "=", date('Y-m-d'));
+        $model->where('booking_date', "=", '2024-01-05');
+
+
+        $data['online_booking_count'] =  $model->pluck("id");
+
+
+        return $data;
+    }
+
     public function store(Request $request)
     {
 
@@ -143,6 +163,11 @@ class BookingController extends Controller
         $data['remaining_price'] = (float) $request->total_price - (float) $request->advance_price;
         $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
         $data['reservation_no'] = $this->getReservationNumber($data);
+
+
+        if ($request->filled('api_json_reference_number')) {
+            $data['widget_confirmation_number'] = $request->api_json_reference_number;
+        }
 
         $booked = Booking::create($data);
 
@@ -1790,7 +1815,7 @@ class BookingController extends Controller
         $model->where('room_category_type', null);
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
-            $model->where('source', $request->source);
+            $model->where('source', "ILIKE", "%" . $request->source . "%");
         }
 
         if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {

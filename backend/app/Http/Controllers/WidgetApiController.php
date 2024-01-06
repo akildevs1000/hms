@@ -10,6 +10,7 @@ use App\Models\RoomType;
 use App\Models\TaxSlabs;
 use App\Models\Weekend;
 use Carbon\CarbonPeriod;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class WidgetApiController extends Controller
@@ -21,21 +22,38 @@ class WidgetApiController extends Controller
 
         //return request()->ip(); // it will return the server IP if the client IP is not found using this method.
         if ($request->filled("company_id")) {
-            return   RoomType::where('company_id', $request->company_id)->get();
+            return   RoomType::with(["widget_available_rooms"])
+                ->where('company_id', $request->company_id)
+                ->whereHas('widget_available_rooms',  function (Builder $query1) {
+                    $query1->where('online_available',   1);
+                    $query1->where('status', 0);
+                })
+                ->get();
         }
     }
 
+
     public function widgetRoomBooking(Request $request)
     {
-        $response =  (new BookingController)->store($request);
+        $response = '';
+        try {
 
+
+            $response =  (new BookingController)->store($request);
+        } catch (\Throwable $th) {
+            echo $th;
+        }
         $responseArray = json_decode($response, true);
+
         if (isset($responseArray['data'])) {
+
             $booking_id = $responseArray['data'];
-            if (isset($request['api_json_reference_number'])) {
-                $api_json_reference_number = $request['api_json_reference_number'];
-                Booking::where("id", $booking_id)->update(["widget_confirmation_number" => $api_json_reference_number]);
-            }
+            //if (isset($request['api_json_reference_number'])) {
+            $api_json_reference_number = $request['api_json_reference_number'];
+            Booking::where("id", $booking_id)->update(["widget_confirmation_number" => $api_json_reference_number]);
+
+
+            //}
         }
 
         return   $response;
@@ -74,6 +92,8 @@ class WidgetApiController extends Controller
 
         $unbookedRoomsInfo = Room::whereNotIn('id', $bookedRoomIds)
             ->where('company_id', $request->company_id)
+            ->where('online_available', 1)
+            ->where('status', 0) //0 is availabe 
             ->get();
 
         $groupedRooms = [];

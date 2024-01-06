@@ -34,6 +34,7 @@ class SourceController extends Controller
         $model = Source::query();
         $model->where('company_id', $request->company_id);
         $model->where('type', 'online');
+        $model->orderBy('name', 'asc');
         return $model->get();
     }
     public function getAgent(Request $request)
@@ -41,6 +42,7 @@ class SourceController extends Controller
         $model = Source::query();
         $model->where('company_id', $request->company_id);
         $model->where('type', 'agent');
+        $model->orderBy('name', 'asc');
         return $model->get();
     }
     public function getCorporate(Request $request)
@@ -48,6 +50,7 @@ class SourceController extends Controller
         $model = Source::query();
         $model->where('company_id', $request->company_id);
         $model->where('type', 'corporate');
+        $model->orderBy('name', 'asc');
         return $model->get();
     }
 
@@ -64,7 +67,7 @@ class SourceController extends Controller
             } else {
                 return $this->response('Source cannot add.', null, false);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -78,7 +81,7 @@ class SourceController extends Controller
             } else {
                 return $this->response('Source cannot update.', null, false);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }

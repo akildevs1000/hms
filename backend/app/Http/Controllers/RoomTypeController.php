@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RoomType\StoreRequest;
 use App\Http\Requests\RoomType\UpdateRequest;
+use App\Models\Company;
 use App\Models\Holiday;
 use App\Models\Room;
 use App\Models\RoomType;
@@ -267,9 +268,33 @@ class RoomTypeController extends Controller
 
     public function updatePrice(Request $request, $id)
     {
+
+
+        //$wordpress_push_prices_url = Company::where("id", $request->company_id)->pluck('wordpress_push_prices_url')->first();
+
         try {
             $model = RoomType::find($id);
             $model->update($request->all());
+
+
+            // if ($wordpress_push_prices_url != '')
+            // {
+
+            //     try {
+            //         $curl = curl_init($wordpress_push_prices_url);
+
+            //         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            //         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            //         $api_response = curl_exec($curl);
+            //         curl_close($curl);
+
+            //         return  $api_response;
+            //     } catch (\Throwable $th) {
+            //         //throw $th;
+            //     }
+
+            // }
+
             return $this->response('Successfully update', null, true);
         } catch (\Throwable $th) {
             return $this->response($th . ' Unsuccessfully update.', null, false);
