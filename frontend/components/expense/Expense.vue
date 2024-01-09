@@ -125,24 +125,27 @@
                 {{ errors.item[0] }}
               </span>
             </v-col>
+
             <v-col cols="4">
-              <!-- <v-autocomplete
+              <v-autocomplete
+                v-if="is_management"
                 :disabled="viewMode"
-                v-model="editedItem.vendor_name"
-                :items="[]"
+                v-model="editedItem.user"
+                :items="['Nadia', 'Ariff', 'Ansari']"
                 item-text="name"
-                item-value="name"
-                placeholder="Select Vendor Name"
-                label="Select Vendor Name"
+                item-value="id"
+                placeholder="Select User"
+                label="Select User"
                 outlined
                 :hide-details="true"
                 dense
               >
               </v-autocomplete>
               <span v-if="errors && errors.department_id" class="error--text">{{
-                errors.vendor_name[0]
-              }}</span> -->
+                errors.user[0]
+              }}</span>
             </v-col>
+
             <v-col cols="4">
               <v-text-field
                 :disabled="viewMode"
@@ -219,24 +222,6 @@
               }}</span>
             </v-col>
 
-            <v-col cols="4" v-if="is_management">
-              <v-autocomplete
-                :disabled="viewMode"
-                v-model="editedItem.user"
-                :items="['Nadia', 'Ariff', 'Ansari']"
-                item-text="name"
-                item-value="id"
-                placeholder="Select User"
-                label="Select User"
-                outlined
-                :hide-details="true"
-                dense
-              >
-              </v-autocomplete>
-              <span v-if="errors && errors.department_id" class="error--text">{{
-                errors.user[0]
-              }}</span>
-            </v-col>
             <v-col cols="4">
               <v-autocomplete
                 :disabled="viewMode"
@@ -554,16 +539,17 @@
     <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
         <v-text-field
+          clearable
           dense
           outlined
-          placeholder="Search..."
+          placeholder="Search Voucher or Item"
           @input="commonMethod"
           v-model="search"
           hide-details
         ></v-text-field>
       </v-col>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
+        <v-autocomplete
           v-model="category_id"
           clearable
           :items="expensesCategories"
@@ -576,7 +562,23 @@
           :hide-details="true"
           dense
         >
-        </v-select>
+        </v-autocomplete>
+      </v-col>
+      <v-col xs="12" sm="12" md="2" cols="12">
+        <v-autocomplete
+          v-model="vendor_id"
+          clearable
+          :items="vendors_list"
+          item-text="name"
+          item-value="id"
+          placeholder="All Vendors"
+          label="Select Vendor"
+          @change="commonMethod"
+          outlined
+          :hide-details="true"
+          dense
+        >
+        </v-autocomplete>
       </v-col>
       <v-col xs="12" sm="12" md="4" cols="12">
         <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
@@ -908,6 +910,7 @@ export default {
     ExpensesVendors,
   },
   data: () => ({
+    vendor_id: "",
     vendors_list: [],
     formTitle: "",
     loadingAddDocument: false,
@@ -1392,6 +1395,7 @@ export default {
             search: this.search,
             is_management: this.is_management,
             category_id: this.category_id,
+            vendor_id: this.vendor_id,
           },
         };
 
@@ -1417,9 +1421,10 @@ export default {
           company_id: this.$auth.user.company.id,
           from: this.from_date,
           to: this.to_date,
-
+          search: this.search,
           is_management: this.is_management,
           category_id: this.category_id,
+          vendor_id: this.vendor_id,
         },
       };
       this.$axios.get(`expenses_statistics`, options).then(({ data }) => {
