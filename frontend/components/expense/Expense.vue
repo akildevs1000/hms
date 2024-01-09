@@ -542,7 +542,7 @@
           clearable
           dense
           outlined
-          placeholder="Search Voucher or Item"
+          placeholder="Search Voucher or Item Number"
           @input="commonMethod"
           v-model="search"
           hide-details
