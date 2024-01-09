@@ -847,7 +847,7 @@ export default {
     },
     gotoReservationPage() {
       this.pendingNotificationsCount = 0;
-      this.$router.push("reservation/up_coming");
+      this.$router.push("/reservation/up_coming");
     },
     loadNotificationMenu() {
       let company_id = this.$auth.user?.company?.id || 0;
