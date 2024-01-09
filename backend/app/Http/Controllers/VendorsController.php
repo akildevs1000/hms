@@ -2,31 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ExpensesCategories\StoreRequest;
-use App\Http\Requests\ExpensesCategories\UpdateRequest;
-use App\Models\ExpensesCategories;
-use App\Http\Requests\StoreExpensesCategoriesRequest;
-use App\Http\Requests\UpdateExpensesCategoriesRequest;
+use App\Http\Requests\Vendors\StoreRequest;
+use App\Http\Requests\Vendors\UpdateRequest;
+use App\Models\Vendors;
 use Illuminate\Http\Request;
 
-class ExpensesCategoriesController extends Controller
+class VendorsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+
+    public function vendorsDropdownList()
+    {
+        $model = Vendors::query();
+        $model->where('company_id', request('company_id'));
+        $model->orderBy("name", "asc");
+        return $model->get();
+    }
     public function index(Request $request)
     {
-        $model = ExpensesCategories::query();
+        $model = Vendors::query();
 
 
         $model = $model->where('company_id', $request->company_id);
 
-        // //datatable Filters
-        // if ($request->filled('name')) {
-        //     $model->where('name', 'like', "$request->TaxSlabs_no%");
-        // }
 
         //datatable sorty by
         if ($request->filled('sortBy')) {
@@ -56,7 +59,7 @@ class ExpensesCategoriesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreExpensesCategoriesRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreRequest $request)
@@ -66,22 +69,22 @@ class ExpensesCategoriesController extends Controller
 
             if ($data) {
 
-                $verifyIsTaxSlabs = ExpensesCategories::where('company_id', $request->company_id)
+                $isVendorAlreadyExist = Vendors::where('company_id', $request->company_id)
 
                     ->where('name',  $request->name)
 
                     ->count();
-                if ($verifyIsTaxSlabs == 0) {
+                if ($isVendorAlreadyExist == 0) {
 
-                    $record = ExpensesCategories::create($data);
+                    $record = Vendors::create($data);
 
                     if ($record) {
-                        return $this->response('Category details are successfully created', $record, true);
+                        return $this->response('Vendor details are successfully created', $record, true);
                     } else {
-                        return $this->response('Category details not created', $record, false);
+                        return $this->response('CategoVendorry details not created', $record, false);
                     }
                 } else {
-                    return $this->response($request->name  . ' : Category   is already exist. ', $data, false);
+                    return $this->response($request->name  . ' : Vendor   is already exist. ', $data, false);
                 }
             } else {
                 return $this->response('Data is not validated', $data, false);
@@ -94,35 +97,30 @@ class ExpensesCategoriesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ExpensesCategories  $expensesCategories
+     * @param  \App\Models\Vendors  $vendors
      * @return \Illuminate\Http\Response
      */
-    public function show(ExpensesCategories $expensesCategories, $id)
+    public function show(Vendors $vendors, $id)
     {
-        return ExpensesCategories::where('id', $id)->first();
+        return Vendors::where('id', $id)->first();
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ExpensesCategories  $expensesCategories
+     * @param  \App\Models\Vendors  $vendors
      * @return \Illuminate\Http\Response
      */
-    public function edit(ExpensesCategories $expensesCategories, $id)
+    public function edit(Vendors $vendors)
     {
-        // if (ExpensesCategories::find($id)->delete()) {
-
-        //     return $this->response('Record    successfully deleted.', null, true);
-        // } else {
-        //     return $this->response('Record   cannot delete.', null, false);
-        // }
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateExpensesCategoriesRequest  $request
-     * @param  \App\Models\ExpensesCategories  $expensesCategories
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Vendors  $vendors
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateRequest $request, $id)
@@ -133,7 +131,7 @@ class ExpensesCategoriesController extends Controller
 
             if ($data) {
 
-                $isTaxSlabsExist = ExpensesCategories::where('company_id', $request->company_id)
+                $isTaxSlabsExist = Vendors::where('company_id', $request->company_id)
                     ->where('name',  $request->name)
                     ->first();
 
@@ -142,11 +140,11 @@ class ExpensesCategoriesController extends Controller
                         return $this->response($request->start_price . '-' . $request->end_price . ' Category  Details are Can not save', null, false);
                     }
                 }
-                $status = ExpensesCategories::whereId($id)->update($data);
+                $status = Vendors::whereId($id)->update($data);
                 if ($status) {
-                    return $this->response('Category Details are updated succesfully', $status, true);
+                    return $this->response('Vendor Details are updated succesfully', $status, true);
                 } else {
-                    return $this->response('Category Details are not Updated', $status, false);
+                    return $this->response('Vendor Details are not Updated', $status, false);
                 }
             } else {
                 return $this->response('Error Occured', $data, false);
@@ -159,12 +157,12 @@ class ExpensesCategoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ExpensesCategories  $expensesCategories
+     * @param  \App\Models\Vendors  $vendors
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ExpensesCategories $expensesCategories, $id)
+    public function destroy(Vendors $vendors, $id)
     {
-        if (ExpensesCategories::find($id)->delete()) {
+        if (Vendors::find($id)->delete()) {
 
             return $this->response('Record    successfully deleted.', null, true);
         } else {
