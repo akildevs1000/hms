@@ -69,6 +69,11 @@ class Expense extends Model
     {
         return $this->belongsTo(ExpensesCategories::class);
     }
+    public function vendor()
+    {
+        return $this->belongsTo(Vendors::class);
+    }
+
     public function expenese_docuemnts()
     {
         return $this->hasMany(ExpensesDocuments::class,   "expenses_id");

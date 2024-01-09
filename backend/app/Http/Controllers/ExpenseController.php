@@ -8,6 +8,7 @@ use App\Models\ExpensesDocuments;
 use App\Models\Expense;
 use App\Models\ExpensesCategories;
 use App\Models\Payment;
+use App\Models\Vendors;
 use Carbon\Carbon;
 use Database\Seeders\ExpenseSeeder;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class ExpenseController extends Controller
     public function index(Request $request)
     {
         $model = Expense::query();
-        $model->with(['category', 'expenese_docuemnts']);
+        $model->with(['category', 'expenese_docuemnts', 'vendor']);
         $model->where('company_id', $request->company_id);
 
         // $model->where(function ($q) use ($request) {
@@ -99,9 +100,30 @@ class ExpenseController extends Controller
     {
         try {
 
+
+            $data = $request->validated();
+
+
+            if ($request->vendor_id == 0 && $request->filled('vendor_new_name')) {
+                $vendors = Vendors::where("company_id", $request->company_id)->where("name", $request->vendor_new_name)->get();
+                if ($vendors->count() == 0) {
+                    $vendor_data['name'] = $request->vendor_new_name;
+                    $vendor_data['address'] = $request->vendor_new_address;
+                    $vendor_data['contact_numbers'] = $request->vendor_new_contact;
+                    $vendor_data['company_id'] = $request->company_id;
+
+                    $vendor = Vendors::create($vendor_data);
+                    $data["vendor_id"] = $vendor->id;
+                } else {
+
+                    $data["vendor_id"] = $vendors[0]->id;
+                }
+            }
+
+
             // return $request->validated();
 
-            $record = Expense::create($request->validated());
+            $record = Expense::create($data);
 
             if ($record) {
                 //$expense = Expense::where('id', $record->id);
@@ -255,7 +277,27 @@ class ExpenseController extends Controller
     {
 
         try {
-            $record = $expense->update($request->validated());
+
+
+            $data = $request->validated();
+
+            if ($request->vendor_id == 0 && $request->filled('vendor_new_name')) {
+                $vendors = Vendors::where("company_id", $request->company_id)->where("name", $request->vendor_new_name)->get();
+                if ($vendors->count() == 0) {
+                    $vendor_data['name'] = $request->vendor_new_name;
+                    $vendor_data['address'] = $request->vendor_new_address;
+                    $vendor_data['contact_numbers'] = $request->vendor_new_contact;
+                    $vendor_data['company_id'] = $request->company_id;
+
+                    $vendor = Vendors::create($vendor_data);
+                    $data["vendor_id"] = $vendor->id;
+                } else {
+
+                    $data["vendor_id"] = $vendors[0]->id;
+                }
+            }
+
+            $record = $expense->update($data);
             if ($record) {
 
 

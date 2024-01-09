@@ -13,9 +13,9 @@
     <v-dialog v-model="newItemDialog" max-width="20%">
       <v-card>
         <v-card-title dense class="primary white--text background">
-          <span v-if="viewMode">View Category Info </span>
-          <span v-else-if="editedItemIndex == -1">Add Category </span>
-          <span v-else>Edit Category Info </span>
+          <span v-if="viewMode">View Vendor Info </span>
+          <span v-else-if="editedItemIndex == -1">Add Vendor </span>
+          <span v-else>Edit Vendor Info </span>
           <v-spacer></v-spacer>
           <v-icon @click="newItemDialog = false" outlined dark color="white">
             mdi mdi-close-circle
@@ -25,8 +25,8 @@
           <v-container>
             <v-row>
               <v-col md="12" cols="12">
-                <label>Name</label>
                 <v-text-field
+                  label="Name"
                   :disabled="viewMode"
                   v-model="editedItem.name"
                   outlined
@@ -38,6 +38,46 @@
                 <span dense v-if="errors && errors.name" class="error--text">{{
                   errors.name[0]
                 }}</span>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col md="12" cols="12">
+                <v-text-field
+                  label="Address"
+                  :disabled="viewMode"
+                  v-model="editedItem.address"
+                  outlined
+                  dense
+                  small
+                  :hide-details="true"
+                  placeholder="Address"
+                ></v-text-field>
+                <span
+                  dense
+                  v-if="errors && errors.address"
+                  class="error--text"
+                  >{{ errors.address[0] }}</span
+                >
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col md="12" cols="12">
+                <v-text-field
+                  label="Contact Numbers"
+                  :disabled="viewMode"
+                  v-model="editedItem.contact_numbers"
+                  outlined
+                  dense
+                  small
+                  :hide-details="true"
+                  placeholder="Contact Numbers"
+                ></v-text-field>
+                <span
+                  dense
+                  v-if="errors && errors.contact_numbers"
+                  class="error--text"
+                  >{{ errors.contact_numbers[0] }}</span
+                >
               </v-col>
             </v-row>
 
@@ -91,7 +131,7 @@
               <v-icon color="white" dark white>mdi-plus-circle</v-icon>
             </v-btn>
           </template>
-          <span>Add New Category</span>
+          <span>Add New Vendor</span>
         </v-tooltip>
       </v-toolbar>
       <v-row>
@@ -219,12 +259,30 @@ export default {
         filterable: true,
         filterSpecial: true,
       },
+      {
+        text: "Address",
+        value: "address",
+        key: "address",
+        align: "left",
+        sortable: true,
+        filterable: true,
+        filterSpecial: true,
+      },
+      {
+        text: "Contact Number",
+        value: "contact_numbers",
+        key: "contact_numbers",
+        align: "left",
+        sortable: true,
+        filterable: true,
+        filterSpecial: true,
+      },
 
       { text: "Options", value: "options", align: "left", sortable: false },
     ],
     roomTypesData: [],
 
-    endpoint: "expenses_categories",
+    endpoint: "vendors",
 
     newItemDialog: false,
 
@@ -247,7 +305,7 @@ export default {
     },
   },
   created() {
-    //  this.getDataFromApi();
+    //this.getDataFromApi();
   },
   methods: {
     can(per) {

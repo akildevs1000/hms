@@ -44,6 +44,8 @@ class UpdateRequest extends FormRequest
             'is_management' => 'nullable',
             'user' => 'nullable',
             'category_id' => 'required',
+            'vendor_id' => 'nullable',
+
 
         ];
     }

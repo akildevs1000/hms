@@ -45,6 +45,8 @@ class StoreRequest extends FormRequest
             'user' => 'nullable',
             'category_id' => 'required',
 
+            'vendor_id' => 'nullable',
+
         ];
     }
 }

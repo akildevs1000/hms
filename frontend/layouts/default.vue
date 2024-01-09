@@ -662,7 +662,9 @@ export default {
       to: "/",
       menu: "dashboard",
     };
-    this.loadNotificationMenu();
+    setTimeout(() => {
+      this.loadNotificationMenu();
+    }, 1000 * 60);
     setInterval(() => {
       this.loadNotificationMenu();
     }, 1000 * 60 * 5);
@@ -863,11 +865,11 @@ export default {
       this.$axios.get(`get-notifications-count`, options).then(({ data }) => {
         try {
           pendingcount = 0;
-          console.log("data.online_booking_count", data.online_booking_count);
+          //console.log("data.online_booking_count", data.online_booking_count);
           if (data.online_booking_count) {
             let storedRecords = localStorage.getItem("online_booking_count");
 
-            console.log("storedRecords", storedRecords);
+            //console.log("storedRecords", storedRecords);
 
             let nonMatching = [];
 
@@ -877,7 +879,7 @@ export default {
               }
             }
 
-            console.log("nonMatching", nonMatching);
+            //console.log("nonMatching", nonMatching);
 
             localStorage.setItem(
               "online_booking_count",
