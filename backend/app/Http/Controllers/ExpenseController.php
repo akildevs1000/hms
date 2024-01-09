@@ -37,7 +37,10 @@ class ExpenseController extends Controller
         //     $q->orWhere('item', 'ILIKE', "%$request->search%");
         // });
         if ($request->filled('search')) {
-            $model->Where('item', 'ILIKE', "%$request->search%");
+            $model->Where(function ($q) use ($request) {
+                $q->Where('item', 'ILIKE', "%$request->search%");
+                $q->orWhere('voucher', 'ILIKE', "%$request->search%");
+            });
         }
 
         if ($request->filled('from') && $request->filled('to')) {
@@ -50,6 +53,10 @@ class ExpenseController extends Controller
         if ($request->filled('category_id')) {
             $model->where('category_id',   $request->category_id);
         }
+        if ($request->filled('vendor_id')) {
+            $model->where('vendor_id',   $request->vendor_id);
+        }
+
         if ($request->filled('is_management')) {
             $model->where('is_management', $request->is_management);
         } else {
@@ -162,6 +169,27 @@ class ExpenseController extends Controller
             ->when($request->filled('is_management'), function ($query) use ($request) {
                 $query->where('is_management', $request->is_management);
             });
+
+
+        if ($request->filled('search')) {
+            $categoriesWithExpenses->Where(function ($q) use ($request) {
+                $q->Where('item', 'ILIKE', "%$request->search%");
+                $q->orWhere('voucher', 'ILIKE', "%$request->search%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $categoriesWithExpenses->where('category_id',   $request->category_id);
+        }
+        if ($request->filled('vendor_id')) {
+            $categoriesWithExpenses->where('vendor_id',   $request->vendor_id);
+        }
+
+        if ($request->filled('is_management')) {
+            $categoriesWithExpenses->where('is_management', $request->is_management);
+        } else {
+            //  $model->where('is_management', 0);
+        }
 
         if ($request->filled('category_id')) {
             $categoriesWithExpenses->where('category_id',   $request->category_id);
