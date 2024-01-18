@@ -24,9 +24,10 @@ class WidgetApiController extends Controller
         if ($request->filled("company_id")) {
             return   RoomType::with(["widget_available_rooms"])
                 ->where('company_id', $request->company_id)
-                ->whereHas('widget_available_rooms',  function (Builder $query1) {
+                ->whereHas('widget_available_rooms',  function (Builder $query1) use ($request) {
                     $query1->where('online_available',   1);
                     $query1->where('status', 0);
+                    $query1->where('company_id', $request->company_id);
                 })
                 ->get();
         }
