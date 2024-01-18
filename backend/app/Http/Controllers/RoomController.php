@@ -162,7 +162,16 @@ class RoomController extends Controller
 
         return $arr;
     }
+    public function roomDropdownList(Request $request)
+    {
+        $arr = [];
+        return  $data = Room::with('roomType')
+            // ->where('status', 0)
+            ->whereCompanyId($request->company_id)->orderBy("room_no", "ASC")->get();
 
+
+        return $arr;
+    }
     public function roomListForMenu()
     {
         return Room::with('roomType')->get();

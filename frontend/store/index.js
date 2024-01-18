@@ -16,10 +16,43 @@ export const state = () => ({
   customerImage: null,
   customerDocument: null,
   devices_logs_id: "",
+
+  hotelQRCodeOTPverified: false,
+  hotelQrcodeRequestId: "",
+  hotelQrcodeCompanyId: "",
+  hotelQrcodeRoomId: "",
+  hotelQrcodeRoomNumber: "",
+  hotelQrcodeWhatsappNumber: "",
+  hotelQrcodeID: "",
+  hotelQRCodeCartItems: [],
 });
 
 // contains your mutations
 export const mutations = {
+  hotelQRCodeCartItems(state, value) {
+    state.hotelQRCodeCartItems = value;
+  },
+  hotelQRCodeOTPverified(state, value) {
+    state.hotelQRCodeOTPverified = value;
+  },
+  hotelQrcodeWhatsappNumber(state, value) {
+    state.hotelQrcodeWhatsappNumber = value;
+  },
+  hotelQrcodeID(state, value) {
+    state.hotelQrcodeID = value;
+  },
+  hotelQrcodeRequestId(state, value) {
+    state.hotelQrcodeRequestId = value;
+  },
+  hotelQrcodeCompanyId(state, value) {
+    state.hotelQrcodeCompanyId = value;
+  },
+  hotelQrcodeRoomId(state, value) {
+    state.hotelQrcodeRoomId = value;
+  },
+  hotelQrcodeRoomNumber(state, value) {
+    state.hotelQrcodeRoomNumber = value;
+  },
   customerImage(state, value) {
     state.customerImage = value;
   },
