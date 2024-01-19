@@ -826,6 +826,7 @@ export default {
           timings_arr.push(1);
 
           this.editedItemIndex = item.id;
+          this.previewImage = item.item_picture;
         });
     },
     save() {

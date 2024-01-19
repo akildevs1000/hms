@@ -7,7 +7,7 @@
             Sent a Whatsapp OTP to registered Mobile Number:
             {{ maskNumber(whatsapp_number) }}
           </p>
-
+          <!-- {{ this.whatsapp_otp }}-{{ this.customer_otp }} -->
           <v-text-field
             ref="name"
             outlined
@@ -49,11 +49,16 @@ export default {
     loading: false,
     customer_otp: "",
     error_message: "",
+    otp_sent: false,
   }),
   auth: false,
   mounted() {
     localStorage.setItem("hotelQRCodeOTPverified", false);
     this.clearDefaults();
+
+    setTimeout(() => {
+      this.sendOTP();
+    }, 3000);
     // this.$nextTick(function () {
     //   console.log(
     //     "hotelQrcodeWhatsappNumber",
@@ -78,7 +83,7 @@ export default {
     // this.whatsapp_number = this.maskNumber(
     //   this.$store.state.hotelQrcodeWhatsappNumber
     // );
-    this.sendOTP();
+    console.log("Home page");
   },
   methods: {
     sendOTP() {
@@ -99,8 +104,10 @@ export default {
           otp: 1,
         },
       };
+      console.log("get_checkin_customer_data");
       this.loading = true;
       this.$axios.get(`get_checkin_customer_data`, options).then(({ data }) => {
+        this.otp_sent = true;
         if (data.check_in) {
           this.$store.commit("hotelQrcodeRequestId", this.id);
           this.$store.commit("hotelQrcodeCompanyId", company_id);

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isPageValid()">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ snackbarMessage }}
@@ -113,6 +113,7 @@
       </v-card-text>
     </v-card>
   </div>
+  <div v-else>UnAuthorised Access</div>
 </template>
 
 <script>
@@ -134,6 +135,7 @@ export default {
     room_id: "",
     booking_id: "",
     room_number: "",
+    pageValid: false,
   }),
   auth: false,
   mounted() {
@@ -143,6 +145,7 @@ export default {
       this.room_id = localStorage.getItem("hotelQrcodeRoomId");
       this.booking_id = localStorage.getItem("hotelQrcodeBookingId");
       this.room_number = localStorage.getItem("hotelQrcodeRoomNumber");
+      this.pageValid = localStorage.getItem("hotelQRCodeOTPverified");
     } else {
     }
   },
@@ -158,6 +161,9 @@ export default {
     // this.displyCartItems();
   },
   methods: {
+    isPageValid() {
+      return this.pageValid;
+    },
     confirmToOrder() {
       let options = {
         params: {
