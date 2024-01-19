@@ -614,7 +614,7 @@
   <NoAccess v-else />
 </template>
 <script>
-import CustomFilter from "../../../components/filter/customfilter.vue";
+import CustomFilter from "../../../components/filter/CustomFilter.vue";
 import RoomOrderList from "../../../components/hotelCheckin/orders/RoomOrderList.vue";
 export default {
   components: { CustomFilter, RoomOrderList },
