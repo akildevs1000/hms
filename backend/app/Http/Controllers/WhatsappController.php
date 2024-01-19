@@ -10,8 +10,10 @@ use Twilio\Rest\Client;
 
 class WhatsappController extends Controller
 {
-    public function sentNotification($data)
+    public function sentNotification($data) //working OTP
     {
+
+
         try {
             if ($data['instance_id'] && $data['access_token']) {
 

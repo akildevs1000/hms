@@ -575,6 +575,101 @@ export default {
           ],
         },
         {
+          icon: "mdi-home-search-outline",
+          title: "Invenotry ",
+
+          to: "/inventory",
+          menu: "lost_and_found_access",
+        },
+        {
+          icon: "mdi-tools",
+          title: `Hotel Settings`,
+          open_menu: false,
+          menu: "setting_access",
+          hasChildren: [
+            {
+              icon: "mdi mdi-bed",
+              title: "Menu Items",
+              to: "/hotel_checkin/settings/menu",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Laundry",
+              to: "/hotel_checkin/settings/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "House Keeping",
+              to: "/hotel_checkin/settings/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Room Supplies",
+              to: "/hotel_checkin/settings/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Room Problems",
+              to: "/hotel_checkin/settings/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Phonebook",
+              to: "/hotel_checkin/settings/room_category",
+              menu: "settings_rooms_category_access",
+            },
+          ],
+        },
+        {
+          icon: "mdi-tools",
+          title: `Hotel Orders`,
+          open_menu: false,
+          menu: "setting_access",
+          hasChildren: [
+            {
+              icon: "mdi mdi-bed",
+              title: "Food Items",
+              to: "/hotel_checkin/orders/food",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Laundry",
+              to: "/hotel_checkin/orders/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "House Keeping",
+              to: "/hotel_checkin/orders/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Room Supplies",
+              to: "/hotel_checkin/orders/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Room Problems",
+              to: "/hotel_checkin/orders/room_category",
+              menu: "settings_rooms_category_access",
+            },
+            {
+              icon: "mdi mdi-bed",
+              title: "Phonebook",
+              to: "/hotel_checkin/orders/room_category",
+              menu: "settings_rooms_category_access",
+            },
+          ],
+        },
+        {
           icon: "mdi-tools",
           title: `Setting`,
           open_menu: false,
@@ -1196,5 +1291,9 @@ select:focus {
 
 .text-box-right-input input {
   text-align: right;
+}
+
+.secondary_value {
+  font-size: 11px;
 }
 </style>

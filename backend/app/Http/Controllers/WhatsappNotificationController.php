@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
+
 class WhatsappNotificationController extends Controller
 {
     public function PostingNotification($data)
@@ -326,5 +328,45 @@ class WhatsappNotificationController extends Controller
         ];
 
         (new WhatsappController)->sentOTP($data);
+    }
+
+    public function hotelMenuOTP($data, $company_id)
+    {
+
+        $company = Company::whereId($company_id)->get()->first();
+
+
+        $instance_id  = "";
+        $access_token = $company["whatsapp_access_token"];
+        $comName      = "";
+        $msg          = "";
+        $customerName = $data['name'];
+        $company      = $company;
+        $otp      = $data['otp'];
+
+        $instance_id = $company["whatsapp_instance_id"];
+        $comName     = $company["company_code"];
+
+        $msg .= "$comName\n";
+        $msg .= "\n";
+        $msg .= "Dear  $customerName, \n";
+
+        $msg .= "\n";
+        $msg .= "Your OTP  To Access Menu. Do not Share with anyone if you did not Initiated. \n";
+        $msg .= "\n";
+        $msg .= "$otp \n";
+
+
+        $data = [
+            'to'           =>   $data['mobile'],
+            'message'      => $msg,
+            'company'      => $company ?? false,
+            'instance_id'  => $instance_id,
+            'access_token' => $access_token,
+            'type'         => 'Login',
+            'userName'        => $data['name'] ?? "",
+        ];
+
+        return (new WhatsappController)->sentNotification($data);
     }
 }
