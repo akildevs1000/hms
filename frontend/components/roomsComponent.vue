@@ -384,7 +384,7 @@
               /> -->
               <!-- {{ updateQRCodeItem(item) }} -->
               <v-img
-                @click="viewQRCode()"
+                @click="viewQRCode(item)"
                 :src="item.qrImage"
                 style="width: 100px; height: auto"
               />
@@ -586,7 +586,7 @@ export default {
     this.getRoomTypesData();
   },
   methods: {
-    async updateQRCode() {
+    updateQRCode() {
       this.data.forEach(async (element) => {
         let url =
           process.env.APP_URL +
@@ -601,7 +601,7 @@ export default {
           width: 100,
         });
       });
-      let person = this.data.find((e) => e.id == item.id);
+      //let person = this.data.find((e) => e.id == item.id);
     },
 
     // async updateQRCodeItem(item) {
@@ -613,8 +613,18 @@ export default {
 
     async viewQRCode(item) {
       this.dialogQRcode = true;
-      let url = process.env.APP_URL;
-      this.generateQRCode(url, 500);
+      // let url = process.env.APP_URL;
+
+      let url =
+        process.env.APP_URL +
+        "qrcode/" +
+        this.$auth.user.company.id +
+        "-" +
+        item.room_no +
+        "-" +
+        item.id;
+
+      await this.generateQRCode(url, 500);
     },
 
     async generateQRCode(url, width) {
@@ -629,19 +639,19 @@ export default {
         console.error("Error generating QR code:", error);
       }
     },
-    async viewQRCode(url, width) {
-      try {
-        this.dialogQRcode = true;
-        let url = process.env.APP_URL;
-        console.log(url);
-        this.qrCodeImage = await this.$qrcode.generate(url, {
-          width: "500",
-        });
-        console.log(this.qrCodeImage);
-      } catch (error) {
-        console.error("Error generating QR code:", error);
-      }
-    },
+    // async viewQRCode(url, width) {
+    //   try {
+    //     this.dialogQRcode = true;
+    //     let url = process.env.APP_URL;
+    //     console.log(url);
+    //     this.qrCodeImage = await this.$qrcode.generate(url, {
+    //       width: "500",
+    //     });
+    //     console.log(this.qrCodeImage);
+    //   } catch (error) {
+    //     console.error("Error generating QR code:", error);
+    //   }
+    // },
 
     changeRoomCloudStatus(item, status) {
       //console.log(roomId, status);
