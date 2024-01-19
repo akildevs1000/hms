@@ -1,10 +1,31 @@
 <template>
-  <div>
+  <div v-if="isPageValid()">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ snackbarMessage }}
       </v-snackbar>
     </div>
+    <v-dialog v-model="dialogPreviewImage" width="600px">
+      <v-card>
+        <v-card-title dense class="primary white--text background">
+          <v-spacer></v-spacer>
+          <v-icon
+            @click="dialogPreviewImage = false"
+            outlined
+            dark
+            color="white"
+          >
+            mdi mdi-close-circle
+          </v-icon>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <img :src="imagePreviewSrc" style="width: 500px; height: auto"
+          /></v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <div class="text-center d-flex pb-4">
       <!-- <v-btn
         v-if="menu_open"
@@ -186,7 +207,8 @@
                       <v-row class="pl-2">
                         <v-col cols="6" class="pa-2">
                           <img
-                            src="https://getqrmenu.com/QRMenu/Images/Items/348/I14734800032.jpg"
+                            @click="itemPreview(item.item_picture)"
+                            :src="item.item_picture"
                             style="height: 100px"
                           />
                         </v-col>
@@ -275,6 +297,7 @@
       </v-btn>
     </v-card-text>
   </div>
+  <div v-else>UnAuthorised Access</div>
 </template>
 
 <script>
@@ -302,6 +325,9 @@ export default {
     snackbar: false,
     snackbarMessage: "",
     loading: true,
+    pageValid: false,
+    imagePreviewSrc: "",
+    dialogPreviewImage: false,
   }),
   auth: false,
   watch: {
@@ -325,6 +351,7 @@ export default {
   mounted() {
     if (localStorage)
       this.cartItems = JSON.parse(localStorage.getItem("QRCodeCartItems"));
+    this.pageValid = localStorage.getItem("hotelQRCodeOTPverified");
   },
   created() {
     this.getDataFromApi();
@@ -335,6 +362,13 @@ export default {
     this.getMenuItemsList();
   },
   methods: {
+    itemPreview(itemPreviewImage) {
+      this.dialogPreviewImage = true;
+      this.imagePreviewSrc = itemPreviewImage;
+    },
+    isPageValid() {
+      return this.pageValid;
+    },
     confirmToOrder() {
       this.$router.push("/qrcode/cartItems");
     },
