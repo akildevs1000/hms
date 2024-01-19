@@ -6,6 +6,9 @@
       </v-snackbar>
     </div>
     <v-card>
+      <div style="text-align: center" v-if="loading">
+        <img src="../../static/loading.gif" width="200px" />
+      </div>
       <v-card-title
         style="padding: 4px; font-size: 14px; background-color: #b3b3b3"
         dense
@@ -111,6 +114,7 @@ export default {
     room_id: "",
     booking_id: "",
     room_number: "",
+    loading: true,
   }),
   auth: false,
   mounted() {
@@ -146,6 +150,7 @@ export default {
         .then(({ data }) => {
           this.cartItems = data;
           this.calculateTotal();
+          this.loading = false;
         });
     },
     calculateTotal(item = null) {

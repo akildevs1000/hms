@@ -57,7 +57,7 @@
           <v-icon color="white">mdi mdi-food</v-icon>
         </v-btn>
         <v-btn @click="goToPage('orders')" style="border-right: 0px solid #ddd">
-          <span style="color: #fff">Orders</span>
+          <span style="color: #fff">My Orders</span>
           <v-icon color="white">mdi mdi-cart</v-icon>
         </v-btn>
         <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">

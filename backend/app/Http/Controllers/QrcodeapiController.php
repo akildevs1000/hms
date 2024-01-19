@@ -42,24 +42,27 @@ class QrcodeapiController extends Controller
             ->Where('room_id',   $request->room_id)
             ->get()->first();
 
+        if ($bookedRoomIds) {
+            if ($request->filled("otp")) {
 
-        if ($request->filled("otp")) {
-
-            if ($request->otp === "1") {
+                if ($request->otp === "1") {
 
 
-                $opt = rand(1000, 9999);
+                    $opt = rand(1000, 9999);
+                    $opt = $opt;
+                    $bookedRoomIds['whatsapp_otp'] = $opt;
+                    $model->update(["whatsapp_otp" => $opt]);
 
-                $bookedRoomIds['whatsapp_otp'] = $opt;
-                $model->update(["whatsapp_otp" => $opt]);
+                    $data_otp['mobile'] = $bookedRoomIds->customer['whatsapp'];
+                    $data_otp['otp'] = $opt;
+                    $data_otp['name'] = $bookedRoomIds->customer['title'];
 
-                $data_otp['mobile'] = $bookedRoomIds->customer['whatsapp'];
-                $data_otp['otp'] = $opt;
-                $data_otp['name'] = $bookedRoomIds->customer['title'];
-
-                (new WhatsappNotificationController)->hotelMenuOTP($data_otp, $request->company_id);
+                    (new WhatsappNotificationController)->hotelMenuOTP($data_otp, $request->company_id);
+                }
             }
         }
+
+
         return  $bookedRoomIds;
     }
 

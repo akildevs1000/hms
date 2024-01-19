@@ -141,6 +141,9 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <div style="text-align: center" v-if="loading">
+      <img src="../../static/loading.gif" width="200px" />
+    </div>
     <v-expansion-panels v-model="panel1" multiple>
       <v-expansion-panel
         :key="counter1"
@@ -298,6 +301,7 @@ export default {
     cartItemsObj: {},
     snackbar: false,
     snackbarMessage: "",
+    loading: true,
   }),
   auth: false,
   watch: {
@@ -431,6 +435,7 @@ export default {
         .get(`hotel_orders_customer_menu`, options)
         .then(({ data }) => {
           this.data = data;
+          this.loading = false;
         });
     },
 
