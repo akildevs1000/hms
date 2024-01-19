@@ -591,7 +591,7 @@ export default {
         let url =
           process.env.APP_URL +
           "qrcode/" +
-          this.$auth.user.company_id +
+          this.$auth.user.company.id +
           "-" +
           element.room_no +
           "-" +
