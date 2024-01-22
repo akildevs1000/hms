@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isPageValid()">
+  <div v-if="pageValid == 'true'">
     <v-row style="width: 100%; text-align: center; margin: 0px">
       <v-col cols="6" class="boxborder"
         ><v-icon size="100" color="blue-grey darken-2">
@@ -54,7 +54,7 @@
       >
     </v-row>
   </div>
-  <div v-else>UnAuthorised Access</div>
+  <div v-else style="padding: 25%">UnAuthorised Access</div>
 </template>
 
 <script>
@@ -67,28 +67,21 @@ export default {
   auth: false,
   mounted() {
     this.pageValid = localStorage.getItem("hotelQRCodeOTPverified");
+    console.log("this.pageValid 1", this.pageValid);
   },
   created() {
-    // console.log(
-    //   "hotelQrcodeRoomNumber",
-    //   this.$store.state.hotelQrcodeRoomNumber
-    // );
-    // if (this.$store.state.hotelQrcodeRoomNumber) {
-    // } else {
-    //   this.pageValid = false;
-    // }
+    try {
+      if (localStorage) {
+        this.pageValid = localStorage.getItem("hotelQRCodeOTPverified");
+        this.pageValid = true;
+      }
+    } catch (e) {}
+
+    console.log("this.pageValid 2", this.pageValid);
   },
   methods: {
     isPageValid() {
       return this.pageValid;
-      // if (
-      //   this.$store.state.hotelQRCodeOTPverified ||
-      // ) {
-      //   return true;
-      // } else {
-      //   this.pageValid = false;
-      //   return false;
-      // }
     },
     openPage(name) {
       this.$router.push("/qrcode/" + name);

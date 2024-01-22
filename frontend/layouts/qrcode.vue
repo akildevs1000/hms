@@ -1,16 +1,86 @@
 <template>
   <v-app>
+    <v-navigation-drawer v-model="drawer" absolute left temporary>
+      <v-list nav dense dark app color="#34444c" clipped="true">
+        <v-list-item-group
+          v-model="group"
+          active-class="deep-purple--text text--accent-4"
+        >
+          <v-list-item>
+            <v-list-item-title>
+              <img
+                src="https://tanjore.hyderspark.com/wp-content/uploads/2023/12/Hyders-Logo-Gold_.png"
+                style="height: 40px"
+              />
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item style="padding: 5px 0 0 0px">
+            <v-list-item-icon class="ma-2">
+              <v-icon>mdi mdi-home-outline </v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-title> Home</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item style="padding: 5px 0 0 0px">
+            <v-list-item-icon class="ma-2">
+              <v-icon>mdi mdi-food </v-icon>
+            </v-list-item-icon>
+            <v-list-item-title> Food Menu </v-list-item-title>
+          </v-list-item>
+          <v-list-item style="padding: 5px 0 0 0px">
+            <v-list-item-icon class="ma-2">
+              <v-icon>mdi mdi-cart </v-icon>
+            </v-list-item-icon>
+            <v-list-item-title> Cart Items</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item style="padding: 5px 0 0 0px">
+            <v-list-item-icon class="ma-2">
+              <v-icon>mdi mdi-home-outline </v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Biils/Orders</v-list-item-title>
+          </v-list-item>
+          <v-list-item style="padding: 5px 0 0 0px">
+            <v-list-item-icon class="ma-2">
+              <v-icon>mdi mdi-airplane-takeoff </v-icon>
+            </v-list-item-icon>
+            <v-list-item-title> Check-out</v-list-item-title>
+          </v-list-item>
+          <v-list-item style="padding: 5px 0 0 0px">
+            <v-list-item-icon class="ma-2">
+              <v-icon>mdi mdi-card-account-phone </v-icon>
+            </v-list-item-icon>
+            <v-list-item-title> Phones</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item style="padding: 5px 0 0 0px">
+            <v-list-item-icon class="ma-2">
+              <v-icon>mdi mdi-food </v-icon>
+            </v-list-item-icon>
+            <v-list-item-title style="color: red">Logout</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+
     <v-container class="qrcodecontainer">
       <div>
         <div class="guestinfo" style="height: 70px">
-          <span style="width: 30%; float: left">
+          <span style="width: 20%; float: left">
+            <v-app-bar-nav-icon
+              style="color: #fff"
+              @click.stop="drawer = !drawer"
+            ></v-app-bar-nav-icon>
+          </span>
+          <span style="width: 20%; float: left">
             <img
               src="https://tanjore.hyderspark.com/wp-content/uploads/2023/12/Hyders-Logo-Gold_.png"
-              style="height: 50px"
+              style="height: 40px"
             />
           </span>
 
-          <span style="width: 70%; float: right; font-size: 10px">
+          <span style="width: 60%; float: right; font-size: 10px">
             <span style="float: right" class="pr-3"
               >Check-in: {{ dateFormatDisplay(guest_check_in_time) }}</span
             >
@@ -76,6 +146,8 @@
 <script>
 export default {
   data: () => ({
+    drawer: false,
+    group: null,
     id: "",
     pageValid: true,
     guest_check_in_time: "Check-In: ---",
@@ -93,6 +165,11 @@ export default {
       this.$store.commit("hotelQrcodeID", this.id);
       localStorage.setItem("hotelQrcodeID", this.id);
     }
+  },
+  watch: {
+    group() {
+      this.drawer = false;
+    },
   },
   created() {
     setTimeout(() => {
@@ -149,13 +226,14 @@ export default {
       };
 
       this.$axios.get(`get_checkin_customer_data`, options).then(({ data }) => {
-        if (data.check_in) {
-          this.guest_check_in_time = data.check_in;
-          this.guest_check_out_time = data.check_out;
-          this.guest_room_number = data.room_no;
+        if (data.status) {
+          this.guest_check_in_time = data.record.check_in;
+          this.guest_check_out_time = data.record.check_out;
+          this.guest_room_number = data.record.room_no;
 
-          this.guest_name = data.customer.title + "" + data.customer.full_name;
-          this.guest_whatsapp_number = data.customer.whatsapp;
+          this.guest_name =
+            data.record.customer.title + "" + data.record.customer.full_name;
+          this.guest_whatsapp_number = data.record.customer.whatsapp;
 
           this.$store.commit("hotelQrcodeRequestId", this.id);
           this.$store.commit("hotelQrcodeCompanyId", company_id);
@@ -163,9 +241,14 @@ export default {
           this.$store.commit("hotelQrcodeRoomId", roomId);
           this.$store.commit(
             "hotelQrcodeWhatsappNumber",
-            data.customer.whatsapp
+            data.record.customer.whatsapp
           );
-        } else if (data == "") {
+
+          localStorage.setItem("hotelQrcodeCompanyId", company_id);
+          localStorage.setItem("hotelQrcodeRoomNumber", roomNo);
+          localStorage.setItem("hotelQrcodeRoomId", roomId);
+          localStorage.setItem("hotelQrcodeBookingId", data.record.booking_id);
+        } else if (data.status == false) {
         }
       });
     },

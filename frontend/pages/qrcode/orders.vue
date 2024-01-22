@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="pageValid == 'true'">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ snackbarMessage }}
@@ -20,11 +20,12 @@
       </v-card-title>
       <v-card-text class="pt-2" style="font-size: 12px">
         <v-row
+          :key="index"
           v-for="(items, index) in cartItems"
           style="border-bottom: 1px solid #ddd"
         >
           <v-col cols="1" style="padding-right: 0px"> {{ index + 1 }} </v-col>
-          <v-col cols="4"> {{ items.food.name }} </v-col>
+          <v-col cols="4"> {{ items.food?.name }} </v-col>
 
           <v-col cols="3" class="pl-0 pr-0">
             <div style="font-size: 12px">
@@ -93,6 +94,7 @@
       </v-card-text>
     </v-card>
   </div>
+  <div v-else style="padding: 25%">UnAuthorised Access</div>
 </template>
 
 <script>
@@ -115,6 +117,7 @@ export default {
     booking_id: "",
     room_number: "",
     loading: true,
+    pageValid: false,
   }),
   auth: false,
   mounted() {
@@ -123,6 +126,8 @@ export default {
       this.room_id = localStorage.getItem("hotelQrcodeRoomId");
       this.booking_id = localStorage.getItem("hotelQrcodeBookingId");
       this.room_number = localStorage.getItem("hotelQrcodeRoomNumber");
+      this.pageValid = localStorage.getItem("hotelQRCodeOTPverified");
+
       this.getOrderedList();
     } else {
     }
@@ -130,12 +135,20 @@ export default {
   watch: {},
   created() {
     // this.displyCartItems();
+    try {
+      if (localStorage) {
+        this.pageValid = localStorage.getItem("hotelQRCodeOTPverified");
+      }
+    } catch (e) {}
 
     setInterval(() => {
       this.getOrderedList();
     }, 1000 * 60);
   },
   methods: {
+    isPageValid() {
+      return this.pageValid;
+    },
     getOrderedList() {
       let options = {
         params: {
@@ -148,8 +161,10 @@ export default {
       this.$axios
         .get(`hotel_orders_get_food_items`, options)
         .then(({ data }) => {
-          this.cartItems = data;
-          this.calculateTotal();
+          if (data.status) {
+            this.cartItems = data;
+            this.calculateTotal();
+          }
           this.loading = false;
         });
     },

@@ -1,7 +1,11 @@
 <template>
   <div class="text-center">
+    <div style="text-align: center" v-if="loading">
+      Validating your Booking information. Please wait...
+      <img src="../../static/loading.gif" width="200px" />
+    </div>
     <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
-      <v-card ref="form" v-if="whatsapp_number != ''" :loading="loading">
+      <v-card ref="form" v-if="whatsapp_number != ''">
         <v-card-text>
           <p class="text-center">
             Sent a Whatsapp OTP to registered Mobile Number:
@@ -31,7 +35,9 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-      <div v-else>Check-in Details are not Found. Please try again</div>
+      <div style="color: green" v-else-if="!loading" class="pt-10">
+        {{ message }}
+      </div>
     </v-col>
   </div>
 </template>
@@ -50,6 +56,8 @@ export default {
     customer_otp: "",
     error_message: "",
     otp_sent: false,
+    lading: "",
+    message: "Validating your Booking information. Please wait.. ",
   }),
   auth: false,
   mounted() {
@@ -58,7 +66,7 @@ export default {
 
     setTimeout(() => {
       this.sendOTP();
-    }, 3000);
+    }, 1000);
     // this.$nextTick(function () {
     //   console.log(
     //     "hotelQrcodeWhatsappNumber",
@@ -108,27 +116,33 @@ export default {
       this.loading = true;
       this.$axios.get(`get_checkin_customer_data`, options).then(({ data }) => {
         this.otp_sent = true;
-        if (data.check_in) {
+        console.log("data", data);
+        if (data.status == true) {
           this.$store.commit("hotelQrcodeRequestId", this.id);
           this.$store.commit("hotelQrcodeCompanyId", company_id);
           this.$store.commit("hotelQrcodeRoomNumber", roomNo);
           this.$store.commit("hotelQrcodeRoomId", roomId);
           this.$store.commit(
             "hotelQrcodeWhatsappNumber",
-            data.customer.whatsapp
+            data.record.customer.whatsapp
           );
           this.loading = false;
-          this.customer_otp = data.whatsapp_otp;
+          this.customer_otp = data.record.whatsapp_otp;
           localStorage.setItem("hotelQrcodeCompanyId", company_id);
           localStorage.setItem("hotelQrcodeRoomNumber", roomNo);
           localStorage.setItem("hotelQrcodeRoomId", roomId);
-          localStorage.setItem("hotelQrcodeBookingId", data.booking_id);
+          localStorage.setItem("hotelQrcodeBookingId", data.record.booking_id);
 
-          this.whatsapp_number = data.customer.whatsapp;
-        } else if (data == "") {
+          this.whatsapp_number = data.record.customer.whatsapp;
+        } else if (data.status == false) {
           this.loading = false;
+          this.message = "Check-in Details are not Found. Please try again";
         }
       });
+
+      setTimeout(() => {
+        this.loading = false;
+      }, 5000);
     },
     maskNumber(number) {
       if (number)

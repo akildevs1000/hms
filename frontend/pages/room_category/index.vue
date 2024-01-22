@@ -225,9 +225,19 @@
               class="rounded-md"
             >
               <v-spacer></v-spacer>
-              <v-tab active-class="active-link"> Categories </v-tab>
+
               <v-tab active-class="active-link"> Rooms </v-tab>
+              <v-tab active-class="active-link"> Categories </v-tab>
               <v-tabs-slider color="#1259a7"></v-tabs-slider>
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-text>
+                    <client-only>
+                      <roomsComponent :key="componentKey" />
+                    </client-only>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
               <v-tab-item>
                 <v-col md="12" lg="12" class="pt-0">
                   <v-col xs="12" sm="12" md="2" cols="12">
@@ -389,15 +399,6 @@
                     ></v-pagination>
                   </div>
                 </v-col>
-              </v-tab-item>
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <client-only>
-                      <roomsComponent :key="componentKey" />
-                    </client-only>
-                  </v-card-text>
-                </v-card>
               </v-tab-item>
             </v-tabs>
           </v-col>
