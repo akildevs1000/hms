@@ -238,7 +238,7 @@ export default {
           this.guest_room_number = data.record.room_no;
 
           this.guest_name =
-            data.record.customer.title + "" + data.record.customer.full_name;
+            data.record.customer.title + " " + data.record.customer.full_name;
           this.guest_whatsapp_number = data.record.customer.whatsapp;
 
           this.$store.commit("hotelQrcodeRequestId", this.id);
