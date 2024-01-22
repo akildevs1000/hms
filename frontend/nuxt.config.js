@@ -51,6 +51,14 @@ export default {
       //     href: "https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.4.95/css/materialdesignicons.min.css"
       // }
     ],
+    script: [
+      {
+        type: "text/javascript",
+        src: "https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js",
+        async: false,
+        body: false,
+      }, // Insert in body
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -70,6 +78,8 @@ export default {
       // ssr: false,
       mode: "client",
     },
+
+    "~/plugins/qrcode.js",
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isPageValid()">
+  <div v-if="pageValid == 'true'">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ snackbarMessage }}
@@ -18,6 +18,7 @@
       </v-card-title>
       <v-card-text class="pt-2" style="font-size: 12px">
         <v-row
+          :key="index"
           v-for="(items, index) in cartItems"
           style="border-bottom: 1px solid #ddd"
         >
@@ -113,7 +114,7 @@
       </v-card-text>
     </v-card>
   </div>
-  <div v-else>UnAuthorised Access</div>
+  <div v-else style="padding: 25%">UnAuthorised Access</div>
 </template>
 
 <script>

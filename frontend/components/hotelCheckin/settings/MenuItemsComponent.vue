@@ -208,7 +208,7 @@
                     small
                     class="form-control primary"
                     @click="onpick_attachment"
-                    >{{ !upload.name ? "Upload" : "Change" }} Room Image
+                    >{{ !upload.name ? "Upload" : "Change" }} Menu Image
                     <v-icon right dark>mdi-cloud-upload</v-icon>
                   </v-btn>
                   <input

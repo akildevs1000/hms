@@ -61,9 +61,10 @@ class QrcodeapiController extends Controller
                 }
             }
         }
-
-
-        return  $bookedRoomIds;
+        if (!isset($bookedRoomIds['id'])) {
+            return $this->response('Check-in Details are not Found. Please try again', null, false);
+        }
+        return $this->response('Success', $bookedRoomIds, true);
     }
 
     public function getCustomerMenu(Request $request)

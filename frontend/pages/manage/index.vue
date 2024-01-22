@@ -338,6 +338,64 @@
                 <table>
                   <tr style="font-size: 12px">
                     <th>#</th>
+                    <th>Room Type</th>
+                    <th>Weekdays Amount</th>
+                    <th>Weekend Amount</th>
+                    <th>Holiday Amount</th>
+                    <th>Action</th>
+                  </tr>
+                  <v-progress-linear
+                    v-if="loading"
+                    :active="loading"
+                    :indeterminate="loading"
+                    absolute
+                    color="primary"
+                  ></v-progress-linear>
+                  <tr
+                    style="font-size: 12px"
+                    v-for="(item, index) in priceList"
+                    :key="index"
+                  >
+                    <td>{{ ++index }}</td>
+                    <td style="text-transform: uppercase">{{ item.name }}</td>
+                    <td>{{ item.weekday_price }}</td>
+                    <td>{{ item.weekend_price }}</td>
+                    <td>{{ item.holiday_price }}</td>
+                    <td class="text-left">
+                      <v-menu
+                        bottom
+                        left
+                        v-if="can('settings_room_price_edit')"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                            <v-icon>mdi-dots-vertical</v-icon>
+                          </v-btn>
+                        </template>
+                        <v-list width="120" dense>
+                          <v-list-item
+                            v-if="can('settings_room_price_edit')"
+                            @click="priceEditItem(item)"
+                          >
+                            <v-list-item-title style="cursor: pointer">
+                              <v-icon color="secondary" small>
+                                mdi-pencil
+                              </v-icon>
+                              Edit
+                            </v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                    </td>
+                  </tr>
+                </table>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
+                <table>
+                  <tr style="font-size: 12px">
+                    <th>#</th>
                     <th>Weekend</th>
                     <th>Action</th>
                   </tr>
@@ -542,65 +600,6 @@
                 </v-data-table>
               </v-card>
             </v-tab-item>
-
-            <v-tab-item>
-              <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
-                <table>
-                  <tr style="font-size: 12px">
-                    <th>#</th>
-                    <th>Room Type</th>
-                    <th>Weekdays Amount</th>
-                    <th>Weekend Amount</th>
-                    <th>Holiday Amount</th>
-                    <th>Action</th>
-                  </tr>
-                  <v-progress-linear
-                    v-if="loading"
-                    :active="loading"
-                    :indeterminate="loading"
-                    absolute
-                    color="primary"
-                  ></v-progress-linear>
-                  <tr
-                    style="font-size: 12px"
-                    v-for="(item, index) in priceList"
-                    :key="index"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td style="text-transform: uppercase">{{ item.name }}</td>
-                    <td>{{ item.weekday_price }}</td>
-                    <td>{{ item.weekend_price }}</td>
-                    <td>{{ item.holiday_price }}</td>
-                    <td class="text-left">
-                      <v-menu
-                        bottom
-                        left
-                        v-if="can('settings_room_price_edit')"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list width="120" dense>
-                          <v-list-item
-                            v-if="can('settings_room_price_edit')"
-                            @click="priceEditItem(item)"
-                          >
-                            <v-list-item-title style="cursor: pointer">
-                              <v-icon color="secondary" small>
-                                mdi-pencil
-                              </v-icon>
-                              Edit
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </td>
-                  </tr>
-                </table>
-              </v-card>
-            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -614,7 +613,7 @@ export default {
   data: () => ({
     tab: null,
     // items: ["Weekdays", "Weekend", "Holidays", "Prices"],
-    items: ["Weekend", "Holidays", "Prices"],
+    items: ["Prices", "Weekend", "Holidays"],
     Model: "Holidays Price",
     selectedWeekDays: [],
     dates: [],

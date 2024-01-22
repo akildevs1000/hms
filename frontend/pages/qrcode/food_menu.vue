@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isPageValid()">
+  <div v-if="pageValid == 'true'">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ snackbarMessage }}
@@ -82,6 +82,7 @@
         </v-card-title>
         <v-card-text style="padding: 0px" class="pt-2">
           <v-row
+            :key="index"
             v-for="(items, index) in cartItems"
             style="border-bottom: 1px solid #ddd"
           >
@@ -297,7 +298,7 @@
       </v-btn>
     </v-card-text>
   </div>
-  <div v-else>UnAuthorised Access</div>
+  <div v-else style="padding: 25%">UnAuthorised Access</div>
 </template>
 
 <script>
@@ -349,6 +350,10 @@ export default {
     // },
   },
   mounted() {
+    console.log(
+      "hotelQRCodeOTPverified",
+      localStorage.getItem("hotelQRCodeOTPverified")
+    );
     if (localStorage)
       this.cartItems = JSON.parse(localStorage.getItem("QRCodeCartItems"));
     this.pageValid = localStorage.getItem("hotelQRCodeOTPverified");

@@ -1,0 +1,79 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+
+const char* ssid = "akil";
+const char* password = "Akil1234";
+
+String URL = "https://backend.ezhms.com/api/update_device_room_fill_status";
+int led = 13;      // led is connected to esp32 D13
+int pirdata = 15;  // pir D is connected to D15
+String roomNumber = "104";
+int currentStatus = 1;
+int oldStatus = 1;
+void setup() {
+
+  Serial.begin(9600);
+
+  connectWiFi();
+
+    Serial.println(F("Board Info:"));
+}
+
+void loop() {
+
+  currentStatus = digitalRead(pirdata);
+  Serial.println(currentStatus);
+  if (WiFi.status() != WL_CONNECTED) {
+    connectWiFi();
+  }
+
+  String postData = "";
+  if (currentStatus == 0) {
+    Serial.println("Motion detected!");
+    postData = "room_number=" + roomNumber + "&status=1";
+  } else {
+    Serial.println("Motion Ended!");
+    postData = "room_number=" + roomNumber + "&status=0";
+  }
+
+  //Serial.println(postData);
+  Serial.println( oldStatus);
+   Serial.println( currentStatus);
+  if (oldStatus != currentStatus) {
+     
+
+    HTTPClient http;
+    http.begin(URL);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    int httpCode = http.POST(postData);
+    Serial.print("httpCode: ");
+    Serial.println(httpCode);
+  }
+
+
+  oldStatus = currentStatus;
+  delay(1000 * 2);
+}
+
+
+void connectWiFi() {
+  WiFi.mode(WIFI_OFF);
+  delay(1000);
+  //This line hides the viewing of ESP as wifi hotspot
+  WiFi.mode(WIFI_STA);
+
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting to WiFi");
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.print("connected to : ");
+  Serial.println(ssid);
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
