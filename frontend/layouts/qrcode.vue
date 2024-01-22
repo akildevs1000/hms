@@ -98,7 +98,7 @@
           "
         >
           <div style="width: 100%">
-            <span>Welcome {{ guest_name }} </span>
+            <span>Welcome Mr {{ guest_name }} </span>
             <span style="float: right" class="pr-3"
               >Room No: {{ guest_room_number }}
             </span>
