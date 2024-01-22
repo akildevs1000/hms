@@ -1,98 +1,97 @@
 <template>
-  <v-app>
-    <div class="text-center">
-      <v-row
-        ><v-col
-          cols="12"
-          sm="12"
-          md="12"
-          lg="12"
-          class="text-center"
-          v-if="welcomeSection"
-        >
-          <img
-            src="../../static/logo.png"
-            style="padding-top: 50%; max-width: 100%"
-          />
-        </v-col>
-      </v-row>
-      <v-expand-x-transition mode="in" hide-on-leave="true">
-        <v-card v-show="expand" elevation="0">
-          <v-card-text>
-            <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
-              <div v-if="whatsapp_number == ''">
-                Validating your Booking information. Please wait...
-                <img src="../../static/loading.gif" width="200px" />
+  <div class="text-center">
+    <v-row
+      ><v-col
+        cols="12"
+        sm="12"
+        md="12"
+        lg="12"
+        class="text-center"
+        v-if="welcomeSection"
+      >
+        <img
+          src="../../static/logo.png"
+          style="padding-top: 50%; max-width: 100%"
+        />
+      </v-col>
+    </v-row>
+    <v-expand-x-transition mode="in" hide-on-leave="true">
+      <v-card v-show="expand" elevation="0">
+        <v-card-text>
+          <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
+            <div v-if="whatsapp_number == ''">
+              Validating your Booking information. Please wait...
+              <img src="../../static/loading.gif" width="200px" />
+            </div>
+            <v-card
+              elevation="0"
+              ref="form"
+              v-if="whatsapp_number != ''"
+              transition="slide-x-transition"
+            >
+              <v-card-text>
+                <img
+                  :src="profilePic ?? '../_nuxt/static/noimage.png'"
+                  style="
+                    padding-top: 40%;
+                    max-height: 250px;
+                    max-width: 100%;
+                    border-radius: 50%;
+                  "
+                />
+                <div class="text-center pt-8">Hello</div>
+
+                <h2 style="color: black">{{ customerName }}</h2>
+
+                <p class="text-center pt-8">
+                  Enter whatsapp OTP is sent to your Mobile Number: <br />
+                  {{ maskNumber(whatsapp_number) }}
+                </p>
+
+                <v-text-field
+                  clearable
+                  dense
+                  ref="name"
+                  outlined
+                  v-model="whatsapp_otp"
+                  :error-messages="errorMessages"
+                  label="Whatsapp OTP"
+                  placeholder="Whatsapp OTP"
+                  required
+                  type="number"
+                  append-icon="mdi mdi-whatsapp"
+                ></v-text-field>
+                <label style="color: red">{{ error_message }}</label>
+              </v-card-text>
+              <!-- <v-divider class="mt-12"></v-divider> -->
+
+              <div>
+                <v-btn
+                  style="width: 250px"
+                  class="otp-button"
+                  desne
+                  small
+                  rounded
+                  @click="verifyOtp()"
+                >
+                  Verify OTP
+                </v-btn>
               </div>
-              <v-card
-                elevation="0"
-                ref="form"
-                v-if="whatsapp_number != ''"
-                transition="slide-x-transition"
-              >
-                <v-card-text>
-                  <img
-                    :src="profilePic ?? '../_nuxt/static/noimage.png'"
-                    style="
-                      padding-top: 40%;
-                      max-height: 250px;
-                      max-width: 100%;
-                      border-radius: 50%;
-                    "
-                  />
-                  <div class="text-center pt-8">Hello</div>
 
-                  <h2 style="color: black">{{ customerName }}</h2>
-
-                  <p class="text-center pt-8">
-                    Enter whatsapp OTP is sent to your Mobile Number: <br />
-                    {{ maskNumber(whatsapp_number) }}
-                  </p>
-
-                  <v-text-field
-                    clearable
-                    dense
-                    ref="name"
-                    outlined
-                    v-model="whatsapp_otp"
-                    :error-messages="errorMessages"
-                    label="Whatsapp OTP"
-                    placeholder="Whatsapp OTP"
-                    required
-                    type="number"
-                    append-icon="mdi mdi-whatsapp"
-                  ></v-text-field>
-                  <label style="color: red">{{ error_message }}</label>
-                </v-card-text>
-                <!-- <v-divider class="mt-12"></v-divider> -->
-
-                <div>
-                  <v-btn
-                    style="width: 250px"
-                    class="otp-button"
-                    desne
-                    small
-                    rounded
-                    @click="verifyOtp()"
-                  >
-                    Verify OTP
-                  </v-btn>
-                </div>
-
-                <div class="pt-3">
-                  <v-btn text color="error" desne small @click="sendOTP()">
-                    Resend
-                  </v-btn>
-                </div>
-              </v-card>
-              <div style="color: green" v-else-if="!loading" class="pt-10">
-                {{ message }}
+              <div class="pt-3">
+                <v-btn text color="error" desne small @click="sendOTP()">
+                  Resend
+                </v-btn>
               </div>
-            </v-col>
-          </v-card-text></v-card
-        >
-      </v-expand-x-transition>
-      <!-- <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
+            </v-card>
+            <div style="color: green" v-else-if="!loading" class="pt-10">
+              {{ message }}
+            </div>
+          </v-col>
+        </v-card-text></v-card
+      >
+    </v-expand-x-transition>
+    <!-- <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
       <transition name="slide">
         <v-card
           ref="form"
@@ -106,15 +105,15 @@
         </v-card>
       </transition>
     </v-col> -->
-      <!-- <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
+    <!-- <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
       <div style="height: 50px">&nbsp;</div>
       <img
         src="https://tanjore.hyderspark.com/wp-content/uploads/2023/12/Hyders-Logo-Gold_.png"
         style="height: 150px; border-radius: 50%; width: 40%"
       />
     </v-col> -->
-      <!-- {{ this.whatsapp_otp }}-{{ this.customer_otp }} -->
-      <!-- 
+    <!-- {{ this.whatsapp_otp }}-{{ this.customer_otp }} -->
+    <!-- 
       <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
       Validating your Booking information. Please wait...
       <img src="../../static/loading.gif" width="200px" />
@@ -166,15 +165,12 @@
         </div>
       </transition>
     </v-col> -->
-    </div>
-  </v-app>
+  </div>
 </template>
 
 <script>
 export default {
-  // layout: "qrcode",
-  layout: "login",
-  auth: false,
+  layout: "qrcode",
   data: () => ({
     profilePic: "",
     welcomeSection: true,
@@ -193,7 +189,7 @@ export default {
     expand: false,
     customerName: "",
   }),
-
+  auth: false,
   mounted() {
     localStorage.setItem("hotelQRCodeOTPverified", false);
     this.clearDefaults();

@@ -67,13 +67,13 @@
   <NoAccess v-else />
 </template>
 <script>
-import MenuCategoriesComponent from "../../../components/hotelCheckin/settings/MenuCategoriesComponent.vue";
-import MenuItemsComponent from "../../../components/hotelCheckin/settings/MenuItemsComponent.vue";
+// import MenuCategoriesComponent from "../../../components/hotelCheckin/settings/MenuCategoriesComponent.vue";
+// import MenuItemsComponent from "../../../components/hotelCheckin/settings/MenuItemsComponent.vue";
 import MenuTimingsComponent from "../../../components/hotelCheckin/settings/MenuTimingsComponent.vue";
 export default {
   components: {
-    MenuCategoriesComponent,
-    MenuItemsComponent,
+    // MenuCategoriesComponent,
+    // MenuItemsComponent,
     MenuTimingsComponent,
   },
   data: () => ({

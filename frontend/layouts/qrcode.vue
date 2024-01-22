@@ -8,10 +8,7 @@
         >
           <v-list-item>
             <v-list-item-title>
-              <img
-                src="https://tanjore.hyderspark.com/wp-content/uploads/2023/12/Hyders-Logo-Gold_.png"
-                style="height: 40px"
-              />
+              <img src="../static/logo.png" style="height: 40px" />
             </v-list-item-title>
           </v-list-item>
           <v-list-item style="padding: 5px 0 0 0px">
@@ -73,11 +70,14 @@
               @click.stop="drawer = !drawer"
             ></v-app-bar-nav-icon>
           </span>
-          <span style="width: 20%; float: left">
-            <img
-              src="https://tanjore.hyderspark.com/wp-content/uploads/2023/12/Hyders-Logo-Gold_.png"
-              style="height: 40px"
-            />
+          <span style="width: 80%; float: left; color: #fff">
+            Hello
+            <span
+              ><h3>{{ guest_name }}</h3></span
+            >
+          </span>
+          <!-- <span style="width: 20%; float: left">
+            <img src="../assets/logo.png" style="height: 40px" />
           </span>
 
           <span style="width: 60%; float: right; font-size: 10px">
@@ -87,9 +87,9 @@
             <span style="float: right" class="pr-3"
               >Check-out: {{ dateFormatDisplay(guest_check_out_time) }}</span
             >
-          </span>
+          </span> -->
         </div>
-        <div
+        <!-- <div
           style="
             height: 30px;
             background-color: #fff;
@@ -98,13 +98,14 @@
           "
         >
           <div style="width: 100%">
-            <span>Welcome Mr {{ guest_name }} </span>
+            <span>Welcome   {{ guest_name }} </span>
             <span style="float: right" class="pr-3"
               >Room No: {{ guest_room_number }}
             </span>
           </div>
-        </div>
+        </div> -->
       </div>
+      <div class="header-bottom-image"></div>
       <div>
         <nuxt />
       </div>
@@ -112,32 +113,32 @@
         :elevation="24"
         grow
         fill
-        background-color="#393838"
-        style="position: fixed; bottom: 0px; border-top: 1px solid black"
+        background-color="#FFF"
+        style="position: fixed; bottom: 0px; border-top: 1px solid #1cae81"
       >
         <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
-          <span style="color: #fff">Home</span>
-          <v-icon color="white">mdi mdi-home-outline</v-icon>
+          <span class="qrcode-color">Home</span>
+          <v-icon class="qrcode-color">mdi mdi-home-outline</v-icon>
         </v-btn>
         <v-btn
           @click="goToPage('food_menu')"
           style="border-right: 0px solid #ddd"
         >
-          <span style="color: #fff">Food</span>
-          <v-icon color="white">mdi mdi-food</v-icon>
+          <span class="qrcode-color">Food</span>
+          <v-icon class="qrcode-color">mdi mdi-food</v-icon>
         </v-btn>
         <v-btn @click="goToPage('orders')" style="border-right: 0px solid #ddd">
-          <span style="color: #fff">My Orders</span>
-          <v-icon color="white">mdi mdi-cart</v-icon>
+          <span class="qrcode-color">My Orders</span>
+          <v-icon class="qrcode-color">mdi mdi-cart</v-icon>
         </v-btn>
         <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
-          <span style="color: #fff">Check-out</span>
-          <v-icon color="white">mdi mdi-airplane-takeoff</v-icon>
+          <span class="qrcode-color">Check-out</span>
+          <v-icon class="qrcode-color">mdi mdi-airplane-takeoff</v-icon>
         </v-btn>
-        <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
-          <span style="color: #fff">Phones</span>
-          <v-icon color="white">mdi mdi-card-account-phone</v-icon>
-        </v-btn>
+        <!-- <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
+          <span class="qrcode-color">Phones</span>
+          <v-icon class="qrcode-color">mdi mdi-card-account-phone</v-icon>
+        </v-btn> -->
       </v-bottom-navigation>
     </v-container>
   </v-app>
@@ -155,6 +156,7 @@ export default {
     guest_room_number: "---",
     guest_name: "---",
     guest_whatsapp_number: "---",
+    // hideMenu: false,
   }),
   auth: false,
   mounted() {
@@ -174,9 +176,13 @@ export default {
   created() {
     setTimeout(() => {
       try {
+        console.log("this.$route.name", this.$route.name);
         if (this.$route.name == "qrcode-id") {
           this.id = this.$route.params.id;
           this.$store.commit("hotelQrcodeID", this.id);
+          //this.hideMenu = false;
+        } else {
+          // this.hideMenu = true;
         }
 
         let IdArray = this.id.split("-");
@@ -268,11 +274,11 @@ body {
 .qrcodecontainer {
   padding: 0px !important;
   max-width: 600px !important;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
 }
 .guestinfo {
   padding: 10px 0;
-  background-color: #ff1b43;
+  background-color: #1cae81;
   font-weight: bold;
   text-align: center;
   margin: auto;
@@ -371,5 +377,50 @@ body {
 }
 .itemCatname .v-expansion-panel-content__wrap {
   padding: 10px;
+}
+
+/* Define transition classes */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 2s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+/* Define transition classes */
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 2s ease;
+}
+.slide-enter,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
+.qrcode-primary {
+}
+.black {
+  color: black;
+}
+.otp-button {
+  height: 50px !important;
+  color: #fff !important;
+  font-size: 20px !important;
+  background-color: #1cae81 !important;
+}
+
+.otp-button .v-icon.v-icon::after {
+  background-color: #1cae81 !important;
+  color: #1cae81 !important;
+}
+.qrcode-color {
+  color: #1cae81 !important;
+}
+.header-bottom-image {
+  background-image: url("../static/header_bottom.jpg") !important;
+  background-color: #1cae81 !important;
+  background-repeat: round;
+  height: 50px;
 }
 </style>
