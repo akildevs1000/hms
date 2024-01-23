@@ -20,7 +20,7 @@
         <v-card v-show="expand" elevation="0">
           <v-card-text>
             <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
-              <div v-if="whatsapp_number == ''">
+              <div v-if="loadingStep1">
                 Validating your Booking information. Please wait...
                 <img src="../../static/loading.gif" width="200px" />
               </div>
@@ -32,12 +32,13 @@
               >
                 <v-card-text>
                   <img
-                    :src="profilePic ?? '../_nuxt/static/noimage.png'"
+                    :src="profilePic ?? 'static/noimage.png'"
                     style="
-                      padding-top: 40%;
                       max-height: 250px;
                       max-width: 100%;
                       border-radius: 50%;
+                      height: 200px;
+                      width: 200px;
                     "
                   />
                   <div class="text-center pt-8">Hello</div>
@@ -85,12 +86,15 @@
                   </v-btn>
                 </div>
               </v-card>
-              <div style="color: green" v-else-if="!loading" class="pt-10">
-                {{ message }}
+              <div style="padding-top: 60%; color: green" v-else-if="!loading">
+                <img
+                  src="../../static/logo.png"
+                  style="padding-top: 0%; max-width: 100%"
+                />
+                <p class="pt-10" v-html="message"></p>
               </div>
-            </v-col>
-          </v-card-text></v-card
-        >
+            </v-col> </v-card-text
+        ></v-card>
       </v-expand-x-transition>
       <!-- <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
       <transition name="slide">
@@ -176,6 +180,7 @@ export default {
   layout: "login",
   auth: false,
   data: () => ({
+    loadingStep1: true,
     profilePic: "",
     welcomeSection: true,
     errorMessages: [],
@@ -196,6 +201,9 @@ export default {
 
   mounted() {
     localStorage.setItem("hotelQRCodeOTPverified", false);
+    this.id = this.$route.params.id;
+    this.$store.commit("hotelQrcodeID", this.id);
+    if (localStorage) localStorage.setItem("hotelQrcodeID", this.id);
     this.clearDefaults();
 
     setTimeout(() => {
@@ -226,6 +234,10 @@ export default {
 
     this.id = this.$route.params.id;
     this.$store.commit("hotelQrcodeID", this.id);
+    try {
+      if (localStorage) localStorage.setItem("hotelQrcodeID", this.id);
+    } catch (ex) {}
+
     // this.whatsapp_number = this.maskNumber(
     //   this.$store.state.hotelQrcodeWhatsappNumber
     // );
@@ -254,6 +266,7 @@ export default {
       this.loading = true;
       this.$axios.get(`get_checkin_customer_data`, options).then(({ data }) => {
         this.otp_sent = true;
+
         console.log("data", data);
         if (data.status == true) {
           this.$store.commit("hotelQrcodeRequestId", this.id);
@@ -278,8 +291,12 @@ export default {
             data.record.customer.title + " " + data.record.customer.full_name;
         } else if (data.status == false) {
           this.loading = false;
-          this.message = "Check-in Details are not Found. Please try again";
+          this.message =
+            "Check-in Details are not Found. <br/>Please scan QR code again.<br/> Sorry for the inconvenience";
         }
+        setTimeout(() => {
+          this.loadingStep1 = false;
+        }, 3000);
       });
 
       setTimeout(() => {

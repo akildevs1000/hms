@@ -143,7 +143,7 @@
         <v-icon right dark> mdi mdi-arrow-collapse-up </v-icon>
       </v-btn> -->
       <v-spacer></v-spacer>
-      <!-- <span style="float: right">
+      <span style="float: right">
         <v-autocomplete
           v-model="itemNameSearch"
           :items="foodMenuList"
@@ -159,7 +159,7 @@
           @change="getDataFromApi()"
         >
         </v-autocomplete>
-      </span> -->
+      </span>
     </div>
 
     <div style="text-align: center" v-if="loading">
@@ -190,7 +190,6 @@
         v-for="(timing, timeIndex, counter1) in timingsList"
       >
         <img
-          @click="gotoCategoriesPage(timing)"
           elevation="24"
           class="p-5 boxshadow"
           :src="timing.image"
@@ -235,14 +234,13 @@
       </v-col> -->
     </v-row>
 
-    <!-- <v-expansion-panels v-model="panel1" multiple style="z-index: 10">
+    <v-expansion-panels v-model="panel1" multiple style="z-index: 10">
       <v-expansion-panel
         :key="counter1"
         v-for="(timing, timeIndex, counter1) in data"
       >
         <v-expansion-panel-header expand-icon="mdi-menu-down">
           {{ timeIndex }}
-           
         </v-expansion-panel-header>
         <v-expansion-panel-content class="itemCatname">
           <v-expansion-panels v-model="panel2" multiple>
@@ -252,7 +250,6 @@
             >
               <v-expansion-panel-header expand-icon="mdi-menu-down">
                 {{ catIndex }}
-                
               </v-expansion-panel-header>
               <v-expansion-panel-content class="itemname">
                 <v-expansion-panels
@@ -266,7 +263,7 @@
                   >
                     <v-expansion-panel-header>
                       {{ item.name }}
-                      
+
                       <template v-slot:actions>
                         <v-icon :color="item.is_non_veg ? 'red' : 'green'">
                           mdi mdi-square-circle
@@ -350,7 +347,7 @@
           </v-expansion-panels>
         </v-expansion-panel-content>
       </v-expansion-panel>
-    </v-expansion-panels> -->
+    </v-expansion-panels>
 
     <v-card-text style="height: 100px; margin-bottom: 200px">
       <v-btn
@@ -443,9 +440,6 @@ export default {
     this.company_id = this.$store.state.hotelQrcodeCompanyId;
   },
   methods: {
-    gotoCategoriesPage(item) {
-      this.$router.push("/qrcode/food_categories/" + item.id + "-" + item.name);
-    },
     itemPreview(itemPreviewImage) {
       this.dialogPreviewImage = true;
       this.imagePreviewSrc = itemPreviewImage;

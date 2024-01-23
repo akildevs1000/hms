@@ -21,4 +21,11 @@ class HotelFoodCategories extends Model
 
 
     ];
+
+    protected $appends = ['image'];
+
+    public function getImageAttribute()
+    {
+        return asset('storage/hotel/categories/' . $this->company_id . '/' . $this->id . '.jpg');
+    }
 }

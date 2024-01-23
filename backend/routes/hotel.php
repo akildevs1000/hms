@@ -15,12 +15,18 @@ Route::post('/menu_food_item_categories_display_order_update', [HotelFoodCategor
 Route::apiResource('/hotel_food_items', HotelFoodItemsController::class);
 Route::get('/hotel_food_dropdown_list', [HotelFoodItemsController::class, "hotelFoodDrodownList"]);
 Route::post('/menu_food_items_display_order_update', [HotelFoodItemsController::class, "updateMenuDisplayOrder"]);
+Route::get('/get_food_items_by_category', [HotelFoodItemsController::class, "getFoodItemsByCategory"]);
+Route::get('/get_food_items_by_search', [HotelFoodItemsController::class, "getFoodItemsBySearch"]);
+
+
+Route::get('/get_hotel_menu_categories_list_by_timingId', [HotelFoodItemsController::class, "getFoodCategoryByTimingId"]);
 
 
 
 
 Route::apiResource('/hotel_food_timings', HotelFoodTimingsController::class);
 Route::get('/get_hotel_menu_timings_list', [HotelFoodTimingsController::class, "getHotelMenuTimingsList"]);
+Route::get('/get_hotel_menu_timings_dropdown', [HotelFoodTimingsController::class, "getHotelMenuTimingsDropdown"]);
 Route::post('/menu_timings_display_order_update', [HotelFoodTimingsController::class, "updateMenuDisplayOrder"]);
 
 //hotel orders

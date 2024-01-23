@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\HotelFoodItems\StoreRequest;
 use App\Http\Requests\HotelFoodItems\UpdateRequest;
-
+use App\Models\HotelFoodCategories;
 use App\Models\HotelFoodItems;
 use App\Models\HotelFoodItemsCategories;
 use App\Models\HotelFoodItemsTimings;
@@ -60,6 +60,76 @@ class HotelFoodItemsController extends Controller
 
         return $model->paginate($request->per_page);
     }
+
+
+    public function getFoodItemsByCategory(Request $request)
+    {
+        $model = HotelFoodItems::with(["category", "timings"]);
+
+
+        $model = $model->where('company_id', $request->company_id);
+        $model->where('category_id',   $request->category_id);
+        //datatable sorty by
+        if ($request->filled('sortBy')) {
+
+            $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
+
+            $model->orderBy($request->sortBy, $sortDesc);
+        } else {
+            $model->orderBy('display_order', 'ASC');
+        }
+
+        return $model->get();
+    }
+    public function getFoodItemsBySearch(Request $request)
+    {
+        $model = HotelFoodItems::with(["category", "timings"]);
+
+
+        $model = $model->where('company_id', $request->company_id);
+        if ($request->filled('item_name')) {
+            $model->where('name', 'like', "$request->item_name%");
+        }
+        // if ($request->filled('description')) {
+        //     $model->where('description', 'like', "%$request->description%");
+        // }
+        //datatable sorty by
+        if ($request->filled('sortBy')) {
+
+            $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
+
+            $model->orderBy($request->sortBy, $sortDesc);
+        } else {
+            $model->orderBy('display_order', 'ASC');
+        }
+
+        return $model->get();
+    }
+
+    public function getFoodCategoryByTimingId(Request $request)
+    {
+
+
+
+        $model = HotelFoodCategories::query();
+
+
+        $model = $model->where('company_id', $request->company_id);
+        // $model->whereIn('category_id',   FoodIte::query()->where("company_id", $request->company_id)->get()->pluck("serial_number"));
+        //datatable sorty by
+        if ($request->filled('sortBy')) {
+
+            $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
+
+            $model->orderBy($request->sortBy, $sortDesc);
+        } else {
+            $model->orderBy('display_order', 'ASC');
+        }
+
+        return $model->get();
+    }
+
+
     public function updateMenuDisplayOrder(Request $request)
     {
 
@@ -112,7 +182,7 @@ class HotelFoodItemsController extends Controller
                 $ext = $file->getClientOriginalExtension();
                 $fileName = $id . '.' . $ext;
 
-                $folder = 'public/hotel/' . $request->company_id . '/food_menu';
+                $folder = 'public/hotel/food_menu/' . $request->company_id . '';
                 if (!Storage::disk('public')->exists($folder)) {
                     Storage::disk('public')->makeDirectory($folder);
                 }
@@ -187,7 +257,7 @@ class HotelFoodItemsController extends Controller
                         $file = $request->file('image');
                         $ext = $file->getClientOriginalExtension();
                         $fileName =  $record->id . '.' . $ext;
-                        $folder = 'public/hotel/' . $request->company_id . '/food_menu';
+                        $folder = 'public/hotel/food_menu/' . $request->company_id . '';
                         if (!Storage::disk('public')->exists($folder)) {
                             Storage::disk('public')->makeDirectory($folder);
                         }

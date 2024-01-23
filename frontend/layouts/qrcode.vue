@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer v-model="drawer" absolute left temporary>
-      <v-list nav dense dark app color="#34444c" clipped="true">
+      <v-list nav dense dark app color="#1cae81" clipped="true">
         <v-list-item-group
           v-model="group"
           active-class="deep-purple--text text--accent-4"
@@ -71,7 +71,7 @@
             ></v-app-bar-nav-icon>
           </span>
           <span style="width: 80%; float: left; color: #fff">
-            Hello
+            Hi
             <span
               ><h3>{{ guest_name }}</h3></span
             >
@@ -109,38 +109,62 @@
       <div>
         <nuxt />
       </div>
-      <v-bottom-navigation
-        :elevation="24"
-        grow
-        fill
-        background-color="#FFF"
-        style="position: fixed; bottom: 0px; border-top: 1px solid #1cae81"
+    </v-container>
+    <v-bottom-navigation
+      :elevation="24"
+      grow
+      fill
+      background-color="#FFF"
+      fixed
+      bottom
+      right
+      style="
+        position: fixed;
+        bottom: 0px;
+        border-top: 1px solid #1cae81;
+        z-index: 9999;
+      "
+    >
+      <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
+        <!-- <span class="qrcode-color">Home</span> -->
+        <v-avatar size="40" class="qrcode-bgcolor1">
+          <v-icon style="color: #1cae81 !important"
+            >mdi mdi-home-outline</v-icon
+          >
+        </v-avatar>
+      </v-btn>
+      <v-btn
+        @click="goToPage('food_menu')"
+        style="border-right: 0px solid #ddd"
       >
-        <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
-          <span class="qrcode-color">Home</span>
-          <v-icon class="qrcode-color">mdi mdi-home-outline</v-icon>
-        </v-btn>
-        <v-btn
-          @click="goToPage('food_menu')"
-          style="border-right: 0px solid #ddd"
+        <!-- <span class="qrcode-color">Food</span> -->
+        <v-avatar size="40" class="qrcode-bgcolor1">
+          <v-icon style="color: #1cae81 !important"
+            >mdi mdi-food</v-icon
+          ></v-avatar
         >
-          <span class="qrcode-color">Food</span>
-          <v-icon class="qrcode-color">mdi mdi-food</v-icon>
-        </v-btn>
-        <v-btn @click="goToPage('orders')" style="border-right: 0px solid #ddd">
-          <span class="qrcode-color">My Orders</span>
-          <v-icon class="qrcode-color">mdi mdi-cart</v-icon>
-        </v-btn>
-        <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
-          <span class="qrcode-color">Check-out</span>
-          <v-icon class="qrcode-color">mdi mdi-airplane-takeoff</v-icon>
-        </v-btn>
-        <!-- <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
+      </v-btn>
+      <v-btn @click="goToPage('orders')" style="border-right: 0px solid #ddd">
+        <!-- <span class="qrcode-color">My Orders</span> -->
+        <v-avatar size="40" class="qrcode-bgcolor1"
+          ><v-icon style="color: #1cae81 !important"
+            >mdi mdi-cart</v-icon
+          ></v-avatar
+        >
+      </v-btn>
+      <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
+        <!-- <span class="qrcode-color">Check-out</span> -->
+        <v-avatar size="40" class="qrcode-bgcolor1">
+          <v-icon style="color: #1cae81 !important"
+            >mdi mdi-airplane-takeoff</v-icon
+          ></v-avatar
+        >
+      </v-btn>
+      <!-- <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
           <span class="qrcode-color">Phones</span>
           <v-icon class="qrcode-color">mdi mdi-card-account-phone</v-icon>
         </v-btn> -->
-      </v-bottom-navigation>
-    </v-container>
+    </v-bottom-navigation>
   </v-app>
 </template>
 
@@ -160,12 +184,13 @@ export default {
   }),
   auth: false,
   mounted() {
+    console.log("this.$route.name M", this.$route.name);
     if (this.$route.name != "qrcode-id") {
       this.id = localStorage.getItem("hotelQrcodeID");
     } else {
       this.id = this.$route.params.id;
       this.$store.commit("hotelQrcodeID", this.id);
-      localStorage.setItem("hotelQrcodeID", this.id);
+      if (localStorage) localStorage.setItem("hotelQrcodeID", this.id);
     }
   },
   watch: {
@@ -175,36 +200,44 @@ export default {
   },
   created() {
     setTimeout(() => {
-      try {
-        console.log("this.$route.name", this.$route.name);
-        if (this.$route.name == "qrcode-id") {
-          this.id = this.$route.params.id;
-          this.$store.commit("hotelQrcodeID", this.id);
-          //this.hideMenu = false;
-        } else {
-          // this.hideMenu = true;
-        }
-
-        let IdArray = this.id.split("-");
-
-        if (IdArray.length == 3) {
-          this.getGuestDetails(IdArray[0], IdArray[2], IdArray[1]);
-        } else {
-          this.pageValid = false;
-          this.guest_room_number = "";
-          this.guest_check_out_time = "";
-          this.guest_check_in_time = "";
-          this.guest_name = "";
-          this.$store.commit("hotelQrcodeRequestId", null);
-          this.$store.commit("hotelQrcodeCompanyId", null);
-          this.$store.commit("hotelQrcodeRoomNumber", null);
-          this.$store.commit("hotelQrcodeRoomId", null);
-          //this.$router.push("/qrcode");
-        }
-      } catch (error) {
-        this.pageValid = false;
+      // try {
+      console.log("this.$route.name C", this.$route.name);
+      if (this.$route.name == "qrcode-id") {
+        this.id = this.$route.params.id;
+        this.$store.commit("hotelQrcodeID", this.id);
+        //this.hideMenu = false;
+      } else {
+        // this.hideMenu = true;
+        this.id = this.$store.state.hotelQrcodeID;
+        console.log(
+          " this.$store.state.hotelQrcodeID",
+          this.$store.state.hotelQrcodeID
+        );
+        try {
+          if (localStorage) this.id = localStorage.getItem("hotelQrcodeID");
+        } catch (e) {}
       }
-    }, 2000);
+
+      let IdArray = this.id.split("-");
+
+      if (IdArray.length == 3) {
+        this.getGuestDetails(IdArray[0], IdArray[2], IdArray[1]);
+      } else {
+        this.pageValid = false;
+        this.guest_room_number = "";
+        this.guest_check_out_time = "";
+        this.guest_check_in_time = "";
+        this.guest_name = "";
+        this.$store.commit("hotelQrcodeRequestId", null);
+        this.$store.commit("hotelQrcodeCompanyId", null);
+        this.$store.commit("hotelQrcodeRoomNumber", null);
+        this.$store.commit("hotelQrcodeRoomId", null);
+        //this.$router.push("/qrcode");
+      }
+      // } catch (error) {
+      //   this.pageValid = false;
+      // }
+    }, 1000);
   },
   methods: {
     goToPage(name) {
@@ -269,7 +302,7 @@ body {
   /* height: 100%;
   width: 100%; */
   /* width: 0; */
-  margin-bottom: 70px;
+  /* margin-bottom: 70px; */
 }
 .qrcodecontainer {
   padding: 0px !important;
@@ -414,13 +447,21 @@ body {
   background-color: #1cae81 !important;
   color: #1cae81 !important;
 }
+.qrcode-bgcolor {
+  background-color: #1cae81 !important;
+}
 .qrcode-color {
   color: #1cae81 !important;
 }
 .header-bottom-image {
   background-image: url("../static/header_bottom.jpg") !important;
   background-color: #1cae81 !important;
+  /*background-color: #0b4696 !important;*/
   background-repeat: round;
   height: 50px;
+}
+
+.boxshadow {
+  box-shadow: rgba(115, 77, 128, 0.75) 2px 4px 4px;
 }
 </style>

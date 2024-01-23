@@ -56,8 +56,7 @@ class QrcodeapiController extends Controller
                     $data_otp['mobile'] = $bookedRoomIds->customer['whatsapp'];
                     $data_otp['otp'] = $opt;
                     $data_otp['name'] = $bookedRoomIds->customer['title'];
-
-                    (new WhatsappNotificationController)->hotelMenuOTP($data_otp, $request->company_id);
+                    if (env("APP_ENV") == "production") (new WhatsappNotificationController)->hotelMenuOTP($data_otp, $request->company_id);
                 }
             }
         }

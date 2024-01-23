@@ -22,7 +22,12 @@ class HotelFoodTimings extends Model
 
 
     ];
+    protected $appends = ['image'];
 
+    public function getImageAttribute()
+    {
+        return asset('storage/hotel/timings/' . $this->company_id . '/' . $this->id . '.jpg');
+    }
     // public function categoy()
     // {
     //     return $this->hasOne(HotelFoodItems::class,   "timing_id", "id");

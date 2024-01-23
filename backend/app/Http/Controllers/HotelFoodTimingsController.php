@@ -49,7 +49,14 @@ class HotelFoodTimingsController extends Controller
     {
         $model = HotelFoodTimings::query();
         $model->where('company_id', $request->company_id);
-        $model->orderBy("name", "ASC");
+        $model->orderBy("display_order", "ASC");
+        return $model->get();
+    }
+    public function getHotelMenuTimingsDropdown(Request $request)
+    {
+        $model = HotelFoodTimings::query();
+        $model->where('company_id', $request->company_id);
+        $model->orderBy("display_order", "ASC");
         return $model->get();
     }
     public function updateMenuDisplayOrder(Request $request)

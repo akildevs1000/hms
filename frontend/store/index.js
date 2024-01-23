@@ -25,10 +25,14 @@ export const state = () => ({
   hotelQrcodeWhatsappNumber: "",
   hotelQrcodeID: "",
   hotelQRCodeCartItems: [],
+  timingName: "",
 });
 
 // contains your mutations
 export const mutations = {
+  timingName(state, value) {
+    state.timingName = value;
+  },
   hotelQRCodeCartItems(state, value) {
     state.hotelQRCodeCartItems = value;
   },

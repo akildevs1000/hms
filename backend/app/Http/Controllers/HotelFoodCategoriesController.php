@@ -46,7 +46,7 @@ class HotelFoodCategoriesController extends Controller
     {
         $model = HotelFoodCategories::query();
         $model->where('company_id', $request->company_id);
-        $model->orderBy("name", "ASC");
+        $model->orderBy("display_order", "ASC");
         return $model->get();
     }
 
