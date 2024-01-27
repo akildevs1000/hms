@@ -85,7 +85,12 @@ class BookingController extends Controller
     public function store(Request $request)
     {
 
-
+        if ($request->filled("payment_reference_id")) {
+            $data = [];
+            $data['payment_reference_id'] = $request->payment_reference_id;
+            $data['payment_response'] =  json_encode($request->payment_response);
+            return  $data;
+        }
 
         $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
         if ($diff_in_seconds < 0) {
