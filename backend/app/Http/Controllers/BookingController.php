@@ -131,6 +131,18 @@ class BookingController extends Controller
                 //recalculating Tax based on discount 
                 $error = (new ManagementController())->generateOccupancyRateByBooking($request);
                 $error = (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
+
+                try {
+
+                    if ($request->filled("payment_reference_id")) {
+                        $data = [];
+                        $data['payment_reference_id'] = $request->payment_reference_id;
+                        $data['payment_response'] =  $request->payment_response;
+
+                        Booking::whereId($booking->id)->update($data);
+                    }
+                } catch (\Exception $e) {
+                }
             } else {
             }
 
