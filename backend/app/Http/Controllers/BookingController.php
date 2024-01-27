@@ -137,7 +137,7 @@ class BookingController extends Controller
                     if ($request->filled("payment_reference_id")) {
                         $data = [];
                         $data['payment_reference_id'] = $request->payment_reference_id;
-                        $data['payment_response'] =  $request->payment_response;
+                        $data['payment_response'] =  json_encode($request->payment_response);
 
                         Booking::whereId($booking->id)->update($data);
                     }
