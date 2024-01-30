@@ -1218,6 +1218,84 @@
                 </v-row>
               </v-card>
             </v-tab-item>
+
+            <v-tab-item class="px-3 py-4">
+              <v-row>           
+
+                <v-col md="12" cols="12">
+                  <v-row class="mt-4">
+                    <v-col md="3">
+                      <div class="text-box" style="float: left">
+                        <h6>Online Payment Status</h6>
+                        <p style="color:green;;font-weight:bold" v-if="booking &&
+                              booking.online_payment_response &&
+                              booking.online_payment_response.razorpay_payment_link_status=='paid'">
+                           Success
+                        </p>
+                        <p v-else style="color:red;font-weight:bold">
+Failed
+                        </p>
+                      </div>
+                    </v-col>
+                    <v-col md="3">
+                      <div class="text-box" style="float: left">
+                        <h6>Online Booking Reference Number</h6>
+                        <p>
+                          {{
+                             (booking &&
+                              booking.widget_confirmation_number) || '---'
+                          }} 
+                        </p>
+                      </div>
+                    </v-col>
+                    
+                    
+                   
+                    <v-col md="3">
+                      <div class="text-box" style="float: left">
+                        <h6>RazorPay - Reference Id</h6>
+                        <p>
+                          {{
+                            (booking &&
+                              booking.payment_reference_id) ||
+                            "---"
+                          }}
+                        </p>
+                      </div>
+                    </v-col>
+                    <v-col md="3">
+                      <div class="text-box" style="float: left">
+                        <h6>RazorPay - Payment Id</h6>
+                        <p>
+                          {{
+                            (booking &&
+                              booking.online_payment_response &&
+                              booking.online_payment_response.razorpay_payment_id) ||
+                            "---"
+                          }}
+                        </p>
+                      </div>
+                    </v-col>
+                    <!-- <v-col md="4">
+                      <div class="text-box" style="float: left">
+                        <h6>RazorPay - Razorpay Order Id</h6>
+                        <p>
+                          (booking &&
+                              booking.online_payment_response &&
+                              booking.online_payment_response.razorpay_payment_id) ||
+                            "---"
+                        </p>
+                      </div>
+                    </v-col> -->
+                    
+                  </v-row>
+
+                    
+ 
+                </v-col>
+              </v-row>
+ 
+            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -1322,7 +1400,7 @@ export default {
     loading: false,
     response: "",
     customer: [],
-    itemsCustomer: ["Reservation", "Room", "Postings", "Transaction"],
+    itemsCustomer: ["Reservation", "Room", "Postings", "Transaction","Online Booking"],
     tab1: null,
     activeTab: 0,
 
@@ -1515,6 +1593,8 @@ export default {
         const booking = data.booking;
         this.customer = booking.customer;
         this.booking = booking;
+
+        this.booking.online_payment_response =JSON.parse(booking.payment_response);
         this.payments = booking.payments;
         this.bookedRooms = booking.booked_rooms;
         this.orderRooms = booking.order_rooms;
@@ -1558,7 +1638,17 @@ export default {
         }
         else {
           this.roomTypeColor = "primary";
-          this.itemsCustomer = ["Reservation", "Room", "Postings", "Transaction"];
+
+          if( data.bookingwidget_confirmation_number!='')
+          {
+            this.itemsCustomer = ["Reservation", "Room", "Postings", "Transaction","Online Booking"];
+          }
+          else
+
+          {
+            this.itemsCustomer = ["Reservation", "Room", "Postings", "Transaction" ];
+          }
+         
         }
 
 
