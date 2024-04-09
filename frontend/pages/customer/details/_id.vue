@@ -1242,8 +1242,8 @@ Failed
                         <h6>Online Booking Reference Number</h6>
                         <p>
                           {{
-                             (booking &&
-                              booking.widget_confirmation_number?.split('_')[1]) || '---'
+                             (booking && booking.widget_confirmation_number && 
+                              booking.widget_confirmation_number.split('_')[1]) || '---'
                           }} 
                         </p>
                       </div>
