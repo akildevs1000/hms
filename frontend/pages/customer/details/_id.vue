@@ -1243,7 +1243,7 @@ Failed
                         <p>
                           {{
                              (booking &&
-                              booking.widget_confirmation_number) || '---'
+                              booking.widget_confirmation_number?.split('_')[1]) || '---'
                           }} 
                         </p>
                       </div>
