@@ -961,7 +961,18 @@
                             }`"
                           >
                             <div class="text-center">
-                              <v-icon dark class="pa-0">mdi mdi-bed</v-icon>
+                              <v-icon
+                                v-if="
+                                  noAvailableRoom.device &&
+                                  noAvailableRoom.device.latest_status == 1
+                                "
+                                dark
+                                class="pa-0 room-inperson-status"
+                                >mdi mdi-bed</v-icon
+                              >
+                              <v-icon v-else dark class="pa-0"
+                                >mdi mdi-bed</v-icon
+                              >
                             </div>
                             <div class="text-center">
                               {{ caps(noAvailableRoom.room_type.name) }}
@@ -970,15 +981,13 @@
                               {{ noAvailableRoom.room_no }}
                             </div>
                           </v-card>
-                          <div
+                          <!-- <div
                             class="bottomright"
                             v-if="
                               noAvailableRoom.device &&
                               noAvailableRoom.device.latest_status == 1
                             "
-                          >
-                            <!-- <v-icon color="green">mdi-lightbulb-on-90 </v-icon> -->
-                          </div>
+                          ></div> -->
                         </v-col>
                       </v-row>
                       <v-row>
@@ -1015,12 +1024,10 @@
                               {{ room.room_no }}
                             </div>
                           </v-card>
-                          <div
+                          <!-- <div
                             class="bottomright"
                             v-if="room.device && room.device.latest_status == 1"
-                          >
-                            <!-- <v-icon color="green">mdi-lightbulb-on-90 </v-icon> -->
-                          </div>
+                          ></div> -->
                         </v-col>
                       </v-row>
                     </div>
@@ -1974,6 +1981,9 @@ export default {
   .box {
     border-radius: 7px !important;
   }
+}
+.room-inperson-status {
+  color: red !important;
 }
 
 .bottomright {
