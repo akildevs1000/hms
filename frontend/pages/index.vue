@@ -841,7 +841,10 @@
                   >
                     <v-row
                       class="box text-center"
-                      style="background-color: #800000; border-radius: 7px"
+                      style="
+                        background-color: #b10085; /*#800000*/
+                        border-radius: 7px;
+                      "
                     >
                       <v-col md="6" class="p-0 m-0">
                         <h1 class="font-light text-white">

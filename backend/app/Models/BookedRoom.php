@@ -161,10 +161,11 @@ class BookedRoom extends Model
             1 => 'linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)', //paid advance
             0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
             // 2 => 'linear-gradient(135deg, #F95C39 0, #F95C39 100%)', //check in room
-            2 => 'linear-gradient(135deg, #800000 0, #800000 100%)', //check in room
+            2 => 'linear-gradient(135deg, #b10085 0, #b10085 100%)', //
+            //'linear-gradient(135deg, #800000 0, #800000 100%)', //check in room
             // 3 => 'linear-gradient(135deg, #4390FC, #4390FC)',
             // 3 => 'linear-gradient(135deg, #d66d75   0, #e29587 100%)', //dirty room
-            3 => 'linear-gradient(135deg, rgb(64 64 64) 0px, rgb(255, 0, 0) 100%)', //  'linear-gradient(135deg, #ff0000   0, #ff0000 100%)', //dirty room
+            3 => 'linear-gradient(138deg, rgb(64, 64, 64) 21px, rgb(255, 0, 0) 100%)', //  'linear-gradient(135deg, #ff0000   0, #ff0000 100%)', //dirty room
             4 => 'linear-gradient(135deg, #34444c 0, #657177 100%)',
             5 => 'green',
             6 => 'linear-gradient(135deg, #FFBE00 0, #FFBE00 100%)', //only booking
