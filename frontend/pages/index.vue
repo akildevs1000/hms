@@ -1970,6 +1970,8 @@ export default {
     font-weight: bold;
   }
 
+  /* -- */
+
   .ipad-font-food-grid {
     color: red !important;
   }
