@@ -1019,7 +1019,7 @@
                           >
                             <div class="text-center">
                               <!-- <v-icon dark class="pa-0">mdi mdi-home</v-icon> -->
-
+                              {{ availableRooms.device.latest_status }}
                               <v-icon
                                 v-if="
                                   availableRooms.device &&
