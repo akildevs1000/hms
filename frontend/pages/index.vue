@@ -1018,16 +1018,7 @@
                             dark
                           >
                             <div class="text-center">
-                              <v-icon
-                                v-if="
-                                  noAvailableRoom.device &&
-                                  noAvailableRoom.device.latest_status == 1
-                                "
-                                dark
-                                class="pa-0 room-inperson-status"
-                                >mdi-home</v-icon
-                              >
-                              <v-icon v-else dark class="pa-0">mdi-home</v-icon>
+                              <v-icon dark class="pa-0">mdi mdi-home</v-icon>
                             </div>
                             <div class="text-center">
                               {{ caps(room.room_type.name) }}
