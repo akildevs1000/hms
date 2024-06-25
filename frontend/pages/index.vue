@@ -1018,12 +1018,9 @@
                             dark
                           >
                             <div class="text-center">
-                              <!-- <v-icon dark class="pa-0">mdi mdi-home</v-icon> -->
-                              {{ availableRooms.device.latest_status }}
                               <v-icon
                                 v-if="
-                                  availableRooms.device &&
-                                  availableRooms.device.latest_status == 1
+                                  room.device && room.device.latest_status == 1
                                 "
                                 dark
                                 class="pa-0 room-inperson-status"
