@@ -1912,7 +1912,7 @@ export default {
 };
 </script>
 <style src="@/assets/css/check.css"></style>
-<style scoped src="@/assets/custom/dash.css"></style>
+<style scoped src="@/assets/css/dash.css"></style>
 <!-- <style scoped src="@/assets/dashtem.css"></style> -->
 <style>
 .dash-font-size {
