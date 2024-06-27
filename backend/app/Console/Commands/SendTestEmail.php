@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\SendTestEmailJob;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 
 class SendTestEmail extends Command
 {
@@ -26,17 +26,10 @@ class SendTestEmail extends Command
      */
     public function handle()
     {
-        $to = $this->ask("email","akildevs1000@gmail.com");
-
+        $to = $this->ask("email", "akildevs1000@gmail.com");
         $subject = 'Test Email';
-        
         $body = 'This is a test email sent from the Laravel command.';
-
-        Mail::raw($body, function ($message) use ($to, $subject) {
-            $message->to($to)
-                    ->subject($subject);
-        });
-
-        $this->info('Test email sent successfully!');
+        SendTestEmailJob::dispatch($to, $subject, $body);
+        $this->info('Test email job dispatched successfully!');
     }
 }
