@@ -748,4 +748,4 @@ export default {
 };
 </script>
 
-<style src="@/assets/custom/check.css"></style>
+<style src="@/assets/css/check.css"></style>

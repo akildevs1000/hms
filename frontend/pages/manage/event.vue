@@ -202,9 +202,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.align-with-border {
-  top: -14px;
-}
-</style>

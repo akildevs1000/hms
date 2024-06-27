@@ -10,8 +10,7 @@
       :color="sideBarcolor"
       :style="miniVariant ? 'width: 60px' : ''"
     >
-      <br />
-      <v-list v-for="(i, idx) in items" :key="idx" style="padding: 5px 0 0 0px">
+      <v-list v-for="(i, idx) in filteredMenu" :key="idx" class="pt-1">
         <v-list-item
           :to="i.to"
           router
@@ -73,49 +72,50 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar
-      elevation="0"
-      color="#5FAFA3"
-      dark
-      :clipped-left="clipped"
-      fixed
-      app
-    >
+    <v-app-bar :clipped-left="clipped" fixed app dense>
       <!-- :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''" -->
 
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
+      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
+      </v-btn> -->
+      <!-- <v-btn icon @click.stop="clipped = !clipped">
         <v-icon>mdi-application</v-icon>
-      </v-btn>
+      </v-btn> -->
       {{ title }}
       <v-spacer></v-spacer>
-      <strong style="font-size: 18px">
-        {{ currentTime }} / {{ currentDate }}</strong
+      <v-btn
+        text
+        v-for="(topMenu, index) in topMenus"
+        :key="index"
+        :color="isActive(topMenu) ? 'blue' : ''"
+        @click="setActive(topMenu)"
+        >{{ topMenu.label }}</v-btn
       >
       <v-spacer></v-spacer>
-
+      <v-badge
+        class="mt-2 mr-1"
+        :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
+        :content="
+          pendingNotificationsCount == '' ? '0' : pendingNotificationsCount
+        "
+        overlap
+      >
+        <v-icon @click="gotoReservationPage()"> mdi-bell-ring </v-icon>
+      </v-badge>
       <v-menu
         nudge-bottom="50"
+        nudge-left="20"
         transition="scale-transition"
         origin="center center"
         bottom
         left
-        min-width="200"
-        nudge-left="20"
+        min-width="150"
       >
         <template v-slot:activator="{ on, attrs }">
-          <label class="px-2" v-bind="attrs" v-on="on">
-            {{ getUser || "---" }}
-          </label>
-
-          <v-btn icon color="yellow" v-bind="attrs" v-on="on">
-            <v-avatar>
-              <img :src="getLogo || '/no-image.PNG'" />
-            </v-avatar>
-          </v-btn>
+          <v-avatar v-bind="attrs" v-on="on">
+            <img :src="getLogo || '/no-image.PNG'" />
+          </v-avatar>
         </template>
 
         <v-list light nav dense>
@@ -125,7 +125,7 @@
                 <v-icon>mdi-account-multiple-outline</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="black--text"
+                <v-list-item-title class="grey--text"
                   >Profile</v-list-item-title
                 >
               </v-list-item-content>
@@ -136,70 +136,21 @@
                 <v-icon>mdi mdi-text-account</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="black--text"
-                  >Report</v-list-item-title
-                >
+                <v-list-item-title class="grey--text">Report</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-
-            <!-- <v-list-item @click="goToSetting()">
-              <v-list-item-icon>
-                <v-icon>mdi-cog</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title class="black--text"
-                  >Setting</v-list-item-title
-                >
-              </v-list-item-content>
-            </v-list-item> -->
 
             <v-list-item @click="logout">
               <v-list-item-icon>
                 <v-icon>mdi-logout</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="black--text"
-                  >Logout</v-list-item-title
-                >
+                <v-list-item-title class="grey--text">Logout</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
         </v-list>
       </v-menu>
-      <v-badge
-        :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
-        :content="
-          pendingNotificationsCount == '' ? '0' : pendingNotificationsCount
-        "
-        style="padding-left: 50px; top: 0px; left: 0px"
-        overlap
-      >
-        <v-icon @click="gotoReservationPage()"> mdi-bell-ring </v-icon>
-      </v-badge>
-      <!-- <v-badge
-        :content="pendingNotificationsCount"
-        :value="pendingNotificationsCount"
-        color="green"
-        overlap
-      >
-        <v-icon large @click="pendingNotificationsCount = 0">
-          mdi-vuetify
-        </v-icon>
-      </v-badge> -->
-      <!-- <v-btn icon dark v-bind="attrs" v-on="on">
-        <v-badge
-          @click="pendingNotificationsCount = 0"
-          :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
-          :content="
-            pendingNotificationsCount == '' ? '0' : pendingNotificationsCount
-          "
-          style="top: 10px; left: -19px"
-        >
-          <v-icon style="top: -10px; left: 10px" class="violet--text"
-            >mdi mdi-bell-ring</v-icon
-          >
-        </v-badge>
-      </v-btn> -->
     </v-app-bar>
 
     <v-main class="main_bg">
@@ -364,8 +315,37 @@
 
 <script>
 export default {
+  head() {
+    return {
+      link: [
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap",
+        },
+      ],
+    };
+  },
   data() {
     return {
+      activeMenu: null, // Keep track of the active menu
+      topMenus: [
+        {
+          label: "Dashboard",
+          name: "dashboard",
+        },
+        {
+          label: "Customer",
+          name: "customer",
+        },
+        {
+          label: "Account",
+          name: "account",
+        },
+        {
+          label: "Setting",
+          name: "setting",
+        },
+      ],
       pendingNotificationsCount: 0,
       menuName: "",
       show: false,
@@ -385,13 +365,21 @@ export default {
       order_count: "",
       menus: [
         {
+          topMenu: "dashboard",
+          icon: "mdi-home",
+          title: "Home",
+          to: "/",
+          menu: "dashboard",
+        },
+        {
+          topMenu: "dashboard",
           icon: "mdi-calendar",
           title: "Calendar",
           to: "/hotel/calendar1",
           menu: "calendar_access",
         },
-
         {
+          topMenu: "dashboard",
           icon: "mdi-bed",
           title: `History`,
           open_menu: false,
@@ -418,6 +406,7 @@ export default {
           ],
         },
         {
+          topMenu: "dashboard",
           icon: "mdi-bed",
           title: `Party Hall`,
           open_menu: false,
@@ -450,64 +439,70 @@ export default {
           ],
         },
         {
-          icon: "mdi mdi-human-male-female-child",
-          title: `Guest`,
-          open_menu: false,
-          menu: "guest_menu",
-          hasChildren: [
-            {
-              icon: "fas fa-male",
-              title: "Guest",
-              to: "/customer/list",
-              menu: "guest_access",
-            },
-
-            {
-              icon: "mdi mdi-account-tie",
-              title: "Source",
-              to: "/source",
-              menu: "source_access",
-            },
-
-            {
-              icon: "mdi mdi-file-document-edit-outline",
-              title: "inquiries",
-              to: "/inquiry",
-              menu: "inquiry_access",
-            },
-          ],
+          topMenu: "customer",
+          icon: "fas fa-male",
+          title: "Guest",
+          to: "/customer/list",
+          menu: "guest_access",
         },
-
         {
-          icon: "mdi-currency-usd",
-          title: `Accounts`,
-          open_menu: false,
-          menu: "account_menu",
-          hasChildren: [
-            {
-              icon: "mdi mdi-food",
-              title: "Posting",
-              to: "/posting",
-              menu: "accounts_posting_access",
-            },
-
-            {
-              icon: "mdi mdi-bank-transfer-out",
-              title: "Expense",
-              to: "/expense",
-              menu: "accounts_expences_access",
-            },
-
-            {
-              icon: "mdi-cash",
-              title: "GST Bills",
-              to: "/taxable",
-              menu: "accounts_gst_access",
-            },
-          ],
+          topMenu: "customer",
+          icon: "mdi mdi-account-tie",
+          title: "Source",
+          to: "/source",
+          menu: "source_access",
         },
-
         {
+          topMenu: "account",
+          icon: "mdi mdi-food",
+          title: "Posting",
+          to: "/posting",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "account",
+          icon: "mdi mdi-bank-transfer-out",
+          title: "Expense",
+          to: "/expense",
+          menu: "accounts_expences_access",
+        },
+        {
+          topMenu: "account",
+          icon: "mdi-cash",
+          title: "GST Bills",
+          to: "/taxable",
+          menu: "accounts_gst_access",
+        },
+        {
+          topMenu: "account",
+          icon: "mdi mdi-file-document-edit-outline",
+          title: "Inquiries",
+          to: "/inquiry",
+          menu: "inquiry_access",
+        },
+        {
+          topMenu: "account",
+          icon: "mdi mdi-cash",
+          title: "Quotation",
+          to: "/quotations",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "account",
+          icon: "mdi mdi-cash",
+          title: "Invoice",
+          to: "/invoices",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "account",
+          icon: "mdi mdi-food",
+          title: "Food Plan",
+          to: "/foodplans",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "account",
           icon: "mdi-account-cash",
           title: `Ledger`,
           open_menu: false,
@@ -527,21 +522,22 @@ export default {
             },
           ],
         },
-
         {
+          topMenu: "dashboard",
           icon: "mdi mdi-file-chart-outline",
           title: "Night Audit",
           to: "/management/report/audit",
           menu: "night_audit_access",
         },
         {
+          topMenu: "dashboard",
           icon: "mdi-home-search-outline",
           title: "Lost & Found  ",
-
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
         },
         {
+          topMenu: "dashboard",
           icon: "mdi mdi-account-tie",
           title: `Management`,
           open_menu: false,
@@ -575,13 +571,14 @@ export default {
           ],
         },
         {
+          topMenu: "dashboard",
           icon: "mdi-home-search-outline",
           title: "Invenotry ",
-
           to: "/inventory",
           menu: "lost_and_found_access",
         },
         {
+          topMenu: "setting",
           icon: "mdi-tools",
           title: `Hotel Settings`,
           open_menu: false,
@@ -626,6 +623,7 @@ export default {
           ],
         },
         {
+          topMenu: "setting",
           icon: "mdi-tools",
           title: `Hotel Orders`,
           open_menu: false,
@@ -670,70 +668,78 @@ export default {
           ],
         },
         {
+          topMenu: "setting",
+          icon: "mdi-email",
+          title: "Automation",
+          to: "/template",
+          menu: "settings_rooms_category_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-bed",
+          title: "Room Category",
+          to: "/room_category",
+          menu: "settings_rooms_category_access",
+        },
+        {
+          topMenu: "setting",
           icon: "mdi-tools",
-          title: `Setting`,
-          open_menu: false,
-          menu: "setting_access",
-          hasChildren: [
-            {
-              icon: "mdi mdi-bed",
-              title: "Room Category",
-              to: "/room_category",
-              menu: "settings_rooms_category_access",
-            },
-
-            {
-              icon: "mdi-tools",
-              title: "Price Setup",
-              to: "/manage",
-              menu: "settings_room_price_access",
-            },
-            {
-              icon: "mdi mdi-account-tie",
-              title: "Users",
-              to: "/users",
-              menu: "settings_users_access",
-            },
-            {
-              icon: "mdi mdi-account-check-outline",
-              title: "Roles",
-              to: "/role",
-              menu: "settings_roles_access",
-            },
-            {
-              icon: "mdi mdi-account-check-outline",
-              title: "Report Emails",
-              to: "/emails",
-              menu: "settings_roles_access",
-            },
-            {
-              icon: "mdi mdi-account-details",
-              title: "Settings",
-              to: "/setting",
-              menu: "settings_permissions_access",
-            },
-            {
-              icon: "mdi mdi-account-details",
-              title: "Profile",
-              to: "/companies",
-              menu: "settings_permissions_access",
-            },
-            {
-              icon: "mdi mdi-account-details",
-              title: "Devices",
-              to: "/devices",
-              menu: "devices_permissions_access",
-            },
-            {
-              icon: "mdi mdi-account-details",
-              title: "Devices Logs",
-              to: "/devices/devices_logs",
-              menu: "devices_permissions_access",
-            },
-          ],
+          title: "Price Setup",
+          to: "/manage",
+          menu: "settings_room_price_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-account-tie",
+          title: "Users",
+          to: "/users",
+          menu: "settings_users_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-account-check-outline",
+          title: "Roles",
+          to: "/role",
+          menu: "settings_roles_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-account-check-outline",
+          title: "Report Emails",
+          to: "/emails",
+          menu: "settings_roles_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-account-details",
+          title: "Settings",
+          to: "/setting",
+          menu: "settings_permissions_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-account-details",
+          title: "Profile",
+          to: "/companies",
+          menu: "settings_permissions_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-account-details",
+          title: "Devices",
+          to: "/devices",
+          menu: "devices_permissions_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi mdi-account-details",
+          title: "Devices Logs",
+          to: "/devices/devices_logs",
+          menu: "devices_permissions_access",
         },
       ],
       items: [],
+      filteredMenu: [],
       modules: {
         module_ids: [],
         module_names: [],
@@ -751,110 +757,14 @@ export default {
 
   created() {
     this.title = "EZHMS"; // this.$auth.user?.company?.company_code;
-    let das = {
-      icon: "mdi-home",
-      title: "Dashboard",
-      to: "/",
-      menu: "dashboard",
-    };
     setTimeout(() => {
       this.loadNotificationMenu();
     }, 1000 * 60);
     setInterval(() => {
       this.loadNotificationMenu();
     }, 1000 * 60 * 5);
-
-    // let Management = {
-    //   icon: "mdi mdi-account-tie",
-    //   title: `Management`,
-    //   open_menu: false,
-    //   menu: "management_access",
-    //   hasChildren: [
-    //     {
-    //       icon: "mdi mdi-bank-transfer-out",
-    //       title: "Expense",
-    //       to: "/management/expense",
-    //       menu: "management_expenses_access",
-    //     },
-    //     {
-    //       icon: "mdi mdi-bank-transfer-in",
-    //       title: "Income",
-    //       to: "/account",
-    //       menu: "management_income_access",
-    //     },
-    //     {
-    //       icon: "mdi mdi-text-account",
-    //       title: "Payment By User Report",
-    //       to: "/management/report/user",
-    //       menu: "management_payments_access",
-    //     },
-
-    //     {
-    //       icon: "mdi mdi-calendar-month",
-    //       title: "All Reports",
-    //       to: "/management/report/monthly",
-    //       menu: "management_soldout_access",
-    //     },
-
-    //   ],
-    // };
-
-    // let setting = {
-    //   icon: "mdi-tools",
-    //   title: `Setting`,
-    //   open_menu: false,
-    //   menu: "setting_access",
-    //   hasChildren: [
-    //     {
-    //       icon: "mdi mdi-bed",
-    //       title: "Room Category",
-    //       to: "/room_category",
-    //       menu: "settings_rooms_category_access",
-    //     },
-
-    //     {
-    //       icon: "mdi-tools",
-    //       title: "Price Setup",
-    //       to: "/manage",
-    //       menu: "settings_room_price_access",
-    //     },
-    //     {
-    //       icon: "mdi mdi-account-tie",
-    //       title: "User",
-    //       to: "/users",
-    //       menu: "settings_users_access",
-    //     },
-    //     {
-    //       icon: "mdi mdi-account-check-outline",
-    //       title: "Roles",
-    //       to: "/role",
-    //       menu: "settings_roles_access",
-    //     },
-    //     {
-    //       icon: "mdi mdi-account-check-outline",
-    //       title: "Report Emails",
-    //       to: "/emails",
-    //       menu: "settings_roles_access",
-    //     },
-    //     {
-    //       icon: "mdi mdi-account-details",
-    //       title: "Settings",
-    //       to: "/setting",
-    //       menu: "settings_permissions_access",
-    //     },
-    //     {
-    //       icon: "mdi mdi-account-details",
-    //       title: "Profile",
-    //       to: "/companies",
-    //       menu: "settings_permissions_access",
-    //     },
-
-    //   ],
-    // };
-
     let user = this.$auth.user;
     let permissions = user.permissions;
-    this.items.push(das);
 
     this.menus.forEach((ele) => {
       if (
@@ -865,18 +775,10 @@ export default {
       }
     });
 
-    // if (this.$auth.user.user_type == "company") {
-    //   this.items.push(Management);
-    //   this.items.push(setting);
-    // }
-
-    // this.menus.forEach((ele) => {
-    //   if (permissions.includes(ele.menu)) {
-    //     this.items.push(ele);
-    //   }
-    // });
-
     this.getCompanyDetails();
+
+    this.filteredMenu = this.items;
+    this.$router.push(this.filteredMenu[0].to ?? "/");
   },
 
   mounted() {
@@ -936,6 +838,16 @@ export default {
     },
   },
   methods: {
+    isActive(menu) {
+      return this.activeMenu === menu;
+    },
+    setActive(menu) {
+      this.activeMenu = menu;
+      this.filteredMenu = this.items.filter((e) => e.topMenu == menu.name);
+      this.$router.push(
+        (this.filteredMenu[0] && this.filteredMenu[0].to) || "/"
+      );
+    },
     showTooltipMenu(e) {
       this.show = true;
       this.menuName = e;
@@ -1061,239 +973,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.fixed-setting {
-  position: fixed !important;
-  top: 500px;
-  z-index: 100000;
-  transition: right 1000ms !important;
-  right: -15px !important;
-}
-
-.v-btn__content {
-  margin: 0 12px 0 0px !important;
-  padding: 0 !important;
-}
-
-.setting-drawer-open {
-  right: 250px !important;
-}
-
-.setting-drawer-close {
-  right: -15px !important;
-}
-
-.spin {
-  -webkit-animation: spin 4s linear infinite;
-  -moz-animation: spin 4s linear infinite;
-  animation: spin 4s linear infinite;
-
-  margin: 0 12px 0 0px !important;
-  padding: 0 !important;
-}
-
-@-moz-keyframes spin {
-  100% {
-    -moz-transform: rotate(360deg);
-  }
-}
-
-@-webkit-keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-
-@keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-.stg-color-icon {
-  width: 30px !important;
-  height: 30px !important;
-}
-</style>
-
-<style>
-.available {
-  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
-}
-
-.booked {
-  background: linear-gradient(135deg, #f48665 0, #d68e41 100%) !important;
-}
-
-.checkedIn {
-  background: linear-gradient(135deg, #8e4cf1 0, #c554bc 100%) !important;
-}
-
-.checkedOut {
-  background: linear-gradient(135deg, #289cf5, #4f8bb7) !important;
-}
-
-.dirty {
-  background: linear-gradient(135deg, #34444c 0, #657177 100%) !important;
-}
-
-.maintenance {
-  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
-}
-</style>
-
-<style>
-.custom-text-box {
-  border-radius: 2px !important;
-  border: 1px solid #dbdddf !important;
-}
-
-input[type="text"]:focus.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select:focus {
-  outline: none !important;
-  border-color: #5fafa3;
-  box-shadow: 0 0 0px #5fafa3;
-}
-</style>
-<style>
-/* Table Header Filter Textbox alignment    */
-td {
-  text-align: left;
-  padding: 8px;
-}
-
-/* Datatable Sorting Icon color  */
-.mdi-arrow-up {
-  color: #5fafa3 !important;
-}
-
-/* datepicker min height is required  */
-
-.v-date-picker-table {
-  min-height: 400px;
-}
-</style>
-
-<!-- CSS Code used from Loast and Found Items (scoped)  -->
-<!-- <style   >
-.no-bg {
-  background-color: white !important;
-}
-
-.guest-avatar {
-  max-width: 200px !important;
-  height: 200px !important;
-  float: left;
-  margin: 0 auto;
-  border-radius: 50%;
-}
-
-.text-box {
-  border: 1px solid rgb(215, 211, 211);
-  padding: 10px 0px 0px 10px;
-  margin: 10px 20px;
-  position: relative;
-  border-radius: 5px;
-  width: 100%;
-}
-
-.text-box-amt {
-  border: 0px solid rgb(215, 211, 211);
-  padding: 0px 0px 0px 0px;
-  margin: 0px 00px;
-  position: relative;
-  border-radius: 5px;
-  width: 100%;
-}
-
-.amt-border {
-  border-bottom: 1px solid;
-}
-
-.amt-border-full {
-  border-bottom: 1px solid;
-  border-top: 1px solid;
-}
-
-.text-box p {
-  margin: 5px;
-}
-
-h6 {
-  position: absolute;
-  top: -12px;
-  left: 20px;
-  background-color: white;
-  padding: 0 10px;
-  color: rgb(154, 152, 152);
-  margin: 0;
-  font-size: 15px;
-}
-
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  text-align: left;
-  padding: 8px;
-  /* border: 1px solid black !important; */
-}
-
-tr:nth-child(even) {
-  background-color: white;
-}
-
-.custom-text-box {
-  border-radius: 2px !important;
-  border: 1px solid #dbdddf !important;
-}
-
-input[type="text"]:focus.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select:focus {
-  outline: none !important;
-  border-color: #5fafa3;
-  box-shadow: 0 0 0px #5fafa3;
-}
-
-.table-header-text {
-  font-size: 12px;
-}
-</style>   -->
-
-<style>
-.apexcharts-active {
-  top: 0px !important;
-}
-
-.apexcharts-tooltip-text-y-value td {
-  padding: 0px !important;
-}
-
-.text-box-right-input input {
-  text-align: right;
-}
-
-.secondary_value {
-  font-size: 11px;
-}
-</style>

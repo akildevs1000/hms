@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ActionMail;
+use App\Mail\ActionMarkdownMail;
 use App\Models\Booking;
 use App\Models\Expense;
 use App\Models\Payment;
+use App\Models\Template;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class Controller extends BaseController
 {
@@ -54,7 +59,7 @@ class Controller extends BaseController
                     'message' => $model . ' cannot ' . $action,
                 ], 200);
             }
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
@@ -149,12 +154,12 @@ class Controller extends BaseController
 
         return [
             'expense' => [
-                'Cash'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 1))->sum('total'),
-                'Card'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 2))->sum('total'),
-                'Online'       => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 3))->sum('total'),
-                'Bank'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 4))->sum('total'),
-                'UPI'          => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 5))->sum('total'),
-                'Cheque'       => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 6))->sum('total'),
+                'Cash'         => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 1))->sum('total'),
+                'Card'         => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 2))->sum('total'),
+                'Online'       => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 3))->sum('total'),
+                'Bank'         => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 4))->sum('total'),
+                'UPI'          => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 5))->sum('total'),
+                'Cheque'       => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 6))->sum('total'),
                 'OverallTotal' => $expense->clone()->sum('total'),
             ],
             'income'  => [
@@ -178,11 +183,91 @@ class Controller extends BaseController
 
     public function getSum($model, $id)
     {
-        return $model->clone()->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('amount');
+        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
     }
 
     public function getAmountFormat($amt = 0)
     {
         return number_format($amt, 2);
+    }
+
+    public function sendMailIfRequired($action, $fields)
+    {
+        $found = Template::where([
+            "action_id" => $action,
+            "medium" => "email"
+        ])->first();
+
+
+        if ($found) {
+            $subject = $found->name;
+
+            $body = str_replace(
+                ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]'],
+                [
+                    $fields['title'],
+                    $fields['full_name'],
+                    date('d-M-y', strtotime($fields['check_in'])),
+                    date('d-M-y', strtotime($fields['check_out'])),
+                    $fields['rooms_type']
+                ],
+                $found->body
+            );
+
+            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject));
+            info("mail sent");
+            return "mail sent";
+        }
+    }
+
+    public function sendWhatsappIfRequired($action, $fields)
+    {
+        info("whatsapp sent");
+        return "whatsapp sent";
+        
+        // $response = Http::withoutVerifying()->get('https://ezwhat.com/api/send.php', [
+        //     'number' => "971554501483",
+        //     'type' => 'text',
+        //     'message' => "hi",
+        //     'instance_id' => '65772646BBF76',
+        //     'access_token' => 'a27e1f9ca2347bb766f332b8863ebe9f',
+        // ]);
+
+        // return $response->json();
+
+        // if ($response->successful()) {
+        // } else {
+        //     return $response->body();
+        // }
+        // return "sent";
+
+
+
+        $found = Template::where([
+            "action_id" => $action,
+            "medium" => "whatsapp"
+        ])->first();
+
+
+        if ($found) {
+            $subject = $found->name;
+
+            $body = str_replace(
+                ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]'],
+                [
+                    $fields['title'],
+                    $fields['full_name'],
+                    date('d-M-y', strtotime($fields['check_in'])),
+                    date('d-M-y', strtotime($fields['check_out'])),
+                    $fields['rooms_type']
+                ],
+                $found->body
+            );
+
+
+            // Mail::to($record->email)->send(new ActionMarkdownMail($body, $subject));
+            info("whatsapp sent");
+            return "whatsapp sent";
+        }
     }
 }

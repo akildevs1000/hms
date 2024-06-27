@@ -589,9 +589,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.form-control {
-  text-transform: none;
-}
-</style>

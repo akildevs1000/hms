@@ -302,4 +302,4 @@ export default {
 };
 </script>
 
-<style scoped src="@/assets/custom/checkout.css"></style>
+<style scoped src="@/assets/css/checkout.css"></style>

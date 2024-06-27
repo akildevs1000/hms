@@ -42,10 +42,10 @@ export default {
       //     rel: "stylesheet",
       //     href: "https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
       // },
-      {
-        rel: "stylesheet",
-        href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
-      },
+      // {
+      //   rel: "stylesheet",
+      //   href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
+      // },
       // {
       //     rel: "stylesheet",
       //     href: "https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.4.95/css/materialdesignicons.min.css"
@@ -62,7 +62,7 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ["~/assets/styles"],
+  css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
@@ -193,7 +193,7 @@ export default {
   },
 
   server: {
-    host: process.env.LOCAL_IP,
+    // host: process.env.LOCAL_IP,
     port: process.env.LOCAL_PORT,
   },
 };

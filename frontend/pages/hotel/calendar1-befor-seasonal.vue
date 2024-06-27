@@ -964,4 +964,4 @@ export default {
 };
 </script>
 
-<style scoped src="@/assets/custom/calendar.css"></style>
+<style scoped src="@/assets/css/calendar.css"></style>

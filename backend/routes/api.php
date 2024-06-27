@@ -23,3 +23,12 @@ include 'party_hall.php';
 include 'devices.php';
 include 'qrcode.php';
 include 'hotel.php';
+
+include 'foodplan.php';
+include 'quotation.php';
+include 'invoice.php';
+include 'followup.php';
+
+include 'template.php';
+
+

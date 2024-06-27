@@ -11,6 +11,13 @@ class BookedRoom extends Model
 
     protected $guarded = [];
 
+    const AVAILABLE = 0;
+    const BOOKED = 1;
+    const CHECKED_IN = 2;
+    const CHECKED_OUT = 3;
+    const DIRTY_ROOM = 4;
+
+
     // protected $fillable = [
     //     "room_no",
     //     "room_type",

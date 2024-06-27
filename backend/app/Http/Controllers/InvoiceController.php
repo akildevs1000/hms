@@ -2,117 +2,115 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use Barryvdh\DomPDF\Facade\Pdf;
-use NumberFormatter;
+use App\Http\Requests\Invoice\ValidationRequest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
-
-    public function index($id, $inv = "")
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function dropDown()
     {
+        return Invoice::get();
+    }
 
-        $invNo = $inv == "" ? "0000" . $id : $inv;
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return Invoice::with(["customer", "items","quotation"])->paginate(request("per_page", 50));
+    }
 
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
-            ->find($id);
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(ValidationRequest $request)
+    {
+        // Invoice::truncate();
+        // InvoiceItem::truncate();
 
-        $orderRooms = $booking->orderRooms;
-        $company = $booking->company;
-        $transactions = $booking->transactions;
-        $bookedRooms = $booking->bookedRooms;
+        try {
+            DB::beginTransaction();
+            $data = $request->validated();
 
-        $roomTypes = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
-        $paymentMode = $transactions->toArray();
-        $paymentMode = end($paymentMode);
+            $data["bank_details"] = "null";
+            $data["terms_and_conditions"] = "null";
 
-        $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
-        $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
-            return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
-        });
+            $lastInvoiceId = Invoice::max("id") + 1;
 
-        $roomsDiscount = $booking->bookedRooms->sum(function ($room) {
-            return $room->room_discount;
-        });
+            $ref_no = $lastInvoiceId < 1000 ? $lastInvoiceId + 1000 : $lastInvoiceId;
 
-        $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-31'));
+            $data["ref_no"] = "INV-$ref_no";
 
-        $bladeName = 'invoice.invoice';
+            $data["quotation_id"] = $request->id ?? 0;
 
-        if ($booking->tax_recalculated_status) {
-            $bladeName = 'invoice.invoice_updated_with_tax';
-        } else if ($is_old_bill <= 0) {
+            $invoice =  Invoice::create($data);
 
-            $bladeName = 'invoice.invoice_old_bills';
+            $items = array_map(function ($item) use ($invoice) {
+                $item['invoice_id'] = $invoice->id;
+                unset($item['quotation_id']);
+                $item['created_at'] = now();
+                return $item;
+            }, $request->items);
+
+            InvoiceItem::insert($items);
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log the exception or handle it as necessary
+            return $e->getMessage();
         }
-
-        return view($bladeName, compact("invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
-
-        return Pdf::loadView($bladeName, compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
-            // ->setPaper('a4', 'landscape')
-            ->setPaper('a4', 'portrait')
-            ->stream();
     }
 
-    public function printInvoice($id)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Invoice  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function update(ValidationRequest $request, Invoice $Invoice)
     {
-        // return $booking = Booking::with('orderRooms.postings', 'customer')->find($id);
-        $booking = Booking::with('orderRooms', 'customer')->find($id);
-        $orderRooms = $booking->orderRooms;
-        return Pdf::loadView('invoice.invoice', compact("booking", "orderRooms"))
-            // ->setPaper('a4', 'landscape')
-            ->setPaper('a4', 'portrait')
-            ->stream();
+        $Invoice->update($request->validated());
+
+        InvoiceItem::where("invoice_id", $Invoice->id)->delete();
+
+        $items = array_map(function ($item) use ($Invoice) {
+            $item['invoice_id'] = $Invoice->id;
+
+           
+            return $item;
+        }, $request->items);
+
+        InvoiceItem::insert($items);
+
+        return $Invoice;
     }
 
-    public function amountToText($amount)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Invoice  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Invoice $Invoice)
     {
-        $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
-        $text = ucwords($formatter->format($amount));
-        return $text;
-    }
+        $Invoice->delete();
 
-    public function grc($id)
-    {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
-        return Pdf::loadView('grc.index', compact('booking', 'trans'))
-            ->setPaper('a4', 'portrait')
-            ->stream();
-    }
-
-    public function grcByCheckin($id)
-    {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
-
-        return [
-            'booking' => $booking,
-            'trans' => $trans,
-        ];
-
-        return Pdf::loadView('grc.index', compact('booking', 'trans'))
-            ->setPaper('a4', 'portrait')
-            ->stream();
-    }
-
-    public function grcPrint($id)
-    {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
-
-        return Pdf::loadView('grc.index', compact('booking', 'trans'))
-            ->setPaper('a4', 'portrait')
-            ->stream();
-    }
-
-    public function grcDownload($id)
-    {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
-
-        return Pdf::loadView('grc.index', compact('booking', 'trans'))
-            ->setPaper('a4', 'portrait')
-            ->download();
+        return response()->noContent();
     }
 }

@@ -16,8 +16,8 @@ return new class extends Migration
     {
 
 
-        DB::statement('ALTER TABLE hall_bookings ALTER COLUMN 
-                  event_type_id TYPE integer USING (event_type_id)::integer');
+        // DB::statement('ALTER TABLE hall_bookings ALTER COLUMN 
+        //           event_type_id TYPE integer USING (event_type_id)::integer');
     }
 
     /**

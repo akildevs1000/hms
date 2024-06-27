@@ -1215,6 +1215,3 @@ export default {
   },
 };
 </script>
-<style src="@/assets/custom/check.css"></style>
-<style scoped src="@/assets/custom/dash.css"></style>
-<!-- <style scoped src="@/assets/dashtem.css"></style> -->

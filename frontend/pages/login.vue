@@ -120,6 +120,107 @@
         </div>
       </div>
     </section>
+
+    <!-- <v-row no-gutters max-width="500">
+      <v-col cols="2" style="background-color: #eeeeee"
+        ><v-card elevation="0"></v-card
+      ></v-col>
+      <v-col cols="4"
+        ><v-card tile elevation="0">
+          <v-container>
+            <div class="text-center">
+                      <img width="35%" :src="logo" alt="logo" />
+                    </div>
+            <v-form ref="form" method="post" v-model="valid" lazy-validation>
+              <label for="">Email</label>
+              <div class="form-outline mb-4">
+                <v-text-field
+                  v-model="email"
+                  :rules="emailRules"
+                  :hide-details="false"
+                  id="form2Example11"
+                  placeholder="master@erp.com"
+                  required
+                  dense
+                  outlined
+                  type="email"
+                ></v-text-field>
+              </div>
+
+              <label for="">Password</label>
+
+              <div class="form-outline mb-4">
+                 <input
+                          v-model="password"
+                          style="border: 1px solid"
+                          type="password"
+                          id="form2Example22"
+                          class="form-control"
+                          placeholder="secret"
+                        />
+
+                <v-text-field
+                  dense
+                  outlined
+                  :rules="passwordRules"
+                  :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="show_password ? 'text' : 'password'"
+                  v-model="password"
+                  class="input-group--focused"
+                  @click:append="show_password = !show_password"
+                ></v-text-field>
+              </div>
+            <vue-recaptcha
+                        class="g-recaptcha"
+                        :sitekey="sitekey"
+                        @verify="mxVerify"
+                      >
+                      </vue-recaptcha>
+                        <span
+                        v-show="showGRC"
+                        style="color: #ff5252; font-size: 13px"
+                        >This field is required
+                      </span>
+
+              <div class="text-center pt-1 mb-5 pb-1">
+                <span v-if="msg" class="error--text">
+                  {{ msg }}
+                </span>
+                <v-btn
+                  :loading="loading"
+                  @click="login"
+                  class="btn btn-primary btn-block text-white fa-lg primary mt-1 mb-3"
+                >
+                  Log in
+                </v-btn>
+              </div>
+
+              <div
+                class="d-flex align-items-center justify-content-center pb-4"
+              >
+            <p class="mb-0 me-2">Don't have an account?</p> 
+               <button type="button" class="btn btn-outline-danger">Create new</button> 
+              </div>
+            </v-form>
+          </v-container>
+        </v-card></v-col
+      >
+      <v-col cols="4" class="text-center">
+        <v-card class="primary white--text" tile elevation="0">
+            <v-container>
+              <h6>EZ-HMS THE RIGHT SOLUTION FOR YOU</h6>
+              <p class="small mb-0">
+                Make it simple, easy and accessible anywhere, anytime. Save
+                time, stay compliant and reduce labor costs by streamlining how
+                you collect hours worked and time-off accruals.
+              </p>
+            </v-container></v-card
+          ></v-col
+      >
+      <v-col cols="2" style="background-color: #eeeeee"
+        ><v-card elevation="0"></v-card
+      ></v-col>
+    </v-row> -->
   </v-app>
 </template>
 
@@ -242,19 +343,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-@media (min-width: 768px) {
-  .gradient-form {
-    height: 100vh !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .primary {
-    background: #5fafa3 !important;
-    /* #5fafa3 */
-    border-top-right-radius: 0.3rem;
-    border-bottom-right-radius: 0.3rem;
-  }
-}
-</style>

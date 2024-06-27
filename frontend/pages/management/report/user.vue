@@ -511,27 +511,3 @@ export default {
   components: { CustomFilter }
 };
 </script>
-
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  text-align: left;
-  padding: 5px;
-  font-size: 13px;
-}
-
-table,
-th,
-td {
-  border: 1px solid #a0a0a0 !important;
-  border-collapse: collapse;
-}
-</style>
-
-<style scoped src="@/assets/dashtem.css"></style>

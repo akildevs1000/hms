@@ -22,7 +22,7 @@ class RoomTypeController extends Controller
      */
     public function index(Request $request)
     {
-        return RoomType::whereCompanyId($request->company_id)->get(['id', 'name', 'price']);
+        return RoomType::whereCompanyId($request->company_id)->get();
     }
 
     public function getRoomType(Request $request)
@@ -62,7 +62,7 @@ class RoomTypeController extends Controller
         }
     }
 
-    public function update(UpdateRequest $request, RoomType $roomType)
+    public function update(UpdateRequest $request, $id)
     {
 
         try {
@@ -80,10 +80,11 @@ class RoomTypeController extends Controller
 
                 $data["pic"] = $fileName ?? "";
             }
+            ;
 
-            $record = $roomType->update($data);
+            $record = RoomType::where("id", $id)->update($data);
             if ($record) {
-                return $this->response('Room Category successfully updated.', $record, true);
+                return $this->response('Room Category successfully updated.', RoomType::where("id", $id)->first(), true);
             } else {
                 return $this->response('Room Category cannot update.', null, false);
             }

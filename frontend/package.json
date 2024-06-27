@@ -29,6 +29,7 @@
     "marked": "^4.0.19",
     "nuxt": "^2.15.7",
     "nuxt-sweetalert2": "^1.0.0",
+    "qrcode": "^1.5.3",
     "tiptap-vuetify": "^2.24.0",
     "vue-apexcharts": "^1.6.2",
     "vue-session": "^1.0.0",

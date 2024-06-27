@@ -5,6 +5,7 @@
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Route;
 
+    Route::get('customer-list', [CustomerController::class, 'dropDown']);
     Route::get('customer/{id}', [CustomerController::class, 'show']);
     Route::get('customer', [CustomerController::class, 'index']);
     Route::post('customer', [CustomerController::class, 'store']);

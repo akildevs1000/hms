@@ -738,29 +738,3 @@ export default {
   height: 30px !important;
 }
 </style>
-
-<style>
-.available {
-  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
-}
-
-.booked {
-  background: linear-gradient(135deg, #f48665 0, #d68e41 100%) !important;
-}
-
-.checkedIn {
-  background: linear-gradient(135deg, #8e4cf1 0, #c554bc 100%) !important;
-}
-
-.checkedOut {
-  background: linear-gradient(135deg, #289cf5, #4f8bb7) !important;
-}
-
-.dirty {
-  background: linear-gradient(135deg, #34444c 0, #657177 100%) !important;
-}
-
-.maintenance {
-  background: linear-gradient(135deg, #23bdb8 0, #65a986 100%) !important;
-}
-</style>

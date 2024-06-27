@@ -29,7 +29,68 @@ use Illuminate\Support\Facades\Storage;
 class BookingController extends Controller
 {
 
+    public function updatePicAndSign()
+    {
+        try {
 
+            $customer_id =  Booking::orderByDesc("id")->value("customer_id");
+
+            $customer = [];
+
+            if (request('captured_photo')) {
+                $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('captured_photo')));
+                $imageName = "captured_photo-" . time() . ".png";
+                $publicDirectory = public_path("captured_photo");
+                if (!file_exists($publicDirectory)) {
+                    mkdir($publicDirectory);
+                }
+                file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+                $customer["captured_photo"] = $imageName;
+            }
+
+            if (request('id_frontend_side')) {
+                $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('id_frontend_side')));
+                $imageName = "id_frontend_side-" . time() . ".png";
+                $publicDirectory = public_path("id_frontend_side");
+                if (!file_exists($publicDirectory)) {
+                    mkdir($publicDirectory);
+                }
+                file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+                $customer["id_frontend_side"] = $imageName;
+            }
+
+            if (request('id_backend_side')) {
+                $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('id_backend_side')));
+                $imageName = "id_backend_side-" . time() . ".png";
+                $publicDirectory = public_path("id_backend_side");
+                if (!file_exists($publicDirectory)) {
+                    mkdir($publicDirectory);
+                }
+                file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+                $customer["id_backend_side"] = $imageName;
+            }
+
+            if (request('sign')) {
+                $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('sign')));
+                $imageName = "sign-" . time() . ".png";
+                $publicDirectory = public_path("sign");
+                if (!file_exists($publicDirectory)) {
+                    mkdir($publicDirectory);
+                }
+                file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+                $customer["sign"] = $imageName;
+            }
+
+            return Customer::where("id", $customer_id)->update($customer);
+            
+        } catch (\Exception $e) {
+            return $this->getMessage();
+        }
+    }
     public function index(Request $request)
     {
         return Booking::with(["customer:id,first_name,last_name", "room"])
@@ -87,10 +148,12 @@ class BookingController extends Controller
 
 
 
+
         $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
         if ($diff_in_seconds < 0) {
             return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
         }
+
         $booking = null;
 
         //verify is booking  availalbe with date and room number
@@ -101,7 +164,7 @@ class BookingController extends Controller
                 $q->where('booking_status', '!=', 0);
                 $q->where('company_id', $request->company_id);
                 $q->where('room_id', $request->selectedRooms[0]['room_id']);
-            })->get()->count();
+            })->count();
 
 
 
@@ -814,8 +877,33 @@ class BookingController extends Controller
                 $id = $isExistCustomer->id;
                 $isExistCustomer->update($customer);
             } else {
+
+                if (request('id_frontend_side')) {
+                    $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('id_frontend_side')));
+                    $imageName = "id_frontend_side-" . time() . ".png";
+                    $publicDirectory = public_path("customer_id_pic");
+                    if (!file_exists($publicDirectory)) {
+                        mkdir($publicDirectory);
+                    }
+                    file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+                    $customer["id_frontend_side"] = $imageName;
+                }
+
+                if (request('id_backend_side')) {
+                    $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('id_backend_side')));
+                    $imageName = "id_backend_side-" . time() . ".png";
+                    $publicDirectory = public_path("customer_id_pic");
+                    if (!file_exists($publicDirectory)) {
+                        mkdir($publicDirectory);
+                    }
+                    file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+                    $customer["id_backend_side"] = $imageName;
+                }
+
                 $record = Customer::create($customer);
-                $id = $record->id;
+                $id = $record->id ?? 0;
             }
             return $id;
             return $this->response('Customer successfully added.', $id, true);

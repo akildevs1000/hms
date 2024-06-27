@@ -109,22 +109,50 @@ class Customer extends Model
             'whatsapp',
             'nationality',
             'gst_number',
+
+            'id_frontend_side',
+            'id_backend_side',
         ];
     }
 
     public function scopeFilter($query, $search)
     {
-        $query->when($search ?? false, fn($query, $search) =>
-            $query->where(
-                fn($query) => $query
-                    ->orWhere('first_name', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('email', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('id_card_no', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('car_no', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('address', 'ILIKE', '%' . $search . '%')
-            ));
+        $query->when($search ?? false, fn ($query, $search) =>
+        $query->where(
+            fn ($query) => $query
+                ->orWhere('first_name', 'ILIKE', '%' . $search . '%')
+                ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
+                ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
+                ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
+                ->orWhere('email', 'ILIKE', '%' . $search . '%')
+                ->orWhere('id_card_no', 'ILIKE', '%' . $search . '%')
+                ->orWhere('car_no', 'ILIKE', '%' . $search . '%')
+                ->orWhere('address', 'ILIKE', '%' . $search . '%')
+        ));
+    }
+
+    public function getIdFrontendSideAttribute($value)
+    {
+        if (!$value) return null;
+        // return "https://amcbackend.mytime2cloud.com/sign/" . $value;
+        return asset('customer_id_pic/' . $value);
+    }
+
+    public function getIdBackendSideAttribute($value)
+    {
+        if (!$value) return null;
+        return asset('customer_id_pic/' . $value);
+    }
+
+    public function getCapturedPhotoAttribute($value)
+    {
+        if (!$value) return null;
+        return asset('captured_photo/' . $value);
+    }
+
+    public function getSignAttribute($value)
+    {
+        if (!$value) return null;
+        return asset('sign/' . $value);
     }
 }

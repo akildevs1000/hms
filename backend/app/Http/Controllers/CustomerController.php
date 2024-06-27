@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
+    public function dropDown()
+    {
+        return Customer::get();
+    }
     public function index(Request $request, Customer $model)
     {
         $model = Customer::query();

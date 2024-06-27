@@ -1,0 +1,37 @@
+server {
+
+	server_name ezhms.com;
+
+	location / {
+		proxy_pass http://64.227.164.43:3000/;
+		proxy_http_version 1.1;
+		proxy_set_header   Upgrade $http_upgrade;
+		proxy_set_header   Connection keep-alive;
+		proxy_set_header   Host $host;
+		proxy_cache_bypass $http_upgrade;
+		proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header   X-Forwarded-Proto $scheme;
+	}
+
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/ezhms.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/ezhms.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}server {
+    if ($host = ezhms.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+	
+	listen 80 default_server;
+	listen [::]:80 default_server;
+
+	server_name ezhms.com;
+    return 404; # managed by Certbot
+
+
+}

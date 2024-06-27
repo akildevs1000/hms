@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
+    public function dropDown()
+    {
+        return Room::get();
+    }
     public function index(Request $request)
     {
         $model = Room::query()->with("device");

@@ -4,4 +4,4 @@
 @REM @REM for backend
 @cd backend
 @set PATH=php;%PATH%
-start php artisan serve
+start php artisan serve --port 8001

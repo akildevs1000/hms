@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use Database\Seeders\MasterSeeder;
 use Database\Seeders\ModuleSeeder;
 use Database\Seeders\PermissionSeeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\ShiftTypeTableSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call([PaymentSeeder::class]);
         $this->call([CountriesTableSeeder::class]);
         $this->call([SourceTableSeeder::class]);
+        $this->call([SeasonTableSeeder::class]);
     }
 }

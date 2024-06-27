@@ -133,6 +133,30 @@
                                 >{{ errors.baby[0] }}</span
                               >
                             </v-col>
+                            <v-col cols="12">
+                              <v-select
+                                v-model="editedItem.tax"
+                                :items="[
+                                  { value: 0, name: `Exempted %` },
+                                  { value: 5, name: `5%` },
+                                  { value: 12, name: `12%` },
+                                  { value: 18, name: `18%` },
+                                  { value: 28, name: `28%` },
+                                ]"
+                                placeholder="GST"
+                                dense
+                                label="GST"
+                                item-text="name"
+                                item-value="value"
+                                outlined
+                                :hide-details="true"
+                              ></v-select>
+                              <span
+                                v-if="errors && errors.adult"
+                                class="error--text"
+                                >{{ errors.adult[0] }}</span
+                              >
+                            </v-col>
                             <v-col md="12" cols="12">
                               <v-text-field
                                 v-model="editedItem.short_description"
@@ -445,6 +469,7 @@ export default {
       adult: "",
       child: "",
       baby: "",
+      tax: 0,
       price: "",
       short_description: "",
       description: "",
@@ -455,6 +480,7 @@ export default {
       adult: "",
       child: "",
       baby: "",
+      tax: 0,
       price: "",
       short_description: "",
       description: "",
@@ -649,6 +675,7 @@ export default {
       payload.append("price", this.editedItem.price);
       payload.append("adult", this.editedItem.adult);
       payload.append("child", this.editedItem.child);
+      payload.append("tax", parseFloat(this.editedItem.tax));
       payload.append("baby", this.editedItem.baby);
       payload.append("company_id", this.$auth.user.company.id);
       payload.append("short_description", this.editedItem.short_description);

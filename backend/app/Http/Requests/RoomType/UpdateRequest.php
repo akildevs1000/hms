@@ -39,6 +39,8 @@ class UpdateRequest extends FormRequest
             'weekday_price' => 'nullable',
             'weekend_price' => 'nullable',
             'image' => 'nullable',
+
+            'tax' => 'nullable',
         ];
     }
 }

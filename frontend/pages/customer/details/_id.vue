@@ -1665,7 +1665,7 @@ export default {
   },
 };
 </script>
-<style scoped src="@/assets/custom.css"></style>
+<style scoped src="@/assets/css/custom.css"></style>
 
 <style scoped>
 .no-bg {

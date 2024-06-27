@@ -6,6 +6,7 @@ use App\Models\Inquiry;
 use Illuminate\Http\Request;
 use App\Http\Requests\Inquiry\StoreRequest;
 use App\Http\Requests\Inquiry\UpdateRequest;
+use App\Models\Template;
 
 class InquiriesController extends Controller
 {
@@ -40,43 +41,36 @@ class InquiriesController extends Controller
     public function store(StoreRequest $request)
     {
         try {
-
-            $inquiry =   Inquiry::whereContactNo($request->contact_no)->first();
+            $inquiry = Inquiry::whereContactNo($request->contact_no)->first();
             $id = "";
 
             if ($inquiry) {
                 $id = $inquiry->id;
                 $inquiry->update($request->validated());
             } else {
-                $record = Inquiry::create($request->validated());
-                $id = $record->id;
+                $inquiry = Inquiry::create($request->validated());
+                $id = $inquiry->id;
             }
+
+            $fields = [
+                "title"     => $inquiry->title,
+                "full_name" => $inquiry->full_name,
+                "check_in"  => date('d-M-y', strtotime($inquiry->check_in)),
+                "check_out" => date('d-M-y', strtotime($inquiry->check_out)),
+                "rooms_type" => $inquiry->rooms_type,
+                "email" => $inquiry->email
+            ];
+
+            if ($inquiry->email) {
+                $this->sendMailIfRequired(Template::INQUERY_CREATE, $fields);
+            }
+
+            $this->sendWhatsappIfRequired(Template::INQUERY_CREATE, $fields);
+
             return $this->response('Inquiry successfully added.', $id, true);
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

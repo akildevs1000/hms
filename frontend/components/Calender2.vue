@@ -260,19 +260,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.mx-input {
-  /*height: 45px !important;*/
-  border: 1px solid #9e9e9e !important;
-  color: black !important;
-}
-.mx-datepicker {
-  width: 200px;
-}
-
-.mx-table-date td,
-.mx-table-date th {
-  text-align: center !important;
-}
-</style>

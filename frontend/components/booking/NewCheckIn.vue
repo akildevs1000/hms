@@ -2319,14 +2319,14 @@ export default {
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
-      if (
-        this.customer.document == null ||
-        this.customer.document == undefined
-      ) {
-        this.alert("Missing!", "Select document", "error");
-        this.subLoad = false;
-        return;
-      }
+      // if (
+      //   this.customer.document == null ||
+      //   this.customer.document == undefined
+      // ) {
+      //   this.alert("Missing!", "Select document", "error");
+      //   this.subLoad = false;
+      //   return;
+      // }
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");
@@ -2380,7 +2380,7 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.store_document(data.data);
+            // this.store_document(data.data);
             this.$router.push(`/reservation/in_house`);
             // this.$router.push(`/customer/details/${260}`);
             this.alert("Success!", "Successfully room added", "success");

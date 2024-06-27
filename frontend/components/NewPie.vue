@@ -84,12 +84,3 @@ export default {
   methods: {},
 };
 </script>
-
-<style>
-/* .apexcharts-legend-series {
-  margin: 0px 100px 2px 0px !important;
-} */
-#pie .apexcharts-legend-series {
-  margin: 0px 50px 2px 0px !important;
-}
-</style>
