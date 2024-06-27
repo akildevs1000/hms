@@ -203,13 +203,12 @@ class Controller extends BaseController
             $subject = $found->name;
 
             $body = str_replace(
-                ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]'],
+                ['[title]', '[full_name]', '[from_date]', '[to_date]'],
                 [
                     $fields['title'],
                     $fields['full_name'],
                     date('d-M-y', strtotime($fields['check_in'])),
                     date('d-M-y', strtotime($fields['check_out'])),
-                    $fields['rooms_type']
                 ],
                 $found->body
             );

@@ -20,9 +20,9 @@ class Template extends Model
     const QUOTATION_CREATE = 2;
     const ONE_DAY_BEFORE_ARRIVAL = 3;
     const ON_ARRIVAL_DATE = 4;
-    const WHEN_CUSTOMER_ARRIVED = 5; // pending
+    const WHEN_CUSTOMER_ARRIVED = 5;
     const ON_CHECKOUT_DATE_CHECKOUT_REMINDER = 6; // pending
-    const AFTER_CHECKOUT = 7; // pending
+    const AFTER_CHECKOUT = 7;
     const BIRTHDAY_WISH = 8;
     const FESTIVAL_MESSAGE = 9;
     const UNKNOWN = 0;
@@ -55,6 +55,6 @@ class Template extends Model
         "attachment" => "nullable",
         "action_id" => "required",
         "company_id" => "required",
-        "medium" => "required"
+        "medium" => "nullable"
     ];
 }

@@ -18,6 +18,7 @@ use App\Models\Payment;
 use App\Models\Room;
 use App\Models\RoomType;
 use App\Models\TaxSlabs;
+use App\Models\Template;
 use App\Models\Transaction;
 use App\Models\Weekend;
 use Carbon\CarbonPeriod;
@@ -86,7 +87,6 @@ class BookingController extends Controller
             }
 
             return Customer::where("id", $customer_id)->update($customer);
-            
         } catch (\Exception $e) {
             return $this->getMessage();
         }
@@ -951,19 +951,35 @@ class BookingController extends Controller
                 $this->updateTransaction($booking, $request, 'check in payment', 'credit', $request->new_payment);
                 $this->updatePayment($booking, $request, $request->new_payment, 'checkin payment');
                 BookedRoom::whereBookingId($booking_id)->update(['booking_status' => 2]);
-                if (app()->isProduction()) {
-                    $customer = Customer::find($booking->customer_id);
-                    (new WhatsappNotificationController())->checkInNotification($booking, $customer);
-                }
+                // if (app()->isProduction()) {
+                //     $customer = Customer::find($booking->customer_id);
+                //     (new WhatsappNotificationController())->checkInNotification($booking, $customer);
+                // }
                 $customerData = $request->only(Customer::customerAttributes());
                 $customerData['id'] = $request->customer_id;
                 $this->customerUpdateById($customerData);
+
+                $fields = [
+                    "title"     => ucfirst($customer['title']) ?? 'Mr',
+                    "full_name" => ucfirst($customer['full_name']) ?? 'Guest',
+                    "check_in"  => date('d-M-y H:i', strtotime($booking->check_in)),
+                    "check_out" => date('d-M-y H:i', strtotime($booking->check_out)),
+                    "email" => $customer['email'],
+                    "whatsapp" => $customer->whatsapp,
+                    // "location" => $company->map, from company model
+
+                ];
+
+                $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+                $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
             }
 
             return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Throwable $th) {
-            return response()->json(['data' => '', 'message' => $th, 'status' => false]);
+        } catch (\Exception $e) {
+
+            return response()->json(['data' => '', 'message' => $e->getMessage(), 'status' => false]);
             // throw $th;
         }
     }
@@ -1058,9 +1074,24 @@ class BookingController extends Controller
                 $booking->booking_status = 3;
                 $booking->check_out = date('Y-m-d H:i');
                 $booking->save();
-                if (app()->isProduction()) {
-                    (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
-                }
+                // if (app()->isProduction()) {
+                //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
+                // }
+
+
+                $fields = [
+                    "title"     => ucfirst($customer['title']) ?? 'Mr',
+                    "full_name" => ucfirst($customer['full_name']) ?? 'Guest',
+                    "check_in"  => date('d-M-y H:i', strtotime($booking->check_in)),
+                    "check_out" => date('d-M-y H:i', strtotime($booking->check_out)),
+                    "email" => $customer['email'],
+                    "whatsapp" => $customer->whatsapp,
+                    // "location" => $company->map, from company model
+
+                ];
+
+                $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
+                $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields);
 
                 return response()
                     ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);

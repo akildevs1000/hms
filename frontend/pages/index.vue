@@ -550,7 +550,7 @@
                 <v-list-item
                   link
                   @click="cancelCheckInDialog = true"
-                  v-if="$auth.user.role.name.toLowerCase() == 'admin'"
+                  v-if="$auth?.user?.role?.name.toLowerCase() == 'admin'"
                 >
                   <v-list-item-title color="red"
                     >Cancel Check-in(admin)
@@ -1911,10 +1911,10 @@ export default {
   },
 };
 </script>
-<style src="@/assets/css/check.css"></style>
-<style scoped src="@/assets/css/dash.css"></style>
+<!-- <style src="@/assets/css/check.css"></style> -->
+<!-- <style scoped src="@/assets/css/dash.css"></style> -->
 <!-- <style scoped src="@/assets/dashtem.css"></style> -->
-<style>
+<!-- <style>
 .dash-font-size {
   font-size: 13px;
 }
@@ -2001,4 +2001,4 @@ export default {
   float: right;
   top: -20px;
 }
-</style>
+</style> -->
