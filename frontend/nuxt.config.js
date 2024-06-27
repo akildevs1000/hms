@@ -193,7 +193,7 @@ export default {
   },
 
   server: {
-    // host: process.env.LOCAL_IP,
+    host: process.env.LOCAL_IP,
     port: process.env.LOCAL_PORT,
   },
 };
