@@ -961,7 +961,18 @@
                             }`"
                           >
                             <div class="text-center">
-                              <v-icon dark class="pa-0">mdi mdi-bed</v-icon>
+                              <v-icon
+                                v-if="
+                                  noAvailableRoom.device &&
+                                  noAvailableRoom.device.latest_status == 1
+                                "
+                                dark
+                                class="pa-0 room-inperson-status"
+                                >mdi mdi-bed</v-icon
+                              >
+                              <v-icon v-else dark class="pa-0"
+                                >mdi mdi-bed</v-icon
+                              >
                             </div>
                             <div class="text-center">
                               {{ caps(noAvailableRoom.room_type.name) }}
@@ -970,15 +981,13 @@
                               {{ noAvailableRoom.room_no }}
                             </div>
                           </v-card>
-                          <div
+                          <!-- <div
                             class="bottomright"
                             v-if="
                               noAvailableRoom.device &&
                               noAvailableRoom.device.latest_status == 1
                             "
-                          >
-                            <!-- <v-icon color="green">mdi-lightbulb-on-90 </v-icon> -->
-                          </div>
+                          ></div> -->
                         </v-col>
                       </v-row>
                       <v-row>
@@ -1015,12 +1024,10 @@
                               {{ room.room_no }}
                             </div>
                           </v-card>
-                          <div
+                          <!-- <div
                             class="bottomright"
                             v-if="room.device && room.device.latest_status == 1"
-                          >
-                            <!-- <v-icon color="green">mdi-lightbulb-on-90 </v-icon> -->
-                          </div>
+                          ></div> -->
                         </v-col>
                       </v-row>
                     </div>
@@ -1904,3 +1911,94 @@ export default {
   },
 };
 </script>
+<style src="@/assets/css/check.css"></style>
+<style scoped src="@/assets/custom/dash.css"></style>
+<!-- <style scoped src="@/assets/dashtem.css"></style> -->
+<style>
+.dash-font-size {
+  font-size: 13px;
+}
+
+.big-screen {
+  font-size: 65px;
+  color: white;
+}
+
+.food-icon-size {
+  font-size: 30px !important;
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1199px) {
+  /* Adjust layout for iPad pro landscape mode */
+  .ipad-font-grid {
+    font-size: 12px !important;
+    color: white;
+    margin-top: 10px !important;
+  }
+}
+
+@media only screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
+  .laptop-font-grid {
+    font-size: 60px !important;
+    color: white !important;
+    margin-top: 7px !important;
+  }
+
+  .laptop-font-paid-grid {
+    font-size: 11px !important;
+    color: white;
+    margin-top: 17px !important;
+    font-weight: bold;
+  }
+
+  .available-room-list {
+    width: 13.333333% !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
+  /* ipad mini Air */
+  .ipad-font-qty-grid {
+    font-size: 55px !important;
+    color: white;
+  }
+
+  .ipad-font-paid-grid {
+    font-size: 11px !important;
+    color: white;
+    margin-top: 17px !important;
+    font-weight: bold;
+  }
+
+  .ipad-font-food-grid {
+    color: red !important;
+  }
+
+  .available-room-list {
+    width: 13.333333% !important;
+  }
+
+  .box {
+    border-radius: 7px !important;
+  }
+}
+.room-inperson-status {
+  color: red !important;
+}
+
+.bottomright {
+  width: 0px;
+  height: 0px;
+  border-bottom: 20px solid #000;
+  border-left: 20px solid transparent;
+
+  position: relative;
+  color: green;
+  position: relative;
+  font-size: 18px;
+  text-align: right;
+  right: 0px;
+  float: right;
+  top: -20px;
+}
+</style>
