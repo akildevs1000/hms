@@ -1103,4 +1103,3 @@ export default {
   },
 };
 </script>
-<style scoped src="@/assets/css/stylishbox.css"></style>

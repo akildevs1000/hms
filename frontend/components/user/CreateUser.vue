@@ -501,5 +501,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style src="@/assets/css/check.css"></style> -->

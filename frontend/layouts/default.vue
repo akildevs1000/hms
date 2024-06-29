@@ -1,87 +1,9 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-model="drawer"
-      dark
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-      :color="sideBarcolor"
-      :style="miniVariant ? 'width: 60px' : ''"
-    >
-      <v-list v-for="(i, idx) in filteredMenu" :key="idx" class="pt-1">
-        <v-list-item
-          :to="i.to"
-          router
-          v-if="!i.hasChildren"
-          :class="!miniVariant || 'pl-2'"
-        >
-          <v-list-item-icon class="ma-2">
-            <v-icon
-              @mouseover="showTooltipMenu(i.title)"
-              @mouseleave="show = false"
-              >{{ i.icon }}
-            </v-icon>
-          </v-list-item-icon>
-          <v-list-item-title> {{ i.title }}&nbsp; </v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          v-else
-          :class="!miniVariant || 'pl-2'"
-          @click="i.open_menu = !i.open_menu"
-        >
-          <v-list-item-icon class="ma-2">
-            <v-icon>{{ i.icon }}</v-icon>
-            <v-icon v-if="miniVariant" small
-              >{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
-            </v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>{{ i.title }} </v-list-item-title>
-          <v-icon small
-            >{{ !i.open_menu ? "mdi-chevron-down" : "mdi-chevron-up" }}
-          </v-icon>
-        </v-list-item>
-        <div v-if="i.open_menu">
-          <div
-            style="margin-left: 54px"
-            v-for="(j, jdx) in i.hasChildren"
-            :key="jdx"
-          >
-            <!-- v-show="!miniVariant" -->
-            <v-list-item style="min-height: 0" :to="j.to">
-              <v-list-item-title v-if="!miniVariant"
-                >{{ j.title }}
-              </v-list-item-title>
-
-              <v-list-item-icon
-                :style="miniVariant ? 'margin-left: -54px;' : ''"
-              >
-                <v-icon
-                  :to="j.to"
-                  :style="miniVariant ? 'margin-left: 12px;' : ''"
-                  @mouseover="showTooltipMenu(j.title)"
-                  @mouseleave="show = false"
-                >
-                  {{ j.icon }}
-                </v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-          </div>
-        </div>
-      </v-list>
-    </v-navigation-drawer>
-
     <v-app-bar :clipped-left="clipped" fixed app dense>
       <!-- :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''" -->
 
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
-      </v-btn> -->
-      <!-- <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>mdi-application</v-icon>
-      </v-btn> -->
       {{ title }}
       <v-spacer></v-spacer>
       <v-btn
@@ -152,37 +74,41 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-
-    <v-main class="main_bg">
-      <!-- <v-container> -->
-      <v-tooltip
-        v-model="show"
-        top
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-y
-        color="primary"
-      >
-        <span>{{ menuName }}</span>
-      </v-tooltip>
-
-      <div class="mx-2 my-4">
-        <nuxt />
-      </div>
-      <!-- </v-container> -->
-    </v-main>
-    <!-- <v-btn
-      height="50"
-      width="20"
+    <v-navigation-drawer
+      v-model="drawer"
       dark
-      :color="changeColor"
-      class="fixed-setting"
-      @click.stop="rightDrawer = !rightDrawer"
+      :clipped="clipped"
+      fixed
+      app
+      :color="sideBarcolor"
+      :width="150"
     >
-      <v-icon class="spin" dark size="25">mdi-cog</v-icon>
-    </v-btn> -->
-    <!-- setting -->
+      <v-row no-gutters>
+        <v-col
+          v-for="(i, idx) in filteredMenu"
+          :key="idx"
+          cols="12"
+          class="text-center white--text"
+        >
+          <v-card
+            v-if="i.to"
+            outlined
+            class="background pa-5"
+            @click="$router.push(i.to)"
+          >
+            <v-icon @mouseover="showTooltipMenu(i.title)">{{ i.icon }} </v-icon>
+            <br />
+            <small>{{ i.title }}</small>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-navigation-drawer>
+    <v-main>
+      <v-container fluid>
+        <nuxt />
+      </v-container>
+    </v-main>
+
     <v-navigation-drawer
       v-model="rightDrawer"
       :clipped="true"

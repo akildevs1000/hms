@@ -1,3 +1,5 @@
 /.vscode
 
-frontend-production-build-generator
+build-generator
+
+verification-app
