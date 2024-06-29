@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room Status</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-container>
+          <v-row class="mb-4">
+            <v-col>
+              <h3>Occupied</h3>
+              <v-btn
+                v-for="n in 3"
+                :key="n"
+                color="red darken-2"
+                class="ma-2 white--text"
+              >
+                <v-icon left>mdi-home</v-icon> 213
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row class="mb-4">
+            <v-col>
+              <h3>Expected Checkout</h3>
+              <v-btn
+                v-for="n in 18"
+                :key="n"
+                color="orange darken-2"
+                class="ma-2 white--text"
+              >
+                <v-icon left>mdi-bed</v-icon> 112
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row class="mb-4">
+            <v-col>
+              <h3>Expected Arrival</h3>
+              <v-btn
+                v-for="n in 14"
+                :key="n"
+                style="background-color: #92d050"
+                class="ma-2 white--text"
+              >
+                <v-icon left>mdi-home</v-icon> 102
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row class="mb-4">
+            <v-col>
+              <h3>Available</h3>
+              <v-btn
+                v-for="n in 8"
+                :key="n"
+                color="success"
+                class="ma-2 white--text"
+              >
+                <v-icon left>mdi-home</v-icon> 105
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row class="mb-4">
+            <v-col>
+              <h3>Blocked</h3>
+              <v-btn
+                v-for="n in 3"
+                :key="n"
+                color="purple darken-2"
+                class="ma-2 white--text"
+              >
+                <v-icon left>mdi-home</v-icon> 213
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-app>
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        vuetify: new Vuetify({
+          theme: {
+            dark: false,
+            themes: {
+              light: {
+                expected_arrival: "#92d050",
+                primary: "#4390FC",
+                accent: "#d8363a",
+                secondary: "#242424",
+                main_bg: "#ECF0F4",
+              },
+            },
+          },
+        }),
+      });
+    </script>
+  </body>
+</html>
