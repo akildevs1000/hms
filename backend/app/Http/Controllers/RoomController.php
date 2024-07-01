@@ -443,6 +443,7 @@ class RoomController extends Controller
                 $query->whereDate('check_in', '<=', $todayDate);
                 $query->where('booking_status', '!=', 0);
                 $query->where('booking_status', '<=', 3);
+                $query->where('status', '!=', 1);
                 $query->whereHas('booking', function ($q) use ($company_id, $todayDate) {
                     $q->where('booking_status', '!=', -1);
                     $q->where('booking_status', '!=', 0);
