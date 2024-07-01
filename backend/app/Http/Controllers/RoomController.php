@@ -446,9 +446,9 @@ class RoomController extends Controller
 
             'notAvailableRooms' => $notAvailableRooms,
             // 'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(), //$notAvailableRooms,
-            'availableRooms' => Room::with('device')->whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
+            'availableRooms' => Room::with('device')->where("status", "!=", Room::Blocked)->whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
             'confirmedBooking' => $confirmedBooking->count(),
-            'blockedRooms' => Room::where("status",Room::Blocked)->where("company_id", $company_id)->get(),
+            'blockedRooms' => Room::where("status", Room::Blocked)->where("company_id", $company_id)->get(),
 
             'confirmedBookingList' => $confirmedBooking->get(),
             'waitingBooking' => $waitingBooking,
