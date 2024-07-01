@@ -593,100 +593,123 @@
       </v-menu>
     </div>
 
-    <v-row no-gutters class="mt-10 mb-5">
-      <v-col cols="2">
-        <div class="pl-5">Arrival</div>
-        <DonutSingle
-          :compId="`id-1`"
+    <div class="d-flex mt-10">
+      <div class="">
+        <div class="text-left pl-5">Arrival</div>
+        <TestChart
+          size="240px"
           :labels="[
-            `Arrival (${checkIn.length > 0 ? checkIn.length : 10})`,
-            `Pending (${expectCheckIn.length > 0 ? expectCheckIn.length : 10})`,
+            {
+              color: `blue`,
+              text: `Arrival`,
+              value: `${checkIn.length}`,
+            },
+            {
+              color: `green`,
+              text: `Pending`,
+              value: `${expectCheckIn.length}`,
+            },
           ]"
-          :series="[
-            checkIn.length > 0 ? checkIn.length : 10,
-            expectCheckIn.length > 0 ? expectCheckIn.length : 10,
-          ]"
-          size="250px"
         />
-      </v-col>
-      <v-col cols="2" class="ml-7">
-        <div class="pl-5">Checkout</div>
-        <DonutSingle
-          :compId="`id-2`"
+      </div>
+      <div class="">
+        <div class="text-left pl-5">Checkout</div>
+        <TestChart
+          size="240px"
           :labels="[
-            `Checkout (${checkOut.length > 0 ? checkOut.length : 10})`,
-            `Pending (${
-              expectCheckOut.length > 0 ? expectCheckOut.length : 10
-            })`,
+            {
+              color: `blue`,
+              text: `Checkout`,
+              value: `${checkOut.length}`,
+            },
+            {
+              color: `green`,
+              text: `Pending`,
+              value: `${expectCheckOut.length}`,
+            },
           ]"
-          :series="[
-            checkOut.length > 0 ? checkOut.length : 10,
-            expectCheckOut.length > 0 ? expectCheckOut.length : 10,
-          ]"
-          size="250px"
         />
-      </v-col>
-      <v-col cols="2" class="ml-7">
-        <div class="pl-5">In House</div>
-        <DonutSingle
-          :compId="`id-3`"
+      </div>
+      <div class="">
+        <div class="text-left pl-5">In House</div>
+        <TestChart
+          size="240px"
           :labels="[
-            `Adult (${members.adult.length > 0 ? members.adult.length : 10})`,
-            `Children (${
-              members.child.length > 0 ? members.child.length : 10
-            })`,
+            {
+              color: `blue`,
+              text: `Adult`,
+              value: `${members.adult}`,
+            },
+            {
+              color: `green`,
+              text: `Children`,
+              value: `${members.child}`,
+            },
           ]"
-          :series="[
-            members.adult.length > 0 ? members.adult.length : 10,
-            members.child.length > 0 ? members.child.length : 10,
-          ]"
-          size="250px"
         />
-      </v-col>
-      <v-col cols="2" class="ml-7">
-        <div class="pl-5">Room Status</div>
-        <DonutSingle
-          :compId="`id-4`"
+      </div>
+      <div class="">
+        <div class="text-left pl-5">Room Status</div>
+        <TestChart
+          size="240px"
           :labels="[
-            `Vacant (10)`,
-            `Sold (15)`,
-            `Day Use (20)`,
-            `Blocked (25)`,
-            `Compliment (30)`,
+            {
+              color: `blue`,
+              text: `Vacant`,
+              value: 10,
+            },
+            {
+              color: `green`,
+              text: `Sold`,
+              value: 15,
+            },
+            {
+              color: `orange`,
+              text: `Day Use`,
+              value: 20,
+            },
+            {
+              color: `red`,
+              text: `Blocked`,
+              value: 25,
+            },
+            {
+              color: `purple`,
+              text: `Compliment`,
+              value: 30,
+            },
           ]"
-          :series="[10, 15, 20, 25, 30]"
-          size="270px"
         />
-      </v-col>
-      <v-col cols="2" class="ml-15">
-        <div class="pl-5">Food Order</div>
-        <DonutSingle
-          :compId="`id-5`"
+      </div>
+      <div class="">
+        <div class="text-left pl-5">Food Order</div>
+        <TestChart
+          size="240px"
           :labels="[
-            `Breakfast (${
-              onlyBreakfast.adult + onlyBreakfast.child + onlyBreakfast.baby
-            })`,
-            `Lunch (${onlyLunch.adult + onlyLunch.child + onlyLunch.baby})`,
-            `Dinner (${onlyDinner.adult + onlyDinner.child + onlyDinner.baby})`,
+            {
+              color: `blue`,
+              text: `Breakfast`,
+              value: `${onlyBreakfast.adult + onlyBreakfast.child + onlyBreakfast.baby}`,
+            },
+            {
+              color: `green`,
+              text: `Lunch`,
+              value: `${onlyLunch.adult + onlyLunch.child + onlyLunch.baby}`,
+            },
+            {
+              color: `orange`,
+              text: `Dinner`,
+              value: `${onlyDinner.adult + onlyDinner.child + onlyDinner.baby}`,
+            },
           ]"
-          :series="[
-            onlyBreakfast.adult + onlyBreakfast.child + onlyBreakfast.baby,
-            onlyLunch.adult + onlyLunch.child + onlyLunch.baby,
-            onlyDinner.adult + onlyDinner.child + onlyDinner.baby,
-          ]"
-          size="250px"
         />
-      </v-col>
-    </v-row>
+      </div>
+    </div>
 
     <v-row class="mt-5">
       <v-col cols="4"></v-col>
       <v-col cols="2">
-        <v-text-field
-          dense
-          label="Search..."
-          outlined
-        ></v-text-field>
+        <v-text-field dense label="Search..." outlined></v-text-field>
       </v-col>
       <v-col cols="2">
         <v-select
