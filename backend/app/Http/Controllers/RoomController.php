@@ -341,11 +341,12 @@ class RoomController extends Controller
             ->orderBy('id', 'ASC');
 
         $expectCheckInModel = BookedRoom::query();
+        
         $expectCheckIn = $expectCheckInModel->whereDate('check_in', $todayDate)
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 1);
-                $q->where('advance_price', '>', 0); //new line
+                // $q->where('advance_price', '>', 0); //new line
                 $q->where('company_id', $company_id);
             })->get();
 
