@@ -289,8 +289,6 @@ class RoomController extends Controller
 
     public function roomListForGridView(Request $request)
     {
-
-
         $company_id = $request->company_id;
 
         $BlockedRooms = Room::where('company_id', $company_id)
@@ -298,8 +296,17 @@ class RoomController extends Controller
             ->get();
 
         $AvailableRooms = Room::where('company_id', $company_id)
-            ->where("status", Room::Available)
+            ->whereDoesntHave('bookedRoom')
+            ->with(['device', 'bookedRoom'])
             ->get();
+
+        // $expectCheckOutModel = BookedRoom::query();
+        // $expectCheckOut = $expectCheckOutModel->clone()->whereDate('check_out', $todayDate)
+        //     ->whereHas('booking', function ($q) use ($company_id) {
+        //         $q->where('booking_status', '!=', 0);
+        //         $q->where('booking_status', '=', 2);
+        //         $q->where('company_id', $company_id);
+        //     })->get();
 
         // return [
         //     $BlockedRooms, $AvailableRooms
@@ -443,14 +450,13 @@ class RoomController extends Controller
             })
             ->get();
 
-       // return [
+        // return [
         //     $BlockedRooms, $AvailableRooms
         // ];
 
         $result = [
             'dirtyRooms' => $dirtyRooms->count(),
             'dirtyRoomsList' => $dirtyRooms->get(),
-
             'notAvailableRooms' => $notAvailableRooms,
             'availableRooms' => $AvailableRooms,
             'blockedRooms' => $BlockedRooms,
