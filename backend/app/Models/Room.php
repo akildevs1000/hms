@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Room extends Model
 {
+    const Available = 0;
+    const Blocked = 1;
+    
     use HasFactory;
 
     protected $guarded = [];
