@@ -443,8 +443,8 @@ class RoomController extends Controller
             'dirtyRoomsList' => $dirtyRooms->get(),
 
             'notAvailableRooms' => $notAvailableRooms,
-            // 'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(), //$notAvailableRooms,
             'availableRooms' => Room::with('device')->whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
+            'blockedRooms' => Room::with('device')->whereNotIn('id', $roomIds)->where("status", 1)->where('company_id', $company_id)->get(),
             'confirmedBooking' => $confirmedBooking->count(),
             'confirmedBookingList' => $confirmedBooking->get(),
             'waitingBooking' => $waitingBooking,
