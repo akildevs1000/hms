@@ -444,6 +444,7 @@ class RoomController extends Controller
         $availableRooms = Room::with('device')
             ->whereHas("bookedRoom", function ($query) use ($todayDate, $company_id) {
                 $query->whereDate('check_in', '<=', $todayDate);
+                $query->where('booking_status', '!=', 0);
                 $query->where('booking_status', '<', 3);
                 $query->where('status', '!=', 1);
                 $query->where('company_id', $company_id);
