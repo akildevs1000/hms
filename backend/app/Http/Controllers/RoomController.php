@@ -346,7 +346,7 @@ class RoomController extends Controller
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 1);
-                // $q->where('advance_price', '>', 0); //new line
+                $q->where('advance_price', '>', 0); //new line
                 $q->where('company_id', $company_id);
             })->get();
 
