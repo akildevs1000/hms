@@ -410,6 +410,7 @@ class RoomController extends Controller
         ];
 
         $model = BookedRoom::query();
+
         $roomIds = $model
             ->whereDate('check_in', '<=', $todayDate)
             ->where('booking_status', '!=', 0)
@@ -421,6 +422,7 @@ class RoomController extends Controller
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_in', '<=', $todayDate);
             })
+            ->whereNotNull('room_id')
             ->with('booking')
             ->pluck('room_id');
 
