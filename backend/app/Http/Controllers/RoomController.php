@@ -446,13 +446,6 @@ class RoomController extends Controller
                 $query->whereDate('check_in', '<=', $todayDate);
                 $query->where('booking_status', '<', 3);
                 $query->where('status', '!=', 1);
-                $query->whereHas('booking', function ($q) use ($company_id, $todayDate) {
-                    $q->where('booking_status', '!=', -1);
-                    $q->where('booking_status', '!=', 0);
-                    $q->where('booking_status', '<=', 3);
-                    $q->where('company_id', $company_id);
-                    $q->whereDate('check_in', '<=', $todayDate);
-                });
             })->get();
 
         $blockedRooms = Room::with('device')
