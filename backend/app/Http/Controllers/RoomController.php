@@ -424,7 +424,7 @@ class RoomController extends Controller
             ->with('booking')
             ->pluck('room_id');
 
-        $roomIds = array_merge($dirtyRooms->pluck('room_id')->toArray(), $roomIds->toArray());
+        // $roomIds = array_merge($dirtyRooms->pluck('room_id')->toArray(), $roomIds->toArray());
 
         $notAvailableRooms = Room::with('device')->whereIn('id', $roomIds)
             ->with('bookedRoom', function ($q) use ($company_id, $request, $todayDate) {
@@ -438,12 +438,26 @@ class RoomController extends Controller
 
         // return $dirtyRooms->get();
 
-        return [
+        $availableRooms = Room::with('device')
+            ->whereHas("bookedRoom", function ($query) use ($todayDate, $company_id) {
+                $query->whereDate('check_in', '<=', $todayDate);
+                $query->where('booking_status', '!=', 0);
+                $query->where('booking_status', '<=', 3);
+                $query->whereHas('booking', function ($q) use ($company_id, $todayDate) {
+                    $q->where('booking_status', '!=', -1);
+                    $q->where('booking_status', '!=', 0);
+                    $q->where('booking_status', '<=', 3);
+                    $q->where('company_id', $company_id);
+                    $q->whereDate('check_in', '<=', $todayDate);
+                });
+            })->get();
+
+        $result = [
             'dirtyRooms' => $dirtyRooms->count(),
             'dirtyRoomsList' => $dirtyRooms->get(),
 
             'notAvailableRooms' => $notAvailableRooms,
-            'availableRooms' => Room::with('device')->whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
+            'availableRooms' => $availableRooms,
             'blockedRooms' => Room::with('device')->whereNotIn('id', $roomIds)->where("status", 1)->where('company_id', $company_id)->get(),
             'confirmedBooking' => $confirmedBooking->count(),
             'confirmedBookingList' => $confirmedBooking->get(),
@@ -464,6 +478,8 @@ class RoomController extends Controller
             'fooForCustomers' => $fooForCustomers,
             'status' => true,
         ];
+
+        return $result;
     }
 
     public function getAvailableRoomsByDate(Request $request)
