@@ -452,13 +452,28 @@ class RoomController extends Controller
                 });
             })->get();
 
+        $blockedRooms = Room::with('device')
+            ->whereHas("bookedRoom", function ($query) use ($todayDate, $company_id) {
+                $query->whereDate('check_in', '<=', $todayDate);
+                $query->where('booking_status', '!=', 0);
+                $query->where('booking_status', '<=', 3);
+                $query->where('status', 1);
+                $query->whereHas('booking', function ($q) use ($company_id, $todayDate) {
+                    $q->where('booking_status', '!=', -1);
+                    $q->where('booking_status', '!=', 0);
+                    $q->where('booking_status', '<=', 3);
+                    $q->where('company_id', $company_id);
+                    $q->whereDate('check_in', '<=', $todayDate);
+                });
+            })->get();
+
         $result = [
             'dirtyRooms' => $dirtyRooms->count(),
             'dirtyRoomsList' => $dirtyRooms->get(),
 
             'notAvailableRooms' => $notAvailableRooms,
             'availableRooms' => $availableRooms,
-            'blockedRooms' => Room::with('device')->whereNotIn('id', $roomIds)->where("status", 1)->where('company_id', $company_id)->get(),
+            'blockedRooms' => $blockedRooms,
             'confirmedBooking' => $confirmedBooking->count(),
             'confirmedBookingList' => $confirmedBooking->get(),
             'waitingBooking' => $waitingBooking,
