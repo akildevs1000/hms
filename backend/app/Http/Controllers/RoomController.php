@@ -295,11 +295,11 @@ class RoomController extends Controller
 
         $BlockedRooms = Room::where('company_id', $company_id)
             ->where("status", Room::Blocked)
-            ->count();
+            ->get();
 
         $AvailableRooms = Room::where('company_id', $company_id)
             ->where("status", Room::Available)
-            ->count();
+            ->get();
 
         // return [
         //     $BlockedRooms, $AvailableRooms
