@@ -578,7 +578,7 @@
             {
               color: `blue`,
               text: `Arrival`,
-              value: `${checkIn.length}`,
+              value: `${expectCheckOut.length}`,
             },
             {
               color: `green`,
@@ -596,7 +596,7 @@
             {
               color: `blue`,
               text: `Checkout`,
-              value: `${checkOut.length}`,
+              value: `${dirtyRoomsList.length}`,
             },
             {
               color: `green`,
@@ -685,29 +685,38 @@
     </div>
 
     <v-row class="mt-5">
-      <v-col cols="4"></v-col>
+      <v-col cols="8"></v-col>
       <v-col cols="2">
-        <v-text-field dense label="Search..." outlined></v-text-field>
+        <v-text-field
+          clearable
+          dense
+          label="Search..."
+          outlined
+          v-model="searchQuery"
+        ></v-text-field>
       </v-col>
       <v-col cols="2">
         <v-select
           dense
           :items="[
-            { id: `arrival`, name: `Arrival` },
-            { id: `checkout`, name: `Checkout` },
+            { id: ``, name: `Select All` },
+            { id: `expected_arrival`, name: `Arrival` },
+            { id: `expected_checkout`, name: `Checkout` },
             { id: `blocked`, name: `Blocked` },
-            { id: `Ssold`, name: `Sold` },
+            // { id: `expected_arrival`, name: `Sold` },
             { id: `available`, name: `Available` },
-            { id: `compliment`, name: `Compliment` },
+            // { id: `compliment`, name: `Compliment` },
             { id: `dirty`, name: `Dirty` },
           ]"
           item-text="name"
           item-value="id"
           label="Select an item"
           outlined
+          v-model="filterQuery"
+          @change="getRoomsByFilter"
         ></v-select>
       </v-col>
-      <v-col cols="2">
+      <!-- <v-col cols="2">
         <v-select
           dense
           :items="[
@@ -723,8 +732,8 @@
           label="Select an item"
           outlined
         ></v-select>
-      </v-col>
-      <v-col cols="2">
+      </v-col> -->
+      <!-- <v-col cols="2">
         <v-select
           dense
           :items="[
@@ -737,14 +746,25 @@
           label="Select"
           outlined
         ></v-select>
-      </v-col>
+      </v-col> -->
     </v-row>
-
-    <v-row no-gutters class="mt-5">
+    <v-row
+      v-if="
+        filteredRooms(dirtyRoomsList) &&
+        filteredRooms(dirtyRoomsList).length &&
+        (filterQuery == 'dirty' || filterQuery == '')
+      "
+      no-gutters
+      class="mt-5"
+    >
       <v-col cols="12">
         <div>Occupied</div>
       </v-col>
-      <v-col cols="1" v-for="(dirtyRoom, index) in dirtyRoomsList" :key="index">
+      <v-col
+        cols="1"
+        v-for="(dirtyRoom, index) in filteredRooms(dirtyRoomsList)"
+        :key="index"
+      >
         <v-btn
           @mouseenter="showMenu = false"
           @mousedown="showMenu = false"
@@ -783,14 +803,21 @@
         </v-btn>
       </v-col>
     </v-row>
-
-    <v-row no-gutters class="mt-5">
+    <v-row
+      v-if="
+        filteredRooms(expectCheckOut) &&
+        filteredRooms(expectCheckOut).length &&
+        (filterQuery == 'expected_checkout' || filterQuery == '')
+      "
+      no-gutters
+      class="mt-5"
+    >
       <v-col cols="12">
         <div>Expected Checkout</div>
       </v-col>
       <v-col
         cols="1"
-        v-for="(noAvailableRoom, index) in expectCheckOut"
+        v-for="(noAvailableRoom, index) in filteredRooms(expectCheckOut)"
         :key="index"
       >
         <v-btn
@@ -813,12 +840,23 @@
         </v-btn>
       </v-col>
     </v-row>
-
-    <v-row no-gutters class="mt-5">
+    <v-row
+      v-if="
+        filteredRooms(expectCheckIn) &&
+        filteredRooms(expectCheckIn).length &&
+        (filterQuery == 'expected_arrival' || filterQuery == '')
+      "
+      no-gutters
+      class="mt-5"
+    >
       <v-col cols="12">
         <div>Expected Arrival</div>
       </v-col>
-      <v-col cols="1" v-for="(expCheckIn, index) in expectCheckIn" :key="index">
+      <v-col
+        cols="1"
+        v-for="(expCheckIn, index) in filteredRooms(expectCheckIn)"
+        :key="index"
+      >
         <v-btn
           :class="`success`"
           dark
@@ -839,15 +877,22 @@
         </v-btn>
       </v-col>
     </v-row>
-
-    <v-row no-gutters class="mt-5">
+    <v-row
+      v-if="
+        filteredRooms(reservedWithoutAdvance) &&
+        filteredRooms(reservedWithoutAdvance).length &&
+        (filterQuery == 'expected_arrival' || filterQuery == '')
+      "
+      no-gutters
+      class="mt-5"
+    >
       <v-col cols="12">
         <div>Reserved</div>
       </v-col>
       <v-col
         cols="1"
         :class="noAvailableRoom.id"
-        v-for="(noAvailableRoom, i) in reservedWithoutAdvance"
+        v-for="(noAvailableRoom, i) in filteredRooms(reservedWithoutAdvance)"
         :key="i"
       >
         <v-btn
@@ -875,43 +920,57 @@
         </v-btn>
       </v-col>
     </v-row>
-
-    <v-row no-gutters class="mt-5">
+    <v-row
+      v-if="
+        filteredRooms(availableRooms) &&
+        filteredRooms(availableRooms).length &&
+        (filterQuery == 'available' || filterQuery == '')
+      "
+      no-gutters
+      class="mt-5"
+    >
       <v-col cols="12">
         <div>Available</div>
       </v-col>
       <v-col
         cols="1"
         class="pa-1"
-        v-for="(availableRoom, index) in availableRooms"
+        v-for="(room, index) in filteredRooms(availableRooms)"
         :key="index"
       >
         <v-btn
           :class="`green darken-2`"
           dark
-          @contextmenu="makeNewBooking($event, availableRoom)"
-          @mouseover="mouseOverForAvailable(availableRoom)"
-          @touchstart="makeNewBookingForTouch($event, availableRoom)"
+          @contextmenu="makeNewBooking($event, room)"
+          @mouseover="mouseOverForAvailable(room)"
+          @touchstart="makeNewBookingForTouch($event, room)"
         >
           <div class="text-center">
             <v-icon>mdi mdi-home</v-icon>
             <span>
-              {{ availableRoom.room_no }}
+              {{ room.room_no }}
             </span>
           </div>
         </v-btn>
       </v-col>
     </v-row>
-    <v-row no-gutters class="mt-5">
+    <v-row
+      v-if="
+        filteredRooms(blockedRooms) &&
+        filteredRooms(blockedRooms).length &&
+        (filterQuery == 'blocked' || filterQuery == '')
+      "
+      no-gutters
+      class="mt-5"
+    >
       <v-col cols="12">
         <div>Blocked</div>
       </v-col>
-      <!-- <v-col cols="12">
-        <pre>
-          {{availableRooms}}
-        </pre>
-      </v-col> -->
-      <v-col cols="1" v-for="(blockedRoom, index) in blockedRooms" :key="index">
+      <v-col
+        cols="1"
+        v-for="(blockedRoom, index) in filteredRooms(blockedRooms)"
+        :key="index"
+      >
         <v-btn
           :class="`purple darken-2`"
           dark
@@ -1137,6 +1196,13 @@ export default {
       isIndex: true,
 
       showMenu: false,
+
+      filtered: {
+        AvailableRooms: [],
+      },
+
+      searchQuery: null,
+      filterQuery: null,
     };
   },
   watch: {
@@ -1180,9 +1246,19 @@ export default {
     }, 1000 * 60 * 2);
   },
 
-  computed: {},
-  mounted() {},
   methods: {
+    getRoomsByFilter() {},
+    filteredRooms(rooms) {
+      console.log(rooms);
+      if (!this.searchQuery) return rooms;
+
+      return rooms.filter((room) => {
+        return room.room_no
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase());
+      });
+    },
+
     get_next_day() {
       // const today = new Date();
       // const tomorrow = new Date(today);
@@ -1491,9 +1567,8 @@ export default {
           ...data.fooForCustomers.dinner,
         };
         this.dirtyRooms = data.dirtyRooms;
-        this.notAvailableRooms = data.notAvailableRooms;
-
         this.availableRooms = data.availableRooms;
+        this.notAvailableRooms = data.notAvailableRooms;
         this.blockedRooms = data.blockedRooms;
 
         this.confirmedBooking = data.confirmedBooking;
