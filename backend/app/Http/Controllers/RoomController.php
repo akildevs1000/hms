@@ -289,6 +289,7 @@ class RoomController extends Controller
 
     public function roomListForGridView(Request $request)
     {
+        $company_id = $request->company_id;
 
         $todayDate = date('Y-m-d');
         //$todayDate = $request->check_in;
@@ -297,18 +298,49 @@ class RoomController extends Controller
             return response()->json(['data' => 'Your system Date is wrong', 'status' => false]);
         }
 
-        $company_id = $request->company_id;
+        $expectCheckOut = Room::with('device')
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+                $query->whereDate('check_in', '<=', $todayDate);
+                $query->where('company_id', $company_id);
+                $query->where('booking_status', 2);
+            })
+            ->with('bookedRoom')
+            ->get();
 
-        // $foodForMembers = BookedRoom::select('id', 'booking_id', 'no_of_adult', 'no_of_child', 'no_of_baby')
-        //     ->whereHas('booking', function ($q) use ($company_id) {
-        //         $q->where('booking_status', '!=', 0);
-        //         $q->where('booking_status', 2);
-        //         $q->where('company_id', $company_id);
-        //     })->withOut('booking');
+        $expectCheckIn = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
+            $q->whereDate('check_in', '<=', $todayDate);
+            $q->where('booking_status', BookedRoom::BOOKED);
+            $q->where('company_id', $company_id);
+            $q->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('advance_price', ">", 0);
+                $q->where('company_id', $company_id);
+            });
+            $q->whereNotNull('room_id');
+            $q->where('company_id', $company_id);
+        })
+            ->with(['device', 'bookedRoom'])
+            ->get();
 
-        // $fooForCustomers = $this->getFoodForCustomers($foodForMembers);
+        $reservedWithoutAdvance = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
+            $q->whereDate('check_in', '<=', $todayDate);
+            $q->where('booking_status', BookedRoom::BOOKED);
+            $q->where('company_id', $company_id);
+            $q->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('advance_price', 0);
+                $q->where('company_id', $company_id);
+            });
+            $q->whereNotNull('room_id');
+            $q->where('company_id', $company_id);
+        })
+            ->with(['device', 'bookedRoom'])
+            ->get();
 
-        // ======================
+        $AvailableRooms = Room::where('company_id', $company_id)
+            ->where('status', '!=', Room::Blocked)
+            ->whereDoesntHave('bookedRoom.booking', fn ($q) => $q->where("company_id", $company_id))
+            ->get();
+
+        $BlockedRooms = Room::where("status", Room::Blocked)->where('company_id', $company_id)->get();
 
         $fooForCustomers = Food::whereHas('booking', function ($q) use ($company_id) {
             $q->where('booking_status', '!=', 0);
@@ -325,47 +357,6 @@ class RoomController extends Controller
             'lunch' => $this->getCustomersLunchOnly($lunch),
             'dinner' => $this->getCustomersDinnerOnly($dinner),
         ];
-
-        //booking 1
-        //checking 2
-        //checkout 3
-        //3 dirty
-        //4 maintaining
-        //0 available;
-
-        // ======================
-
-        $dirtyRooms = BookedRoom::where('booking_status', '!=', 0)
-            ->where('booking_status', 3)
-            ->where('company_id', $company_id)
-            ->orderBy('id', 'ASC');
-
-        $expectCheckInModel = BookedRoom::query();
-        $expectCheckIn = $expectCheckInModel->whereDate('check_in', $todayDate)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 1);
-                $q->where('advance_price', '>', 0); //new line
-                $q->where('company_id', $company_id);
-            })->get();
-
-        $reservedWithoutAdvanceModel = BookedRoom::query();
-        $reservedWithoutAdvance = $reservedWithoutAdvanceModel->whereDate('check_in', $todayDate)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', -1);
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 1);
-                $q->where('advance_price', '=', 0); //new line
-                $q->where('company_id', $company_id);
-            })->get();
-
-        $expectCheckOutModel = BookedRoom::query();
-        $expectCheckOut = $expectCheckOutModel->clone()->whereDate('check_out', $todayDate)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-            })->get();
 
         $checkInModel = BookedRoom::query();
         $checkIn = $checkInModel->clone() //->whereDate('check_in', $request->check_in)
@@ -409,47 +400,29 @@ class RoomController extends Controller
             $no_of_baby = array_column($checkInRooms, 'no_of_baby'),
         ];
 
-        $model = BookedRoom::query();
-
-        $roomIds = $model
-            ->whereDate('check_in', '<=', $todayDate)
-            ->where('booking_status', '!=', 0)
-            ->where('booking_status', '<=', 3)
-            ->whereHas('booking', function ($q) use ($company_id, $request, $todayDate) {
-                $q->where('booking_status', '!=', -1);
+        $dirtyRooms = Room::with(['device', 'bookedRoom'])
+            ->whereHas('bookedRoom', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '<=', 3);
+                $q->where('booking_status', 3);
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_in', '<=', $todayDate);
-            })
-            ->whereNotNull('room_id')
-            ->with('booking')
-            ->pluck('room_id');
-
-        $roomIds = array_merge($dirtyRooms->pluck('room_id')->toArray(), $roomIds->toArray());
-
-        $notAvailableRooms = Room::with('device')->whereIn('id', $roomIds)
-            ->with('bookedRoom', function ($q) use ($company_id, $request, $todayDate) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '<=', 4);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_in', '<=', $todayDate);
                 $q->orderBy('id', 'ASC');
-            })
-            ->get();
+            });
 
-        // return $dirtyRooms->get();
+        //booking 1
+        //checking 2
+        //checkout 3
+        //3 dirty
+        //4 maintaining
+        //0 available;
+
+        // ======================
 
         return [
             'dirtyRooms' => $dirtyRooms->count(),
             'dirtyRoomsList' => $dirtyRooms->get(),
-
-            'notAvailableRooms' => $notAvailableRooms,
-            // 'notAvailableRooms' => Room::whereIn('id', $roomIds)->with('bookedRoom.booking')->get(), //$notAvailableRooms,
-            'availableRooms' => Room::with('device')->where("status", "!=", Room::Blocked)->whereNotIn('id', $roomIds)->where('company_id', $company_id)->get(),
+            'availableRooms' => $AvailableRooms,
             'confirmedBooking' => $confirmedBooking->count(),
-            'blockedRooms' => Room::where("status", Room::Blocked)->where("company_id", $company_id)->get(),
-
+            'blockedRooms' => $BlockedRooms,
             'confirmedBookingList' => $confirmedBooking->get(),
             'waitingBooking' => $waitingBooking,
             'expectCheckIn' => $expectCheckIn,

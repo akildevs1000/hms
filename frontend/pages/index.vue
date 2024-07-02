@@ -481,38 +481,22 @@
               >
             </v-list-item>
 
-            <v-list-item
-              v-if="bookingStatus == 1"
-              link
-              @click="checkInDialog = true"
-            >
-              <v-list-item-title>Check In</v-list-item-title>
-            </v-list-item>
-
-            <v-list-item
-              v-else-if="bookingStatus == 2"
-              link
-              @click="get_check_out"
-            >
-              <v-list-item-title>Check Out</v-list-item-title>
-            </v-list-item>
-
-            <div v-else-if="bookingStatus == 3">
-              <v-list-item link @click="setAvailable">
-                <v-list-item-title>Make Available</v-list-item-title>
+            <template v-if="bookingStatus == 1">
+              <v-list-item link @click="checkInDialog = true">
+                <v-list-item-title>Check In</v-list-item-title>
               </v-list-item>
-              <!-- <v-list-item link @click="setMaintenance">
-                <v-list-item-title>Make Maintenance</v-list-item-title>
-              </v-list-item> -->
-            </div>
-
-            <div v-else>
-              <v-list-item link @click="setAvailable">
-                <v-list-item-title>Make Available</v-list-item-title>
+              <v-list-item link @click="cancelDialog = true">
+                <v-list-item-title>Cancel Room</v-list-item-title>
               </v-list-item>
-            </div>
+              <v-list-item link @click="payingAdvance = true">
+                <v-list-item-title>Pay Advance </v-list-item-title>
+              </v-list-item>
+            </template>
 
-            <div v-if="bookingStatus == 2">
+            <template v-else-if="bookingStatus == 2">
+              <v-list-item link @click="get_check_out">
+                <v-list-item-title>Check Out</v-list-item-title>
+              </v-list-item>
               <v-list-item link @click="postingDialog = true">
                 <v-list-item-title>Posting</v-list-item-title>
               </v-list-item>
@@ -524,23 +508,6 @@
               <v-list-item link @click="viewBillingDialog">
                 <v-list-item-title>View Billing</v-list-item-title>
               </v-list-item>
-            </div>
-            <v-list-item
-              link
-              @click="payingAdvance = true"
-              v-if="bookingStatus <= 2 && checkData.paid_by != 2"
-            >
-              <v-list-item-title>Pay Advance </v-list-item-title>
-            </v-list-item>
-
-            <v-list-item
-              link
-              @click="cancelDialog = true"
-              v-if="bookingStatus == 1"
-            >
-              <v-list-item-title>Cancel Room</v-list-item-title>
-            </v-list-item>
-            <div v-if="bookingStatus == 2">
               <v-list-item
                 link
                 @click="cancelCheckInDialog = true"
@@ -550,7 +517,16 @@
                   >Cancel Check-in(admin)
                 </v-list-item-title>
               </v-list-item>
-            </div>
+            </template>
+
+            <template v-else-if="bookingStatus == 3">
+              <v-list-item link @click="setAvailable">
+                <v-list-item-title>Make Available</v-list-item-title>
+              </v-list-item>
+              <!-- <v-list-item link @click="setMaintenance">
+                <v-list-item-title>Make Maintenance</v-list-item-title>
+              </v-list-item> -->
+            </template>
           </v-list-item-group>
         </v-list>
       </v-menu>
@@ -596,7 +572,7 @@
     <div class="d-flex mt-10">
       <div class="">
         <div class="text-left pl-5">Arrival</div>
-        <TestChart
+        <Donut
           size="240px"
           :labels="[
             {
@@ -614,7 +590,7 @@
       </div>
       <div class="">
         <div class="text-left pl-5">Checkout</div>
-        <TestChart
+        <Donut
           size="240px"
           :labels="[
             {
@@ -632,7 +608,7 @@
       </div>
       <div class="">
         <div class="text-left pl-5">In House</div>
-        <TestChart
+        <Donut
           size="240px"
           :labels="[
             {
@@ -650,7 +626,7 @@
       </div>
       <div class="">
         <div class="text-left pl-5">Room Status</div>
-        <TestChart
+        <Donut
           size="240px"
           :labels="[
             {
@@ -683,13 +659,15 @@
       </div>
       <div class="">
         <div class="text-left pl-5">Food Order</div>
-        <TestChart
+        <Donut
           size="240px"
           :labels="[
             {
               color: `blue`,
               text: `Breakfast`,
-              value: `${onlyBreakfast.adult + onlyBreakfast.child + onlyBreakfast.baby}`,
+              value: `${
+                onlyBreakfast.adult + onlyBreakfast.child + onlyBreakfast.baby
+              }`,
             },
             {
               color: `green`,
@@ -766,31 +744,66 @@
       <v-col cols="12">
         <div>Occupied</div>
       </v-col>
-      <v-col
-        cols="1"
-        v-for="(noAvailableRoom, index) in notAvailableRooms"
-        :key="index"
-      >
-        <v-btn :class="`red darken-2`" dark>
+      <v-col cols="1" v-for="(dirtyRoom, index) in dirtyRoomsList" :key="index">
+        <v-btn
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="
+            touchstart(
+              $event,
+              dirtyRoom && dirtyRoom.booked_room && dirtyRoom.booked_room.id,
+              dirtyRoom &&
+                dirtyRoom.booked_room &&
+                dirtyRoom.booked_room.booking &&
+                dirtyRoom.booked_room.booking.booking_status
+            )
+          "
+          :elevation="0"
+          @mouseover="
+            mouseOver(
+              dirtyRoom && dirtyRoom.booked_room && dirtyRoom.booked_room.id,
+              dirtyRoom &&
+                dirtyRoom.booked_room &&
+                dirtyRoom.booked_room.booking &&
+                dirtyRoom.booked_room.booking.booking_status
+            )
+          "
+          @dblclick="dblclick"
+          :class="`red darken-2`"
+          dark
+        >
           <div class="text-center">
             <v-icon>mdi mdi-home</v-icon>
             <span>
-              {{ noAvailableRoom.room_no }}
+              {{ dirtyRoom.room_no }}
             </span>
           </div>
         </v-btn>
       </v-col>
     </v-row>
+
     <v-row no-gutters class="mt-5">
       <v-col cols="12">
         <div>Expected Checkout</div>
       </v-col>
       <v-col
         cols="1"
-        v-for="(noAvailableRoom, index) in notAvailableRooms"
+        v-for="(noAvailableRoom, index) in expectCheckOut"
         :key="index"
       >
-        <v-btn :class="`orange darken-2`" dark>
+        <v-btn
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="handleTouchstart($event, noAvailableRoom)"
+          @mouseover="handleMouseOver(noAvailableRoom)"
+          @dblclick="dblclick"
+          :class="`orange darken-2`"
+          dark
+        >
           <div class="text-center">
             <v-icon>mdi mdi-home</v-icon>
             <span>
@@ -805,63 +818,36 @@
       <v-col cols="12">
         <div>Expected Arrival</div>
       </v-col>
-      <v-col
-        cols="1"
-        v-for="(noAvailableRoom, index) in notAvailableRooms"
-        :key="index"
-      >
-        <v-btn :class="`success`" dark>
+      <v-col cols="1" v-for="(expCheckIn, index) in expectCheckIn" :key="index">
+        <v-btn
+          :class="`success`"
+          dark
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="handleTouchstart($event, expCheckIn)"
+          @mouseover="handleMouseOver(expCheckIn)"
+          @dblclick="dblclick"
+        >
           <div class="text-center">
             <v-icon>mdi mdi-home</v-icon>
             <span>
-              {{ noAvailableRoom.room_no }}
+              {{ expCheckIn.room_no }}
             </span>
           </div>
         </v-btn>
       </v-col>
     </v-row>
+
     <v-row no-gutters class="mt-5">
       <v-col cols="12">
-        <div>Available</div>
+        <div>Reserved</div>
       </v-col>
       <v-col
         cols="1"
-        v-for="(noAvailableRoom, index) in notAvailableRooms"
-        :key="index"
-      >
-        <v-btn :class="`green darken-2`" dark>
-          <div class="text-center">
-            <v-icon>mdi mdi-home</v-icon>
-            <span>
-              {{ noAvailableRoom.room_no }}
-            </span>
-          </div>
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row no-gutters class="mt-5">
-      <v-col cols="12">
-        <div>Blocked</div>
-      </v-col>
-      <v-col
-        cols="1"
-        v-for="(noAvailableRoom, index) in notAvailableRooms"
-        :key="index"
-      >
-        <v-btn :class="`purple darken-2`" dark>
-          <div class="text-center">
-            <v-icon>mdi mdi-home</v-icon>
-            <span>
-              {{ noAvailableRoom.room_no }}
-            </span>
-          </div>
-        </v-btn>
-      </v-col>
-    </v-row>
-    <!-- <v-row>
-      <v-col
         :class="noAvailableRoom.id"
-        v-for="(noAvailableRoom, i) in notAvailableRooms"
+        v-for="(noAvailableRoom, i) in reservedWithoutAdvance"
         :key="i"
       >
         <v-btn
@@ -870,12 +856,10 @@
           @mouseup="showMenu = false"
           @contextmenu="show"
           @touchstart="handleTouchstart($event, noAvailableRoom)"
-          :elevation="0"
           @mouseover="handleMouseOver(noAvailableRoom)"
           @dblclick="dblclick"
-          :class="getButtonClass(noAvailableRoom)"
+          :class="`blue`"
           dark
-          :style="`background-image: ${getBackgroundImage(noAvailableRoom)}`"
         >
           <div class="text-center">
             <v-icon
@@ -890,31 +874,60 @@
           </div>
         </v-btn>
       </v-col>
-    </v-row> -->
-    <!-- <v-row>
-        <v-col
-          :class="room.id"
-          v-for="(room, index) in availableRooms"
-          :key="index"
+    </v-row>
+
+    <v-row no-gutters class="mt-5">
+      <v-col cols="12">
+        <div>Available</div>
+      </v-col>
+      <v-col
+        cols="1"
+        class="pa-1"
+        v-for="(availableRoom, index) in availableRooms"
+        :key="index"
+      >
+        <v-btn
+          :class="`green darken-2`"
+          dark
+          @contextmenu="makeNewBooking($event, availableRoom)"
+          @mouseover="mouseOverForAvailable(availableRoom)"
+          @touchstart="makeNewBookingForTouch($event, availableRoom)"
         >
-          <v-card
-            @contextmenu="makeNewBooking($event, room)"
-            @mouseover="mouseOverForAvailable(room)"
-            @touchstart="makeNewBookingForTouch($event, room)"
-            :elevation="0"
-            :style="
-              room.status == 1
-                ? 'background-color: #D60078'
-                : 'background-color: #32a15c'
-            "
-            dark
-          >
-            <div class="text-center">
-              <v-icon left>mdi mdi-home</v-icon> {{ room.room_no }}
-            </div>
-          </v-card>
-        </v-col>
-      </v-row> -->
+          <div class="text-center">
+            <v-icon>mdi mdi-home</v-icon>
+            <span>
+              {{ availableRoom.room_no }}
+            </span>
+          </div>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row no-gutters class="mt-5">
+      <v-col cols="12">
+        <div>Blocked</div>
+      </v-col>
+      <!-- <v-col cols="12">
+        <pre>
+          {{availableRooms}}
+        </pre>
+      </v-col> -->
+      <v-col cols="1" v-for="(blockedRoom, index) in blockedRooms" :key="index">
+        <v-btn
+          :class="`purple darken-2`"
+          dark
+          @contextmenu="makeNewBooking($event, blockedRoom)"
+          @mouseover="mouseOverForAvailable(blockedRoom)"
+          @touchstart="makeNewBookingForTouch($event, blockedRoom)"
+        >
+          <div class="text-center">
+            <v-icon>mdi mdi-home</v-icon>
+            <span>
+              {{ blockedRoom.room_no }}
+            </span>
+          </div>
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 
   <div v-else>
@@ -1076,6 +1089,7 @@ export default {
       confirmedBookingList: [],
       notAvailableRooms: [],
       availableRooms: [],
+      blockedRooms: [],
       checkIn: [],
       checkOut: [],
       reservedWithoutAdvance: [],
@@ -1283,15 +1297,6 @@ export default {
     isDeviceStatusActive(room) {
       return room.device?.latest_status === 1;
     },
-    renderChartData() {
-      let arr = [
-        this.expectCheckIn.length,
-        this.expectCheckOut.length,
-        this.notAvailableRooms.length,
-        this.availableRooms.length,
-      ];
-      return arr;
-    },
 
     caps(str) {
       if (str == "" || str == null) {
@@ -1341,11 +1346,6 @@ export default {
     closeNewCheckin() {
       this.newBookingRoom = false;
       this.NewBooking = false;
-    },
-
-    get_availableRooms(rooms) {
-      let numberOfBlockedRooms = rooms.filter((e) => e.status == 1).length;
-      return this.availableRooms.length - numberOfBlockedRooms;
     },
 
     get_data(jsEvent = null) {
@@ -1492,7 +1492,10 @@ export default {
         };
         this.dirtyRooms = data.dirtyRooms;
         this.notAvailableRooms = data.notAvailableRooms;
+
         this.availableRooms = data.availableRooms;
+        this.blockedRooms = data.blockedRooms;
+
         this.confirmedBooking = data.confirmedBooking;
         this.waitingBooking = data.waitingBooking;
         this.expectCheckIn = data.expectCheckIn;
@@ -1503,7 +1506,6 @@ export default {
         this.dirtyRoomsList = data.dirtyRoomsList;
         this.reservedWithoutAdvance = data.reservedWithoutAdvance;
 
-        this.renderChartData();
         this.members = {
           ...data.members,
         };
@@ -1519,23 +1521,6 @@ export default {
       this.get_data();
     },
 
-    getRelaventColor(status) {
-      switch (parseInt(status)) {
-        case 1:
-          return "booked";
-        case 2:
-          return "checkedIn";
-        case 3:
-          return "checkedOut";
-        case 4:
-          return "background";
-        case 5:
-          return "grey";
-        default:
-          return "available";
-      }
-    },
-
     viewBillingDialog() {
       let id = this.bookingId;
       this.$router.push(`/customer/details/${id}`);
@@ -1543,36 +1528,6 @@ export default {
 
     get_event_by_db_click() {
       this.$router.push(`/customer/details/${this.bookingId}`);
-    },
-
-    store_check_in(data) {
-      if (
-        // this.new_payment == "" ||
-        // this.new_payment == 0 ||
-        data.document ? "" : this.document == null
-      ) {
-        alert("Enter required fields");
-        return;
-      }
-      this.loading = true;
-      let bookingId = data.id;
-      let payload = {
-        new_payment: this.new_payment,
-        booking_id: data.id,
-        remaining_price: data.remaining_price,
-        payment_mode_id: data.payment_mode_id,
-      };
-      this.$axios
-        .post("/check_in_room", payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.errors = data.errors;
-          } else {
-            this.succuss(data, true, false);
-            data.document ? "" : this.store_document(bookingId);
-          }
-        })
-        .catch((e) => console.log(e));
     },
     changeCheckInAdminProcess() {
       if (this.$auth.user.role.name.toLowerCase() != "admin") {
@@ -1691,49 +1646,6 @@ export default {
           this.response = data.message;
         })
         .catch((err) => console.log(err));
-    },
-
-    store_check_out() {
-      this.loading = true;
-      let payload = {
-        booking_id: this.checkData.id,
-        grand_remaining_price: this.checkData.grand_remaining_price,
-        remaining_price: this.checkData.remaining_price,
-        full_payment: this.full_payment,
-        payment_mode_id: this.checkData.payment_mode_id,
-        company_id: this.$auth.user.company.id,
-        isPrintInvoice: this.isPrintInvoice,
-      };
-      this.$axios
-        .post("/check_out_room", payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.errors = data.errors;
-          } else {
-            this.succuss(data, false, false, true);
-            if (this.isPrintInvoice) {
-              this.redirect_to_invoice(data.bookingId);
-            }
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    redirect_to_invoice(id) {
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `http://127.0.0.1:8000/api/invoice/${id}`);
-      document.body.appendChild(element);
-      element.click();
-    },
-
-    preview(file) {
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", file);
-      document.body.appendChild(element);
-      element.click();
-      // document.body.removeChild(element);
     },
 
     succuss(
