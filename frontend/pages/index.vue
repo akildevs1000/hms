@@ -683,7 +683,6 @@
         />
       </div>
     </div>
-
     <v-row class="mt-5">
       <v-col cols="8"></v-col>
       <v-col cols="2">
@@ -1202,7 +1201,7 @@ export default {
       },
 
       searchQuery: null,
-      filterQuery: null,
+      filterQuery: ``,
     };
   },
   watch: {
