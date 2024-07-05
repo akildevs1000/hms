@@ -669,7 +669,7 @@ class ReportController extends Controller
     {
         $bookingModel = (new Booking)->setConnection('second_pgsql');
 
-        return $bookingModel->getConnectionName();
+        // return $bookingModel->getConnectionName();
 
         $data = $bookingModel->whereCompanyId($request->company_id)
             //->whereMonth('check_in', $request->month)
