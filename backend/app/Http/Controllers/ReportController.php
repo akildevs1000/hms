@@ -669,18 +669,20 @@ class ReportController extends Controller
     {
         $bookingModel = (new Booking)->setConnection('second_pgsql');
 
-        // return $bookingModel->getConnectionName();
-
-        // Use a different connection for the Booking model
-        $bookingModel = (new Booking)->setConnection('second_pgsql');
-
-        // Perform the query with grouping, counting rooms, and summing total price
         $data = $bookingModel->whereCompanyId($request->company_id)
             ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
             ->where('booking_status', '!=', -1)
             ->selectRaw('source, COUNT(*) as room_count, SUM(total_price) as total_price_sum')
             ->groupBy('source')
             ->get();
+
+        $totalSum = $data->sum('total_price_sum'); // Total sum of total_price across all sources
+
+        // Calculate percentage for each source
+        foreach ($data as $item) {
+            $percentage = ($item->total_price_sum / $totalSum) * 100;
+            $item->percentage = round($percentage, 2); // Rounded to 2 decimal places
+        }
 
         return $data;
 
