@@ -667,10 +667,6 @@ class ReportController extends Controller
 
     public function reportBySource(Request $request)
     {
-        $result = [];
-
-        $result["colors"] = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#ffbb78", "#aec7e8", "#ff9896"];
-
 
         $bookingModel = (new Booking)->setConnection('second_pgsql');
 
@@ -689,10 +685,24 @@ class ReportController extends Controller
             $item->percentage = round($percentage, 2) . "%"; // Rounded to 2 decimal places
         }
 
+        $colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#ffbb78", "#aec7e8", "#ff9896"];
 
-        $result["data"] = $data;
+        foreach ($data as $index => &$item) {
+            // Calculate percentage
+            $percentage = ($item['revenue'] / $totalSum) * 100;
+            $item['percentage'] = round($percentage, 2) . "%"; // Rounded to 2 decimal places
 
-        return $result;
+            // Apply colors
+            $colorIndex = $index % count($colors);
+            $item['background'] = $colors[$colorIndex];
+            $item['color'] = $colors[$colorIndex];
+        }
+
+
+        return [
+            "colors" => $colors,
+            "data" => $data,
+        ];
 
         // $response = Http::withoutVerifying()->get('https://backend.ezhms.com/api/get_source_rate_by_month', [
         //     'company_id' => 1,
