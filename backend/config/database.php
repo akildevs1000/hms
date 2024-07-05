@@ -81,6 +81,24 @@ return [
             ]
         ],
 
+        'second_pgsql' => [
+            'driver' => 'pgsql',
+            'url' => env('SECOND_DATABASE_URL'),
+            'host' => env('SECOND_DB_HOST', '127.0.0.1'),
+            'port' => env('SECOND_DB_PORT', '5432'),
+            'database' => env('SECOND_DB_DATABASE', 'forge'),
+            'username' => env('SECOND_DB_USERNAME', 'forge'),
+            'password' => env('SECOND_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+            'dump' => [
+                'add_extra_option' => '--format=c', // and any other pg_dump flags
+            ]
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),

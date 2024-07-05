@@ -667,7 +667,9 @@ class ReportController extends Controller
 
     public function reportBySource(Request $request)
     {
-        $data = Booking::whereCompanyId($request->company_id)
+        $bookingModel = (new Booking)->setConnection('second_pgsql');
+
+        $data = $bookingModel->whereCompanyId($request->company_id)
             //->whereMonth('check_in', $request->month)
             ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
             ->where('booking_status', '!=', -1)
