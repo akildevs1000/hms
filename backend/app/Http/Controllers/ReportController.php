@@ -667,7 +667,10 @@ class ReportController extends Controller
 
     public function reportBySource(Request $request)
     {
-        return array(
+        $result = [];
+        $result["colors"] = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#ffbb78", "#aec7e8", "#ff9896"];
+
+        $result["data"] = array(
             0 =>
             array(
                 'source' => 'Asian paints limited',
@@ -851,6 +854,9 @@ class ReportController extends Controller
                 'check_out_date' => '1970-01-01 05:30',
             ),
         );
+
+
+        return $result;
         $bookingModel = (new Booking)->setConnection('second_pgsql');
 
         $data = $bookingModel->whereCompanyId($request->company_id)
