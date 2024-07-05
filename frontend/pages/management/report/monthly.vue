@@ -43,6 +43,7 @@
       </v-col> -->
       <v-col md="4" class="p-2 text-center">
         <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
+
         <!-- <DateRangePicker :disabled="false" key="taxable" :DPStart_date="filter_from_date" :DPEnd_date="filter_to_date"
           column="date_range" @selected-dates="handleDatesFilter" /> -->
       </v-col>

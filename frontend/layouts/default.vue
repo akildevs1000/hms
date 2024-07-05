@@ -317,6 +317,13 @@ export default {
           to: "/reports",
           menu: "dashboard",
         },
+        // {
+        //   topMenu: "reports",
+        //   icon: "mdi-chart-areaspline",
+        //   title: "Old",
+        //   to: "/management/report/monthly",
+        //   menu: "dashboard",
+        // },
         {
           topMenu: "dashboard",
           icon: "mdi-bed",

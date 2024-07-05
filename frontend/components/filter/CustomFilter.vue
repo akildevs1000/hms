@@ -1,13 +1,9 @@
 <template>
-  <div>
-
-    <v-row>
-      <!-- <v-col xs="12" sm="12" md="2" cols="12">
-        <v-text-field class="" label="Search..." dense outlined flat append-icon="mdi-magnify" v-model="search"
-          hide-details></v-text-field>
-      </v-col> -->
-      <v-col xs="12" sm="12" md="4" cols="12">
-        <v-select v-model="filterType" :items="[
+  <v-row>
+    <v-col :cols="filterType == 5 ? '6' : ''">
+      <v-select
+        v-model="filterType"
+        :items="[
           {
             id: 1,
             name: 'Today',
@@ -28,45 +24,35 @@
             id: 5,
             name: 'Custom',
           },
-        ]" dense placeholder="Date" outlined :hide-details="true" item-text="name" item-value="id"></v-select>
-      </v-col>
-      <v-col md="6" v-if="filterType == 5" class="box">
-
-        <date-picker value-type="format" format="YYYY-MM-DD" type="date" v-model="time3" @change="CustomFilter()"
-          range></date-picker>
-
-      </v-col>
-      <!-- <v-col md="3" v-if="filterType == 5">
-        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-          offset-y min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
-              class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
-          </template>
-          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col md="3" v-if="filterType == 5">
-        <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y
-          min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense class="custom-text-box shadow-none"
-              solo flat label="To" :hide-details="true"></v-text-field>
-          </template>
-          <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"></v-date-picker>
-        </v-menu>
-      </v-col> -->
-    </v-row>
-  </div>
+        ]"
+        dense
+        placeholder="Date"
+        outlined
+        :hide-details="true"
+        item-text="name"
+        item-value="id"
+      ></v-select>
+    </v-col>
+    <v-col cols="6" v-if="filterType == 5">
+      <date-picker
+        style="width: 100%"
+        value-type="format"
+        format="YYYY-MM-DD"
+        type="date"
+        v-model="time3"
+        @change="CustomFilter()"
+        range
+      ></date-picker>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-import DatePicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
+import DatePicker from "vue2-datepicker";
+import "vue2-datepicker/index.css";
 export default {
   components: {
-
-    DatePicker
+    DatePicker,
   },
   props: ["defaultFilterType"],
   data() {
@@ -87,40 +73,13 @@ export default {
 
   watch: {
     filterType() {
-
       this.showTimePanel = true;
       this.FilterData();
-
-
-
-      // if (this.filterType == 5) {
-      //   setTimeout(() => {
-      //     document.addEventListener("DOMContentLoaded", function () {
-      //       const textBox = document.querySelector('.mx-input');
-
-      //       if (textBox) {
-      //         textBox.focus();
-      //       }
-      //     });
-      //   }, 5000);
-
-      // }
     },
-    // search() {
-    //   this.FilterData();
-    // },
-    // from_date() {
-    //   this.FilterData();
-    // },
-    // to_date() {
-    //   this.FilterData();
-    // },
   },
 
   mounted() {
-
-    if (this.filterType == 5)
-      document.querySelector('.mx-input').focus();
+    if (this.filterType == 5) document.querySelector(".mx-input").focus();
   },
   created() {
     if (this.defaultFilterType) {
@@ -133,9 +92,6 @@ export default {
     this.to_date = today.toISOString().slice(0, 10);
 
     this.time3 = [this.from_date, this.to_date];
-
-
-
   },
   methods: {
     commonMethod() {
@@ -154,33 +110,24 @@ export default {
         };
 
         this.$emit("filter-attr", data);
-
-
       }
     },
     FilterData() {
-
       this.from_date = this.time3[0];
       this.to_date = this.time3[1];
       const today = new Date();
 
       if (this.filterType == 1) {
-
         // Get today's date
         this.from_date = today.toISOString().slice(0, 10);
         this.to_date = today.toISOString().slice(0, 10);
-
-      }
-      else if (this.filterType == 2) {
-
+      } else if (this.filterType == 2) {
         // Get yesterday's date
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
         this.from_date = yesterday.toISOString().slice(0, 10);
         this.to_date = yesterday.toISOString().slice(0, 10);
-      }
-      else if (this.filterType == 3) {
-
+      } else if (this.filterType == 3) {
         // Get the first day of the current week (Sunday)
         const firstDayOfWeek = new Date(today);
         firstDayOfWeek.setDate(today.getDate() - today.getDay());
@@ -191,23 +138,22 @@ export default {
 
         this.from_date = firstDayOfWeek.toISOString().slice(0, 10);
         this.to_date = lastDayOfWeek.toISOString().slice(0, 10);
-      }
-      else if (this.filterType == 4) {
-
-
+      } else if (this.filterType == 4) {
         // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
         // // Get the last day of the current month
         // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-
         // this.from_date = firstDayOfMonth.toISOString().slice(0, 10);
         // this.to_date = lastDayOfMonth.toISOString().slice(0, 10);
 
-        this.from_date = this.formatDate(new Date(today.getFullYear(), today.getMonth(), 1));
-        this.to_date = this.formatDate(new Date(today.getFullYear(), today.getMonth() + 1, 0));
-      }
-      else if (this.filterType == 5) {
+        this.from_date = this.formatDate(
+          new Date(today.getFullYear(), today.getMonth(), 1)
+        );
+        this.to_date = this.formatDate(
+          new Date(today.getFullYear(), today.getMonth() + 1, 0)
+        );
+      } else if (this.filterType == 5) {
         this.time3 = [];
 
         return;
@@ -222,22 +168,28 @@ export default {
         };
 
         this.$emit("filter-attr", data);
-
       }
-
     },
 
     formatDate(date) {
       var day = date.getDate();
       var month = date.getMonth() + 1; // Months are zero-based
       var year = date.getFullYear();
-      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+      return (
+        year +
+        "-" +
+        (month < 10 ? "0" : "") +
+        month +
+        "-" +
+        (day < 10 ? "0" : "") +
+        day
+      );
     },
   },
 };
 </script>
- 
-<style  >
+
+<style>
 .mx-input {
   height: 40px !important;
   border: 1px solid #9e9e9e !important;
@@ -249,4 +201,3 @@ export default {
   text-align: center !important;
 }
 </style>
- 
