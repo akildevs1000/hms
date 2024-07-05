@@ -674,16 +674,16 @@ class ReportController extends Controller
         $to = date("Y-m-d 23:59:59");
 
         if (request()->filled("filter_from_date")) {
-            $from = request()->filled("filter_from_date");
+            $from = request("filter_from_date");
         }
         if (request()->filled("filter_to_date")) {
-            $to = request()->filled("filter_to_date");
+            $to = request("filter_to_date");
         }
 
 
         $data = $bookingModel->whereCompanyId(1)
 
-            ->whereBetween('booking_date', [$to,$from])
+            ->whereBetween('booking_date', [$to, $from])
             ->where('booking_status', '!=', -1)
             ->selectRaw('source, COUNT(*) as no_of_room, CAST(SUM(total_price) AS DECIMAL(10,2)) as revenue')
             ->groupBy('source')
