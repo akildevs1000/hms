@@ -670,193 +670,7 @@ class ReportController extends Controller
         $result = [];
         $result["colors"] = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#ffbb78", "#aec7e8", "#ff9896"];
 
-        $result["data"] = array(
-            0 =>
-            array(
-                'source' => 'Asian paints limited',
-                'no_of_room' => 2,
-                'revenue' => '5500.00',
-                'percentage' => 2.68,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#1f77b4',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            1 =>
-            array(
-                'source' => 'Express holidays',
-                'no_of_room' => 6,
-                'revenue' => '18000.00',
-                'percentage' => 8.76,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#ff7f0e',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            2 =>
-            array(
-                'source' => 'Festo india pvt ltd,chennai',
-                'no_of_room' => 1,
-                'revenue' => '16500.00',
-                'percentage' => 8.03,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#2ca02c',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            3 =>
-            array(
-                'source' => 'Garudadri global voyages pvt ltd',
-                'no_of_room' => 2,
-                'revenue' => '6800.00',
-                'percentage' => 3.31,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#d62728',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            4 =>
-            array(
-                'source' => 'Gulf oil lubricants india limited',
-                'no_of_room' => 1,
-                'revenue' => '5000.00',
-                'percentage' => 2.43,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#9467bd',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            5 =>
-            array(
-                'source' => 'Jsw retail and distribution limited',
-                'no_of_room' => 1,
-                'revenue' => '2300.00',
-                'percentage' => 1.12,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#8c564b',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            6 =>
-            array(
-                'source' => 'Mmt online',
-                'no_of_room' => 2,
-                'revenue' => '6763.00',
-                'percentage' => 3.29,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#e377c2',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            7 =>
-            array(
-                'source' => 'Online - goibibo',
-                'no_of_room' => 2,
-                'revenue' => '4488.00',
-                'percentage' => 2.18,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#7f7f7f',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            8 =>
-            array(
-                'source' => 'Optimus corporate travel solutions',
-                'no_of_room' => 1,
-                'revenue' => '2500.00',
-                'percentage' => 1.22,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#bcbd22',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            9 =>
-            array(
-                'source' => 'Prithvi inner wears private limited',
-                'no_of_room' => 1,
-                'revenue' => '3000.00',
-                'percentage' => 1.46,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#17becf',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            10 =>
-            array(
-                'source' => 'Sarto electro equipments pvt. ltd.',
-                'no_of_room' => 1,
-                'revenue' => '2300.00',
-                'percentage' => 1.12,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#ffbb78',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            11 =>
-            array(
-                'source' => 'Shriram finance ltd.',
-                'no_of_room' => 1,
-                'revenue' => '2300.00',
-                'percentage' => 1.12,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#aec7e8',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-            12 =>
-            array(
-                'source' => 'walking',
-                'no_of_room' => 30,
-                'revenue' => '130020.00',
-                'percentage' => 63.28,
-                'resourceId' => '',
-                'title' => '',
-                'background' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
-                'color' => '#ff9896',
-                'status' => '',
-                'check_in_date' => '1970-01-01 05:30',
-                'check_out_date' => '1970-01-01 05:30',
-            ),
-        );
 
-
-        return $result;
         $bookingModel = (new Booking)->setConnection('second_pgsql');
 
         $data = $bookingModel->whereCompanyId($request->company_id)
@@ -874,36 +688,26 @@ class ReportController extends Controller
             $item->percentage = round($percentage, 2) . "%"; // Rounded to 2 decimal places
         }
 
-        return $data;
 
-        $response = Http::withoutVerifying()->get('https://backend.ezhms.com/api/get_source_rate_by_month', [
-            'company_id' => 1,
-            'month' => 7,
-            'filter_from_date' => '2024-07-01',
-            'filter_to_date' => '2024-07-31',
-        ]);
-
-        // Check if the request was successful
-        if ($response->successful()) {
-            // Handle the response data
-            $data = $response->json();
-            return response()->json($data);
-        } else {
-            // Handle the error
-            return response()->json(['error' => 'Failed to fetch data'], $response->status());
-        }
-
-        $data = Booking::whereCompanyId($request->company_id)
-            //->whereMonth('check_in', $request->month)
-            ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
-            ->where('booking_status', '!=', -1)
-            ->select('source', 'total_price')
-            ->get()
-            ->groupBy('source')
-            ->map(function ($group) {
-                return $group->sum('total_price');
-            });
+        $result["data"] = $data;
 
         return $data;
+
+        // $response = Http::withoutVerifying()->get('https://backend.ezhms.com/api/get_source_rate_by_month', [
+        //     'company_id' => 1,
+        //     'month' => 7,
+        //     'filter_from_date' => '2024-07-01',
+        //     'filter_to_date' => '2024-07-31',
+        // ]);
+
+        // // Check if the request was successful
+        // if ($response->successful()) {
+        //     // Handle the response data
+        //     $data = $response->json();
+        //     return response()->json($data);
+        // } else {
+        //     // Handle the error
+        //     return response()->json(['error' => 'Failed to fetch data'], $response->status());
+        // }
     }
 }
