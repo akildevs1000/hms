@@ -31,4 +31,6 @@ include 'followup.php';
 
 include 'template.php';
 
+include 'report.php';
+
 

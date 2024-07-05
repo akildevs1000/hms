@@ -11,6 +11,7 @@ use App\Models\Room;
 use App\Models\Taxable;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class ReportController extends Controller
 {
@@ -662,5 +663,49 @@ class ReportController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function reportBySource(Request $request)
+    {
+        $data = Booking::whereCompanyId($request->company_id)
+            //->whereMonth('check_in', $request->month)
+            ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
+            ->where('booking_status', '!=', -1)
+            ->select('source', 'total_price')
+            ->get()
+            ->groupBy('source');
+
+
+        return $data;
+
+        $response = Http::withoutVerifying()->get('https://backend.ezhms.com/api/get_source_rate_by_month', [
+            'company_id' => 1,
+            'month' => 7,
+            'filter_from_date' => '2024-07-01',
+            'filter_to_date' => '2024-07-31',
+        ]);
+
+        // Check if the request was successful
+        if ($response->successful()) {
+            // Handle the response data
+            $data = $response->json();
+            return response()->json($data);
+        } else {
+            // Handle the error
+            return response()->json(['error' => 'Failed to fetch data'], $response->status());
+        }
+
+        $data = Booking::whereCompanyId($request->company_id)
+            //->whereMonth('check_in', $request->month)
+            ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
+            ->where('booking_status', '!=', -1)
+            ->select('source', 'total_price')
+            ->get()
+            ->groupBy('source')
+            ->map(function ($group) {
+                return $group->sum('total_price');
+            });
+
+        return $data;
     }
 }
