@@ -670,11 +670,11 @@ class ReportController extends Controller
         $bookingModel = (new Booking)->setConnection('second_pgsql');
 
         $data = $bookingModel->whereCompanyId($request->company_id)
-            ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
-            ->where('booking_status', '!=', -1)
-            ->selectRaw('source, COUNT(*) as no_of_room, SUM(total_price) as revenue')
-            ->groupBy('source')
-            ->get();
+        ->whereBetween('booking_date', [$request->filter_from_date . ' 00:00:00', $request->filter_to_date . ' 23:59:59'])
+        ->where('booking_status', '!=', -1)
+        ->selectRaw('source, COUNT(*) as no_of_room, CAST(SUM(total_price) AS DECIMAL(10,2)) as revenue')
+        ->groupBy('source')
+        ->get();
 
         $totalSum = $data->sum('revenue'); // Total sum of total_price across all sources
 
