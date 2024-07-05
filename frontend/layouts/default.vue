@@ -103,10 +103,12 @@
         </v-col>
       </v-row>
     </v-navigation-drawer>
-    <v-main>
-      <v-container fluid>
-        <nuxt />
-      </v-container>
+    <v-main class="main_bg">
+      <v-card class="ma-8">
+        <v-container>
+          <nuxt />
+        </v-container>
+      </v-card>
     </v-main>
 
     <v-navigation-drawer
@@ -310,44 +312,9 @@ export default {
         },
         {
           topMenu: "reports",
-          icon: "mdi-ticket-account",
-          title: "Source Report",
+          icon: "mdi-chart-areaspline",
+          title: "Analytics",
           to: "/reports",
-          menu: "dashboard",
-        },
-        {
-          topMenu: "reports",
-          icon: "mdi-wallet ",
-          title: "Payment Report",
-          to: "/reports/payment",
-          menu: "dashboard",
-        },
-        {
-          topMenu: "reports",
-          icon: "mdi-bed",
-          title: "Room Report",
-          to: "/reports/room",
-          menu: "dashboard",
-        },
-        {
-          topMenu: "reports",
-          icon: "mdi-calendar",
-          title: "Days Report",
-          to: "/reports/day",
-          menu: "dashboard",
-        },
-        {
-          topMenu: "reports",
-          icon: "mdi-cash",
-          title: "Income Report",
-          to: "/reports/income",
-          menu: "dashboard",
-        },
-        {
-          topMenu: "reports",
-          icon: "mdi-walk",
-          title: "Walkin Report",
-          to: "/reports/walkin",
           menu: "dashboard",
         },
         {

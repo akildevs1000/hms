@@ -1,6 +1,5 @@
 <template>
-  <span>
-    <v-data-table
+ <v-data-table
       dense
       :headers="headers"
       :items="foodplans"
@@ -9,12 +8,11 @@
       :footer-props="{
         itemsPerPageOptions: [100, 500, 1000],
       }"
-      class="elevation-1 pa-3"
     >
       <template v-slot:top>
         <v-toolbar flat dense class="mb-5">
           {{ Model }}
-          <v-icon color="primary" right class="mt-1" @click="getDataFromApi()"
+          <v-icon color="primary" right @click="getDataFromApi()"
             >mdi-reload</v-icon
           >
           <v-spacer></v-spacer>
@@ -68,7 +66,6 @@
         </v-menu>
       </template>
     </v-data-table>
-  </span>
 </template>
 
 <script>

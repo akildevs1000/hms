@@ -307,8 +307,7 @@
       </v-card>
     </v-dialog>
 
-    <v-card style="background: none">
-      <v-data-table
+    <v-data-table
         dense
         :headers="headers"
         :items="data"
@@ -317,12 +316,11 @@
         :footer-props="{
           itemsPerPageOptions: [10, 50, 100],
         }"
-        class="elevation-1 pa-3"
       >
         <template v-slot:top>
           <v-toolbar flat dense class="mb-5">
             {{ Model }}
-            <v-icon color="blue white--text" right class="mt-1" @click="getDataFromApi()"
+            <v-icon color="blue white--text" right @click="getDataFromApi()"
               >mdi-reload</v-icon
             >
             <v-spacer></v-spacer>
@@ -367,7 +365,6 @@
           </v-menu>
         </template>
       </v-data-table>
-    </v-card>
   </div>
   <NoAccess v-else />
 </template>

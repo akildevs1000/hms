@@ -1,19 +1,5 @@
 <template>
-  <div class="mt-5">
-    <v-row no-gutters>
-      <v-col cols="9"> {{ heading }} </v-col>
-      <v-col cols="3">
-        <v-autocomplete
-          v-model="selectedDate"
-          :items="dateOptions"
-          label="Select Date"
-          item-text="text"
-          item-value="value"
-          outlined
-          dense
-          class="red-text"
-        ></v-autocomplete>
-      </v-col>
+   <v-row no-gutters>
       <v-col cols="6">
         <table class="mt-12">
           <thead>
@@ -59,7 +45,6 @@
         </v-tabs>
       </v-col>
     </v-row>
-  </div>
 </template>
 
 <script>

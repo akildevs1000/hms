@@ -1,76 +1,60 @@
 <template>
-  <div class="mt-5">
-    <v-row no-gutters>
-      <v-col cols="9"> {{ heading }} </v-col>
-      <v-col cols="3">
-        <v-autocomplete
-          v-model="selectedDate"
-          :items="dateOptions"
-          label="Select Date"
-          item-text="text"
-          item-value="value"
-          outlined
-          dense
-          class="red-text"
-        ></v-autocomplete>
-      </v-col>
-      <v-col cols="7">
-        <table class="mt-12">
-          <thead>
-            <tr>
-              <td class="text-center"><small>COLOR</small></td>
-              <td><small>Month</small></td>
-              <td class="text-center"><small>Room sold</small></td>
-              <td class="text-center"><small>Income</small></td>
-              <td class="text-center"><small>Expenses</small></td>
-              <td class="text-center"><small>Management Expense</small></td>
-              <td class="text-center"><small>Profit</small></td>
-              <td class="text-center"><small>%</small></td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in tableData" :key="index">
-              <td class="text-center">
-                <v-icon :style="{ color: item.color, fontSize: '24px' }"
-                  >mdi-circle</v-icon
-                >
-              </td>
-              <td>{{ item.source }}</td>
-              <td class="text-center">{{ item.no_of_room }}</td>
-              <td class="text-center">{{ item.income.toFixed(2) }}</td>
-              <td class="text-center">{{ item.expense }}</td>
-              <td class="text-center">{{ item.management_expense }}</td>
-              <td class="text-center">{{ item.profit }}</td>
-              <td class="text-center">{{ item.percentage }}</td>
-            </tr>
-            <tr>
-              <td colspan="2">TOTAL</td>
-              <td class="text-center">{{ totalRooms }}</td>
-              <td class="text-center">4519785.00</td>
-              <td class="text-center">77876.00</td>
-              <td class="text-center">132428.00</td>
-              <td class="text-center">5645335</td>
-              <td class="text-center">100%</td>
-
-            </tr>
-          </tbody>
-        </table>
-      </v-col>
-      <v-col cols="5" class="text-center">
-        <!-- <highcharts :options="pieChartOptions"></highcharts> -->
-        <v-tabs v-if="!loading" right>
-          <v-tab>pie chart </v-tab>
-          <v-tab>statistical </v-tab>
-          <v-tab-item>
-            <highcharts :options="pieChartOptions"></highcharts>
-          </v-tab-item>
-          <v-tab-item>
-            <highcharts :options="barChartOptions"></highcharts>
-          </v-tab-item>
-        </v-tabs>
-      </v-col>
-    </v-row>
-  </div>
+  <v-row no-gutters>
+    <v-col cols="7">
+      <table class="mt-12">
+        <thead>
+          <tr>
+            <td class="text-center"><small>COLOR</small></td>
+            <td><small>Month</small></td>
+            <td class="text-center"><small>Room sold</small></td>
+            <td class="text-center"><small>Income</small></td>
+            <td class="text-center"><small>Expenses</small></td>
+            <td class="text-center"><small>Management Expense</small></td>
+            <td class="text-center"><small>Profit</small></td>
+            <td class="text-center"><small>%</small></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in tableData" :key="index">
+            <td class="text-center">
+              <v-icon :style="{ color: item.color, fontSize: '24px' }"
+                >mdi-circle</v-icon
+              >
+            </td>
+            <td>{{ item.source }}</td>
+            <td class="text-center">{{ item.no_of_room }}</td>
+            <td class="text-center">{{ item.income.toFixed(2) }}</td>
+            <td class="text-center">{{ item.expense }}</td>
+            <td class="text-center">{{ item.management_expense }}</td>
+            <td class="text-center">{{ item.profit }}</td>
+            <td class="text-center">{{ item.percentage }}</td>
+          </tr>
+          <tr>
+            <td colspan="2">TOTAL</td>
+            <td class="text-center">{{ totalRooms }}</td>
+            <td class="text-center">4519785.00</td>
+            <td class="text-center">77876.00</td>
+            <td class="text-center">132428.00</td>
+            <td class="text-center">5645335</td>
+            <td class="text-center">100%</td>
+          </tr>
+        </tbody>
+      </table>
+    </v-col>
+    <v-col cols="5" class="text-center">
+      <!-- <highcharts :options="pieChartOptions"></highcharts> -->
+      <v-tabs v-if="!loading" right>
+        <v-tab>pie chart </v-tab>
+        <v-tab>statistical </v-tab>
+        <v-tab-item>
+          <highcharts :options="pieChartOptions"></highcharts>
+        </v-tab-item>
+        <v-tab-item>
+          <highcharts :options="barChartOptions"></highcharts>
+        </v-tab-item>
+      </v-tabs>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
