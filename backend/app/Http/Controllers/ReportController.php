@@ -12,6 +12,7 @@ use App\Models\Room;
 use App\Models\Taxable;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class ReportController extends Controller
@@ -735,48 +736,70 @@ class ReportController extends Controller
 
     public function getReportTopTenCustomers(Request $request)
     {
-        $customer = (new Customer)->setConnection('second_pgsql');
+        $from = date("Y-m-d 00:00:00");
+        $to = date("Y-m-d 23:59:59");
 
-        return $customer->with("bookings")->where("company_id", 1)->count();
-        // return $Customer->with("bookings")->whereCompanyId(1)->get();
+        if (request()->filled("filter_from_date")) {
+            $from = $request->filter_from_date . ' 00:00:00';
+        }
+        if (request()->filled("filter_to_date")) {
+            $to = $request->filter_to_date . ' 23:59:59';
+        }
 
-        // $year = $request->year;
-
-        // $bookings = Booking::select(
-        //     DB::raw("string_agg(rooms, ',') as rooms"),
-        //     'bookings.customer_id',
-
-        //     DB::raw('sum(total_price) as customer_total_price'),
-        //     DB::raw('count(id) as number_of_visits'),
-        // )
-        //     ->with('customer:id,contact_no')
-        //     ->groupBy('bookings.customer_id')
-        //     ->orderByDesc('customer_total_price')
-        //     ->where('company_id', $request->company_id)
-        //     ->where('booking_status', "!=", -1)
-
-        //     ->where(function ($query) use ($request) {
-        //         $query->where(function ($query) use ($request) {
-        //             $query->where('check_in', '>=', $request->filter_from_date . ' 00:00:00')
-        //                 ->where('check_in', '<=', $request->filter_to_date . ' 23:59:59');
-        //         });
-        //         $query->orWhere(function ($query) use ($request) {
-        //             $query->where('check_in', '<=', $request->filter_from_date . ' 00:00:00')
-        //                 ->where('check_out', '>=', $request->filter_to_date . ' 23:59:59');
-        //         });
-        //     })
-
-        //     //->limit(100)
-        //     ->get();
-
-        // $total_price = Payment::query() //transaction
-        //     ->where('company_id', $request->company_id)
-        //     ->whereHas('booking', function ($q) {
-        //         $q->where('booking_status', '!=', -1);
-        //     })
-        //     ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
-        //     ->sum('amount');
+        $bookingModel = (new Booking)->setConnection('second_pgsql');
 
 
+        $data = $bookingModel->select(
+            DB::raw("string_agg(rooms, ',') as rooms"),
+            'bookings.customer_id',
+            DB::raw('sum(total_price) as revenue'),
+            DB::raw('count(id) as number_of_visits'),
+        )
+            ->with('customer:id,contact_no')
+            ->groupBy('bookings.customer_id')
+            ->orderByDesc('revenue')
+            ->where('company_id', 1)
+            ->where('booking_status', "!=", -1)
+            ->where(function ($query) use ($from, $to) {
+                $query->where(function ($query) use ($from, $to) {
+                    $query->where('check_in', '>=', $from)
+                        ->where('check_in', '<=', $to);
+                });
+                $query->orWhere(function ($query) use ($from, $to) {
+                    $query->where('check_in', '<=', $from)
+                        ->where('check_out', '>=', $to);
+                });
+            })
+            ->get();
+
+        $totalSum = $data->sum('revenue'); // Total sum of total_price across all sources
+
+        $colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#ffbb78", "#aec7e8", "#ff9896"];
+
+        $newData = [];
+
+        foreach ($data as $index => $item) {
+
+            $percentage = ($item['revenue'] / $totalSum) * 100;
+
+            $item['percentage'] =  // Rounded to 2 decimal places
+            
+            $colorIndex = $index % count($colors);
+
+
+            $newData[] = [
+                "source" => $item["title"],
+                "revenue" => $item["revenue"],
+                "percentage" => round($percentage, 2) . "%",
+                "color" => $colors[$colorIndex],
+                "no_of_room" => count(explode(',', $item['rooms'] ?? 0)),
+                "number_of_visits" => $item['number_of_visits'],
+            ];
+        }
+
+        return [
+            "colors" => $colors,
+            "data" => $newData,
+        ];
     }
 }
