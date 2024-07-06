@@ -770,6 +770,7 @@ class ReportController extends Controller
                         ->where('check_out', '>=', $to);
                 });
             })
+            ->take(10)
             ->get();
 
         $totalSum = $data->sum('revenue'); // Total sum of total_price across all sources
