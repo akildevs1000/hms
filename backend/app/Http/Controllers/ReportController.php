@@ -736,7 +736,7 @@ class ReportController extends Controller
     public function getReportTopTenCustomers(Request $request)
     {
         $Customer = (new Customer())->setConnection('second_pgsql');
-
+        return Customer::get();
         return $Customer->with("bookings")->whereCompanyId(1)->get();
 
         // $year = $request->year;
