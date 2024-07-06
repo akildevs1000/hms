@@ -104,11 +104,9 @@
       </v-row>
     </v-navigation-drawer>
     <v-main class="main_bg">
-      <v-card class="ma-8">
-        <v-container>
-          <nuxt />
-        </v-container>
-      </v-card>
+      <v-container fluid>
+        <nuxt />
+      </v-container>
     </v-main>
 
     <v-navigation-drawer
