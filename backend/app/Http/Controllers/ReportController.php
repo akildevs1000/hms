@@ -755,7 +755,7 @@ class ReportController extends Controller
             DB::raw('sum(total_price) as revenue'),
             DB::raw('count(id) as number_of_visits'),
         )
-            ->with('customer:id,contact_no')
+            ->with('customer:id,contact_no,first_name,last_name')
             ->groupBy('bookings.customer_id')
             ->orderByDesc('revenue')
             ->where('company_id', 1)
@@ -789,7 +789,7 @@ class ReportController extends Controller
 
 
             $newData[] = [
-                "source" => $item["title"],
+                "source" => $item["full_name"],
                 "revenue" => $item["revenue"],
                 "percentage" => round($percentage, 2) . "%",
                 "color" => $colors[$colorIndex],
