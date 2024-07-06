@@ -789,7 +789,7 @@ class ReportController extends Controller
 
 
             $newData[] = [
-                "source" => $item["customer"]["full_name"] ?? "",
+                "source" => $item["customer"]->full_name ?? "",
                 "revenue" => $item["revenue"],
                 "percentage" => round($percentage, 2) . "%",
                 "color" => $colors[$colorIndex],
