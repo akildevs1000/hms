@@ -1,55 +1,110 @@
 <template>
-  <v-row no-gutters>
-    <v-col cols="7">
-      <table>
-        <thead>
-          <tr>
-            <td class="text-center">
-              <small>COLOR</small>
-            </td>
-            <td><small>SOURCE</small></td>
-            <td class="text-center"><small>NO OF ROOM</small></td>
-            <td class="text-center"><small>PERCENTAGE %</small></td>
-            <td class="text-center"><small>REVENUE</small></td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in data" :key="index">
-            <td class="text-center">
-              <v-icon :style="{ color: item.color, fontSize: '24px' }"
-                >mdi-circle</v-icon
-              >
-            </td>
-            <td>{{ item.source }}</td>
-            <td class="text-center">{{ item.no_of_room }}</td>
-            <td class="text-center">{{ item.percentage }}</td>
-            <td class="text-center">{{ item.revenue }}</td>
-          </tr>
-          <tr>
-            <td colspan="2">TOTAL</td>
-            <td class="text-center">{{ totalRooms }}</td>
-            <td class="text-center">100%</td>
-            <td class="text-center">{{ totalRevenue }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </v-col>
-    <v-col cols="5" class="text-center">
-      <v-tabs v-if="!loading" right>
-        <v-tab>pie chart </v-tab>
-        <v-tab>statistical </v-tab>
-        <v-tab-item>
-          <highcharts :options="pieChartOptions"></highcharts>
-        </v-tab-item>
-        <v-tab-item>
-          <highcharts :options="barChartOptions"></highcharts>
-        </v-tab-item>
-      </v-tabs>
-    </v-col>
-  </v-row>
+  <span>
+    <v-row no-gutters>
+      <v-col cols="7">
+        <table>
+          <thead>
+            <tr>
+              <td class="text-center">
+                <small>COLOR</small>
+              </td>
+              <td><small>SOURCE</small></td>
+              <td class="text-center"><small>NO OF ROOM</small></td>
+              <td class="text-center"><small>PERCENTAGE %</small></td>
+              <td class="text-center"><small>REVENUE</small></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in data" :key="index">
+              <td class="text-center">
+                <v-icon :style="{ color: item.color, fontSize: '24px' }"
+                  >mdi-circle</v-icon
+                >
+              </td>
+              <td>{{ item.source }}</td>
+              <td class="text-center">{{ item.no_of_room }}</td>
+              <td class="text-center">{{ item.percentage }}</td>
+              <td class="text-center">{{ item.revenue }}</td>
+            </tr>
+            <tr>
+              <td colspan="2">TOTAL</td>
+              <td class="text-center">{{ totalRooms }}</td>
+              <td class="text-center">100%</td>
+              <td class="text-center">{{ totalRevenue }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </v-col>
+      <v-col cols="5" class="text-center">
+        <v-tabs v-if="!loading" right>
+          <v-tab>pie chart </v-tab>
+          <v-tab>statistical </v-tab>
+          <v-tab-item>
+            <highcharts :options="pieChartOptions"></highcharts>
+          </v-tab-item>
+          <v-tab-item>
+            <highcharts :options="barChartOptions"></highcharts>
+          </v-tab-item>
+        </v-tabs>
+      </v-col>
+    </v-row>
+    <div ref="capture" style="position: fixed; top: -9999px; left: -9999px">
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <table>
+              <thead>
+                <tr>
+                  <td class="text-center">
+                    <small>COLOR</small>
+                  </td>
+                  <td><small>SOURCE</small></td>
+                  <td class="text-center"><small>NO OF ROOM</small></td>
+                  <td class="text-center"><small>PERCENTAGE %</small></td>
+                  <td class="text-center"><small>REVENUE</small></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in data" :key="index">
+                  <td class="text-center">
+                    <v-icon :style="{ color: item.color, fontSize: '24px' }"
+                      >mdi-circle</v-icon
+                    >
+                  </td>
+                  <td>{{ item.source }}</td>
+                  <td class="text-center">{{ item.no_of_room }}</td>
+                  <td class="text-center">{{ item.percentage }}</td>
+                  <td class="text-center">{{ item.revenue }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2">TOTAL</td>
+                  <td class="text-center">{{ totalRooms }}</td>
+                  <td class="text-center">100%</td>
+                  <td class="text-center">{{ totalRevenue }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </v-col>
+          <v-col cols="6" class="text-center">
+            <v-card outlined>
+              <highcharts :options="pieChartOptions"></highcharts>
+            </v-card>
+          </v-col>
+          <v-col cols="6" class="text-center">
+            <v-card outlined>
+              <highcharts :options="barChartOptions"></highcharts>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+  </span>
 </template>
 
 <script>
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
 export default {
   props: {
     heading: {
@@ -65,6 +120,7 @@ export default {
 
   data() {
     return {
+      clicked: false,
       loading: true,
       pieChartOptions: {
         chart: {
@@ -97,7 +153,6 @@ export default {
       barChartOptions: {
         chart: {
           type: "column",
-          height: "320",
         },
         title: {
           text: "",
@@ -174,7 +229,37 @@ export default {
       );
     },
     totalRevenue() {
-      return this.data.reduce((sum, item) => sum + parseFloat(item.revenue), 0).toFixed(2);
+      return this.data
+        .reduce((sum, item) => sum + parseFloat(item.revenue), 0)
+        .toFixed(2);
+    },
+  },
+  methods: {
+    async captureArea() {
+      this.clicked = true;
+      try {
+        const scale = 2; // Increase the scale to capture a higher resolution image
+        const canvas = await html2canvas(this.$refs.capture, {
+          scale,
+          useCORS: true, // Enable this if your content includes external images
+        });
+        const imgData = canvas.toDataURL("image/png");
+
+        const pdf = new jsPDF({
+          orientation: "portrait",
+          unit: "pt", // Use points as the unit to match CSS pixels
+          format: [canvas.width, canvas.height],
+        });
+
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("report.pdf");
+      } catch (err) {
+        console.error("Error capturing area:", err);
+      }
     },
   },
 };
