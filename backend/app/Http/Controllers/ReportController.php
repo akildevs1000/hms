@@ -737,7 +737,7 @@ class ReportController extends Controller
     {
         $customer = (new Customer)->setConnection('second_pgsql');
 
-        return $customer->with("bookings")->where("company_id", 1)->take(10)->get();
+        return $customer->with("bookings")->where("company_id", 3)->take(10)->get();
         // return $Customer->with("bookings")->whereCompanyId(1)->get();
 
         // $year = $request->year;
