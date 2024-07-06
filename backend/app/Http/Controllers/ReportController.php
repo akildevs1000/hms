@@ -735,9 +735,10 @@ class ReportController extends Controller
 
     public function getReportTopTenCustomers(Request $request)
     {
-        $Customer = (new Customer())->setConnection('second_pgsql');
-        return Customer::get();
-        return $Customer->with("bookings")->whereCompanyId(1)->get();
+        $customer = (new Customer)->setConnection('second_pgsql');
+
+        return $customer->get();
+        // return $Customer->with("bookings")->whereCompanyId(1)->get();
 
         // $year = $request->year;
 
@@ -776,6 +777,6 @@ class ReportController extends Controller
         //     ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
         //     ->sum('amount');
 
-       
+
     }
 }
