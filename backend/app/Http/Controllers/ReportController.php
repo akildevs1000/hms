@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Company;
+use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\Room;
@@ -730,5 +731,51 @@ class ReportController extends Controller
         //     // Handle the error
         //     return response()->json(['error' => 'Failed to fetch data'], $response->status());
         // }
+    }
+
+    public function getReportTopTenCustomers(Request $request)
+    {
+        $bookingModel = (new Booking)->setConnection('second_pgsql');
+
+        return $bookingModel->with("bookings")->whereCompanyId(1)->take(10)->get();
+
+        // $year = $request->year;
+
+        // $bookings = Booking::select(
+        //     DB::raw("string_agg(rooms, ',') as rooms"),
+        //     'bookings.customer_id',
+
+        //     DB::raw('sum(total_price) as customer_total_price'),
+        //     DB::raw('count(id) as number_of_visits'),
+        // )
+        //     ->with('customer:id,contact_no')
+        //     ->groupBy('bookings.customer_id')
+        //     ->orderByDesc('customer_total_price')
+        //     ->where('company_id', $request->company_id)
+        //     ->where('booking_status', "!=", -1)
+
+        //     ->where(function ($query) use ($request) {
+        //         $query->where(function ($query) use ($request) {
+        //             $query->where('check_in', '>=', $request->filter_from_date . ' 00:00:00')
+        //                 ->where('check_in', '<=', $request->filter_to_date . ' 23:59:59');
+        //         });
+        //         $query->orWhere(function ($query) use ($request) {
+        //             $query->where('check_in', '<=', $request->filter_from_date . ' 00:00:00')
+        //                 ->where('check_out', '>=', $request->filter_to_date . ' 23:59:59');
+        //         });
+        //     })
+
+        //     //->limit(100)
+        //     ->get();
+
+        // $total_price = Payment::query() //transaction
+        //     ->where('company_id', $request->company_id)
+        //     ->whereHas('booking', function ($q) {
+        //         $q->where('booking_status', '!=', -1);
+        //     })
+        //     ->whereBetween('date', [$request->filter_from_date, $request->filter_to_date])
+        //     ->sum('amount');
+
+       
     }
 }
