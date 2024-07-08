@@ -28,13 +28,11 @@
     <div>
       <v-dialog v-model="roomTypeDialog" max-width="50%">
         <v-card>
-          <v-toolbar color="background" dense flat dark>
-            <v-toolbar color="background" dense flat dark>
-              <span>{{ formTitle }} {{ Model }}</span>
-            </v-toolbar>
+          <v-toolbar color="primary" dense flat dark>
+            <span>{{ formTitle }} {{ Model }}</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="roomTypeDialog = false"
-              >mdi mdi-close-box</v-icon
+              >mdi-close</v-icon
             >
           </v-toolbar>
           <v-container>
@@ -169,6 +167,7 @@
                             </v-col>
                             <v-col md="12" cols="12">
                               <v-textarea
+                                rows="3"
                                 outlined
                                 v-model="editedItem.description"
                                 placeholder="Description"
@@ -186,7 +185,7 @@
                               style="
                                 width: 100%;
                                 height: 200px;
-                                border: 1px solid #5fafa3;
+                                border: 1px solid #4390FC;
                                 border-radius: 10%;
                                 margin: 0 auto;
                               "
@@ -218,12 +217,12 @@
                           </div>
                         </v-col>
 
-                        <v-card-actions>
-                          <v-btn class="error" @click="roomTypeDialog = false">
+                        <v-col cols="12" class="text-right">
+                          <v-btn small class="grey white--text" @click="roomTypeDialog = false">
                             Cancel
                           </v-btn>
-                          <v-btn class="primary" @click="save">Save</v-btn>
-                        </v-card-actions>
+                          <v-btn small class="primary" @click="save">Save</v-btn>
+                        </v-col>
                       </v-row>
                     </v-container>
                   </v-card-text>
@@ -238,12 +237,7 @@
       <div>
         <v-row>
           <v-col md="12" lg="12">
-            <v-tabs
-              v-model="activeTab"
-              dense
-              flat
-              right
-            >
+            <v-tabs v-model="activeTab" dense flat right>
               <v-tab> Rooms </v-tab>
               <v-tab> Categories </v-tab>
               <v-tab-item>
@@ -271,24 +265,15 @@
                     ></v-text-field>
                   </v-col>
                   <v-card>
-                    <v-toolbar
-                      class="mb-2 white--text"
-                      color="background"
-                      dense
-                      flat
-                    >
+                    <v-toolbar class="mb-2 white--text" dense flat>
                       <v-spacer></v-spacer>
-                      <v-tooltip
-                        v-if="can('settings_rooms_create')"
-                        top
-                        color="background"
-                      >
+                      <v-tooltip v-if="can('settings_rooms_create')" top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn
+                            dark
+                            class="blue"
                             v-if="can(`settings_rooms_category_create`)"
-                            x-small
-                            :ripple="false"
-                            text
+                            small
                             v-bind="attrs"
                             v-on="on"
                             @click="
@@ -296,15 +281,72 @@
                               previewImage = null;
                             "
                           >
-                            <v-icon color="white" dark white
-                              >mdi-plus-circle</v-icon
-                            >
+                            <v-icon color="white" small>mdi-plus</v-icon> Room
+                            Category
                           </v-btn>
                         </template>
                       </v-tooltip>
                     </v-toolbar>
                     <v-row>
                       <v-col cols="12">
+                        <v-data-table
+                          :headers="headersCategory"
+                          :items="data"
+                          :loading="loading"
+                          hide-default-footer
+                        >
+                          <template v-slot:item.photo="{ item }">
+                            <v-img
+                              :src="item.pic || '/noimage.png'"
+                              class="rounded-circle"
+                              height="100"
+                              width="100"
+                              style="margin: 0 auto"
+                            ></v-img>
+                          </template>
+
+                          <template v-slot:item.action="{ item }">
+                            <v-menu
+                              bottom
+                              left
+                              v-if="
+                                can('settings_rooms_category_edit') ||
+                                can('settings_rooms_category_delete')
+                              "
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                                  <v-icon>mdi-dots-vertical</v-icon>
+                                </v-btn>
+                              </template>
+                              <v-list width="120" dense>
+                                <v-list-item
+                                  v-if="can('settings_rooms_category_edit')"
+                                  @click="editItem(item)"
+                                >
+                                  <v-list-item-title style="cursor: pointer">
+                                    <v-icon color="secondary" small
+                                      >mdi-pencil</v-icon
+                                    >
+                                    Edit
+                                  </v-list-item-title>
+                                </v-list-item>
+                                <v-list-item
+                                  v-if="can('settings_rooms_category_delete')"
+                                  @click="deleteItem(item)"
+                                >
+                                  <v-list-item-title style="cursor: pointer">
+                                    <v-icon color="error" small
+                                      >mdi-delete</v-icon
+                                    >
+                                    Delete
+                                  </v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
+                          </template>
+                        </v-data-table>
+
                         <table class="mt-0">
                           <tr style="font-size: 13px">
                             <th class="ps-5">#</th>
@@ -480,7 +522,18 @@ export default {
 
     response: "",
     data: [],
-
+    headersCategory: [
+      { text: "#", value: "id", align: "start" },
+      { text: "Photo", value: "photo", width: "50px", align: "center" },
+      { text: "Name", value: "name" },
+      { text: "Adult", value: "adult" },
+      { text: "Child", value: "child" },
+      { text: "Baby", value: "baby" },
+      { text: "Weekday Rent", value: "weekday_price" },
+      { text: "Weekend Rent", value: "weekend_price" },
+      { text: "Holiday Rent", value: "holiday_price" },
+      { text: "Action", value: "action", align: "center" },
+    ],
     selectedFile: "",
     errors: [],
   }),
@@ -714,3 +767,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@import url("../../assets/css/tableStyles.css");
+</style>

@@ -18,6 +18,8 @@ class NotificationReportTypesController extends Controller
     {
         $model = NotificationReportTypes::query();
 
+        $model->where('company_id',$request->company_id);
+
         //datatable Filters
         if ($request->filled('description')) {
             $model->where('description', 'ILIKE', "$request->description%");}

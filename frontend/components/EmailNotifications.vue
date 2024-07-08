@@ -13,138 +13,127 @@
 
     <v-dialog v-model="editItemDialog" max-width="40%">
       <v-card>
-        <v-card-title dense class="primary white--text background">
+        <v-toolbar flat dense class="primary" dark>
           <span v-if="viewMode">View Email Info </span>
           <span v-else-if="editedItemIndex == -1">Add Emails </span>
           <span v-else>Edit Email Info </span>
           <v-spacer></v-spacer>
-          <v-icon @click="editItemDialog = false" outlined dark color="white">
-            mdi mdi-close-circle
+          <v-icon @click="editItemDialog = false" outlined dark>
+            mdi-close
           </v-icon>
-        </v-card-title>
+        </v-toolbar>
         <v-card-text>
-          <v-container>
+          <v-container class="mt-4">
             <v-row>
-              <v-col cols="6">
-                <v-col md="12" cols="12">
-                  <label>Name</label>
-                  <v-text-field
-                    placeholder="Name"
-                    type="text"
-                    :disabled="viewMode"
-                    v-model="editedItem.name"
-                    outlined
-                    dense
-                    small
-                    :hide-details="true"
-                  ></v-text-field>
-                  <span
-                    dense
-                    v-if="errors && errors.name"
-                    class="error--text"
-                    >{{ errors.name[0] }}</span
-                  >
-                </v-col>
-
-                <v-col md="12" cols="12">
-                  <label>Email</label>
-                  <v-text-field
-                    placeholder="johndoe@gmail.com"
-                    type="email"
-                    :disabled="viewMode"
-                    v-model="editedItem.email"
-                    outlined
-                    dense
-                    small
-                    :hide-details="true"
-                  ></v-text-field>
-                  <span
-                    dense
-                    v-if="errors && errors.email"
-                    class="error--text"
-                    >{{ errors.email[0] }}</span
-                  >
-                </v-col>
-                <v-col md="12" cols="12">
-                  <label>Whatsapp Number</label>
-                  <v-text-field
-                    placeholder="Whatsapp Number"
-                    type="text"
-                    :disabled="viewMode"
-                    v-model="editedItem.whatsapp_number"
-                    outlined
-                    dense
-                    small
-                    :hide-details="true"
-                  ></v-text-field>
-                  <span
-                    dense
-                    v-if="errors && errors.whatsapp_number"
-                    class="error--text"
-                    >{{ errors.whatsapp_number[0] }}</span
-                  >
-                </v-col>
-                <v-col md="12" cols="12">
-                  <label> Status</label>
-                  <v-select
-                    :disabled="viewMode"
-                    :items="[
-                      { id: 1, name: 'Active' },
-                      {
-                        id: 0,
-                        name: 'In-Active',
-                      },
-                    ]"
-                    v-model="editedItem.status"
-                    outlined
-                    dense
-                    small
-                    :hide-details="true"
-                    item-text="name"
-                    item-value="id"
-                    placeholder="Select status"
-                  >
-                  </v-select>
-                  <span v-if="errors && errors.status" class="error--text">{{
-                    errors.status[0]
-                  }}</span>
-                </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  label="Name"
+                  type="text"
+                  :disabled="viewMode"
+                  v-model="editedItem.name"
+                  outlined
+                  dense
+                  small
+                  :hide-details="true"
+                ></v-text-field>
+                <span dense v-if="errors && errors.name" class="error--text">{{
+                  errors.name[0]
+                }}</span>
               </v-col>
-              <v-col cols="6">
-                <label><strong>Reports</strong></label>
-
-                <v-col
-                  md="6"
-                  cols="6"
-                  v-for="item1 in report_types"
-                  :key="item1.id"
+              <v-col cols="12">
+                <v-text-field
+                  label="Email"
+                  type="email"
+                  :disabled="viewMode"
+                  v-model="editedItem.email"
+                  outlined
+                  dense
+                  small
+                  :hide-details="true"
+                ></v-text-field>
+                <span dense v-if="errors && errors.email" class="error--text">{{
+                  errors.email[0]
+                }}</span>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  label="Whatsapp Number"
+                  type="text"
+                  :disabled="viewMode"
+                  v-model="editedItem.whatsapp_number"
+                  outlined
+                  dense
+                  small
+                  :hide-details="true"
+                ></v-text-field>
+                <span
+                  dense
+                  v-if="errors && errors.whatsapp_number"
+                  class="error--text"
+                  >{{ errors.whatsapp_number[0] }}</span
                 >
-                  <v-checkbox
-                    :disabled="viewMode"
-                    v-model="selectedReportTypes"
-                    :value="item1.id"
-                    :label="item1.name"
-                    hide-details
-                  >
-                  </v-checkbox>
-                </v-col>
+              </v-col>
+              <v-col cols="12">
+                <v-select
+                  label="Status"
+                  :disabled="viewMode"
+                  :items="[
+                    { id: 1, name: 'Active' },
+                    {
+                      id: 0,
+                      name: 'In-Active',
+                    },
+                  ]"
+                  v-model="editedItem.status"
+                  outlined
+                  dense
+                  small
+                  :hide-details="true"
+                  item-text="name"
+                  item-value="id"
+                  placeholder="Select status"
+                >
+                </v-select>
+                <span v-if="errors && errors.status" class="error--text">{{
+                  errors.status[0]
+                }}</span>
+              </v-col>
+
+              <!-- <v-col
+                md="6"
+                cols="6"
+                v-for="item1 in report_types"
+                :key="item1.id"
+              >
+                <v-checkbox
+                  :disabled="viewMode"
+                  v-model="selectedReportTypes"
+                  :value="item1.id"
+                  :label="item1.name"
+                  hide-details
+                >
+                </v-checkbox>
+              </v-col> -->
+              <v-col cols="12" class="text-right" v-if="!viewMode">
+                <v-btn
+                  small
+                  @click="editItemDialog = false"
+                  dark
+                  filled
+                  color="grey white--text"
+                  >Cancel</v-btn
+                >
+                <v-btn small @click="save()" dark filled color="primary"
+                  >Save</v-btn
+                >
               </v-col>
             </v-row>
-
-            <v-card-actions class="mt-5" v-if="!viewMode">
-              <v-btn @click="editItemDialog = false" dark filled color="red"
-                >Cancel</v-btn
-              >
-              <v-spacer></v-spacer>
-              <v-btn @click="save()" dark filled color="primary">Save</v-btn>
-            </v-card-actions>
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
     <v-card class="mb-5" elevation="0">
       <v-toolbar class="rounded-md mb-2 white--text" color="" dense flat>
-        <v-toolbar-title><span>Emails</span></v-toolbar-title>
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -181,6 +170,7 @@
         <v-tooltip v-if="can('settings_Emails_create')" top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              dark
               class="blue"
               small
               text
@@ -188,7 +178,7 @@
               v-on="on"
               @click="AddNewEmail()"
             >
-              <v-icon color="white" dark white>mdi-plus</v-icon>
+              <v-icon dark small>mdi-plus</v-icon> Email
             </v-btn>
           </template>
           <span>Add New Email Id</span>
@@ -205,7 +195,6 @@
             :footer-props="{
               itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
             }"
-            class="elevation-1"
             :server-items-length="totalTableRowsCount"
           >
             <template v-slot:header="{ props: { headers } }">
@@ -535,12 +524,13 @@ export default {
       this.selectedReportTypes = [];
       let options = {
         params: {
-          per_page: 100,
+          per_page: 1000,
           company_id: this.$auth.user.company.id,
         },
       };
       this.$axios.get("notification_report_Types", options).then(({ data }) => {
         this.report_types = data.data;
+        this.selectedReportTypes = data.data.map((e) => e.id);
       });
     },
 
