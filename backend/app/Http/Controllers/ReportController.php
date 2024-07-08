@@ -670,7 +670,9 @@ class ReportController extends Controller
     public function reportBySource(Request $request)
     {
 
-        $bookingModel = (new Booking)->setConnection('second_pgsql');
+        // $bookingModel = (new Booking)->setConnection('second_pgsql');
+
+        $bookingModel = (new Booking);
 
         $from = date("Y-m-d 00:00:00");
         $to = date("Y-m-d 23:59:59");
@@ -746,8 +748,9 @@ class ReportController extends Controller
             $to = $request->filter_to_date . ' 23:59:59';
         }
 
-        $bookingModel = (new Booking)->setConnection('second_pgsql');
+        // $bookingModel = (new Booking)->setConnection('second_pgsql');
 
+        $bookingModel = (new Booking);
 
         $data = $bookingModel->select(
             DB::raw("string_agg(rooms, ',') as rooms"),

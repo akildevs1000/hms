@@ -10,60 +10,41 @@
         {{ snackbarResponse }}
       </v-snackbar>
     </div>
-
-    <v-row>
-      <v-col cols="7"></v-col>
-
-      <v-col cols="3">
-        <Calender2
-          style="float: right"
-          @filter-attr="filterAttr"
-          :default_date_from="date_from"
-          :default_date_to="date_to"
-          :defaultFilterType="1"
-          :height="'35px '"
-        />
-      </v-col>
-      <v-col cols="2">
-        <v-autocomplete
-          v-model="device_id"
-          :items="[{ serial_number: `All Rooms` }, ...devices_list]"
-          item-text="serial_number"
-          item-value="serial_number"
-          placeholder="Select Room"
-          label="Room"
-          outlined
-          :hide-details="true"
-          dense
-          @change="getDataFromApi()"
-        >
-        </v-autocomplete>
-      </v-col>
-    </v-row>
-    <!-- <v-dialog v-model="newItemDialog" max-width="20%">
+    <v-dialog v-model="DeviceLogDialog" max-width="900">
       <v-card>
-        <v-card-title dense class="primary white--text background">
+        <v-toolbar color="blue" dark dense flat>
+          <v-toolbar-title><span>Devices Logs</span></v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-icon @click="DeviceLogDialog = false">mdi-close</v-icon>
+        </v-toolbar>
+        <v-card-text>
+          <DeviceLogs viewType="dialog" :key="DeviceLogCompKey" />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="newItemDialog" max-width="500">
+      <v-card>
+        <v-toolbar flat dense class="primary white--text">
           <span v-if="viewMode">View Device Info </span>
           <span v-else-if="editedItemIndex == -1">Add Device </span>
           <span v-else>Edit Device Info </span>
           <v-spacer></v-spacer>
           <v-icon @click="newItemDialog = false" outlined dark color="white">
-            mdi mdi-close-circle
+            mdi-close
           </v-icon>
-        </v-card-title>
+        </v-toolbar>
         <v-card-text>
-          <v-container>
+          <v-container class="mt-4">
             <v-row>
-              <v-col md="12" cols="12">
-                <label>Serial Number</label>
+              <v-col cols="6">
                 <v-text-field
                   :disabled="viewMode"
                   v-model="editedItem.serial_number"
                   outlined
                   dense
                   small
-                  :hide-details="true"
-                  placeholder="Serial Number"
+                  hide-details
+                  label="Serial Number"
                 ></v-text-field>
                 <span
                   dense
@@ -72,23 +53,21 @@
                   >{{ errors.serial_number[0] }}</span
                 >
               </v-col>
-              <v-col md="12" cols="12">
-                <label>Device Type Name</label>
+              <v-col cols="6">
                 <v-text-field
                   :disabled="viewMode"
                   v-model="editedItem.name"
                   outlined
                   dense
                   small
-                  :hide-details="true"
-                  placeholder="Device Type Name"
+                  hide-details
+                  label="Device Type Name"
                 ></v-text-field>
                 <span v-if="errors && errors.name" class="error--text">{{
                   errors.name[0]
                 }}</span>
               </v-col>
-              <v-col md="12" cols="12">
-                <label> Assign Room </label>
+              <v-col cols="12">
                 <v-select
                   :disabled="viewMode"
                   :items="roomList"
@@ -96,38 +75,39 @@
                   outlined
                   dense
                   small
-                  :hide-details="true"
+                  hide-details
                   item-text="room_no"
                   item-value="table_id"
-                  placeholder="Assign Room"
+                  label="Assign Room"
                 >
                 </v-select>
                 <span v-if="errors && errors.room_id" class="error--text">{{
                   errors.room_id[0]
                 }}</span>
               </v-col>
-            </v-row>
 
-            <v-card-actions class="mt-5" v-if="!viewMode">
-              <v-btn @click="newItemDialog = false" dark filled color="red"
-                >Cancel</v-btn
-              >
-              <v-spacer></v-spacer>
-              <v-btn @click="save()" dark filled color="primary">Save</v-btn>
-            </v-card-actions>
+              <v-col cols="12" v-if="!viewMode" class="text-right">
+                <v-btn
+                  small
+                  @click="newItemDialog = false"
+                  dark
+                  filled
+                  color="grey"
+                  >Cancel</v-btn
+                >
+                <v-btn small @click="save()" dark filled color="primary"
+                  >Save</v-btn
+                >
+              </v-col>
+            </v-row>
           </v-container>
         </v-card-text>
       </v-card>
-    </v-dialog> -->
+    </v-dialog>
     <v-card class="mb-5" elevation="0">
-      <v-toolbar
-        class="rounded-md mb-2 white--text"
-        color="background"
-        dense
-        flat
-      >
-        <v-toolbar-title><span>Devices Logs</span></v-toolbar-title>
-        <v-tooltip top color="primary">
+      <v-toolbar dense flat>
+        <v-toolbar-title><span>Devices</span></v-toolbar-title>
+        <v-tooltip top>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               dense
@@ -138,44 +118,28 @@
               v-bind="attrs"
               v-on="on"
             >
-              <v-icon color="white" class="ml-2" @click="reload()" dark
-                >mdi mdi-reload</v-icon
-              >
+              <v-icon @click="reload()">mdi mdi-reload</v-icon>
             </v-btn>
           </template>
           <span>Reload</span>
         </v-tooltip>
-        <!-- <v-tooltip top color="primary">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              x-small
-              :ripple="false"
-              text
-              v-bind="attrs"
-              v-on="on"
-              @click="toggleFilter"
-            >
-              <v-icon white color="#FFF">mdi-filter</v-icon>
-            </v-btn>
-          </template>
-          <span>Filter</span>
-        </v-tooltip> -->
         <v-spacer></v-spacer>
-        <!-- <v-tooltip v-if="can('devices_create')" top color="primary">
+        <v-tooltip v-if="can('devices_create')" top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              x-small
-              :ripple="false"
-              text
+              small
+              color="blue"
+              class="white--text"
+              dark
               v-bind="attrs"
               v-on="on"
               @click="AddNewRoom()"
             >
-              <v-icon color="white" dark white>mdi-plus-circle</v-icon>
+              <v-icon small>mdi-plus</v-icon> Device
             </v-btn>
           </template>
           <span>Add New Room</span>
-        </v-tooltip> -->
+        </v-tooltip>
       </v-toolbar>
       <v-row>
         <v-col cols="12">
@@ -188,7 +152,6 @@
             :footer-props="{
               itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
             }"
-            class="elevation-1"
             :server-items-length="totalTableRowsCount"
           >
             <template v-slot:item.sno="{ item, index }">
@@ -202,13 +165,75 @@
             <template v-slot:item.room.room_no="{ item }">
               {{ item.room.room_no }}</template
             >
-            <template v-slot:item.status="{ item }">
-              <v-icon v-if="item.status == 0" color="red"
+            <template v-slot:item.room_type.name="{ item }">
+              {{ item.room_type.name }}</template
+            >
+            <template v-slot:item.latest_status="{ item }">
+              <v-icon v-if="item.latest_status == 0" color="red"
                 >mdi-alpha-x-circle
               </v-icon>
-              <v-icon v-else-if="item.status == 1" color="green"
+              <v-icon v-else-if="item.latest_status == 1" color="green"
                 >mdi-alpha-y-circle
               </v-icon>
+            </template>
+            <template v-slot:item.latest_status_time="{ item }">
+              {{ item.latest_status_time }}
+            </template>
+            <template
+              v-slot:item.options="{ item }"
+              v-if="
+                can('devices_view') ||
+                can('devices_edit') ||
+                can('devices_delete')
+              "
+            >
+              <v-menu bottom left>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list width="120" dense>
+                  <v-list-item
+                    v-if="can('devices_view')"
+                    @click="editItem(item, true)"
+                  >
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="primary" small> mdi-eye </v-icon>
+                      View
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    v-if="can('devices_view')"
+                    @click="viewStatusLogs(item)"
+                  >
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="warning" small>
+                        mdi-format-list-checkbox
+                      </v-icon>
+                      View Logs
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    v-if="can('devices_edit')"
+                    @click="editItem(item, false)"
+                  >
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="secondary" small> mdi-pencil </v-icon>
+                      Edit
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    v-if="can('devices_delete')"
+                    @click="deleteItem(item)"
+                  >
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="error" small> mdi-delete </v-icon>
+                      Delete
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </template>
           </v-data-table>
         </v-col>
@@ -218,11 +243,9 @@
   <NoAccess v-else />
 </template>
 <script>
-import Calender2 from "../../components/Calender2.vue";
 export default {
-  components: { Calender2 },
+  props: ["addNew"],
   data: () => ({
-    devices_list: [],
     //datatable varables
     page: 1,
     perPage: 0,
@@ -250,30 +273,53 @@ export default {
         filterable: true,
       },
       {
-        text: "status",
-        value: "status",
-        key: "status",
+        text: "Device Name",
+        value: "name",
+        key: "name",
         align: "left",
         sortable: true,
         filterable: true,
         filterSpecial: true,
       },
       {
-        text: "log_time",
-        value: "log_time",
-        key: "log_time",
+        text: "Roo No",
+        value: "room.room_no",
         align: "left",
         sortable: true,
+        key: "room_id",
         filterable: true,
         filterSpecial: true,
       },
+
+      {
+        text: "Status",
+        value: "latest_status",
+        align: "left",
+        sortable: true,
+        key: "room_id",
+        filterable: true,
+        filterSpecial: true,
+      },
+
+      {
+        text: "Status Time",
+        value: "latest_status_time",
+        align: "left",
+        sortable: true,
+        key: "room_id",
+        filterable: true,
+        filterSpecial: true,
+      },
+
+      { text: "Options", value: "options", align: "left", sortable: false },
     ],
     roomList: [],
 
-    endpoint: "devices_logs",
+    endpoint: "devices",
 
     newItemDialog: false,
-
+    DeviceLogDialog: false,
+    DeviceLogCompKey: 1,
     //add edit item details
     editedItem: {},
     editedItemIndex: -1,
@@ -296,24 +342,12 @@ export default {
     },
   },
   created() {
-    //console.log("device_id", this.$store.state.devices_logs_id);
-
-    this.device_id = this.$store.state.devices_logs_id;
     this.getDataFromApi();
-    //this.getroomList();
-    this.getDevicesList();
-    // Get today's date
-    let today = new Date();
+    this.getroomList();
 
-    // Subtract 7 days from today
-    let sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 2);
-
-    // Format the dates (optional)
-    this.date_to = today.toISOString().split("T")[0];
-    this.date_from = sevenDaysAgo.toISOString().split("T")[0];
-    // this.display_title =
-    //   "Attendance : " + this.date_from + " to " + this.date_to;
+    // setInterval(() => {
+    //   this.getDataFromApi();
+    // }, 1000 * 60 * 2);
   },
   methods: {
     can(per) {
@@ -321,12 +355,6 @@ export default {
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
-    },
-    filterAttr(data) {
-      this.date_from = data.from;
-      this.date_to = data.to;
-
-      this.getDataFromApi();
     },
     AddNewRoom() {
       this.errors = {};
@@ -365,9 +393,7 @@ export default {
       if (customPage == 1) page = 1;
       this.currentPage = page;
       this.perPage = itemsPerPage;
-      if (this.device_id == "All Rooms") {
-        this.device_id = null;
-      }
+
       let options = {
         params: {
           page: page,
@@ -375,12 +401,10 @@ export default {
           sortDesc: sortedDesc,
           per_page: itemsPerPage,
           company_id: this.$auth.user.company.id,
-          serial_number: this.device_id,
-          from_date: this.date_from,
-          to_date: this.date_to,
+          ...this.filters,
         },
       };
-      this.$axios.get(`devices_logs?page=${page}`, options).then(({ data }) => {
+      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
         this.loading = false;
         this.data = data.data;
         this.totalTableRowsCount = data.total;
@@ -394,16 +418,13 @@ export default {
         //this.roomTypesForSelectOptions.unshift({ id: '', name: "All" });
       });
     },
-
-    getDevicesList() {
-      let options = { params: { company_id: this.$auth.user.company.id } };
-      this.$axios.get(`devices_list`, options).then(({ data }) => {
-        this.devices_list = data;
-        //this.roomTypesForSelectOptions.unshift({ id: '', name: "All" });
-      });
-    },
     viewItem(item) {
       this.editItem(item, true);
+    },
+    viewStatusLogs(item) {
+      this.$store.commit("devices_logs_id", item.serial_number);
+      this.DeviceLogDialog = true;
+      this.DeviceLogCompKey++;
     },
     editItem(item, viewMode = false) {
       this.errors = {};

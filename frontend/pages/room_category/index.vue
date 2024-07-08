@@ -10,7 +10,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row class="mt-0 mb-0">
+    <!-- <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
       </v-col>
@@ -24,7 +24,7 @@
           >Upload Prices To Wordpress Site</v-btn
         >
       </v-col>
-    </v-row>
+    </v-row> -->
     <div>
       <v-dialog v-model="roomTypeDialog" max-width="50%">
         <v-card>
@@ -240,19 +240,12 @@
           <v-col md="12" lg="12">
             <v-tabs
               v-model="activeTab"
-              :vertical="vertical"
-              background-color="background"
               dense
               flat
-              dark
-              show-arrows
-              class="rounded-md"
+              right
             >
-              <v-spacer></v-spacer>
-
-              <v-tab active-class="active-link"> Rooms </v-tab>
-              <v-tab active-class="active-link"> Categories </v-tab>
-              <v-tabs-slider color="#1259a7"></v-tabs-slider>
+              <v-tab> Rooms </v-tab>
+              <v-tab> Categories </v-tab>
               <v-tab-item>
                 <v-card flat>
                   <v-card-text>
@@ -444,7 +437,6 @@ export default {
     },
     previewImage: null,
     componentKey: 0,
-    vertical: false,
     activeTab: 0,
 
     pagination: {
@@ -722,24 +714,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  text-align: left;
-  padding: 5px;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
-
-input[type="text"]:focus.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-</style>

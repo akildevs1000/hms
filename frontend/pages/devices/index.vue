@@ -1,22 +1,12 @@
 <template>
-  <div v-if="can('devices_permissions_access') && can('devices_view')">
-    <Deviceslist :addNew="true"></Deviceslist>
-  </div>
-  <NoAccess v-else />
+  <v-tabs right dense>
+    <v-tab>Device</v-tab>
+    <v-tab>Device Logs</v-tab>
+    <v-tab-item>
+      <Device />
+    </v-tab-item>
+    <v-tab-item>
+      <DeviceLogs />
+    </v-tab-item>
+  </v-tabs>
 </template>
-<script>
-import Deviceslist from "../../components/devices/List.vue";
-
-export default {
-  data: () => ({}),
-  methods: {
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
-      );
-    },
-  },
-  components: { Deviceslist },
-};
-</script>

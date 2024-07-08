@@ -29,23 +29,23 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="newItemDialog" max-width="20%">
+    <v-dialog v-model="newItemDialog" max-width="500">
       <v-card>
-        <v-card-title dense class="primary white--text background">
+        <v-toolbar dense class="primary white--text" flat>
           <span v-if="viewMode">View Room Info </span>
           <span v-else-if="editedItemIndex == -1">Add Room </span>
           <span v-else>Edit Room Info </span>
           <v-spacer></v-spacer>
           <v-icon @click="newItemDialog = false" outlined dark color="white">
-            mdi mdi-close-circle
+            mdi-close
           </v-icon>
-        </v-card-title>
+        </v-toolbar>
         <v-card-text>
-          <v-container>
+          <v-container class="mt-5">
             <v-row>
               <v-col md="12" cols="12">
-                <label>Floor No</label>
                 <v-select
+                  label="Floor No"
                   v-model="editedItem.floor_no"
                   :disabled="viewMode"
                   outlined
@@ -59,9 +59,9 @@
                   errors.floor_no[0]
                 }}</span>
               </v-col>
-              <v-col md="12" cols="12">
-                <label>Room No</label>
+              <v-col md="6" cols="12">
                 <v-text-field
+                  label="Room No"
                   :disabled="viewMode"
                   v-model="editedItem.room_no"
                   outlined
@@ -77,10 +77,9 @@
                   >{{ errors.room_no[0] }}</span
                 >
               </v-col>
-
-              <v-col md="12" cols="12">
-                <label> Category</label>
+              <v-col md="6" cols="12">
                 <v-select
+                  label="Category"
                   :disabled="viewMode"
                   :items="roomTypesData"
                   v-model="editedItem.room_type_id"
@@ -100,9 +99,8 @@
                 >
               </v-col>
               <v-col md="12" cols="12">
-                <label> Available Online Booking?</label>
-
                 <v-select
+                  label="Available Online Booking?"
                   :disabled="viewMode"
                   selected="0"
                   :items="[
@@ -127,8 +125,9 @@
                 }}</span>
               </v-col>
               <v-col md="12" cols="12">
-                <label> Status</label>
+                <label> </label>
                 <v-select
+                label="Status"
                   :disabled="viewMode"
                   selected="0"
                   :items="[
@@ -152,41 +151,23 @@
                   errors.status[0]
                 }}</span>
               </v-col>
-            </v-row>
-
-            <v-card-actions class="mt-5" v-if="!viewMode">
-              <v-btn @click="newItemDialog = false" dark filled color="red"
+              <v-col cols="12" class="text-right">
+                <v-btn small @click="newItemDialog = false" dark filled color="grey white--text"
                 >Cancel</v-btn
               >
-              <v-spacer></v-spacer>
-              <v-btn @click="save()" dark filled color="primary">Save</v-btn>
-            </v-card-actions>
+              <v-btn small @click="save()" dark filled color="primary">Save</v-btn>
+              </v-col>
+            </v-row>
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
     <v-card class="mb-5" elevation="0">
-      <v-toolbar
-        class="rounded-md mb-2 white--text"
-        color="background"
-        dense
-        flat
-      >
-        <!-- <v-toolbar-title><span>Rooms</span></v-toolbar-title> -->
+      <v-toolbar dense flat>
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              dense
-              class="ma-0 px-0"
-              x-small
-              :ripple="false"
-              text
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon color="white" class="ml-2" @click="reload()" dark
-                >mdi mdi-reload</v-icon
-              >
+            <v-btn dense text class="ma-0 px-0" small v-bind="attrs" v-on="on">
+              Rooms <v-icon class="ml-2" @click="reload()">mdi-reload</v-icon>
             </v-btn>
           </template>
           <span>Reload</span>
@@ -210,14 +191,14 @@
         <v-tooltip v-if="can('settings_rooms_create')" top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              x-small
-              :ripple="false"
-              text
+              dark
+              color="blue"
+              small
               v-bind="attrs"
               v-on="on"
               @click="AddNewRoom()"
             >
-              <v-icon color="white" dark white>mdi-plus-circle</v-icon>
+              <v-icon dark small>mdi-plus</v-icon> Room
             </v-btn>
           </template>
           <span>Add New Room</span>

@@ -117,7 +117,6 @@
             <TaxSlabs />
           </v-tab-item>
           <v-tab-item>
-
             <WhatsappInstance />
           </v-tab-item>
         </v-tabs>

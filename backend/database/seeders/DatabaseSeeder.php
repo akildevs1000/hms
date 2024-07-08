@@ -17,15 +17,15 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Production
-        $this->call([MasterSeeder::class]);
+        // $this->call([MasterSeeder::class]);
         $this->call([PermissionSeeder::class]);
-        $this->call([ModuleSeeder::class]);
-        $this->call([RoomsTableSeeder::class]);
-        $this->call([FoodTableSeeder::class]);
-        $this->call([PaymentSeeder::class]);
-        $this->call([CountriesTableSeeder::class]);
-        $this->call([SourceTableSeeder::class]);
-        $this->call([SeasonTableSeeder::class]);
-        $this->call([TaxSlabsTableSeeder::class]);
+        // $this->call([ModuleSeeder::class]);
+        // $this->call([RoomsTableSeeder::class]);
+        // $this->call([FoodTableSeeder::class]);
+        // $this->call([PaymentSeeder::class]);
+        // $this->call([CountriesTableSeeder::class]);
+        // $this->call([SourceTableSeeder::class]);
+        // $this->call([SeasonTableSeeder::class]);
+        // $this->call([TaxSlabsTableSeeder::class]);
     }
 }

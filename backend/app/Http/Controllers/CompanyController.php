@@ -260,42 +260,24 @@ class CompanyController extends Controller
     }
     public function updateSettings(Request $request, $id)
     {
+        $data["whatsapp_instance_id"] = $request->whatsapp_instance_id;
+        $data["whatsapp_access_token"] = $request->whatsapp_access_token;
+        $company = Company::find($id)->update($data);
 
-        if (isset($request->currency)) {
-
-            $data["currency"] = $request->currency;
-            $company = Company::find($id)->update($data);
-
-            if (!$company) {
-                return $this->response('Company cannot updated.', null, false);
-            }
+        if (!$company) {
+            return $this->response('Company cannot updated.', null, false);
         }
-        if (isset($request->whatsapp_instance_id)) {
-            if ($request->whatsapp_instance_id != '') {
-                $data["whatsapp_instance_id"] = $request->whatsapp_instance_id;
-                $data["whatsapp_access_token"] = $request->whatsapp_access_token;
-                $company = Company::find($id)->update($data);
-
-                if (!$company) {
-                    return [
-                        "status" => false,
-                        "errors" => ['whatsapp_instance_id' =>  ['Invalid Details']],
-                    ];
-                }
-            } else {
-                return [
-                    "status" => false,
-                    "errors" => ['whatsapp_instance_id' => ['Invalid Details']],
-                ];
-            }
-        } else
-            return [
-                "status" => false,
-                "errors" => ['whatsapp_instance_id' => ['Invalid Details']],
-            ];
-
-        return $this->response('Company successfully updated.', $company, true);
+        return $this->response('Company has been updated.', null, true);
     }
+
+    public function updateCurrency(Request $request, $id)
+    {
+        if (!Company::whereId($id)->update(["currency" => $request->currency])) {
+            return $this->response('Company cannot updated.', null, false);
+        }
+        return $this->response('Company has been updated.', null, true);
+    }
+
 
     public function updateContact(ContactRequest $request, $id)
     {

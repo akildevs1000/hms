@@ -7,7 +7,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row class="mt-5 mb-0">
+    <!-- <v-row class="mt-5 mb-0">
       <v-col cols="6">
         <h3>{{ Model }}</h3>
       </v-col>
@@ -21,155 +21,151 @@
           >Upload Prices To Wordpress Site</v-btn
         >
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <v-row>
       <v-dialog v-model="holidayDialog" max-width="40%">
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <v-toolbar color="background" dense flat dark>
-              <span>{{ formTitle }} {{ Model }}</span>
-            </v-toolbar>
+          <v-toolbar class="blue" dark dense flat>
+            <span>{{ formTitle }} {{ Model }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="holidayDialog = false"
-              >mdi mdi-close-box</v-icon
+            <v-icon class="pa-0" @click="holidayDialog = false"
+              >mdi-close</v-icon
             >
           </v-toolbar>
-          <v-container>
-            <v-row>
-              <v-col md="12" lg="12">
-                <v-card elevation="0">
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col md="12">
-                          <v-row>
-                            <v-col md="12" cols="12">
-                              <v-text-field
-                                v-model="description"
-                                placeholder="Name"
-                                label="Name"
-                                outlined
-                                :hide-details="true"
-                                dense
-                              ></v-text-field>
-                              <span
-                                v-if="errors && errors.description"
-                                class="error--text"
-                                >{{ errors.description[0] }}</span
-                              >
-                            </v-col>
-                            <v-col md="6" cols="12">
-                              <v-menu
-                                v-model="from_date_menu"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    v-model="from_date"
-                                    @change="getDays(from_date)"
-                                    label="From Date"
-                                    v-on="on"
-                                    v-bind="attrs"
-                                    :hide-details="true"
-                                    dense
-                                    outlined
-                                  ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                  v-model="from_date"
-                                  @input="from_date_menu = false"
-                                ></v-date-picker>
-                              </v-menu>
-                              <span
-                                v-if="errors && errors.email"
-                                class="error--text"
-                                >{{ errors.email[0] }}
-                              </span>
-                            </v-col>
-                            <v-col md="6" cols="12">
-                              <v-menu
-                                v-model="to_date_menu"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    v-model="to_date"
-                                    label="To Date"
-                                    v-on="on"
-                                    v-bind="attrs"
-                                    :hide-details="true"
-                                    dense
-                                    outlined
-                                  ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                  v-model="to_date"
-                                  @input="to_date_menu = false"
-                                ></v-date-picker>
-                              </v-menu>
-                              <span
-                                v-if="errors && errors.email"
-                                class="error--text"
-                                >{{ errors.email[0] }}
-                              </span>
-                            </v-col>
-                            <v-col md="12" cols="12">
-                              <v-text-field
-                                v-model="numberOfDays"
-                                placeholder="Number of Days"
-                                label="Number of Days"
-                                outlined
-                                :hide-details="true"
-                                dense
-                              ></v-text-field>
-                              <span
-                                v-if="errors && errors.numberOfDays"
-                                class="error--text"
-                                >{{ errors.numberOfDays[0] }}</span
-                              >
-                            </v-col>
-                          </v-row>
-                        </v-col>
-                      </v-row>
-                      <v-card-actions>
-                        <v-btn class="error" @click="holidayDialog = false">
-                          Cancel
-                        </v-btn>
-                        <!-- <v-btn class="primary">Save</v-btn> -->
-                        <v-btn
-                          class="primary"
-                          @click="update_holidays"
-                          v-if="isUpdate"
-                          >Update</v-btn
-                        >
-                        <v-btn class="primary" @click="store_holidays" v-else>
-                          Save
-                        </v-btn>
-                      </v-card-actions>
-                    </v-container>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-card-actions> </v-card-actions>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col md="12">
+                  <v-row>
+                    <v-col md="12" cols="12">
+                      <v-text-field
+                        v-model="description"
+                        placeholder="Name"
+                        label="Name"
+                        outlined
+                        :hide-details="true"
+                        dense
+                      ></v-text-field>
+                      <span
+                        v-if="errors && errors.description"
+                        class="error--text"
+                        >{{ errors.description[0] }}</span
+                      >
+                    </v-col>
+                    <v-col md="6" cols="12">
+                      <v-menu
+                        v-model="from_date_menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="from_date"
+                            @change="getDays(from_date)"
+                            label="From Date"
+                            v-on="on"
+                            v-bind="attrs"
+                            :hide-details="true"
+                            dense
+                            outlined
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          no-title
+                          v-model="from_date"
+                          @input="from_date_menu = false"
+                        ></v-date-picker>
+                      </v-menu>
+                      <span v-if="errors && errors.email" class="error--text"
+                        >{{ errors.email[0] }}
+                      </span>
+                    </v-col>
+                    <v-col md="6" cols="12">
+                      <v-menu
+                        v-model="to_date_menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="to_date"
+                            label="To Date"
+                            v-on="on"
+                            v-bind="attrs"
+                            :hide-details="true"
+                            dense
+                            outlined
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          no-title
+                          v-model="to_date"
+                          @input="to_date_menu = false"
+                        ></v-date-picker>
+                      </v-menu>
+                      <span v-if="errors && errors.email" class="error--text"
+                        >{{ errors.email[0] }}
+                      </span>
+                    </v-col>
+                    <v-col md="12" cols="12">
+                      <v-text-field
+                        v-model="numberOfDays"
+                        placeholder="Number of Days"
+                        label="Number of Days"
+                        outlined
+                        :hide-details="true"
+                        dense
+                      ></v-text-field>
+                      <span
+                        v-if="errors && errors.numberOfDays"
+                        class="error--text"
+                        >{{ errors.numberOfDays[0] }}</span
+                      >
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" class="text-right">
+                  <v-btn
+                    small
+                    class="grey white--text"
+                    @click="holidayDialog = false"
+                  >
+                    Cancel
+                  </v-btn>
+                  <!-- <v-btn small class="primary">Save</v-btn> -->
+                  <v-btn
+                    small
+                    class="primary"
+                    @click="update_holidays"
+                    v-if="isUpdate"
+                    >Update</v-btn
+                  >
+                  <v-btn small class="primary" @click="store_holidays" v-else>
+                    Save
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
         </v-card>
       </v-dialog>
 
       <v-dialog v-model="priceEditDialog" max-width="600px">
         <v-card>
-          <v-card-title> Edit </v-card-title>
+          <v-toolbar flat dense>
+            Edit <v-spacer></v-spacer>
+            <v-icon @click="priceEditDialog = false">mdi-close</v-icon>
+          </v-toolbar>
+
           <v-divider></v-divider>
-          <h3
+          <h4
             style="
               text-transform: capitalize;
               margin: 11px 20px -25px 20px;
@@ -177,7 +173,7 @@
             "
           >
             {{ editPriceList.name }}
-          </h3>
+          </h4>
           <v-card-text class="mt-8">
             <v-row>
               <v-col md="4">
@@ -260,22 +256,32 @@
                 </v-text-field>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12" class="text-right">
+                <v-btn
+                  color="grey white--text"
+                  small
+                  @click="priceEditDialog = false"
+                >
+                  Close
+                </v-btn>
+                <v-btn class="primary" small @click="update_price">
+                  Update
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn class="primary" @click="update_price"> Update </v-btn>
-            <v-btn color="accent" @click="priceEditDialog = false">
-              Close
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-dialog>
 
       <v-dialog v-model="weekendDialog" max-width="700px">
         <v-card>
-          <v-card-title> Edit </v-card-title>
+          <v-toolbar flat dense>
+            Edit <v-spacer></v-spacer>
+            <v-icon @click="weekendDialog = false">mdi-close</v-icon>
+          </v-toolbar>
           <v-divider></v-divider>
-          <h3
+          <h4
             style="
               text-transform: capitalize;
               margin: 11px 20px -25px 20px;
@@ -283,169 +289,138 @@
             "
           >
             <!-- {{ editPriceList }} -->
-          </h3>
+          </h4>
           <v-card-text class="mt-8">
             <v-row>
-              <v-col md="2" class="mt-2 pr-0 mr-0">
-                <h5>Weekdays</h5>
+              <v-col cols="2" class="pt-5">
+                <h4>Weekdays</h4>
               </v-col>
-              <v-col
-                md="1"
-                sm="4"
-                class="py-0 my-0 ml-3"
-                v-for="(day, index) in Weekdays"
-                :key="index"
-              >
-                <v-checkbox
-                  v-model="editWeekend.name"
-                  :label="day.name"
-                  :value="day.name"
+              <v-col cols="10">
+                <v-row>
+                  <v-col
+                    cols="1"
+                    class="text-right ml-5"
+                    v-for="(day, index) in Weekdays"
+                    :key="index"
+                  >
+                    <v-checkbox
+                      hide-details
+                      dense
+                      v-model="editWeekend.name"
+                      :label="day.name"
+                      :value="day.name"
+                    >
+                    </v-checkbox>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12">
+                <v-btn small class="primary" @click="update_weekend">
+                  Update
+                </v-btn>
+                <v-btn
+                  small
+                  class="grey white--text"
+                  @click="weekendDialog = false"
+                  >Close</v-btn
                 >
-                </v-checkbox>
               </v-col>
             </v-row>
           </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn class="primary" @click="update_weekend"> Update </v-btn>
-            <v-btn color="accent" @click="weekendDialog = false"> Close </v-btn>
-          </v-card-actions>
         </v-card>
       </v-dialog>
 
       <v-col md="12" sm="12" class="float-right">
         <v-card>
-          <v-tabs
-            v-model="tab"
-            align-with-title
-            background-color="background"
-            dark
-            show-arrows
-          >
+          <v-tabs v-model="tab">
             <v-spacer></v-spacer>
-            <v-tab v-for="item in items" :key="item" active-class="active-link">
+            <v-tab v-for="item in items" :key="item">
               {{ item }}
             </v-tab>
-            <v-tabs-slider color="#1259a7"></v-tabs-slider>
           </v-tabs>
 
           <v-tabs-items v-model="tab">
-            <!-- weekdays -->
-
-            <!-- weekdays -->
             <v-tab-item>
               <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
-                <table>
-                  <tr style="font-size: 12px">
-                    <th>#</th>
-                    <th>Room Type</th>
-                    <th>Weekdays Amount</th>
-                    <th>Weekend Amount</th>
-                    <th>Holiday Amount</th>
-                    <th>Action</th>
-                  </tr>
-                  <v-progress-linear
-                    v-if="loading"
-                    :active="loading"
-                    :indeterminate="loading"
-                    absolute
-                    color="primary"
-                  ></v-progress-linear>
-                  <tr
-                    style="font-size: 12px"
-                    v-for="(item, index) in priceList"
-                    :key="index"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td style="text-transform: uppercase">{{ item.name }}</td>
-                    <td>{{ item.weekday_price }}</td>
-                    <td>{{ item.weekend_price }}</td>
-                    <td>{{ item.holiday_price }}</td>
-                    <td class="text-left">
-                      <v-menu
-                        bottom
-                        left
-                        v-if="can('settings_room_price_edit')"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list width="120" dense>
-                          <v-list-item
-                            v-if="can('settings_room_price_edit')"
-                            @click="priceEditItem(item)"
-                          >
-                            <v-list-item-title style="cursor: pointer">
-                              <v-icon color="secondary" small>
-                                mdi-pencil
-                              </v-icon>
-                              Edit
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </td>
-                  </tr>
-                </table>
+                <v-data-table
+                  :headers="headers"
+                  :items="priceList"
+                  :loading="loading"
+                  hide-default-footer
+                >
+                  <template v-slot:item.index="{ index }">
+                    {{ index + 1 }}
+                  </template>
+
+                  <template v-slot:item.name="{ item }">
+                    <span style="text-transform: uppercase">{{
+                      item.name
+                    }}</span>
+                  </template>
+
+                  <template v-slot:item.action="{ item }">
+                    <v-menu bottom left v-if="can('settings_room_price_edit')">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list width="120" dense>
+                        <v-list-item
+                          v-if="can('settings_room_price_edit')"
+                          @click="priceEditItem(item)"
+                        >
+                          <v-list-item-title style="cursor: pointer">
+                            <v-icon color="secondary" small>mdi-pencil</v-icon>
+                            Edit
+                          </v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template>
+                </v-data-table>
               </v-card>
             </v-tab-item>
             <v-tab-item>
               <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
-                <table>
-                  <tr style="font-size: 12px">
-                    <th>#</th>
-                    <th>Weekend</th>
-                    <th>Action</th>
-                  </tr>
-                  <v-progress-linear
-                    v-if="loading"
-                    :active="loading"
-                    :indeterminate="loading"
-                    absolute
-                    color="primary"
-                  ></v-progress-linear>
-                  <tr
-                    style="font-size: 12px"
-                    v-for="(item, index) in weekendList"
-                    :key="index"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td>
-                      <span v-for="(w, i) in item.day" :key="i">
-                        {{ w }}
-                        <span v-if="item && item.day.length - 1 !== i">, </span>
-                      </span>
-                    </td>
-                    <td class="text-left">
-                      <v-menu
-                        bottom
-                        left
-                        v-if="can('settings_room_price_edit')"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list width="120" dense>
-                          <v-list-item
-                            v-if="can('settings_room_price_edit')"
-                            @click="weekendEditItem(item)"
-                          >
-                            <v-list-item-title style="cursor: pointer">
-                              <v-icon color="secondary" small>
-                                mdi-pencil
-                              </v-icon>
-                              Edit
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </td>
-                  </tr>
-                </table>
+                <v-data-table
+                  :headers="weekendHeaders"
+                  :items="weekendList"
+                  :loading="loading"
+                  hide-default-footer
+                >
+                  <template v-slot:item.index="{ index }">
+                    {{ index + 1 }}
+                  </template>
+
+                  <template v-slot:item.day="{ item }">
+                    <span v-for="(w, i) in item.day" :key="i">
+                      {{ w
+                      }}<span v-if="item && item.day.length - 1 !== i">, </span>
+                    </span>
+                  </template>
+
+                  <template v-slot:item.action="{ item }">
+                    <v-menu bottom left v-if="can('settings_room_price_edit')">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list width="120" dense>
+                        <v-list-item
+                          v-if="can('settings_room_price_edit')"
+                          @click="weekendEditItem(item)"
+                        >
+                          <v-list-item-title style="cursor: pointer">
+                            <v-icon color="secondary" small>mdi-pencil</v-icon>
+                            Edit
+                          </v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template>
+                </v-data-table>
               </v-card>
             </v-tab-item>
             <!-- weekend -->
@@ -474,69 +449,12 @@
                   </v-btn>
                 </div>
 
-                <!-- <table>
-                  <tr>
-                    <th style="font-size: 12px" v-for="(item, index) in headers" :key="index">
-                      <span v-html="item.text"></span>
-                    </th>
-                  </tr>
-                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                    color="primary"></v-progress-linear>
-                  <tr style="font-size: 12px" v-for="(item, index) in data" :key="index">
-                    <td>
-                      {{
-                        (pagination.current - 1) * pagination.per_page +
-                        index +
-                        1
-                      }}
-                    </td>
-                    <td>{{ item.from }}</td>
-                    <td>{{ item.to }}</td>
-                    <td>{{ item.description }}</td>
-                    <td class="text-left">
-                      <v-menu bottom left>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list width="120" dense>
-                          <v-list-item @click="editItem(item)">
-                            <v-list-item-title style="cursor: pointer">
-                              <v-icon color="secondary" small>
-                                mdi-pencil
-                              </v-icon>
-                              Edit
-                            </v-list-item-title>
-                          </v-list-item>
-                          <v-list-item @click="deleteItem(item)">
-                            <v-list-item-title style="cursor: pointer">
-                              <v-icon color="error" small> mdi-delete </v-icon>
-                              Delete
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </td>
-                  </tr>
-                </table>
-
-                <v-row>
-                  <v-col md="12" class="float-right">
-                    <div class="float-right">
-                      <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-                        :total-visible="12"></v-pagination>
-                    </div>
-                  </v-col>
-                </v-row> -->
-
                 <v-data-table
                   :headers="holidayHeaders"
                   :items="data"
                   :options.sync="holidayOptions"
                   :server-items-length="totalUserData"
                   :loading="loading"
-                  class="elevation-1 mt-2"
                   :footer-props="{
                     itemsPerPageOptions: [50, 100, 500, 1000],
                   }"
@@ -677,6 +595,19 @@ export default {
     total: 0,
     id: "",
     priceId: "",
+    headers: [
+      { text: "#", value: "index", sortable: false },
+      { text: "Room Type", value: "name" },
+      { text: "Weekdays Amount", value: "weekday_price" },
+      { text: "Weekend Amount", value: "weekend_price" },
+      { text: "Holiday Amount", value: "holiday_price" },
+      { text: "Action", value: "action", sortable: false },
+    ],
+    weekendHeaders: [
+      { text: "#", value: "index", sortable: false },
+      { text: "Weekend", value: "day" },
+      { text: "Action", value: "action", sortable: false },
+    ],
     // headers: [
     //   { text: "#" },
     //   { text: "From" },
@@ -951,7 +882,7 @@ export default {
             this.errors = data.errors;
           } else {
             console.log(data.status);
-            this.get_price_list();
+            // this.get_price_list();
             this.priceEditDialog = false;
             this.snackbar = true;
             this.response = "Price successfully updated";
@@ -1020,19 +951,5 @@ export default {
 </script>
 
 <style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  text-align: left;
-  padding: 7px;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
+@import url("../../assets/css/tableStyles.css");
 </style>
