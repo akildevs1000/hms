@@ -33,6 +33,7 @@
           </v-toolbar>
           <v-card-text>
             <check-in
+              :key="checkInKey"
               :BookingData="checkData"
               @close-dialog="closeCheckInAndOpenGRC"
             ></check-in>
@@ -61,68 +62,6 @@
           </v-card-text>
           <v-container></v-container>
           <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <!-- <v-btn color="success" @click="GRCDialog = true">text</v-btn> -->
-
-      <!-- end check in dialog -->
-
-      <v-dialog
-        v-model="ExpectCheckInReportDialog"
-        persistent
-        max-width="700px"
-      >
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Expect Checkin Rooms Report</span>
-            <v-spacer></v-spacer>
-            <v-icon
-              dark
-              class="pa-0"
-              @click="ExpectCheckInReportDialog = false"
-            >
-              mdi mdi-close-box
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <ExpectCheckInReport
-                :data="expectCheckIn"
-                @close-dialog="closeDialogs"
-              />
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog
-        v-model="ExpectCheckOutReportDialog"
-        persistent
-        max-width="700px"
-      >
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Expect Checkout Report</span>
-            <v-spacer></v-spacer>
-            <v-icon
-              dark
-              class="pa-0"
-              @click="ExpectCheckOutReportDialog = false"
-            >
-              mdi mdi-close-box
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <ExpectCheckOutReport
-                :data="expectCheckOut"
-                @close-dialog="closeDialogs"
-              />
-            </v-container>
-          </v-card-text>
         </v-card>
       </v-dialog>
 
@@ -168,22 +107,33 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="CheckInReportDialog" persistent max-width="700px">
+      <v-dialog v-model="ArrivalReportDialog" persistent max-width="700px">
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Checkin Rooms Report</span>
+          <v-toolbar color="primary" dense flat dark>
+            <small>Arrival</small>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="CheckInReportDialog = false">
-              mdi mdi-close-box
+            <v-icon dark class="pa-0" @click="ArrivalReportDialog = false">
+              mdi-close
             </v-icon>
           </v-toolbar>
           <v-card-text>
             <v-container>
-              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <CheckInRoomsReport
-                :data="checkIn"
-                @close-dialog="closeDialogs"
-              />
+              <v-tabs right dense>
+                <v-tab>Pending</v-tab>
+                <v-tab>Arrival</v-tab>
+                <v-tab-item>
+                  <ExpectCheckInReport
+                    :data="expectCheckIn"
+                    @close-dialog="closeDialogs"
+                  />
+                </v-tab-item>
+                <v-tab-item>
+                  <CheckInRoomsReport
+                    :data="checkIn"
+                    @close-dialog="closeDialogs"
+                  />
+                </v-tab-item>
+              </v-tabs>
             </v-container>
           </v-card-text>
         </v-card>
@@ -191,20 +141,31 @@
 
       <v-dialog v-model="CheckOutReportDialog" persistent max-width="700px">
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Checkout Rooms Report</span>
+          <v-toolbar color="primary" dense flat dark>
+            <span>Checkout</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="CheckOutReportDialog = false">
-              mdi mdi-close-box
+              mdi-close
             </v-icon>
           </v-toolbar>
           <v-card-text>
             <v-container>
-              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <CheckOutRoomsReport
-                :data="checkOut"
-                @close-dialog="closeDialogs"
-              />
+              <v-tabs right dense>
+                <v-tab>Pending</v-tab>
+                <v-tab>Arrival</v-tab>
+                <v-tab-item>
+                  <ExpectCheckOutReport
+                    :data="expectCheckOut"
+                    @close-dialog="closeDialogs"
+                  />
+                </v-tab-item>
+                <v-tab-item>
+                  <CheckOutRoomsReport
+                    :data="checkOut"
+                    @close-dialog="closeDialogs"
+                  />
+                </v-tab-item>
+              </v-tabs>
             </v-container>
           </v-card-text>
         </v-card>
@@ -261,11 +222,11 @@
 
       <v-dialog v-model="FoodDialog" persistent max-width="700px">
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Food Order Rooms List</span>
+          <v-toolbar class="rounded-md" color="primary" dense flat dark>
+            <span>Food Orders</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="FoodDialog = false">
-              mdi mdi-close-box
+              mdi mdi-close
             </v-icon>
           </v-toolbar>
           <v-card-text>
@@ -571,7 +532,11 @@
     <v-row>
       <v-col>
         <div class="d-flex mt-5">
-          <v-card class="py-2 mr-2" max-width="230">
+          <v-card
+            class="py-2 mr-2"
+            max-width="230"
+            @click="ArrivalReportDialog = true"
+          >
             <div class="text-left pl-5">Arrival</div>
             <Donut
               size="240px"
@@ -589,7 +554,11 @@
               ]"
             />
           </v-card>
-          <v-card class="py-2 mx-2" max-width="230">
+          <v-card
+            class="py-2 mx-2"
+            max-width="230"
+            @click="CheckOutReportDialog = true"
+          >
             <div class="text-left pl-5">Checkout</div>
             <Donut
               size="240px"
@@ -607,7 +576,11 @@
               ]"
             />
           </v-card>
-          <v-card class="py-2 mx-2" max-width="230">
+          <v-card
+            class="py-2 mx-2"
+            max-width="230"
+            @click="CheckOutReportDialog = true"
+          >
             <div class="text-left pl-5">In House</div>
             <Donut
               size="240px"
@@ -658,7 +631,7 @@
               ]"
             />
           </v-card>
-          <v-card class="py-2 ml-2" max-width="250">
+          <v-card class="py-2 ml-2" max-width="250" @click="FoodDialog = true">
             <div class="text-left pl-5">Food Order</div>
             <Donut
               size="240px"
@@ -741,10 +714,11 @@
               </v-col>
               <v-col
                 cols="1"
+                class="ma-1"
                 v-for="(dirtyRoom, index) in filteredRooms(dirtyRoomsList)"
                 :key="index"
               >
-                <v-btn
+                <v-card
                   @mouseenter="showMenu = false"
                   @mousedown="showMenu = false"
                   @mouseup="showMenu = false"
@@ -777,13 +751,14 @@
                   :class="`red darken-2`"
                   dark
                 >
-                  <div class="text-center">
-                    <v-icon>mdi mdi-home</v-icon>
-                    <span>
-                      {{ dirtyRoom.room_no }}
-                    </span>
-                  </div>
-                </v-btn>
+                  <v-card-text>
+                    <div class="text-center white--text">
+                      <v-icon>mdi-bed</v-icon>
+                      <div>{{ dirtyRoom?.room_no || "---" }}</div>
+                      <div>{{ dirtyRoom?.room_type?.name || "---" }}</div>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
             <v-row
@@ -800,12 +775,13 @@
               </v-col>
               <v-col
                 cols="1"
+                class="ma-1"
                 v-for="(noAvailableRoom, index) in filteredRooms(
                   expectCheckOut
                 )"
                 :key="index"
               >
-                <v-btn
+                <v-card
                   @mouseenter="showMenu = false"
                   @mousedown="showMenu = false"
                   @mouseup="showMenu = false"
@@ -816,13 +792,14 @@
                   :class="`orange darken-2`"
                   dark
                 >
-                  <div class="text-center">
-                    <v-icon>mdi mdi-home</v-icon>
-                    <span>
-                      {{ noAvailableRoom.room_no }}
-                    </span>
-                  </div>
-                </v-btn>
+                  <v-card-text>
+                    <div class="text-center white--text">
+                      <v-icon>mdi-bed</v-icon>
+                      <div>{{ noAvailableRoom?.room_no || "---" }}</div>
+                      <div>{{ noAvailableRoom?.room_type?.name || "---" }}</div>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
             <v-row
@@ -839,11 +816,11 @@
               </v-col>
               <v-col
                 cols="1"
+                class="ma-1"
                 v-for="(expCheckIn, index) in filteredRooms(expectCheckIn)"
                 :key="index"
               >
-                <v-btn
-                  :class="`success`"
+                <v-card
                   dark
                   @mouseenter="showMenu = false"
                   @mousedown="showMenu = false"
@@ -852,14 +829,16 @@
                   @touchstart="handleTouchstart($event, expCheckIn)"
                   @mouseover="handleMouseOver(expCheckIn)"
                   @dblclick="dblclick"
+                  class="success"
                 >
-                  <div class="text-center">
-                    <v-icon>mdi mdi-home</v-icon>
-                    <span>
-                      {{ expCheckIn.room_no }}
-                    </span>
-                  </div>
-                </v-btn>
+                  <v-card-text>
+                    <div class="text-center white--text">
+                      <v-icon>mdi-bed</v-icon>
+                      <div>{{ expCheckIn?.room_no || "---" }}</div>
+                      <div>{{ expCheckIn?.room_type?.name || "---" }}</div>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
             <v-row
@@ -876,13 +855,14 @@
               </v-col>
               <v-col
                 cols="1"
+                class="ma-1"
                 :class="noAvailableRoom.id"
                 v-for="(noAvailableRoom, i) in filteredRooms(
                   reservedWithoutAdvance
                 )"
                 :key="i"
               >
-                <v-btn
+                <v-card
                   @mouseenter="showMenu = false"
                   @mousedown="showMenu = false"
                   @mouseup="showMenu = false"
@@ -890,21 +870,24 @@
                   @touchstart="handleTouchstart($event, noAvailableRoom)"
                   @mouseover="handleMouseOver(noAvailableRoom)"
                   @dblclick="dblclick"
-                  :class="`blue`"
+                  :class="`blue `"
                   dark
                 >
-                  <div class="text-center">
-                    <v-icon
-                      v-if="isDeviceStatusActive(noAvailableRoom)"
-                      dark
-                      class="pa-0 room-inperson-status"
-                    >
-                      mdi mdi-bed
-                    </v-icon>
-                    <v-icon v-else dark class="pa-0"> mdi mdi-bed </v-icon>
-                    {{ noAvailableRoom.room_no }}
-                  </div>
-                </v-btn>
+                  <v-card-text>
+                    <div class="text-center white--text">
+                      <v-icon
+                        v-if="isDeviceStatusActive(noAvailableRoom)"
+                        dark
+                        class="pa-0 room-inperson-status"
+                      >
+                        mdi mdi-bed
+                      </v-icon>
+                      <v-icon v-else dark class="pa-0"> mdi mdi-bed </v-icon>
+                      <div>{{ noAvailableRoom?.room_no || "---" }}</div>
+                      <div>{{ noAvailableRoom?.room_type?.name || "---" }}</div>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
             <v-row
@@ -921,24 +904,25 @@
               </v-col>
               <v-col
                 cols="1"
-                class="pa-1"
+                class="ma-1"
                 v-for="(room, index) in filteredRooms(availableRooms)"
                 :key="index"
               >
-                <v-btn
+                <v-card
                   :class="`green darken-2`"
                   dark
                   @contextmenu="makeNewBooking($event, room)"
                   @mouseover="mouseOverForAvailable(room)"
                   @touchstart="makeNewBookingForTouch($event, room)"
                 >
-                  <div class="text-center">
-                    <v-icon>mdi mdi-home</v-icon>
-                    <span>
-                      {{ room.room_no }}
-                    </span>
-                  </div>
-                </v-btn>
+                  <v-card-text>
+                    <div class="text-center white--text">
+                      <v-icon> mdi mdi-bed </v-icon>
+                      <div>{{ room?.room_no || "---" }}</div>
+                      <div>{{ room?.room_type?.name || "---" }}</div>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
             <v-row
@@ -955,23 +939,25 @@
               </v-col>
               <v-col
                 cols="1"
+                class="ma-1"
                 v-for="(blockedRoom, index) in filteredRooms(blockedRooms)"
                 :key="index"
               >
-                <v-btn
+                <v-card
                   :class="`purple darken-2`"
                   dark
                   @contextmenu="makeNewBooking($event, blockedRoom)"
                   @mouseover="mouseOverForAvailable(blockedRoom)"
                   @touchstart="makeNewBookingForTouch($event, blockedRoom)"
                 >
-                  <div class="text-center">
-                    <v-icon>mdi mdi-home</v-icon>
-                    <span>
-                      {{ blockedRoom.room_no }}
-                    </span>
-                  </div>
-                </v-btn>
+                  <v-card-text>
+                    <div class="text-center white--text">
+                      <v-icon> mdi mdi-bed </v-icon>
+                      <div>{{ blockedRoom?.room_no || "---" }}</div>
+                      <div>{{ blockedRoom?.room_type?.name || "---" }}</div>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
           </v-container>
@@ -979,12 +965,7 @@
       </v-col>
     </v-row>
   </div>
-
-  <div v-else>
-    <div class="text-center" style="width: 50px; margin: 25% auto">
-      <v-img src="../static/preloaders/hotel.jpg"></v-img>
-    </div>
-  </div>
+  <Preloader v-else />
 </template>
 <script>
 import Posting from "../components/booking/Posting";
@@ -1077,13 +1058,14 @@ export default {
       DirtyRoomsReportDialog: false,
       PaidRoomReportDialog: false,
       BookedRoomReportDialog: false,
-      CheckInReportDialog: false,
+      ArrivalReportDialog: false,
       CheckOutReportDialog: false,
       AvailableRoomsReportDialog: false,
       ExpectCheckOutReportDialog: false,
       ExpectCheckInReportDialog: false,
       FoodDialog: false,
       checkInDialog: false,
+      checkInKey:1,
       checkOutDialog: false,
       GRCDialog: false,
       postingDialog: false,
@@ -1198,6 +1180,7 @@ export default {
     checkInDialog() {
       this.formTitle = "Check In";
       this.get_data();
+      ++this.checkInKey;
       this.checkInDialog ? (this.isIndex = false) : (this.isIndex = true);
     },
 
@@ -1238,13 +1221,35 @@ export default {
   methods: {
     getRoomsByFilter() {},
     filteredRooms(rooms) {
-      console.log(rooms);
-      if (!this.searchQuery) return rooms;
+      if (!this.searchQuery) return rooms; // Early return for empty search
+
+      // Optimized search function for multiple customer fields
+      const searchCustomer = (customer, searchQuery) => {
+        const searchFields = [
+          "first_name",
+          "last_name",
+          "contact_no",
+          "whatsapp",
+          "email",
+          "nationality",
+          "address",
+          "full_name",
+        ];
+
+        const searchText = searchQuery.toLowerCase();
+        return searchFields.some((field) =>
+          customer[field]?.toLowerCase().includes(searchText)
+        );
+      };
 
       return rooms.filter((room) => {
-        return room.room_no
-          .toLowerCase()
-          .includes(this.searchQuery.toLowerCase());
+        const { booked_room: { customer } = {} } = room; // Destructuring with default value for customer
+
+        // Combine room number and customer search, using toLowerCase() for case-insensitive search
+        return (
+          room.room_no.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          (customer && searchCustomer(customer, this.searchQuery))
+        );
       });
     },
 
@@ -1338,6 +1343,7 @@ export default {
     },
 
     handleTouchstart(event, room) {
+      console.log(room);
       this.touchstart(
         event,
         room?.booked_room?.id,

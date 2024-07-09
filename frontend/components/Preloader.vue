@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center" style="width: 50px; margin: 25% auto">
-    <v-img src="/preloaders/1.gif"></v-img>
+  <div class="d-flex justify-center align-center" style="height: 100vh">
+    <div>Loading......</div>
   </div>
 </template>

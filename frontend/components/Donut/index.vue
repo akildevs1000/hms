@@ -6,11 +6,15 @@
       :series="series"
     ></apexchart>
 
-    <div class="" style="width: 100%">
-      <div v-for="(item, index) in labels" :key="index" style="line-height: 15px;">
-        <span><v-badge dot left :color="item.color"></v-badge></span>
+    <div style="width: 100%;display: flex; flex-direction: column; justify-content: center">
+      <div
+        v-for="(item, index) in labels"
+        :key="index"
+        style="line-height: 16px; display: flex; align-items: center"
+      >
         <small style="font-size: 10px"
-          >{{ item.text }} ({{
+          ><span><v-badge dot left :color="item.color"></v-badge></span>
+          {{ item.text }} ({{
             item.value == 0 ? 10 : parseInt(item.value)
           }})</small
         >

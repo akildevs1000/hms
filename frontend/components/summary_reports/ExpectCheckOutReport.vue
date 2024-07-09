@@ -23,11 +23,11 @@
 
     <table class="mt-4">
       <tr style="background-color: white; color: black" class="my-0 py-0">
-        <th class="my-0 py-0">Room No</th>
-        <th class="my-0 py-0">Type</th>
-        <th class="my-0 py-0">Guest</th>
-        <th class="my-0 py-0">Check In</th>
-        <th class="my-0 py-0">Check Out</th>
+        <td class="my-0 py-0">Room No</td>
+        <td class="my-0 py-0">Type</td>
+        <td class="my-0 py-0">Guest</td>
+        <td class="my-0 py-0">Check In</td>
+        <td class="my-0 py-0">Check Out</td>
       </tr>
       <tr
         v-for="(item, index) in data"
@@ -36,7 +36,7 @@
         class="my-0 py-0"
       >
         <td class="my-1 py-1">{{ item.room_no || "---" }}</td>
-        <td class="my-1 py-1">{{ item.room_type || "---" }}</td>
+        <td class="my-1 py-1">{{ item.room_type.name || "---" }}</td>
         <td class="my-1 py-1">{{ item.title || "---" }}</td>
         <td class="my-1 py-1">{{ item.check_in || "---" }}</td>
         <td class="my-1 py-1">{{ item.check_out || "---" }}</td>
