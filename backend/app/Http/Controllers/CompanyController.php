@@ -13,6 +13,7 @@ use App\Models\AssignModule;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\CompanyContact;
+use App\Models\CompanyDocument;
 use App\Models\Device;
 use App\Models\Role;
 use App\Models\User;
@@ -334,6 +335,80 @@ class CompanyController extends Controller
                     "errors" => ['current_password' => 'Current password does not match'],
                 ];
             }
+        }
+    }
+
+    public function documentStore(Request $request)
+    {
+        $validated = $request->validate([
+            "name" => "required|min:3|max:20",
+            "description" => "nullable|min:3|max:100",
+            'document' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'company_id' => 'required',
+        ]);
+
+        try {
+
+            if (isset($request->document)) {
+                $file = $request->file('document');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $request->file('document')->move(public_path('/company_document'), $fileName);
+                $validated['path'] = $fileName;
+            }
+
+            unset($validated["document"]);
+
+            CompanyDocument::create($validated);
+            return $this->response("Document has been added", null, true);
+        } catch (\Exception $e) {
+            return $this->response("Document cannot add", $e->getMessage(), true);
+        }
+    }
+
+    public function documentUpdate(Request $request, $id)
+    {
+        $validated = $request->validate([
+            "name" => "required|min:3|max:20",
+            "description" => "nullable|min:3|max:100",
+            'document' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        try {
+            if (isset($request->document)) {
+                $file = $request->file('document');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $request->file('document')->move(public_path('/company_document'), $fileName);
+                $validated['path'] = $fileName;
+            }
+
+            unset($validated["document"]);
+
+            CompanyDocument::where("id", $id)->update($validated);
+            return $this->response("Document has been updated", null, true);
+        } catch (\Exception $e) {
+            return $this->response("Document cannot update", $e->getMessage(), true);
+        }
+    }
+
+    public function documentList(Request $request)
+    {
+        return CompanyDocument::where("company_id", $request->company_id)->paginate($request->per_page ?? 100);
+    }
+
+    public function documentShow($id)
+    {
+        return CompanyDocument::where("id", $id)->first();
+    }
+
+    public function documentDestroy($id)
+    {
+        try {
+            CompanyDocument::where("id", $id)->delete();
+            return $this->response("Document has been deleted", null, true);
+        } catch (\Throwable $th) {
+            return $this->response("Document cannot delete", null, true);
         }
     }
 }

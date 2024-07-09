@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\AssignPermissionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReportNotificationController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Models\CompanyContact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,3 +50,9 @@ Route::post('report_notifications', function (Request $request) {
 });
 
 Route::apiResource('report_notification', ReportNotificationController::class);
+
+Route::post('company-document', [CompanyController::class, "documentStore"]);
+Route::get('company-document/{id}', [CompanyController::class, "documentShow"]);
+Route::post('company-document/{id}', [CompanyController::class, "documentUpdate"]);
+Route::get('company-document', [CompanyController::class, "documentList"]);
+Route::delete('company-document/{id}', [CompanyController::class, "documentDestroy"]);

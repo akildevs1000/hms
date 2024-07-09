@@ -18,6 +18,7 @@
               <v-tab> Profile </v-tab>
               <v-tab> License </v-tab>
               <v-tab> Contact </v-tab>
+              <v-tab> Document </v-tab>
               <v-tab> Password </v-tab>
               <v-tab> Currency </v-tab>
 
@@ -509,6 +510,10 @@
                     </v-row>
                   </v-card-text>
                 </v-card>
+              </v-tab-item>
+
+              <v-tab-item>
+                <CompanyDocument />
               </v-tab-item>
 
               <!-- <v-tab-item>
