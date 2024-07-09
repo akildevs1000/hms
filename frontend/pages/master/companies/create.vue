@@ -30,13 +30,13 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Company Name</label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="company_payload.name"
                     class="form-control"
                     type=""
                   />
-                  <span v-if="errors && errors.name" class="text-danger mt-2">{{
+                  <span v-if="errors && errors.name" class="error--text mt-2">{{
                     errors.name[0]
                   }}</span>
                 </div>
@@ -45,7 +45,7 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Company Email</label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="company_payload.email"
                     class="form-control"
@@ -53,7 +53,7 @@
                   />
                   <span
                     v-if="errors && errors.email"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.email[0] }}</span
                   >
                 </div>
@@ -64,7 +64,7 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Member From </label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="company_payload.member_from"
                     class="form-control"
@@ -72,7 +72,7 @@
                   />
                   <span
                     v-if="errors && errors.member_from"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.member_from[0] }}</span
                   >
                 </div>
@@ -81,7 +81,7 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Expiry Date </label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="company_payload.expiry"
                     type="date"
@@ -89,7 +89,7 @@
                   />
                   <span
                     v-if="errors && errors.expiry"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.expiry[0] }}</span
                   >
                 </div>
@@ -101,7 +101,7 @@
 
                   <span
                     v-if="errors && errors.no_branch"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.no_branch[0] }}</span
                   >
                 </div>
@@ -110,7 +110,7 @@
               <div class="col-sm-4">
                 <div class="form-group">
                   <label class="col-form-label"
-                    >Max Branches <span class="text-danger">*</span></label
+                    >Max Branches <span class="error--text">*</span></label
                   >
                   <input
                     v-model="company_payload.max_branches"
@@ -119,7 +119,7 @@
                   />
                   <span
                     v-if="errors && errors.max_branches"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.max_branches[0] }}</span
                   >
                 </div>
@@ -128,7 +128,7 @@
               <div class="col-sm-4">
                 <div class="form-group">
                   <label class="col-form-label"
-                    >Max customers <span class="text-danger">*</span></label
+                    >Max customers <span class="error--text">*</span></label
                   >
                   <input
                     v-model="company_payload.max_employee"
@@ -137,7 +137,7 @@
                   />
                   <span
                     v-if="errors && errors.max_employee"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.max_employee[0] }}</span
                   >
                 </div>
@@ -146,7 +146,7 @@
               <div class="col-sm-4">
                 <div class="form-group">
                   <label class="col-form-label"
-                    >Max Devices <span class="text-danger">*</span></label
+                    >Max Devices <span class="error--text">*</span></label
                   >
                   <input
                     v-model="company_payload.max_devices"
@@ -155,7 +155,7 @@
                   />
                   <span
                     v-if="errors && errors.max_devices"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.max_devices[0] }}</span
                   >
                 </div>
@@ -200,7 +200,7 @@
 
                       <span
                         v-if="errors && errors.logo"
-                        class="text-danger mt-2"
+                        class="error--text mt-2"
                         >{{ errors.logo[0] }}</span
                       >
                     </div>
@@ -231,13 +231,13 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Contact Person Name </label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="contact_payload.name"
                     class="form-control"
                     type="text"
                   />
-                  <span v-if="errors && errors.name" class="text-danger mt-2">{{
+                  <span v-if="errors && errors.name" class="error--text mt-2">{{
                     errors.name[0]
                   }}</span>
                 </div>
@@ -245,7 +245,7 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Contact Person Number </label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="contact_payload.number"
                     class="form-control"
@@ -253,7 +253,7 @@
                   />
                   <span
                     v-if="errors && errors.number"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.number[0] }}</span
                   >
                 </div>
@@ -261,7 +261,7 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Contact Person Position </label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="contact_payload.position"
                     class="form-control"
@@ -269,7 +269,7 @@
                   />
                   <span
                     v-if="errors && errors.position"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.position[0] }}</span
                   >
                 </div>
@@ -277,7 +277,7 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label">Contact Person Whatsapp </label>
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                   <input
                     v-model="contact_payload.whatsapp"
                     class="form-control"
@@ -285,7 +285,7 @@
                   />
                   <span
                     v-if="errors && errors.whatsapp"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.whatsapp[0] }}</span
                   >
                 </div>
@@ -315,14 +315,14 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label"
-                    >Lat <span class="text-danger">*</span></label
+                    >Lat <span class="error--text">*</span></label
                   >
                   <input
                     v-model="geographic_payload.lat"
                     type="number"
                     class="form-control"
                   />
-                  <span v-if="errors && errors.lat" class="text-danger mt-2">{{
+                  <span v-if="errors && errors.lat" class="error--text mt-2">{{
                     errors.lat[0]
                   }}</span>
                 </div>
@@ -331,14 +331,14 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="col-form-label"
-                    >Lon <span class="text-danger">*</span></label
+                    >Lon <span class="error--text">*</span></label
                   >
                   <input
                     v-model="geographic_payload.lon"
                     type="number"
                     class="form-control"
                   />
-                  <span v-if="errors && errors.lon" class="text-danger mt-2">{{
+                  <span v-if="errors && errors.lon" class="error--text mt-2">{{
                     errors.lon[0]
                   }}</span>
                 </div>
@@ -354,7 +354,7 @@
                   ></textarea>
                   <span
                     v-if="errors && errors.location"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.location[0] }}</span
                   >
                 </div>

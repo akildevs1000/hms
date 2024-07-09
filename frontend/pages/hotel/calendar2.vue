@@ -58,7 +58,7 @@
               <tr>
                 <th>
                   Payment Mode
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-select
@@ -95,7 +95,7 @@
               <tr style="background-color: white">
                 <th>
                   Full Payment
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field
@@ -173,7 +173,7 @@
                   <tr>
                     <th>
                       Payment Mode
-                      <span class="text-danger">*</span>
+                      <span class="error--text">*</span>
                     </th>
                     <td>
                       <v-select
@@ -218,7 +218,7 @@
                   >
                     <th>
                       Full Payment
-                      <span class="text-danger">*</span>
+                      <span class="error--text">*</span>
                     </th>
                     <td>
                       <v-text-field
@@ -354,7 +354,7 @@
               <tr style="background-color: white">
                 <th>
                   Item
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field
@@ -369,7 +369,7 @@
               <tr style="background-color: white">
                 <th>
                   QTY
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field
@@ -384,7 +384,7 @@
               <tr style="background-color: white">
                 <th>
                   Amount
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field
@@ -400,7 +400,7 @@
               <tr style="background-color: white">
                 <th>
                   Type
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-select
@@ -426,7 +426,7 @@
               <tr style="background-color: white">
                 <th>
                   Amount With Tax
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   {{ posting.amount_with_tax }}
@@ -537,7 +537,7 @@
               <tr>
                 <th>
                   Payment Mode
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-select
@@ -592,7 +592,7 @@
               <tr style="background-color: white">
                 <th>
                   Document
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <div v-if="checkData.document">
@@ -697,7 +697,7 @@
               <tr>
                 <th>
                   Payment Mode
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-select
@@ -739,7 +739,7 @@
               <tr style="background-color: white">
                 <th>
                   New Advance
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field

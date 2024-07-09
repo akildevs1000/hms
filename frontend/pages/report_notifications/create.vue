@@ -146,7 +146,7 @@
                   @click:minute="$refs.menu.save(payload.time)"
                 ></v-time-picker>
               </v-menu>
-              <span v-if="errors && errors.time" class="text-danger mt-2">{{
+              <span v-if="errors && errors.time" class="error--text mt-2">{{
                 errors.time[0]
               }}</span>
             </v-col>

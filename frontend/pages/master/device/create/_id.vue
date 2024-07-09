@@ -18,13 +18,13 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Device Name </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <input
                   v-model="payload.name"
                   class="form-control"
                   type="text"
                 />
-                <span v-if="errors && errors.name" class="text-danger mt-2">{{
+                <span v-if="errors && errors.name" class="error--text mt-2">{{
                   errors.name[0]
                 }}</span>
               </div>
@@ -32,7 +32,7 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Device Short Name </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <input
                   v-model="payload.short_name"
                   class="form-control"
@@ -40,7 +40,7 @@
                 />
                 <span
                   v-if="errors && errors.short_name"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.short_name[0] }}</span
                 >
               </div>
@@ -48,7 +48,7 @@
             <div class="col-sm-4">
               <div class="form-group">
                 <label class="col-form-label">Device Type </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <select
                   v-model="payload.device_type"
                   class="form-select pt-1 pb-1"
@@ -61,7 +61,7 @@
                 </select>
                 <span
                   v-if="errors && errors.device_type"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.device_type[0] }}</span
                 >
               </div>
@@ -70,7 +70,7 @@
             <div class="col-sm-4">
               <div class="form-group">
                 <label class="col-form-label">Device Id </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <input
                   v-model="payload.device_id"
                   class="form-control"
@@ -78,7 +78,7 @@
                 />
                 <span
                   v-if="errors && errors.device_id"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.device_id[0] }}</span
                 >
               </div>
@@ -87,7 +87,7 @@
             <div class="col-sm-4">
               <div class="form-group">
                 <label class="col-form-label">Device Model Number</label>
-                <!-- <span class="text-danger">*</span> -->
+                <!-- <span class="error--text">*</span> -->
                 <input
                   v-model="payload.model_number"
                   class="form-control"
@@ -95,7 +95,7 @@
                 />
                 <span
                   v-if="errors && errors.model_number"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.model_number[0] }}</span
                 >
               </div>
@@ -104,9 +104,9 @@
             <!-- <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Device IP </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <input v-model="payload.ip" class="form-control" type="text" />
-                <span v-if="errors && errors.ip" class="text-danger mt-2">{{
+                <span v-if="errors && errors.ip" class="error--text mt-2">{{
                 errors.ip[0]
                 }}</span>
               </div>
@@ -114,9 +114,9 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Port </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <input v-model="payload.port" class="form-control" type="text" />
-                <span v-if="errors && errors.port" class="text-danger mt-2">{{
+                <span v-if="errors && errors.port" class="error--text mt-2">{{
                 errors.port[0]
                 }}</span>
               </div>
@@ -125,7 +125,7 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Device Status </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <select
                   v-model="payload.status_id"
                   class="form-select"
@@ -142,7 +142,7 @@
                 </select>
                 <span
                   v-if="errors && errors.status_id"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.status_id[0] }}</span
                 >
               </div>
@@ -150,7 +150,7 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Company List</label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <select
                   v-model="payload.company_id"
                   class="form-select"
@@ -167,7 +167,7 @@
                 </select>
                 <span
                   v-if="errors && errors.company_id"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.company_id[0] }}</span
                 >
               </div>
@@ -184,7 +184,7 @@
                 ></textarea>
                 <span
                   v-if="errors && errors.location"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.location[0] }}</span
                 >
               </div>

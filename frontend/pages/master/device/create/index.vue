@@ -18,13 +18,13 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Device Name </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <input
                   v-model="payload.name"
                   class="form-control"
                   type="text"
                 />
-                <span v-if="errors && errors.name" class="text-danger mt-2">{{
+                <span v-if="errors && errors.name" class="error--text mt-2">{{
                   errors.name[0]
                 }}</span>
               </div>
@@ -33,7 +33,7 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Device Id </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <input
                   v-model="payload.device_id"
                   class="form-control"
@@ -41,7 +41,7 @@
                 />
                 <span
                   v-if="errors && errors.device_id"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.device_id[0] }}</span
                 >
               </div>
@@ -50,7 +50,7 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Device Status </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <select
                   v-model="payload.status_id"
                   class="form-select"
@@ -67,7 +67,7 @@
                 </select>
                 <span
                   v-if="errors && errors.status_id"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.status_id[0] }}</span
                 >
               </div>
@@ -75,7 +75,7 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label class="col-form-label">Company List</label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <select
                   v-model="payload.company_id"
                   class="form-select"
@@ -92,7 +92,7 @@
                 </select>
                 <span
                   v-if="errors && errors.company_id"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.company_id[0] }}</span
                 >
               </div>
@@ -101,7 +101,7 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label class="col-form-label">Device Location </label>
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
                 <textarea
                   v-model="payload.location"
                   class="form-control"
@@ -110,7 +110,7 @@
                 ></textarea>
                 <span
                   v-if="errors && errors.location"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.location[0] }}</span
                 >
               </div>

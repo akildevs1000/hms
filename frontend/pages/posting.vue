@@ -52,7 +52,7 @@
               <tr style="background-color: white">
                 <th>
                   Item
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field dense outlined type="text" v-model="posting.item" :hide-details="true"></v-text-field>
@@ -61,7 +61,7 @@
               <tr style="background-color: white">
                 <th>
                   QTY
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field dense outlined type="number" v-model="posting.qty" :hide-details="true"></v-text-field>
@@ -70,7 +70,7 @@
               <tr style="background-color: white">
                 <th>
                   Amount
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field dense outlined type="number" v-model="posting.amount" :hide-details="true"></v-text-field>
@@ -79,7 +79,7 @@
               <tr style="background-color: white">
                 <th>
                   Type
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-select v-model="posting.tax_type" :items="[
@@ -94,7 +94,7 @@
               <tr style="background-color: white">
                 <th>
                   Amount With Tax
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   {{ posting.amount_with_tax }}

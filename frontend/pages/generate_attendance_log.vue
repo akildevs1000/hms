@@ -24,7 +24,7 @@
                 v-model="payload.user_id"
                 label="User Id"
               ></v-text-field>
-              <span v-if="errors && errors.user_id" class="text-danger mt-2">{{
+              <span v-if="errors && errors.user_id" class="error--text mt-2">{{
                 errors.user_id[0]
               }}</span>
             </v-col>
@@ -35,7 +35,7 @@
               ></v-text-field>
               <span
                 v-if="errors && errors.device_id"
-                class="text-danger mt-2"
+                class="error--text mt-2"
                 >{{ errors.device_id[0] }}</span
               >
             </v-col>
@@ -115,7 +115,7 @@
                   </v-btn>
                 </v-time-picker>
               </v-menu>
-              <span v-if="errors && errors.time" class="text-danger mt-2">{{
+              <span v-if="errors && errors.time" class="error--text mt-2">{{
                 errors.time[0]
               }}</span>
             </v-col>

@@ -249,7 +249,7 @@
                                                 <v-row>
                                                     <v-col md="2" sm="4" cols="12" dense>
                                                         <label class="col-form-label">Adult <span
-                                                                class="text-danger">*</span>
+                                                                class="error--text">*</span>
                                                         </label>
 
                                                         <div class="wrapper">
@@ -813,7 +813,7 @@
                     <v-row>
                         <v-col md="12" cols="12" sm="12">
                             <label class="col-form-label">Search By Mobile Number
-                                <span class="text-danger">*</span>
+                                <span class="error--text">*</span>
                             </label>
                             <v-text-field dense outlined type="text" placeholder="Enter your Mobile Number"
                                 v-model="search.mobile" :hide-details="true"></v-text-field>

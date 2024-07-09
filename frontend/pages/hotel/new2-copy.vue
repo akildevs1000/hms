@@ -484,7 +484,7 @@
                         <v-row>
                           <v-col md="4" sm="12" cols="12" dense>
                             <label class="col-form-label"
-                              >Adult <span class="text-danger">*</span>
+                              >Adult <span class="error--text">*</span>
                             </label>
 
                             <div class="wrapper">
@@ -1557,7 +1557,7 @@
             <v-col md="12" cols="12" sm="12">
               <label class="col-form-label"
                 >Search By Mobile Number
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
               </label>
               <v-text-field
                 dense

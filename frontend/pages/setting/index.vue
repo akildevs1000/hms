@@ -36,7 +36,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12">
-                        <label class="col-form-label">Current Password <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Current Password <span class="error--text">*</span></label>
                         <v-text-field dense outlined :hide-details="!errors.current_password" :append-icon="current_password_show ? 'mdi-eye' : 'mdi-eye-off'
                           " :type="current_password_show ? 'text' : 'password'" v-model="payload.current_password"
                           class="input-group--focused" @click:append="
@@ -47,7 +47,7 @@
     "></v-text-field>
                       </v-col>
                       <v-col md="12" sm="12" cols="12" dense>
-                        <label class="col-form-label">Password <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Password <span class="error--text">*</span></label>
                         <v-text-field dense outlined :hide-details="!errors.password"
                           :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
                           :type="show_password ? 'text' : 'password'" v-model="payload.password"
@@ -57,7 +57,7 @@
                       </v-col>
 
                       <v-col md="12" sm="12" cols="12" dense>
-                        <label class="col-form-label">Confirm Password <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Confirm Password <span class="error--text">*</span></label>
                         <v-text-field dense outlined :hide-details="!errors.password_confirmation" :append-icon="show_password_confirm ? 'mdi-eye' : 'mdi-eye-off'
                           " :type="show_password_confirm ? 'text' : 'password'" v-model="payload.password_confirmation"
                           class="input-group--focused" @click:append="
@@ -86,14 +86,14 @@
                       <v-col cols="12">
                         <div class="form-group">
                           <label class="col-form-label">Currency</label>
-                          <span class="text-danger">*</span>
+                          <span class="error--text">*</span>
                           <v-select outlined dense small v-model="company_payload.currency" :items="[
                             { text: 'INR ₹', value: '₹' },
                             { text: 'US $', value: '$' },
                           ]">
                           </v-select>
 
-                          <span v-if="errors && errors.currency" class="text-danger mt-2">{{ errors.p_o_box_no[0]
+                          <span v-if="errors && errors.currency" class="error--text mt-2">{{ errors.p_o_box_no[0]
                           }}</span>
                         </div>
                         <v-col cols="12">
@@ -145,7 +145,7 @@
                   <input required type="file" @change="attachment" style="display: none" accept="image/*"
                     ref="attachment_input" />
 
-                  <span v-if="errors && errors.logo" class="text-danger mt-2">{{
+                  <span v-if="errors && errors.logo" class="error--text mt-2">{{
                     errors.logo[0]
                   }}</span>
                 </v-col>

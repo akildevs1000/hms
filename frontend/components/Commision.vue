@@ -15,7 +15,7 @@
               <v-col cols="5">
                 <v-text-field v-model="item.title" label="Title"></v-text-field>
 
-                <span v-if="errors && errors.title" class="text-danger mt-2">{{
+                <span v-if="errors && errors.title" class="error--text mt-2">{{
                   errors.title[0]
                 }}</span>
               </v-col>
@@ -27,7 +27,7 @@
                   label="Amount"
                 ></v-text-field>
 
-                <span v-if="errors && errors.amount" class="text-danger mt-2">{{
+                <span v-if="errors && errors.amount" class="error--text mt-2">{{
                   errors.amount[0]
                 }}</span>
               </v-col>
@@ -68,7 +68,7 @@
                   label="Title"
                 ></v-text-field>
 
-                <span v-if="errors && errors.title" class="text-danger mt-2">{{
+                <span v-if="errors && errors.title" class="error--text mt-2">{{
                   errors.title[0]
                 }}</span>
               </v-col>
@@ -80,7 +80,7 @@
                   label="Amount"
                 ></v-text-field>
 
-                <span v-if="errors && errors.amount" class="text-danger mt-2">{{
+                <span v-if="errors && errors.amount" class="error--text mt-2">{{
                   errors.amount[0]
                 }}</span>
               </v-col>

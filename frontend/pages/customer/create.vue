@@ -29,7 +29,7 @@
             <v-row dense>
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Title <span class="text-danger">*</span></label
+                  >Title <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="payload.title"
@@ -57,7 +57,7 @@
               </v-col>
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
-                  >Employee Id<span class="text-danger">*</span></label
+                  >Employee Id<span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -74,7 +74,7 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
-                  >Employee Device ID <span class="text-danger">*</span></label
+                  >Employee Device ID <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -92,7 +92,7 @@
               </v-col>
               <v-col md="4" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Display Name <span class="text-danger">*</span></label
+                  >Display Name <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -108,7 +108,7 @@
               </v-col>
               <v-col md="4" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >First Name <span class="text-danger">*</span></label
+                  >First Name <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -125,7 +125,7 @@
 
               <v-col md="4" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Last Name <span class="text-danger">*</span></label
+                  >Last Name <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -142,7 +142,7 @@
 
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Password <span class="text-danger">*</span></label
+                  >Password <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -162,7 +162,7 @@
 
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Confirm Password <span class="text-danger">*</span></label
+                  >Confirm Password <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -186,7 +186,7 @@
 
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Email <span class="text-danger">*</span></label
+                  >Email <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -254,7 +254,7 @@
 
                   <span
                     v-if="errors && errors.profile_picture"
-                    class="text-danger mt-2"
+                    class="error--text mt-2"
                     >{{ errors.profile_picture[0] }}</span
                   >
                 </div>
@@ -293,7 +293,7 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
-                  >Phone No <span class="text-danger">*</span></label
+                  >Phone No <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -310,7 +310,7 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
-                  >Whatsapp Number <span class="text-danger">*</span></label
+                  >Whatsapp Number <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -433,7 +433,7 @@
           <v-stepper-content step="3">
             <v-row dense>
               <!-- <v-col md="6" cols="12" sm="12" dense>
-                <label class="col-form-label">Employee Id<span class="text-danger">*</span></label>
+                <label class="col-form-label">Employee Id<span class="error--text">*</span></label>
                 <v-text-field dense outlined type="text" v-model="other.employee_id" :hide-details="!errors.employee_id"
                   :error="errors.employee_id" :error-messages="
                     errors && errors.employee_id ? errors.employee_id[0] : ''
@@ -441,7 +441,7 @@
               </v-col>
 
               <v-col md="6" cols="12" sm="12" dense>
-                <label class="col-form-label">Employee Device ID <span class="text-danger">*</span></label>
+                <label class="col-form-label">Employee Device ID <span class="error--text">*</span></label>
                 <v-text-field dense outlined type="text" v-model="other.system_user_id"
                   :hide-details="!errors.system_user_id" :error="errors.system_user_id" :error-messages="
                     errors && errors.system_user_id
@@ -452,7 +452,7 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
-                  >Department <span class="text-danger">*</span></label
+                  >Department <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="other.department_id"
@@ -474,7 +474,7 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
-                  >Designation <span class="text-danger">*</span></label
+                  >Designation <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="other.designation_id"
@@ -529,7 +529,7 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
-                  >Joining Date <span class="text-danger">*</span>
+                  >Joining Date <span class="error--text">*</span>
                 </label>
                 <v-text-field
                   dense

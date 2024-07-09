@@ -124,7 +124,7 @@
                 </v-menu>
                 <span
                   v-if="errors && errors.start_date"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.start_date[0] }}</span
                 >
               </v-col>
@@ -169,7 +169,7 @@
                 </v-menu>
                 <span
                   v-if="errors && errors.end_date"
-                  class="text-danger mt-2"
+                  class="error--text mt-2"
                   >{{ errors.end_date[0] }}</span
                 >
               </v-col>
@@ -189,7 +189,7 @@
               </v-col>
               <span
                 v-if="errors && errors.description"
-                class="text-danger mt-2"
+                class="error--text mt-2"
                 >{{ errors.description[0] }}</span
               >
             </v-row>

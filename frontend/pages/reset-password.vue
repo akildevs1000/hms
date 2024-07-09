@@ -120,7 +120,7 @@
                       <div class="form-outline mb-4">
                         <label class="col-form-label"
                           >New Password
-                          <span class="text-danger">*</span></label
+                          <span class="error--text">*</span></label
                         >
                         <v-text-field
                           dense
@@ -139,7 +139,7 @@
                         ></v-text-field>
                         <label class="col-form-label"
                           >Confirm Password
-                          <span class="text-danger">*</span></label
+                          <span class="error--text">*</span></label
                         >
                         <v-text-field
                           dense

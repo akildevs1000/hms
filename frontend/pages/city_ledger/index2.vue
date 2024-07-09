@@ -59,7 +59,7 @@
               <tr>
                 <th>
                   Payment Mode
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-select
@@ -100,7 +100,7 @@
               <tr>
                 <th>
                   Full Payment
-                  <span class="text-danger">*</span>
+                  <span class="error--text">*</span>
                 </th>
                 <td>
                   <v-text-field

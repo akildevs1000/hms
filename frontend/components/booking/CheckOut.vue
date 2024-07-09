@@ -39,7 +39,7 @@
             <tr>
               <th>
                 Payment Mode
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
               </th>
               <td>
                 <v-select v-model="BookingData.payment_mode_id" :items="[
@@ -55,7 +55,7 @@
             <tr v-if="BookingData.payment_mode_id != 1">
               <th>
                 Reference Number
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
               </th>
               <td>
                 <v-text-field dense outlined type="text" v-model="reference" :hide-details="true"></v-text-field>
@@ -95,7 +95,7 @@
             <tr style="background-color: white" v-if="BookingData.paid_by != 2">
               <th>
                 Full Payment
-                <span class="text-danger">*</span>
+                <span class="error--text">*</span>
               </th>
               <td>
                 <v-text-field dense outlined type="number" v-model="full_payment" :hide-details="true"></v-text-field>

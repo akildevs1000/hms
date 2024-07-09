@@ -211,7 +211,7 @@
 
                             <span
                               v-if="errors && errors.profile_picture"
-                              class="text-danger mt-2"
+                              class="error--text mt-2"
                               >{{ errors.profile_picture[0] }}</span
                             >
                           </div>

@@ -14,29 +14,18 @@
       <v-row>
         <v-col>
           <v-card>
-            <v-tabs class="pt-3" color="primary" :vertical="vertical">
-              <v-tab>
-                <v-icon> mdi-domain </v-icon>
-              </v-tab>
-              <v-tab>
-                <v-icon> mdi-license </v-icon>
-              </v-tab>
-              <v-tab>
-                <v-icon> mdi-account </v-icon>
-              </v-tab>
-              <!-- <v-tab>
-                <v-icon> mdi-earth </v-icon>
-              </v-tab> -->
-              <v-tab>
-                <v-icon> mdi-lock </v-icon>
-              </v-tab>
-              <v-tab> <v-icon>mdi-currency-usd</v-icon> </v-tab>
+            <v-tabs class="pt-3" color="primary">
+              <v-tab> Profile </v-tab>
+              <v-tab> License </v-tab>
+              <v-tab> Contact </v-tab>
+              <v-tab> Password </v-tab>
+              <v-tab> Currency </v-tab>
 
-              <v-tab> <v-icon>mdi-file-percent</v-icon> </v-tab>
+              <v-tab> Tax Slabs </v-tab>
 
-              <v-tab> <v-icon>mdi-whatsapp</v-icon> </v-tab>
+              <v-tab> Whatsapp </v-tab>
 
-              <v-tab> <v-icon>mdi-weather-night</v-icon> </v-tab>
+              <v-tab> Night Audit Email </v-tab>
 
               <v-tab-item>
                 <v-card flat>
@@ -64,7 +53,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.name"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.name[0] }}</span
                         >
                       </v-col>
@@ -79,7 +68,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.email"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.email[0] }}</span
                         >
                       </v-col>
@@ -95,7 +84,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.mol_id"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.mol_id[0] }}</span
                         >
                       </v-col>
@@ -111,7 +100,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.p_o_box_no"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.p_o_box_no[0] }}</span
                         >
                       </v-col>
@@ -127,7 +116,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.currency"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.currency[0] }}</span
                         >
                       </v-col>
@@ -191,31 +180,31 @@
                         >
                         </v-text-field>
                       </v-col>
-                      <v-col cols="4">
-                        <v-card class="ml-1 mr-1">
-                          <div class="pa-5">
-                            <v-img
+                      <v-col cols="6">
+                        <v-card max-width="300" class="pa-1" outlined>
+                          <div class="text-center">
+                            <v-avatar tile size="250">
+                            <img
                               @click="onpick_attachment"
-                              style="
-                                width: 150px;
-                                height: 150px;
-                                margin: 0 auto;
-                                border-radius: 50%;
-                              "
                               :src="
                                 previewImage ||
                                 company_payload.logo ||
                                 '/no-profile-image.jpg'
                               "
-                            ></v-img>
+                            />
+                          </v-avatar>
                           </div>
-                          <v-btn style="width: 100%" @click="onpick_attachment"
-                            >{{
-                              !upload.name ? "Upload Logo" : "Logo Uploaded"
-                            }}
-                            <v-icon right dark>mdi-cloud-upload</v-icon>
-                          </v-btn>
+                          <br>
+                          <v-btn
+                          color="primary"
+                          
+                          block
+                          @click="onpick_attachment"
+                          >{{ !upload.name ? "Upload Logo" : "Logo Uploaded" }}
+                          <v-icon right dark>mdi-cloud-upload</v-icon>
+                        </v-btn>
                         </v-card>
+                       
 
                         <input
                           required
@@ -228,7 +217,7 @@
 
                         <span
                           v-if="errors && errors.logo"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.logo[0] }}</span
                         >
                       </v-col>
@@ -266,7 +255,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.license_no"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.license_no[0] }}</span
                         >
                       </v-col>
@@ -295,7 +284,7 @@
                         </v-select>
                         <span
                           v-if="errors && errors.license_type"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.license_type[0] }}</span
                         >
                       </v-col>
@@ -311,7 +300,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.emirate"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.emirate[0] }}</span
                         >
                       </v-col>
@@ -327,7 +316,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.manager"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.manager[0] }}</span
                         >
                       </v-col>
@@ -363,7 +352,7 @@
                         </v-menu>
                         <span
                           v-if="errors && errors.issue_date"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.issue_date[0] }}</span
                         >
                       </v-col>
@@ -399,7 +388,7 @@
                         </v-menu>
                         <span
                           v-if="errors && errors.expiry_date"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.expiry_date[0] }}</span
                         >
                       </v-col>
@@ -415,7 +404,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.makeem_no"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.makeem_no[0] }}</span
                         >
                       </v-col>
@@ -452,7 +441,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.name"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.name[0] }}</span
                         >
                       </v-col>
@@ -468,7 +457,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.number"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.number[0] }}</span
                         >
                       </v-col>
@@ -484,7 +473,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.position"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.position[0] }}</span
                         >
                       </v-col>
@@ -500,23 +489,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.whatsapp"
-                          class="text-danger mt-2"
-                          >{{ errors.whatsapp[0] }}</span
-                        >
-                      </v-col>
-
-                      <v-col cols="6">
-                        <v-text-field
-                          label="Contact Person Whatsapp"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="contact_payload.whatsapp"
-                        >
-                        </v-text-field>
-                        <span
-                          v-if="errors && errors.whatsapp"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.whatsapp[0] }}</span
                         >
                       </v-col>
@@ -553,7 +526,7 @@
                       </v-text-field>
                       <span
                         v-if="errors && errors.lat"
-                        class="text-danger mt-2"
+                        class="error--text mt-2"
                         >{{ errors.lat[0] }}</span
                       >
                     </v-col>
@@ -568,7 +541,7 @@
                       </v-text-field>
                       <span
                         v-if="errors && errors.lon"
-                        class="text-danger mt-2"
+                        class="error--text mt-2"
                         >{{ errors.lon[0] }}</span
                       >
                     </v-col>
@@ -584,7 +557,7 @@
                       </v-textarea>
                       <span
                         v-if="errors && errors.location"
-                        class="text-danger mt-2"
+                        class="error--text mt-2"
                         >{{ errors.location[0] }}</span
                       >
                     </v-col>
@@ -622,7 +595,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.password"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.password[0] }}</span
                         >
                       </v-col>
@@ -638,7 +611,7 @@
                         </v-text-field>
                         <span
                           v-if="errors && errors.password_confirmation"
-                          class="text-danger mt-2"
+                          class="error--text mt-2"
                           >{{ errors.password_confirmation[0] }}</span
                         >
                       </v-col>
@@ -684,7 +657,7 @@
 
                             <span
                               v-if="errors && errors.currency"
-                              class="text-danger mt-2"
+                              class="error--text mt-2"
                               >{{ errors.p_o_box_no[0] }}</span
                             >
                           </v-col>

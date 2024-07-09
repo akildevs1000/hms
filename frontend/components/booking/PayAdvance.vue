@@ -41,7 +41,7 @@
       <tr>
         <th>
           Payment Mode
-          <span class="text-danger">*</span>
+          <span class="error--text">*</span>
         </th>
         <td>
           <v-select
@@ -66,7 +66,7 @@
       <tr v-if="BookingData.payment_mode_id != 1">
         <th>
           Reference Number
-          <span class="text-danger">*</span>
+          <span class="error--text">*</span>
         </th>
         <td>
           <v-text-field
@@ -90,7 +90,7 @@
       <tr style="background-color: white">
         <th>
           New Advance
-          <span class="text-danger">*</span>
+          <span class="error--text">*</span>
         </th>
         <td>
           <v-text-field

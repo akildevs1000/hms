@@ -19,7 +19,7 @@
               <v-card-title primary-title> Room Information </v-card-title>
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Type <span class="text-danger">*</span></label
+                  >Type <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="room.type"
@@ -64,7 +64,7 @@
             <v-row>
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Room Type <span class="text-danger">*</span></label
+                  >Room Type <span class="error--text">*</span></label
                 >
                 <v-text-field
                   v-model="reservation.room_type"
@@ -287,7 +287,7 @@
               <v-card-title primary-title> Customer Information </v-card-title>
               <v-col md="8" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Contact No <span class="text-danger">*</span></label
+                  >Contact No <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -312,7 +312,7 @@
               </v-col>
               <v-col md="4" cols="12" sm="12">
                 <label class="col-form-label"
-                  >First Name <span class="text-danger">*</span></label
+                  >First Name <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -338,7 +338,7 @@
               </v-col>
               <v-col md="4" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Email <span class="text-danger">*</span></label
+                  >Email <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -391,7 +391,7 @@
               </v-col>
               <v-col md="3" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >ID Card Type <span class="text-danger">*</span></label
+                  >ID Card Type <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="customer.id_card_type_id"
@@ -412,7 +412,7 @@
               <v-col md="3" cols="12" sm="12">
                 <label class="col-form-label"
                   >Selected ID Card Number
-                  <span class="text-danger">*</span></label
+                  <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense

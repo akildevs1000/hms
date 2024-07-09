@@ -47,7 +47,7 @@
                         <v-row>
                           <v-col md="4" sm="12" cols="12" dense>
                             <label class="col-form-label"
-                              >Adult <span class="text-danger">*</span>
+                              >Adult <span class="error--text">*</span>
                             </label>
 
                             <div class="wrapper">

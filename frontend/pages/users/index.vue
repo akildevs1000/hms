@@ -123,7 +123,7 @@
                           <input required type="file" @change="attachment" style="display: none" accept="image/*"
                             ref="attachment_input" />
 
-                          <span v-if="errors && errors.profile_picture" class="text-danger mt-2">{{
+                          <span v-if="errors && errors.profile_picture" class="error--text mt-2">{{
                             errors.profile_picture[0]
                           }}</span>
                         </div>

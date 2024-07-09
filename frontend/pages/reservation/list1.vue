@@ -57,7 +57,7 @@
                   <tr>
                     <th>
                       Payment Mode
-                      <span class="text-danger">*</span>
+                      <span class="error--text">*</span>
                     </th>
                     <td>
                       <v-select
@@ -99,7 +99,7 @@
                   <tr style="background-color: white">
                     <th>
                       Payment
-                      <span class="text-danger">*</span>
+                      <span class="error--text">*</span>
                     </th>
                     <td>
                       <v-text-field

@@ -308,7 +308,7 @@
                     <v-row>
                         <v-col md="12" cols="12" sm="12">
                             <label class="col-form-label">Search By Mobile Number
-                                <span class="text-danger">*</span>
+                                <span class="error--text">*</span>
                             </label>
                             <v-text-field dense outlined type="text" v-model="search.mobile"
                                 :hide-details="true"></v-text-field>

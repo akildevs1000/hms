@@ -10,7 +10,7 @@
             <v-col md="12" cols="12" sm="12">
               <label class="col-form-label"
                 >Search By Mobile Number
-                <span class="text-danger">*</span></label
+                <span class="error--text">*</span></label
               >
               <v-text-field
                 dense
@@ -170,7 +170,7 @@
               </v-col>
               <v-col md="2" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Tittle <span class="text-danger">*</span></label
+                  >Tittle <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="customer.title"
@@ -188,7 +188,7 @@
               </v-col>
               <v-col md="5" cols="12" sm="12">
                 <label class="col-form-label"
-                  >First Name <span class="text-danger">*</span></label
+                  >First Name <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -214,7 +214,7 @@
               </v-col>
               <!-- <v-col md="3" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Adult <span class="text-danger">*</span>
+                  >Adult <span class="error--text">*</span>
                 </label>
                 <div class="wrapper">
                   <span
@@ -265,7 +265,7 @@
 
               <v-col md="3" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >ID Card Type <span class="text-danger">*</span></label
+                  >ID Card Type <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="customer.id_card_type_id"
@@ -285,7 +285,7 @@
               </v-col>
               <v-col md="3" cols="12" sm="12">
                 <label class="col-form-label"
-                  >ID Card <span class="text-danger">*</span></label
+                  >ID Card <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -360,7 +360,7 @@
               </v-col>
               <v-col md="6" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Contact No <span class="text-danger">*</span></label
+                  >Contact No <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -377,7 +377,7 @@
               </v-col>
               <v-col md="5" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Whatsapp No <span class="text-danger">*</span></label
+                  >Whatsapp No <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -403,7 +403,7 @@
               </v-col>
               <v-col md="6" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Nationality <span class="text-danger">*</span></label
+                  >Nationality <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="customer.nationality"
@@ -421,7 +421,7 @@
               </v-col>
               <v-col md="12" cols="12" sm="12">
                 <label class="col-form-label"
-                  >Email <span class="text-danger">*</span></label
+                  >Email <span class="error--text">*</span></label
                 >
                 <v-text-field
                   dense
@@ -458,7 +458,7 @@
             <v-row class="px-10">
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label"
-                  >Type <span class="text-danger">*</span></label
+                  >Type <span class="error--text">*</span></label
                 >
                 <v-select
                   v-model="room.type"
@@ -851,7 +851,7 @@
                       </v-col>
                       <v-col md="3" sm="12" cols="12" dense>
                         <label class="col-form-label"
-                          >Adult <span class="text-danger">*</span>
+                          >Adult <span class="error--text">*</span>
                         </label>
                         <div class="wrapper">
                           <span
