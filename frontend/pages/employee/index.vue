@@ -8,14 +8,14 @@
     <v-dialog v-model="userDialog" max-width="700">
       <v-card>
         <v-toolbar class="rounded-md" color="blue" dense flat dark>
-          <span>{{ formTitle }} {{ Model }}</span>
+          <span>{{ editedItem.id ? "Edit" : "Create" }} {{ Model }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="userDialog = false"
             >mdi-close</v-icon
           >
         </v-toolbar>
         <v-card-text>
-          <v-container>
+          <v-container v-if="!editedItem.id">
             <v-row>
               <v-col md="8">
                 <v-row>
@@ -242,6 +242,255 @@
               </v-col>
             </v-row>
           </v-container>
+          <v-tabs v-else>
+            <v-tab>Profile</v-tab>
+            <v-tab>Document</v-tab>
+            <v-tab-item>
+              <v-container>
+                <v-row>
+                  <v-col md="8">
+                    <v-row>
+                      <v-col md="6" cols="12" sm="12">
+                        <v-select
+                          v-model="editedItem.title"
+                          :items="titleItems"
+                          dense
+                          item-text="name"
+                          item-value="name"
+                          :hide-details="errors && !errors.title"
+                          :error="errors && errors.title"
+                          :error-messages="
+                            errors && errors.title ? errors.title[0] : ''
+                          "
+                          outlined
+                        ></v-select>
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-select
+                          :items="roles"
+                          item-text="name"
+                          item-value="id"
+                          v-model="editedItem.role_id"
+                          outlined
+                          placeholder="Select Role"
+                          label="Role"
+                          :hide-details="true"
+                          dense
+                        ></v-select>
+                        <span
+                          v-if="errors && errors.role_id"
+                          class="error--text"
+                          >{{ errors.role_id[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-text-field
+                          v-model="editedItem.name"
+                          placeholder="Name"
+                          label="Name"
+                          outlined
+                          :hide-details="true"
+                          dense
+                        ></v-text-field>
+                        <span
+                          v-if="errors && errors.name"
+                          class="error--text"
+                          >{{ errors.name[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-text-field
+                          v-model="editedItem.last_name"
+                          placeholder="Last Name"
+                          label="last Name"
+                          outlined
+                          :hide-details="true"
+                          dense
+                        ></v-text-field>
+                        <span
+                          v-if="errors && errors.last_name"
+                          class="error--text"
+                          >{{ errors.last_name[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-text-field
+                          v-model="editedItem.email"
+                          placeholder="Email"
+                          label="Email"
+                          outlined
+                          :hide-details="true"
+                          type="email"
+                          dense
+                        ></v-text-field>
+                        <span
+                          v-if="errors && errors.email"
+                          class="error--text"
+                          >{{ errors.email[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-text-field
+                          v-model="editedItem.mobile"
+                          placeholder="Mobile"
+                          label="Mobile"
+                          outlined
+                          :hide-details="true"
+                          type="number"
+                          dense
+                        ></v-text-field>
+                        <span
+                          v-if="errors && errors.mobile"
+                          class="error--text"
+                          >{{ errors.mobile[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-text-field
+                          v-model="editedItem.password"
+                          placeholder="Password"
+                          autocomplete="false"
+                          label="Password"
+                          outlined
+                          :hide-details="true"
+                          type="password"
+                          dense
+                        ></v-text-field>
+                        <span
+                          v-if="errors && errors.password"
+                          class="error--text"
+                          >{{ errors.password[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-text-field
+                          v-model="editedItem.password_confirmation"
+                          autocomplete="false"
+                          placeholder="Confirm Password"
+                          label="Confirm Password"
+                          outlined
+                          :hide-details="true"
+                          type="password"
+                          dense
+                        ></v-text-field>
+                        <span
+                          v-if="errors && errors.password_confirmation"
+                          class="error--text"
+                          >{{ errors.password_confirmation[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-select
+                          label="Status"
+                          v-model="editedItem.is_active"
+                          :items="[
+                            { name: 'Active', value: '1' },
+                            { name: 'Inactive', value: '0' },
+                          ]"
+                          dense
+                          item-text="name"
+                          item-value="value"
+                          :hide-details="errors && !errors.is_active"
+                          :error="errors && errors.is_active"
+                          :error-messages="
+                            errors && errors.is_active
+                              ? errors.is_active[0]
+                              : ''
+                          "
+                          outlined
+                        ></v-select>
+                        <span
+                          v-if="errors && errors.is_active"
+                          class="error--text"
+                          >{{ errors.is_active[0] }}</span
+                        >
+                      </v-col>
+                      <v-col md="6" cols="12">
+                        <v-select
+                          label="Whatsapp OTP"
+                          v-model="editedItem.enable_whatsapp_otp"
+                          :items="[
+                            { name: 'Enable', value: 1 },
+                            { name: 'Disable', value: 0 },
+                          ]"
+                          dense
+                          item-text="name"
+                          item-value="value"
+                          :hide-details="errors && !errors.enable_whatsapp_otp"
+                          :error="errors && errors.enable_whatsapp_otp"
+                          :error-messages="
+                            errors && errors.enable_whatsapp_otp
+                              ? errors.enable_whatsapp_otp[0]
+                              : ''
+                          "
+                          outlined
+                        ></v-select>
+                        <span
+                          v-if="errors && errors.enable_whatsapp_otp"
+                          class="error--text"
+                          >{{ errors.enable_whatsapp_otp[0] }}</span
+                        >
+                      </v-col>
+
+                      <v-col cols="12" class="text-right">
+                        <v-btn
+                          small
+                          class="grey white--text"
+                          @click="userDialog = false"
+                        >
+                          Cancel
+                        </v-btn>
+                        <v-btn small class="primary" @click="save">Save</v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col md="4">
+                    <div
+                      class="form-group"
+                      style="margin: 0 auto; width: 150px"
+                    >
+                      <v-img
+                        style="
+                          width: 100%;
+                          height: 150px;
+                          border: 1px solid #4390fc;
+                          border-radius: 50%;
+                          margin: 0 auto;
+                        "
+                        :src="previewImage || '/no-profile-image.jpg'"
+                      ></v-img>
+                      <br />
+                      <v-btn
+                        small
+                        class="form-control primary"
+                        @click="onpick_attachment"
+                        >{{ !upload.name ? "Upload" : "Change" }}
+                        Image
+                        <v-icon right dark>mdi-cloud-upload</v-icon>
+                      </v-btn>
+                      <input
+                        required
+                        type="file"
+                        @change="attachment"
+                        style="display: none"
+                        accept="image/*"
+                        ref="attachment_input"
+                      />
+
+                      <span
+                        v-if="errors && errors.profile_picture"
+                        class="error--text mt-2"
+                        >{{ errors.profile_picture[0] }}</span
+                      >
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-tab-item>
+            <v-tab-item>
+              <EmployeeDocument :employee_id="editedItem.id" />
+            </v-tab-item>
+          </v-tabs>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -289,17 +538,7 @@
           v-if="can('lost_and_found_create')"
           v-slot:activator="{ on, attrs }"
         >
-          <v-btn
-            class="blue"
-            dark
-            small
-            v-bind="attrs"
-            v-on="on"
-            @click="
-              userDialog = true;
-              errors = [];
-            "
-          >
+          <v-btn class="blue" dark small v-bind="attrs" v-on="on" @click="addNewItem">
             <v-icon small center>mdi-plus</v-icon> Employee
           </v-btn>
         </template>
@@ -541,9 +780,9 @@ export default {
     };
   },
   watch: {
-    userDialog(val) {
-      !val ? (this.editedItem = []) : "";
-    },
+    // userDialog(val) {
+    //   !val ? (this.editedItem = []) : "";
+    // },
 
     options: {
       handler() {
@@ -589,6 +828,11 @@ export default {
       this.getDataFromApi();
     },
 
+    addNewItem () {
+      this.userDialog = true;
+      this.errors = [];
+      this.editedItem = {};
+    },
     editItem(item) {
       this.errors = [];
       this.editedIndex = this.userData.indexOf(item);

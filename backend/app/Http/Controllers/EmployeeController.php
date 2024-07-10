@@ -23,6 +23,7 @@ use App\Http\Requests\Employee\EmployeeImportRequest;
 use App\Http\Requests\Employee\EmployeeUpdateContact;
 use App\Http\Requests\Employee\EmployeeUpdateRequest;
 use App\Http\Requests\Employee\EmployeeContactRequest;
+use App\Models\EmployeeDocument;
 
 class EmployeeController extends Controller
 {
@@ -509,6 +510,80 @@ class EmployeeController extends Controller
             ->where('report_id', $request->report_id)
             ->delete();
         return response()->json(['status' => true, 'message' => 'Reporter successfully Deleted']);
+    }
+
+    public function documentStore(Request $request)
+    {
+        $validated = $request->validate([
+            "name" => "required|min:3|max:20",
+            "description" => "nullable|min:3|max:100",
+            'document' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'employee_id' => 'required',
+        ]);
+
+        try {
+
+            if (isset($request->document)) {
+                $file = $request->file('document');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $request->file('document')->move(public_path('/employee_document'), $fileName);
+                $validated['path'] = $fileName;
+            }
+
+            unset($validated["document"]);
+
+            EmployeeDocument::create($validated);
+            return $this->response("Document has been added", null, true);
+        } catch (\Exception $e) {
+            return $this->response("Document cannot add", $e->getMessage(), true);
+        }
+    }
+
+    public function documentUpdate(Request $request, $id)
+    {
+        $validated = $request->validate([
+            "name" => "required|min:3|max:20",
+            "description" => "nullable|min:3|max:100",
+            'document' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        try {
+            if (isset($request->document)) {
+                $file = $request->file('document');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $request->file('document')->move(public_path('/employee_document'), $fileName);
+                $validated['path'] = $fileName;
+            }
+
+            unset($validated["document"]);
+
+            EmployeeDocument::where("id", $id)->update($validated);
+            return $this->response("Document has been updated", null, true);
+        } catch (\Exception $e) {
+            return $this->response("Document cannot update", $e->getMessage(), true);
+        }
+    }
+
+    public function documentList(Request $request)
+    {
+        return EmployeeDocument::where("employee_id", $request->employee_id)->paginate($request->per_page ?? 100);
+    }
+
+    public function documentShow($id)
+    {
+        return EmployeeDocument::where("id", $id)->first();
+    }
+
+    public function documentDestroy($id)
+    {
+        try {
+            EmployeeDocument::where("id", $id)->delete();
+            return $this->response("Document has been deleted", null, true);
+        } catch (\Throwable $th) {
+            return $this->response("Document cannot delete", null, true);
+        }
     }
 
     // public function employeeRemoveReporter($id)

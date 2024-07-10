@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssignPermissionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReportNotificationController;
 use App\Http\Controllers\ResetPasswordController;
@@ -56,3 +57,11 @@ Route::get('company-document/{id}', [CompanyController::class, "documentShow"]);
 Route::post('company-document/{id}', [CompanyController::class, "documentUpdate"]);
 Route::get('company-document', [CompanyController::class, "documentList"]);
 Route::delete('company-document/{id}', [CompanyController::class, "documentDestroy"]);
+
+
+
+Route::post('employee-document', [EmployeeController::class, "documentStore"]);
+Route::get('employee-document/{id}', [EmployeeController::class, "documentShow"]);
+Route::post('employee-document/{id}', [EmployeeController::class, "documentUpdate"]);
+Route::get('employee-document', [EmployeeController::class, "documentList"]);
+Route::delete('employee-document/{id}', [EmployeeController::class, "documentDestroy"]);

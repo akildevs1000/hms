@@ -1241,6 +1241,7 @@ class BookingController extends Controller
     public function events_list(Request $request)
     {
 
+
         // $calender_display_days = 30;
         // if ($request->calender_display_days > 30) {
         //     $calender_display_days = $request->calender_display_days - 30;
@@ -1261,7 +1262,7 @@ class BookingController extends Controller
             $q->where('company_id', $request->company_id);
             $q->where('check_in', '>=', $date_from);
             $q->where('check_in', '<=', $date_to);
-        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in as start', 'check_out', 'booking_status', 'room_category_type as className']);
+        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in', 'check_in as start', 'check_out', 'booking_status', 'room_category_type as className']);
     }
 
     public function events_list1(Request $request)

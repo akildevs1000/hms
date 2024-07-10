@@ -51,6 +51,8 @@ class BookedRoom extends Model
         'background',
         'check_out_time',
         'end',
+
+        'checkin_date_only'
     ];
 
     protected $casts = [
@@ -229,6 +231,10 @@ class BookedRoom extends Model
         // date_modify($date, "-1 days");
         return date_format($date, "Y-m-d");
         // return date_format($date, "Y-m-d H:i");
+    }
+    public function GetCheckInDateOnlyAttribute()
+    {
+        return date('Y-m-d 12:00', strtotime($this->check_in));
     }
 
     public function GetResourceIdAttribute()

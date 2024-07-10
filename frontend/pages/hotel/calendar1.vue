@@ -372,12 +372,35 @@
     </v-dialog>
     <v-row>
       <v-col cols="12">
-        <FullCalendar
-          ref="fullCalendar"
-          @datesRender="handleDatesRender"
-          :options="calendarOptions"
-          style="background: #fff"
-        />
+        <v-card>
+          <v-card-text>
+            <v-row flat>
+              <v-col cols="8">
+                <h1 class="title">Calendar</h1>
+              </v-col>
+              <v-col cols="2">
+                <v-text-field
+                  outlined
+                  hide-details
+                  dense
+                  append-icon="mdi-magnify"
+                  label="Search"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="2">
+                <FilterDateRange @filter-attr="filterAttr" />
+              </v-col>
+              <v-col cols="12">
+                <FullCalendar
+                  ref="fullCalendar"
+                  @datesRender="handleDatesRender"
+                  :options="calendarOptions"
+                  style="background: #fff"
+                />
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </div>
@@ -409,6 +432,13 @@ export default {
   //   mask: VueMask.directive,
   // },
   data() {
+    const today = new Date();
+    const startDate = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - 7
+    ); // Calculate start date 7 days ago
+
     return {
       // date: "",
       isConfirm: false,
@@ -444,74 +474,8 @@ export default {
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
         locale: "en",
-
-        customButtons: {
-          prev: {
-            // this overrides the prev button
-            text: "PREV",
-            click: (e) => {
-              this.prevCounter = this.prevCounter - 1;
-              let calendarApi = this.$refs.fullCalendar.getApi();
-              calendarApi.prev();
-
-              //var start = calendarApi.view;
-              // var end = calendarApi.view.end;
-              //console.log(start);
-              // var date = this.$refs.fullCalendar.getDate();
-              // alert("The current date of the calendar is " + date.toISOString());
-              this.get_events();
-            },
-          },
-          next: {
-            // this overrides the prev button
-            text: "NEXT",
-            click: (e) => {
-              this.prevCounter = this.prevCounter + 1;
-
-              let calendarApi = this.$refs.fullCalendar.getApi();
-              calendarApi.next();
-              this.get_events();
-            },
-          },
-          first: {
-            text: "30 Days",
-            click: () => {
-              // this.clearHeaderContent();
-              this.calendarOptions.views.resourceTimelineYear.duration.days = 60;
-              // this.changeTableHeaderContent();
-              // this.defaultDaysCount = 60;
-
-              setTimeout(() => {
-                this.get_events();
-              }, 2000);
-            },
-          },
-          second: {
-            text: "45 Days",
-            click: () => {
-              // this.clearHeaderContent();
-              this.calendarOptions.views.resourceTimelineYear.duration.days = 75;
-              // this.changeTableHeaderContent();
-              //this.defaultDaysCount = 75;
-              setTimeout(() => {
-                this.get_events();
-              }, 2000);
-            },
-          },
-          // third: {
-          //   text: "90 Days",
-          //   click: () => {
-          //     this.clearHeaderContent();
-          //     this.calendarOptions.views.resourceTimelineYear.duration.days = 120;
-          //     // this.changeTableHeaderContent();
-          //   },
-          // },
-        },
-        headerToolbar: {
-          start: "first,second,third",
-          center: "title",
-          // end: "dayGridMonth,timeGridWeek,timeGridDay",
-        },
+        initialDate: startDate, // Set initial date to 7 days ago
+        headerToolbar: false,
         // now: "2022-11-01",
         now: "",
 
@@ -523,11 +487,6 @@ export default {
         selectable: true,
         // initialView: "resourceTimelineMonth",
         initialView: "resourceTimelineYear",
-        //initialView: "timeGrid",
-        // visibleRange: {
-        //   start: "2023-05-22",
-        //   end: "2023-05-25",
-        // },
         weekday: "long",
         dayHeaderFormat: {
           weekday: "long",
@@ -537,35 +496,16 @@ export default {
           weekday: "long",
         },
         views: {
-          resourceTimelineDay: {
-            buttonText: ":15 slots",
-            slotDuration: "00:15",
-            weekday: "long",
-          },
           resourceTimelineYear: {
             type: "resourceTimeline",
-            duration: { days: 31 },
-            buttonText: "10 days",
-            weekday: "long",
-            day: "numeric",
-            slotLabelFormat: [
-              { day: "2-digit", weekday: "short", omitCommas: true },
-            ],
-          },
-          dayGrid: {
-            weekday: "long",
-          },
-          dayHeaderFormat: {
-            weekday: "long",
-            month: "numeric",
-            day: "numeric",
-            omitCommas: true,
-          },
-          dayGridMonth: {
-            // name of view
-            titleFormat: { year: "numeric", month: "2-digit", day: "2-digit" },
-            weekday: "long",
-            // other view-specific options here
+            duration: { days: 15 },
+            slotLabelFormat: {
+              day: "numeric", // Display day number only
+              weekday: "short", // Display short weekday name
+            },
+            columnHeaderFormat: { weekday: "short" }, // Display short weekday name in column headers
+            slotDuration: "24:00:00", // Hide time slots
+            // slotEventOverlap: false, // Prevent events from overlapping in the timeline
           },
         },
         eventResizableFromStart: true, // enables resizing from the start of the event
@@ -585,38 +525,8 @@ export default {
             width: "4%",
           },
         ],
-        resources: [
-          // { id: "103", room_no: "103", room_type: "king", eventColor: "green" },
-          // { id: "104", room_no: "104", eventColor: "orange" }
-        ],
-        events: [
-          // {
-          //   id: "1",
-          //   room_id: "1",
-          //   resourceId: "104",
-          //   start: "2023-02-20 01:00:00",
-          //   end: "2023-02-20 23:00:00",
-          //   title: "e",
-          //   background: "linear-gradient(135deg, #23bdb8 0, #65a986 100%)",
-          //   eventBorderColor: "red",
-          // },
-          // {
-          //   id: "1",
-          //   room_id: "1",
-          //   resourceId: "104",
-          //   start: "2023-02-20 01:00:00",
-          //   end: "2023-02-20 23:00:00",
-          //   title: "e",
-          // },
-          // {
-          //   id: "1",
-          //   room_id: "1",
-          //   resourceId: "103",
-          //   start: "2023-02-20 01:00:00",
-          //   end: "2023-02-20 23:00:00",
-          //   title: "e",
-          // },
-        ],
+        resources: [],
+        events: [],
 
         eventDidMount: (arg) => {
           const eventId = arg.event.id;
@@ -767,29 +677,6 @@ export default {
       try {
         document.querySelector(".fc-license-message").style.display = "none";
       } catch (error) {}
-
-      // const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
-      // setTimeout(() => {
-      //   for (let i = 0; i < elements.length; i++) {
-      //     //elements[i].style.backgroundColor = "red";
-      //     elements[i].innerHTML;
-      //     let content = elements[i].getAttribute("title");
-      //     let date = new Date(content);
-      //     date = date.toString().split(" "); //
-
-      //     let [weekday, m, daydate] = date;
-      //     //     //content = date.getFullYear();
-
-      //     elements[i].innerHTML =
-      //       "<span style='font-size:12px'>" +
-      //       daydate +
-      //       "</span><span style='font-size:10px'>(" +
-      //       weekday +
-      //       ")</span>"; //';content;
-      //     // return
-      //   }
-      // }, 1000 * 2);
-      // this.changeTableHeaderContent();
     });
   },
   activated() {},
@@ -862,6 +749,50 @@ export default {
     },
   },
   methods: {
+    filterAttr({ from, to }) {
+      // Calculate the number of days between the from and to dates
+      const fromDate = new Date(from);
+      const toDate = new Date(to);
+      const durationDays =
+        Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+
+      if (durationDays < 15) {
+        this.$swal(
+          "Warning",
+          "Please select a date range of at least 15 days."
+        );
+        return;
+      } else if (durationDays > 45) {
+        this.$swal("Warning", "Date range cannot be more than 45 days.");
+        return;
+      }
+
+      // Update the calendar options dynamically
+      this.calendarOptions = {
+        ...this.calendarOptions,
+        initialDate: fromDate,
+        views: {
+          resourceTimelineYear: {
+            type: "resourceTimeline",
+            duration: { days: durationDays },
+            slotDuration: "24:00:00",
+            buttonText: `${durationDays} days`,
+            slotLabelFormat: [
+              { day: "2-digit", weekday: "short", omitCommas: true },
+            ],
+          },
+        },
+      };
+
+      // Force re-rendering the calendar
+      this.$nextTick(() => {
+        this.$refs.fullCalendar
+          .getApi()
+          .changeView("resourceTimelineYear", fromDate);
+      });
+
+      console.log(from, to);
+    },
     handleDatesRender(info) {
       let start = info.view.activeStart;
       let end = info.view.activeEnd;
@@ -1116,7 +1047,10 @@ export default {
         },
       };
       this.$axios.get(`events_list`, payload).then(({ data }) => {
-        this.calendarOptions.events = data;
+        this.calendarOptions.events = data.map((e) => ({
+          ...e,
+          start: e.checkin_date_only,
+        }));
         return;
       });
     },
@@ -1523,3 +1457,49 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/calendar.css"></style>
+<style scoped>
+.columnheader {
+  height: 40px !important;
+}
+
+.fc-timeline-header {
+  height: 30px;
+}
+
+.fc .fc-scrollgrid-section table {
+  height: 42px !important;
+}
+
+.fc .fc-scrollgrid-section table td {
+  height: 28px !important;
+}
+</style>
+<style>
+.fc-timeline-lane-frame {
+  height: 30px !important;
+  overflow: hidden;
+}
+
+.fc-timeline-event {
+  border-radius: 5px;
+}
+
+.fc-timeline-event-harness {
+  margin-left: -6px;
+  margin-right: -28px;
+}
+
+.Hall {
+  margin-left: -9px !important;
+  margin-right: 21px !important;
+}
+
+.fc-datagrid-cell-frame {
+  height: 30px !important;
+  overflow: hidden;
+}
+
+/* .fc .fc-scrollgrid-section table td {
+  height: 28px !important;
+} */
+</style>

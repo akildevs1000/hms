@@ -21,6 +21,7 @@ class UserController extends Controller
         $model = User::with(['role']);
 
         $model->where('company_id', $request->company_id);
+        $model->where('is_master', 0);
 
         // $model->when()
 
