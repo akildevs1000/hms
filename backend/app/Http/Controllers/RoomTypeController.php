@@ -30,7 +30,7 @@ class RoomTypeController extends Controller
         $model = RoomType::whereCompanyId($request->company_id);
 
         if ($request->filled('search') && $request->search) {
-            $model->where('name', 'ILIKE', "%$request->search%");
+            $model->where('name', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
         }
         $model->orderBy('name', 'asc');
         return $model->paginate($request->per_page ?? 50);

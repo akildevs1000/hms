@@ -120,14 +120,14 @@ class Customer extends Model
         $query->when($search ?? false, fn ($query, $search) =>
         $query->where(
             fn ($query) => $query
-                ->orWhere('first_name', 'ILIKE', '%' . $search . '%')
-                ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
-                ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
-                ->orWhere('email', 'ILIKE', '%' . $search . '%')
-                ->orWhere('id_card_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('car_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('address', 'ILIKE', '%' . $search . '%')
+                ->orWhere('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('whatsapp', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('email', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('id_card_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('car_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('address', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
         ));
     }
 

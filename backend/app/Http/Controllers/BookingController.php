@@ -1241,28 +1241,30 @@ class BookingController extends Controller
     public function events_list(Request $request)
     {
 
-
-        // $calender_display_days = 30;
-        // if ($request->calender_display_days > 30) {
-        //     $calender_display_days = $request->calender_display_days - 30;
-        // }
-        // $days = ($request->prevCounter * $calender_display_days);
-        // //echo  $days;
-        // $date_from = date('Y-m-01', strtotime($days . ' days'));
-        // $date_from = date('Y-m-d', strtotime('-7 days', strtotime($date_from)));
-        // $date_to = date('Y-m-t', strtotime('+' . $calender_display_days . ' days', strtotime($date_from)));
-
-        $date_from = date('Y-m-d', strtotime('-7 days', strtotime($request->startDateString)));
+        $date_from =  $request->startDateString;
         $date_to =  $request->endDateString;
 
-        // return   $date_from . '-' . $date_to;
+        $search = $request->search;
 
         return BookedRoom::whereHas('booking', function ($q) use ($request, $date_from, $date_to,) {
             // $q->where('booking_status', '!=', 0);
             $q->where('company_id', $request->company_id);
             $q->where('check_in', '>=', $date_from);
             $q->where('check_in', '<=', $date_to);
-        })->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in', 'check_in as start', 'check_out', 'booking_status', 'room_category_type as className']);
+        })
+
+            ->when($request->filled('search'), function ($query) use ($search) {
+                $query->whereHas('booking.customer', function ($q) use ($search) {
+                    $q->where(function ($query) use ($search) {
+                        $query->where('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+                        $query->orWhere('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+                        $query->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+                        $query->orWhere('contact_no',  env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+                    });
+                });
+            })
+
+            ->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in', 'check_in as start', 'check_out', 'booking_status', 'room_category_type as className']);
     }
 
     public function events_list1(Request $request)
@@ -2039,11 +2041,11 @@ class BookingController extends Controller
         }
         if ($request->filled('customer_name')) {
             $model->whereHas('customer', function ($q) use ($request) {
-                $q->where('first_name', 'ILIKE', "%$request->customer_name%");
+                $q->where('first_name', env("WILD_CARD") ?? 'ILIKE', "%$request->customer_name%");
             });
         }
         if ($request->filled('rooms')) {
-            $model->where('rooms', 'ILIKE', "%$request->rooms%");
+            $model->where('rooms', env("WILD_CARD") ?? 'ILIKE', "%$request->rooms%");
         }
         if ($request->filled('check_in')) {
             $model->whereDate('check_in', $request->check_in);
@@ -2058,7 +2060,7 @@ class BookingController extends Controller
             $model->where('total_price', '>=', $request->total_price);
         }
         if ($request->filled('source')) {
-            $model->where('source', 'ILIKE', "%$request->source%");
+            $model->where('source', env("WILD_CARD") ?? 'ILIKE', "%$request->source%");
         }
 
         //datatable sorting

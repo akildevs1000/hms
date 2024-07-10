@@ -20,7 +20,7 @@ class HolidayController extends Controller
         $model = Holiday::whereCompanyId($request->company_id);
 
         if($request->filled('description') && $request->has('description')) {
-            $model->Where('description', 'ILIKE', '%' . $request->description . '%');
+            $model->Where('description', env("WILD_CARD") ?? 'ILIKE', '%' . $request->description . '%');
         }
 
         if ($sortBy && $sortDesc) {

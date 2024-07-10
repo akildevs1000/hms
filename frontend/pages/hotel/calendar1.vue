@@ -385,6 +385,7 @@
                   dense
                   append-icon="mdi-magnify"
                   label="Search"
+                  v-model="search"
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
@@ -439,7 +440,15 @@ export default {
       today.getDate() - 7
     ); // Calculate start date 7 days ago
 
+    const endDate = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 7
+    ); // Calculate start date 7 days ago
+
     return {
+      from_date: startDate.toISOString().slice(0, 10),
+      to_date: endDate.toISOString().slice(0, 10),
       // date: "",
       isConfirm: false,
       confirmationDialog: false,
@@ -655,6 +664,8 @@ export default {
       changeRoomOptions: [],
 
       defaultDaysCount: 31,
+
+      search: "",
     };
   },
 
@@ -682,6 +693,27 @@ export default {
   activated() {},
 
   watch: {
+    search(val) {
+      const MIN_SEARCH_LENGTH = 3;
+
+      // Debounce function to limit the rate at which the function is called
+      const debounce = (func, wait) => {
+        let timeout;
+        return (...args) => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      };
+
+      // Call the get_events function with a debounce
+      const debouncedGetEvents = debounce(() => {
+        this.get_events();
+      }, 300); // Adjust the debounce delay (300ms in this case) as needed
+
+      if (!val || val.length > MIN_SEARCH_LENGTH) {
+        debouncedGetEvents();
+      }
+    },
     checkInDialog() {
       this.formTitle = "Check In";
       this.new_payment = 0;
@@ -750,6 +782,9 @@ export default {
   },
   methods: {
     filterAttr({ from, to }) {
+      this.from_date = from;
+      this.to_date = to;
+
       // Calculate the number of days between the from and to dates
       const fromDate = new Date(from);
       const toDate = new Date(to);
@@ -876,164 +911,8 @@ export default {
         this.showMenu = true;
       });
     },
-
-    getCalenderDateFromat2(inputString) {
-      // Input string
-      //const inputString = "Aug 1 – 31, 2023";
-
-      // Split the input string by the "–" (en dash) character to get date range parts
-      const dateParts = inputString.split("–").map((part) => part.trim());
-
-      // Extract the year from the end date part
-      const endDate = dateParts[1];
-      const yearRegex = /(\d{4})/; // Regular expression to match a 4-digit year
-      const match = endDate.match(yearRegex);
-
-      if (!match) {
-        let date = new Date();
-        match = date.getFullYear();
-      }
-
-      let year = parseInt(match[0]);
-
-      let monthMap = {
-        Jan: 1,
-        Feb: 2,
-        Mar: 3,
-        Apr: 4,
-        May: 5,
-        Jun: 6,
-        Jul: 7,
-        Aug: 8,
-        Sep: 9,
-        Oct: 10,
-        Nov: 11,
-        Dec: 12,
-      };
-
-      // Split the start date part into month and day
-      const startDateParts = dateParts[0].split(" ");
-      const startMonth = monthMap[startDateParts[0]];
-      const startDay = parseInt(startDateParts[1]);
-
-      // Format the start date in "dd-mm-yyyy" format
-      const startDateString = `${year}-${startMonth}-${startDay}`;
-
-      // Format the end date in "dd-mm-yyyy" format
-      const endDateString = `${year}-${startMonth}-${
-        dateParts[1].split(",")[0]
-      }`;
-
-      // Display the extracted year and the formatted dates
-      // console.log("Year:", year);
-      // console.log("Start Date:", startDateString);
-      // console.log("End Date:", endDateString);
-
-      return { startDateString: startDateString, endDateString: endDateString };
-    },
-    getCalenderDateFromat(inputString1) {
-      console.log(inputString1);
-
-      try {
-        let inputString = inputString1; //"Aug 1 – Oct 14, 2023";
-
-        // Split the input string by the "–" (en dash) character to get start and end date parts
-        let dateParts = inputString.split("–").map((part) => part.trim());
-
-        // Extract the year from the end date part
-        let endDate = dateParts[1];
-        let yearRegex = /(\d{4})/; // Regular expression to match a 4-digit year
-        let match = endDate.match(yearRegex);
-
-        if (!match) {
-          let date = new Date();
-          match = date.getFullYear();
-        }
-
-        let endYear = parseInt(match[0]);
-
-        //-------------------
-        // Extract the year from the end date part
-        let startDate = dateParts[0];
-        yearRegex = /(\d{4})/; // Regular expression to match a 4-digit year
-        let Startmatch = startDate.match(yearRegex);
-
-        if (!Startmatch) {
-          let date = new Date();
-          Startmatch = date.getFullYear();
-        }
-
-        let startYear = parseInt(Startmatch[0]);
-
-        if (
-          startYear == "NaN" ||
-          startYear == NaN ||
-          Startmatch[0] == undefined
-        ) {
-          startYear = endYear;
-        }
-
-        // Create a mapping of month names to their numeric representation
-        let monthMap = {
-          Jan: 1,
-          Feb: 2,
-          Mar: 3,
-          Apr: 4,
-          May: 5,
-          Jun: 6,
-          Jul: 7,
-          Aug: 8,
-          Sep: 9,
-          Oct: 10,
-          Nov: 11,
-          Dec: 12,
-        };
-
-        // Split the start date part into month and day
-        let startMonthDay = dateParts[0].split(" ");
-        let startMonth = monthMap[startMonthDay[0]];
-        let startDay = parseInt(startMonthDay[1]);
-
-        // Split the end date part into month and day
-        let endMonthDay = endDate.split(" ");
-        let endMonth = monthMap[endMonthDay[0]];
-        let endDay = 30;
-        if (endMonthDay[1]) {
-          endDay = parseInt(endMonthDay[1]);
-        } else {
-          endDay = endMonth;
-          endMonth = startMonth;
-        }
-
-        // if (!endMonth) endMonth = startMonth;
-        // Assuming you want to use the extracted year
-        // Format the start and end dates in "dd-mm-yyyy" format
-        let startDateString = `${startYear}-${startMonth}-${startDay}`;
-        let endDateString = `${endYear}-${endMonth}-${endDay}`;
-
-        // Display the extracted year and the formatted dates
-
-        console.log("Start Date:", startDateString);
-        console.log("End Date:", endDateString);
-        return {
-          startDateString: startDateString,
-          endDateString: endDateString,
-        };
-      } catch (error) {
-        console.log("error", error);
-      }
-    },
     get_events() {
-      let calendarApi = this.$refs.fullCalendar.getApi();
-
-      console.log(calendarApi.view.title);
-
-      let dateRagenge = {};
-      if (calendarApi.view.title.length <= 17) {
-        dateRagenge = this.getCalenderDateFromat2(calendarApi.view.title);
-      } else {
-        dateRagenge = this.getCalenderDateFromat(calendarApi.view.title);
-      }
+      this.$refs.fullCalendar.getApi();
 
       let payload = {
         params: {
@@ -1042,8 +921,9 @@ export default {
           defaultDaysCount: this.defaultDaysCount,
           calender_display_days:
             this.calendarOptions.views.resourceTimelineYear.duration.days,
-          startDateString: dateRagenge.startDateString,
-          endDateString: dateRagenge.endDateString,
+          startDateString: this.from_date,
+          endDateString: this.to_date,
+          ...this.search,
         },
       };
       this.$axios.get(`events_list`, payload).then(({ data }) => {

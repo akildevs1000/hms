@@ -33,25 +33,25 @@ class LostAndFoundItemsController extends Controller
 
         $data = $this->getDefaultModelSettings($request);
         $data->when($request->filled('booking_id'), function ($q) use ($request) {
-            $q->where('booking_id', 'ILIKE', "$request->booking_id%");
+            $q->where('booking_id', env("WILD_CARD") ?? 'ILIKE', "$request->booking_id%");
         });
         $data->when($request->filled('reservation_no'), function ($q) use ($request) {
-            $q->whereHas('booking', fn (Builder $query) => $query->where('reservation_no', 'ILIKE', "$request->reservation_no%"));
+            $q->whereHas('booking', fn (Builder $query) => $query->where('reservation_no', env("WILD_CARD") ?? 'ILIKE', "$request->reservation_no%"));
         });
         $data->when($request->filled('bookings_rooms'), function ($q) use ($request) {
-            $q->whereHas('booking', fn (Builder $query) => $query->where('rooms', 'ILIKE', "%$request->bookings_rooms%"));
+            $q->whereHas('booking', fn (Builder $query) => $query->where('rooms', env("WILD_CARD") ?? 'ILIKE', "%$request->bookings_rooms%"));
         });
         $data->when($request->filled('customer_name'), function ($q) use ($request) {
-            $q->whereHas('booking.customer', fn (Builder $query) => $query->where('first_name', 'ILIKE', "%$request->customer_name%"));
+            $q->whereHas('booking.customer', fn (Builder $query) => $query->where('first_name', env("WILD_CARD") ?? 'ILIKE', "%$request->customer_name%"));
         });
         $data->when($request->filled('item_name'), function ($q) use ($request) {
-            $q->where('item_name', 'ILIKE', "$request->item_name%");
+            $q->where('item_name', env("WILD_CARD") ?? 'ILIKE', "$request->item_name%");
         });
         $data->when($request->filled('status'), function ($q) use ($request) {
             $q->where('status', $request->status);
         });
         $data->when($request->filled('returned_remarks'), function ($q) use ($request) {
-            $q->where('returned_remarks', 'ILIKE', "$request->returned_remarks%");
+            $q->where('returned_remarks', env("WILD_CARD") ?? 'ILIKE', "$request->returned_remarks%");
         });
         $data->when($request->filled('found_datetime'), function ($q) use ($request) {
             $q->whereDate('found_datetime', $request->found_datetime);

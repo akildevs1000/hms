@@ -184,17 +184,17 @@ class Booking extends Model
         $query->when($filter ?? false, fn ($query, $search) =>
         $query->where(
             fn ($query) => $query
-                ->orWhere('reservation_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('reference_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('type', 'ILIKE', '%' . $search . '%')
+                ->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('reference_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('type', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhereHas(
                     'customer',
                     fn ($query) =>
-                    $query->Where('first_name', 'ILIKE', '%' . $search . '%')
-                        ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
-                        ->orWhere('title', 'ILIKE', '%' . $search . '%')
-                        ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
-                        ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
+                    $query->Where('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                        ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                        ->orWhere('title', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                        ->orWhere('whatsapp', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                        ->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 )
         ));
     }

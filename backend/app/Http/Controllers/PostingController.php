@@ -53,7 +53,7 @@ class PostingController extends Controller
             $key = $request->search;
             $model->Where(function ($q) use ($key) {
                 $q->orWhere('bill_no', $key);
-                $q->orWhere('item', 'ILIKE', '%' . $key . '%');
+                $q->orWhere('item', env("WILD_CARD") ?? 'ILIKE', '%' . $key . '%');
             });
 
             $model->orWhereHas('booking', function (Builder $query) use ($key) {
@@ -100,8 +100,8 @@ class PostingController extends Controller
             $model->orWhereHas('booking', function (Builder $query) use ($key) {
                 $query->where('id', is_numeric($key) ? $key : 0)
                     ->orWhereHas('customer', function (Builder $query) use ($key) {
-                        $query->where('first_name', 'ILIKE', '%' . $key . '%')
-                            ->orWhere('last_name', 'ILIKE', '%' . $key . '%');
+                        $query->where('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $key . '%')
+                            ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $key . '%');
                     });
             });
         });

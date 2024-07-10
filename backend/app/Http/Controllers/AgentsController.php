@@ -28,15 +28,15 @@ class AgentsController extends Controller
         if ($request->filled('search') && $request->search != "") {
             $model->where(function ($q) use ($request) {
                 $q->where(function ($query) use ($request) {
-                    $query->orWhere('reservation_no', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
                 });
             });
 
             $model->orWhereHas('customer', function ($q) use ($request) {
                 $q->where(function ($query) use ($request) {
-                    $query->orWhere('first_name', 'ILIKE', '%' . $request->search . '%');
-                    $query->orWhere('last_name', 'ILIKE', '%' . $request->search . '%');
-                    $query->orWhere('contact_no', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
                 });
             });
         }
@@ -90,14 +90,14 @@ class AgentsController extends Controller
         if ($request->filled('search') && $request->search != "") {
             $model->whereHas('booking', function ($q) use ($request) {
                 $q->where(function ($query) use ($request) {
-                    $query->orWhere('reservation_no', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
                 });
             });
             $model->orWhereHas('customer', function ($q) use ($request) {
                 $q->where(function ($query) use ($request) {
-                    $query->orWhere('first_name', 'ILIKE', '%' . $request->search . '%');
-                    $query->orWhere('last_name', 'ILIKE', '%' . $request->search . '%');
-                    $query->orWhere('contact_no', 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
+                    $query->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $request->search . '%');
                 });
             });
         }
@@ -138,9 +138,9 @@ class AgentsController extends Controller
 
         if ($request->filled('search') && $request->search != "") {
             $model->whereHas('customer', function ($q) use ($request) {
-                $q->where('first_name', 'ILIKE', "%$request->search%");
-                $q->orWhere('last_name', 'ILIKE', "%$request->search%");
-                $q->orWhere('contact_no', 'ILIKE', "%$request->search%");
+                $q->where('first_name', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
+                $q->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
+                $q->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
             });
             if (is_numeric($request->search)) {
                 $model->orWhere(function ($q) use ($request) {

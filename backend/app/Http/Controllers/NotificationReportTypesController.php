@@ -22,10 +22,10 @@ class NotificationReportTypesController extends Controller
 
         //datatable Filters
         if ($request->filled('description')) {
-            $model->where('description', 'ILIKE', "$request->description%");}
+            $model->where('description', env("WILD_CARD") ?? 'ILIKE', "$request->description%");}
 
         if ($request->filled('name')) {
-            $model->where('name', 'ILIKE', "$request->name%");}
+            $model->where('name', env("WILD_CARD") ?? 'ILIKE', "$request->name%");}
 
         //datatable sorty by
         if ($request->filled('sortBy')) {

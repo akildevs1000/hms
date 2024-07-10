@@ -26,14 +26,14 @@ class UserController extends Controller
         // $model->when()
 
         if ($request->filled('name') && $request->has('name')) {
-            $model->Where('name', 'ILIKE', '%' . $request->name . '%');
+            $model->Where('name', env("WILD_CARD") ?? 'ILIKE', '%' . $request->name . '%');
         }
 
         if ($request->filled('email') && $request->email != "") {
-            $model->Where('email', 'ILIKE', '%' . $request->email . '%');
+            $model->Where('email', env("WILD_CARD") ?? 'ILIKE', '%' . $request->email . '%');
         }
         if ($request->filled('mobile') && $request->mobile != "") {
-            $model->Where('mobile', 'ILIKE', '%' . $request->mobile . '%');
+            $model->Where('mobile', env("WILD_CARD") ?? 'ILIKE', '%' . $request->mobile . '%');
         }
 
         if ($request->filled('role_id') && $request->role_id != "") {

@@ -34,94 +34,30 @@ export default {
     };
   },
 
-  watch: {
-    filterType() {
-      this.showTimePanel = true;
-      this.FilterData();
-    },
-  },
-
   mounted() {
-    if (this.filterType == 5) document.querySelector(".mx-input").focus();
+    // document.querySelector(".mx-input").focus();
   },
   created() {
-    if (this.defaultFilterType) {
-      this.filterType = this.defaultFilterType;
-    }
-
     const today = new Date();
 
-    this.from_date = today.toISOString().slice(0, 10);
-    this.to_date = today.toISOString().slice(0, 10);
+    // Calculate from_date as today - 7 days
+    const from_date = new Date(today);
+    from_date.setDate(today.getDate() - 7);
+
+    // Calculate to_date as today + 7 days
+    const to_date = new Date(today);
+    to_date.setDate(today.getDate() + 7);
+
+    this.from_date = from_date.toISOString().slice(0, 10);
+    this.to_date = to_date.toISOString().slice(0, 10);
 
     this.time3 = [this.from_date, this.to_date];
   },
+
   methods: {
-    commonMethod() {
-      if (this.from_date && this.to_date) {
-      }
-    },
     CustomFilter() {
       this.from_date = this.time3[0];
       this.to_date = this.time3[1];
-      if (this.from_date && this.to_date) {
-        let data = {
-          from: this.from_date,
-          to: this.to_date,
-          type: this.filterType,
-          search: this.search,
-        };
-
-        this.$emit("filter-attr", data);
-      }
-    },
-    FilterData() {
-      this.from_date = this.time3[0];
-      this.to_date = this.time3[1];
-      const today = new Date();
-
-      if (this.filterType == 1) {
-        // Get today's date
-        this.from_date = today.toISOString().slice(0, 10);
-        this.to_date = today.toISOString().slice(0, 10);
-      } else if (this.filterType == 2) {
-        // Get yesterday's date
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-        this.from_date = yesterday.toISOString().slice(0, 10);
-        this.to_date = yesterday.toISOString().slice(0, 10);
-      } else if (this.filterType == 3) {
-        // Get the first day of the current week (Sunday)
-        const firstDayOfWeek = new Date(today);
-        firstDayOfWeek.setDate(today.getDate() - today.getDay());
-
-        // Get the last day of the current week (Saturday)
-        const lastDayOfWeek = new Date(today);
-        lastDayOfWeek.setDate(today.getDate() - today.getDay() + 6);
-
-        this.from_date = firstDayOfWeek.toISOString().slice(0, 10);
-        this.to_date = lastDayOfWeek.toISOString().slice(0, 10);
-      } else if (this.filterType == 4) {
-        // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
-        // // Get the last day of the current month
-        // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-        // this.from_date = firstDayOfMonth.toISOString().slice(0, 10);
-        // this.to_date = lastDayOfMonth.toISOString().slice(0, 10);
-
-        this.from_date = this.formatDate(
-          new Date(today.getFullYear(), today.getMonth(), 1)
-        );
-        this.to_date = this.formatDate(
-          new Date(today.getFullYear(), today.getMonth() + 1, 0)
-        );
-      } else if (this.filterType == 5) {
-        this.time3 = [];
-
-        return;
-      }
-
       if (this.from_date && this.to_date) {
         let data = {
           from: this.from_date,

@@ -23,10 +23,10 @@ class EmailNotificationsController extends Controller
 
         //datatable Filters
         if ($request->filled('email')) {
-            $model->where('email', 'ILIKE', "$request->email%");}
+            $model->where('email', env("WILD_CARD") ?? 'ILIKE', "$request->email%");}
 
         if ($request->filled('name')) {
-            $model->where('name', 'ILIKE', "$request->name%");}
+            $model->where('name', env("WILD_CARD") ?? 'ILIKE', "$request->name%");}
 
         if ($request->filled('whatsapp_number')) {
             $model->where('whatsapp_number', 'like', "$request->whatsapp_number%");}
@@ -37,7 +37,7 @@ class EmailNotificationsController extends Controller
         if ($request->filled('report_name')) {
             $model->whereHas('report_type_access', function (Builder $query) use ($request) {
                 $query->whereHas('report_type', function (Builder $query1) use ($request) {
-                    $query1->where('name', 'ILIKE', "$request->report_name%");
+                    $query1->where('name', env("WILD_CARD") ?? 'ILIKE', "$request->report_name%");
                 });
             });
         }

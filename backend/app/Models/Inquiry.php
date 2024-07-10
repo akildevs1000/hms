@@ -122,12 +122,12 @@ class Inquiry extends Model
         $query->when($search ?? false, fn ($query, $search) =>
         $query->where(
             fn ($query) => $query
-                ->orWhere('first_name', 'ILIKE', '%' . $search . '%')
-                ->orWhere('last_name', 'ILIKE', '%' . $search . '%')
-                ->orWhere('contact_no', 'ILIKE', '%' . $search . '%')
-                ->orWhere('whatsapp', 'ILIKE', '%' . $search . '%')
-                ->orWhere('email', 'ILIKE', '%' . $search . '%')
-                ->orWhere('city', 'ILIKE', '%' . $search . '%')
+                ->orWhere('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('whatsapp', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('email', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                ->orWhere('city', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
         ));
     }
 }
