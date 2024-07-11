@@ -1240,8 +1240,8 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-
-        $date_from =  $request->startDateString;
+        $date_from = date('Y-m-d', strtotime('-7 days', strtotime($request->startDateString)));
+      
         $date_to =  $request->endDateString;
 
         $search = $request->search;

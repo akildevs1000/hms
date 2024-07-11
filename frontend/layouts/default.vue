@@ -447,6 +447,20 @@ export default {
         },
         {
           topMenu: "account",
+          icon: "mdi-account",
+          title: "Vendor",
+          to: "/vendors",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "account",
+          icon: "mdi-account",
+          title: "Vendor Category",
+          to: "/vendor-categories",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "account",
           icon: "mdi-account-cash",
           title: `Ledger`,
           open_menu: false,

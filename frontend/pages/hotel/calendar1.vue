@@ -343,6 +343,20 @@
                 checkData.paid_by != 2
               "
             >
+              <v-list-item-title>
+                <BookingModify :BookingData="checkData" />
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              link
+              @click="payingAdvance = true"
+              v-if="
+                bookingStatus <= 2 &&
+                bookingStatus != 0 &&
+                checkData.paid_by != 2
+              "
+            >
               <v-list-item-title>Pay Advance</v-list-item-title>
             </v-list-item>
 
@@ -386,6 +400,7 @@
                   append-icon="mdi-magnify"
                   label="Search"
                   v-model="search"
+                  clearable
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
@@ -437,7 +452,7 @@ export default {
     const startDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() - 7
+      today.getDate() - 6
     ); // Calculate start date 7 days ago
 
     const endDate = new Date(
@@ -447,7 +462,7 @@ export default {
     ); // Calculate start date 7 days ago
 
     return {
-      from_date: startDate.toISOString().slice(0, 10),
+      from_date: null,
       to_date: endDate.toISOString().slice(0, 10),
       // date: "",
       isConfirm: false,
@@ -802,31 +817,7 @@ export default {
         return;
       }
 
-      // Update the calendar options dynamically
-      this.calendarOptions = {
-        ...this.calendarOptions,
-        initialDate: fromDate,
-        views: {
-          resourceTimelineYear: {
-            type: "resourceTimeline",
-            duration: { days: durationDays },
-            slotDuration: "24:00:00",
-            buttonText: `${durationDays} days`,
-            slotLabelFormat: [
-              { day: "2-digit", weekday: "short", omitCommas: true },
-            ],
-          },
-        },
-      };
-
-      // Force re-rendering the calendar
-      this.$nextTick(() => {
-        this.$refs.fullCalendar
-          .getApi()
-          .changeView("resourceTimelineYear", fromDate);
-      });
-
-      console.log(from, to);
+      this.get_events();
     },
     handleDatesRender(info) {
       let start = info.view.activeStart;
@@ -912,25 +903,43 @@ export default {
       });
     },
     get_events() {
-      this.$refs.fullCalendar.getApi();
-
+      let durationDays = 15;
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          prevCounter: this.prevCounter,
-          defaultDaysCount: this.defaultDaysCount,
-          calender_display_days:
-            this.calendarOptions.views.resourceTimelineYear.duration.days,
           startDateString: this.from_date,
           endDateString: this.to_date,
-          ...this.search,
+          search: this.search,
         },
       };
       this.$axios.get(`events_list`, payload).then(({ data }) => {
-        this.calendarOptions.events = data.map((e) => ({
-          ...e,
-          start: e.checkin_date_only,
-        }));
+        // Update the calendar options dynamically
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events: data.map((e) => ({
+            ...e,
+            start: e.checkin_date_only,
+          })),
+          initialDate: this.from_date,
+          views: {
+            resourceTimelineYear: {
+              type: "resourceTimeline",
+              duration: { days: durationDays },
+              slotDuration: "24:00:00",
+              buttonText: `${durationDays} days`,
+              slotLabelFormat: [
+                { day: "2-digit", weekday: "short", omitCommas: true },
+              ],
+            },
+          },
+        };
+        this.$nextTick(() => {
+          if (this.from_date) {
+            this.$refs.fullCalendar
+              .getApi()
+              .changeView("resourceTimelineYear", this.from_date);
+          }
+        });
         return;
       });
     },

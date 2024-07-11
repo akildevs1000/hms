@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AdminExpenseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExpensePaymentController;
 use App\Http\Controllers\PaymentController;
 
 Route::resource('expense', ExpenseController::class);
@@ -14,3 +16,8 @@ Route::resource('payments', PaymentController::class);
 Route::get('expenses_documents/{key}', [ExpenseController::class, 'expensesDocuments']);
 Route::post('expenses_document_delete/{key}', [ExpenseController::class, 'expensesDocumentsDelete']);
 Route::get('expenses_statistics', [ExpenseController::class, 'getStaticstics']);
+
+Route::resource('admin-expense', AdminExpenseController::class);
+Route::get('payment-voucher/{id}', [AdminExpenseController::class, "voucher"]);
+
+Route::resource('expense-payment', ExpensePaymentController::class);

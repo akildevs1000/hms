@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attachments', function (Blueprint $table) {
+        Schema::create('admin_expense_items', function (Blueprint $table) {
             $table->id();
-            $table->string("expense_id");
-            $table->string("attachment");
-            $table->string("slug");
-            $table->string("model");
+            $table->unsignedBigInteger('admin_expense_id')->default(0);
+            $table->string('detail');
+            $table->decimal('qty', 10, 2);
+            $table->decimal('rate', 10, 2);
+            $table->string('tax')->nullable();
+            $table->decimal('amount', 10, 2);
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attachments');
+        Schema::dropIfExists('admin_expense_items');
     }
 };

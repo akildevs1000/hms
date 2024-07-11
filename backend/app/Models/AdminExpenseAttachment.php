@@ -5,17 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Attachment extends Model
+class AdminExpenseAttachment extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    // attachment
-
-
     public function getAttachmentAttribute($val)
     {
-        return asset("attachments/" . $this->model . "/" . $this->expense_id . "/" . $val);
+        return asset("admin_expense_attachments/" . $this->admin_expense_id . "/" . $val);
     }
 }

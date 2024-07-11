@@ -1,0 +1,3 @@
+<template>
+  <Vendor />
+</template>

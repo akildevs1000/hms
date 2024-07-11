@@ -26,6 +26,8 @@
 
   Route::get('room_list_menu', [RoomController::class, 'roomListForMenu']);
   Route::get('get_available_rooms_by_date', [RoomController::class, 'getAvailableRoomsByDate']);
+  Route::get('get_available_rooms_for_modify', [RoomController::class, 'getAvailableRoomsForModify']);
+
   Route::get('get_food_prices', [RoomController::class, 'getFoodPrices']);
 
   Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);
