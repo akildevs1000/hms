@@ -278,8 +278,23 @@
                       <v-col md="3" cols="12" sm="12">
                         <v-text-field
                           dense
+                          label="Email *"
+                          outlined
+                          type="email"
+                          v-model="customer.email"
+                          :hide-details="errors && !errors.email"
+                          :error="errors && errors.email"
+                          :error-messages="
+                            errors && errors.email ? errors.email[0] : ''
+                          "
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <v-text-field
+                          dense
                           label="Contact No *"
                           outlined
+                          max="1111111111111"
                           type="number"
                           v-model="customer.contact_no"
                           :hide-details="errors && !errors.contact_no"
@@ -297,27 +312,13 @@
                           dense
                           label="Whatsapp No"
                           outlined
+                          max="1111111111111"
                           type="number"
                           v-model="customer.whatsapp"
                           :hide-details="errors && !errors.whatsapp"
                           :error="errors && errors.whatsapp"
                           :error-messages="
                             errors && errors.whatsapp ? errors.whatsapp[0] : ''
-                          "
-                        ></v-text-field>
-                      </v-col>
-
-                      <v-col md="3" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Email *"
-                          outlined
-                          type="email"
-                          v-model="customer.email"
-                          :hide-details="errors && !errors.email"
-                          :error="errors && errors.email"
-                          :error-messages="
-                            errors && errors.email ? errors.email[0] : ''
                           "
                         ></v-text-field>
                       </v-col>

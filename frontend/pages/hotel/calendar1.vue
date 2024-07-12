@@ -6,6 +6,10 @@
       </v-snackbar>
     </div>
 
+    <!-- <pre>
+      {{ checkData }}
+    </pre> -->
+
     <v-dialog v-model="confirmationDialog" persistent max-width="290">
       <v-card>
         <v-card-title class="text-h5"> Action </v-card-title>
@@ -336,7 +340,6 @@
 
             <v-list-item
               link
-              @click="payingAdvance = true"
               v-if="
                 bookingStatus <= 2 &&
                 bookingStatus != 0 &&
@@ -344,7 +347,7 @@
               "
             >
               <v-list-item-title>
-                <BookingModify :BookingData="checkData" />
+                <BookingModify :BookedRoomId="evenIid"/>
               </v-list-item-title>
             </v-list-item>
 
@@ -462,6 +465,7 @@ export default {
     ); // Calculate start date 7 days ago
 
     return {
+      durationDays: 15,
       from_date: null,
       to_date: endDate.toISOString().slice(0, 10),
       // date: "",
@@ -504,7 +508,7 @@ export default {
         now: "",
 
         defaultDate: new Date().setDate(1),
-        editable: true,
+        editable: false,
         aspectRatio: 1.8,
         scrollTime: "00:00",
         displayEventTime: false,
@@ -817,6 +821,8 @@ export default {
         return;
       }
 
+      this.durationDays = durationDays;
+
       this.get_events();
     },
     handleDatesRender(info) {
@@ -842,35 +848,6 @@ export default {
         elements[i].innerHTML = "";
       }
     },
-    // changeTableHeaderContent() {
-    //   this.changetableheaderwaitprocess();
-    //   setTimeout(() => {
-    //     this.changetableheaderwaitprocess();
-    //   }, 1000 * 5);
-    // },
-    // changetableheaderwaitprocess() {
-    //   const elements = document.querySelectorAll(".fc-timeline-slot-cushion");
-    //   setTimeout(() => {
-    //     for (let i = 0; i < elements.length; i++) {
-    //       //elements[i].style.backgroundColor = "red";
-
-    //       let content = elements[i].getAttribute("title");
-    //       let date = new Date(content);
-    //       date = date.toString().split(" "); //
-
-    //       let [weekday, m, daydate] = date;
-    //       //     //content = date.getFullYear();
-
-    //       elements[i].innerHTML =
-    //         "<span style='font-size:12px'>" +
-    //         daydate +
-    //         "</span> <span style='font-size:10px'>(" +
-    //         weekday +
-    //         ")</span>"; //';content;
-    //       // return
-    //     }
-    //   }, 1000 * 3);
-    // },
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -903,7 +880,6 @@ export default {
       });
     },
     get_events() {
-      let durationDays = 15;
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -924,9 +900,9 @@ export default {
           views: {
             resourceTimelineYear: {
               type: "resourceTimeline",
-              duration: { days: durationDays },
+              duration: { days: this.durationDays },
               slotDuration: "24:00:00",
-              buttonText: `${durationDays} days`,
+              buttonText: `${this.durationDays} days`,
               slotLabelFormat: [
                 { day: "2-digit", weekday: "short", omitCommas: true },
               ],
@@ -1002,7 +978,11 @@ export default {
     create_reservation(e, obj) {
       this.get_room_types(e, obj);
     },
-
+    addOneDay(originalDate) {
+      const date = new Date(originalDate);
+      date.setDate(date.getDate() + 1);
+      return date.toISOString().split("T")[0];
+    },
     get_room_types(e, obj) {
       console.log(obj.room_type);
       this.reservation.isCalculate = true;
@@ -1011,9 +991,9 @@ export default {
       ).id;
       this.reservation.room_type = obj.room_type;
       this.reservation.room_no = obj.room_no;
-      this.reservation.check_in = e.startStr;
 
-      this.reservation.check_out = e.endStr;
+      this.reservation.check_in = this.addOneDay(e.startStr);
+      this.reservation.check_out = this.addOneDay(e.endStr);
 
       let payload = {
         params: {

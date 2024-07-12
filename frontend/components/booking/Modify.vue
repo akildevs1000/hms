@@ -24,27 +24,28 @@
                 color="primary"
               ></v-progress-linear>
               <tr>
-                <th style="width:200px;">Customer Name</th>
+                <th style="width: 200px">Customer Name</th>
                 <td style="width: 300px">
-                  {{ BookingData && BookingData.title }}
+                  {{ (customer && customer.title) || "---" }}
                 </td>
               </tr>
-
               <tr>
                 <th>Group Name</th>
-                <td>---</td>
+                <td>
+                  {{ (customer && customer.group) || "---" }}
+                </td>
               </tr>
 
               <tr>
                 <th>Agent Name</th>
                 <td>
-                  {{ BookingData.agent_name || "---" }}
+                  {{ (customer && customer.agent_name) || "---" }}
                 </td>
               </tr>
               <tr>
                 <th>Contact</th>
                 <td>
-                  {{ BookingData.contact_no || "---" }}
+                  {{ (customer && customer.contact_no) || "---" }}
                 </td>
               </tr>
               <tr>
@@ -91,7 +92,8 @@
                         outlined
                         dense
                         hide-details
-                        v-model="payload.check_in"
+                        v-model="formattedCheckinDate"
+                        :min="new Date().toISOString().substr(0, 10)"
                         persistent-hint
                         readonly
                         v-bind="attrs"
@@ -99,6 +101,7 @@
                       ></v-text-field>
                     </template>
                     <v-date-picker
+                      :min="new Date().toISOString().substr(0, 10)"
                       v-model="payload.check_in"
                       no-title
                       @input="checkin_menu = false"
@@ -122,7 +125,7 @@
                         outlined
                         dense
                         hide-details
-                        v-model="payload.check_out"
+                        v-model="formattedCheckOutDate"
                         persistent-hint
                         readonly
                         v-bind="attrs"
@@ -130,6 +133,7 @@
                       ></v-text-field>
                     </template>
                     <v-date-picker
+                      :min="new Date().toISOString().substr(0, 10)"
                       v-model="payload.check_out"
                       no-title
                       @input="checkout_menu = false"
@@ -170,7 +174,7 @@
               <tr>
                 <th>Total</th>
                 <td class="text-right">
-                    {{payload.total_price}}
+                  {{ payload.total_price }}
                 </td>
               </tr>
               <tr style="background-color: white">
@@ -188,17 +192,14 @@
               <tr>
                 <th>Balance Amount</th>
                 <td class="text-right">
-                    {{payload.grand_remaining_price}}
+                  {{ payload.grand_remaining_price }}
                 </td>
               </tr>
 
               <tr></tr>
             </table>
             <div class="text-right">
-              <v-btn
-                class="grey white--text mt-2"
-                small
-                @click="dialog = false"
+              <v-btn class="grey white--text mt-2" small @click="dialog = false"
                 >Close</v-btn
               >
 
@@ -218,7 +219,7 @@
 </template>
 <script>
 export default {
-  props: ["BookingData"],
+  props: ["BookingData", "BookedRoomId"],
   data() {
     return {
       checkin_menu: false,
@@ -232,6 +233,12 @@ export default {
         total_price: "",
         new_advance: "",
         grand_remaining_price: "",
+      },
+      customer: {
+        title: null,
+        group: null,
+        agent_name: null,
+        contact_no: null,
       },
       dialog: false,
       isDiscount: false,
@@ -249,29 +256,16 @@ export default {
   async created() {
     this.preloader = false;
 
-    this.payload = {
-      booking_id: this.BookingData.id,
-      room_id: this.BookingData.room_id,
-      extra_bed: 0,
-      check_in: this.BookingData.check_in,
-      check_out: this.BookingData.check_out,
-      total_price: this.BookingData.total_price,
-      new_advance: this.BookingData.new_advance,
-      grand_remaining_price: this.BookingData.grand_remaining_price,
-      company_id: this.$auth.user.company_id,
-      user_id: this.$auth.user.id,
-    };
-
-    let payload = {
-      params: {
-        company_id: this.$auth.user.company.id,
-      },
-    };
-
     let { data: rooms } = await this.$axios.get(
       `get_available_rooms_for_modify`,
-      payload
+      {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      }
     );
+
+    await this.get_booking();
 
     this.rooms = rooms.map((e) => ({
       id: e.id,
@@ -284,9 +278,60 @@ export default {
 
   mounted() {},
 
-  computed: {},
+  computed: {
+    formattedCheckinDate() {
+      if (!this.payload.check_in) return "";
+
+      const date = new Date(this.payload.check_in);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day} 12:00`;
+    },
+    formattedCheckOutDate() {
+      if (!this.payload.check_out) return "";
+
+      const date = new Date(this.payload.check_out);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day} 11:00`;
+    },
+  },
 
   methods: {
+    async get_booking() {
+      let payload = {
+        params: {
+          id: this.BookedRoomId,
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`get_booking_for_modify`, payload).then(({ data }) => {
+        this.payload = {
+          booking_id: data.booking_id,
+          room_id: data.room_id,
+          check_in: data.check_in,
+          check_out: data.check_out,
+          total_price: data.total_price,
+          new_advance: data.new_advance,
+          grand_remaining_price: data.grand_remaining_price,
+          company_id: this.$auth.user.company_id,
+          user_id: this.$auth.user.id,
+          extra_bed: 0,
+        };
+      });
+    },
+    addOneDay(originalDate) {
+      const date = new Date(originalDate);
+
+      console.log(date);
+      // date.setDate(date.getDate() + 1);
+      
+      // console.log(date.toISOString().split("T"));
+
+      return originalDate;
+    },
     submit() {
       this.loading = true;
       this.$axios

@@ -42,7 +42,7 @@ export default {
 
     // Calculate from_date as today - 7 days
     const from_date = new Date(today);
-    from_date.setDate(today.getDate() - 7);
+    from_date.setDate(today.getDate() - 6);
 
     // Calculate to_date as today + 7 days
     const to_date = new Date(today);

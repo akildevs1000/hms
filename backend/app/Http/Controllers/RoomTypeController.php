@@ -159,7 +159,7 @@ class RoomTypeController extends Controller
         $arr = [];
         $period = CarbonPeriod::create($request->checkin, $this->checkOutDate($request->checkout));
 
-        $eachRoomDiscount = $discount / count($period);
+        $eachRoomDiscount = $discount > 0 ? $discount / count($period) : 0;
 
         foreach ($period as $date) {
             $iteration_date = $date->format('Y-m-d');

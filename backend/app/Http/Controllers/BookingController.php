@@ -1241,7 +1241,7 @@ class BookingController extends Controller
     public function events_list(Request $request)
     {
         $date_from = date('Y-m-d', strtotime('-7 days', strtotime($request->startDateString)));
-      
+
         $date_to =  $request->endDateString;
 
         $search = $request->search;
@@ -1283,6 +1283,11 @@ class BookingController extends Controller
         $bookedRoom->booking->contact_no = $bookedRoom->customer->contact_no;
         return $bookedRoom->booking;
         // return response()->json(['booking' => $bookedRoom->booking, 'status' => true]);
+    }
+
+    public function get_booking_for_modify(Request $request)
+    {
+        return BookedRoom::with(['booking', 'customer'])->where('company_id', $request->company_id)->findOrFail($request->id);
     }
 
     public function changeCheckIntoBookingAdmin(Request $request, $id)

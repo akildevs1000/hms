@@ -33,6 +33,7 @@
     Route::post('update_by_drag', [BookingController::class, 'updateByDrag']);
 
     Route::get('get_booking', [BookingController::class, 'get_booking']);
+    Route::get('get_booking_for_modify', [BookingController::class, 'get_booking_for_modify']);
 
     Route::get('reservation_list', [BookingController::class, 'reservationList']);
 
