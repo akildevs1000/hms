@@ -347,7 +347,7 @@
               "
             >
               <v-list-item-title>
-                <BookingModify :key="evenIid" :BookedRoomId="evenIid" />
+                <BookingModify @close="get_events()" :key="evenIid" :BookedRoomId="evenIid" />
               </v-list-item-title>
             </v-list-item>
 

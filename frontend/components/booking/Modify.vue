@@ -14,7 +14,7 @@
         >
 
         <v-card-text class="py-5">
-          <v-container v-if="bookingResponse && bookingResponse.id">
+          <v-container v-if="payload && payload.booking_id">
             <table>
               <v-progress-linear
                 v-if="false"
@@ -47,7 +47,7 @@
                 </td>
               </tr>
               <tr>
-                <th>Room No {{ dialog }}</th>
+                <th>Room No</th>
                 <td>
                   <v-autocomplete
                     @change="getPricesByRoomId(payload.room_id)"
@@ -150,36 +150,30 @@
               </tr>
               <tr>
                 <th>Days</th>
-                <td>{{ bookingResponse.days }}</td>
+                <td>{{ payload.total_days }}</td>
               </tr>
               <tr>
                 <th>Total ( New Price )</th>
                 <td class="text-right">
-                  {{ payload.total_price }}
+                  {{ convert_decimal(payload.total_price) }}
                 </td>
               </tr>
               <tr>
                 <th>Discount</th>
                 <td class="text-right">
-                  {{ payload.total_discount }}
-                </td>
-              </tr>
-              <tr>
-                <th>Tax</th>
-                <td class="text-right">
-                  {{ payload.total_tax }}
+                  {{ convert_decimal(payload.total_discount) }}
                 </td>
               </tr>
               <tr>
                 <th>Advance Payment</th>
                 <td class="text-right">
-                  {{ payload.advance_price }}
+                  {{ convert_decimal(payload.advance_price) }}
                 </td>
               </tr>
               <tr>
                 <th>Balance Amount</th>
                 <td class="text-right">
-                  {{ payload.remaining_price }}
+                  {{ convert_decimal(payload.remaining_price) }}
                 </td>
               </tr>
             </table>
@@ -295,7 +289,7 @@ export default {
   },
 
   methods: {
-    getPricesByRoomId(id) {
+    async getPricesByRoomId(id) {
       this.roomPriceResponse = [];
       let found = this.rooms.find((e) => e.id == id);
       if (!found) return;
@@ -315,18 +309,23 @@ export default {
             this.alert("Failure!", data.data, "error");
             return;
           }
-          console.log(data.total_price, data);
           this.payload = {
             ...this.payload,
             total_price: data.total_price,
             total_discount: data.total_discount,
-            total_tax: data.total_tax,
             extra_bed: this.extra_bed,
             remaining_price: data.total_price - this.payload.advance_price,
+            total_days: data.data.length || 0,
+            total_tax: this.payload.room_tax * data.data.length || 0,
           };
-
-          this.bookingResponse.days = data.data.length || 0;
         });
+    },
+    convert_decimal(n) {
+      if (n === +n && n !== (n | 0)) {
+        return n.toFixed(2);
+      } else {
+        return n + ".00";
+      }
     },
     async get_booking() {
       let payload = {
@@ -338,18 +337,27 @@ export default {
       this.$axios.get(`get_booking_for_modify`, payload).then(({ data }) => {
         this.bookingResponse = data;
         this.payload = {
+          id: data.id,
           booking_id: data.booking_id,
           room_id: data.room_id,
           check_in: data.checkin_date_only,
           check_out: data.checkout_date_only,
-          total_price: data.total_price,
+          total_price: data.grand_total,
           company_id: this.$auth.user.company_id,
           user_id: this.$auth.user.id,
           extra_bed: this.extra_bed,
+          total_discount: data.booking.total_discount || 0,
           advance_price: data.booking.advance_price || 0,
           remaining_price:
             parseFloat(data.grand_total) -
             parseFloat(data.booking.advance_price),
+
+          total_days: data.days || 0,
+          total_tax: data.room_tax * data.days,
+          room_tax: data.room_tax,
+          room_price: data.price,
+          room_no: data.room_no,
+          room_type: data.room_type,
         };
       });
     },
@@ -364,23 +372,47 @@ export default {
       return date.toISOString().split("T")[0];
     },
     submit() {
-      alert("under process");
+      let payload = {
+        id: this.payload.id,
+        booking_id: this.payload.booking_id,
+        room_id: this.payload.room_id,
+        check_in: this.payload.check_in + " 12:00",
+        check_out: this.payload.check_out + " 11:00",
+        total_price: this.payload.total_price,
+        company_id: this.payload.company_id,
+        user_id: this.payload.user_id,
+        remaining_price: this.payload.remaining_price,
+        total_days: this.payload.total_days,
+        total_tax: this.payload.total_tax,
+        room_tax: this.payload.room_tax,
+        room_price: this.payload.room_price,
+        room_no: this.payload.room_no,
+        room_type: this.payload.room_type,
+        extra_bed: this.payload.extra_bed,
+      };
 
-      return;
+      console.log(payload);
 
       this.loading = true;
       this.$axios
-        .post("/modify_booking", this.payload)
+        .post(`/modify_booking`, payload)
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
             this.loading = false;
           } else {
-            this.closeDialog(data);
+            this.dialog = false;
             this.loading = false;
+
+            this.alert("Sucess!", "Booking has been modified", "success");
+            this.$emit("close");
+          
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          this.loading = false;
+          console.log(e);
+        });
     },
 
     can(per) {
