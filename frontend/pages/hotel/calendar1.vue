@@ -347,7 +347,7 @@
               "
             >
               <v-list-item-title>
-                <BookingModify :BookedRoomId="evenIid"/>
+                <BookingModify :key="evenIid" :BookedRoomId="evenIid" />
               </v-list-item-title>
             </v-list-item>
 
@@ -507,15 +507,12 @@ export default {
         // now: "2022-11-01",
         now: "",
 
-        defaultDate: new Date().setDate(1),
         editable: false,
         aspectRatio: 1.8,
         scrollTime: "00:00",
         displayEventTime: false,
         selectable: true,
-        // initialView: "resourceTimelineMonth",
         initialView: "resourceTimelineYear",
-        weekday: "long",
         dayHeaderFormat: {
           weekday: "long",
           month: "numeric",
@@ -531,7 +528,6 @@ export default {
               day: "numeric", // Display day number only
               weekday: "short", // Display short weekday name
             },
-            columnHeaderFormat: { weekday: "short" }, // Display short weekday name in column headers
             slotDuration: "24:00:00", // Hide time slots
             // slotEventOverlap: false, // Prevent events from overlapping in the timeline
           },
@@ -894,7 +890,7 @@ export default {
           ...this.calendarOptions,
           events: data.map((e) => ({
             ...e,
-            start: e.checkin_date_only,
+            start: e.checkin_datetime_only,
           })),
           initialDate: this.from_date,
           views: {

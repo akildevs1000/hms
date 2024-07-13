@@ -14,7 +14,7 @@
         >
 
         <v-card-text class="py-5">
-          <v-container>
+          <v-container v-if="bookingResponse && bookingResponse.id">
             <table>
               <v-progress-linear
                 v-if="false"
@@ -26,40 +26,38 @@
               <tr>
                 <th style="width: 200px">Customer Name</th>
                 <td style="width: 300px">
-                  {{ (customer && customer.title) || "---" }}
+                  {{ bookingResponse?.customer?.full_name }}
                 </td>
               </tr>
               <tr>
                 <th>Group Name</th>
-                <td>
-                  {{ (customer && customer.group) || "---" }}
-                </td>
+                <td>---</td>
               </tr>
 
               <tr>
                 <th>Agent Name</th>
                 <td>
-                  {{ (customer && customer.agent_name) || "---" }}
+                  {{ bookingResponse.agent_name || "---" }}
                 </td>
               </tr>
               <tr>
                 <th>Contact</th>
                 <td>
-                  {{ (customer && customer.contact_no) || "---" }}
+                  {{ bookingResponse?.customer?.contact_no || "---" }}
                 </td>
               </tr>
               <tr>
-                <th>Room No</th>
+                <th>Room No {{ dialog }}</th>
                 <td>
                   <v-autocomplete
-                    v-model="payload.room_id"
+                    @change="getPricesByRoomId(payload.room_id)"
                     :items="rooms"
-                    item-text="name"
+                    item-text="label"
                     item-value="id"
                     dense
                     outlined
+                    v-model="payload.room_id"
                     :hide-details="true"
-                    :height="1"
                   ></v-autocomplete>
                 </td>
               </tr>
@@ -93,7 +91,6 @@
                         dense
                         hide-details
                         v-model="formattedCheckinDate"
-                        :min="new Date().toISOString().substr(0, 10)"
                         persistent-hint
                         readonly
                         v-bind="attrs"
@@ -104,7 +101,12 @@
                       :min="new Date().toISOString().substr(0, 10)"
                       v-model="payload.check_in"
                       no-title
-                      @input="checkin_menu = false"
+                      @input="
+                        () => {
+                          checkin_menu = false;
+                          getPricesByRoomId(payload.room_id);
+                        }
+                      "
                     ></v-date-picker>
                   </v-menu>
                 </td>
@@ -133,76 +135,58 @@
                       ></v-text-field>
                     </template>
                     <v-date-picker
-                      :min="new Date().toISOString().substr(0, 10)"
+                      :min="addOneDay(payload.check_in)"
                       v-model="payload.check_out"
                       no-title
-                      @input="checkout_menu = false"
+                      @input="
+                        () => {
+                          checkout_menu = false;
+                          getPricesByRoomId(payload.room_id);
+                        }
+                      "
                     ></v-date-picker>
                   </v-menu>
                 </td>
               </tr>
               <tr>
                 <th>Days</th>
-                <td>2</td>
+                <td>{{ bookingResponse.days }}</td>
               </tr>
-              <!-- <tr>
-                <th>
-                  Payment Mode
-                  <span class="error--text">*</span>
-                </th>
-                <td>
-                  <v-select
-                    v-model="BookingData.payment_mode_id"
-                    :items="[
-                      { id: 1, name: 'Cash' },
-                      { id: 2, name: 'Card' },
-                      { id: 3, name: 'Online' },
-                      { id: 4, name: 'Bank' },
-                      { id: 5, name: 'UPI' },
-                      { id: 6, name: 'Cheque' },
-                    ]"
-                    item-text="name"
-                    item-value="id"
-                    dense
-                    outlined
-                    :hide-details="true"
-                    :height="1"
-                  ></v-select>
-                </td>
-              </tr> -->
-
               <tr>
-                <th>Total</th>
+                <th>Total ( New Price )</th>
                 <td class="text-right">
                   {{ payload.total_price }}
                 </td>
               </tr>
-              <tr style="background-color: white">
+              <tr>
+                <th>Discount</th>
+                <td class="text-right">
+                  {{ payload.total_discount }}
+                </td>
+              </tr>
+              <tr>
+                <th>Tax</th>
+                <td class="text-right">
+                  {{ payload.total_tax }}
+                </td>
+              </tr>
+              <tr>
                 <th>Advance Payment</th>
-                <td>
-                  <v-text-field
-                    dense
-                    outlined
-                    type="number"
-                    v-model="payload.new_advance"
-                    :hide-details="true"
-                  ></v-text-field>
+                <td class="text-right">
+                  {{ payload.advance_price }}
                 </td>
               </tr>
               <tr>
                 <th>Balance Amount</th>
                 <td class="text-right">
-                  {{ payload.grand_remaining_price }}
+                  {{ payload.remaining_price }}
                 </td>
               </tr>
-
-              <tr></tr>
             </table>
             <div class="text-right">
               <v-btn class="grey white--text mt-2" small @click="dialog = false"
                 >Close</v-btn
               >
-
               <v-btn
                 class="primary mt-2"
                 small
@@ -210,6 +194,14 @@
                 :loading="loading"
                 >Submit</v-btn
               >
+            </div>
+          </v-container>
+          <v-container v-else>
+            <div
+              class="d-flex justify-center align-center"
+              style="height: 400px"
+            >
+              <div>Loading......</div>
             </div>
           </v-container>
         </v-card-text>
@@ -226,13 +218,16 @@ export default {
       checkout_menu: false,
       rooms: [],
       payload: {
-        room_id: 1,
-        extra_bed: "",
+        extra_bed: 0,
         check_in: "",
         check_out: "",
-        total_price: "",
-        new_advance: "",
-        grand_remaining_price: "",
+        total_price: 0,
+        remaining_price: 0,
+        company_id: 0,
+        booking_id: 0,
+        room_id: 0,
+        user_id: 0,
+        advance_price: 0,
       },
       customer: {
         title: null,
@@ -246,15 +241,18 @@ export default {
       response: "",
       preloader: false,
       loading: false,
-      new_advance: 0,
       reference: "",
       errors: [],
       checkOutDialog: false,
+      bookingResponse: null,
+      roomPriceResponse: null,
     };
   },
 
   async created() {
     this.preloader = false;
+
+    await this.get_booking();
 
     let { data: rooms } = await this.$axios.get(
       `get_available_rooms_for_modify`,
@@ -265,14 +263,11 @@ export default {
       }
     );
 
-    await this.get_booking();
-
     this.rooms = rooms.map((e) => ({
       id: e.id,
       room_no: e.room_no,
-      price: e.price,
-      name: `${e.room_no} ${e.room_type.name}`,
-      room_type_price: e.room_type.price,
+      roomType: e.room_type.name,
+      label: `${e.room_no} ${e.room_type.name}`,
     }));
   },
 
@@ -300,6 +295,39 @@ export default {
   },
 
   methods: {
+    getPricesByRoomId(id) {
+      this.roomPriceResponse = [];
+      let found = this.rooms.find((e) => e.id == id);
+      if (!found) return;
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          roomType: found.roomType,
+          room_no: found.room_no,
+          checkin: this.payload.check_in,
+          checkout: this.payload.check_out,
+        },
+      };
+      this.$axios
+        .get(`get_data_by_select_with_tax`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.alert("Failure!", data.data, "error");
+            return;
+          }
+          console.log(data.total_price, data);
+          this.payload = {
+            ...this.payload,
+            total_price: data.total_price,
+            total_discount: data.total_discount,
+            total_tax: data.total_tax,
+            extra_bed: this.extra_bed,
+            remaining_price: data.total_price - this.payload.advance_price,
+          };
+
+          this.bookingResponse.days = data.data.length || 0;
+        });
+    },
     async get_booking() {
       let payload = {
         params: {
@@ -308,31 +336,38 @@ export default {
         },
       };
       this.$axios.get(`get_booking_for_modify`, payload).then(({ data }) => {
+        this.bookingResponse = data;
         this.payload = {
           booking_id: data.booking_id,
           room_id: data.room_id,
-          check_in: data.check_in,
-          check_out: data.check_out,
+          check_in: data.checkin_date_only,
+          check_out: data.checkout_date_only,
           total_price: data.total_price,
-          new_advance: data.new_advance,
-          grand_remaining_price: data.grand_remaining_price,
           company_id: this.$auth.user.company_id,
           user_id: this.$auth.user.id,
-          extra_bed: 0,
+          extra_bed: this.extra_bed,
+          advance_price: data.booking.advance_price || 0,
+          remaining_price:
+            parseFloat(data.grand_total) -
+            parseFloat(data.booking.advance_price),
         };
       });
     },
     addOneDay(originalDate) {
+      if (!originalDate) {
+        return new Date().toISOString().substr(0, 10);
+      }
       const date = new Date(originalDate);
 
-      console.log(date);
-      // date.setDate(date.getDate() + 1);
-      
-      // console.log(date.toISOString().split("T"));
+      date.setDate(date.getDate() + 1);
 
-      return originalDate;
+      return date.toISOString().split("T")[0];
     },
     submit() {
+      alert("under process");
+
+      return;
+
       this.loading = true;
       this.$axios
         .post("/modify_booking", this.payload)
@@ -341,7 +376,6 @@ export default {
             this.errors = data.errors;
             this.loading = false;
           } else {
-            this.new_advance = 0;
             this.closeDialog(data);
             this.loading = false;
           }

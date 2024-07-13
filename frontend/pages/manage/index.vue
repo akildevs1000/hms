@@ -893,7 +893,7 @@ export default {
           }
         })
         .catch((res) => console.log(res));
-      this.updatePriceToWordpress();
+      // this.updatePriceToWordpress();
     },
     updatePriceToWordpress() {
       //console.log(this.$auth.user.company);

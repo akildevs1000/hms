@@ -473,7 +473,7 @@ class RoomController extends Controller
 
     public function getAvailableRoomsForModify(Request $request)
     {
-        return Room::where('company_id', $request->company_id)->get();
+        return Room::with("room_type")->where('company_id', $request->company_id)->get();
     }
 
     public function get_color($val)

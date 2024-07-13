@@ -52,7 +52,11 @@ class BookedRoom extends Model
         'check_out_time',
         'end',
 
-        'checkin_date_only'
+        'checkin_date_only',
+        'checkin_datetime_only',
+
+        'checkout_date_only',
+        'checkout_datetime_only'
     ];
 
     protected $casts = [
@@ -234,7 +238,22 @@ class BookedRoom extends Model
     }
     public function GetCheckInDateOnlyAttribute()
     {
+        return date('Y-m-d', strtotime($this->check_in));
+    }
+
+    public function GetCheckInDateTimeOnlyAttribute()
+    {
         return date('Y-m-d 12:00', strtotime($this->check_in));
+    }
+
+    public function GetCheckOutDateOnlyAttribute()
+    {
+        return date('Y-m-d', strtotime($this->check_out));
+    }
+
+    public function GetCheckOutDateTimeOnlyAttribute()
+    {
+        return date('Y-m-d 11:00', strtotime($this->check_out));
     }
 
     public function GetResourceIdAttribute()
