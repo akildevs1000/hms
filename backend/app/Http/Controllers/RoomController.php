@@ -471,9 +471,34 @@ class RoomController extends Controller
             ->get();
     }
 
+    public function getAvailableRoomsByDateAndRoomType(Request $request)
+    {
+        $checkIn = $request->check_in;
+        $checkOut = $request->check_out;
+        $companyId = $request->company_id;
+        $roomTypeId = $request->room_type_id;
+
+        $bookedRoomIds = BookedRoom::whereDate('check_in', '<=', $checkIn)
+            ->whereDate('check_out', '>=', $checkOut)
+            ->whereHas('booking', function ($query) use ($companyId) {
+                $query->where('booking_status', '!=', 0)
+                    ->where('company_id', $companyId);
+            })
+            ->pluck('room_id');
+
+        $availableRooms = Room::whereNotIn('id', $bookedRoomIds)
+            ->where('company_id', $companyId)
+            ->where('room_type_id', $roomTypeId)
+            ->get();
+
+        return $availableRooms;
+    }
+
     public function getAvailableRoomsForModify(Request $request)
     {
-        return Room::with("room_type")->where('company_id', $request->company_id)->get();
+        return Room::with("room_type")
+            ->when($request->filled("room_type_id"), fn ($q) => $q->where("room_type_id", $request->room_type_id))
+            ->where('company_id', $request->company_id)->get();
     }
 
     public function get_color($val)

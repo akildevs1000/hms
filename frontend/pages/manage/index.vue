@@ -423,8 +423,6 @@
                 </v-data-table>
               </v-card>
             </v-tab-item>
-            <!-- weekend -->
-
             <v-tab-item>
               <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
                 <div class="d-flex justify-center">
@@ -518,6 +516,51 @@
                 </v-data-table>
               </v-card>
             </v-tab-item>
+            <v-tab-item>
+              <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
+                <v-card-title>Enter Addtional Charges</v-card-title>
+                <v-container>
+                  <v-row>
+                    <v-col cols="2">Early Check In</v-col>
+                    <v-col cols="4"
+                      ><v-text-field
+                        dense
+                        flat
+                        hide-details
+                        outlined
+                        placeholder="Enter Changes"
+                        type="number"
+                        v-model="additionalCharges.early_check_in"
+                      ></v-text-field
+                    ></v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col cols="2">Late Check Out</v-col>
+                    <v-col cols="4"
+                      ><v-text-field
+                        dense
+                        flat
+                        hide-details
+                        outlined
+                        placeholder="Enter Changes"
+                        type="number"
+                        v-model="additionalCharges.late_check_out"
+                      ></v-text-field
+                    ></v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col v-if="additionalChargesError">{{
+                      additionalChargesError
+                    }}</v-col>
+                    <v-col cols="2"></v-col>
+                    <v-col cols="4">
+                      <v-btn @click="submitAdditionalCharges" class="primary">Submit</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
+            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -529,9 +572,14 @@
 <script>
 export default {
   data: () => ({
+    additionalChargesError: null,
+    additionalCharges: {
+      early_check_in: 0,
+      late_check_out: 0,
+    },
     tab: null,
     // items: ["Weekdays", "Weekend", "Holidays", "Prices"],
-    items: ["Prices", "Weekend", "Holidays"],
+    items: ["Prices", "Weekend", "Holidays", "Additional Charges"],
     Model: "Holidays Price",
     selectedWeekDays: [],
     dates: [],
@@ -648,6 +696,7 @@ export default {
     this.loading = true;
     this.get_price_list();
     this.get_weekends();
+    this.getAdditionalCharges();
   },
 
   computed: {
@@ -660,6 +709,29 @@ export default {
   },
 
   methods: {
+    async getAdditionalCharges() {
+      try {
+        let { data } = await this.$axios.get(`additional_charges`, {
+          params: {
+            company_id: this.$auth.user.company_id,
+          },
+        });
+
+        this.additionalCharges = data;
+      } catch (error) {
+        this.additionalChargesError = error;
+      }
+    },
+
+    async submitAdditionalCharges() {
+      try {
+        this.additionalCharges.company_id = this.$auth.user.company_id;
+        await this.$axios.post(`additional_charges`, this.additionalCharges);
+        alert(`Additional Charges has been added`);
+      } catch (error) {
+        this.additionalChargesError = error;
+      }
+    },
     onPageChange() {
       this.getDataFromApi();
     },

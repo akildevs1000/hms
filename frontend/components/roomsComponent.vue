@@ -478,6 +478,16 @@ export default {
         filterSpecial: true,
       },
       {
+        text: "Room Type id",
+        value: "room_type_id",
+        key: "room_type",
+        align: "left",
+        sortable: true,
+        filterable: true,
+        filterSpecial: true,
+      },
+
+      {
         text: "Room Type",
         value: "room_type.name",
         key: "room_type",

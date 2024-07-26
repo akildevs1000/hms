@@ -346,104 +346,6 @@
                             </v-menu>
                           </template>
                         </v-data-table>
-
-                        <table class="mt-0">
-                          <tr style="font-size: 13px">
-                            <th class="ps-5">#</th>
-                            <th style="width: 50px; text-align: center">
-                              Photo
-                            </th>
-                            <th>Name</th>
-                            <th>Adult</th>
-                            <th>Child</th>
-                            <th>Baby</th>
-                            <th>Weekday Rent</th>
-                            <th>Weekend Rent</th>
-                            <th>Holiday Rent</th>
-                            <th class="text-center">Action</th>
-                          </tr>
-                          <v-progress-linear
-                            v-if="loading"
-                            :active="loading"
-                            :indeterminate="loading"
-                            absolute
-                            color="primary"
-                          ></v-progress-linear>
-                          <tr
-                            v-for="(item, index) in data"
-                            :key="index"
-                            style="font-size: 13px"
-                          >
-                            <td>
-                              {{
-                                (pagination.current - 1) * pagination.per_page +
-                                index +
-                                1
-                              }}
-                            </td>
-                            <td>
-                              <v-img
-                                style="
-                                  border-radius: 50%;
-                                  height: 100px;
-                                  width: 100px;
-                                  margin: 0 auto;
-                                "
-                                :src="item.pic || '/noimage.png'"
-                              >
-                              </v-img>
-                            </td>
-
-                            <td>{{ caps(item.name) }}</td>
-                            <td>{{ caps(item.adult) }}</td>
-                            <td>{{ caps(item.child) }}</td>
-                            <td>{{ caps(item.baby) }}</td>
-                            <td>{{ caps(item.weekday_price) }}</td>
-                            <td>{{ caps(item.weekend_price) }}</td>
-                            <td>{{ caps(item.holiday_price) }}</td>
-
-                            <td class="text-center">
-                              <v-menu
-                                bottom
-                                left
-                                v-if="
-                                  can(`settings_rooms_category_edit`) ||
-                                  can(`settings_rooms_category_delete`)
-                                "
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                                    <v-icon>mdi-dots-vertical</v-icon>
-                                  </v-btn>
-                                </template>
-                                <v-list width="120" dense>
-                                  <v-list-item
-                                    v-if="can(`settings_rooms_category_edit`)"
-                                    @click="editItem(item)"
-                                  >
-                                    <v-list-item-title style="cursor: pointer">
-                                      <v-icon color="secondary" small>
-                                        mdi-pencil
-                                      </v-icon>
-                                      Edit
-                                    </v-list-item-title>
-                                  </v-list-item>
-                                  <v-list-item
-                                    v-if="can(`settings_rooms_category_delete`)"
-                                    @click="deleteItem(item)"
-                                  >
-                                    <v-list-item-title style="cursor: pointer">
-                                      <v-icon color="error" small>
-                                        mdi-delete
-                                      </v-icon>
-                                      Delete
-                                    </v-list-item-title>
-                                  </v-list-item>
-                                </v-list>
-                              </v-menu>
-                            </td>
-                          </tr>
-                        </table>
                       </v-col>
                     </v-row>
                   </v-card>
@@ -620,18 +522,19 @@ export default {
         this.dialogCropping = true;
       }
     },
-    getDataFromApi(url = this.endpoint) {
+    getDataFromApi() {
       this.loading = true;
-      let page = this.pagination.current;
       let options = {
         params: {
+          page: this.pagination.current,
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
           search: this.search,
+         
         },
       };
 
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+      this.$axios.get(this.endpoint, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
@@ -639,9 +542,7 @@ export default {
       });
     },
     searchIt(e) {
-      let s = e.toLowerCase();
       this.getDataFromApi();
-      return;
     },
 
     editItem(item) {

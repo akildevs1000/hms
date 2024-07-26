@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdditionalChargeController;
 use App\Http\Controllers\AssignModuleController;
 use App\Http\Controllers\AssignPermissionController;
 use App\Http\Controllers\AttendanceController;
@@ -135,3 +136,10 @@ Route::get('get_corporate', [SourceController::class, 'getCorporate']);
 Route::resource('missing', MissingController::class);
 Route::get('get_reservation_list', [MissingController::class, 'getReservationList']);
 Route::get('get_booking_by_id/{bookingId}', [MissingController::class, 'getBookingModel']);
+
+
+
+
+
+Route::get('additional_charges', [AdditionalChargeController::class, 'index']);
+Route::post('additional_charges', [AdditionalChargeController::class, 'store']);

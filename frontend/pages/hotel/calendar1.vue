@@ -347,7 +347,11 @@
               "
             >
               <v-list-item-title>
-                <BookingModify @close="get_events()" :key="evenIid" :BookedRoomId="evenIid" />
+                <BookingModify
+                  @close="get_events()"
+                  :key="evenIid"
+                  :BookedRoomId="evenIid"
+                />
               </v-list-item-title>
             </v-list-item>
 
@@ -392,8 +396,11 @@
         <v-card>
           <v-card-text>
             <v-row flat>
-              <v-col cols="8">
+              <v-col cols="6">
                 <h1 class="title">Calendar</h1>
+              </v-col>
+              <v-col cols="2">
+                <BookingGroup />
               </v-col>
               <v-col cols="2">
                 <v-text-field
