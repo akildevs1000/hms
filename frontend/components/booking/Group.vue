@@ -1113,45 +1113,6 @@
                     </div>
                     <v-divider></v-divider>
                     <section class="payment-section">
-                      <div
-                        class="input-group input-group-sm px-5 pt-2 text-center"
-                      >
-                        <v-card class="pa-2" style="width: 25%" outlined tile>
-                          <div class="d-flex justify-space-between">
-                            <span
-                              class="pa-0 m-0"
-                              style="width: 33.33%"
-                              outlined
-                            >
-                              {{ item.no_of_adult }}|
-                            </span>
-                            <span
-                              class="pa-0 m-0"
-                              style="width: 33.33%"
-                              outlined
-                            >
-                              {{ item.no_of_child }} |
-                            </span>
-                            <span
-                              class="pa-0 m-0"
-                              style="width: 33.33%"
-                              outlined
-                            >
-                              {{ item.no_of_baby }}
-                            </span>
-                          </div>
-                        </v-card>
-                        <v-card class="pa-2" style="width: 25%" outlined tile>
-                          {{ getMealSeparate(item.meal)[0] }}
-                        </v-card>
-                        <v-card class="pa-2" style="width: 25%" outlined tile>
-                          {{ getMealSeparate(item.meal)[1] }}
-                        </v-card>
-                        <v-card class="pa-2" style="width: 25%" outlined tile>
-                          {{ getMealSeparate(item.meal)[2] }}
-                        </v-card>
-                      </div>
-
                       <div class="input-group input-group-sm px-5 pt-2">
                         <span
                           class="input-group-text"
@@ -1167,6 +1128,60 @@
                           disabled
                         >
                           {{ convert_decimal(item.price) }}
+                        </div>
+                      </div>
+
+                      <div class="input-group input-group-sm px-5">
+                        <span
+                          class="input-group-text"
+                          id="inputGroup-sizing-sm"
+                        >
+                          Meal
+                        </span>
+                        <div
+                          type="text"
+                          class="form-control"
+                          aria-label="Sizing example input"
+                          aria-describedby="inputGroup-sizing-sm"
+                          disabled
+                        >
+                          {{ convert_decimal(item.meal_price) }}
+                        </div>
+                      </div>
+
+                      <div class="input-group input-group-sm px-5">
+                        <span
+                          class="input-group-text"
+                          id="inputGroup-sizing-sm"
+                        >
+                          Early Checkin
+                        </span>
+                        <div
+                          type="text"
+                          class="form-control"
+                          aria-label="Sizing example input"
+                          aria-describedby="inputGroup-sizing-sm"
+                          disabled
+                        >
+                          {{ convert_decimal(item.early_check_in) }}
+                        </div>
+                      </div>
+
+                      <div class="input-group input-group-sm px-5">
+                        <span
+                          class="input-group-text"
+                          id="inputGroup-sizing-sm"
+                        >
+                          Late Checkout
+                        </span>
+                        <div
+                          type="text"
+                          class="form-control"
+                          aria-label="Sizing example input"
+                          aria-describedby="inputGroup-sizing-sm"
+                          disabled
+                        >
+                          {{ convert_decimal(item.late_check_out) }}
                         </div>
                       </div>
 
@@ -1222,62 +1237,6 @@
                           {{ convert_decimal(item.after_discount) }}
                         </div>
                       </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Adult Food
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.tot_adult_food) }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Child Food
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.tot_child_food) }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Total Food
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{
-                            convert_decimal(
-                              item.tot_adult_food + item.tot_child_food
-                            )
-                          }}
-                        </div>
-                      </div>
                       <div class="input-group input-group-sm px-5">
                         <span
                           class="input-group-text"
@@ -1329,6 +1288,42 @@
                           disabled
                         >
                           {{ item.extra_amount_reason || "---" }}
+                        </div>
+                      </div>
+
+                      <div class="input-group input-group-sm px-5">
+                        <span
+                          class="input-group-text"
+                          id="inputGroup-sizing-sm"
+                        >
+                          Adult
+                        </span>
+                        <div
+                          type="text"
+                          class="form-control"
+                          aria-label="Sizing example input"
+                          aria-describedby="inputGroup-sizing-sm"
+                          disabled
+                        >
+                          {{ item.no_of_adult }}
+                        </div>
+                      </div>
+
+                      <div class="input-group input-group-sm px-5">
+                        <span
+                          class="input-group-text"
+                          id="inputGroup-sizing-sm"
+                        >
+                          Child
+                        </span>
+                        <div
+                          type="text"
+                          class="form-control"
+                          aria-label="Sizing example input"
+                          aria-describedby="inputGroup-sizing-sm"
+                          disabled
+                        >
+                          {{ item.no_of_child }}
                         </div>
                       </div>
                     </section>
@@ -1592,19 +1587,21 @@
             </v-col>
             <v-col cols="6">
               <v-checkbox
-                v-model="temp.early_check_in"
+                v-model="is_early_check_in"
                 label="Early Check In"
                 :hide-details="true"
                 dense
+                @change="set_additional_charges"
               >
               </v-checkbox>
             </v-col>
             <v-col cols="6"
               ><v-checkbox
-                v-model="temp.late_check_out"
+                v-model="is_late_check_out"
                 label="Late Check Out"
                 :hide-details="true"
                 dense
+                @change="set_additional_charges"
               >
               </v-checkbox>
             </v-col>
@@ -1642,6 +1639,9 @@ export default {
   },
   data() {
     return {
+      additional_charges: {},
+      is_early_check_in: false,
+      is_late_check_out: false,
       dialog: false,
       foodplans: [],
       multipleRoomObjects: [],
@@ -1749,6 +1749,8 @@ export default {
       idCards: [],
       imgView: false,
       temp: {
+        early_check_in: 0,
+        late_check_out: 0,
         check_in_menu: false,
         check_out_menu: false,
         room_no: "",
@@ -1952,6 +1954,8 @@ export default {
     this.preloader = false;
 
     await this.get_food_plans();
+
+    await this.get_additional_charges();
   },
   computed: {
     formattedCheckinDate() {
@@ -1983,6 +1987,23 @@ export default {
     },
   },
   methods: {
+    set_additional_charges() {
+      this.temp.early_check_in = this.is_early_check_in
+        ? this.additional_charges.early_check_in
+        : 0;
+      this.temp.late_check_out = this.is_late_check_out
+        ? this.additional_charges.late_check_out
+        : 0;
+    },
+    async get_additional_charges() {
+      let { data } = await this.$axios.get(`additional_charges`, {
+        params: {
+          company_id: this.$auth.user.company_id,
+        },
+      });
+
+      this.additional_charges = data;
+    },
     async get_food_plans() {
       let { data: foodplans } = await this.$axios.get(`foodplan-list`);
 
@@ -2480,13 +2501,15 @@ export default {
       this.multipleRoomObjects = items;
     },
     selectMultipleRooms() {
+      let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
+
       this.multipleRoomObjects.forEach((item) => {
         console.log("🚀 ~ selectMultipleRooms ~ item.room_no:", item.room_no);
-        this.selectRoom(item);
+        this.selectRoom(item, foodplan);
       });
     },
 
-    selectRoom(item) {
+    selectRoom(item, foodplan) {
       this.selectRoomLoading = true;
       let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
       if (isSelect) {
@@ -2518,10 +2541,11 @@ export default {
           this.temp.room_id = item.id;
           this.temp.room_type = item.room_type.name;
           this.temp.price = data.total_price;
+          this.temp.meal_price = foodplan.unit_price;
           this.temp.priceList = data.data;
-          this.temp.room_tax = this.reservation.total_tax;
+          this.temp.room_tax = data.total_tax;
           this.get_cs_gst(this.temp.room_tax);
-          this.add_room();
+          this.add_room(foodplan);
         });
     },
 
@@ -2553,41 +2577,33 @@ export default {
         });
     },
 
-    add_room() {
+    add_room(foodplan) {
       if (this.temp.room_no == "") {
         this.alert("Missing!", "Select room", "error");
         return;
       }
 
-      let roomDiscount = parseFloat(
-        this.temp.room_discount == "" ? 0 : this.temp.room_discount
-      );
-      let roomExtraAmount = parseFloat(
-        this.temp.room_extra_amount == "" ? 0 : this.temp.room_extra_amount
-      );
+      let {
+        price,
+        early_check_in,
+        late_check_out,
+        room_discount,
+        room_extra_amount,
+      } = this.temp;
+
+      let sub_total =
+        price +
+        foodplan.unit_price +
+        early_check_in +
+        late_check_out + 
+        parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
 
       this.temp.after_discount =
-        parseFloat(this.temp.price) - roomDiscount + roomExtraAmount;
+        sub_total - (room_discount == "" ? 0 : room_discount);
 
       this.temp.days = this.getDays();
 
-      let adult_f_tot = Object.values(this.tempAdult).reduce(
-        (a, b) => a + b,
-        0
-      );
-      let child_f_tot = Object.values(this.tempChild).reduce(
-        (a, b) => a + b,
-        0
-      );
-
-      this.temp.tot_adult_food = adult_f_tot; // * this.getDays();
-      this.temp.tot_child_food = child_f_tot; //* this.getDays();
-
-      this.temp.total =
-        parseFloat(this.temp.tot_adult_food) +
-        parseFloat(this.temp.after_discount) +
-        parseFloat(this.temp.tot_child_food);
-      // parseFloat(this.temp.total_with_tax) +
+      this.temp.total = parseFloat(this.temp.after_discount);
 
       this.temp.grand_total = parseFloat(this.temp.total);
 
@@ -2647,11 +2663,9 @@ export default {
     },
 
     clear_add_room() {
-      let check_in_old = this.temp.check_in;
-      let check_out_old = this.temp.check_out;
       this.temp = {
-        check_in_menu: false,
-        check_out_menu: false,
+        early_check_in: this.temp.early_check_in,
+        late_check_out: this.temp.late_check_out,
         room_no: "",
         room_type: "",
         room_id: "",
@@ -2659,8 +2673,8 @@ export default {
         days: 0,
         sgst: 0,
         cgst: 0,
-        check_in: check_in_old,
-        check_out: check_out_old,
+        check_in: this.temp.check_in,
+        check_out: this.temp.check_out,
         meal: "room_only_price",
         bed_amount: 0,
         room_discount: 0,
