@@ -2512,41 +2512,33 @@ export default {
     selectRoom(item, foodplan) {
       this.selectRoomLoading = true;
       let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
-      if (isSelect) {
-        this.selectRoomLoading = false;
-        this.alert(
-          "oops",
-          "Already selected please choose another room",
-          "error"
-        );
-        return;
+      if (!isSelect) {
+        let payload = {
+          params: {
+            company_id: this.$auth.user.company.id,
+            roomType: item.room_type.name,
+            room_no: item.room_no,
+            checkin: this.reservation.check_in,
+            checkout: this.reservation.check_out,
+          },
+        };
+        this.$axios
+          .get(`get_data_by_select_with_tax`, payload)
+          .then(({ data }) => {
+            this.selectRoomLoading = false;
+            this.RoomDrawer = false;
+            this.temp.company_id = this.$auth.user.company.id;
+            this.temp.room_no = item.room_no;
+            this.temp.room_id = item.id;
+            this.temp.room_type = item.room_type.name;
+            this.temp.price = data.total_price;
+            this.temp.meal_price = foodplan.unit_price;
+            this.temp.priceList = data.data;
+            this.temp.room_tax = data.total_tax;
+            this.get_cs_gst(this.temp.room_tax);
+            this.add_room(foodplan);
+          });
       }
-
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: item.room_type.name,
-          room_no: item.room_no,
-          checkin: this.reservation.check_in,
-          checkout: this.reservation.check_out,
-        },
-      };
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          this.selectRoomLoading = false;
-          this.RoomDrawer = false;
-          this.temp.company_id = this.$auth.user.company.id;
-          this.temp.room_no = item.room_no;
-          this.temp.room_id = item.id;
-          this.temp.room_type = item.room_type.name;
-          this.temp.price = data.total_price;
-          this.temp.meal_price = foodplan.unit_price;
-          this.temp.priceList = data.data;
-          this.temp.room_tax = data.total_tax;
-          this.get_cs_gst(this.temp.room_tax);
-          this.add_room(foodplan);
-        });
     },
 
     capsTitle(val) {
@@ -2595,7 +2587,7 @@ export default {
         price +
         foodplan.unit_price +
         early_check_in +
-        late_check_out + 
+        late_check_out +
         parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
 
       this.temp.after_discount =
