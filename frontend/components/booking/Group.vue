@@ -1473,6 +1473,12 @@
         >
         <v-container>
           <v-row>
+            <v-col>
+              <pre>
+              {{ priceListByType }}
+             </pre
+              >
+            </v-col>
             <v-col cols="12">
               <v-menu
                 v-model="checkin_menu"
@@ -1544,8 +1550,14 @@
                 item-value="id"
                 item-text="name"
                 v-model="room_type_id"
-                @change="get_available_rooms"
+                @change="
+                  ($event) => {
+                    get_available_rooms();
+                    selectRoom($event);
+                  }
+                "
                 :items="roomTypes"
+                return-object
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
@@ -1559,7 +1571,6 @@
                 dense
                 outlined
                 return-object
-                @change="onChangeMultipleRooms"
               >
               </v-autocomplete>
             </v-col>
@@ -1639,6 +1650,7 @@ export default {
   },
   data() {
     return {
+      priceListByType: [],
       additional_charges: {},
       is_early_check_in: false,
       is_late_check_out: false,
@@ -1749,6 +1761,7 @@ export default {
       idCards: [],
       imgView: false,
       temp: {
+        food_plan_id: 1,
         early_check_in: 0,
         late_check_out: 0,
         check_in_menu: false,
@@ -2497,47 +2510,53 @@ export default {
       this.temp.sgst = gst;
     },
 
-    onChangeMultipleRooms(items) {
-      this.multipleRoomObjects = items;
-    },
     selectMultipleRooms() {
+      console.log(
+        "🚀 ~ selectMultipleRooms ~ this.multipleRoomObjects:",
+        this.multipleRoomObjects
+      );
+    },
+
+    selectRoom(item) {
       let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
 
-      this.multipleRoomObjects.forEach((item) => {
-        console.log("🚀 ~ selectMultipleRooms ~ item.room_no:", item.room_no);
-        this.selectRoom(item, foodplan);
-      });
-    },
-
-    selectRoom(item, foodplan) {
       this.selectRoomLoading = true;
+
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          roomType: item.name,
+          room_no: item.room_no,
+          checkin: this.reservation.check_in,
+          checkout: this.reservation.check_out,
+        },
+      };
+
+      this.$axios
+        .get(`get_data_by_select_with_tax`, payload)
+        .then(({ data }) => {
+          this.selectRoomLoading = false;
+
+          console.log(data.data);
+          return;
+          this.RoomDrawer = false;
+          this.temp.company_id = this.$auth.user.company.id;
+          this.temp.room_no = item.room_no;
+          this.temp.room_id = item.id;
+          this.temp.room_type = item.room_type.name;
+          this.temp.price = data.total_price;
+          this.temp.meal_price = foodplan.unit_price;
+          this.temp.priceList = data.data;
+          this.temp.room_tax = data.total_tax;
+          this.get_cs_gst(this.temp.room_tax);
+          // this.add_room(foodplan);
+          // if (!this.priceListByType.find((e) => e == item.room_type.name)) {
+          //   this.priceListByType = this.priceListByType.concat(data.data);
+          // }
+        });
+
       let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
       if (!isSelect) {
-        let payload = {
-          params: {
-            company_id: this.$auth.user.company.id,
-            roomType: item.room_type.name,
-            room_no: item.room_no,
-            checkin: this.reservation.check_in,
-            checkout: this.reservation.check_out,
-          },
-        };
-        this.$axios
-          .get(`get_data_by_select_with_tax`, payload)
-          .then(({ data }) => {
-            this.selectRoomLoading = false;
-            this.RoomDrawer = false;
-            this.temp.company_id = this.$auth.user.company.id;
-            this.temp.room_no = item.room_no;
-            this.temp.room_id = item.id;
-            this.temp.room_type = item.room_type.name;
-            this.temp.price = data.total_price;
-            this.temp.meal_price = foodplan.unit_price;
-            this.temp.priceList = data.data;
-            this.temp.room_tax = data.total_tax;
-            this.get_cs_gst(this.temp.room_tax);
-            this.add_room(foodplan);
-          });
       }
     },
 
@@ -2547,26 +2566,6 @@ export default {
       let upper = res.toUpperCase();
       // let title = upper.replace(/[^A-Z]/g, " ");
       return upper;
-    },
-
-    changeMealPlan(mealType) {
-      if (!this.temp.room_type) {
-        alert("Select room");
-        return;
-      }
-
-      let payload = {
-        params: {
-          room_type: this.temp.room_type,
-          slug: mealType,
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios
-        .get(`get_room_price_by_meal_plan`, payload)
-        .then(({ data }) => {
-          this.temp.price = data;
-        });
     },
 
     add_room(foodplan) {
@@ -2648,10 +2647,6 @@ export default {
         (e) => (tot_total += e.total == "" ? 0 : parseFloat(e.total))
       );
       this.room.all_room_Total_amount = tot_total;
-    },
-
-    get_room_discount(val) {
-      this.temp.price = parseFloat(this.temp.price) - parseFloat(val);
     },
 
     clear_add_room() {
@@ -2774,16 +2769,6 @@ export default {
           this.checkLoader = false;
         });
     },
-
-    // can(per) {
-    //   let u = this.$auth.user;
-    //   console.log(u);
-    //   if (!u.permissions) return false;
-    //   return (
-    //     (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-    //     u.is_master
-    //   );
-    // },
 
     can(per) {
       let u = this.$auth.user;
