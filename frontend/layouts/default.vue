@@ -417,13 +417,13 @@ export default {
           to: "/taxable",
           menu: "accounts_gst_access",
         },
-        {
-          topMenu: "account",
-          icon: "mdi mdi-file-document-edit-outline",
-          title: "Inquiries",
-          to: "/inquiry",
-          menu: "inquiry_access",
-        },
+        // {
+        //   topMenu: "account",
+        //   icon: "mdi mdi-file-document-edit-outline",
+        //   title: "Inquiries",
+        //   to: "/inquiry",
+        //   menu: "inquiry_access",
+        // },
         {
           topMenu: "account",
           icon: "mdi mdi-cash",
@@ -436,13 +436,6 @@ export default {
           icon: "mdi mdi-cash",
           title: "Invoice",
           to: "/invoices",
-          menu: "accounts_posting_access",
-        },
-        {
-          topMenu: "account",
-          icon: "mdi mdi-food",
-          title: "Food Plan",
-          to: "/foodplans",
           menu: "accounts_posting_access",
         },
         {
@@ -932,3 +925,10 @@ export default {
   },
 };
 </script>
+<style>
+* {
+  font-family: "Source Sans Pro", sans-serif !important;
+  margin: 0;
+  padding: 0;
+}
+</style>

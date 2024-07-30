@@ -555,11 +555,16 @@
                     }}</v-col>
                     <v-col cols="2"></v-col>
                     <v-col cols="4">
-                      <v-btn @click="submitAdditionalCharges" class="primary">Submit</v-btn>
+                      <v-btn @click="submitAdditionalCharges" class="primary"
+                        >Submit</v-btn
+                      >
                     </v-col>
                   </v-row>
                 </v-container>
               </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <FoodPlan />
             </v-tab-item>
           </v-tabs-items>
         </v-card>
@@ -579,7 +584,7 @@ export default {
     },
     tab: null,
     // items: ["Weekdays", "Weekend", "Holidays", "Prices"],
-    items: ["Prices", "Weekend", "Holidays", "Additional Charges"],
+    items: ["Prices", "Weekend", "Holidays", "Additional Charges", "Food Plan"],
     Model: "Holidays Price",
     selectedWeekDays: [],
     dates: [],

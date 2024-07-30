@@ -22,6 +22,7 @@ use App\Models\Template;
 use App\Models\Transaction;
 use App\Models\Weekend;
 use Carbon\CarbonPeriod;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as Logger;
@@ -436,15 +437,18 @@ class BookingController extends Controller
             $rooms = $request->only('selectedRooms');
 
 
-            $roomCount = count($rooms);
             foreach ($rooms['selectedRooms'] as $room) {
                 $room['booking_id'] = $booking->id;
                 $room['customer_id'] = $booking->customer_id;
                 $room['booking_status'] = $booking->booking_status;
 
                 $priceList = $room['priceList'];
+
                 unset($room['priceList']);
-                $numberOfDays = count($priceList);
+                unset($room['meal_price']);
+                unset($room['meal_name']);
+                unset($room['extra_bed']);
+
 
                 $bookedRoomId = BookedRoom::create($room);
 
@@ -473,25 +477,19 @@ class BookingController extends Controller
 
                     $orderRooms['total_with_tax'] = $orderRooms['after_discount'];
 
-                    $orderRooms['tot_child_food'] = $bookedRoomId->tot_child_food / $bookedRoomId->days;
-                    $orderRooms['tot_adult_food'] = $bookedRoomId->tot_adult_food / $bookedRoomId->days;
-
-                    $orderRooms['total'] = $orderRooms['tot_adult_food'] + $orderRooms['tot_child_food'] + $orderRooms['total_with_tax'];
-                    $orderRooms['grand_total'] = $orderRooms['tot_adult_food'] + $orderRooms['tot_child_food'] + $orderRooms['total_with_tax'];
+                    $orderRooms['total'] = $orderRooms['total_with_tax'];
+                    $orderRooms['grand_total'] = $orderRooms['total_with_tax'];
 
                     $orderRooms['days'] = 1;
                     $orderRooms['room_tax'] = $list['tax'];
                     $orderRooms['sgst'] = $list['tax'] / 2;
                     $orderRooms['cgst'] = $list['tax'] / 2;
                     $orderRooms['booked_room_id'] = $bookedRoomId->id;
-                    $orderRooms['no_of_adult'] = $bookedRoomId->no_of_adult;
                     $orderRooms['customer_id'] = $bookedRoomId->customer_id;
                     $orderRooms['meal'] = $bookedRoomId->meal;
                     $orderRooms['no_of_adult'] = $bookedRoomId->no_of_adult;
                     $orderRooms['no_of_child'] = $bookedRoomId->no_of_child;
                     $orderRooms['no_of_baby'] = $bookedRoomId->no_of_baby;
-
-
 
 
                     // print_r($orderRooms);
@@ -508,10 +506,8 @@ class BookingController extends Controller
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
-        } catch (\Throwable $th) {
-            return $th;
-            Logger::channel("custom")->error("BookingController: " . $th);
-            return ["done" => false, "data" => "DataBase Error booking"];
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage());
         }
     }
     public function reCalculatePrice($finalAmountWithDiscount)
@@ -1139,7 +1135,7 @@ class BookingController extends Controller
 
     public function get_booking_for_modify(Request $request)
     {
-        return BookedRoom::with(['booking', 'customer'])->where('company_id', $request->company_id)->findOrFail($request->id);
+        return BookedRoom::with(['booking', 'customer', "room"])->where('company_id', $request->company_id)->findOrFail($request->id);
     }
 
     public function changeCheckIntoBookingAdmin(Request $request, $id)
@@ -1569,43 +1565,100 @@ class BookingController extends Controller
 
     public function modifyBooking(Request $request)
     {
+        $booked_room_id = $request->booked_room_id;
+        $booking_id = $request->booking_id;
+
+        $check_in = $request->check_in;
+        $check_out = $request->check_out;
+        $checkOutDate = new \DateTime($check_out);
+        $checkOutDate->modify('+1 day');
+        $room_id = $request->room_id;
+        $room_no = $request->room_no;
+        $room_type = $request->room_type;
+        $room_price = $request->room_price;
+        $room_tax = $request->room_tax;
+        $cgst = $room_tax / 2;
+        $sgst = $room_tax / 2;
+        $total_price = $request->total_price;
+        $room_discount = $request->room_discount;
+
+        $total_days = $request->total_days;
+        $remaining_price = $request->remaining_price;
+        $total_tax = $request->total_tax;
+        $user_id = $request->user_id;
+        $company_id = $request->company_id;
+
         try {
+
+            $period = CarbonPeriod::create($check_in, $this->checkOutDate($checkOutDate->format('Y-m-d')));
+            foreach ($period as $date) {
+
+                OrderRoom::where('booking_id', $booking_id)->update([
+                    'date' => $date->format('Y-m-d'),
+                    'booked_room_id' => $booked_room_id,
+                    'room_id' => $room_id,
+                    'room_no' => $room_no,
+                    'room_type' => $room_type,
+                    'price' => $room_price,
+                    'bed_amount' => 0,
+                    'cgst' => $cgst,
+                    'sgst' => $sgst,
+                    'room_tax' => $room_tax,
+                    'check_in' => $check_in,
+                    'check_out' => $check_out,
+                    'total' => $total_price,
+                    'days' => $request->total_days,
+                    'grand_total' => $total_price,
+                    'room_discount' => $room_discount,
+                ]);
+            }
+
             BookedRoom::where("id", $request->id)
                 ->update([
-                    'room_id' => $request->room_id,
-                    'room_no' => $request->room_no,
-                    'room_type' => $request->room_type,
-                    'price' => $request->room_price,
+                    'room_id' => $room_id,
+                    'room_no' => $room_no,
+                    'room_type' => $room_type,
+                    'price' => $room_price,
                     'bed_amount' => 0,
-                    'cgst' => $request->room_tax / 2,
-                    'sgst' => $request->room_tax / 2,
-                    'room_tax' => $request->room_tax,
-                    'check_in' => $request->check_in,
-                    'check_out' => $request->check_out,
-                    'total' => $request->total_price,
+                    'cgst' => $cgst,
+                    'sgst' => $sgst,
+                    'room_tax' => $room_tax,
+                    'check_in' => $check_in,
+                    'check_out' => $check_out,
+                    'total' => $total_price,
                     'days' => $request->total_days,
-                    'grand_total' => $request->total_price,
+                    'grand_total' => $total_price,
+                    'room_discount' => $room_discount,
+
                 ]);
 
-            Booking::where("id", $request->booking_id)
-                ->where("company_id", $request->company_id)
+            Booking::where("id", $booking_id)
+                ->where("company_id", $company_id)
                 ->update([
-                    'check_in' => $request->check_in,
-                    'check_out' => $request->check_out,
-                    'total_days' => $request->total_days,
-                    'total_price' => $request->total_price,
-                    'all_room_Total_amount' => $request->total_price,
-                    'grand_remaining_price' => $request->remaining_price,
-                    'inv_total_tax_collected' => $request->total_tax,
-                    'balance' => $request->remaining_price,
-                    'remaining_price' => $request->remaining_price,
-                    'user_id' => $request->user_id,
+                    'check_in' => $check_in,
+                    'check_out' => $check_out,
+                    'total_days' => $total_days,
+                    'total_price' => $total_price,
+                    'all_room_Total_amount' => $total_price,
+                    'grand_remaining_price' => $remaining_price,
+                    'inv_total_tax_collected' => $total_tax,
+                    'balance' => $remaining_price,
+                    'remaining_price' => $remaining_price,
+                    'user_id' => $user_id,
                 ]);
 
+
+            Transaction::where("booking_id", $booking_id)->update([
+                "user_id" => $user_id,
+                "balance" => $remaining_price,
+                "debit" => $remaining_price,
+                "user_id" => $user_id,
+            ]);
+
+            // return Transaction::where('booking_id', $booking_id)->first();
+            // BookedRoom::where("id", $request->id)->first();
 
             return $this->response('Booking has been modified.', null, true);
-
-            return $this->response('DataBase Error in status change', null, true);
         } catch (\Throwable $th) {
             return $th;
             Logger::channel("custom")->error("BookingController: " . $th);
@@ -2068,8 +2121,7 @@ class BookingController extends Controller
         }
 
 
-        // DB::beginTransaction();
-        $error = '';
+        DB::beginTransaction();
         try {
             $customer_id = $this->customerStore($request->only(Customer::customerAttributes()));
             $request['customer_id'] = $customer_id;
@@ -2082,39 +2134,27 @@ class BookingController extends Controller
 
 
             if ($booking) {
-                $error = $this->storeBookedRooms($request, $booking);
-
-                //DB::commit();
-
+                $this->storeBookedRooms($request, $booking);
                 //recalculating Tax based on discount 
-                $error = (new ManagementController())->generateOccupancyRateByBooking($request);
-                $error = (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
+                (new ManagementController())->generateOccupancyRateByBooking($request);
+                (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
-                try {
+                if ($request->filled("payment_reference_id")) {
+                    $data = [];
+                    $data['payment_reference_id'] = $request->payment_reference_id;
+                    $data['payment_response'] =  json_encode($request->payment_response);
 
-                    if ($request->filled("payment_reference_id")) {
-                        $data = [];
-                        $data['payment_reference_id'] = $request->payment_reference_id;
-                        $data['payment_response'] =  json_encode($request->payment_response);
-
-                        Booking::whereId($booking->id)->update($data);
-                    }
-                } catch (\Exception $e) {
+                    Booking::whereId($booking->id)->update($data);
                 }
-            } else {
             }
-
-
-
+            DB::commit();
+            return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
 
             // all good
         } catch (\Exception $e) {
-            // DB::rollback();
+            DB::rollback();
             return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error 
         }
-
-
-        return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
     }
 
     public function storeGroupBooking($request)

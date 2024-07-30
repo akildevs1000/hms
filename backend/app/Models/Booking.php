@@ -220,6 +220,7 @@ class Booking extends Model
             "customer_id",
             "room_category_type",
             "booking_status",
+            "group_name",
             "customer_type",
             "customer_status",
             "all_room_Total_amount",

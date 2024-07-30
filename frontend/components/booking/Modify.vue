@@ -31,13 +31,13 @@
               </tr>
               <tr>
                 <th>Group Name</th>
-                <td>---</td>
+                <td>{{ bookingResponse?.booking?.group_name || "---" }}</td>
               </tr>
 
               <tr>
                 <th>Agent Name</th>
                 <td>
-                  {{ bookingResponse.agent_name || "---" }}
+                  {{ bookingResponse?.booking?.agent_name || "---" }}
                 </td>
               </tr>
               <tr>
@@ -46,13 +46,32 @@
                   {{ bookingResponse?.customer?.contact_no || "---" }}
                 </td>
               </tr>
+
+              <tr>
+                <th>Room Type</th>
+                <td>
+                  <!-- <pre>{{bookingResponse}}</pre> -->
+                  <v-autocomplete
+                    v-model="payload.room_type_id"
+                    @change="getFilteredRooms"
+                    label="Room Type"
+                    outlined
+                    dense
+                    hide-details
+                    item-value="id"
+                    item-text="name"
+                    :items="roomTypes"
+                    return-object
+                  ></v-autocomplete>
+                </td>
+              </tr>
               <tr>
                 <th>Room No</th>
                 <td>
                   <v-autocomplete
                     @change="getPricesByRoomId(payload.room_id)"
-                    :items="rooms"
-                    item-text="label"
+                    :items="filteredRooms"
+                    item-text="room_no"
                     item-value="id"
                     dense
                     outlined
@@ -61,7 +80,7 @@
                   ></v-autocomplete>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <th>Extra Bed</th>
                 <td>
                   <v-text-field
@@ -73,7 +92,7 @@
                     :hide-details="true"
                   ></v-text-field>
                 </td>
-              </tr>
+              </tr> -->
               <tr>
                 <th>Check In</th>
                 <td>
@@ -152,6 +171,13 @@
                 <th>Days</th>
                 <td>{{ payload.total_days }}</td>
               </tr>
+
+              <tr>
+                <th>Total ( Old Price )</th>
+                <td class="text-right">
+                  {{ convert_decimal(old_total) }}
+                </td>
+              </tr>
               <tr>
                 <th>Total ( New Price )</th>
                 <td class="text-right">
@@ -161,7 +187,14 @@
               <tr>
                 <th>Discount</th>
                 <td class="text-right">
-                  {{ convert_decimal(payload.total_discount) }}
+                  <v-text-field
+                    outlined
+                    dense
+                    hide-details
+                    v-model="payload.room_discount"
+                    persistent-hint
+                    @keyup="getTotalAfterDiscount"
+                  ></v-text-field>
                 </td>
               </tr>
               <tr>
@@ -211,11 +244,15 @@ export default {
       checkin_menu: false,
       checkout_menu: false,
       rooms: [],
+      filteredRooms: [],
+      old_total:0,
       payload: {
+        room_type_id: 0,
         extra_bed: 0,
         check_in: "",
         check_out: "",
         total_price: 0,
+        old_remaining_price: 0,
         remaining_price: 0,
         company_id: 0,
         booking_id: 0,
@@ -237,6 +274,7 @@ export default {
       loading: false,
       reference: "",
       errors: [],
+      roomTypes: [],
       checkOutDialog: false,
       bookingResponse: null,
       roomPriceResponse: null,
@@ -245,24 +283,9 @@ export default {
 
   async created() {
     this.preloader = false;
+    await this.get_room_types();
 
     await this.get_booking();
-
-    let { data: rooms } = await this.$axios.get(
-      `get_available_rooms_for_modify`,
-      {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      }
-    );
-
-    this.rooms = rooms.map((e) => ({
-      id: e.id,
-      room_no: e.room_no,
-      roomType: e.room_type.name,
-      label: `${e.room_no} ${e.room_type.name}`,
-    }));
   },
 
   mounted() {},
@@ -289,14 +312,57 @@ export default {
   },
 
   methods: {
+    async get_rooms(room_id) {
+      let { data: rooms } = await this.$axios.get(
+        `get_available_rooms_for_modify`,
+        {
+          params: {
+            company_id: this.$auth.user.company.id,
+          },
+        }
+      );
+
+      this.filteredRooms = rooms.filter((e) => e.id == room_id);
+    },
+
+    async getFilteredRooms(item) {
+      let { data: rooms } = await this.$axios.get(
+        `get_available_rooms_by_date_and_room_type`,
+        {
+          params: {
+            company_id: this.$auth.user.company.id,
+            check_in: this.payload.check_in,
+            check_out: this.payload.check_out,
+            room_type_id: item.id,
+          },
+        }
+      );
+
+      this.filteredRooms = rooms;
+    },
+    async get_room_types() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`room_type`, payload).then(({ data }) => {
+        this.roomTypes = data;
+      });
+    },
+    getTotalAfterDiscount() {
+      let { room_discount, remaining_price } = this.payload;
+      this.total_price =
+        parseFloat(remaining_price) - parseFloat(room_discount);
+    },
     async getPricesByRoomId(id) {
       this.roomPriceResponse = [];
-      let found = this.rooms.find((e) => e.id == id);
+      let found = this.filteredRooms.find((e) => e.id == id);
       if (!found) return;
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          roomType: found.roomType,
+          roomType: found.room_type.name || "",
           room_no: found.room_no,
           checkin: this.payload.check_in,
           checkout: this.payload.check_out,
@@ -309,6 +375,7 @@ export default {
             this.alert("Failure!", data.data, "error");
             return;
           }
+
           this.payload = {
             ...this.payload,
             total_price: data.total_price,
@@ -336,6 +403,8 @@ export default {
       };
       this.$axios.get(`get_booking_for_modify`, payload).then(({ data }) => {
         this.bookingResponse = data;
+        this.old_total = data.grand_total;
+
         this.payload = {
           id: data.id,
           booking_id: data.booking_id,
@@ -352,13 +421,20 @@ export default {
             parseFloat(data.grand_total) -
             parseFloat(data.booking.advance_price),
 
+          old_remaining_price:
+            parseFloat(data.grand_total) -
+            parseFloat(data.booking.advance_price),
+
           total_days: data.days || 0,
           total_tax: data.room_tax * data.days,
           room_tax: data.room_tax,
           room_price: data.price,
           room_no: data.room_no,
-          room_type: data.room_type,
+          room_type_id: data.room.room_type_id,
+          room_id: data.room_id,
         };
+
+        this.get_rooms(data.room_id);
       });
     },
     addOneDay(originalDate) {
@@ -372,10 +448,14 @@ export default {
       return date.toISOString().split("T")[0];
     },
     submit() {
+      let room_id = this.payload.room_id;
+
+      let foundRoom = this.filteredRooms.find((e) => e.id == room_id);
+
       let payload = {
         id: this.payload.id,
         booking_id: this.payload.booking_id,
-        room_id: this.payload.room_id,
+        room_id: foundRoom.id,
         check_in: this.payload.check_in + " 12:00",
         check_out: this.payload.check_out + " 11:00",
         total_price: this.payload.total_price,
@@ -386,12 +466,12 @@ export default {
         total_tax: this.payload.total_tax,
         room_tax: this.payload.room_tax,
         room_price: this.payload.room_price,
-        room_no: this.payload.room_no,
-        room_type: this.payload.room_type,
+        room_no: foundRoom.room_no,
+        room_type: foundRoom.room_type.name,
         extra_bed: this.payload.extra_bed,
+        booked_room_id: this.BookedRoomId,
+        room_discount : this.payload.room_discount || 0
       };
-
-      console.log(payload);
 
       this.loading = true;
       this.$axios
@@ -406,7 +486,6 @@ export default {
 
             this.alert("Sucess!", "Booking has been modified", "success");
             this.$emit("close");
-          
           }
         })
         .catch((e) => {

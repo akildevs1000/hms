@@ -2,7 +2,7 @@
   <div v-if="can('calendar_create')">
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-bind="attrs" v-on="on" class="primary"> Group Booking </v-btn>
+        <v-btn v-bind="attrs" v-on="on" class="primary"> <v-icon class="mr-2">mdi-account-group</v-icon> Group Booking </v-btn>
       </template>
       <v-card>
         <v-container fluid>
@@ -248,10 +248,18 @@
                                 @click="searchDialog = true"
                               >
                                 Search
-                                <v-icon right dark>mdi mdi-magnify</v-icon>
+                                <v-icon right dark>mdi-magnify</v-icon>
                               </v-btn>
                             </v-col>
-                            <v-col md="5" dense> </v-col>
+                            <v-col md="5" dense>
+                              <v-text-field
+                                label="Group Name"
+                                v-model="room.group_name"
+                                dense
+                                outlined
+                                :hide-details="true"
+                              ></v-text-field>
+                            </v-col>
                             <v-col md="5" dense>
                               <v-select
                                 label="Type"
@@ -637,6 +645,7 @@
                         <v-col md="12" cols="12">
                           <v-alert colored-border elevation="0">
                             <div class="mt-3">
+                              <!-- <pre>{{ priceListTableView }}</pre> -->
                               <v-row>
                                 <v-col
                                   md="12"
@@ -651,15 +660,22 @@
                                       <tr>
                                         <th>Date</th>
                                         <th>Day</th>
+                                        <th>Room Type</th>
                                         <th>Type</th>
                                         <th>Tariff</th>
-                                        <th>Tax</th>
-                                        <th class="text-right">T/Amount</th>
+                                        <th>Adult</th>
+                                        <th>Child</th>
+                                        <th>Meal</th>
+                                        <th>No of Rooms</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       <tr
-                                        v-for="(item, index) in temp.priceList"
+                                        v-for="(
+                                          item, index
+                                        ) in priceListTableView"
                                         :key="index"
                                       >
                                         <td>
@@ -669,28 +685,29 @@
                                           {{ item.day }}
                                         </td>
                                         <td>
+                                          {{ item.room_type }}
+                                        </td>
+                                        <td>
                                           {{ item.day_type }}
                                         </td>
                                         <td>
-                                          {{ item.room_price }}
+                                          {{ convert_decimal(item.room_price) }}
+                                        </td>
+                                        <td>{{ item.no_of_adult }}</td>
+                                        <td>{{ item.no_of_child }}</td>
+                                        <td>{{ item.meal_name }}</td>
+                                        <td>{{ item.no_of_rooms }}</td>
+                                        <td>
+                                          {{
+                                            convert_decimal(
+                                              item.price_with_meal
+                                            )
+                                          }}
                                         </td>
                                         <td>
-                                          {{ convert_decimal(item.tax) }}
-                                        </td>
-                                        <td class="text-right">
-                                          {{ convert_decimal(item.price) }}
-                                        </td>
-                                      </tr>
-                                      <tr class="active-row">
-                                        <td>Total</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>
-                                          {{ convert_decimal(temp.room_tax) }}
-                                        </td>
-                                        <td class="season-table text-right">
-                                          {{ convert_decimal(temp.price) }}
+                                          {{
+                                            convert_decimal(item.total_price)
+                                          }}
                                         </td>
                                       </tr>
                                     </tbody>
@@ -704,9 +721,8 @@
                                     class="d-flex justify-space-around py-3 styled-table"
                                     style="margin-top: 5px"
                                   >
-                                    <v-col cols=" 11" class="text-right">
+                                    <v-col cols="10" class="text-right">
                                       <div>Sub Total:</div>
-                                      <div>Food:</div>
                                       <div>Add :</div>
                                       <div>Discount :</div>
                                       <v-divider color="#4390FC"></v-divider>
@@ -719,22 +735,11 @@
                                         Total :
                                       </div>
                                     </v-col>
-                                    <v-col cols="1" class="text-right">
+                                    <v-col cols="2" class="text-right">
                                       <div>
-                                        {{ convert_decimal(temp.price) }}
+                                        {{ convert_decimal(room.total_price) }}
                                       </div>
-                                      <div>
-                                        {{
-                                          convert_decimal(
-                                            parseFloat(tempAdult.tot_ab) +
-                                              parseFloat(tempAdult.tot_al) +
-                                              parseFloat(tempAdult.tot_ad) +
-                                              parseFloat(tempChild.tot_cb) +
-                                              parseFloat(tempChild.tot_cl) +
-                                              parseFloat(tempChild.tot_cd)
-                                          )
-                                        }}
-                                      </div>
+
                                       <div>
                                         {{
                                           convert_decimal(
@@ -755,17 +760,7 @@
                                         "
                                       >
                                         {{
-                                          convert_decimal(
-                                            parseFloat(temp.room_extra_amount) +
-                                              parseFloat(temp.price) +
-                                              parseFloat(-temp.room_discount) +
-                                              parseFloat(tempAdult.tot_ab) +
-                                              parseFloat(tempAdult.tot_al) +
-                                              parseFloat(tempAdult.tot_ad) +
-                                              parseFloat(tempChild.tot_cb) +
-                                              parseFloat(tempChild.tot_cl) +
-                                              parseFloat(tempChild.tot_cd)
-                                          )
+                                          convert_decimal(room.remaining_price)
                                         }}
                                       </div>
                                     </v-col>
@@ -773,10 +768,8 @@
                                   <v-divider color="#4390FC"></v-divider>
                                 </v-col>
                                 <v-col md="3" sm="12" cols="12" dense>
-                                  <label class="col-form-label">
-                                    Discount/Extra
-                                  </label>
                                   <v-select
+                                    label="Discount/Extra"
                                     v-model="extraPayType"
                                     :items="['Discount', 'ExtraAmount']"
                                     dense
@@ -791,10 +784,8 @@
                                   dense
                                   v-if="extraPayType == 'Discount'"
                                 >
-                                  <label class="col-form-label">
-                                    Discount Amount
-                                  </label>
                                   <v-text-field
+                                    label="Discount Amount"
                                     dense
                                     outlined
                                     type="number"
@@ -810,8 +801,8 @@
                                   dense
                                   v-if="extraPayType == 'Discount'"
                                 >
-                                  <label class="col-form-label"> Reason </label>
                                   <v-text-field
+                                    label="Reason"
                                     dense
                                     outlined
                                     type="text"
@@ -826,14 +817,15 @@
                                   dense
                                   v-if="extraPayType == 'ExtraAmount'"
                                 >
-                                  <label class="col-form-label">
-                                    Extra Amount
-                                  </label>
                                   <v-text-field
+                                    label="Extra Amount"
                                     dense
                                     outlined
                                     type="number"
                                     v-model="temp.room_extra_amount"
+                                    @keyup="
+                                      updateExtrasAmount(temp.room_extra_amount)
+                                    "
                                     :hide-details="true"
                                   ></v-text-field>
                                 </v-col>
@@ -844,8 +836,8 @@
                                   dense
                                   v-if="extraPayType == 'ExtraAmount'"
                                 >
-                                  <label class="col-form-label"> Reason </label>
                                   <v-text-field
+                                    label="Reason"
                                     dense
                                     outlined
                                     type="text"
@@ -1473,12 +1465,6 @@
         >
         <v-container>
           <v-row>
-            <v-col>
-              <pre>
-              {{ priceListByType }}
-             </pre
-              >
-            </v-col>
             <v-col cols="12">
               <v-menu
                 v-model="checkin_menu"
@@ -1552,7 +1538,7 @@
                 v-model="room_type_id"
                 @change="
                   ($event) => {
-                    get_available_rooms();
+                    get_available_rooms($event);
                     selectRoom($event);
                   }
                 "
@@ -1562,17 +1548,28 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
+                v-model="multipleRoomIds"
                 hide-details
                 multiple
                 :items="availableRooms"
                 item-value="id"
                 item-text="room_no"
-                label="Select a Room"
+                label="Select Room"
                 dense
                 outlined
-                return-object
+                @change="getMultipleRoomObjects(multipleRoomIds)"
               >
               </v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                label="Adult Per Room"
+                :items="[0, 1, 2, 3]"
+                dense
+                outlined
+                v-model="temp.no_of_adult"
+                :hide-details="true"
+              ></v-autocomplete>
             </v-col>
             <v-col cols="12">
               <v-autocomplete
@@ -1628,7 +1625,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-btn block @click="selectMultipleRooms" color="primary" small>
+              <v-btn block @click="add_room" color="primary" small>
                 Confirm Room
               </v-btn>
             </v-col>
@@ -1642,7 +1639,9 @@
 <script>
 import History from "../../components/customer/History.vue";
 import ImagePreview from "../../components/images/ImagePreview.vue";
-
+const today = new Date();
+const tomorrow = new Date(today);
+tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
   components: {
     History,
@@ -1650,13 +1649,13 @@ export default {
   },
   data() {
     return {
-      priceListByType: [],
       additional_charges: {},
       is_early_check_in: false,
       is_late_check_out: false,
       dialog: false,
       foodplans: [],
       multipleRoomObjects: [],
+      multipleRoomIds: [],
       checkin_menu: false,
       checkout_menu: false,
       room_type_id: 1,
@@ -1760,12 +1759,12 @@ export default {
       // room_extra_amount: 0,
       idCards: [],
       imgView: false,
+      priceListTableView: [],
+
       temp: {
         food_plan_id: 1,
         early_check_in: 0,
         late_check_out: 0,
-        check_in_menu: false,
-        check_out_menu: false,
         room_no: "",
         room_type: "",
         room_id: "",
@@ -1790,9 +1789,6 @@ export default {
         no_of_adult: 1,
         no_of_child: 0,
         no_of_baby: 0,
-        breakfast: "",
-        lunch: "",
-        dinner: "",
         tot_adult_food: 0,
         tot_child_food: 0,
         discount_reason: "",
@@ -1818,6 +1814,7 @@ export default {
       search_available_room: "",
       room: {
         customer_type: "",
+        group_name: "",
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
@@ -1847,8 +1844,8 @@ export default {
         // priceList: [],
       },
       reservation: {
-        check_in: "2024-07-28",
-        check_out: "2024-07-29",
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         room_no: "101",
         room_id: 82,
         room_type: "castle",
@@ -1871,15 +1868,6 @@ export default {
         { id: 3, name: "Miss" },
         { id: 4, name: "Ms" },
         { id: 5, name: "Dr" },
-      ],
-
-      meals: [
-        { name: "Room only", slug: "room_only_price" },
-        { name: "Breakfast", slug: "Break_fast_price" },
-        { name: "Breakfast and Dinner", slug: "Break_fast_with_dinner_price" },
-        { name: "Breakfast and Lunch", slug: "Break_fast_with_lunch_price" },
-        { name: "Full Board", slug: "full_board_price" },
-        // { name: 5, slug: "lunch_with_dinner_price" },
       ],
 
       customer: {
@@ -2033,16 +2021,17 @@ export default {
       return date.toISOString().split("T")[0];
     },
     updateDiscount(temp) {
-      let finalDisplayPrice =
-        parseFloat(temp.price) + parseFloat(-temp.room_discount);
-      this.$axios
-        .get("get_re_calculate_price/" + finalDisplayPrice, null)
-        .then(({ data }) => {
-          this.gst_calculation.recal_basePrice = data.basePrice;
-          this.gst_calculation.recal_final = data.basePrice + data.gstAmount;
-          this.gst_calculation.recal_gst_total = data.gstAmount;
-          this.gst_calculation.recal_gst_percentage = data.tax;
-        });
+      this.room.remaining_price =
+        parseFloat(this.room.total_price) + parseFloat(-temp.room_discount);
+    },
+
+    updateExtrasAmount(amount) {
+      let discount = parseFloat(this.temp.room_discount) || 0;
+      let total_price = this.room.total_price;
+
+      let sub_total = total_price + (parseFloat(amount) || 0);
+
+      this.room.remaining_price = sub_total + -discount;
     },
     nextTab() {
       // if (this.activeTab) {
@@ -2108,12 +2097,6 @@ export default {
       this.imgView = true;
     },
 
-    getMealSeparate(meal) {
-      const mealsString = this.capsTitle(meal);
-      const mealsArray = mealsString.split("|");
-      return mealsArray;
-    },
-
     runAllFunctions() {
       this.getDays();
       this.subTotal();
@@ -2160,15 +2143,6 @@ export default {
         this.get_food_price_cal("adult", 1);
       });
     },
-
-    // preview(file) {
-    //   let element = document.createElement("a");
-    //   element.setAttribute("target", "_blank");
-    //   element.setAttribute("href", file);
-    //   document.body.appendChild(element);
-    //   element.click();
-    //   // document.body.removeChild(element);
-    // },
 
     redirect() {
       this.$router.push("/");
@@ -2510,13 +2484,11 @@ export default {
       this.temp.sgst = gst;
     },
 
-    selectMultipleRooms() {
-      console.log(
-        "🚀 ~ selectMultipleRooms ~ this.multipleRoomObjects:",
-        this.multipleRoomObjects
+    getMultipleRoomObjects(idsToFilter) {
+      this.multipleRoomObjects = this.availableRooms.filter((item) =>
+        idsToFilter.includes(item.id)
       );
     },
-
     selectRoom(item) {
       let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
 
@@ -2527,8 +2499,8 @@ export default {
           company_id: this.$auth.user.company.id,
           roomType: item.name,
           room_no: item.room_no,
-          checkin: this.reservation.check_in,
-          checkout: this.reservation.check_out,
+          checkin: this.temp.check_in,
+          checkout: this.temp.check_out,
         },
       };
 
@@ -2536,28 +2508,15 @@ export default {
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
           this.selectRoomLoading = false;
-
-          console.log(data.data);
-          return;
-          this.RoomDrawer = false;
-          this.temp.company_id = this.$auth.user.company.id;
-          this.temp.room_no = item.room_no;
-          this.temp.room_id = item.id;
-          this.temp.room_type = item.room_type.name;
-          this.temp.price = data.total_price;
+          this.temp.room_type = item.name;
+          this.temp.meal_name = foodplan.title;
           this.temp.meal_price = foodplan.unit_price;
+          this.temp.company_id = this.$auth.user.company.id;
+          this.temp.price = data.total_price;
           this.temp.priceList = data.data;
           this.temp.room_tax = data.total_tax;
-          this.get_cs_gst(this.temp.room_tax);
-          // this.add_room(foodplan);
-          // if (!this.priceListByType.find((e) => e == item.room_type.name)) {
-          //   this.priceListByType = this.priceListByType.concat(data.data);
-          // }
+          this.get_cs_gst(data.total_tax);
         });
-
-      let isSelect = this.selectedRooms.find((e) => e.room_no == item.room_no);
-      if (!isSelect) {
-      }
     },
 
     capsTitle(val) {
@@ -2568,11 +2527,13 @@ export default {
       return upper;
     },
 
-    add_room(foodplan) {
+    add_room() {
       if (this.temp.room_no == "") {
         this.alert("Missing!", "Select room", "error");
         return;
       }
+
+      let selectedRoomsForTableView = [];
 
       let {
         price,
@@ -2580,57 +2541,88 @@ export default {
         late_check_out,
         room_discount,
         room_extra_amount,
+        meal_name,
+        meal_price,
+        priceList,
+        room_type,
+        no_of_adult,
+        no_of_child,
       } = this.temp;
 
       let sub_total =
         price +
-        foodplan.unit_price +
+        meal_price +
         early_check_in +
         late_check_out +
         parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
 
-      this.temp.after_discount =
+      let after_discount =
         sub_total - (room_discount == "" ? 0 : room_discount);
-
-      this.temp.days = this.getDays();
-
-      this.temp.total = parseFloat(this.temp.after_discount);
-
-      this.temp.grand_total = parseFloat(this.temp.total);
 
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
 
-      this.temp.room_discount =
-        this.temp.room_discount == "" ? 0 : this.temp.room_discount;
+      this.multipleRoomObjects.forEach((item) => {
+        let isSelect = this.selectedRooms.find(
+          (e) => e.room_no == item.room_no
+        );
 
-      this.temp.meal = `${this.temp.breakfast || "---"} | ${
-        this.temp.lunch || "---"
-      } | ${this.temp.dinner || "---"}`;
+        if (!isSelect) {
+          let payload = {
+            ...this.temp,
+            meal: "------",
+            days: this.getDays(),
+            room_discount: room_discount == "" ? 0 : room_discount,
+            after_discount: after_discount,
+            total: after_discount,
+            grand_total: after_discount,
+            room_no: item.room_no,
+            room_id: item.id,
+          };
 
-      delete this.temp.check_in_menu;
-      delete this.temp.check_out_menu;
-      delete this.temp.breakfast;
-      delete this.temp.lunch;
-      delete this.temp.dinner;
-      this.selectedRooms.push(this.temp);
+          selectedRoomsForTableView.push(payload);
+          this.selectedRooms.push(payload);
 
-      this.get_total_amounts();
-      this.runAllFunctions();
+          this.get_total_amounts();
+          this.runAllFunctions();
+          this.alert("Success!", "success selected room", "success");
+          this.isSelectRoom = false;
+          this.RoomDrawer = false;
+        }
+      });
 
-      this.allFood.push({ breakfast: this.breakfast });
-      this.allFood.push({ lunch: this.lunch });
-      this.allFood.push({ dinner: this.dinner });
+      let extras = meal_price + early_check_in + late_check_out;
 
-      this.breakfast = {};
-      this.lunch = {};
-      this.dinner = {};
+      let arrToMerge = priceList.map((e) => ({
+        ...e,
+        price_with_meal: e.price + extras,
+        room_type: room_type,
+        no_of_adult: no_of_adult,
+        no_of_child: no_of_child,
+        meal_name: meal_name,
+        no_of_rooms: selectedRoomsForTableView.length,
+        total_price: (e.price + extras) * selectedRoomsForTableView.length,
+      }));
 
-      this.clear_add_room();
-      this.alert("Success!", "success selected room", "success");
-      this.isSelectRoom = false;
-      return;
+      this.priceListTableView = this.mergeEntries(this.priceListTableView.concat(arrToMerge))
     },
+
+    mergeEntries(entries) {
+    const result = [];
+  
+    entries.forEach(entry => {
+      const existingEntry = result.find(e => e.room_type === entry.room_type && e.date === entry.date);
+  
+      if (existingEntry) {
+        existingEntry.no_of_rooms += entry.no_of_rooms;
+        existingEntry.total_price += entry.total_price;
+      } else {
+        result.push({ ...entry });
+      }
+    });
+  
+    return result;
+  },
 
     get_total_amounts() {
       let tot_bed_amount = 0;
@@ -2649,65 +2641,7 @@ export default {
       this.room.all_room_Total_amount = tot_total;
     },
 
-    clear_add_room() {
-      this.temp = {
-        early_check_in: this.temp.early_check_in,
-        late_check_out: this.temp.late_check_out,
-        room_no: "",
-        room_type: "",
-        room_id: "",
-        price: 0,
-        days: 0,
-        sgst: 0,
-        cgst: 0,
-        check_in: this.temp.check_in,
-        check_out: this.temp.check_out,
-        meal: "room_only_price",
-        bed_amount: 0,
-        room_discount: 0,
-        room_extra_amount: 0,
-        after_discount: 0, //(price - room_discount)
-        room_tax: 0,
-        total_with_tax: 0, //(after_discount * room_tax)
-        total: 0, //(total_with_tax * bed_amount)
-        grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
-        discount_reason: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-      };
-
-      this.tempAdult = {
-        tot_ab: 0,
-        tot_al: 0,
-        tot_ad: 0,
-      };
-      this.tempChild = {
-        tot_cb: 0,
-        tot_cl: 0,
-        tot_cd: 0,
-      };
-
-      return;
-
-      let check_in = this.temp.check_in;
-      let check_out = this.temp.check_out;
-
-      this.temp = {};
-
-      this.temp.check_in = check_in;
-      // this.temp.bed_amount = 0;
-      this.temp.room_discount = 0;
-      this.temp.check_out = check_out;
-      // this.temp.meal = "Room only";
-
-      this.temp.no_of_adult = 1;
-      this.temp.no_of_child = 0;
-      this.temp.no_of_baby = 0;
-    },
-
-    get_available_rooms() {
+    get_available_rooms(item) {
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
         alert("Please select date");
         this.RoomDrawer = false;
@@ -2720,7 +2654,7 @@ export default {
           params: {
             check_in: this.temp.check_in,
             check_out: this.temp.check_out,
-            room_type_id: this.room_type_id,
+            room_type_id: item.id,
             company_id: this.$auth.user.company.id,
           },
         })
@@ -2771,6 +2705,7 @@ export default {
     },
 
     can(per) {
+      return true;
       let u = this.$auth.user;
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
@@ -2782,8 +2717,6 @@ export default {
         this.room.advance_price = 0;
       }
 
-      console.log(this.reservation.booking_status);
-      console.log(this.customer.document);
       if (this.reservation.booking_status == 2) {
         if (
           this.customer.document == null ||
@@ -2836,20 +2769,15 @@ export default {
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
-        // allFoods: this.breakfast,
-        // qty_lunch: this.lunch,
-        // qty_dinner: this.dinner,
-        allFoods: this.allFood,
         selectedRooms: this.selectedRooms,
         ...this.customer,
         user_id: this.$auth.user.id,
-        merge_food_in_room_price: this.merge_food_in_room_price,
       };
 
       this.subLoad = false;
 
       this.$axios
-        .post("/booking", payload)
+        .post("/group-booking", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
