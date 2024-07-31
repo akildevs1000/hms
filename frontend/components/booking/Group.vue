@@ -2,7 +2,9 @@
   <div v-if="can('calendar_create')">
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-bind="attrs" v-on="on" class="primary"> <v-icon class="mr-2">mdi-account-group</v-icon> Group Booking </v-btn>
+        <v-btn v-bind="attrs" v-on="on" class="primary">
+          <v-icon class="mr-2">mdi-account-group</v-icon> Group Booking
+        </v-btn>
       </template>
       <v-card>
         <v-container fluid>
@@ -658,17 +660,20 @@
                                   >
                                     <thead>
                                       <tr>
-                                        <th>Date</th>
-                                        <th>Day</th>
-                                        <th>Room Type</th>
-                                        <th>Type</th>
-                                        <th>Tariff</th>
-                                        <th>Adult</th>
-                                        <th>Child</th>
-                                        <th>Meal</th>
-                                        <th>No of Rooms</th>
-                                        <th>Price</th>
-                                        <th>Total</th>
+                                        <th><small>Date</small></th>
+                                        <th><small>Day</small></th>
+                                        <th><small>Room Type</small></th>
+                                        <th><small>Type</small></th>
+                                        <th><small>Tariff</small></th>
+                                        <th><small>Adult</small></th>
+                                        <th><small>Child</small></th>
+                                        <th><small>Meal</small></th>
+                                        <th><small>No of Rooms</small></th>
+                                        <th><small>Price</small></th>
+                                        <th><small>Early Checkin</small></th>
+                                        <th><small>Late Checkout</small></th>
+                                        <th><small>Extra Bed</small></th>
+                                        <th><small>Total</small></th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -698,9 +703,22 @@
                                         <td>{{ item.meal_name }}</td>
                                         <td>{{ item.no_of_rooms }}</td>
                                         <td>
+                                          {{ convert_decimal(item.price) }}
+                                        </td>
+                                        <td>
+                                          {{
+                                            convert_decimal(item.early_check_in)
+                                          }}
+                                        </td>
+                                        <td>
+                                          {{
+                                            convert_decimal(item.late_check_out)
+                                          }}
+                                        </td>
+                                        <td>
                                           {{
                                             convert_decimal(
-                                              item.price_with_meal
+                                              item.bed_amount
                                             )
                                           }}
                                         </td>
@@ -737,7 +755,7 @@
                                     </v-col>
                                     <v-col cols="2" class="text-right">
                                       <div>
-                                        {{ convert_decimal(room.total_price) }}
+                                        {{ convert_decimal(subTotal()) }}
                                       </div>
 
                                       <div>
@@ -759,9 +777,7 @@
                                           font-weight: bold;
                                         "
                                       >
-                                        {{
-                                          convert_decimal(room.remaining_price)
-                                        }}
+                                        {{ convert_decimal(processCalculation()) }}
                                       </div>
                                     </v-col>
                                   </div>
@@ -791,7 +807,7 @@
                                     type="number"
                                     v-model="temp.room_discount"
                                     :hide-details="true"
-                                    @keyup="updateDiscount(temp)"
+                                    @keyup="processCalculation"
                                   ></v-text-field>
                                 </v-col>
                                 <v-col
@@ -823,9 +839,7 @@
                                     outlined
                                     type="number"
                                     v-model="temp.room_extra_amount"
-                                    @keyup="
-                                      updateExtrasAmount(temp.room_extra_amount)
-                                    "
+                                    @keyup="processCalculation"
                                     :hide-details="true"
                                   ></v-text-field>
                                 </v-col>
@@ -1620,8 +1634,9 @@
                 dense
                 outlined
                 type="number"
-                v-model="temp.extra_bed"
+                v-model="temp.extra_bed_qty"
                 :hide-details="true"
+                @keyup="set_additional_charges"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -1629,6 +1644,7 @@
                 Confirm Room
               </v-btn>
             </v-col>
+
           </v-row>
         </v-container>
       </v-card>
@@ -1762,6 +1778,7 @@ export default {
       priceListTableView: [],
 
       temp: {
+        extra_bed_qty:0,
         food_plan_id: 1,
         early_check_in: 0,
         late_check_out: 0,
@@ -1995,6 +2012,10 @@ export default {
       this.temp.late_check_out = this.is_late_check_out
         ? this.additional_charges.late_check_out
         : 0;
+
+      this.temp.bed_amount = this.temp.extra_bed_qty
+        ? this.temp.extra_bed_qty * this.additional_charges.extra_bed
+        : 0;
     },
     async get_additional_charges() {
       let { data } = await this.$axios.get(`additional_charges`, {
@@ -2020,19 +2041,7 @@ export default {
 
       return date.toISOString().split("T")[0];
     },
-    updateDiscount(temp) {
-      this.room.remaining_price =
-        parseFloat(this.room.total_price) + parseFloat(-temp.room_discount);
-    },
 
-    updateExtrasAmount(amount) {
-      let discount = parseFloat(this.temp.room_discount) || 0;
-      let total_price = this.room.total_price;
-
-      let sub_total = total_price + (parseFloat(amount) || 0);
-
-      this.room.remaining_price = sub_total + -discount;
-    },
     nextTab() {
       // if (this.activeTab) {
 
@@ -2100,12 +2109,7 @@ export default {
     runAllFunctions() {
       this.getDays();
       this.subTotal();
-      // this.afterDiscount();
-      // this.getAmountAfterSalesTax();
-      this.getTotal();
-      this.getRemainingAmount();
-
-      // this.convert_decimal(this.room.advance_price);
+      this.processCalculation();
     },
 
     getDays() {
@@ -2165,137 +2169,10 @@ export default {
       }
     },
 
-    meal_cal(meal_type) {
-      this.person_type_arr.find((e) => {
-        if (e.type == "adult" || meal_type == "adult") {
-          this.get_adult_cal(e);
-        }
-        if (e.type == "child" || meal_type == "child") {
-          this.get_child_cal(e);
-        }
-        if (e.type == "baby" || meal_type == "baby") {
-          this.get_baby_cal(e);
-        }
-      });
-    },
-    reCalFood(temp) {
-      this.meal_cal(temp);
-    },
-    get_adult_cal(e) {
-      let tab, tax_tab, tal, tax_tal, tad, tax_tad;
-      let totalBookingDays = 1;
-      if (this.temp.priceList) {
-        totalBookingDays = this.temp.priceList.length;
-      }
-      if (this.temp.breakfast) {
-        tab =
-          parseFloat(e.breakfast) *
-          parseFloat(e.qty) *
-          this.temp.priceList.length;
-        this.breakfast.adult = e.qty;
-        tax_tab = this.get_amount_with_tax(tab);
-      } else {
-        this.breakfast.adult = 0;
-      }
-      if (this.temp.lunch) {
-        tal =
-          parseFloat(e.lunch) * parseFloat(e.qty) * this.temp.priceList.length;
-        tax_tal = this.get_amount_with_tax(tal);
-        this.lunch.adult = e.qty;
-      } else {
-        this.lunch.adult = 0;
-      }
-      if (this.temp.dinner) {
-        tad =
-          parseFloat(e.dinner) * parseFloat(e.qty) * this.temp.priceList.length;
-        tax_tad = this.get_amount_with_tax(tad);
-        this.dinner.adult = e.qty;
-      } else {
-        this.dinner.adult = 0;
-      }
-
-      this.tempAdult = {
-        tot_ab: tax_tab + tab || 0,
-        tot_al: tax_tal + tal || 0,
-        tot_ad: tax_tad + tad || 0,
-      };
-    },
-
-    get_child_cal(e) {
-      let tcb, tax_tcb, tcl, tax_tcl, tcd, tax_tcd;
-      if (this.temp.breakfast) {
-        tcb = parseFloat(e.breakfast) * parseFloat(e.qty);
-        tax_tcb = this.get_amount_with_tax(tcb);
-        this.breakfast.child = e.qty;
-      } else {
-        this.breakfast.child = 0;
-      }
-
-      if (this.temp.lunch) {
-        tcl = parseFloat(e.lunch) * parseFloat(e.qty);
-        tax_tcl = this.get_amount_with_tax(tcl);
-        this.lunch.child = e.qty;
-      } else {
-        this.lunch.child = 0;
-      }
-
-      if (this.temp.dinner) {
-        tcd = parseFloat(e.dinner) * parseFloat(e.qty);
-        tax_tcd = this.get_amount_with_tax(tcd);
-        this.dinner.child = e.qty;
-      } else {
-        this.dinner.child = 0;
-      }
-
-      this.tempChild = {
-        tot_cb: tax_tcb + tcb || 0,
-        tot_cl: tax_tcl + tcl || 0,
-        tot_cd: tax_tcd + tcd || 0,
-      };
-    },
-
-    get_baby_cal(e) {
-      if (this.temp.breakfast) {
-        this.breakfast.baby = e.qty;
-      } else {
-        this.breakfast.baby = 0;
-      }
-
-      if (this.temp.lunch) {
-        this.lunch.baby = e.qty;
-      } else {
-        this.lunch.baby = 0;
-      }
-
-      if (this.temp.dinner) {
-        this.dinner.baby = e.qty;
-      } else {
-        this.dinner.baby = 0;
-      }
-    },
-
-    get_amount_with_tax(amount) {
-      let per = 5;
-      let tax = this.getPercentage(amount, per);
-      return tax;
-    },
-
-    getPercentage(amount, clause) {
-      let res = (amount / 100) * clause;
-      return res;
-    },
 
     mergeContact() {
       if (!this.isDiff) {
         this.customer.whatsapp = this.customer.contact_no;
-      }
-    },
-
-    newWhatsapp() {
-      if (!this.isDiff) {
-        this.customer.whatsapp = this.customer.contact_no;
-      } else {
-        this.customer.whatsapp = "";
       }
     },
 
@@ -2313,27 +2190,27 @@ export default {
       });
     },
 
-    getTotal() {
-      return (this.room.total_price = this.subTotal());
-      // parseInt(this.getAmountAfterSalesTax()) +
-      // this.subTotal() - this.room.discount);
+    processCalculation() {
+      let discount = parseFloat(this.temp.room_discount) || 0;
+      let room_extra_amount = parseFloat(this.temp.room_extra_amount) || 0;
+      let sub_total = parseFloat(this.room.sub_total) || 0;
+
+      let advance_price = parseFloat(this.room.advance_price) || 0;
+
+      let afterExtraAmount = sub_total + room_extra_amount;
+      let afterDiscount = afterExtraAmount - discount;
+
+      this.room.remaining_price = afterDiscount - advance_price
+
+      return (this.room.total_price = afterDiscount);
     },
 
-    getRemainingAmount() {
-      return (this.room.remaining_price =
-        this.getTotal() - this.room.advance_price);
-    },
-
-    getPercentage(amount, clause) {
-      return (amount / 100) * clause;
-    },
 
     subTotal() {
-      return (this.room.sub_total = this.room.all_room_Total_amount);
-      // --------------old---------------
-      // return (this.room.sub_total =
-      // parseFloat(this.room.all_room_Total_amount) *
-      // parseFloat(this.getDays()));
+      return (this.room.sub_total = this.priceListTableView.reduce(
+        (total, num) => total + num.total_price,
+        0
+      ));
     },
 
     getType(val) {
@@ -2447,17 +2324,6 @@ export default {
         this.idCards = data;
       });
     },
-
-    remove_select_room(index) {
-      this.selectedRooms.splice(index, 1);
-      this.get_total_amounts();
-      this.get_all_room_Total_amount();
-      this.runAllFunctions();
-      this.isSelectRoom = true;
-      if (this.selectedRooms.length == 0) {
-      }
-    },
-
     searchAvailableRoom(val) {
       let arr = this.availableRooms;
       let res = arr.filter((e) => e.room_no == val);
@@ -2468,14 +2334,6 @@ export default {
       if (res.length > 0) {
         this.availableRooms = res;
       }
-    },
-
-    get_all_room_Total_amount() {
-      let sum = 0;
-      let res = 0;
-      this.selectedRooms.map((e) => (sum += parseFloat(e.total_with_tax)));
-      res = parseFloat(sum) + parseFloat(this.room.total_extra);
-      this.room.all_room_Total_amount = res;
     },
 
     get_cs_gst(amount) {
@@ -2543,6 +2401,7 @@ export default {
         room_extra_amount,
         meal_name,
         meal_price,
+        bed_amount,
         priceList,
         room_type,
         no_of_adult,
@@ -2583,7 +2442,6 @@ export default {
           selectedRoomsForTableView.push(payload);
           this.selectedRooms.push(payload);
 
-          this.get_total_amounts();
           this.runAllFunctions();
           this.alert("Success!", "success selected room", "success");
           this.isSelectRoom = false;
@@ -2591,54 +2449,46 @@ export default {
         }
       });
 
-      let extras = meal_price + early_check_in + late_check_out;
+      let extras = early_check_in + late_check_out + bed_amount;
 
       let arrToMerge = priceList.map((e) => ({
         ...e,
         price_with_meal: e.price + extras,
-        room_type: room_type,
-        no_of_adult: no_of_adult,
-        no_of_child: no_of_child,
-        meal_name: meal_name,
         no_of_rooms: selectedRoomsForTableView.length,
-        total_price: (e.price + extras) * selectedRoomsForTableView.length,
+        room_type,
+        no_of_adult,
+        no_of_child,
+        meal_name: `${meal_name} (${meal_price})`,
+        extras,
+        early_check_in,
+        late_check_out,
+        bed_amount,
+        total_price:
+          (e.price + extras + meal_price) * selectedRoomsForTableView.length,
       }));
 
-      this.priceListTableView = this.mergeEntries(this.priceListTableView.concat(arrToMerge))
+      this.priceListTableView = this.mergeEntries(
+        this.priceListTableView.concat(arrToMerge)
+      );
     },
 
     mergeEntries(entries) {
-    const result = [];
-  
-    entries.forEach(entry => {
-      const existingEntry = result.find(e => e.room_type === entry.room_type && e.date === entry.date);
-  
-      if (existingEntry) {
-        existingEntry.no_of_rooms += entry.no_of_rooms;
-        existingEntry.total_price += entry.total_price;
-      } else {
-        result.push({ ...entry });
-      }
-    });
-  
-    return result;
-  },
+      const result = [];
 
-    get_total_amounts() {
-      let tot_bed_amount = 0;
+      entries.forEach((entry) => {
+        const existingEntry = result.find(
+          (e) => e.room_type === entry.room_type && e.date === entry.date
+        );
 
-      let tot_total = 0;
-      this.selectedRooms.map(
-        (e) =>
-          (tot_bed_amount += e.bed_amount == "" ? 0 : parseFloat(e.bed_amount))
-      );
+        if (existingEntry) {
+          existingEntry.no_of_rooms += entry.no_of_rooms;
+          existingEntry.total_price += entry.total_price;
+        } else {
+          result.push({ ...entry });
+        }
+      });
 
-      this.room.total_extra = tot_bed_amount;
-
-      this.selectedRooms.map(
-        (e) => (tot_total += e.total == "" ? 0 : parseFloat(e.total))
-      );
-      this.room.all_room_Total_amount = tot_total;
+      return result;
     },
 
     get_available_rooms(item) {

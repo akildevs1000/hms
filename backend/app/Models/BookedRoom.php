@@ -126,7 +126,10 @@ class BookedRoom extends Model
         return $this->belongsTo(Room::class);
     }
 
-
+    public function foodplan()
+    {
+        return $this->belongsTo(FoodPlan::class,"food_plan_id");
+    }
 
     /**
      * Get all of the comments for the BookedRoom

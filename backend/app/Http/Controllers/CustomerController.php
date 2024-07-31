@@ -174,7 +174,8 @@ class CustomerController extends Controller
 
     public function viewBookingCustomerBill($id)
     {
-        $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'orderRooms', 'hallBooking.food', 'hallBooking.extraAmounts')->first();
+        $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'hallBooking.food', 'hallBooking.extraAmounts')
+            ->with(["orderRooms" => fn ($q) => $q->with("foodplan")])->first();
         $postings = Posting::with('room')->whereBookingId($id)->get();
         // $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
         $transaction = Transaction::with(['paymentMode', 'user'])->whereBookingId($id);

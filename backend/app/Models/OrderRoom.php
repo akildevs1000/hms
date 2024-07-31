@@ -57,6 +57,12 @@ class OrderRoom extends Model
 
         "inv_room_tax_per",
         "inv_food_tax_per",
+
+        "food_plan_id",
+
+        "extra_bed_qty",
+        "early_check_in",
+        "late_check_out",
     ];
 
     /**
@@ -112,5 +118,10 @@ class OrderRoom extends Model
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('room_no', 'desc');
         });
+    }
+
+    public function foodplan()
+    {
+        return $this->belongsTo(FoodPlan::class,"food_plan_id");
     }
 }

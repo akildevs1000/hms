@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="700">
+    <v-dialog v-model="dialog" width="480">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
@@ -41,22 +41,15 @@
                   label="description"
                 ></v-text-field>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="12">
                 <v-text-field
+                  type="number"
+                  min="0"
                   outlined
                   dense
                   hide-details
                   v-model="payload.unit_price"
                   label="Unit Price"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  outlined
-                  dense
-                  hide-details
-                  v-model="payload.no_of_pax"
-                  label="No of Pax"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" v-if="errorResponse">
@@ -99,7 +92,7 @@ export default {
       payload: {
         title: "",
         description: "",
-        no_of_pax: "",
+        no_of_pax: 0,
         unit_price: "",
       },
       dialog: false,

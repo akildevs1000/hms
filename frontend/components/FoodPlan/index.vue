@@ -97,10 +97,6 @@ export default {
         value: "description",
       },
       {
-        text: "No of Pax",
-        value: "no_of_pax",
-      },
-      {
         text: "Unit Price",
         value: "unit_price",
       },

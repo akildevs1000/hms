@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="700">
+  <v-dialog v-model="dialog" width="480">
     <template v-slot:activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
         <v-icon color="blue" small> mdi-eye </v-icon>
@@ -36,7 +36,7 @@
                 label="description"
               ></v-text-field>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12">
               <v-text-field
                 outlined
                 dense
@@ -44,16 +44,6 @@
                readonly
                 v-model="payload.unit_price"
                 label="Unit Price"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                outlined
-                dense
-                hide-details
-               readonly
-                v-model="payload.no_of_pax"
-                label="No of Pax"
               ></v-text-field>
             </v-col>
           </v-row>

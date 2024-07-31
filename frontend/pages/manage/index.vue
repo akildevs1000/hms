@@ -549,6 +549,22 @@
                       ></v-text-field
                     ></v-col>
                   </v-row>
+
+                  <v-row>
+                    <v-col cols="2">Extra Bed</v-col>
+                    <v-col cols="4"
+                      ><v-text-field
+                        dense
+                        flat
+                        hide-details
+                        outlined
+                        placeholder="Enter Changes"
+                        type="number"
+                        v-model="additionalCharges.extra_bed"
+                      ></v-text-field
+                    ></v-col>
+                  </v-row>
+
                   <v-row>
                     <v-col v-if="additionalChargesError">{{
                       additionalChargesError

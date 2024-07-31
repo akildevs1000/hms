@@ -531,141 +531,147 @@
     </div>
     <v-row>
       <v-col>
-        <div class="d-flex mt-5">
-          <v-card
-            class="py-2 mr-2"
-            max-width="230"
-            @click="ArrivalReportDialog = true"
-          >
-            <div class="text-left pl-5">Arrival</div>
-            <Donut
-              size="240px"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Arrival`,
-                  value: `${expectCheckOut.length}`,
-                },
-                {
-                  color: `green`,
-                  text: `Pending`,
-                  value: `${expectCheckIn.length}`,
-                },
-              ]"
-            />
-          </v-card>
-          <v-card
-            class="py-2 mx-2"
-            max-width="230"
-            @click="CheckOutReportDialog = true"
-          >
-            <div class="text-left pl-5">Checkout</div>
-            <Donut
-              size="240px"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Checkout`,
-                  value: `${dirtyRoomsList.length}`,
-                },
-                {
-                  color: `green`,
-                  text: `Pending`,
-                  value: `${expectCheckOut.length}`,
-                },
-              ]"
-            />
-          </v-card>
-          <v-card
-            class="py-2 mx-2"
-            max-width="230"
-            @click="CheckOutReportDialog = true"
-          >
-            <div class="text-left pl-5">In House</div>
-            <Donut
-              size="240px"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Adult`,
-                  value: `${members.adult}`,
-                },
-                {
-                  color: `green`,
-                  text: `Children`,
-                  value: `${members.child}`,
-                },
-              ]"
-            />
-          </v-card>
-          <v-card class="py-2 mx-2" max-width="250">
-            <div class="text-left pl-5">Room Status</div>
-            <Donut
-              size="240px"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Vacant`,
-                  value: 10,
-                },
-                {
-                  color: `green`,
-                  text: `Sold`,
-                  value: 15,
-                },
-                {
-                  color: `orange`,
-                  text: `Day Use`,
-                  value: 20,
-                },
-                {
-                  color: `red`,
-                  text: `Blocked`,
-                  value: 25,
-                },
-                {
-                  color: `purple`,
-                  text: `Compliment`,
-                  value: 30,
-                },
-              ]"
-            />
-          </v-card>
-          <v-card class="py-2 ml-2" max-width="250" @click="FoodDialog = true">
-            <div class="text-left pl-5">Food Order</div>
-            <Donut
-              size="240px"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Breakfast`,
-                  value: `${
-                    onlyBreakfast.adult +
-                    onlyBreakfast.child +
-                    onlyBreakfast.baby
-                  }`,
-                },
-                {
-                  color: `green`,
-                  text: `Lunch`,
-                  value: `${
-                    onlyLunch.adult + onlyLunch.child + onlyLunch.baby
-                  }`,
-                },
-                {
-                  color: `orange`,
-                  text: `Dinner`,
-                  value: `${
-                    onlyDinner.adult + onlyDinner.child + onlyDinner.baby
-                  }`,
-                },
-              ]"
-            />
-          </v-card>
-        </div>
+        <v-card
+          class="py-2"
+          max-width="250"
+          @click="ArrivalReportDialog = true"
+        >
+          <div class="text-left pl-5">Arrival</div>
+          <Donut
+            size="240px"
+            :labels="[
+              {
+                color: `blue`,
+                text: `Arrival`,
+                value: `${expectCheckOut.length}`,
+              },
+              {
+                color: `green`,
+                text: `Pending`,
+                value: `${expectCheckIn.length}`,
+              },
+            ]"
+          />
+        </v-card>
       </v-col>
+
       <v-col>
-        <v-card class="py-2" max-width="1235">
+        <v-card
+          class="py-2"
+          max-width="250"
+          @click="CheckOutReportDialog = true"
+        >
+          <div class="text-left pl-5">Checkout</div>
+          <Donut
+            size="240px"
+            :labels="[
+              {
+                color: `blue`,
+                text: `Checkout`,
+                value: `${dirtyRoomsList.length}`,
+              },
+              {
+                color: `green`,
+                text: `Pending`,
+                value: `${expectCheckOut.length}`,
+              },
+            ]"
+          />
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-card
+          class="py-2"
+          max-width="250"
+          @click="CheckOutReportDialog = true"
+        >
+          <div class="text-left pl-5">In House</div>
+          <Donut
+            size="240px"
+            :labels="[
+              {
+                color: `blue`,
+                text: `Adult`,
+                value: `${members.adult}`,
+              },
+              {
+                color: `green`,
+                text: `Children`,
+                value: `${members.child}`,
+              },
+            ]"
+          />
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-card class="py-2" max-width="250">
+          <div class="text-left pl-5">Room Status</div>
+          <Donut
+            size="240px"
+            :labels="[
+              {
+                color: `blue`,
+                text: `Vacant`,
+                value: 10,
+              },
+              {
+                color: `green`,
+                text: `Sold`,
+                value: 15,
+              },
+              {
+                color: `orange`,
+                text: `Day Use`,
+                value: 20,
+              },
+              {
+                color: `red`,
+                text: `Blocked`,
+                value: 25,
+              },
+              {
+                color: `purple`,
+                text: `Compliment`,
+                value: 30,
+              },
+            ]"
+          />
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-card class="py-2" max-width="250" @click="FoodDialog = true">
+          <div class="text-left pl-5">Food Order</div>
+          <Donut
+            size="240px"
+            :labels="[
+              {
+                color: `blue`,
+                text: `Breakfast`,
+                value: `${
+                  onlyBreakfast.adult + onlyBreakfast.child + onlyBreakfast.baby
+                }`,
+              },
+              {
+                color: `green`,
+                text: `Lunch`,
+                value: `${onlyLunch.adult + onlyLunch.child + onlyLunch.baby}`,
+              },
+              {
+                color: `orange`,
+                text: `Dinner`,
+                value: `${
+                  onlyDinner.adult + onlyDinner.child + onlyDinner.baby
+                }`,
+              },
+            ]"
+          />
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card class="py-2">
           <v-container fluid>
             <v-row>
               <v-col cols="6"></v-col>
@@ -1065,7 +1071,7 @@ export default {
       ExpectCheckInReportDialog: false,
       FoodDialog: false,
       checkInDialog: false,
-      checkInKey:1,
+      checkInKey: 1,
       checkOutDialog: false,
       GRCDialog: false,
       postingDialog: false,
