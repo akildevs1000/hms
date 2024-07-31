@@ -376,14 +376,26 @@ export default {
             return;
           }
 
-          this.payload = {
-            ...this.payload,
+          let restOfPayload = {
+            room_tax: data.room_tax,
+            room_price: data.total_price / data.data.length || 0,
+            room_no: found.room_no,
+            room_type_id: data.room.room_type_id,
+            room_id: data.room.id,
+            remaining_price: data.total_price - this.payload.advance_price,
             total_price: data.total_price,
             total_discount: data.total_discount,
-            extra_bed: this.extra_bed,
-            remaining_price: data.total_price - this.payload.advance_price,
             total_days: data.data.length || 0,
-            total_tax: this.payload.room_tax * data.data.length || 0,
+            total_tax: data.total_tax,
+
+            room_tax: data.total_tax / data.data.length || 0,
+
+          };
+          console.log("🚀 ~ .then ~ restOfPayload:", restOfPayload);
+
+          this.payload = {
+            ...this.payload,
+            ...restOfPayload,
           };
         });
     },

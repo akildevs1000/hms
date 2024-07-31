@@ -1565,6 +1565,8 @@ class BookingController extends Controller
 
     public function modifyBooking(Request $request)
     {
+        // return BookedRoom::where("booking_id", $request->booking_id)->first();
+
         $booked_room_id = $request->booked_room_id;
         $booking_id = $request->booking_id;
 
@@ -1656,7 +1658,6 @@ class BookingController extends Controller
             ]);
 
             // return Transaction::where('booking_id', $booking_id)->first();
-            // BookedRoom::where("id", $request->id)->first();
 
             return $this->response('Booking has been modified.', null, true);
         } catch (\Throwable $th) {
