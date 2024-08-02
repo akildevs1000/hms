@@ -580,7 +580,6 @@ export default {
         food_plan_id: this.payload.food_plan_id,
         early_check_in: this.payload.early_check_in,
         late_check_out: this.payload.late_check_out,
-        bed_amount: data.bed_amount,
         booked_room_id: this.BookedRoomId,
         room_discount: this.payload.room_discount || 0,
       };

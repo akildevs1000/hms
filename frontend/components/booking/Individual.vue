@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
         <v-btn v-bind="attrs" v-on="on" class="primary">
-          <v-icon class="mr-2">mdi-account-group</v-icon> Group
+          <v-icon class="mr-2">mdi-account</v-icon> Individual
         </v-btn>
       </template>
       <v-card>
@@ -716,11 +716,7 @@
                                           }}
                                         </td>
                                         <td>
-                                          {{
-                                            convert_decimal(
-                                              item.bed_amount
-                                            )
-                                          }}
+                                          {{ convert_decimal(item.bed_amount) }}
                                         </td>
                                         <td>
                                           {{
@@ -777,7 +773,9 @@
                                           font-weight: bold;
                                         "
                                       >
-                                        {{ convert_decimal(processCalculation()) }}
+                                        {{
+                                          convert_decimal(processCalculation())
+                                        }}
                                       </div>
                                     </v-col>
                                   </div>
@@ -1472,7 +1470,7 @@
     <v-dialog v-model="RoomDrawer" max-width="400">
       <v-card>
         <v-toolbar flat class="primary white--text" dense>
-          Group Booking <v-spacer></v-spacer
+          Individual Booking <v-spacer></v-spacer
           ><v-icon @click="RoomDrawer = false" color="white"
             >mdi-close</v-icon
           ></v-toolbar
@@ -1562,16 +1560,15 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-                v-model="multipleRoomIds"
+                v-model="multipleRoomId"
                 hide-details
-                multiple
                 :items="availableRooms"
                 item-value="id"
                 item-text="room_no"
                 label="Select Room"
                 dense
                 outlined
-                @change="getMultipleRoomObjects(multipleRoomIds)"
+                @change="getMultipleRoomObjects(multipleRoomId)"
               >
               </v-autocomplete>
             </v-col>
@@ -1644,7 +1641,6 @@
                 Confirm Room
               </v-btn>
             </v-col>
-
           </v-row>
         </v-container>
       </v-card>
@@ -1671,7 +1667,7 @@ export default {
       dialog: false,
       foodplans: [],
       multipleRoomObjects: [],
-      multipleRoomIds: [],
+      multipleRoomId: null,
       checkin_menu: false,
       checkout_menu: false,
       room_type_id: 1,
@@ -1778,7 +1774,7 @@ export default {
       priceListTableView: [],
 
       temp: {
-        extra_bed_qty:0,
+        extra_bed_qty: 0,
         food_plan_id: 1,
         early_check_in: 0,
         late_check_out: 0,
@@ -2169,7 +2165,6 @@ export default {
       }
     },
 
-
     mergeContact() {
       if (!this.isDiff) {
         this.customer.whatsapp = this.customer.contact_no;
@@ -2200,11 +2195,10 @@ export default {
       let afterExtraAmount = sub_total + room_extra_amount;
       let afterDiscount = afterExtraAmount - discount;
 
-      this.room.remaining_price = afterDiscount - advance_price
+      this.room.remaining_price = afterDiscount - advance_price;
 
       return (this.room.total_price = afterDiscount);
     },
-
 
     subTotal() {
       return (this.room.sub_total = this.priceListTableView.reduce(
@@ -2342,9 +2336,9 @@ export default {
       this.temp.sgst = gst;
     },
 
-    getMultipleRoomObjects(idsToFilter) {
-      this.multipleRoomObjects = this.availableRooms.filter((item) =>
-        idsToFilter.includes(item.id)
+    getMultipleRoomObjects(idToFilter) {
+      this.multipleRoomObjects = this.availableRooms.filter(
+        (item) => item.id == idToFilter
       );
     },
     selectRoom(item) {

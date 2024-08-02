@@ -347,6 +347,23 @@
               "
             >
               <v-list-item-title>
+                <BookingSingle
+                  @close="get_events()"
+                  :key="evenIid"
+                  :BookedRoomId="evenIid"
+                />
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              link
+              v-if="
+                bookingStatus <= 2 &&
+                bookingStatus != 0 &&
+                checkData.paid_by != 2
+              "
+            >
+              <v-list-item-title>
                 <BookingModify
                   @close="get_events()"
                   :key="evenIid"
@@ -396,13 +413,21 @@
         <v-card>
           <v-card-text>
             <v-row flat>
-              <v-col cols="6">
+              <v-col cols="2">
                 <h1 class="title">Calendar</h1>
               </v-col>
-              <v-col cols="2">
-                <BookingGroup />
+
+              <v-col class="text-right">
+                <v-row>
+                  <v-col class="text-right">
+                    <BookingIndividual />
+                  </v-col>
+                  <v-col cols="3">
+                    <BookingGroup />
+                  </v-col>
+                </v-row>
               </v-col>
-              <v-col cols="2">
+              <v-col cols="2" class="text-right">
                 <v-text-field
                   outlined
                   hide-details
@@ -413,7 +438,7 @@
                   clearable
                 ></v-text-field>
               </v-col>
-              <v-col cols="2">
+              <v-col cols="2" class="text-right">
                 <FilterDateRange @filter-attr="filterAttr" />
               </v-col>
               <v-col cols="12">
@@ -676,7 +701,7 @@ export default {
         room_type: "",
         price: "",
         origin_price: "",
-        room_id: "",
+        room_type_id: "",
         isCalculate: false,
       },
       isDbCLick: false,
@@ -1024,6 +1049,7 @@ export default {
           }
 
           this.reservation.room_id = data.room.id;
+          this.reservation.room_type_id = data.room.room_type_id;
           this.reservation.price = data.total_price;
           this.reservation.priceList = data.data;
           this.reservation.total_tax = data.total_tax;
@@ -1329,7 +1355,7 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/calendar.css"></style>
-<style scoped>
+<!-- <style scoped>
 .columnheader {
   height: 40px !important;
 }
@@ -1370,8 +1396,4 @@ export default {
   height: 30px !important;
   overflow: hidden;
 }
-
-/* .fc .fc-scrollgrid-section table td {
-  height: 28px !important;
-} */
-</style>
+</style> -->
