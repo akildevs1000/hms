@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <v-dialog v-model="BookingDetialsDialog" max-width="1300">
-      <template v-slot:activator="{ on, attrs }">
-        <span v-bind="attrs" v-on="on"> View Booking </span>
-      </template>
-      <div class="text-center ma-2">
+  <span>
+    <v-dialog v-model="BookingDetialsDialog" max-width="1100">
+      <div class="text-center">
         <v-snackbar
           v-model="snackbar"
           top="top"
@@ -14,62 +11,9 @@
           {{ response }}
         </v-snackbar>
       </div>
-      <v-dialog
-        v-model="GRCDialog"
-        persistent
-        :width="900"
-        class="checkin-models"
-      >
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ "GRC" }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
-          </v-toolbar>
-          <v-card-text>
-            <BookingGrc :bookingId="booking_id" />
-          </v-card-text>
-          <v-container></v-container>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog v-model="imgView" max-width="80%">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Preview</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="imgView = false"
-              >mdi mdi-close-box</v-icon
-            >
-          </v-toolbar>
-          <v-container>
-            <ImagePreview :docObj="documentObj"></ImagePreview>
-          </v-container>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog v-model="payingDialog" persistent max-width="1000px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Payment</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="payingDialog = false"
-              >mdi mdi-close-box</v-icon
-            >
-          </v-toolbar>
-          <v-card-text>
-            <BookingPaying
-              :BookingData="payData"
-              @close-dialog="closeDialogs"
-            ></BookingPaying>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
+      <template v-slot:activator="{ on, attrs }">
+        <span v-bind="attrs" v-on="on"> View Booking </span>
+      </template>
       <v-card>
         <v-toolbar :color="roomTypeColor" dark flat dense>
           <v-tabs v-model="activeTab" align-with-title>
@@ -93,9 +37,9 @@
             mdi mdi-close-box
           </v-icon>
         </v-toolbar>
-        <v-container>
-          <v-tabs-items v-model="activeTab">
-            <v-tab-item class="px-3 py-4">
+        <v-tabs-items v-model="activeTab">
+          <v-tab-item>
+            <v-container>
               <v-row>
                 <v-col md="2" cols="12">
                   <v-row>
@@ -188,8 +132,7 @@
                     </v-col>
                   </v-row>
                 </v-col>
-
-                <v-col md="9" cols="12">
+                <v-col md="10" cols="12">
                   <v-row class="mt-4">
                     <v-col md="4">
                       <div class="text-box" style="float: left">
@@ -406,8 +349,10 @@
                   </v-row>
                 </v-col>
               </v-row>
-            </v-tab-item>
-            <v-tab-item class="px-3 py-4">
+            </v-container>
+          </v-tab-item>
+          <v-tab-item>
+            <v-container>
               <table class="responsive-table">
                 <thead>
                   <tr class="table-header-text">
@@ -438,8 +383,10 @@
                   </tr>
                 </tbody>
               </table>
-            </v-tab-item>
-            <v-tab-item class="px-3 py-4">
+            </v-container>
+          </v-tab-item>
+          <v-tab-item>
+            <v-container>
               <table class="responsive-table">
                 <thead>
                   <tr class="table-header-text">
@@ -492,9 +439,11 @@
                   </tr>
                 </tbody>
               </table>
-            </v-tab-item>
-            <v-tab-item class="px-3">
-              <v-card flat>
+            </v-container>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-container>
                 <v-row>
                   <v-col md="12" class="mt-2 text-right">
                     <v-btn
@@ -583,9 +532,11 @@
                     </table>
                   </v-col>
                 </v-row>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item class="px-3" v-if="room_category_type == 'Hall'">
+              </v-container>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item v-if="room_category_type == 'Hall'">
+            <v-container>
               <v-col cols="12">
                 <table class="responsive-table mt-0 pt-5">
                   <thead>
@@ -628,193 +579,193 @@
                   </tbody>
                 </table>
               </v-col>
-            </v-tab-item>
-            <v-tab-item class="px-3" v-if="room_category_type == 'Hall'">
-              <v-card flat>
-                <v-row>
-                  <v-col cols="6">
-                    <v-row style="background-color: #e3e3e3">
-                      <v-col md="3" cols="12"
-                        ><label class="text-h6">Name</label>
-                      </v-col>
+            </v-container>
+          </v-tab-item>
+          <v-tab-item v-if="room_category_type == 'Hall'">
+            <v-container>
+              <v-row>
+                <v-col cols="6">
+                  <v-row style="background-color: #e3e3e3">
+                    <v-col md="3" cols="12"
+                      ><label class="text-h6">Name</label>
+                    </v-col>
 
-                      <v-col md="2" cols="12" class="text-right"> Total </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
+                    <v-col md="2" cols="12" class="text-right"> Total </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
 
-                    <v-row>
-                      <v-col md="3" cols="12"><label>Hall rent</label> </v-col>
+                  <v-row>
+                    <v-col md="3" cols="12"><label>Hall rent</label> </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(hallRentTotalAmount) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"
-                        ><label>Electricity (EB) Charges</label>
-                      </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(hallRentTotalAmount) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"
+                      ><label>Electricity (EB) Charges</label>
+                    </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(electricityTotalAmount) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(electricityTotalAmount) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
 
-                    <v-row>
-                      <v-col md="3" cols="12"
-                        ><label>Sound System </label>
-                      </v-col>
+                  <v-row>
+                    <v-col md="3" cols="12"
+                      ><label>Sound System </label>
+                    </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(audioTotalAmount) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"><label> Projector</label> </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(audioTotalAmount) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"><label> Projector</label> </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(projecterTotalAmount) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"
-                        ><label>Setting arrangment & Cleaning charges</label>
-                      </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(projecterTotalAmount) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"
+                      ><label>Setting arrangment & Cleaning charges</label>
+                    </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(cleaningTotalAmount) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"><label>Food Total</label> </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(cleaningTotalAmount) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"><label>Food Total</label> </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(foodTotalAmount) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"
-                        ><label>Additional Events</label>
-                      </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(foodTotalAmount) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"
+                      ><label>Additional Events</label>
+                    </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(otherCharges) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="12">
-                        <hr />
-                      </v-col>
-                    </v-row>
-                    <v-row style="font-weight: bold">
-                      <v-col md="3" cols="12"><label>Total</label> </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(otherCharges) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <hr />
+                    </v-col>
+                  </v-row>
+                  <v-row style="font-weight: bold">
+                    <v-col md="3" cols="12"><label>Total</label> </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(hallItemsTotal) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-row>
-                      <v-col cols="12">
-                        <hr />
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"
-                        ><label>Adjusted Final Amount(After Discount)</label>
-                      </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(hallItemsTotal) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="6">
+                  <v-row>
+                    <v-col cols="12">
+                      <hr />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"
+                      ><label>Adjusted Final Amount(After Discount)</label>
+                    </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(inv_total_without_tax) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"
-                        ><label>Tax Collected with Food tax</label>
-                      </v-col>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(inv_total_without_tax) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"
+                      ><label>Tax Collected with Food tax</label>
+                    </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(inv_total_tax) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(inv_total_tax) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
 
-                    <v-row>
-                      <v-col cols="12">
-                        <hr />
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col md="3" cols="12"
-                        ><label>Grand Total</label>
-                      </v-col>
+                  <v-row>
+                    <v-col cols="12">
+                      <hr />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12"><label>Grand Total</label> </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-                        {{ getPriceFormat(inv_total) }}
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right"> </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
+                    <v-col md="2" cols="12" class="text-right">
+                      {{ getPriceFormat(inv_total) }}
+                    </v-col>
+                    <v-col md="1" cols="12" class="text-right"> </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
 
-                <v-row>
-                  <v-col cols="12" class="pt-5">
-                    <h4>Additional Events/Charges</h4>
-                    <table class="responsive-table mt-0">
-                      <thead>
-                        <tr class="table-header-text">
-                          <th>#</th>
-                          <th>Name</th>
-                          <th>Qty</th>
-                          <th>Price</th>
-                          <th>Total</th>
-                        </tr>
-                      </thead>
-                      <v-progress-linear
-                        v-if="loading"
-                        :active="loading"
-                        :indeterminate="loading"
-                        absolute
-                        color="primary"
-                      ></v-progress-linear>
+              <v-row>
+                <v-col cols="12" class="pt-5">
+                  <h4>Additional Events/Charges</h4>
+                  <table class="responsive-table mt-0">
+                    <thead>
+                      <tr class="table-header-text">
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <v-progress-linear
+                      v-if="loading"
+                      :active="loading"
+                      :indeterminate="loading"
+                      absolute
+                      color="primary"
+                    ></v-progress-linear>
 
-                      <tbody>
-                        <tr
-                          v-for="(item, index) in extra_amounts"
-                          :key="index"
-                          style="font-size: 13px"
-                          class="no-bg"
-                        >
-                          <td>
-                            <b>{{ ++index }}</b>
-                          </td>
-                          <td>{{ item.name || "---" }}</td>
-                          <td>{{ item.qty || "---" }}</td>
+                    <tbody>
+                      <tr
+                        v-for="(item, index) in extra_amounts"
+                        :key="index"
+                        style="font-size: 13px"
+                        class="no-bg"
+                      >
+                        <td>
+                          <b>{{ ++index }}</b>
+                        </td>
+                        <td>{{ item.name || "---" }}</td>
+                        <td>{{ item.qty || "---" }}</td>
 
-                          <td>
-                            {{ item.price_per_item || "---" }}
-                          </td>
-                          <td>
-                            {{ item.total || "---" }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </v-tab-item>
+                        <td>
+                          {{ item.price_per_item || "---" }}
+                        </td>
+                        <td>
+                          {{ item.total || "---" }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-tab-item>
 
-            <v-tab-item class="px-3 py-4">
+          <v-tab-item>
+            <v-container>
               <v-row>
                 <v-col md="12" cols="12">
                   <v-row class="mt-4">
@@ -879,12 +830,68 @@
                   </v-row>
                 </v-col>
               </v-row>
-            </v-tab-item>
-          </v-tabs-items>
-        </v-container>
+            </v-container>
+          </v-tab-item>
+        </v-tabs-items>
+
+        <v-dialog
+          v-model="GRCDialog"
+          persistent
+          max-width="900"
+          class="checkin-models"
+        >
+          <v-card>
+            <v-toolbar class="rounded-md" color="background" dense flat dark>
+              <span>{{ "GRC" }}</span>
+              <v-spacer></v-spacer>
+              <v-icon dark class="pa-0" @click="GRCDialog = false"
+                >mdi mdi-close-box</v-icon
+              >
+            </v-toolbar>
+            <v-card-text>
+              <BookingGrc :bookingId="booking_id" />
+            </v-card-text>
+            <v-container></v-container>
+            <v-card-actions> </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="imgView">
+          <v-card>
+            <v-toolbar class="rounded-md" color="background" dense flat dark>
+              <span>Preview</span>
+              <v-spacer></v-spacer>
+              <v-icon dark class="pa-0" @click="imgView = false"
+                >mdi mdi-close-box</v-icon
+              >
+            </v-toolbar>
+            <v-container>
+              <ImagePreview :docObj="documentObj"></ImagePreview>
+            </v-container>
+            <v-card-actions> </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="payingDialog" persistent>
+          <v-card>
+            <v-toolbar class="rounded-md" color="background" dense flat dark>
+              <span>Payment</span>
+              <v-spacer></v-spacer>
+              <v-icon dark class="pa-0" @click="payingDialog = false"
+                >mdi mdi-close-box</v-icon
+              >
+            </v-toolbar>
+            <v-card-text>
+              <BookingPaying
+                :BookingData="payData"
+                @close-dialog="closeDialogs"
+              ></BookingPaying>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-card>
     </v-dialog>
-  </div>
+  </span>
 </template>
 <script>
 export default {
@@ -1257,3 +1264,98 @@ export default {
 };
 </script>
 <style scoped src="@/assets/css/custom.css"></style>
+<style scoped>
+.no-bg {
+  background-color: white !important;
+}
+
+.guest-avatar {
+  max-width: 200px !important;
+  height: 200px !important;
+  float: left;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.text-box {
+  border: 1px solid rgb(215, 211, 211);
+  padding: 10px 0px 0px 10px;
+  margin: 10px 20px;
+  position: relative;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.text-box-amt {
+  border: 0px solid rgb(215, 211, 211);
+  padding: 0px 0px 0px 0px;
+  margin: 0px 00px;
+  position: relative;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.amt-border {
+  border-bottom: 1px solid;
+}
+
+.amt-border-full {
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+}
+
+.text-box p {
+  margin: 5px;
+}
+
+h6 {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background-color: white;
+  padding: 0 10px;
+  color: rgb(154, 152, 152);
+  margin: 0;
+  font-size: 15px;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 8px;
+  /* border: 1px solid black !important; */
+}
+
+tr:nth-child(even) {
+  background-color: white;
+}
+
+.custom-text-box {
+  border-radius: 2px !important;
+  border: 1px solid #dbdddf !important;
+}
+
+input[type="text"]:focus.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select.custom-text-box {
+  border: 2px solid #5fafa3 !important;
+}
+
+select:focus {
+  outline: none !important;
+  border-color: #5fafa3;
+  box-shadow: 0 0 0px #5fafa3;
+}
+
+.table-header-text {
+  font-size: 12px;
+}
+</style>

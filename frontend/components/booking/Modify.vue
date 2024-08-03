@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="600">
+    <v-dialog v-model="dialog" width="700">
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs" v-on="on"> Modify Booking </span>
       </template>
@@ -155,10 +155,6 @@
                   </v-menu>
                 </td>
               </tr>
-              <tr>
-                <th>Days</th>
-                <td>{{ payload.total_days }}</td>
-              </tr>
 
               <tr>
                 <th>Meal</th>
@@ -172,6 +168,7 @@
                     item-text="title"
                     v-model="payload.food_plan_id"
                     :items="foodplans"
+                    @change="adjust_food_charges(payload.food_plan_id)"
                   ></v-autocomplete>
                 </td>
               </tr>
@@ -183,13 +180,6 @@
                     :label="`Early Check In (${early_check_in})`"
                     :hide-details="true"
                     dense
-                    @change="
-                      () => {
-                        early_check_in = is_early_check_in
-                          ? payload.early_check_in
-                          : 0;
-                      }
-                    "
                   ></v-checkbox>
                 </td>
               </tr>
@@ -239,33 +229,9 @@
                   ></v-text-field>
                 </td>
               </tr>
-
               <tr>
-                <th>Room Price (Old)</th>
-                <td class="text-right">
-                  <span class="red--text">{{
-                    convert_decimal(room_price_old)
-                  }}</span>
-                </td>
-              </tr>
-              <tr>
-                <th>Room Price (New)</th>
-                <td class="text-right">
-                  {{ convert_decimal(payload.total_price) }}
-                </td>
-              </tr>
-              <tr>
-                <th>Discount</th>
-                <td class="text-right">
-                  <v-text-field
-                    outlined
-                    dense
-                    hide-details
-                    v-model="payload.room_discount"
-                    persistent-hint
-                    @keyup="getTotalAfterDiscount"
-                  ></v-text-field>
-                </td>
+                <th>Days</th>
+                <td class="text-right">{{ payload.total_days }}</td>
               </tr>
               <tr>
                 <th>Advance Payment</th>
@@ -273,10 +239,23 @@
                   {{ convert_decimal(payload.advance_price) }}
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <th>Balance Amount</th>
                 <td class="text-right">
-                  {{ convert_decimal(payload.remaining_price) }}
+                  {{ convert_decimal(payload.booking_remaining_price) }}
+                </td>
+              </tr> -->
+              <tr>
+                <th>Old Grand Total</th>
+                <td class="text-right">
+                  {{ convert_decimal(old_booking_total_price) }}
+                </td>
+              </tr>
+              <tr>
+                <th>Grand Total {{old_meal_price}}</th>
+                <td class="text-rights">
+                  <pre>{{ payload }}</pre>
+                  {{ convert_decimal(payload.booking_total_price) }}
                 </td>
               </tr>
             </table>
@@ -308,7 +287,7 @@
 </template>
 <script>
 export default {
-  props: ["BookingData", "BookedRoomId"],
+  props: ["BookedRoomId"],
   data() {
     return {
       is_early_check_in: false,
@@ -316,14 +295,17 @@ export default {
 
       early_check_in: 0,
       late_check_out: 0,
-
+      old_booking_total_price: 0,
       foodplans: [],
       checkin_menu: false,
       checkout_menu: false,
       rooms: [],
       filteredRooms: [],
       room_price_old: 0,
+      old_meal_price:0,
       payload: {
+        booking_remaining_price: 0,
+        booking_total_price: 0,
         room_type_id: 0,
         extra_bed_qty: 0,
         bed_amount: 0,
@@ -392,6 +374,22 @@ export default {
   },
 
   methods: {
+    adjust_food_charges(id) {
+      // this.temp.early_check_in = this.is_early_check_in
+      //   ? this.additional_charges.early_check_in
+      //   : 0;
+      // this.temp.late_check_out = this.is_late_check_out
+      //   ? this.additional_charges.late_check_out
+      //   : 0;
+
+      let { unit_price } = this.foodplans.find((e) => e.id == id);
+
+      console.log("🚀 ~ adjust_food_charges ~ unit_price:", unit_price)
+
+      this.payload.booking_total_price =
+        this.old_booking_total_price + unit_price;
+    },
+
     async get_food_plans() {
       let { data: foodplans } = await this.$axios.get(`foodplan-list`);
 
@@ -475,6 +473,8 @@ export default {
             total_days: data.data.length || 0,
             total_tax: data.total_tax,
             room_tax: data.total_tax / data.data.length || 0,
+            booking_total_price: this.getGrandTotal(data.total_price),
+            // booking_remaining_price: this.payload.booking_remaining_price,
           };
 
           this.payload = {
@@ -482,6 +482,9 @@ export default {
             ...restOfPayload,
           };
         });
+    },
+    getGrandTotal(new_price) {
+      return this.old_booking_total_price - this.room_price_old + new_price;
     },
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
@@ -499,7 +502,14 @@ export default {
       };
       this.$axios.get(`get_booking_for_modify`, payload).then(({ data }) => {
         this.bookingResponse = data;
+
         this.room_price_old = data.price;
+
+        this.old_booking_total_price = data.booking.total_price;
+
+        let exceptMealPrice = data.price + data.early_check_in + data.late_check_out + data.bed_amount;
+
+        this.old_meal_price = this.old_booking_total_price  - exceptMealPrice;
 
         this.early_check_in = data.early_check_in;
         this.late_check_out = data.late_check_out;
@@ -539,6 +549,8 @@ export default {
           room_no: data.room_no,
           room_type_id: data.room.room_type_id,
           room_id: data.room_id,
+          booking_remaining_price: data.booking.remaining_price,
+          booking_total_price: data.booking.total_price,
         };
 
         this.get_rooms(data.room_id);
@@ -582,6 +594,8 @@ export default {
         late_check_out: this.payload.late_check_out,
         booked_room_id: this.BookedRoomId,
         room_discount: this.payload.room_discount || 0,
+        booking_remaining_price: this.payload.booking_remaining_price,
+        booking_total_price: this.payload.booking_total_price,
       };
 
       this.loading = true;

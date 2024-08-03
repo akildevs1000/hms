@@ -254,15 +254,6 @@
                               </v-btn>
                             </v-col>
                             <v-col md="5" dense>
-                              <v-text-field
-                                label="Group Name"
-                                v-model="room.group_name"
-                                dense
-                                outlined
-                                :hide-details="true"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col md="5" dense>
                               <v-select
                                 label="Type"
                                 v-model="customer.customer_type"
@@ -1149,7 +1140,7 @@
                           aria-describedby="inputGroup-sizing-sm"
                           disabled
                         >
-                          {{ convert_decimal(item.meal_price) }}
+                          {{ convert_decimal(item.food_plan_price) }}
                         </div>
                       </div>
 
@@ -1774,6 +1765,7 @@ export default {
       priceListTableView: [],
 
       temp: {
+        food_plan_price:1,
         extra_bed_qty: 0,
         food_plan_id: 1,
         early_check_in: 0,
@@ -1827,12 +1819,11 @@ export default {
       search_available_room: "",
       room: {
         customer_type: "",
-        group_name: "",
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
         type: "",
-        source: "",
+        source: "walking",
         agent_name: "",
         booking_status: 1,
         check_in: null,
@@ -1859,9 +1850,9 @@ export default {
       reservation: {
         check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
         check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        room_no: "101",
+        room_no: "",
         room_id: 82,
-        room_type: "castle",
+        room_type: "",
         price: 0,
         origin_price: "",
         isCalculate: true,
@@ -1884,7 +1875,7 @@ export default {
       ],
 
       customer: {
-        title: "",
+        title: "Mr",
         whatsapp: "",
         nationality: "India",
         first_name: "",
@@ -1955,7 +1946,6 @@ export default {
     };
   },
   async created() {
-    this.get_food_price();
     this.get_reservation();
     this.get_room_types();
     this.get_id_cards();
@@ -2132,37 +2122,8 @@ export default {
       this.get_cs_gst(this.temp.room_tax);
     },
 
-    get_food_price() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_food_prices`, payload).then(({ data }) => {
-        this.foodPriceList = data;
-        this.get_food_price_cal("adult", 1);
-      });
-    },
-
     redirect() {
       this.$router.push("/");
-    },
-
-    get_food_price_cal(person_type, person_qty) {
-      if (this.foodPriceList.length == 0) {
-        return;
-      }
-      let person = this.foodPriceList.find((e) => e.type == person_type);
-
-      person.qty = person_qty;
-
-      let index = this.person_type_arr.findIndex((e) => e.type == person_type);
-
-      if (index == -1) {
-        this.person_type_arr.push(person);
-      } else {
-        this.person_type_arr.splice(index, 1, person);
-      }
     },
 
     mergeContact() {
@@ -2360,9 +2321,15 @@ export default {
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
           this.selectRoomLoading = false;
+
+          let fPrice = foodplan.unit_price;
+          let adult_food_plan_price = fPrice * this.temp.no_of_adult;
+          let child_food_plan_price = (fPrice * this.temp.no_of_child) / 2;
+          this.selectRoomLoading = false;
           this.temp.room_type = item.name;
           this.temp.meal_name = foodplan.title;
-          this.temp.meal_price = foodplan.unit_price;
+          this.temp.food_plan_price =
+            adult_food_plan_price + child_food_plan_price;
           this.temp.company_id = this.$auth.user.company.id;
           this.temp.price = data.total_price;
           this.temp.priceList = data.data;
@@ -2380,10 +2347,6 @@ export default {
     },
 
     add_room() {
-      if (this.temp.room_no == "") {
-        this.alert("Missing!", "Select room", "error");
-        return;
-      }
 
       let selectedRoomsForTableView = [];
 
@@ -2394,7 +2357,7 @@ export default {
         room_discount,
         room_extra_amount,
         meal_name,
-        meal_price,
+        food_plan_price,
         bed_amount,
         priceList,
         room_type,
@@ -2404,7 +2367,7 @@ export default {
 
       let sub_total =
         price +
-        meal_price +
+        food_plan_price +
         early_check_in +
         late_check_out +
         parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
@@ -2443,7 +2406,8 @@ export default {
         }
       });
 
-      let extras = early_check_in + late_check_out + bed_amount;
+      let extras =
+      early_check_in + late_check_out + bed_amount + food_plan_price;
 
       let arrToMerge = priceList.map((e) => ({
         ...e,
@@ -2452,13 +2416,13 @@ export default {
         room_type,
         no_of_adult,
         no_of_child,
-        meal_name: `${meal_name} (${meal_price})`,
+        meal_name: `${meal_name} (${food_plan_price})`,
         extras,
         early_check_in,
         late_check_out,
         bed_amount,
         total_price:
-          (e.price + extras + meal_price) * selectedRoomsForTableView.length,
+          (e.price + extras + food_plan_price) * selectedRoomsForTableView.length,
       }));
 
       this.priceListTableView = this.mergeEntries(

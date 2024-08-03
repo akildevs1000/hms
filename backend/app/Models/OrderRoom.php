@@ -59,10 +59,10 @@ class OrderRoom extends Model
         "inv_food_tax_per",
 
         "food_plan_id",
-
         "extra_bed_qty",
         "early_check_in",
         "late_check_out",
+        "food_plan_price",
     ];
 
     /**

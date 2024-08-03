@@ -7,6 +7,7 @@
         </v-btn>
       </template>
       <v-card>
+       
         <v-container fluid>
           <v-row>
             <v-dialog v-model="documentDialog" max-width="30%">
@@ -716,11 +717,7 @@
                                           }}
                                         </td>
                                         <td>
-                                          {{
-                                            convert_decimal(
-                                              item.bed_amount
-                                            )
-                                          }}
+                                          {{ convert_decimal(item.bed_amount) }}
                                         </td>
                                         <td>
                                           {{
@@ -777,7 +774,9 @@
                                           font-weight: bold;
                                         "
                                       >
-                                        {{ convert_decimal(processCalculation()) }}
+                                        {{
+                                          convert_decimal(processCalculation())
+                                        }}
                                       </div>
                                     </v-col>
                                   </div>
@@ -1151,7 +1150,7 @@
                           aria-describedby="inputGroup-sizing-sm"
                           disabled
                         >
-                          {{ convert_decimal(item.meal_price) }}
+                          {{ convert_decimal(item.food_plan_price) }}
                         </div>
                       </div>
 
@@ -1644,7 +1643,6 @@
                 Confirm Room
               </v-btn>
             </v-col>
-
           </v-row>
         </v-container>
       </v-card>
@@ -1778,7 +1776,8 @@ export default {
       priceListTableView: [],
 
       temp: {
-        extra_bed_qty:0,
+        food_plan_price: 1,
+        extra_bed_qty: 0,
         food_plan_id: 1,
         early_check_in: 0,
         late_check_out: 0,
@@ -2169,7 +2168,6 @@ export default {
       }
     },
 
-
     mergeContact() {
       if (!this.isDiff) {
         this.customer.whatsapp = this.customer.contact_no;
@@ -2200,11 +2198,10 @@ export default {
       let afterExtraAmount = sub_total + room_extra_amount;
       let afterDiscount = afterExtraAmount - discount;
 
-      this.room.remaining_price = afterDiscount - advance_price
+      this.room.remaining_price = afterDiscount - advance_price;
 
       return (this.room.total_price = afterDiscount);
     },
-
 
     subTotal() {
       return (this.room.sub_total = this.priceListTableView.reduce(
@@ -2365,10 +2362,15 @@ export default {
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
+          let fPrice = foodplan.unit_price;
+          let adult_food_plan_price = fPrice * this.temp.no_of_adult;
+          let child_food_plan_price = (fPrice * this.temp.no_of_child) / 2;
+
           this.selectRoomLoading = false;
           this.temp.room_type = item.name;
           this.temp.meal_name = foodplan.title;
-          this.temp.meal_price = foodplan.unit_price;
+          this.temp.food_plan_price =
+            adult_food_plan_price + child_food_plan_price;
           this.temp.company_id = this.$auth.user.company.id;
           this.temp.price = data.total_price;
           this.temp.priceList = data.data;
@@ -2400,7 +2402,7 @@ export default {
         room_discount,
         room_extra_amount,
         meal_name,
-        meal_price,
+        food_plan_price,
         bed_amount,
         priceList,
         room_type,
@@ -2410,7 +2412,7 @@ export default {
 
       let sub_total =
         price +
-        meal_price +
+        food_plan_price +
         early_check_in +
         late_check_out +
         parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
@@ -2449,7 +2451,8 @@ export default {
         }
       });
 
-      let extras = early_check_in + late_check_out + bed_amount;
+      let extras =
+        early_check_in + late_check_out + bed_amount + food_plan_price;
 
       let arrToMerge = priceList.map((e) => ({
         ...e,
@@ -2458,13 +2461,14 @@ export default {
         room_type,
         no_of_adult,
         no_of_child,
-        meal_name: `${meal_name} (${meal_price})`,
+        meal_name: `${meal_name} (${food_plan_price})`,
         extras,
         early_check_in,
         late_check_out,
         bed_amount,
         total_price:
-          (e.price + extras + meal_price) * selectedRoomsForTableView.length,
+          (e.price + extras + food_plan_price) *
+          selectedRoomsForTableView.length,
       }));
 
       this.priceListTableView = this.mergeEntries(

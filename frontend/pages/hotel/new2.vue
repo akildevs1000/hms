@@ -24,7 +24,6 @@
                       item-text="name"
                       item-value="id"
                       :hide-details="errors && !errors.id_card_type_id"
-                      :error="errors && errors.id_card_type_id"
                       :error-messages="
                         errors && errors.id_card_type_id
                           ? errors.id_card_type_id[0]
@@ -40,7 +39,6 @@
                       type="text"
                       v-model="customer.id_card_no"
                       :hide-details="errors && !errors.id_card_no"
-                      :error="errors && errors.id_card_no"
                       :error-messages="
                         errors && errors.id_card_no ? errors.id_card_no[0] : ''
                       "
@@ -260,7 +258,6 @@
                               item-text="name"
                               item-value="name"
                               :hide-details="errors && !errors.title"
-                              :error="errors && errors.title"
                               :error-messages="
                                 errors && errors.title ? errors.title[0] : ''
                               "
@@ -275,7 +272,6 @@
                               type="text"
                               v-model="customer.first_name"
                               :hide-details="errors && !errors.first_name"
-                              :error="errors && errors.first_name"
                               :error-messages="
                                 errors && errors.first_name
                                   ? errors.first_name[0]
@@ -301,7 +297,6 @@
                               type="email"
                               v-model="customer.email"
                               :hide-details="errors && !errors.email"
-                              :error="errors && errors.email"
                               :error-messages="
                                 errors && errors.email ? errors.email[0] : ''
                               "
@@ -316,7 +311,6 @@
                               type="number"
                               v-model="customer.contact_no"
                               :hide-details="errors && !errors.contact_no"
-                              :error="errors && errors.contact_no"
                               :error-messages="
                                 errors && errors.contact_no
                                   ? errors.contact_no[0]
@@ -334,7 +328,6 @@
                               type="number"
                               v-model="customer.whatsapp"
                               :hide-details="errors && !errors.whatsapp"
-                              :error="errors && errors.whatsapp"
                               :error-messages="
                                 errors && errors.whatsapp
                                   ? errors.whatsapp[0]
@@ -354,7 +347,6 @@
                           item-text="name"
                           item-value="name"
                           :hide-details="errors && !errors.nationality"
-                          :error="errors && errors.nationality"
                           :error-messages="
                             errors && errors.nationality
                               ? errors.nationality[0]
@@ -424,7 +416,6 @@
                           item-text="name"
                           item-value="id"
                           :hide-details="errors && !errors.id_card_type_id"
-                          :error="errors && errors.id_card_type_id"
                           :error-messages="
                             errors && errors.id_card_type_id
                               ? errors.id_card_type_id[0]
@@ -440,7 +431,6 @@
                           type="text"
                           v-model="customer.id_card_no"
                           :hide-details="errors && !errors.id_card_no"
-                          :error="errors && errors.id_card_no"
                           :error-messages="
                             errors && errors.id_card_no
                               ? errors.id_card_no[0]
@@ -456,7 +446,6 @@
                           type="text"
                           v-model="customer.gst_number"
                           :hide-details="errors && !errors.gst_number"
-                          :error="errors && errors.gst_number"
                           :error-messages="
                             errors && errors.gst_number
                               ? errors.gst_number[0]
@@ -495,7 +484,6 @@
                           outlined
                           @change="getType(room.type)"
                           :hide-details="errors && !errors.type"
-                          :error="errors && errors.type"
                           :error-messages="
                             errors && errors.type ? errors.type[0] : ''
                           "
@@ -513,7 +501,6 @@
                           item-text="name"
                           v-model="room.source"
                           :hide-details="errors && !errors.source"
-                          :error="errors && errors.source"
                           :error-messages="
                             errors && errors.source ? errors.source[0] : ''
                           "
@@ -530,7 +517,6 @@
                           item-value="name"
                           item-text="name"
                           :hide-details="errors && !errors.source"
-                          :error="errors && errors.source"
                           :error-messages="
                             errors && errors.source ? errors.source[0] : ''
                           "
@@ -547,7 +533,6 @@
                           item-value="name"
                           item-text="name"
                           :hide-details="errors && !errors.source"
-                          :error="errors && errors.source"
                           :error-messages="
                             errors && errors.source ? errors.source[0] : ''
                           "
@@ -566,7 +551,6 @@
                           type="text"
                           v-model="room.reference_no"
                           :hide-details="errors && !errors.reference_no"
-                          :error="errors && errors.reference_no"
                           :error-messages="
                             errors && errors.reference_no
                               ? errors.reference_no[0]
@@ -593,7 +577,6 @@
                           item-value="value"
                           item-text="name"
                           :hide-details="errors && !errors.paid_by"
-                          :error="errors && errors.paid_by"
                           :error-messages="
                             errors && errors.paid_by ? errors.paid_by[0] : ''
                           "
@@ -822,7 +805,7 @@
                               <v-col md="12" class="text-right">
                                 <v-btn
                                   color="primary"
-                                  @click="RoomDrawer = true"
+                                  @click="get_available_rooms"
                                   small
                                 >
                                   <v-icon color="white" small>mdi-plus</v-icon>
@@ -1073,7 +1056,7 @@
                         aria-describedby="inputGroup-sizing-sm"
                         disabled
                       >
-                        {{ convert_decimal(item.meal_price) }}
+                        {{ convert_decimal(item.food_plan_price) }}
                       </div>
                     </div>
 
@@ -1233,8 +1216,6 @@
       </v-container>
     </v-card>
 
-    <!---------------------------------------------------------------->
-
     <v-dialog v-model="searchDialog" width="500">
       <v-card>
         <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
@@ -1371,9 +1352,6 @@
         <v-container>
           <v-row>
             <v-col cols="12">
-              <!-- <pre>
-                {{reservation}}
-              </pre> -->
               <v-text-field
                 label="Check In"
                 append-icon="mdi-calendar"
@@ -1399,8 +1377,6 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-                readonly
-                append-icon=""
                 label="Room Type"
                 outlined
                 dense
@@ -1408,13 +1384,18 @@
                 item-value="id"
                 item-text="name"
                 v-model="room_type_id"
+                @change="
+                  ($event) => {
+                    get_available_rooms($event);
+                    selectRoom($event);
+                  }
+                "
                 :items="roomTypes"
+                return-object
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-                readonly
-                append-icon=""
                 v-model="multipleRoomId"
                 hide-details
                 :items="availableRooms"
@@ -1423,6 +1404,7 @@
                 label="Select Room"
                 dense
                 outlined
+                @change="getMultipleRoomObjects(multipleRoomId)"
               >
               </v-autocomplete>
             </v-col>
@@ -1495,9 +1477,6 @@
                 Confirm Room
               </v-btn>
             </v-col>
-            <!-- <v-col cols="12">
-              <pre>{{ temp }}</pre>
-            </v-col> -->
           </v-row>
         </v-container>
       </v-card>
@@ -1631,6 +1610,7 @@ export default {
       priceListTableView: [],
 
       temp: {
+        food_plan_price: 1,
         extra_bed_qty: 0,
         food_plan_id: 1,
         early_check_in: 0,
@@ -1688,8 +1668,8 @@ export default {
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
-        type: "",
-        source: "",
+        type: "Walking",
+        source: "walking",
         agent_name: "",
         booking_status: 1,
         check_in: null,
@@ -1716,10 +1696,9 @@ export default {
       reservation: {
         check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
         check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        room_no: "101",
+        room_no: "",
         room_id: 82,
-        room_type: "castle",
-        room_type_id: 1,
+        room_type: "",
         price: 0,
         origin_price: "",
         isCalculate: true,
@@ -1742,7 +1721,7 @@ export default {
       ],
 
       customer: {
-        title: "",
+        title: "Mr",
         whatsapp: "",
         nationality: "India",
         first_name: "",
@@ -1813,9 +1792,7 @@ export default {
     };
   },
   async created() {
-    await this.get_food_plans();
-
-    await this.get_reservation();
+    this.get_reservation();
     this.get_room_types();
     this.get_id_cards();
     this.runAllFunctions();
@@ -1826,12 +1803,9 @@ export default {
     // this.getImage();
     this.preloader = false;
 
+    await this.get_food_plans();
 
     await this.get_additional_charges();
-
-    await this.get_available_rooms({ id: this.reservation.room_type_id });
-
-    this.selectRoom({ name:this.temp.room_type, room_no:this.temp.room_no });
   },
   computed: {
     formattedCheckinDate() {
@@ -1980,14 +1954,14 @@ export default {
       }
     },
 
-    async get_reservation() {
+    get_reservation() {
       this.reservation = this.$store.state.reservation;
+      this.room_type_id = this.reservation.room_type_id;
+      this.multipleRoomId = this.reservation.room_id;
 
       this.temp.room_id = this.reservation.room_id;
       this.temp.room_no = this.reservation.room_no;
       this.temp.room_type = this.reservation.room_type;
-      this.room_type_id = this.reservation.room_type_id;
-      this.multipleRoomId = this.reservation.room_id;
       this.temp.price = this.reservation.price;
       this.temp.check_in = this.reservation.check_in;
       this.temp.check_out = this.reservation.check_out;
@@ -1995,7 +1969,6 @@ export default {
       this.room.check_in = this.reservation.check_in;
       this.room.check_out = this.reservation.check_out;
       this.temp.priceList = this.reservation.priceList;
-
       this.get_cs_gst(this.temp.room_tax);
     },
 
@@ -2156,6 +2129,17 @@ export default {
         this.idCards = data;
       });
     },
+    searchAvailableRoom(val) {
+      let arr = this.availableRooms;
+      let res = arr.filter((e) => e.room_no == val);
+      if (val.length == 0) {
+        this.get_available_rooms();
+        return;
+      }
+      if (res.length > 0) {
+        this.availableRooms = res;
+      }
+    },
 
     get_cs_gst(amount) {
       let gst = parseFloat(amount) / 2;
@@ -2168,11 +2152,8 @@ export default {
         (item) => item.id == idToFilter
       );
     },
-    async selectRoom(item) {
+    selectRoom(item) {
       let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
-      console.log("🚀 ~ selectRoom ~ this.foodplans:", this.foodplans)
-      console.log("🚀 ~ selectRoom ~ this.temp.food_plan_id:", this.temp.food_plan_id)
-      console.log("🚀 ~ selectRoom ~ foodplan:", foodplan)
 
       this.selectRoomLoading = true;
 
@@ -2190,21 +2171,19 @@ export default {
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
           this.selectRoomLoading = false;
+
+          let fPrice = foodplan.unit_price;
+          let adult_food_plan_price = fPrice * this.temp.no_of_adult;
+          let child_food_plan_price = (fPrice * this.temp.no_of_child) / 2;
+          this.selectRoomLoading = false;
           this.temp.room_type = item.name;
           this.temp.meal_name = foodplan.title;
-          this.temp.meal_price = foodplan.unit_price;
+          this.temp.food_plan_price =
+            adult_food_plan_price + child_food_plan_price;
           this.temp.company_id = this.$auth.user.company.id;
           this.temp.price = data.total_price;
           this.temp.priceList = data.data;
           this.temp.room_tax = data.total_tax;
-
-          console.log("🚀 ~ .then ~ this.temp.room_type:", this.temp.room_type)
-          console.log("🚀 ~ .then ~ this.temp.meal_name:", this.temp.meal_name)
-          console.log("🚀 ~ .then ~ this.temp.meal_price:", this.temp.meal_price)
-          console.log("🚀 ~ .then ~ this.temp.price:", this.temp.price)
-          console.log("🚀 ~ .then ~ this.temp.room_tax:", this.temp.room_tax)
-
-
           this.get_cs_gst(data.total_tax);
         });
     },
@@ -2218,11 +2197,6 @@ export default {
     },
 
     add_room() {
-      if (this.temp.room_no == "") {
-        this.alert("Missing!", "Select room", "error");
-        return;
-      }
-
       let selectedRoomsForTableView = [];
 
       let {
@@ -2232,18 +2206,17 @@ export default {
         room_discount,
         room_extra_amount,
         meal_name,
-        meal_price,
+        food_plan_price,
         bed_amount,
         priceList,
         room_type,
         no_of_adult,
         no_of_child,
-        room_no,
       } = this.temp;
 
       let sub_total =
         price +
-        meal_price +
+        food_plan_price +
         early_check_in +
         late_check_out +
         parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
@@ -2254,8 +2227,9 @@ export default {
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
 
-      let isSelect = this.selectedRooms.find(
-          (e) => e.room_no == room_no
+      this.multipleRoomObjects.forEach((item) => {
+        let isSelect = this.selectedRooms.find(
+          (e) => e.room_no == item.room_no
         );
 
         if (!isSelect) {
@@ -2264,8 +2238,11 @@ export default {
             meal: "------",
             days: this.getDays(),
             room_discount: room_discount == "" ? 0 : room_discount,
+            after_discount: after_discount,
             total: after_discount,
             grand_total: after_discount,
+            room_no: item.room_no,
+            room_id: item.id,
           };
 
           selectedRoomsForTableView.push(payload);
@@ -2276,8 +2253,10 @@ export default {
           this.isSelectRoom = false;
           this.RoomDrawer = false;
         }
+      });
 
-      let extras = early_check_in + late_check_out + bed_amount;
+      let extras =
+        early_check_in + late_check_out + bed_amount + food_plan_price;
 
       let arrToMerge = priceList.map((e) => ({
         ...e,
@@ -2286,13 +2265,14 @@ export default {
         room_type,
         no_of_adult,
         no_of_child,
-        meal_name: `${meal_name} (${meal_price})`,
+        meal_name: `${meal_name} (${food_plan_price})`,
         extras,
         early_check_in,
         late_check_out,
         bed_amount,
         total_price:
-          (e.price + extras + meal_price) * selectedRoomsForTableView.length,
+          (e.price + extras + food_plan_price) *
+          selectedRoomsForTableView.length,
       }));
 
       this.priceListTableView = this.mergeEntries(
@@ -2319,12 +2299,14 @@ export default {
       return result;
     },
 
-    async get_available_rooms(item) {
+    get_available_rooms(item) {
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
         alert("Please select date");
+        this.RoomDrawer = false;
         return;
       }
 
+      this.RoomDrawer = true;
       this.$axios
         .get(`get_available_rooms_by_date_and_room_type`, {
           params: {
@@ -2337,6 +2319,7 @@ export default {
         .then(({ data }) => {
           this.availableRooms = data;
         });
+      this.runAllFunctions();
     },
 
     get_customer() {

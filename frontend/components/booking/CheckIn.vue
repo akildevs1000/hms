@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="imgView" max-width="80%">
+    <v-dialog v-model="imgView">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>ID</span>
@@ -141,6 +141,9 @@
             <span class="mx-2">Check In</span>
           </div>
           <v-spacer></v-spacer>
+          <v-tab v-if="BookingData.group_name" active-class="active-link">
+            <v-icon> mdi mdi-account </v-icon>
+          </v-tab>
           <v-tab active-class="active-link">
             <v-icon> mdi mdi-account-tie </v-icon>
           </v-tab>
@@ -148,6 +151,271 @@
             <v-icon> mdi mdi-clipboard-text-clock </v-icon>
           </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
+          <v-tab-item v-if="BookingData.group_name">
+            <v-card flat>
+              <v-card-text>
+                <v-row>
+                  <v-col md="3" cols="12">
+                    <v-row>
+                      <v-col md="12" class="text-center">
+                        <v-img
+                          @click="onpick_attachment"
+                          style="
+                            max-width: 150px;
+                            margin: 0 auto;
+                            border-radius: 50%;
+                          "
+                          :src="showImage"
+                        ></v-img>
+                        <input
+                          required
+                          type="file"
+                          @change="attachment"
+                          style="display: none"
+                          accept="image/*"
+                          ref="attachment_input"
+                        />
+                        <span
+                          v-if="errors && errors.image"
+                          class="red--text mt-2"
+                        >
+                          {{ errors.image[0] }}</span
+                        >
+                        <div class="mt-2" v-if="BookingData.document">
+                          <v-btn
+                            small
+                            dark
+                            class="primary ipad-preview lg-pt-4 lg-pb-4 doc-btn mx-auto"
+                            @click="preview(BookingData.document)"
+                          >
+                            ID
+                            <v-icon right dark>mdi-file</v-icon>
+                          </v-btn>
+                        </div>
+                        <div class="mt-2 ml-2" v-else>
+                          <v-btn
+                            small
+                            dark
+                            class="primary pt-4 pb-4"
+                            @click="add_document()"
+                          >
+                            <small>Document</small>
+                            <v-icon right dark>mdi-plus</v-icon>
+                          </v-btn>
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col md="9" cols="12">
+                    <v-row>
+                      <v-col md="4" dense>
+                     
+                        <v-text-field
+                          label="Reservation Number"
+                          v-model="BookingData.reservation_no"
+                          :items="['Company', 'Regular', 'Corporate']"
+                          dense
+                          readonly
+                          item-text="name"
+                          item-value="id"
+                          outlined
+                          :hide-details="true"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="4" dense>
+                        <v-text-field
+                          v-if="BookingData.group_name"
+                          label="Group Name"
+                          v-model="BookingData.group_name"
+                          dense
+                          readonly
+                          outlined
+                          :hide-details="true"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="4" dense>
+                        <v-text-field
+                          label="Type"
+                          v-model="BookingData.customer_type"
+                          dense
+                          outlined
+                          readonly
+                          :hide-details="true"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="3" cols="12" sm="12">
+                        <v-select
+                          v-model="guest.title"
+                          :items="titleItems"
+                          label="Tittle *"
+                          dense
+                          item-text="name"
+                          item-value="name"
+                          :hide-details="errors && !errors.title"
+                          :error="errors && errors.title"
+                          :error-messages="
+                            errors && errors.title ? errors.title[0] : ''
+                          "
+                          outlined
+                        ></v-select>
+                      </v-col>
+                      <v-col md="5" cols="12" sm="12">
+                        <v-text-field
+                          label="First Name *"
+                          dense
+                          outlined
+                          type="text"
+                          v-model="guest.first_name"
+                          :hide-details="errors && !errors.first_name"
+                          :error="errors && errors.first_name"
+                          :error-messages="
+                            errors && errors.first_name
+                              ? errors.first_name[0]
+                              : ''
+                          "
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="4" cols="12" sm="12">
+                        <v-text-field
+                          label="Last Name"
+                          dense
+                          :hide-details="true"
+                          outlined
+                          type="text"
+                          v-model="guest.last_name"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="4" cols="12" sm="12">
+                        <v-text-field
+                          dense
+                          label="Contact No *"
+                          outlined
+                          type="number"
+                          v-model="guest.contact_no"
+                          :hide-details="errors && !errors.contact_no"
+                          :error="errors && errors.contact_no"
+                          :error-messages="
+                            errors && errors.contact_no
+                              ? errors.contact_no[0]
+                              : ''
+                          "
+                          @keyup="mergeContact"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="4" cols="12" sm="12">
+                        <v-text-field
+                          dense
+                          label="Whatsapp No"
+                          outlined
+                          type="number"
+                          v-model="guest.whatsapp"
+                          :hide-details="errors && !errors.whatsapp"
+                          :error="errors && errors.whatsapp"
+                          :error-messages="
+                            errors && errors.whatsapp ? errors.whatsapp[0] : ''
+                          "
+                        ></v-text-field>
+                      </v-col>
+
+                      <v-col md="4" cols="12" sm="12">
+                        <v-text-field
+                          dense
+                          label="Email *"
+                          outlined
+                          type="email"
+                          v-model="guest.email"
+                          :hide-details="errors && !errors.email"
+                          :error="errors && errors.email"
+                          :error-messages="
+                            errors && errors.email ? errors.email[0] : ''
+                          "
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col md="4" cols="12" sm="12">
+                    <v-select
+                      v-model="guest.nationality"
+                      :items="countryList"
+                      label="Nationality"
+                      item-text="name"
+                      item-value="name"
+                      :hide-details="errors && !errors.nationality"
+                      :error="errors && errors.nationality"
+                      :error-messages="
+                        errors && errors.nationality
+                          ? errors.nationality[0]
+                          : ''
+                      "
+                      dense
+                      outlined
+                    ></v-select>
+                  </v-col>
+                  <v-col md="4" cols="12" sm="12">
+                    <v-menu
+                      v-model="guest.dob_menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="guest.dob"
+                          readonly
+                          label="DOB"
+                          v-on="on"
+                          v-bind="attrs"
+                          :hide-details="true"
+                          dense
+                          outlined
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        no-title
+                        v-model="guest.dob"
+                        @input="guest.dob_menu = false"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col md="4">
+                    <v-select
+                      label="Purpose"
+                      v-model="room.purpose"
+                      :items="purposes"
+                      dense
+                      :hide-details="true"
+                      outlined
+                    ></v-select>
+                  </v-col>
+                  <v-col md="6" cols="12" sm="12">
+                    <v-textarea
+                      rows="3"
+                      label="Address"
+                      v-model="customer.address"
+                      outlined
+                      :hide-details="true"
+                    ></v-textarea>
+                  </v-col>
+                  <v-col md="6">
+                    <v-textarea
+                      rows="3"
+                      label="Customer Request"
+                      v-model="room.request"
+                      :hide-details="true"
+                      outlined
+                    ></v-textarea>
+                  </v-col>
+                  <v-col cols="12" class="text-right">
+                    <v-btn small @click="nextTab" color="primary">Next</v-btn>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
           <v-tab-item>
             <v-card flat>
               <v-card-text>
@@ -210,7 +478,7 @@
                           v-model="BookingData.reservation_no"
                           :items="['Company', 'Regular', 'Corporate']"
                           dense
-                          disabled
+                          readonly
                           item-text="name"
                           item-value="id"
                           outlined
@@ -360,6 +628,7 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
+                        no-title
                         v-model="customer.dob"
                         @input="customer.dob_menu = false"
                       ></v-date-picker>
@@ -1132,6 +1401,29 @@ export default {
         { id: 5, name: "Dr" },
       ],
 
+      guest: {
+        title: "",
+        whatsapp: "",
+        nationality: "India",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        id_card_type_id: "",
+        id_card_no: "",
+        car_no: "",
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: null,
+        exp_menu: false,
+        exp: null,
+      },
+
       customer: {
         title: "",
         whatsapp: "",
@@ -1176,6 +1468,15 @@ export default {
   },
   computed: {
     showImage() {
+      if (this.BookingData.group_name) {
+        if (!this.guest.image && !this.previewImage) {
+          // return "/no-image.PNG";
+          return "/no-profile-image.jpg";
+        } else if (this.previewImage) {
+          return this.previewImage;
+        }
+        return this.guest.image;
+      }
       if (!this.customer.image && !this.previewImage) {
         // return "/no-image.PNG";
         return "/no-profile-image.jpg";
@@ -1222,51 +1523,77 @@ export default {
     },
 
     store_check_in(data) {
-      let bookingId = data.id;
       this.loading = true;
-      // if (data.document ? "" : this.checkIn.checkIn_document == null) {
-      //   alert("Document is missing");
-      //   this.loading = false;
-      //   return;
-      // }
 
       let payload = new FormData();
       payload.append("customer_id", data.customer_id);
       payload.append("new_payment", this.new_payment || 0);
       payload.append("booking_id", data.id);
+      payload.append("room_id", this.BookingData.room_id);
       payload.append("remaining_price", data.remaining_price);
       payload.append("payment_mode_id", this.room.payment_mode_id);
       payload.append("company_id", this.$auth.user.company.id);
       payload.append("id_card_type_id", this.checkIn.id_card_type_id);
       payload.append("id_card_no", this.checkIn.id_card_no);
       payload.append("expired", this.checkIn.exp);
-      payload.append("image", this.customer.image);
       if (this.checkIn.checkIn_document) {
         payload.append("document", this.checkIn.checkIn_document);
       }
-      payload.append("title", this.customer.title);
-      payload.append("contact_no", this.customer.contact_no);
-      payload.append("whatsapp", this.customer.whatsapp);
-      payload.append("nationality", this.customer.nationality);
+
       payload.append("user_id", this.$auth.user.id);
 
-      if (this.customer.dob) {
-        payload.append("dob", this.customer.dob);
-      }
-      if (this.customer.first_name) {
-        payload.append("first_name", this.customer.first_name);
-      }
-      if (this.customer.last_name) {
-        payload.append("last_name", this.customer.last_name);
-      }
-      if (this.customer.address) {
-        payload.append("address", this.customer.address);
-      }
-      if (this.reference_number) {
-        payload.append("reference_number", this.reference_number);
-      }
-      if (this.customer.email) {
-        payload.append("email", this.customer.email);
+      if (this.BookingData.group_name) {
+        payload.append("image", this.guest.image);
+
+        payload.append("title", this.guest.title);
+        payload.append("contact_no", this.guest.contact_no);
+        payload.append("whatsapp", this.guest.whatsapp);
+        payload.append("nationality", this.guest.nationality);
+
+        if (this.guest.dob) {
+          payload.append("dob", this.guest.dob);
+        }
+        if (this.guest.first_name) {
+          payload.append("first_name", this.guest.first_name);
+        }
+        if (this.guest.last_name) {
+          payload.append("last_name", this.guest.last_name);
+        }
+        if (this.guest.address) {
+          payload.append("address", this.guest.address);
+        }
+        if (this.reference_number) {
+          payload.append("reference_number", this.reference_number);
+        }
+        if (this.guest.email) {
+          payload.append("email", this.guest.email);
+        }
+      } else {
+        payload.append("image", this.customer.image);
+
+        payload.append("title", this.customer.title);
+        payload.append("contact_no", this.customer.contact_no);
+        payload.append("whatsapp", this.customer.whatsapp);
+        payload.append("nationality", this.customer.nationality);
+
+        if (this.customer.dob) {
+          payload.append("dob", this.customer.dob);
+        }
+        if (this.customer.first_name) {
+          payload.append("first_name", this.customer.first_name);
+        }
+        if (this.customer.last_name) {
+          payload.append("last_name", this.customer.last_name);
+        }
+        if (this.customer.address) {
+          payload.append("address", this.customer.address);
+        }
+        if (this.reference_number) {
+          payload.append("reference_number", this.reference_number);
+        }
+        if (this.customer.email) {
+          payload.append("email", this.customer.email);
+        }
       }
 
       this.$axios
