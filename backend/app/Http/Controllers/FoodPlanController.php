@@ -58,9 +58,9 @@ class FoodPlanController extends Controller
      * @param  \App\Models\FoodPlan  $foodPlan
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FoodPlan $foodPlan)
+    public function destroy($id)
     {
-        $foodPlan->delete();
+        FoodPlan::find($id)->delete();
 
         return response()->noContent();
     }
