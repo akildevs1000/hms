@@ -794,7 +794,6 @@ class BookingController extends Controller
             }
             $checkedIn = $booking->save();
             if ($checkedIn) {
-                $customer->date = date("Y-m-d");
                 $customer->save();
                 $this->updateTransaction($booking, $request, 'check in payment', 'credit', $request->new_payment);
                 $this->updatePayment($booking, $request, $request->new_payment, 'checkin payment');
