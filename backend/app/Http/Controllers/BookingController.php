@@ -772,6 +772,8 @@ class BookingController extends Controller
             $booking->expired = $request->expired;
             $booking->id_card_type = IdCardType::find($request->id_card_type_id)->name ?? "";
             $booking->check_in = date('Y-m-d H:i');
+            $newBookingCheckIn = date('Y-m-d H:i');
+
 
             if ($request->hasFile('document')) {
                 $file = $request->file('document');
@@ -795,7 +797,7 @@ class BookingController extends Controller
                 $customer->save();
                 $this->updateTransaction($booking, $request, 'check in payment', 'credit', $request->new_payment);
                 $this->updatePayment($booking, $request, $request->new_payment, 'checkin payment');
-                BookedRoom::where("booking_id", $booking_id)->where("room_id", $request->room_id)->update(['check_in' => date('Y-m-d H:i', strtotime($booking->check_in)), 'booking_status' => 2]);
+                BookedRoom::where("booking_id", $booking_id)->where("room_id", $request->room_id)->update(['check_in' => $newBookingCheckIn, 'booking_status' => 2]);
                 // if (app()->isProduction()) {
                 //     $customer = Customer::find($booking->customer_id);
                 //     (new WhatsappNotificationController())->checkInNotification($booking, $customer);
