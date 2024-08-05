@@ -240,7 +240,7 @@
               <tr>
                 <th>Grand Total</th>
                 <td class="text-rights">
-                  <pre>{{ payload }}</pre>
+                  <!-- <pre>{{ payload }}</pre> -->
                   {{ convert_decimal(payload.booking_total_price) }}
                 </td>
               </tr>
