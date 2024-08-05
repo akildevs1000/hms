@@ -795,7 +795,7 @@ class BookingController extends Controller
                 $customer->save();
                 $this->updateTransaction($booking, $request, 'check in payment', 'credit', $request->new_payment);
                 $this->updatePayment($booking, $request, $request->new_payment, 'checkin payment');
-                BookedRoom::where("booking_id", $booking_id)->where("room_id", $request->room_id)->update(['check_in' => date('Y-m-d H:i', strtotime($booking->check_in)) , 'booking_status' => 2]);
+                BookedRoom::where("booking_id", $booking_id)->where("room_id", $request->room_id)->update(['check_in' => date('Y-m-d H:i', strtotime($booking->check_in)), 'booking_status' => 2]);
                 // if (app()->isProduction()) {
                 //     $customer = Customer::find($booking->customer_id);
                 //     (new WhatsappNotificationController())->checkInNotification($booking, $customer);
@@ -1127,6 +1127,18 @@ class BookingController extends Controller
         $bookedRoom->booking->room_type = $bookedRoom->room_type;
         $bookedRoom->booking->contact_no = $bookedRoom->customer->contact_no;
         return $bookedRoom->booking;
+        // return response()->json(['booking' => $bookedRoom->booking, 'status' => true]);
+    }
+
+    public function get_booked_room(Request $request)
+    {
+        $bookedRoom = BookedRoom::with(['booking', 'customer'])->where('company_id', $request->company_id)->findOrFail($request->id);
+        $bookedRoom->booking->room_id = $bookedRoom->room_id;
+        $bookedRoom->booking->room_no = $bookedRoom->room_no;
+        $bookedRoom->booking->room_type = $bookedRoom->room_type;
+        $bookedRoom->booking->contact_no = $bookedRoom->customer->contact_no;
+
+        return $bookedRoom;
         // return response()->json(['booking' => $bookedRoom->booking, 'status' => true]);
     }
 
@@ -1580,18 +1592,16 @@ class BookingController extends Controller
         $cgst = $room_tax / 2;
         $sgst = $room_tax / 2;
         $total_price = $request->total_price;
-        $room_discount = $request->room_discount;
+        $room_discount = $request->room_discount ?? 0;
 
         $food_plan_id = $request->food_plan_id;
-        $extra_bed_qty = $request->extra_bed_qty;
+        $food_plan_price = $request->food_plan_price ?? 0;
+
+        $extra_bed_qty = $request->extra_bed_qty ?? 0;
         $bed_amount = $request->bed_amount;
 
-        $early_check_in = $request->early_check_in;
-        $late_check_out = $request->late_check_out;
 
-
-        $total_days = $request->total_days;
-        $remaining_price = $request->remaining_price;
+        $total_days = $request->total_days ?? 0;
 
         $user_id = $request->user_id;
         $company_id = $request->company_id;
@@ -1600,62 +1610,70 @@ class BookingController extends Controller
         $booking_total_price = $request->booking_total_price;
 
 
-        // BookedRoom::where("id", $request->id)
-        //     ->update([
-        //         'room_id' => $room_id,
-        //         'room_no' => $room_no,
-        //         'room_type' => $room_type,
-        //         'price' => $room_price,
-        //         'cgst' => $cgst,
-        //         'sgst' => $sgst,
-        //         'room_tax' => $room_tax,
-        //         'check_in' => $check_in,
-        //         'check_out' => $check_out,
-        //         'days' => $request->total_days,
-        //         'room_discount' => $room_discount,
-        //         "after_discount" => $total_price - $room_discount,
-        //         'total' => $total_price - $room_discount,
-        //         'grand_total' => $total_price - $room_discount,
-        //         "food_plan_id" => $food_plan_id,
-        //         "extra_bed_qty" => $extra_bed_qty,
-        //         "early_check_in" => $early_check_in,
-        //         "late_check_out" => $late_check_out,
-        //         "bed_amount" => $bed_amount,
-        //     ]);
+        $early_check_in = $request->early_check_in;
+        $late_check_out = $request->late_check_out;
+        $remaining_price = $request->remaining_price;
 
-        // try {
 
-        //     $period = CarbonPeriod::create($check_in, $this->checkOutDate($checkOutDate->format('Y-m-d')));
-        //     foreach ($period as $date) {
+        BookedRoom::where("id", $request->id)
+            ->update([
+                'room_id' => $room_id,
+                'room_no' => $room_no,
+                'room_type' => $room_type,
+                'price' => $room_price - $room_tax,
+                'cgst' => $cgst,
+                'sgst' => $sgst,
+                'room_tax' => $room_tax,
+                'check_in' => $check_in,
+                'check_out' => $check_out,
+                'days' => $total_days,
+                'total' => $total_price - $room_discount,
+                'grand_total' => $total_price - $room_discount,
+                "food_plan_id" => $food_plan_id,
+                "food_plan_price" => $food_plan_price,
 
-        //         OrderRoom::where('id', $id)->update([
-        //             'date' => $date->format('Y-m-d'),
-        //             'room_id' => $room_id,
-        //             'room_no' => $room_no,
-        //             'room_type' => $room_type,
-        //             'price' => $room_price - $room_tax,
-        //             'cgst' => $cgst,
-        //             'sgst' => $sgst,
-        //             'room_tax' => $room_tax,
-        //             'check_in' => $check_in,
-        //             'check_out' => $check_out,
-        //             'days' => $request->total_days,
-        //             'room_discount' => $room_discount,
-        //             "total_with_tax" => $total_price - $room_discount,
-        //             "after_discount" => $total_price - $room_discount,
+                "extra_bed_qty" => $extra_bed_qty,
+                "bed_amount" => $bed_amount,
 
-        //             'total' => $total_price - $room_discount,
-        //             'grand_total' => $total_price - $room_discount,
+                // 'room_discount' => $room_discount,
+                // "total_with_tax" => $total_price - $room_discount,
+                // "after_discount" => $total_price - $room_discount,
+                // 'price_adjusted_after_dsicount' => $room_price - $room_discount, 
+                // "early_check_in" => $early_check_in,
+                // "late_check_out" => $late_check_out,
 
-        //             // 'price_adjusted_after_dsicount' => $room_price - $room_discount, 
 
-        //             "food_plan_id" => $food_plan_id,
-        //             "extra_bed_qty" => $extra_bed_qty,
-        //             "early_check_in" => $early_check_in,
-        //             "late_check_out" => $late_check_out,
-        //             "bed_amount" => $bed_amount,
-        //         ]);
-        //     }
+
+            ]);
+
+        OrderRoom::where('id', $id)->update([
+            'date' => date('Y-m-d'),
+            'room_id' => $room_id,
+            'room_no' => $room_no,
+            'room_type' => $room_type,
+            'price' => $room_price - $room_tax,
+            'cgst' => $cgst,
+            'sgst' => $sgst,
+            'room_tax' => $room_tax,
+            'check_in' => $check_in,
+            'check_out' => $check_out,
+            'days' => $total_days,
+            'total' => $total_price - $room_discount,
+            'grand_total' => $total_price - $room_discount,
+            "food_plan_id" => $food_plan_id,
+            "food_plan_price" => $food_plan_price,
+            "extra_bed_qty" => $extra_bed_qty,
+            "bed_amount" => $bed_amount,
+
+            // 'room_discount' => $room_discount,
+            // "total_with_tax" => $total_price - $room_discount,
+            // "after_discount" => $total_price - $room_discount,
+            // 'price_adjusted_after_dsicount' => $room_price - $room_discount, 
+            // "early_check_in" => $early_check_in,
+            // "late_check_out" => $late_check_out,
+        ]);
+
+
 
         Booking::where("id", $booking_id)
             ->where("company_id", $company_id)
@@ -1664,19 +1682,16 @@ class BookingController extends Controller
                 'check_out' => $check_out,
                 'total_days' => $total_days,
                 'user_id' => $user_id,
-                'discount' => $room_discount,
-
-                'after_discount' => $booking_total_price - $room_discount,
                 'sub_total' => $booking_total_price,
                 'total_price' => $booking_total_price,
                 'all_room_Total_amount' => $booking_total_price,
-                // 'inv_total_tax_collected' => $bookingPayload->total_tax,
-
                 'balance' => $booking_remaining_price,
                 'remaining_price' => $booking_remaining_price,
-
                 'grand_remaining_price' => $booking_remaining_price,
 
+                // 'discount' => $room_discount,    
+                // 'after_discount' => $booking_total_price - $room_discount,
+                // 'inv_total_tax_collected' => $bookingPayload->total_tax,
                 // "rooms": "302,307",
                 // "payment_status": 1,
                 // "payment_mode_id": 1,
@@ -1685,7 +1700,6 @@ class BookingController extends Controller
             ]);
 
 
-        // return Booking::where("id", $booking_id)->first("total_price");
 
         Transaction::where("booking_id", $booking_id)->update([
             "balance" => $booking_total_price,
@@ -1694,14 +1708,6 @@ class BookingController extends Controller
         ]);
 
         return $this->response('Booking has been modified.', null, true);
-
-        // return Transaction::where('booking_id', $booking_id)->first();
-
-        // } catch (\Throwable $th) {
-        //     return $th;
-        //     Logger::channel("custom")->error("BookingController: " . $th);
-        //     return ["done" => false, "data" => "DataBase Error booking"];
-        // }
     }
 
     private function changeDateByDragProcess($bookingModel, $request, $bookedRoomId)

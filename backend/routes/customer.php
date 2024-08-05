@@ -2,6 +2,7 @@
 
     use App\Http\Controllers\CustomerController;
     use App\Http\Controllers\InquiriesController;
+    use App\Http\Controllers\SubCustomerController;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Route;
 
@@ -33,3 +34,6 @@
     Route::post('inquiry', [InquiriesController::class, 'store']);
     Route::get('inquiry', [InquiriesController::class, 'index']);
     Route::post('inquiry/{id}', [InquiriesController::class, 'update']);
+
+
+    Route::resource('sub_customer', SubCustomerController::class);

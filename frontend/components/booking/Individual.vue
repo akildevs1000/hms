@@ -2411,7 +2411,7 @@ export default {
 
       let arrToMerge = priceList.map((e) => ({
         ...e,
-        price_with_meal: e.price + extras,
+        price_with_meal: e.price + food_plan_price,
         no_of_rooms: selectedRoomsForTableView.length,
         room_type,
         no_of_adult,
@@ -2422,7 +2422,7 @@ export default {
         late_check_out,
         bed_amount,
         total_price:
-          (e.price + extras + food_plan_price) * selectedRoomsForTableView.length,
+          (e.price + extras) * selectedRoomsForTableView.length,
       }));
 
       this.priceListTableView = this.mergeEntries(

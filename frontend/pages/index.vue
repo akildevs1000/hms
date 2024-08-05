@@ -1084,7 +1084,7 @@ export default {
       showMenu: false,
       showMenuForNewBooking: false,
 
-      bookingStatus: "",
+      bookingStatus: 0,
       eventStatus: "",
       x: 0,
       y: 0,
@@ -1142,6 +1142,7 @@ export default {
       items: [],
       transactions: [],
       checkData: {},
+      roomData:null,
       customerId: "",
       bookingId: "",
       document: null,
@@ -1435,15 +1436,16 @@ export default {
         },
       };
       this.rightClickRoomId = "---";
-      this.$axios.get(`get_booking`, payload).then(({ data }) => {
-        this.checkData = data;
-        this.bookingId = data.id;
+      this.$axios.get(`get_booked_room`, payload).then(({ data }) => {
+        this.checkData = data.booking;
+        this.roomData = data;
+        this.bookingId = data.booking.id;
 
-        this.rightClickRoomId = data.resourceId;
+          this.rightClickRoomId = data.booking.resourceId;
 
         this.full_payment = "";
         this.bookingStatus = data.booking_status;
-        this.customerId = data.customer_id;
+        this.customerId = data.booking.customer_id;
         if (this.isDbCLick) {
           this.get_event_by_db_click();
         }

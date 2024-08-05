@@ -172,7 +172,7 @@
                   ></v-autocomplete>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <th>Early Check In</th>
                 <td>
                   <v-checkbox
@@ -182,8 +182,8 @@
                     dense
                   ></v-checkbox>
                 </td>
-              </tr>
-              <tr>
+              </tr> -->
+              <!-- <tr>
                 <th>Late Check Out</th>
                 <td>
                   <v-checkbox
@@ -200,8 +200,7 @@
                     "
                   ></v-checkbox>
                 </td>
-              </tr>
-
+              </tr> -->
               <tr>
                 <th>Extra Bed</th>
                 <td>
@@ -212,24 +211,11 @@
                     type="number"
                     v-model="payload.extra_bed_qty"
                     :hide-details="true"
+                    @keyup="adjust_bed_charges"
                   ></v-text-field>
                 </td>
               </tr>
-
-              <tr>
-                <th>Extra Bed Charges</th>
-                <td>
-                  <v-text-field
-                    min="0"
-                    dense
-                    outlined
-                    type="number"
-                    v-model="payload.bed_amount"
-                    :hide-details="true"
-                  ></v-text-field>
-                </td>
-              </tr>
-              <tr>
+                <tr>
                 <th>Days</th>
                 <td class="text-right">{{ payload.total_days }}</td>
               </tr>
@@ -248,11 +234,11 @@
               <tr>
                 <th>Old Grand Total</th>
                 <td class="text-right">
-                  {{ convert_decimal(old_booking_total_price) }}
+                  {{ convert_decimal(old.booking_total_price) }}
                 </td>
               </tr>
               <tr>
-                <th>Grand Total {{old_meal_price}}</th>
+                <th>Grand Total</th>
                 <td class="text-rights">
                   <pre>{{ payload }}</pre>
                   {{ convert_decimal(payload.booking_total_price) }}
@@ -295,14 +281,16 @@ export default {
 
       early_check_in: 0,
       late_check_out: 0,
-      old_booking_total_price: 0,
       foodplans: [],
       checkin_menu: false,
       checkout_menu: false,
       rooms: [],
       filteredRooms: [],
-      room_price_old: 0,
-      old_meal_price:0,
+      old: {
+        food_plan_price: 0,
+        room_price: 0,
+        booking_total_price: 0,
+      },
       payload: {
         booking_remaining_price: 0,
         booking_total_price: 0,
@@ -338,16 +326,22 @@ export default {
       checkOutDialog: false,
       bookingResponse: null,
       roomPriceResponse: null,
+      additional_charges: {},
     };
   },
 
   async created() {
     this.preloader = false;
-    await this.get_room_types();
 
     await this.get_booking();
 
+    await this.get_additional_charges();
+
+    await this.get_room_types();
+
     await this.get_food_plans();
+
+    await this.adjust_bed_charges();
   },
 
   mounted() {},
@@ -374,7 +368,28 @@ export default {
   },
 
   methods: {
+    async get_additional_charges() {
+      let { data } = await this.$axios.get(`additional_charges`, {
+        params: {
+          company_id: this.$auth.user.company_id,
+        },
+      });
+
+      this.additional_charges = data;
+    },
     adjust_food_charges(id) {
+      let { unit_price } = this.foodplans.find((e) => e.id == id);
+
+      let { booking_total_price, food_plan_price } = this.old;
+
+      let deductedOldPrice = booking_total_price - food_plan_price;
+
+      this.payload.food_plan_price = unit_price;
+
+      this.payload.booking_total_price = deductedOldPrice + unit_price;
+    },
+
+    async adjust_bed_charges() {
       // this.temp.early_check_in = this.is_early_check_in
       //   ? this.additional_charges.early_check_in
       //   : 0;
@@ -382,12 +397,18 @@ export default {
       //   ? this.additional_charges.late_check_out
       //   : 0;
 
-      let { unit_price } = this.foodplans.find((e) => e.id == id);
+      let newPrice = this.payload.extra_bed_qty
+        ? this.payload.extra_bed_qty * this.additional_charges.extra_bed
+        : 0;
 
-      console.log("🚀 ~ adjust_food_charges ~ unit_price:", unit_price)
+      let { booking_total_price, bed_amount } = this.old;
 
-      this.payload.booking_total_price =
-        this.old_booking_total_price + unit_price;
+      let deductedOldPrice = booking_total_price - bed_amount;
+
+      this.payload.bed_amount = newPrice;
+
+      this.payload.booking_total_price = deductedOldPrice + newPrice;
+
     },
 
     async get_food_plans() {
@@ -456,6 +477,7 @@ export default {
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
+          console.log("🚀 ~ .then ~ data:", data);
           if (!data.status) {
             this.alert("Failure!", data.data, "error");
             return;
@@ -476,15 +498,24 @@ export default {
             booking_total_price: this.getGrandTotal(data.total_price),
             // booking_remaining_price: this.payload.booking_remaining_price,
           };
+          console.log(
+            "🚀 ~ .then ~ restOfPayload.total_price:",
+            restOfPayload.room_price
+          );
 
           this.payload = {
             ...this.payload,
             ...restOfPayload,
           };
+
+          console.log(
+            "🚀 ~ .then ~ payload.total_price:",
+            this.payload.room_price
+          );
         });
     },
     getGrandTotal(new_price) {
-      return this.old_booking_total_price - this.room_price_old + new_price;
+      return this.old.booking_total_price - this.old.room_price + new_price;
     },
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
@@ -503,19 +534,19 @@ export default {
       this.$axios.get(`get_booking_for_modify`, payload).then(({ data }) => {
         this.bookingResponse = data;
 
-        this.room_price_old = data.price;
+        this.old = {
+          room_price: data.price,
+          booking_total_price: data.booking.total_price,
+          food_plan_price: data.food_plan_price,
+          extra_bed_qty: data.extra_bed_qty,
+          bed_amount: data.bed_amount,
+        };
 
-        this.old_booking_total_price = data.booking.total_price;
+        // this.early_check_in = data.early_check_in;
+        // this.late_check_out = data.late_check_out;
 
-        let exceptMealPrice = data.price + data.early_check_in + data.late_check_out + data.bed_amount;
-
-        this.old_meal_price = this.old_booking_total_price  - exceptMealPrice;
-
-        this.early_check_in = data.early_check_in;
-        this.late_check_out = data.late_check_out;
-
-        this.is_early_check_in = this.early_check_in > 0 ? true : false;
-        this.is_late_check_out = this.late_check_out > 0 ? true : false;
+        // this.is_early_check_in = this.early_check_in > 0 ? true : false;
+        // this.is_late_check_out = this.late_check_out > 0 ? true : false;
 
         this.payload = {
           id: data.id,
@@ -596,7 +627,13 @@ export default {
         room_discount: this.payload.room_discount || 0,
         booking_remaining_price: this.payload.booking_remaining_price,
         booking_total_price: this.payload.booking_total_price,
+
+        food_plan_price: this.payload.food_plan_price,
       };
+
+      console.log(payload);
+
+      // return;
 
       this.loading = true;
       this.$axios
