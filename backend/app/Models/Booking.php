@@ -108,25 +108,25 @@ class Booking extends Model
         ]);
     }
 
-    public function SetCheckInAttribute($value)
-    {
+    // public function SetCheckInAttribute($value)
+    // {
 
 
-        // $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
-        if (session('isCheckInSes')) {
-            $cod = $this->attributes['check_in'] = date('Y-m-d H:i', strtotime($value));
-            BookedRoom::whereBookingId($this->attributes['id'])->update(['check_in' => $cod, 'booking_status' => 2]);
-        } else {
-            $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
-        }
+    //     // $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+    //     if (session('isCheckInSes')) {
+    //         $cod = $this->attributes['check_in'] = date('Y-m-d H:i', strtotime($value));
+    //         BookedRoom::whereBookingId($this->attributes['id'])->update(['check_in' => $cod, 'booking_status' => 2]);
+    //     } else {
+    //         $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+    //     }
 
-        if (isset($this->attributes['room_category_type'])) {
-            if ($this->attributes['room_category_type'] == 'Hall') {
+    //     if (isset($this->attributes['room_category_type'])) {
+    //         if ($this->attributes['room_category_type'] == 'Hall') {
 
-                $this->attributes['check_in'] = $value;
-            }
-        }
-    }
+    //             $this->attributes['check_in'] = $value;
+    //         }
+    //     }
+    // }
 
     public function SetReferenceNoAttribute($value)
     {
