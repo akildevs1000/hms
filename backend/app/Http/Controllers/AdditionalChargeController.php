@@ -11,7 +11,17 @@ class AdditionalChargeController extends Controller
     {
         $model = AdditionalCharge::query();
 
-        return $model->where("company_id", request("company_id", 0))->first();
+        $found = $model->where("company_id", request("company_id", 0))->first();
+
+        if (!$found) {
+            return [
+                'early_check_in' => 0,
+                'late_check_out' => 0,
+                'extra_bed' => 0,
+            ];
+        }
+
+        return $found;
     }
     public function store(Request $request)
     {
