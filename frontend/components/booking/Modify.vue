@@ -391,14 +391,14 @@ export default {
 
     async adjust_bed_charges() {
       // this.temp.early_check_in = this.is_early_check_in
-      //   ? this.additional_charges.early_check_in
+      //   ? this.additional_charges.early_check_in || 0
       //   : 0;
       // this.temp.late_check_out = this.is_late_check_out
-      //   ? this.additional_charges.late_check_out
+      //   ? this.additional_charges.late_check_out || 0
       //   : 0;
 
       let newPrice = this.payload.extra_bed_qty
-        ? this.payload.extra_bed_qty * this.additional_charges.extra_bed
+        ? this.payload.extra_bed_qty * (this.additional_charges.extra_bed || 0)
         : 0;
 
       let { booking_total_price, bed_amount } = this.old;

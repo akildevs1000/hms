@@ -687,7 +687,7 @@
                                           {{ item.day_type }}
                                         </td>
                                         <td>
-                                          {{ convert_decimal(item.room_price) }}
+                                          {{ (item.room_price) }}
                                         </td>
                                         <td>{{ item.no_of_adult }}</td>
                                         <td>{{ item.no_of_child }}</td>

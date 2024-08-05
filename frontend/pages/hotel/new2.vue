@@ -650,7 +650,7 @@
                                         {{ item.day_type }}
                                       </td>
                                       <td>
-                                        {{ convert_decimal(item.room_price) }}
+                                        {{ (item.room_price) }}
                                       </td>
                                       <td>{{ item.no_of_adult }}</td>
                                       <td>{{ item.no_of_child }}</td>
@@ -1839,14 +1839,14 @@ export default {
   methods: {
     set_additional_charges() {
       this.temp.early_check_in = this.is_early_check_in
-        ? this.additional_charges.early_check_in
+        ? this.additional_charges.early_check_in || 0
         : 0;
       this.temp.late_check_out = this.is_late_check_out
-        ? this.additional_charges.late_check_out
+        ? this.additional_charges.late_check_out || 0
         : 0;
 
       this.temp.bed_amount = this.temp.extra_bed_qty
-        ? this.temp.extra_bed_qty * this.additional_charges.extra_bed
+        ? this.temp.extra_bed_qty * (this.additional_charges.extra_bed || 0)
         : 0;
     },
     async get_additional_charges() {
