@@ -1355,7 +1355,7 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/calendar.css"></style>
-<!-- <style scoped>
+<style scoped>
 .columnheader {
   height: 40px !important;
 }
@@ -1396,4 +1396,4 @@ export default {
   height: 30px !important;
   overflow: hidden;
 }
-</style> -->
+</style>
