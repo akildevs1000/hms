@@ -358,6 +358,7 @@
                   <tr class="table-header-text">
                     <th>No</th>
                     <th>Date</th>
+                    <th>Days</th>
                     <th>Room</th>
                     <th>Description</th>
                     <th>Adults</th>
@@ -371,6 +372,7 @@
                   <tr style="font-size: 13px">
                     <td>{{ ++index || "---" }}</td>
                     <td>{{ item.date || "---" }}</td>
+                    <td>{{ item.days || "---" }}</td>
                     <td>{{ item.room_no || "---" }}</td>
                     <td>{{ item.room_type || "---" }}</td>
                     <td>{{ item.no_of_adult }}</td>
