@@ -1583,7 +1583,6 @@
                 outlined
                 v-model="temp.no_of_adult"
                 :hide-details="true"
-                @change="set_foodplan_charges"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
