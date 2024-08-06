@@ -2255,17 +2255,22 @@ export default {
         }
       });
 
+      let adult_food_charges = food_plan_price * no_of_adult;
+      let child_food_charges = (food_plan_price * no_of_child) / 2;
+      let total_food_charges = adult_food_charges + child_food_charges;
+
+
       let extras =
-        early_check_in + late_check_out + bed_amount + food_plan_price;
+        early_check_in + late_check_out + bed_amount + total_food_charges;
 
       let arrToMerge = priceList.map((e) => ({
         ...e,
-        price_with_meal: e.price + food_plan_price,
+        price_with_meal: e.price + total_food_charges,
         no_of_rooms: selectedRoomsForTableView.length,
         room_type,
         no_of_adult,
         no_of_child,
-        meal_name: `${meal_name} (${food_plan_price})`,
+        meal_name: `${meal_name} (${total_food_charges})`,
         extras,
         early_check_in,
         late_check_out,
