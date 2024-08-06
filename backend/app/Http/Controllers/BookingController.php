@@ -101,6 +101,14 @@ class BookingController extends Controller
             ->paginate($request->per_page ?? 50);
     }
 
+    public function getBookedRoomList()
+    {
+        return BookedRoom::where('booking_id', request('booking_id'))
+            ->where('booking_status', BookedRoom::BOOKED)
+            ->orderByDesc("room_no")
+            ->get();
+    }
+
     public function booking_validate(BookingRequest $request)
     {
         return $this->response('Booking validated.', null, true);
@@ -799,6 +807,82 @@ class BookingController extends Controller
                 $this->updateTransaction($booking, $request, 'check in payment', 'credit', $request->new_payment);
                 $this->updatePayment($booking, $request, $request->new_payment, 'checkin payment');
                 BookedRoom::where("booking_id", $booking_id)->where("room_id", $request->room_id)->update(['check_in' => $newBookingCheckIn, 'booking_status' => 2]);
+                // if (app()->isProduction()) {
+                //     $customer = Customer::find($booking->customer_id);
+                //     (new WhatsappNotificationController())->checkInNotification($booking, $customer);
+                // }
+                $customerData = $request->only(Customer::customerAttributes());
+                $customerData['id'] = $request->customer_id;
+                $this->customerUpdateById($customerData);
+
+                $fields = [
+                    "title"     => ucfirst($customer['title']) ?? 'Mr',
+                    "full_name" => ucfirst($customer['full_name']) ?? 'Guest',
+                    "check_in"  => date('d-M-y H:i', strtotime($booking->check_in)),
+                    "check_out" => date('d-M-y H:i', strtotime($booking->check_out)),
+                    "email" => $customer['email'],
+                    "whatsapp" => $customer->whatsapp,
+                    // "location" => $company->map, from company model
+
+                ];
+
+                $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+                $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+
+                return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
+            }
+
+            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+        } catch (\Exception $e) {
+
+            return response()->json(['data' => '', 'message' => $e->getMessage(), 'status' => false]);
+            // throw $th;
+        }
+    }
+
+    public function quick_check_in_room(Request $request)
+    {
+        try {
+
+            // session(['isCheckInSes' => true]);
+
+            $booking_id = $request->booking_id;
+            $booking = Booking::find($booking_id);
+            $customer = Customer::find($request->customer_id);
+            $booking->check_in_price = $request->new_payment;
+            $booking->booking_status = 2;
+            $booking->id_card_no = $request->id_card_no;
+            $booking->expired = $request->expired;
+            $booking->id_card_type = IdCardType::find($request->id_card_type_id)->name ?? "";
+            $booking->check_in = date('Y-m-d H:i');
+            $newBookingCheckIn = date('Y-m-d H:i');
+
+
+            if ($request->hasFile('document')) {
+                $file = $request->file('document');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $path = $file->storeAs('public/documents/booking', $fileName);
+                Storage::copy($path, 'public/documents/customer/' . $fileName);
+                $booking->document = $fileName;
+                $customer->document = $fileName;
+            }
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = time() . '.' . $ext;
+                $path = $file->storeAs('public/documents/customer/photo', $fileName);
+                $customer->image = $fileName;
+            }
+            
+            $checkedIn = $booking->save();
+            if ($checkedIn) {
+                $customer->dob = date("Y-m-d");
+                $customer->save();
+                $this->updateTransaction($booking, $request, 'check in payment', 'credit', $request->new_payment);
+                $this->updatePayment($booking, $request, $request->new_payment, 'checkin payment');
+                BookedRoom::where("booking_id", $booking_id)->whereIn("room_no", $request->room_nos)->update(['check_in' => $newBookingCheckIn, 'booking_status' => 2]);
                 // if (app()->isProduction()) {
                 //     $customer = Customer::find($booking->customer_id);
                 //     (new WhatsappNotificationController())->checkInNotification($booking, $customer);
@@ -1644,9 +1728,6 @@ class BookingController extends Controller
                 // 'price_adjusted_after_dsicount' => $room_price - $room_discount, 
                 // "early_check_in" => $early_check_in,
                 // "late_check_out" => $late_check_out,
-
-
-
             ]);
 
         OrderRoom::where('id', $id)->update([
@@ -1677,7 +1758,6 @@ class BookingController extends Controller
         ]);
 
 
-
         Booking::where("id", $booking_id)
             ->where("company_id", $company_id)
             ->update([
@@ -1701,7 +1781,6 @@ class BookingController extends Controller
                 // "": "18760",
                 // "total_extra": 0,
             ]);
-
 
 
         Transaction::where("booking_id", $booking_id)->update([

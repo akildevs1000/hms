@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="900">
+    <v-dialog v-model="dialog" width="700">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
@@ -26,7 +26,7 @@
               <v-col cols="12">
                 <v-autocomplete
                   clearable
-                  label="Select Vendor Category Id"
+                  label="Select Vendor Category"
                   dense
                   outlined
                   v-model="payload.vendor_category_id"

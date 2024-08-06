@@ -7,7 +7,6 @@
         </v-btn>
       </template>
       <v-card>
-       
         <v-container fluid>
           <v-row>
             <v-dialog v-model="documentDialog" max-width="30%">
@@ -1510,6 +1509,7 @@
                 ></v-date-picker>
               </v-menu>
             </v-col>
+
             <v-col cols="12">
               <v-menu
                 v-model="checkout_menu"
@@ -1671,6 +1671,7 @@ export default {
       foodplans: [],
       multipleRoomObjects: [],
       multipleRoomIds: [],
+      checkin_time_menu: false,
       checkin_menu: false,
       checkout_menu: false,
       room_type_id: 1,
@@ -2014,7 +2015,7 @@ export default {
         : 0;
 
       this.temp.bed_amount = this.temp.extra_bed_qty
-        ? this.temp.extra_bed_qty * (this.additional_charges.extra_bed)
+        ? this.temp.extra_bed_qty * this.additional_charges.extra_bed
         : 0;
     },
     async get_additional_charges() {
@@ -2467,9 +2468,7 @@ export default {
         early_check_in,
         late_check_out,
         bed_amount,
-        total_price:
-          (e.price + extras) *
-          selectedRoomsForTableView.length,
+        total_price: (e.price + extras) * selectedRoomsForTableView.length,
       }));
 
       this.priceListTableView = this.mergeEntries(

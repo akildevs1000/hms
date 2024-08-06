@@ -674,7 +674,10 @@
         <v-card class="py-2">
           <v-container fluid>
             <v-row>
-              <v-col cols="6"></v-col>
+              <v-col cols="4"></v-col>
+              <v-col cols="2">
+                <BookingQuickCheckIn @success="handleReload" />
+              </v-col>
               <v-col>
                 <v-text-field
                   clearable
@@ -1142,7 +1145,7 @@ export default {
       items: [],
       transactions: [],
       checkData: {},
-      roomData:null,
+      roomData: null,
       customerId: "",
       bookingId: "",
       document: null,
@@ -1226,6 +1229,9 @@ export default {
   },
 
   methods: {
+    handleReload() {
+      this.room_list();
+    },
     getRoomsByFilter() {},
     filteredRooms(rooms) {
       if (!this.searchQuery) return rooms; // Early return for empty search
@@ -1441,7 +1447,7 @@ export default {
         this.roomData = data;
         this.bookingId = data.booking.id;
 
-          this.rightClickRoomId = data.booking.resourceId;
+        this.rightClickRoomId = data.booking.resourceId;
 
         this.full_payment = "";
         this.bookingStatus = data.booking_status;

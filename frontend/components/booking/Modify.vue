@@ -215,7 +215,7 @@
                   ></v-text-field>
                 </td>
               </tr>
-                <tr>
+              <tr>
                 <th>Days</th>
                 <td class="text-right">{{ payload.total_days }}</td>
               </tr>
@@ -389,6 +389,12 @@ export default {
       this.payload.booking_total_price = deductedOldPrice + unit_price;
     },
 
+    get_food_charges(id) {
+      let { unit_price } = this.foodplans.find((e) => e.id == id);
+
+      return unit_price;
+    },
+
     async adjust_bed_charges() {
       // this.temp.early_check_in = this.is_early_check_in
       //   ? this.additional_charges.early_check_in || 0
@@ -408,7 +414,6 @@ export default {
       this.payload.bed_amount = newPrice;
 
       this.payload.booking_total_price = deductedOldPrice + newPrice;
-
     },
 
     async get_food_plans() {
@@ -477,46 +482,51 @@ export default {
       this.$axios
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
-          console.log("🚀 ~ .then ~ data:", data);
           if (!data.status) {
             this.alert("Failure!", data.data, "error");
             return;
           }
 
-          let restOfPayload = {
-            room_tax: data.room_tax,
-            room_price: data.total_price / data.data.length || 0,
-            room_no: found.room_no,
-            room_type_id: data.room.room_type_id,
-            room_id: data.room.id,
-            remaining_price: data.total_price - this.payload.advance_price,
-            total_price: data.total_price,
-            total_discount: data.total_discount,
-            total_days: data.data.length || 0,
-            total_tax: data.total_tax,
-            room_tax: data.total_tax / data.data.length || 0,
-            booking_total_price: this.getGrandTotal(data.total_price),
-            // booking_remaining_price: this.payload.booking_remaining_price,
-          };
-          console.log(
-            "🚀 ~ .then ~ restOfPayload.total_price:",
-            restOfPayload.room_price
-          );
+          let unit_price = this.get_food_charges(this.payload.food_plan_id);
+
+          let { booking_total_price, food_plan_price, room_price } = this.old;
+
+          let old_room_price_with_meal = food_plan_price + room_price;
+
+          let total_days = data.data.length || 0;
+
+          let room_tax = data.total_tax / total_days;
+
+          let food_plan_price_for_days = unit_price * total_days;
+
+          let new_room_price = data.total_price;
+
+          let new_room_price_single_day = data.total_price / total_days;
+
+          let room_price_with_meal = new_room_price + food_plan_price_for_days;
+
+          let after_old_deducted_room_price = booking_total_price - old_room_price_with_meal;
 
           this.payload = {
             ...this.payload,
-            ...restOfPayload,
-          };
+            room_no: found.room_no,
+            room_type_id: data.room.room_type_id,
+            room_id: data.room.id,
+            total_days: total_days,
+            room_price: new_room_price_single_day,
+            total_price: room_price_with_meal,
+            total_tax: data.total_tax,
+            room_tax: room_tax,
+            booking_total_price: after_old_deducted_room_price + room_price_with_meal,
 
-          console.log(
-            "🚀 ~ .then ~ payload.total_price:",
-            this.payload.room_price
-          );
+            booking_remaining_price:
+              this.payload.booking_remaining_price - this.payload.advance_price,
+              remaining_price: room_price_with_meal - this.payload.advance_price,
+              total_discount: data.total_discount,
+          };
         });
     },
-    getGrandTotal(new_price) {
-      return this.old.booking_total_price - this.old.room_price + new_price;
-    },
+
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
@@ -536,10 +546,10 @@ export default {
 
         this.old = {
           room_price: data.price,
-          booking_total_price: data.booking.total_price,
           food_plan_price: data.food_plan_price,
           extra_bed_qty: data.extra_bed_qty,
           bed_amount: data.bed_amount,
+          booking_total_price: data.booking.total_price,
         };
 
         // this.early_check_in = data.early_check_in;
