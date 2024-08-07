@@ -1396,15 +1396,14 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-                v-model="multipleRoomId"
+                v-model="temp.room_no"
                 hide-details
                 :items="availableRooms"
-                item-value="id"
+                item-value="room_no"
                 item-text="room_no"
                 label="Select Room"
                 dense
                 outlined
-                @change="getMultipleRoomObjects(multipleRoomId)"
               >
               </v-autocomplete>
             </v-col>
@@ -1502,8 +1501,6 @@ export default {
       is_late_check_out: false,
       dialog: false,
       foodplans: [],
-      multipleRoomObjects: [],
-      multipleRoomId: null,
       checkin_menu: false,
       checkout_menu: false,
       room_type_id: 1,
@@ -1792,6 +1789,8 @@ export default {
     };
   },
   async created() {
+    await this.get_food_plans();
+
     this.get_reservation();
     this.get_room_types();
     this.get_id_cards();
@@ -1802,10 +1801,13 @@ export default {
     this.get_Corporate();
 
     this.get_available_rooms({ id: this.room_type_id });
+
+    let { room_no, room_type: name } = this.temp;
+
+    this.selectRoom({ room_no, name });
+
     // this.getImage();
     this.preloader = false;
-
-    await this.get_food_plans();
 
     await this.get_additional_charges();
   },
@@ -1959,7 +1961,6 @@ export default {
     get_reservation() {
       this.reservation = this.$store.state.reservation;
       this.room_type_id = this.reservation.room_type_id;
-      this.multipleRoomId = this.reservation.room_id;
 
       this.temp.room_id = this.reservation.room_id;
       this.temp.room_no = this.reservation.room_no;
@@ -2149,12 +2150,8 @@ export default {
       this.temp.sgst = gst;
     },
 
-    getMultipleRoomObjects(idToFilter) {
-      this.multipleRoomObjects = this.availableRooms.filter(
-        (item) => item.id == idToFilter
-      );
-    },
     selectRoom(item) {
+      console.log("🚀 ~ selectRoom ~ item:", item);
       let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
 
       this.selectRoomLoading = true;
@@ -2177,7 +2174,6 @@ export default {
           let fPrice = foodplan.unit_price;
           let adult_food_plan_price = fPrice * this.temp.no_of_adult;
           let child_food_plan_price = (fPrice * this.temp.no_of_child) / 2;
-          this.selectRoomLoading = false;
           this.temp.room_type = item.name;
           this.temp.meal_name = foodplan.title;
           this.temp.food_plan_price =
@@ -2214,7 +2210,24 @@ export default {
         room_type,
         no_of_adult,
         no_of_child,
+        room_no,
+        room_id
       } = this.temp;
+
+      console.log("🚀 ~ add_room ~ price:", price);
+      console.log("🚀 ~ add_room ~ early_check_in:", early_check_in);
+      console.log("🚀 ~ add_room ~ late_check_out:", late_check_out);
+      console.log("🚀 ~ add_room ~ room_discount:", room_discount);
+      console.log("🚀 ~ add_room ~ room_discount:", room_discount);
+      console.log("🚀 ~ add_room ~ room_extra_amount:", room_extra_amount);
+      console.log("🚀 ~ add_room ~ meal_name:", meal_name);
+      console.log("🚀 ~ add_room ~ food_plan_price:", food_plan_price);
+      console.log("🚀 ~ add_room ~ bed_amount:", bed_amount);
+      console.log("🚀 ~ add_room ~ priceList:", priceList);
+      console.log("🚀 ~ add_room ~ room_type:", room_type);
+      console.log("🚀 ~ add_room ~ no_of_adult:", no_of_adult);
+      console.log("🚀 ~ add_room ~ no_of_child:", no_of_child);
+      console.log("🚀 ~ add_room ~ room_no:", room_no);
 
       let sub_total =
         price +
@@ -2229,33 +2242,29 @@ export default {
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
 
-      this.multipleRoomObjects.forEach((item) => {
-        let isSelect = this.selectedRooms.find(
-          (e) => e.room_no == item.room_no
-        );
+      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
 
-        if (!isSelect) {
-          let payload = {
-            ...this.temp,
-            meal: "------",
-            days: this.getDays(),
-            room_discount: room_discount == "" ? 0 : room_discount,
-            after_discount: after_discount,
-            total: after_discount,
-            grand_total: after_discount,
-            room_no: item.room_no,
-            room_id: item.id,
-          };
+      if (!isSelect) {
+        let payload = {
+          ...this.temp,
+          meal: "------",
+          days: this.getDays(),
+          room_discount: room_discount == "" ? 0 : room_discount,
+          after_discount: after_discount,
+          total: after_discount,
+          grand_total: after_discount,
+          room_no,
+          room_id,
+        };
 
-          selectedRoomsForTableView.push(payload);
-          this.selectedRooms.push(payload);
+        selectedRoomsForTableView.push(payload);
+        this.selectedRooms.push(payload);
 
-          this.runAllFunctions();
-          this.alert("Success!", "success selected room", "success");
-          this.isSelectRoom = false;
-          this.RoomDrawer = false;
-        }
-      });
+        this.runAllFunctions();
+        this.alert("Success!", "success selected room", "success");
+        this.isSelectRoom = false;
+        this.RoomDrawer = false;
+      }
 
       let adult_food_charges = food_plan_price * no_of_adult;
       let child_food_charges = (food_plan_price * no_of_child) / 2;
