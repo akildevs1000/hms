@@ -650,7 +650,7 @@
                                         {{ item.day_type }}
                                       </td>
                                       <td>
-                                        {{ (item.room_price) }}
+                                        {{ item.room_price }}
                                       </td>
                                       <td>{{ item.no_of_adult }}</td>
                                       <td>{{ item.no_of_child }}</td>
@@ -1800,6 +1800,8 @@ export default {
     this.get_agents();
     this.get_online();
     this.get_Corporate();
+
+    this.get_available_rooms({ id: this.room_type_id });
     // this.getImage();
     this.preloader = false;
 
@@ -2259,7 +2261,6 @@ export default {
       let child_food_charges = (food_plan_price * no_of_child) / 2;
       let total_food_charges = adult_food_charges + child_food_charges;
 
-
       let extras =
         early_check_in + late_check_out + bed_amount + total_food_charges;
 
@@ -2275,9 +2276,7 @@ export default {
         early_check_in,
         late_check_out,
         bed_amount,
-        total_price:
-          (e.price + extras) *
-          selectedRoomsForTableView.length,
+        total_price: (e.price + extras) * selectedRoomsForTableView.length,
       }));
 
       this.priceListTableView = this.mergeEntries(
