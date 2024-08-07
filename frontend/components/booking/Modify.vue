@@ -333,13 +333,14 @@ export default {
   async created() {
     this.preloader = false;
 
+    await this.get_food_plans();
+
     await this.get_booking();
 
     await this.get_additional_charges();
 
     await this.get_room_types();
 
-    await this.get_food_plans();
 
     await this.adjust_bed_charges();
   },
@@ -505,7 +506,8 @@ export default {
 
           let room_price_with_meal = new_room_price + food_plan_price_for_days;
 
-          let after_old_deducted_room_price = booking_total_price - old_room_price_with_meal;
+          let after_old_deducted_room_price =
+            booking_total_price - old_room_price_with_meal;
 
           this.payload = {
             ...this.payload,
@@ -517,12 +519,13 @@ export default {
             total_price: room_price_with_meal,
             total_tax: data.total_tax,
             room_tax: room_tax,
-            booking_total_price: after_old_deducted_room_price + room_price_with_meal,
+            booking_total_price:
+              after_old_deducted_room_price + room_price_with_meal,
 
             booking_remaining_price:
               this.payload.booking_remaining_price - this.payload.advance_price,
-              remaining_price: room_price_with_meal - this.payload.advance_price,
-              total_discount: data.total_discount,
+            remaining_price: room_price_with_meal - this.payload.advance_price,
+            total_discount: data.total_discount,
           };
         });
     },
@@ -592,6 +595,7 @@ export default {
           room_id: data.room_id,
           booking_remaining_price: data.booking.remaining_price,
           booking_total_price: data.booking.total_price,
+          food_plan_price: this.adjust_food_charges(data.food_plan_id),
         };
 
         this.get_rooms(data.room_id);
@@ -642,6 +646,8 @@ export default {
       };
 
       console.log(payload);
+
+      return;
 
       // return;
 

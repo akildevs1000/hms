@@ -1282,7 +1282,7 @@ export default {
 .text-box {
   border: 1px solid rgb(215, 211, 211);
   padding: 10px 0px 0px 10px;
-  margin: 10px 20px;
+  /* margin: 10px 20px; */
   position: relative;
   border-radius: 5px;
   width: 100%;
