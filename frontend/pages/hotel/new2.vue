@@ -1377,6 +1377,7 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
+                readonly
                 label="Room Type"
                 outlined
                 dense
@@ -1396,6 +1397,7 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
+                readonly
                 v-model="temp.room_no"
                 hide-details
                 :items="availableRooms"
@@ -2211,7 +2213,7 @@ export default {
         no_of_adult,
         no_of_child,
         room_no,
-        room_id
+        room_id,
       } = this.temp;
 
       console.log("🚀 ~ add_room ~ price:", price);
