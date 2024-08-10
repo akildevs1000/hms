@@ -2615,6 +2615,8 @@ export default {
 
         let extra_booking_hours_charges = extra_hours * extra_hours_charges;
 
+        extra_booking_hours_charges = extra_booking_hours_charges < 0 ? 0 : extra_booking_hours_charges
+
 
         let selectedRoomsForTableView = [];
 

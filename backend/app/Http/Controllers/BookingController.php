@@ -779,7 +779,7 @@ class BookingController extends Controller
             $booking->id_card_no = $request->id_card_no;
             $booking->expired = $request->expired;
             $booking->id_card_type = IdCardType::find($request->id_card_type_id)->name ?? "";
-            $booking->check_in = date('Y-m-d H:i');
+            // $booking->check_in = date('Y-m-d H:i');
             $newBookingCheckIn = date('Y-m-d H:i');
 
 
@@ -2512,6 +2512,10 @@ class BookingController extends Controller
                 $room['booking_id'] = $booking->id;
                 $room['customer_id'] = $booking->customer_id;
                 $room['booking_status'] = $booking->booking_status;
+
+                $room['check_in'] = $booking->check_in;
+                $room['check_out'] = $booking->check_out;
+
 
 
                 $priceList = $room['priceList'];

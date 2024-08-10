@@ -133,28 +133,28 @@ class Booking extends Model
         $this->attributes['reference_no'] = Str::lower($value);
     }
 
-    public function SetCheckOutAttribute($value)
-    {
-        if (session('isCheckoutSes')) {
-            $cod = $this->attributes['check_out'] = date('Y-m-d H:i', strtotime($value));
-            BookedRoom::whereBookingId($this->attributes['id'])->update(['check_out' => $cod, 'booking_status' => 3]);
-        } else {
-            $cod = $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
-        }
+    // public function SetCheckOutAttribute($value)
+    // {
+    //     // if (session('isCheckoutSes')) {
+    //     //     $cod = $this->attributes['check_out'] = date('Y-m-d H:i', strtotime($value));
+    //     //     BookedRoom::whereBookingId($this->attributes['id'])->update(['check_out' => $cod, 'booking_status' => 3]);
+    //     // } else {
+    //     //     $cod = $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
+    //     // }
 
-        if (isset($this->attributes['room_category_type'])) {
-            if ($this->attributes['room_category_type'] == 'Hall') {
+    //     // if (isset($this->attributes['room_category_type'])) {
+    //     //     if ($this->attributes['room_category_type'] == 'Hall') {
 
-                $this->attributes['check_out'] = $value;
-            }
-        }
-        // dd($cod);
+    //     //         $this->attributes['check_out'] = $value;
+    //     //     }
+    //     // }
+    //     // dd($cod);
 
-        // $date = Carbon::parse($value);
-        // $date->addDays(1);
-        // $d = $date->format('Y-m-d');
-        // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
-    }
+    //     // $date = Carbon::parse($value);
+    //     // $date->addDays(1);
+    //     // $d = $date->format('Y-m-d');
+    //     // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+    // }
 
     // public function GetBackgroundAttribute()
     // {

@@ -189,40 +189,42 @@ class BookedRoom extends Model
         };
     }
 
-    public function SetCheckInAttribute($value)
-    {
-        if (isset($this->attributes['room_category_type'])) {
-            if ($this->attributes['room_category_type'] == 'Hall') {
+    // public function SetCheckInAttribute($value)
+    // {
+    //     if (isset($this->attributes['room_category_type'])) {
+    //         if ($this->attributes['room_category_type'] == 'Hall') {
 
-                $this->attributes['check_in'] = $value;
-            }
-        } else {
-            $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
-        }
-        // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
+    //             $this->attributes['check_in'] = $value;
+    //         }
+    //     } else {
+    //         $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
+    //     }
+    //     // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
 
 
-    }
+    // }
 
-    public function SetCheckOutAttribute($value)
-    {
-        // dd($this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value)));
+    // public function SetCheckOutAttribute($value)
+    // {
+    //     // dd($this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value)));
 
-        if (isset($this->attributes['room_category_type'])) {
-            if ($this->attributes['room_category_type'] == 'Hall') {
+    //     if (isset($this->attributes['room_category_type'])) {
+    //         if ($this->attributes['room_category_type'] == 'Hall') {
 
-                $this->attributes['check_out'] = $value;
-            }
-        } else {
-            $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
-        }
+    //             $this->attributes['check_out'] = $value;
+    //         }
+    //     } else {
+           
+    //     }
 
-        // $date = Carbon::parse($value);
-        // $date->addDays(1);
-        // $d = $date->format('Y-m-d');
-        // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+    //     $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
 
-    }
+    //     // $date = Carbon::parse($value);
+    //     // $date->addDays(1);
+    //     // $d = $date->format('Y-m-d');
+    //     // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
+
+    // }
 
     public function GetCheckOutTimeAttribute()
     {

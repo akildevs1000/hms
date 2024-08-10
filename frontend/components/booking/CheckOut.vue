@@ -151,7 +151,7 @@
 </template>
 <script>
 export default {
-  props: ["BookingData"],
+  props: ["BookingData","roomData"],
   data() {
     return {
       isDiscount: false,

@@ -330,15 +330,15 @@
       <!-- check out  -->
       <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <v-toolbar class="rounded-md" color="primary" dense flat dark>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="closeCheckOut">
-              mdi mdi-close-box
+              mdi-close
             </v-icon>
           </v-toolbar>
           <v-card-text>
-            <check-out :BookingData="checkData" @close-dialog="closeDialogs" />
+            <check-out :BookingData="checkData" :roomData="roomData" @close-dialog="closeDialogs" />
           </v-card-text>
           <v-card-actions> </v-card-actions>
         </v-card>
@@ -1785,7 +1785,7 @@ export default {
     closeCheckInAndOpenGRC() {
       this.room_list();
       this.checkInDialog = false;
-      this.GRCDialog = true;
+      // this.GRCDialog = true;
     },
   },
 };
