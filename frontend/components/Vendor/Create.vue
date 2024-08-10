@@ -23,7 +23,7 @@
         <v-card-text class="py-5">
           <v-container>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="6">
                 <v-autocomplete
                   clearable
                   label="Select Vendor Category"
@@ -35,6 +35,15 @@
                   item-text="name"
                   :hide-details="true"
                 ></v-autocomplete>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="payload.company_name"
+                  label="Company Name"
+                ></v-text-field>
               </v-col>
               <v-col cols="4">
                 <v-autocomplete
@@ -65,15 +74,7 @@
                   label="Last Name"
                 ></v-text-field>
               </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  outlined
-                  dense
-                  hide-details
-                  v-model="payload.company_name"
-                  label="Company Name"
-                ></v-text-field>
-              </v-col>
+             
               <v-col cols="6">
                 <v-text-field
                   outlined
@@ -81,6 +82,15 @@
                   hide-details
                   v-model="payload.vendor_display_name"
                   label="Vendor Display Name"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="payload.tax_number"
+                  label="Tax Number"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
@@ -110,23 +120,16 @@
                   label="Mobile"
                 ></v-text-field>
               </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  outlined
-                  dense
-                  hide-details
-                  v-model="payload.tax_number"
-                  label="Tax Number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
+              
+              <v-col cols="12">
+                <FullAddress @location="handleFullAddress" />
+                <!-- <v-text-field
                   outlined
                   dense
                   hide-details
                   v-model="payload.address"
                   label="Address"
-                ></v-text-field>
+                ></v-text-field> -->
               </v-col>
 
               <v-col cols="12" v-if="errorResponse">
@@ -189,6 +192,12 @@ export default {
     this.getVendorCategory();
   },
   methods: {
+    handleFullAddress(e) {
+      this.payload = {
+        ...this.payload,
+        ...e,
+      };
+    },
     close() {
       this.dialog = false;
       this.loading = false;

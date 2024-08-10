@@ -34,8 +34,13 @@ class ValidationRequest extends FormRequest
             'work_phone' => 'required|string|max:255',
             'mobile' => 'required|string|max:255',
             'tax_number' => 'nullable|string|max:255',
-            'address' => 'required|string|max:255',
-            'vendor_category_id' => 'required|exists:vendor_categories,id'
+            'address' => 'nullable|string|max:255',
+            'vendor_category_id' => 'required|exists:vendor_categories,id',
+
+            'country' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'zip_code' => 'required|string|max:255',
         ];
     }
 }
