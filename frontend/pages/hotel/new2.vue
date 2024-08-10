@@ -229,25 +229,19 @@
                             </v-btn>
                           </v-col>
                           <v-col md="5" dense>
-                            <v-text-field
-                              label="Group Name"
-                              v-model="room.group_name"
-                              dense
-                              outlined
-                              :hide-details="true"
-                            ></v-text-field>
+                          
                           </v-col>
                           <v-col md="5" dense>
-                            <v-select
-                              label="Type"
-                              v-model="customer.customer_type"
-                              :items="['Company', 'Regular', 'Corporate']"
-                              dense
-                              item-text="name"
-                              item-value="id"
-                              outlined
-                              :hide-details="true"
-                            ></v-select>
+                            <v-autocomplete
+                                label="Business Source"
+                                v-model="customer.customer_type"
+                                :items="business_sources"
+                                dense
+                                item-text="name"
+                                item-value="name"
+                                outlined
+                                :hide-details="true"
+                              ></v-autocomplete>
                           </v-col>
                           <v-col md="3" cols="12" sm="12">
                             <v-select
@@ -454,8 +448,9 @@
                         ></v-text-field>
                       </v-col>
                     </v-row>
+                    <FullAddress @location="handleFullAddress" />
                     <v-row>
-                      <v-col md="6" cols="12" sm="12">
+                      <!-- <v-col md="6" cols="12" sm="12">
                         <v-textarea
                           rows="3"
                           label="Address"
@@ -463,7 +458,7 @@
                           outlined
                           :hide-details="true"
                         ></v-textarea>
-                      </v-col>
+                      </v-col> -->
                       <v-col md="6">
                         <v-textarea
                           rows="3"
@@ -478,7 +473,7 @@
                       <v-col md="3" sm="12" cols="12" dense>
                         <v-select
                           v-model="room.type"
-                          label="Source Type *"
+                          label="Invoice To *"
                           :items="types"
                           dense
                           outlined
@@ -628,6 +623,7 @@
                                       <th><small>Late Checkout</small></th>
                                       <th><small>Extra Bed</small></th>
                                       <th><small>Total</small></th>
+                                      <th></th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -674,6 +670,13 @@
                                       </td>
                                       <td>
                                         {{ convert_decimal(item.total_price) }}
+                                      </td>
+                                      <td class="text-center">
+                                        <v-icon
+                                          color="red"
+                                          @click="deleteItem(index)"
+                                          >mdi-close</v-icon
+                                        >
                                       </td>
                                     </tr>
                                   </tbody>
@@ -1439,6 +1442,9 @@
                 item-text="title"
                 v-model="temp.food_plan_id"
                 :items="foodplans"
+                @change="
+                  selectRoom({ name: temp.room_type, room_no: temp.room_no })
+                "
               ></v-autocomplete>
             </v-col>
             <v-col cols="6">
@@ -1663,7 +1669,7 @@ export default {
       search_available_room: "",
       room: {
         customer_type: "",
-        group_name: "",
+        group_name: null,
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
@@ -1720,6 +1726,7 @@ export default {
       ],
 
       customer: {
+        customer_type:"Walking",
         title: "Mr",
         whatsapp: "",
         nationality: "India",
@@ -1788,6 +1795,7 @@ export default {
         fileExtension: null,
         file: null,
       },
+      business_sources: [],
     };
   },
   async created() {
@@ -1812,6 +1820,8 @@ export default {
     this.preloader = false;
 
     await this.get_additional_charges();
+
+    await this.get_business_sources();
   },
   computed: {
     formattedCheckinDate() {
@@ -1843,6 +1853,25 @@ export default {
     },
   },
   methods: {
+    async get_business_sources() {
+      let config = {
+        params: {
+          company_id: this.$auth.user.company_id,
+        },
+      };
+      let { data } = await this.$axios.get("business-source-list", config);
+      this.business_sources = data;
+    },
+    handleFullAddress(e) {
+      this.customer = {
+        ...this.customer,
+        ...e,
+      };
+    },
+    deleteItem(index) {
+      this.priceListTableView.splice(index, 1);
+      this.selectedRooms.splice(index, 1);
+    },
     set_additional_charges() {
       this.temp.early_check_in = this.is_early_check_in
         ? this.additional_charges.early_check_in || 0

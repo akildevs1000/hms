@@ -1526,13 +1526,13 @@ export default {
             this.errors = data.errors;
             this.loading = false;
           } else {
-            this.closeDialog(data);
+            this.$emit("close-dialog", data);
             this.alert("Success!", "success check in", "success");
             // this.redirect_to_invoice(bookingId);
             this.loading = false;
-            if ($nuxt.$route.name == "hotel-calendar1") {
-              this.$router.push(`/`);
-            }
+            // if ($nuxt.$route.name == "hotel-calendar1") {
+            //   this.$router.push(`/`);
+            // }
           }
         })
         .catch((e) => {
@@ -1556,6 +1556,12 @@ export default {
     },
 
     storeSubCustomer() {
+
+      if(!this.BookingData.group_name){
+        this.store_check_in(this.BookingData);
+        return;
+      }
+
       let payload = new FormData();
 
       const fields = this.getSubCustomerFields();
@@ -1600,10 +1606,6 @@ export default {
       element.setAttribute("href", `${process.env.BACKEND_URL}grc/${id}`);
       document.body.appendChild(element);
       element.click();
-    },
-
-    closeDialog(data) {
-      this.$emit("close-dialog", data);
     },
 
     get_customer() {

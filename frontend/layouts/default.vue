@@ -447,13 +447,6 @@ export default {
         },
         {
           topMenu: "account",
-          icon: "mdi-account",
-          title: "Vendor Category",
-          to: "/vendor-categories",
-          menu: "accounts_posting_access",
-        },
-        {
-          topMenu: "account",
           icon: "mdi-account-cash",
           title: `Ledger`,
           open_menu: false,
@@ -641,9 +634,23 @@ export default {
         },
         {
           topMenu: "setting",
+          icon: "mdi-sofa", // give appropriate icon here
+          title: "Hall",
+          to: "/hall",
+          menu: "settings_rooms_category_access",
+        },
+        {
+          topMenu: "setting",
           icon: "mdi-tools",
           title: "Price Setup",
           to: "/manage",
+          menu: "settings_room_price_access",
+        },
+        {
+          topMenu: "setting",
+          icon: "mdi-cog",
+          title: "Setup",
+          to: "/setup",
           menu: "settings_room_price_access",
         },
         {
@@ -930,5 +937,16 @@ export default {
   font-family: "Source Sans Pro", sans-serif !important;
   margin: 0;
   padding: 0;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 </style>

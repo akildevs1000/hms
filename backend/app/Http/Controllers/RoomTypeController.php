@@ -24,12 +24,12 @@ class RoomTypeController extends Controller
      */
     public function index(Request $request)
     {
-        return RoomType::whereCompanyId($request->company_id)->get();
+        return RoomType::whereCompanyId($request->company_id)->where("type", request("type", "room"))->get();
     }
 
     public function getRoomType(Request $request)
     {
-        $model = RoomType::whereCompanyId($request->company_id);
+        $model = RoomType::whereCompanyId($request->company_id)->where("type", request("type", "room"));
 
         if ($request->filled('search') && $request->search) {
             $model->where('name', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
@@ -96,7 +96,7 @@ class RoomTypeController extends Controller
 
     public function getPriceList(Request $request)
     {
-        return RoomType::where('company_id', $request->company_id)->get();
+        return RoomType::where('company_id', $request->company_id)->where("type", request("type", "room"))->get();
     }
 
     public function getDataBySelect(Request $request)
@@ -227,6 +227,112 @@ class RoomTypeController extends Controller
             ->where('company_id', $request->company_id)
             ->first();
     }
+
+    public function get_hall_pricing_list(Request $request)
+    {
+
+        $diff_in_seconds = strtotime($request->checkin) - strtotime(date('Y-m-d'));
+        if ($diff_in_seconds < 0) {
+            return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        }
+
+        // return app()->isProduction();
+        $company_id = $request->company_id;
+        $discount = $request->discount ?? 0;
+        $eachRoomDiscount = $discount;
+        $room = Room::where('room_no', $request->room_no)->where('company_id', $request->company_id)->first();
+
+        $foodplan = 0;
+
+        if ($request->BookedRoomId) {
+            $BookedRoom = BookedRoom::where("room_id", $request->BookedRoomId)->with("foodplan")->first();
+            if ($BookedRoom) {
+                $foodplan = $BookedRoom->foodplan->unit_price;
+            }
+        }
+
+        $prices = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
+            ->first([
+                'holiday_price', 
+                'weekend_price', 
+                'weekday_price',
+                'hall_min_hours',
+                'cleaning_charges',
+
+                'electricity_charges',
+                'audio_charges',
+                'projector_charges',
+                'generator_charges',
+                'extra_hours_charges',
+
+            ]);
+
+        $weekModel = Weekend::where('company_id', $request->company_id)->first();
+        $weekends = $weekModel->day;
+
+        $arr = [];
+        $period = CarbonPeriod::create($request->checkin, $request->checkout);
+
+        $eachRoomDiscount = $discount > 0 ? $discount / count($period) : 0;
+
+        foreach ($period as $date) {
+            $iteration_date = $date->format('Y-m-d');
+            $day = $date->format('D');
+            $isWeekend = in_array($day, $weekends);
+            $isHoliday = $this->checkHoliday($iteration_date, $company_id);
+            if ($isHoliday) {
+                $arr[] = [
+                    "date" => $iteration_date,
+                    "price" => $this->getRoomTax(($prices->holiday_price + $foodplan) - $eachRoomDiscount, $request->company_id)['total_with_tax'],
+                    "day_type" => "holiday",
+                    "day" => $day,
+                    "tax" => $this->getRoomTax($prices->holiday_price - $eachRoomDiscount, $request->company_id)['room_tax'],
+                    "room_price" => $prices->holiday_price,
+                    "discount" => $eachRoomDiscount,
+                ];
+            } elseif ($isWeekend) {
+                $arr[] = [
+                    "date" => $iteration_date,
+                    "price" => $this->getRoomTax(($prices->weekend_price + $foodplan) - $eachRoomDiscount, $request->company_id)['total_with_tax'],
+                    "tax" => $this->getRoomTax($prices->weekend_price - $eachRoomDiscount, $request->company_id)['room_tax'],
+                    "day_type" => "weekend",
+                    "day" => $day,
+                    "room_price" => $prices->weekend_price,
+                    "discount" => $eachRoomDiscount,
+                ];
+            } else {
+                $arr[] = [
+                    "date" => $iteration_date,
+                    "price" => $this->getRoomTax(($prices->weekday_price + $foodplan) - $eachRoomDiscount, $request->company_id)['total_with_tax'],
+                    "day_type" => "weekday",
+                    "day" => $day,
+                    "tax" => $this->getRoomTax($prices->weekday_price - $eachRoomDiscount, $request->company_id)['room_tax'],
+                    "room_price" => $prices->weekday_price,
+                    "discount" => $eachRoomDiscount,
+                ];
+            }
+        }
+
+        return [
+            'room_type_data' => $prices ?? false,
+            'room' => $room,
+            'data' => $arr,
+            'total_price' => array_sum(array_column($arr, "price")),
+            'total_tax' => array_sum(array_column($arr, "tax")),
+
+            'total_price_after_discount' => array_sum(array_column($arr, "price")),
+            'total_discount' => array_sum(array_column($arr, "discount")),
+            'status' => true,
+
+        ];
+
+        return Room::where('room_no', $request->room_no)
+            ->where('status', 0)
+            ->where('company_id', $request->company_id)
+            ->first();
+    }
+
+    
     public function getTaxSlab($amount, $company_id)
     {
 
@@ -280,32 +386,9 @@ class RoomTypeController extends Controller
 
     public function updatePrice(Request $request, $id)
     {
-
-
         //$wordpress_push_prices_url = Company::where("id", $request->company_id)->pluck('wordpress_push_prices_url')->first();
-
         try {
-            $model = RoomType::find($id);
-            $model->update($request->all());
-
-
-            // if ($wordpress_push_prices_url != '')
-            // {
-
-            //     try {
-            //         $curl = curl_init($wordpress_push_prices_url);
-
-            //         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-            //         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            //         $api_response = curl_exec($curl);
-            //         curl_close($curl);
-
-            //         return  $api_response;
-            //     } catch (\Throwable $th) {
-            //         //throw $th;
-            //     }
-
-            // }
+            RoomType::where("id",$id)->update($request->all());
 
             return $this->response('Successfully update', null, true);
         } catch (\Throwable $th) {
@@ -449,5 +532,12 @@ class RoomTypeController extends Controller
             ->where('status', 0)
             ->where('company_id', $request->company_id)
             ->first();
+    }
+
+    public function destroy(RoomType $RoomType)
+    {
+        $RoomType->delete();
+
+        return response()->noContent();
     }
 }

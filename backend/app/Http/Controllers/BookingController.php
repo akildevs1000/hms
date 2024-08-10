@@ -875,7 +875,7 @@ class BookingController extends Controller
                 $path = $file->storeAs('public/documents/customer/photo', $fileName);
                 $customer->image = $fileName;
             }
-            
+
             $checkedIn = $booking->save();
             if ($checkedIn) {
                 $customer->dob = date("Y-m-d");
@@ -2432,5 +2432,171 @@ class BookingController extends Controller
         //     Logger::channel("custom")->error("BookingController: " . $th);
         //     return ["done" => false, "data" => "DataBase Error booking"];
         // }
+    }
+
+
+
+
+
+    public function hallBooking(Request $request)
+    {
+
+        $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
+        if ($diff_in_seconds < 0) {
+            return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        }
+
+        $booking = null;
+
+        //verify is booking  availalbe with date and room number
+
+        $bookedRoomsCount = BookedRoom::whereDate('check_in', '<=', $request->check_in)
+            ->WhereDate('check_out', '>=', $request->check_out)
+            ->whereHas('booking', function ($q) use ($request) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('company_id', $request->company_id);
+                $q->where('room_id', $request->selectedRooms[0]['room_id']);
+            })->count();
+
+
+
+        if ($bookedRoomsCount > 0) {
+            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error 
+        }
+
+
+        DB::beginTransaction();
+        try {
+            $customer_id = $this->customerStore($request->only(Customer::customerAttributes()));
+            $request['customer_id'] = $customer_id;
+            //$booking = $this->storeBooking($request);
+
+            $bookingArray = $this->storeGroupBooking($request);
+            $booking_reservation_number =  $bookingArray[1];
+            $booking  =  $bookingArray[0];
+
+
+
+            if ($booking) {
+                $this->storeBookedRoomsForHall($request, $booking);
+                //recalculating Tax based on discount 
+                (new ManagementController())->generateOccupancyRateByBooking($request);
+                (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
+
+                if ($request->filled("payment_reference_id")) {
+                    $data = [];
+                    $data['payment_reference_id'] = $request->payment_reference_id;
+                    $data['payment_response'] =  json_encode($request->payment_response);
+
+                    Booking::whereId($booking->id)->update($data);
+                }
+            }
+            DB::commit();
+            return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
+
+            // all good
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error 
+        }
+    }
+
+
+    public function storeBookedRoomsForHall($request, $booking)
+    {
+        try {
+            $rooms = $request->only('selectedRooms');
+
+            foreach ($rooms['selectedRooms'] as $room) {
+
+                $room['booking_id'] = $booking->id;
+                $room['customer_id'] = $booking->customer_id;
+                $room['booking_status'] = $booking->booking_status;
+
+
+                $priceList = $room['priceList'];
+
+                unset($room['priceList']);
+                unset($room['meal_name']);
+
+                unset($room['extra_hours_charges']);
+
+
+                unset($room['check_in_time']);
+                unset($room['check_out_time']);
+
+                $bookedRoomId = BookedRoom::create($room);
+
+                $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
+                $singleDayDiscount = ($room['room_discount'] / count($priceList));
+                $singleDayExtraAmount = ($room['room_extra_amount'] / count($priceList));
+                // $singleDayPrice = ($room['price'] / count($priceList));
+
+                foreach ($priceList as $list) {
+                    $singleDayPrice = $list['room_price'];
+                    // Recalculation start
+                    $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
+
+                    $price_adjusted_after_dsicount = $taxArray['basePrice'];
+                    $list['tax'] = $taxArray['gstAmount'];
+                    // Recalculation end
+
+                    $orderRooms['price_adjusted_after_dsicount'] = $price_adjusted_after_dsicount;
+                    $orderRooms['date'] = $list['date'];
+
+                    $orderRooms['room_discount'] = $singleDayDiscount;
+                    $orderRooms['after_discount'] = $list['price'] - $orderRooms['room_discount'] + $singleDayExtraAmount;
+
+                    $orderRooms['price'] = $singleDayPrice;
+
+                    $orderRooms['total_with_tax'] = $orderRooms['after_discount'];
+
+                    $orderRooms['total'] = $orderRooms['total_with_tax'];
+                    $orderRooms['grand_total'] = $orderRooms['total_with_tax'];
+
+                    $orderRooms['days'] = 1;
+                    $orderRooms['room_tax'] = $list['tax'];
+                    $orderRooms['sgst'] = $list['tax'] / 2;
+                    $orderRooms['cgst'] = $list['tax'] / 2;
+                    $orderRooms['booked_room_id'] = $bookedRoomId->id;
+                    $orderRooms['customer_id'] = $bookedRoomId->customer_id;
+                    $orderRooms['meal'] = $bookedRoomId->meal;
+                    $orderRooms['no_of_adult'] = $bookedRoomId->no_of_adult;
+                    $orderRooms['no_of_child'] = $bookedRoomId->no_of_child;
+                    $orderRooms['no_of_baby'] = $bookedRoomId->no_of_baby;
+                    $orderRooms['food_plan_id'] = $bookedRoomId->food_plan_id;
+                    $orderRooms['food_plan_price'] = $bookedRoomId->food_plan_price;
+                    $orderRooms['early_check_in'] = $bookedRoomId->early_check_in;
+                    $orderRooms['late_check_out'] = $bookedRoomId->late_check_out;
+
+                    $orderRooms['cleaning'] = $bookedRoomId->cleaning;
+                    $orderRooms['electricity'] = $bookedRoomId->electricity;
+                    $orderRooms['generator'] = $bookedRoomId->generator;
+                    $orderRooms['audio'] = $bookedRoomId->audio;
+                    $orderRooms['projector'] = $bookedRoomId->projector;
+
+
+                    $orderRooms['hall_min_hours'] = $bookedRoomId->hall_min_hours;
+                    $orderRooms['extra_hours'] = $bookedRoomId->extra_hours;
+                    $orderRooms['total_booking_hours'] = $bookedRoomId->total_booking_hours;
+                    $orderRooms['extra_booking_hours_charges'] = $bookedRoomId->extra_booking_hours_charges;
+
+                    $orderRooms['extra_bed_qty '] = 0;
+
+
+                    OrderRoom::create($orderRooms);
+                }
+            }
+
+            if (app()->isProduction()) {
+                $customer = Customer::find($booking->customer_id);
+                (new WhatsappNotificationController())->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
+            }
+
+            return $rooms;
+            return $this->response('Room Booked Successfully.', $rooms, true);
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 }

@@ -7,22 +7,6 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <!-- <v-row class="mt-5 mb-0">
-      <v-col cols="6">
-        <h3>{{ Model }}</h3>
-      </v-col>
-      <v-col cols="6" class="text--right">
-        <v-btn
-          dense
-          small
-          class="primary"
-          style="float: right"
-          @click="updatePriceToWordpress()"
-          >Upload Prices To Wordpress Site</v-btn
-        >
-      </v-col>
-    </v-row> -->
-
     <v-row>
       <v-dialog v-model="holidayDialog" max-width="40%">
         <v-card>
@@ -341,45 +325,10 @@
 
           <v-tabs-items v-model="tab">
             <v-tab-item>
-              <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
-                <v-data-table
-                  :headers="headers"
-                  :items="priceList"
-                  :loading="loading"
-                  hide-default-footer
-                >
-                  <template v-slot:item.index="{ index }">
-                    {{ index + 1 }}
-                  </template>
-
-                  <template v-slot:item.name="{ item }">
-                    <span style="text-transform: uppercase">{{
-                      item.name
-                    }}</span>
-                  </template>
-
-                  <template v-slot:item.action="{ item }">
-                    <v-menu bottom left v-if="can('settings_room_price_edit')">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                          <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list width="120" dense>
-                        <v-list-item
-                          v-if="can('settings_room_price_edit')"
-                          @click="priceEditItem(item)"
-                        >
-                          <v-list-item-title style="cursor: pointer">
-                            <v-icon color="secondary" small>mdi-pencil</v-icon>
-                            Edit
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </template>
-                </v-data-table>
-              </v-card>
+              <PriceListRoom />
+            </v-tab-item>
+            <v-tab-item>
+              <PriceListHall />
             </v-tab-item>
             <v-tab-item>
               <v-card class="mb-5 rounded-md mt-3 px-2" elevation="0">
@@ -600,7 +549,14 @@ export default {
     },
     tab: null,
     // items: ["Weekdays", "Weekend", "Holidays", "Prices"],
-    items: ["Prices", "Weekend", "Holidays", "Additional Charges", "Food Plan"],
+    items: [
+      "Prices",
+      "Hall Prices",
+      "Weekend",
+      "Holidays",
+      "Additional Charges",
+      "Food Plan",
+    ],
     Model: "Holidays Price",
     selectedWeekDays: [],
     dates: [],

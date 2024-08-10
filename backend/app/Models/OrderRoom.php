@@ -63,6 +63,18 @@ class OrderRoom extends Model
         "early_check_in",
         "late_check_out",
         "food_plan_price",
+
+
+        "cleaning",
+        "electricity",
+        "generator",
+        "audio",
+        "projector",
+
+        "hall_min_hours",
+        "extra_hours",
+        "total_booking_hours",
+        "extra_booking_hours_charges",
     ];
 
     /**
@@ -122,6 +134,6 @@ class OrderRoom extends Model
 
     public function foodplan()
     {
-        return $this->belongsTo(FoodPlan::class,"food_plan_id");
+        return $this->belongsTo(FoodPlan::class, "food_plan_id");
     }
 }

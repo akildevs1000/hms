@@ -19,7 +19,7 @@ include 'email_notifications.php';
 include 'api_widget.php';
 include 'tax_slabs.php';
 include 'expenses_categories.php';
-include 'party_hall.php';
+// include 'party_hall.php';
 include 'devices.php';
 include 'qrcode.php';
 include 'hotel.php';
@@ -35,4 +35,4 @@ include 'report.php';
 
 include 'vendor.php';
 
-
+include 'business_source.php';

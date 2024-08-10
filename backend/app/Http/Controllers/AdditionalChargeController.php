@@ -18,6 +18,12 @@ class AdditionalChargeController extends Controller
                 'early_check_in' => 0,
                 'late_check_out' => 0,
                 'extra_bed' => 0,
+
+                'extra_hour' => 0,
+                'cleaning' => 0,
+                'electricity' => 0,
+                'generator' => 0,
+                'audio' => 0,
             ];
         }
 
@@ -29,6 +35,14 @@ class AdditionalChargeController extends Controller
             'early_check_in' => 'required|integer|min:0',
             'late_check_out' => 'required|integer|min:0',
             'extra_bed' => 'required|integer|min:0',
+
+
+            'extra_hour' => 'required|integer|min:0',
+            'cleaning' => 'required|integer|min:0',
+            'electricity' => 'required|integer|min:0',
+            'generator' => 'required|integer|min:0',
+            'audio' => 'required|integer|min:0',
+
             'company_id' => 'required|integer|min:0',
         ];
 
@@ -44,6 +58,27 @@ class AdditionalChargeController extends Controller
             'extra_bed.required' => 'The extra bed charge is required.',
             'extra_bed.integer' => 'The extra bed charge must be an integer.',
             'extra_bed.min' => 'The extra bed charge must be at least 0.',
+
+
+            'extra_hour.required' => 'The extra hour charge is required.',
+            'extra_hour.integer' => 'The extra hour charge must be an integer.',
+            'extra_hour.min' => 'The extra hour charge must be at least 0.',
+
+            'cleaning.required' => 'The cleaning charge is required.',
+            'cleaning.integer' => 'The cleaning charge must be an integer.',
+            'cleaning.min' => 'The cleaning charge must be at least 0.',
+
+            'electricity.required' => 'The electricity charge is required.',
+            'electricity.integer' => 'The electricity charge must be an integer.',
+            'electricity.min' => 'The electricity charge must be at least 0.',
+
+            'generator.required' => 'The generator charge is required.',
+            'generator.integer' => 'The generator charge must be an integer.',
+            'generator.min' => 'The generator charge must be at least 0.',
+
+            'audio.required' => 'The audio charge is required.',
+            'audio.integer' => 'The audio charge must be an integer.',
+            'audio.min' => 'The audio charge must be at least 0.',
         ];
 
         $request->validate($rules, $messages);
@@ -53,6 +88,12 @@ class AdditionalChargeController extends Controller
             "early_check_in" => $request->early_check_in,
             "late_check_out" => $request->late_check_out,
             "extra_bed" => $request->extra_bed,
+
+            "extra_hour" => $request->extra_hour,
+            "cleaning" => $request->cleaning,
+            "electricity" => $request->electricity,
+            "generator" => $request->generator,
+            "audio" => $request->audio,
             "company_id" => $request->company_id,
         ];
 

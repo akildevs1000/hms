@@ -45,7 +45,15 @@
                 label="Unit Price"
               ></v-text-field>
             </v-col>
-
+            <v-col cols="12">
+              <v-checkbox
+                outlined
+                dense
+                hide-details
+                v-model="payload.is_for_hall"
+                label="Is this plan for Hall ?"
+              ></v-checkbox>
+            </v-col>
             <v-col cols="12" v-if="errorResponse">
               <span class="red--text">{{ errorResponse }}</span>
             </v-col>

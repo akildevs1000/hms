@@ -52,6 +52,16 @@
                   label="Unit Price"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12">
+                <v-checkbox
+                  outlined
+                  dense
+                  hide-details
+                  v-model="payload.is_for_hall"
+                  label="Is this plan for Hall ?"
+                ></v-checkbox>
+              </v-col>
+
               <v-col cols="12" v-if="errorResponse">
                 <span class="red--text">{{ errorResponse }}</span>
               </v-col>
@@ -93,7 +103,9 @@ export default {
         title: "",
         description: "",
         no_of_pax: 0,
-        unit_price: "",
+        unit_price: 0,
+        is_for_hall: 0,
+        company_id: this.$auth.user.company_id,
       },
       dialog: false,
       loading: false,

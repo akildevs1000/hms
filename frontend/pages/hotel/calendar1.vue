@@ -418,14 +418,13 @@
               </v-col>
 
               <v-col class="text-right">
-                <v-row>
-                  <v-col class="text-right">
-                    <BookingIndividual />
-                  </v-col>
-                  <v-col cols="3">
-                    <BookingGroup />
-                  </v-col>
-                </v-row>
+                <div
+                  style="display: flex; justify-content: flex-end; gap: 16px"
+                >
+                  <BookingHall />
+                  <BookingIndividual />
+                  <BookingGroup />
+                </div>
               </v-col>
               <v-col cols="2" class="text-right">
                 <v-text-field
@@ -1094,7 +1093,7 @@ export default {
           company_id: this.$auth.user.company.id,
         },
       };
-      this.$axios.get(`room_list`, payload).then(({ data }) => {
+      this.$axios.get(`room_list_for_calendar_only`, payload).then(({ data }) => {
         this.calendarOptions.resources = data;
         this.RoomList = data;
       });

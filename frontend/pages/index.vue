@@ -129,7 +129,7 @@
                 </v-tab-item>
                 <v-tab-item>
                   <CheckInRoomsReport
-                    :data="checkIn"
+                    :data="Occupied"
                     @close-dialog="closeDialogs"
                   />
                 </v-tab-item>
@@ -671,6 +671,7 @@
         </v-card>
       </v-col>
       <v-col cols="12">
+       
         <v-card class="py-2">
           <v-container fluid>
             <v-row>
@@ -710,11 +711,7 @@
               </v-col>
             </v-row>
             <v-row
-              v-if="
-                filteredRooms(dirtyRoomsList) &&
-                filteredRooms(dirtyRoomsList).length &&
-                (filterQuery == 'dirty' || filterQuery == '')
-              "
+              v-if="Occupied.length"
               no-gutters
               class="mt-5"
             >
@@ -724,7 +721,7 @@
               <v-col
                 cols="1"
                 class="ma-1"
-                v-for="(dirtyRoom, index) in filteredRooms(dirtyRoomsList)"
+                v-for="(occupied, index) in filteredRooms(Occupied)"
                 :key="index"
               >
                 <v-card
@@ -735,25 +732,25 @@
                   @touchstart="
                     touchstart(
                       $event,
-                      dirtyRoom &&
-                        dirtyRoom.booked_room &&
-                        dirtyRoom.booked_room.id,
-                      dirtyRoom &&
-                        dirtyRoom.booked_room &&
-                        dirtyRoom.booked_room.booking &&
-                        dirtyRoom.booked_room.booking.booking_status
+                      occupied &&
+                        occupied.booked_room &&
+                        occupied.booked_room.id,
+                      occupied &&
+                        occupied.booked_room &&
+                        occupied.booked_room.booking &&
+                        occupied.booked_room.booking.booking_status
                     )
                   "
                   :elevation="0"
                   @mouseover="
                     mouseOver(
-                      dirtyRoom &&
-                        dirtyRoom.booked_room &&
-                        dirtyRoom.booked_room.id,
-                      dirtyRoom &&
-                        dirtyRoom.booked_room &&
-                        dirtyRoom.booked_room.booking &&
-                        dirtyRoom.booked_room.booking.booking_status
+                      occupied &&
+                        occupied.booked_room &&
+                        occupied.booked_room.id,
+                      occupied &&
+                        occupied.booked_room &&
+                        occupied.booked_room.booking &&
+                        occupied.booked_room.booking.booking_status
                     )
                   "
                   @dblclick="dblclick"
@@ -761,10 +758,11 @@
                   dark
                 >
                   <v-card-text>
+                   
                     <div class="text-center white--text">
                       <v-icon>mdi-bed</v-icon>
-                      <div>{{ dirtyRoom?.room_no || "---" }}</div>
-                      <div>{{ dirtyRoom?.room_type?.name || "---" }}</div>
+                      <div>{{ occupied?.room_no || "---" }}</div>
+                      <div>{{ occupied?.room_type?.name || "---" }}</div>
                     </div>
                   </v-card-text>
                 </v-card>
@@ -1129,6 +1127,7 @@ export default {
       notAvailableRooms: [],
       availableRooms: [],
       blockedRooms: [],
+      Occupied:[],
       checkIn: [],
       checkOut: [],
       reservedWithoutAdvance: [],
@@ -1584,7 +1583,7 @@ export default {
         this.waitingBooking = data.waitingBooking;
         this.expectCheckIn = data.expectCheckIn;
         this.expectCheckOut = data.expectCheckOut;
-        this.checkIn = data.checkIn;
+        this.Occupied = data.checkIn;
         this.checkOut = data.checkOut;
         this.confirmedBookingList = data.confirmedBookingList;
         this.dirtyRoomsList = data.dirtyRoomsList;

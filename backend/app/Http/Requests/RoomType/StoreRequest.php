@@ -45,6 +45,7 @@ class StoreRequest extends FormRequest
             'weekend_price' => 'nullable',
             'description' => 'nullable',
             'short_description' => 'nullable',
+            'type' => 'nullable'
         ];
     }
 }

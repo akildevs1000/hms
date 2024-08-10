@@ -36,7 +36,6 @@
                         item-text="name"
                         item-value="id"
                         :hide-details="errors && !errors.id_card_type_id"
-                        :error="errors && errors.id_card_type_id"
                         :error-messages="
                           errors && errors.id_card_type_id
                             ? errors.id_card_type_id[0]
@@ -52,7 +51,6 @@
                         type="text"
                         v-model="customer.id_card_no"
                         :hide-details="errors && !errors.id_card_no"
-                        :error="errors && errors.id_card_no"
                         :error-messages="
                           errors && errors.id_card_no
                             ? errors.id_card_no[0]
@@ -253,18 +251,6 @@
                                 <v-icon right dark>mdi-magnify</v-icon>
                               </v-btn>
                             </v-col>
-                            <v-col md="5" dense>
-                              <v-select
-                                label="Type"
-                                v-model="customer.customer_type"
-                                :items="['Company', 'Regular', 'Corporate']"
-                                dense
-                                item-text="name"
-                                item-value="id"
-                                outlined
-                                :hide-details="true"
-                              ></v-select>
-                            </v-col>
                             <v-col md="3" cols="12" sm="12">
                               <v-select
                                 v-model="customer.title"
@@ -274,14 +260,28 @@
                                 item-text="name"
                                 item-value="name"
                                 :hide-details="errors && !errors.title"
-                                :error="errors && errors.title"
                                 :error-messages="
                                   errors && errors.title ? errors.title[0] : ''
                                 "
                                 outlined
                               ></v-select>
                             </v-col>
-                            <v-col md="3" cols="12" sm="12">
+
+                            <v-col md="3" dense>
+                              <v-autocomplete
+                                label="Business Source"
+                                v-model="customer.customer_type"
+                                :items="business_sources"
+                                dense
+                                item-text="name"
+                                item-value="name"
+                                outlined
+                                :hide-details="true"
+                              ></v-autocomplete>
+                            </v-col>
+                            <v-col md="2"></v-col>
+                           
+                            <v-col md="4" cols="12" sm="12">
                               <v-text-field
                                 label="First Name *"
                                 dense
@@ -289,7 +289,6 @@
                                 type="text"
                                 v-model="customer.first_name"
                                 :hide-details="errors && !errors.first_name"
-                                :error="errors && errors.first_name"
                                 :error-messages="
                                   errors && errors.first_name
                                     ? errors.first_name[0]
@@ -297,7 +296,7 @@
                                 "
                               ></v-text-field>
                             </v-col>
-                            <v-col md="3" cols="12" sm="12">
+                            <v-col md="4" cols="12" sm="12">
                               <v-text-field
                                 label="Last Name"
                                 dense
@@ -307,7 +306,7 @@
                                 v-model="customer.last_name"
                               ></v-text-field>
                             </v-col>
-                            <v-col md="3" cols="12" sm="12">
+                            <v-col md="4" cols="12" sm="12">
                               <v-text-field
                                 dense
                                 label="Email *"
@@ -315,13 +314,12 @@
                                 type="email"
                                 v-model="customer.email"
                                 :hide-details="errors && !errors.email"
-                                :error="errors && errors.email"
                                 :error-messages="
                                   errors && errors.email ? errors.email[0] : ''
                                 "
                               ></v-text-field>
                             </v-col>
-                            <v-col md="3" cols="12" sm="12">
+                            <v-col md="4" cols="12" sm="12">
                               <v-text-field
                                 dense
                                 label="Contact No *"
@@ -330,7 +328,6 @@
                                 type="number"
                                 v-model="customer.contact_no"
                                 :hide-details="errors && !errors.contact_no"
-                                :error="errors && errors.contact_no"
                                 :error-messages="
                                   errors && errors.contact_no
                                     ? errors.contact_no[0]
@@ -339,7 +336,7 @@
                                 @keyup="mergeContact"
                               ></v-text-field>
                             </v-col>
-                            <v-col md="3" cols="12" sm="12">
+                            <v-col md="4" cols="12" sm="12">
                               <v-text-field
                                 dense
                                 label="Whatsapp No"
@@ -348,7 +345,6 @@
                                 type="number"
                                 v-model="customer.whatsapp"
                                 :hide-details="errors && !errors.whatsapp"
-                                :error="errors && errors.whatsapp"
                                 :error-messages="
                                   errors && errors.whatsapp
                                     ? errors.whatsapp[0]
@@ -356,29 +352,7 @@
                                 "
                               ></v-text-field>
                             </v-col>
-                          </v-row>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-select
-                            v-model="customer.nationality"
-                            :items="countryList"
-                            label="Nationality"
-                            item-text="name"
-                            item-value="name"
-                            :hide-details="errors && !errors.nationality"
-                            :error="errors && errors.nationality"
-                            :error-messages="
-                              errors && errors.nationality
-                                ? errors.nationality[0]
-                                : ''
-                            "
-                            dense
-                            outlined
-                          ></v-select>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
+                            <v-col md="4" cols="12" sm="12">
                           <v-menu
                             v-model="customer.dob_menu"
                             :close-on-content-click="false"
@@ -405,6 +379,28 @@
                             ></v-date-picker>
                           </v-menu>
                         </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-select
+                            v-model="customer.nationality"
+                            :items="countryList"
+                            label="Nationality"
+                            item-text="name"
+                            item-value="name"
+                            :hide-details="errors && !errors.nationality"
+                            :error-messages="
+                              errors && errors.nationality
+                                ? errors.nationality[0]
+                                : ''
+                            "
+                            dense
+                            outlined
+                          ></v-select>
+                        </v-col>
+                      
                         <v-col md="3">
                           <v-select
                             label="Purpose"
@@ -425,6 +421,21 @@
                             v-model="customer.car_no"
                           ></v-text-field>
                         </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            outlined
+                            label="GST"
+                            type="text"
+                            v-model="customer.gst_number"
+                            :hide-details="errors && !errors.gst_number"
+                            :error-messages="
+                              errors && errors.gst_number
+                                ? errors.gst_number[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
                       </v-row>
 
                       <v-row>
@@ -438,7 +449,6 @@
                             item-text="name"
                             item-value="id"
                             :hide-details="errors && !errors.id_card_type_id"
-                            :error="errors && errors.id_card_type_id"
                             :error-messages="
                               errors && errors.id_card_type_id
                                 ? errors.id_card_type_id[0]
@@ -454,7 +464,6 @@
                             type="text"
                             v-model="customer.id_card_no"
                             :hide-details="errors && !errors.id_card_no"
-                            :error="errors && errors.id_card_no"
                             :error-messages="
                               errors && errors.id_card_no
                                 ? errors.id_card_no[0]
@@ -462,25 +471,11 @@
                             "
                           ></v-text-field>
                         </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            outlined
-                            label="GST"
-                            type="text"
-                            v-model="customer.gst_number"
-                            :hide-details="errors && !errors.gst_number"
-                            :error="errors && errors.gst_number"
-                            :error-messages="
-                              errors && errors.gst_number
-                                ? errors.gst_number[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
+                       
                       </v-row>
+                      <FullAddress @location="handleFullAddress" />
                       <v-row>
-                        <v-col md="6" cols="12" sm="12">
+                        <!-- <v-col md="6" cols="12" sm="12">
                           <v-textarea
                             rows="3"
                             label="Address"
@@ -488,8 +483,8 @@
                             outlined
                             :hide-details="true"
                           ></v-textarea>
-                        </v-col>
-                        <v-col md="6">
+                        </v-col> -->
+                        <v-col md="12">
                           <v-textarea
                             rows="3"
                             label="Customer Request"
@@ -509,7 +504,6 @@
                             outlined
                             @change="getType(room.type)"
                             :hide-details="errors && !errors.type"
-                            :error="errors && errors.type"
                             :error-messages="
                               errors && errors.type ? errors.type[0] : ''
                             "
@@ -527,7 +521,6 @@
                             item-text="name"
                             v-model="room.source"
                             :hide-details="errors && !errors.source"
-                            :error="errors && errors.source"
                             :error-messages="
                               errors && errors.source ? errors.source[0] : ''
                             "
@@ -544,7 +537,6 @@
                             item-value="name"
                             item-text="name"
                             :hide-details="errors && !errors.source"
-                            :error="errors && errors.source"
                             :error-messages="
                               errors && errors.source ? errors.source[0] : ''
                             "
@@ -567,7 +559,6 @@
                             item-value="name"
                             item-text="name"
                             :hide-details="errors && !errors.source"
-                            :error="errors && errors.source"
                             :error-messages="
                               errors && errors.source ? errors.source[0] : ''
                             "
@@ -586,7 +577,6 @@
                             type="text"
                             v-model="room.reference_no"
                             :hide-details="errors && !errors.reference_no"
-                            :error="errors && errors.reference_no"
                             :error-messages="
                               errors && errors.reference_no
                                 ? errors.reference_no[0]
@@ -613,7 +603,6 @@
                             item-value="value"
                             item-text="name"
                             :hide-details="errors && !errors.paid_by"
-                            :error="errors && errors.paid_by"
                             :error-messages="
                               errors && errors.paid_by ? errors.paid_by[0] : ''
                             "
@@ -622,7 +611,7 @@
                       </v-row>
                       <v-row>
                         <v-col cols="12" class="text-right">
-                          <v-btn x-small @click="nextTab" color="primary"
+                          <v-btn small @click="nextTab" color="primary"
                             >Next</v-btn
                           >
                         </v-col>
@@ -665,6 +654,7 @@
                                         <th><small>Late Checkout</small></th>
                                         <th><small>Extra Bed</small></th>
                                         <th><small>Total</small></th>
+                                        <th></th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -713,6 +703,13 @@
                                           {{
                                             convert_decimal(item.total_price)
                                           }}
+                                        </td>
+                                        <td class="text-center">
+                                          <v-icon
+                                            color="red"
+                                            @click="deleteItem(index)"
+                                            >mdi-close</v-icon
+                                          >
                                         </td>
                                       </tr>
                                     </tbody>
@@ -1593,6 +1590,9 @@
                 item-text="title"
                 v-model="temp.food_plan_id"
                 :items="foodplans"
+                @change="
+                  selectRoom({ name: temp.room_type, room_no: temp.room_no })
+                "
               ></v-autocomplete>
             </v-col>
             <v-col cols="6">
@@ -1822,7 +1822,7 @@ export default {
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
-        type: "",
+        type: "Walking",
         source: "walking",
         agent_name: "",
         booking_status: 1,
@@ -1875,6 +1875,7 @@ export default {
       ],
 
       customer: {
+        customer_type:"Walking",
         title: "Mr",
         whatsapp: "",
         nationality: "India",
@@ -1943,6 +1944,8 @@ export default {
         fileExtension: null,
         file: null,
       },
+      business_sources: [],
+
     };
   },
   async created() {
@@ -1960,6 +1963,9 @@ export default {
     await this.get_food_plans();
 
     await this.get_additional_charges();
+
+    await this.get_business_sources();
+
   },
   computed: {
     formattedCheckinDate() {
@@ -1991,6 +1997,25 @@ export default {
     },
   },
   methods: {
+    async get_business_sources() {
+      let config = {
+        params: {
+          company_id: this.$auth.user.company_id,
+        },
+      };
+      let { data } = await this.$axios.get("business-source-list", config);
+      this.business_sources = data;
+    },
+    handleFullAddress(e) {
+      this.customer = {
+        ...this.customer,
+        ...e,
+      };
+    },
+    deleteItem(index) {
+      this.priceListTableView.splice(index, 1);
+      this.selectedRooms.splice(index, 1);
+    },
     set_additional_charges() {
       this.temp.early_check_in = this.is_early_check_in
         ? this.additional_charges.early_check_in

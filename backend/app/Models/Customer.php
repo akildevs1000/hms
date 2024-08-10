@@ -112,14 +112,21 @@ class Customer extends Model
 
             'id_frontend_side',
             'id_backend_side',
+
+
+            'country',
+            'state',
+            'city',
+            'zip_code',
+
         ];
     }
 
     public function scopeFilter($query, $search)
     {
-        $query->when($search ?? false, fn ($query, $search) =>
+        $query->when($search ?? false, fn($query, $search) =>
         $query->where(
-            fn ($query) => $query
+            fn($query) => $query
                 ->orWhere('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')

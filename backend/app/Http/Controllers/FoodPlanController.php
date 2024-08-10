@@ -14,7 +14,7 @@ class FoodPlanController extends Controller
      */
     public function dropDown()
     {
-        return FoodPlan::get();
+        return FoodPlan::where("is_for_hall", request("is_for_hall", FoodPlan::No))->get();
     }
 
     /**

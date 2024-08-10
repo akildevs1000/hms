@@ -28,6 +28,8 @@ class ValidationRequest extends FormRequest
             "description" => "required|min:2|max:255",
             "no_of_pax" => "required|integer",
             "unit_price" => "required|integer",
+            "is_for_hall" => "required",
+            "company_id" => "required|integer",
         ];
     }
 }

@@ -10,37 +10,7 @@ class RoomType extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        // 'weekday_price',
-        // 'weekend_price',
-        // 'holiday_price',
-        // 'company_id',
-        'name',
-        'price',
-        'room_only_price',
-        'Break_fast_price',
-        'Break_fast_with_dinner_price',
-        'Break_fast_with_lunch_price',
-        'lunch_with_dinner_price',
-        'full_board_price',
-        'max_person',
-        'created_at',
-        'updated_at',
-        'company_id',
-        'adult',
-        'child',
-        'baby',
-        'holiday_price',
-        'weekday_price',
-        'weekend_price',
-        'description',
-        'short_description',
-        'pic',
-        'projector_charges',
-        'cleaning_charges',
-        'electricity_charges',
-        'audio_charges',
-    ];
+    protected $guarded = [];
 
     public function room()
     {

@@ -96,4 +96,6 @@
 
 
     Route::post('group-booking', [BookingController::class, 'groupBooking']);
+    Route::post('hall-booking', [BookingController::class, 'hallBooking']);
+
     Route::apiResource('booking-source-type', BookingSourceTypeController::class);

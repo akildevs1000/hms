@@ -47,4 +47,64 @@ class AdditionalCharge extends Model
         // Customize the retrieval logic for extra_bed attribute
         return $value ?? 0;
     }
+
+    /**
+     * Get the extra hour attribute.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function getExtraHourAttribute($value)
+    {
+        // Customize the retrieval logic for extra_hour attribute
+        return $value ?? 0;
+    }
+
+    /**
+     * Get the cleaning attribute.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function getCleaningAttribute($value)
+    {
+        // Customize the retrieval logic for cleaning attribute
+        return $value ?? 0;
+    }
+
+    /**
+     * Get the electricity attribute.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function getElectricityAttribute($value)
+    {
+        // Customize the retrieval logic for electricity attribute
+        return $value ?? 0;
+    }
+
+    /**
+     * Get the generator attribute.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function getGeneratorAttribute($value)
+    {
+        // Customize the retrieval logic for generator attribute
+        return $value ?? 0;
+    }
+
+    /**
+     * Get the audio attribute.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function getAudioAttribute($value)
+    {
+        // Customize the retrieval logic for audio attribute
+        return $value ?? 0;
+    }
 }

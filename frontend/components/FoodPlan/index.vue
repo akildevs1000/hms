@@ -1,71 +1,75 @@
 <template>
- <v-data-table
-      dense
-      :headers="headers"
-      :items="foodplans"
-      :loading="loading"
-      :options.sync="options"
-      :footer-props="{
-        itemsPerPageOptions: [100, 500, 1000],
-      }"
-    >
-      <template v-slot:top>
-        <v-toolbar flat dense class="mb-5">
-          {{ Model }}
-          <v-icon color="primary" right @click="getDataFromApi()"
-            >mdi-reload</v-icon
-          >
-          <v-spacer></v-spacer>
-          <FoodPlanCreate
-            :model="Model"
-            :endpoint="endpoint"
-            @response="getDataFromApi"
-          />
-        </v-toolbar>
-      </template>
-      <template v-slot:item.options="{ item }">
-        <v-menu bottom left>
-          <template v-slot:activator="{ on, attrs }">
-            <div class="text-center">
-              <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </div>
-          </template>
-          <v-list width="120" dense>
-            <v-list-item>
-              <v-list-item-title>
-                <FoodPlanView
-                  :model="Model"
-                  :endpoint="endpoint"
-                  :item="item"
-                  @response="getDataFromApi"
-                />
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>
-                <FoodPlanEdit
-                  :model="Model"
-                  :endpoint="endpoint"
-                  :item="item"
-                  @response="getDataFromApi"
-                />
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>
-                <FoodPlanDelete
-                  :id="item.id"
-                  :endpoint="endpoint"
-                  @response="getDataFromApi"
-                />
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
-    </v-data-table>
+  <v-data-table
+    dense
+    :headers="headers"
+    :items="foodplans"
+    :loading="loading"
+    :options.sync="options"
+    :footer-props="{
+      itemsPerPageOptions: [100, 500, 1000],
+    }"
+  >
+    <template v-slot:top>
+      <v-toolbar flat dense class="mb-5">
+        {{ Model }}
+        <v-icon color="primary" right @click="getDataFromApi()"
+          >mdi-reload</v-icon
+        >
+        <v-spacer></v-spacer>
+        <FoodPlanCreate
+          :model="Model"
+          :endpoint="endpoint"
+          @response="getDataFromApi"
+        />
+      </v-toolbar>
+    </template>
+    <template v-slot:item.is_for_hall="{ item }">
+      {{ item.is_for_hall ? "Hall" : "Room" }}
+    </template>
+
+    <template v-slot:item.options="{ item }">
+      <v-menu bottom left>
+        <template v-slot:activator="{ on, attrs }">
+          <div class="text-center">
+            <v-btn dark-2 icon v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </div>
+        </template>
+        <v-list width="120" dense>
+          <v-list-item>
+            <v-list-item-title>
+              <FoodPlanView
+                :model="Model"
+                :endpoint="endpoint"
+                :item="item"
+                @response="getDataFromApi"
+              />
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <FoodPlanEdit
+                :model="Model"
+                :endpoint="endpoint"
+                :item="item"
+                @response="getDataFromApi"
+              />
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <FoodPlanDelete
+                :id="item.id"
+                :endpoint="endpoint"
+                @response="getDataFromApi"
+              />
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -100,6 +104,11 @@ export default {
         text: "Unit Price",
         value: "unit_price",
       },
+      {
+        text: "Type",
+        value: "is_for_hall",
+      },
+
       {
         text: "Action",
         align: "center",

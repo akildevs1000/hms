@@ -185,7 +185,7 @@
                               style="
                                 width: 100%;
                                 height: 200px;
-                                border: 1px solid #4390FC;
+                                border: 1px solid #4390fc;
                                 border-radius: 10%;
                                 margin: 0 auto;
                               "
@@ -218,10 +218,16 @@
                         </v-col>
 
                         <v-col cols="12" class="text-right">
-                          <v-btn small class="grey white--text" @click="roomTypeDialog = false">
+                          <v-btn
+                            small
+                            class="grey white--text"
+                            @click="roomTypeDialog = false"
+                          >
                             Cancel
                           </v-btn>
-                          <v-btn small class="primary" @click="save">Save</v-btn>
+                          <v-btn small class="primary" @click="save"
+                            >Save</v-btn
+                          >
                         </v-col>
                       </v-row>
                     </v-container>
@@ -530,7 +536,6 @@ export default {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
           search: this.search,
-         
         },
       };
 
@@ -553,34 +558,12 @@ export default {
       this.roomTypeDialog = true;
     },
 
-    delteteSelectedRecords() {
-      let just_ids = this.ids.map((e) => e.id);
-      confirm(
-        "Are you sure you wish to delete selected records , to mitigate any inconvenience in future."
-      ) &&
-        this.$axios
-          .post(`${this.endpoint}/delete/selected`, {
-            ids: just_ids,
-          })
-          .then((res) => {
-            if (!res.data.status) {
-              this.errors = res.data.errors;
-            } else {
-              this.getDataFromApi();
-              this.snackbar = res.data.status;
-              this.ids = [];
-              this.response = "Selected records has been deleted";
-            }
-          })
-          .catch((err) => console.log(err));
-    },
-
     deleteItem(item) {
       confirm(
         "Are you sure you wish to delete , to mitigate any inconvenience in future."
       ) &&
         this.$axios
-          .delete(this.endpoint + "/" + item.id)
+          .delete(`room_types/` + item.id)
           .then(({ data }) => {
             const index = this.data.indexOf(item);
             this.data.splice(index, 1);

@@ -17,11 +17,14 @@ class RoomController extends Controller
 {
     public function dropDown()
     {
-        return Room::get();
+        return Room::whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->get();
     }
     public function index(Request $request)
     {
         $model = Room::query()->with("device");
+
+        $model->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")));
+
         if ($request->filled('status') && $request->status != "-1") {
             $model->where('status', $request->status);
         }
@@ -79,13 +82,15 @@ class RoomController extends Controller
             'room_type_id',
         ];
         $model = $this->process_search($model, $key, $fields);
-        return $model->where("company_id", $request->company_id)->where("status", $request->status)->paginate($request->per_page);
+        return $model->where("company_id", $request->company_id)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->where("status", $request->status)->paginate($request->per_page);
     }
 
     public function filter(Request $request)
     {
         $model = Room::query();
-        return $model->where("company_id", $request->company_id)->where("status", $request->status)->paginate($request->per_page);
+        return $model->where("company_id", $request->company_id)
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->where("status", $request->status)->paginate($request->per_page);
     }
 
     // public function update($room_id, $status)
@@ -137,7 +142,9 @@ class RoomController extends Controller
 
     public function getRoom($id)
     {
-        return Room::where('status', 0)->where('room_type_id', $id)->get(['id', 'room_no']);
+        return Room::where('status', 0)
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->where('room_type_id', $id)->get(['id', 'room_no']);
     }
 
     public function get_id_cards()
@@ -149,6 +156,7 @@ class RoomController extends Controller
     {
         $arr = [];
         $data = Room::with('roomType')
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             // ->where('status', 0)
             ->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
@@ -166,11 +174,34 @@ class RoomController extends Controller
 
         return $arr;
     }
+
+    public function roomListForCalendarOnly(Request $request)
+    {
+        $arr = [];
+        $data = Room::with('roomType')->whereHas("roomType")->whereCompanyId($request->company_id)->get();
+        foreach ($data as $d) {
+            
+            $arr[] = [
+                'id' => $d->room_no,
+                'table_id' => $d->id,
+                'room_no' => $d->room_no,
+                'room_type' => $d->roomType->name ?? "",
+                // 'eventColor' => $color,
+                'eventBorderColor' => 'white',
+                'status' => $d->status,
+            ];
+        }
+
+        return $arr;
+    }
+
+
     public function roomDropdownList(Request $request)
     {
         $arr = [];
         return  $data = Room::with('roomType')
             // ->where('status', 0)
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereCompanyId($request->company_id)->orderBy("room_no", "ASC")->get();
 
 
@@ -178,12 +209,7 @@ class RoomController extends Controller
     }
     public function roomListForMenu()
     {
-        return Room::with('roomType')->get();
-    }
-
-    private function hideAttributes()
-    {
-        return ['resourceId', 'title', 'background', 'check_out_time', 'postings'];
+        return Room::with('roomType')->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->get();
     }
 
     private function getCustomersBreakfastOnly($breakfast)
@@ -299,6 +325,7 @@ class RoomController extends Controller
         }
 
         $expectCheckOut = Room::with('device')
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', '<=', $todayDate);
                 $query->where('company_id', $company_id);
@@ -370,13 +397,18 @@ class RoomController extends Controller
             'dinner' => $this->getCustomersDinnerOnly($dinner),
         ];
 
-        $checkInModel = BookedRoom::query();
-        $checkIn = $checkInModel->clone() //->whereDate('check_in', $request->check_in)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-            })->get();
+        $checkIn = Room::with('device')
+        // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+        ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+            $query->whereDate('check_in', '<=', $todayDate);
+            $query->where('company_id', $company_id);
+            $query->where('booking_status', 2);
+        })
+        ->with(['bookedRoom' => function ($q) use ($company_id) {
+            $q->where("company_id", $company_id);
+            $q->with("customer");
+        }])
+        ->get();
 
         $checkOutModel = BookedRoom::query();
         $checkOut = $checkOutModel->clone()->whereDate('check_out', $todayDate)
@@ -467,6 +499,7 @@ class RoomController extends Controller
             })
             ->pluck('room_id');
         return Room::whereNotIn('id', $roomIds)
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->where('company_id', $request->company_id)
             ->get();
     }
@@ -487,6 +520,7 @@ class RoomController extends Controller
             ->pluck('room_id');
 
         $availableRooms = Room::whereNotIn('id', $bookedRoomIds)
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->where('company_id', $companyId)
             ->where('room_type_id', $roomTypeId)
             ->get();
@@ -497,6 +531,7 @@ class RoomController extends Controller
     public function getAvailableRoomsForModify(Request $request)
     {
         return Room::with("room_type")
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->when($request->filled("room_type_id"), fn ($q) => $q->where("room_type_id", $request->room_type_id))
             ->where('company_id', $request->company_id)->get();
     }
@@ -529,7 +564,7 @@ class RoomController extends Controller
     {
         try {
             $msg = $status == 1 ? 'blocked' : 'unblocked';
-            Room::whereCompanyId($request->company_id)->whereRoomNo($request->room_no)->update(['status' => $status]);
+            Room::whereCompanyId($request->company_id)->whereRoomNo($request->room_no)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->update(['status' => $status]);
             return $this->response('Room ' . $msg, null, true);
         } catch (\Throwable $th) {
             return $this->response('Something wrong.', $th, true);
@@ -543,7 +578,7 @@ class RoomController extends Controller
 
             if ($data) {
 
-                $verifyIsRoom = Room::where('company_id', $request->company_id)->where('room_no', $request->room_no)->count();
+                $verifyIsRoom = Room::where('company_id', $request->company_id)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->where('room_no', $request->room_no)->count();
                 if ($verifyIsRoom == 0) {
 
                     $record = Room::create($data);
@@ -566,7 +601,7 @@ class RoomController extends Controller
 
     public function show($id)
     {
-        return Room::where('id', $id)->first();
+        return Room::where('id', $id)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->first();
     }
     public function destroy(Room $lostAndFoundItems, $id)
     {
