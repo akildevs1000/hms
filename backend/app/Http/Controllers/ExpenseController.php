@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Expense\StoreRequest;
 use App\Http\Requests\Expense\UpdateRequest;
+use App\Models\AdminExpense;
 use App\Models\ExpensesDocuments;
 use App\Models\Expense;
+use App\Models\ExpensePayment;
 use App\Models\ExpensesCategories;
 use App\Models\Payment;
+use App\Models\PaymentMode;
 use App\Models\Vendors;
 use Carbon\Carbon;
 use Database\Seeders\ExpenseSeeder;
@@ -363,84 +366,87 @@ class ExpenseController extends Controller
 
     public function counts(Request $request)
     {
-        // ['id' => 1, 'name' => 'Cash'],
-        // ['id' => 2, 'name' => 'Card'],
-        // ['id' => 3, 'name' => 'Online'],
-        // ['id' => 4, 'name' => 'Bank'],
-        // ['id' => 5, 'name' => 'UPI'],
-        // ['id' => 6, 'name' => 'Cheque']
-        // ['id' => 7, 'name' => 'City Ledger']
+        // $expense = AdminExpense::where('company_id', $request->company_id)
+        //     ->orderByDesc("id");
 
-        $expense = $this->model
-            ->where('company_id', $request->company_id)
-            ->orderByDesc("id");
+        // $income = Payment::query()
+        //     ->where('company_id', $request->company_id)
+        //     ->whereHas('booking', function ($q) {
+        //         $q->where('booking_status', '!=', -1);
+        //     })
+        //     ->orderByDesc("id");
 
-        $income = Payment::query()
-            ->where('company_id', $request->company_id)
-            ->whereHas('booking', function ($q) {
-                $q->where('booking_status', '!=', -1);
-            })
-            ->orderByDesc("id");
+        // if ($request->filled('from_date') && $request->filled('to_date')) {
+        //     $from = $request->from_date;
+        //     $to = $request->to_date;
+        //     $expense->whereDate('created_at', '>=', $from);
+        //     $expense->whereDate('created_at', '<=', $to);
 
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $from = $request->from_date;
-            $to = $request->to_date;
-            $expense->whereDate('created_at', '>=', $from);
-            $expense->whereDate('created_at', '<=', $to);
+        //     $income->whereDate('created_at', '>=', $from);
+        //     $income->whereDate('created_at', '<=', $to);
+        // }
 
-            $income->whereDate('created_at', '>=', $from);
-            $income->whereDate('created_at', '<=', $to);
-        }
+        // $incomingWithoutCityLedger = $income->clone()->sum('amount') - $this->getSumByModel($income, 7);
+        // $loss = $expense->clone()->sum('total') - $incomingWithoutCityLedger;
+        // $profit = $incomingWithoutCityLedger - $expense->clone()->sum('total');
 
-        $incomingWithoutCityLedger = $income->clone()->sum('amount') - $this->getSumByModel($income, 7);
-        $loss = $expense->clone()->sum('total') - $incomingWithoutCityLedger;
-        $profit = $incomingWithoutCityLedger - $expense->clone()->sum('total');
+
+
+        $loss = 0;
+        $profit = 0;
 
         return [
-            'expense' => [
-                'Cash' => $this->getSumByExpenseModel($expense, 1),
-                'Card' => $this->getSumByExpenseModel($expense, 2),
-                'Online' => $this->getSumByExpenseModel($expense, 3),
-                'Bank' => $this->getSumByExpenseModel($expense, 4),
-                'UPI' => $this->getSumByExpenseModel($expense, 5),
-                'Cheque' => $this->getSumByExpenseModel($expense, 6),
-                'OverallTotal' => $expense->clone()->where('is_management', 0)->sum('total'),
-                'ManagementOverallTotal' => $expense->clone()->where('is_management', 1)->sum('total'),
-            ],
-            'managementExpense' => [
-                'Cash' => $this->getSumByExpenseModel($expense, 1, 1),
-                'Card' => $this->getSumByExpenseModel($expense, 2, 1),
-                'Online' => $this->getSumByExpenseModel($expense, 3, 1),
-                'Bank' => $this->getSumByExpenseModel($expense, 4, 1),
-                'UPI' => $this->getSumByExpenseModel($expense, 5, 1),
-                'Cheque' => $this->getSumByExpenseModel($expense, 6, 1),
-                'ManagementOverallTotal' => $expense->clone()->where('is_management', 1)->sum('total'),
-            ],
+            'expense' => $this->getExpenses(AdminExpense::NonManagementExpense),
+            'managementExpense' => $this->getExpenses(AdminExpense::ManagementExpense),
 
-            'income' => [
-                'Cash' => $this->getSumByModel($income, 1),
-                'Card' => $this->getSumByModel($income, 2),
-                'Online' => $this->getSumByModel($income, 3),
-                'Bank' => $this->getSumByModel($income, 4),
-                'UPI' => $this->getSumByModel($income, 5),
-                'Cheque' => $this->getSumByModel($income, 6),
-                'City_ledger' => $this->getSumByModel($income, 7),
-                'OverallTotal' => $incomingWithoutCityLedger,
-            ],
+            'income' => $this->getExpenses(AdminExpense::ManagementExpense),
 
             'profit' => $profit != abs($profit) ? 0 : $profit,
             'loss' => $loss != abs($loss) ? 0 : $loss,
         ];
     }
 
+    public function getExpenses($ExpenseCondition)
+    {
+        $expenseModes = [
+            'Cash' => AdminExpense::CASH,
+            'Card' => AdminExpense::CARD,
+            'Online' => AdminExpense::ONLINE,
+            'Bank' => AdminExpense::BANK,
+            'UPI' => AdminExpense::UPI,
+            'Cheque' => AdminExpense::CHEQUE,
+            'CityLedger' => AdminExpense::CITYLEDGER,
+        ];
+
+        $expenses = collect($expenseModes)->mapWithKeys(function ($mode, $key) use ($ExpenseCondition) {
+            return [
+                $key => AdminExpense::whereHas('payment', function ($q) use ($mode, $ExpenseCondition) {
+                    $q->where('payment_mode', $mode)
+                        ->where('is_admin_expense', $ExpenseCondition);
+                })->sum('total'),
+            ];
+        })->toArray();
+
+        $expenses['WithOutCityLedger'] = AdminExpense::whereHas('payment', function ($q) use ($ExpenseCondition) {
+            $q->where('payment_mode', '!=', AdminExpense::CITYLEDGER)
+                ->where('is_admin_expense', $ExpenseCondition);
+        })->sum('total');
+
+        $expenses['Total'] = AdminExpense::whereHas('payment', function ($q) use ($ExpenseCondition) {
+            $q->where('is_admin_expense', $ExpenseCondition);
+        })->sum('total');
+
+        return $expenses;
+    }
+
     public function getSumByModel($model, $id)
     {
-        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
+        return $model->clone()->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('amount');
     }
 
     public function getSumByExpenseModel($model, $id, $is_management = 0)
     {
-        return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('total');
+        return $model->clone()->where('is_management', $is_management)->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('total');
     }
 
     public function expensesDocuments($expenses_id)

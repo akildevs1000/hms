@@ -18,7 +18,7 @@
             >mdi-reload</v-icon
           >
           <v-spacer></v-spacer>
-          <AdminExpenseCreate
+          <ExpenseManagementCreate
             :model="Model"
             :endpoint="endpoint"
             @response="getDataFromApi"
@@ -44,7 +44,7 @@
           <v-list width="120" dense>
             <v-list-item>
               <v-list-item-title>
-                <AdminExpenseView
+                <ExpenseManagementView
                   :model="Model"
                   :endpoint="endpoint"
                   :item="item"
@@ -54,7 +54,7 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <AdminExpenseEdit
+                <ExpenseManagementEdit
                   :model="Model"
                   :endpoint="endpoint"
                   :item="item"
@@ -64,9 +64,10 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <AdminExpensePayment
+                <ExpenseManagementPayment
                   :endpoint="`expense-payment`"
                   :id="item.id"
+                  :vendor_id="item.vendor_id"
                   @response="getDataFromApi"
                 />
               </v-list-item-title>
@@ -79,7 +80,7 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <AdminExpenseDelete
+                <ExpenseManagementDelete
                   :id="item.id"
                   :endpoint="endpoint"
                   @response="getDataFromApi"
@@ -118,6 +119,10 @@ export default {
         value: "id",
       },
       {
+        text: "Vendor",
+        value: "vendor.first_name",
+      },
+      {
         text: "Total",
         value: "total",
       },
@@ -128,10 +133,6 @@ export default {
       {
         text: "Bill Date",
         value: "bill_date",
-      },
-      {
-        text: "Vendor",
-        value: "vendor.first_name",
       },
       {
         text: "Status",
@@ -170,7 +171,7 @@ export default {
   methods: {
     openVoucher(id) {
       window.open(
-        `http://localhost:8007/api/payment-voucher/${id}?payee=${this.$auth.user.name}`
+        `https://hms-backend.test/api/payment-voucher/${id}?payee=${this.$auth.user.name}`
       );
     },
     getRandomeId() {
@@ -178,7 +179,12 @@ export default {
     },
     async getDataFromApi() {
       this.loading = true;
-      let { data } = await this.$axios.get(this.endpoint);
+      let config = {
+        params: {
+          is_admin_expense: 1,
+        },
+      };
+      let { data } = await this.$axios.get(this.endpoint,config);
       this.loading = false;
       this.expenses = data.data;
     },

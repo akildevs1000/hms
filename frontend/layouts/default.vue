@@ -398,6 +398,13 @@ export default {
         },
         {
           topMenu: "account",
+          icon: "mdi-bank-transfer",
+          title: "Income",
+          to: "/account",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "account",
           icon: "mdi mdi-food",
           title: "Posting",
           to: "/posting",

@@ -7,12 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class AdminExpense extends Model
 {
+    const ManagementExpense = 1;
+    const NonManagementExpense = 0;
+
+    const CASH = "Cash";
+    const CARD = "Card";
+    const ONLINE = "Online";
+    const BANK = "Bank";
+    const UPI = "UPI";
+    const CHEQUE = "Cheque";
+    const CITYLEDGER = "City Ledger";
+
+
     use HasFactory;
 
     protected $guarded = [];
 
+
+    protected $appends = ["date","time","datetime"];
+
     protected $casts = [
-        "created_at" => "datetime:Y-m-d"
+        "created_at" => "datetime:d-M-y"
     ];
 
     /**
@@ -53,5 +68,25 @@ class AdminExpense extends Model
     public function payment()
     {
         return $this->hasOne(ExpensePayment::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(PaymentMode::class,"name","payment_mode");
+    }
+
+    public function getDateAttribute()
+    {
+        return date("d-M-y", strtotime($this->created_at));
+    }
+
+    public function getTimeAttribute()
+    {
+        return date("H:i", strtotime($this->created_at));
+    }
+
+    public function getDatetimeAttribute()
+    {
+        return date("d-M-y H:i", strtotime($this->created_at));
     }
 }

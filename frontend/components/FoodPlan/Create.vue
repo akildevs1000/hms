@@ -52,6 +52,30 @@
                   label="Unit Price"
                 ></v-text-field>
               </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  outlined
+                  dense
+                  hide-details
+                  label="Breakfast"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  outlined
+                  dense
+                  hide-details
+                  label="Lunch"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <v-checkbox
+                  outlined
+                  dense
+                  hide-details
+                  label="Dinner"
+                ></v-checkbox>
+              </v-col>
               <v-col cols="12">
                 <v-checkbox
                   outlined

@@ -21,3 +21,7 @@ Route::resource('admin-expense', AdminExpenseController::class);
 Route::get('payment-voucher/{id}', [AdminExpenseController::class, "voucher"]);
 
 Route::resource('expense-payment', ExpensePaymentController::class);
+
+
+
+Route::get('expense-count', [AdminExpenseController::class,"expenseCount"]);

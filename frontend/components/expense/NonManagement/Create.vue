@@ -16,7 +16,7 @@
 
       <v-card>
         <v-toolbar flat class="blue white--text" dense>
-          Create {{ model }} <v-spacer></v-spacer
+          Create {{ model }}<v-spacer></v-spacer
           ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
         >
 

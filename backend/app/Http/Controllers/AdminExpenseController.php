@@ -6,6 +6,7 @@ use App\Http\Requests\AdminExpenseRequest\ValidationRequest;
 use App\Models\AdminExpense;
 use App\Models\AdminExpenseAttachment;
 use App\Models\AdminExpenseItem;
+use App\Models\PaymentMode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,9 @@ class AdminExpenseController extends Controller
                 "items",
                 "attachments"
             ]
-        )->paginate(request("per_page", 50));
+        )
+            ->where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
+            ->paginate(request("per_page", 50));
     }
 
     /**
@@ -133,20 +136,30 @@ class AdminExpenseController extends Controller
             }
         }
 
+        DB::beginTransaction();
 
-        AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->whereIn("attachment", $existingAttachments)->delete();
+        try {
+            AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->whereIn("attachment", $existingAttachments)->delete();
 
-        AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->delete();
+            AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->delete();
 
-        AdminExpenseAttachment::insert($attachments);
+            AdminExpenseAttachment::insert($attachments);
 
-        AdminExpenseItem::where("admin_expense_id", $AdminExpense->id)->delete();
+            AdminExpenseItem::where("admin_expense_id", $AdminExpense->id)->delete();
 
-        AdminExpenseItem::insert($request->items);
+            AdminExpenseItem::insert($request->items);
 
-        $AdminExpense->update($request->validated());
+            $AdminExpense->update($request->validated());
 
-        return $AdminExpense;
+            DB::commit();
+
+            return $AdminExpense;
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -176,5 +189,62 @@ class AdminExpenseController extends Controller
         } catch (\Exception $e) {
             return $e->getMessage();
         }
+    }
+
+    public function expenseCount()
+    {
+
+        $is_admin_expense = request("is_admin_expense", 0);
+
+        $modes = PaymentMode::pluck("name")->map(fn($mode) => str_replace(' ', '', $mode))->toArray();
+
+        $items = AdminExpenseItem::whereHas("expense", fn($q) => $q->where("is_admin_expense", $is_admin_expense))->with("expense")->get()->map(function ($item) use ($modes) {
+            // Initialize all payment modes to 0
+            foreach ($modes as $mode) {
+                $item[$mode] = 0;
+            }
+
+            // Set the appropriate payment mode if it exists
+            if ($item->expense->payment && in_array($item->expense->payment->payment_mode, $modes)) {
+                $item[$item->expense->payment->payment_mode] = $item->expense->total;
+            }
+
+            return $item;
+        });
+
+
+        $expenseModes = [
+            'Cash' => AdminExpense::CASH,
+            'Card' => AdminExpense::CARD,
+            'Online' => AdminExpense::ONLINE,
+            'Bank' => AdminExpense::BANK,
+            'UPI' => AdminExpense::UPI,
+            'Cheque' => AdminExpense::CHEQUE,
+            'CityLedger' => AdminExpense::CITYLEDGER,
+        ];
+
+        $expenses = collect($expenseModes)->mapWithKeys(function ($mode, $key) use ($is_admin_expense) {
+            return [
+                $key => AdminExpense::whereHas('payment', function ($q) use ($mode, $is_admin_expense) {
+                    $q->where('payment_mode', $mode)
+                        ->where('is_admin_expense', $is_admin_expense);
+                })->sum('total'),
+            ];
+        })->toArray();
+
+        $expenses['WithOutCityLedger'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense) {
+            $q->where('payment_mode', '!=', AdminExpense::CITYLEDGER)
+                ->where('is_admin_expense', $is_admin_expense);
+        })->sum('total');
+
+        $expenses['Total'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense) {
+            $q->where('is_admin_expense', $is_admin_expense);
+        })->sum('total');
+
+
+        return [
+            "data" => $items,
+            "stats" => $expenses
+        ];
     }
 }

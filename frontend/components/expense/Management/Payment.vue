@@ -14,7 +14,7 @@
       >
 
       <v-card-text class="py-5">
-        <v-container>
+        <v-container v-if="payload.vendor_id">
           <v-row>
             <v-col cols="12">
               <v-autocomplete
@@ -22,13 +22,9 @@
                 dense
                 hide-details
                 item-value="id"
-                item-text="name"
+                item-text="first_name"
                 v-model="payload.vendor_id"
-                :items="[
-                  { name: `Vendor 1`, id: 1 },
-                  { name: `Vendor 2`, id: 2 },
-                  { name: `Vendor 3`, id: 3 },
-                ]"
+                :items="vendors"
                 placeholder="Vendors"
               ></v-autocomplete>
             </v-col>
@@ -139,12 +135,12 @@
 </template>
 <script>
 export default {
-  props: ["id", "endpoint"],
+  props: ["id", "endpoint", "vendor_id"],
   data() {
     return {
       menu2: false,
       payload: {
-        vendor_id: 1,
+        vendor_id: 0,
         payment_number: "234234",
         payment_date: new Date(
           Date.now() - new Date().getTimezoneOffset() * 60000
@@ -159,15 +155,24 @@ export default {
       loading: false,
       successResponse: null,
       errorResponse: null,
+      vendors: [],
     };
   },
-  created() {},
+  async created() {
+    this.payload.vendor_id = this.vendor_id;
+    await this.getVendors();
+  },
 
   methods: {
     close() {
       this.dialog = false;
       this.loading = false;
       this.errorResponse = null;
+    },
+    async getVendors() {
+      let { data } = await this.$axios.get(`vendor-list`);
+
+      this.vendors = data;
     },
     handleMultipleFileSelection(e) {
       e.forEach((v, i) => {

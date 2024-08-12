@@ -10,4 +10,14 @@ class ExpensePayment extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    /**
+     * Get the payment_mode that owns the ExpensePayment
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function payment_mode()
+    {
+        return $this->belongsTo(PaymentMode::class, "name", "payment_mode");
+    }
 }
