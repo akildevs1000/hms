@@ -83,12 +83,6 @@
     </v-row>
 
     <v-row>
-      <v-col md="4" class="p-2 text-center">
-        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
-      </v-col>
-    </v-row>
-
-    <v-row>
       <v-col cols="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-tabs
@@ -109,8 +103,7 @@
             </v-tab>
 
             <v-tabs-slider color="#1259a7"></v-tabs-slider>
-            <!-- today checkin -->
-
+            
             <v-tab-item>
               <Income />
             </v-tab-item>
@@ -131,7 +124,6 @@
 </template>
 
 <script>
-import CustomFilter from "../../components/filter/CustomFilter.vue";
 
 export default {
   data: () => ({
@@ -203,15 +195,6 @@ export default {
   },
   computed: {},
   methods: {
-    filterAttr(data) {
-      this.from_date = data.from;
-      this.to_date = data.to;
-      this.filterType = data.type;
-      //this.search = data.search;
-      if (this.from_date && this.to_date) {
-        this.get_counts();
-      }
-    },
     getPriceFormat(price) {
       return (
         this.$auth.user.company.currency +
@@ -254,7 +237,6 @@ export default {
       });
     },
   },
-  components: { CustomFilter },
 };
 </script>
 

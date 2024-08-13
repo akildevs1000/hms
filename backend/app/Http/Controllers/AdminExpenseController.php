@@ -193,24 +193,35 @@ class AdminExpenseController extends Controller
 
     public function expenseCount()
     {
+        $searchKey = request('search', null);
+
 
         $is_admin_expense = request("is_admin_expense", 0);
 
         $modes = PaymentMode::pluck("name")->map(fn($mode) => str_replace(' ', '', $mode))->toArray();
 
-        $items = AdminExpenseItem::whereHas("expense", fn($q) => $q->where("is_admin_expense", $is_admin_expense))->with("expense")->get()->map(function ($item) use ($modes) {
-            // Initialize all payment modes to 0
-            foreach ($modes as $mode) {
-                $item[$mode] = 0;
-            }
+        $items = AdminExpenseItem::whereHas("expense", function ($q) use ($is_admin_expense, $searchKey) {
+            $q->where("is_admin_expense", $is_admin_expense);
 
-            // Set the appropriate payment mode if it exists
-            if ($item->expense->payment && in_array($item->expense->payment->payment_mode, $modes)) {
-                $item[$item->expense->payment->payment_mode] = $item->expense->total;
-            }
+            $q->whereHas("vendor", function ($childQuery) use ($searchKey) {
 
-            return $item;
-        });
+                $childQuery->where('first_name', 'like', "%{$searchKey}%")
+                    ->orWhere('last_name', 'like', "%{$searchKey}%");
+            });
+        })
+            ->with("expense")->get()->map(function ($item) use ($modes) {
+                // Initialize all payment modes to 0
+                foreach ($modes as $mode) {
+                    $item[$mode] = 0;
+                }
+
+                // Set the appropriate payment mode if it exists
+                if ($item->expense->payment && in_array($item->expense->payment->payment_mode, $modes)) {
+                    $item[$item->expense->payment->payment_mode] = $item->expense->total;
+                }
+
+                return $item;
+            });
 
 
         $expenseModes = [
@@ -223,12 +234,19 @@ class AdminExpenseController extends Controller
             'CityLedger' => AdminExpense::CITYLEDGER,
         ];
 
-        $expenses = collect($expenseModes)->mapWithKeys(function ($mode, $key) use ($is_admin_expense) {
+        $expenses = collect($expenseModes)->mapWithKeys(function ($mode, $key) use ($is_admin_expense, $searchKey) {
             return [
-                $key => AdminExpense::whereHas('payment', function ($q) use ($mode, $is_admin_expense) {
+                $key => AdminExpense::whereHas('payment', function ($q) use ($mode, $is_admin_expense, $searchKey) {
                     $q->where('payment_mode', $mode)
                         ->where('is_admin_expense', $is_admin_expense);
-                })->sum('total'),
+                })
+                    ->whereHas("vendor", function ($childQuery) use ($searchKey) {
+
+                        $childQuery->where('first_name', 'like', "%{$searchKey}%")
+                            ->orWhere('last_name', 'like', "%{$searchKey}%");
+                    })
+
+                    ->sum('total'),
             ];
         })->toArray();
 

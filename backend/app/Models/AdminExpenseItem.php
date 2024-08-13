@@ -22,7 +22,9 @@ class AdminExpenseItem extends Model
      */
     public function expense()
     {
-        return $this->belongsTo(AdminExpense::class,"admin_expense_id")->with("payment");
+        return $this->belongsTo(AdminExpense::class, "admin_expense_id")
+            ->with(["vendor" => function ($q) {
+                $q->with("vendor_category");
+            }, "payment"]);
     }
-    
 }

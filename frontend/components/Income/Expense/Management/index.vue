@@ -42,44 +42,66 @@
                  </v-tooltip>
                </v-toolbar> -->
     <v-container fluid>
-      <table>
-        <tr>
-          <td v-for="(item, index) in incomeHeaders" :key="index">
-            <span v-html="item.text"></span>
-          </td>
-        </tr>
-        <v-progress-linear
-          v-if="loading"
-          :active="loading"
-          :indeterminate="loading"
-          absolute
-          color="primary"
-        ></v-progress-linear>
+      <v-row dense>
+        <v-col cols="8"></v-col>
+        <v-col cols="2">
+          <v-text-field
+            label="Search..."
+            clearable
+            dense
+            outlined
+            hide-details
+            v-model="search"
+            @input="getBySearch"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2" class="text-right">
+          <FilterDateRange @filter-attr="filterAttr" />
+        </v-col>
+        <v-col>
+          <table>
+            <tr>
+              <td v-for="(item, index) in incomeHeaders" :key="index">
+                <span v-html="item.text"></span>
+              </td>
+            </tr>
+            <v-progress-linear
+              v-if="loading"
+              :active="loading"
+              :indeterminate="loading"
+              absolute
+              color="primary"
+            ></v-progress-linear>
 
-        <tr v-for="(item, index) in expenseData" :key="index">
-          <td>{{ ++index }}</td>
-          <td>{{ item.expense.datetime }}</td>
-          <td>{{ item.detail }}</td>
-          <td>{{ item.qty }}</td>
+            <tr v-for="(item, index) in expenseData" :key="index">
+              <td>{{ ++index }}</td>
+              <td>{{ item.expense.datetime }}</td>
+              <td>{{ item?.expense?.vendor?.first_name }}</td>
+              <td>{{ item?.expense?.vendor?.vendor_category?.name }}</td>
 
-          <td>{{ item.Cash}}</td>
-          <td>{{ item.Card}}</td>
-          <td>{{ item.Online}}</td>
-          <td>{{ item.Bank}}</td>
-          <td>{{ item.UPI}}</td>
-          <td>{{ item.Cheque}}</td>
-        </tr>
+              <td>{{ item.detail }}</td>
+              <td>{{ item.qty }}</td>
 
-        <tr class="text-right">
-          <td colspan="4">Total</td>
-          <td>{{ stats.Cash }}</td>
-          <td>{{ stats.Card }}</td>
-          <td>{{ stats.Online }}</td>
-          <td>{{ stats.Bank }}</td>
-          <td>{{ stats.UPI }}</td>
-          <td>{{ stats.Cheque }}</td>
-        </tr>
-      </table>
+              <td>{{ item.Cash }}</td>
+              <td>{{ item.Card }}</td>
+              <td>{{ item.Online }}</td>
+              <td>{{ item.Bank }}</td>
+              <td>{{ item.UPI }}</td>
+              <td>{{ item.Cheque }}</td>
+            </tr>
+
+            <tr class="text-right">
+              <td colspan="6">Total</td>
+              <td>{{ stats.Cash }}</td>
+              <td>{{ stats.Card }}</td>
+              <td>{{ stats.Online }}</td>
+              <td>{{ stats.Bank }}</td>
+              <td>{{ stats.UPI }}</td>
+              <td>{{ stats.Cheque }}</td>
+            </tr>
+          </table>
+        </v-col>
+      </v-row>
     </v-container>
   </v-card>
 </template>
@@ -105,7 +127,7 @@ export default {
     snackbar: false,
     dialog: false,
     expenseData: [],
-    stats:[],
+    stats: [],
     managementExpenseData: [],
     counts: [],
     loading: false,
@@ -113,6 +135,8 @@ export default {
     incomeHeaders: [
       { text: "#" },
       { text: "DateTime" },
+      { text: "Vendor" },
+      { text: "Category" },
       { text: "Item" },
       { text: "Qty" },
       { text: "Cash" },
@@ -121,8 +145,6 @@ export default {
       { text: "Bank" },
       { text: "UPI" },
       { text: "Cheque" },
-
-      
     ],
     editedIndex: -1,
     response: "",
@@ -144,6 +166,16 @@ export default {
   },
   computed: {},
   methods: {
+    getBySearch() {
+      if (
+        !this.search ||
+        this.search === null ||
+        this.search.length === 0 ||
+        this.search.length > 3
+      ) {
+        this.getExpenseData();
+      }
+    },
     filterAttr(data) {
       this.from_date = data.from;
       this.to_date = data.to;
@@ -201,6 +233,7 @@ export default {
           company_id: this.$auth.user.company.id,
           from_date: this.from_date,
           to_date: this.to_date,
+          search: this.search,
           is_admin_expense: 1,
         },
       };

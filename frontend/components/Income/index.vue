@@ -1,6 +1,6 @@
 <template>
-     <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <!-- <v-toolbar
+  <v-card class="mb-5 rounded-md mt-3" elevation="0">
+    <!-- <v-toolbar
                     class="rounded-md"
                     color="background"
                     dense
@@ -41,103 +41,128 @@
                       <span> DOWNLOAD </span>
                     </v-tooltip>
                   </v-toolbar> -->
-        <v-container fluid>
-            <table>
-          <tr>
-            <td v-for="(item, index) in incomeHeaders" :key="index">
-              <span v-html="item.text"></span>
-            </td>
-          </tr>
-          <v-progress-linear
-            v-if="loading"
-            :active="loading"
-            :indeterminate="loading"
-            absolute
-            color="primary"
-          ></v-progress-linear>
+    <v-container fluid>
+      <v-row dense>
+        <v-col cols="8"></v-col>
+        <v-col cols="2">
+          <v-text-field
+            label="Search..."
+            clearable
+            dense
+            outlined
+            hide-details
+            v-model="search"
+            @input="getBySearch"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2" class="text-right">
+          <FilterDateRange @filter-attr="filterAttr" />
+        </v-col>
+        <v-col>
+          <table>
+            <tr>
+              <td v-for="(item, index) in incomeHeaders" :key="index">
+                <span v-html="item.text"></span>
+              </td>
+            </tr>
+            <v-progress-linear
+              v-if="loading"
+              :active="loading"
+              :indeterminate="loading"
+              absolute
+              color="primary"
+            ></v-progress-linear>
 
-          <tr v-for="(item, index) in incomeData" :key="index">
-            <td>{{ ++index }}</td>
-            <td>{{ item.date }}</td>
-            <td>{{ item.time }}</td>
-            <td>
-              <span
-                class="blue--text"
-                @click="goToRevView(item)"
-                style="cursor: pointer"
-              >
-                {{ item.booking.reservation_no || "---" }}
-              </span>
-            </td>
-            <td style="max-width: 20px !important">
-              {{ item.room }}
-            </td>
-            <td>
-              {{
-                item &&
-                item.booking &&
-                item.booking.customer &&
-                item.booking.customer.first_name
-              }}
-            </td>
-            <td>{{ item.description }}</td>
+            <tr v-for="(item, index) in incomeData" :key="index">
+              <td>{{ ++index }}</td>
+              <td>{{ item.date }}</td>
+              <td>{{ item.time }}</td>
+              <td>
+                <span
+                  class="blue--text"
+                  @click="goToRevView(item)"
+                  style="cursor: pointer"
+                >
+                  {{ item.booking.reservation_no || "---" }}
+                </span>
+              </td>
+              <td style="max-width: 20px !important">
+                {{ item.room }}
+              </td>
+              <td>
+                {{
+                  item &&
+                  item.booking &&
+                  item.booking.customer &&
+                  item.booking.customer.first_name
+                }}
+              </td>
+              <td>{{ item.description }}</td>
 
-            <td v-for="i in 7" :key="i" class="text-right">
-              <span
-                v-if="
-                  (item && item.payment_mode && item.payment_mode.name) ==
-                    'Cash' && i == 1
-                "
-              >
-                {{ item.amount }}
-              </span>
-              <span
-                v-else-if="(item && item.payment_mode.name) == 'Bank' && i == 4"
-              >
-                {{ item.amount }}
-              </span>
-              <span
-                v-else-if="
-                  (item && item.payment_mode.name) == 'Online' && i == 3
-                "
-              >
-                {{ item.amount }}
-              </span>
-              <span
-                v-else-if="(item && item.payment_mode.name) == 'UPI' && i == 5"
-              >
-                {{ item.amount }}
-              </span>
-              <span
-                v-else-if="(item && item.payment_mode.name) == 'Card' && i == 2"
-              >
-                {{ item.amount }}
-              </span>
+              <td v-for="i in 7" :key="i" class="text-right">
+                <span
+                  v-if="
+                    (item && item.payment_mode && item.payment_mode.name) ==
+                      'Cash' && i == 1
+                  "
+                >
+                  {{ item.amount }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'Bank' && i == 4
+                  "
+                >
+                  {{ item.amount }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'Online' && i == 3
+                  "
+                >
+                  {{ item.amount }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'UPI' && i == 5
+                  "
+                >
+                  {{ item.amount }}
+                </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'Card' && i == 2
+                  "
+                >
+                  {{ item.amount }}
+                </span>
 
-              <span
-                v-else-if="
-                  (item && item.payment_mode.name) == 'City Ledger' && i == 7
-                "
-              >
-                {{ item.amount }}
-              </span>
+                <span
+                  v-else-if="
+                    (item && item.payment_mode.name) == 'City Ledger' && i == 7
+                  "
+                >
+                  {{ item.amount }}
+                </span>
 
-              <span v-else> --- </span>
-            </td>
-          </tr>
-          <tr class="text-right">
-            <td colspan="7">Total</td>
-            <td>{{ totalIncomes.Cash }}</td>
-            <td>{{ totalIncomes.Card }}</td>
-            <td>{{ totalIncomes.Online }}</td>
-            <td>{{ totalIncomes.Bank }}</td>
-            <td>{{ totalIncomes.UPI }}</td>
-            <td>{{ totalIncomes.Cheque }}</td>
-            <td>{{ totalIncomes.City_ledger }}</td>
-          </tr>
-        </table>
-        </v-container>
-      </v-card>
+                <span v-else> --- </span>
+              </td>
+            </tr>
+            <tr class="text-right">
+              <td colspan="7">Total</td>
+              <td>{{ totalIncomes.Cash }}</td>
+              <td>{{ totalIncomes.Card }}</td>
+              <td>{{ totalIncomes.Online }}</td>
+              <td>{{ totalIncomes.Bank }}</td>
+              <td>{{ totalIncomes.UPI }}</td>
+              <td>{{ totalIncomes.Cheque }}</td>
+              <td>{{ totalIncomes.City_ledger }}</td>
+            </tr>
+          </table>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <script>
@@ -193,6 +218,7 @@ export default {
     loss: "",
     profit: "",
     errors: [],
+    search: null,
     editedItem: {
       item: null,
       amount: null,
@@ -208,6 +234,16 @@ export default {
   },
   computed: {},
   methods: {
+    getBySearch() {
+      if (
+        !this.search ||
+        this.search === null ||
+        this.search.length === 0 ||
+        this.search.length > 3
+      ) {
+        this.getIncomeData();
+      }
+    },
     filterAttr(data) {
       this.from_date = data.from;
       this.to_date = data.to;
@@ -268,12 +304,12 @@ export default {
           company_id: this.$auth.user.company.id,
           from_date: this.from_date,
           to_date: this.to_date,
+          search: this.search,
         },
       };
       this.$axios.get(this.endpoint, options).then(({ data }) => {
         this.incomeData = data;
-      this.loading = false;
-
+        this.loading = false;
       });
     },
   },
