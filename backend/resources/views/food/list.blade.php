@@ -338,28 +338,17 @@
     @foreach ($data as $item)
     <table class="mt-3 w-100">
         <tr style="background-color: white; color: black" class="my-0 py-0">
-            <th class="my-0 py-0">Room No - {{ $item->room_no ?? '---' }}</th>
-            <th class="my-0 py-0">Adult</th>
-            <th class="my-0 py-0">Child</th>
-            <th class="my-0 py-0">Baby</th>
+            <th class="my-0 py-0">Room No</th>
+            <th class="my-0 py-0">Breakfast</th>
+            <th class="my-0 py-0">Lunch</th>
+            <th class="my-0 py-0">Dinner</th>
         </tr>
         <tr style="background-color: white" class="my-0 py-0">
-            <td class="my-0 py-0">{{ $item['breakfast']['title'] ?? 'Breakfast' }}</td>
-            <td class="my-0 py-0">{{ $item['breakfast']['no_of_adult'] ?? '---' }}</td>
-            <td class="my-0 py-0">{{ $item['breakfast']['no_of_child'] ?? '---' }}</td>
-            <td class="my-0 py-0">{{ $item['breakfast']['no_of_baby'] ?? '---' }}</td>
-        </tr>
-        <tr style="background-color: white" class="my-0 py-0">
-            <td class="my-0 py-0">{{ $item['lunch']['title'] ?? 'Lunch' }}</td>
-            <td class="my-0 py-0">{{ $item['lunch']['no_of_adult'] ?? '---' }}</td>
-            <td class="my-0 py-0">{{ $item['lunch']['no_of_child'] ?? '---' }}</td>
-            <td class="my-0 py-0">{{ $item['lunch']['no_of_baby'] ?? '---' }}</td>
-        </tr>
-        <tr style="background-color: white" class="my-0 py-0">
-            <td class="my-0 py-0">{{ $item['dinner']['title'] ?? 'Dinner' }}</td>
-            <td class="my-0 py-0">{{ $item['dinner']['no_of_adult'] ?? '---' }}</td>
-            <td class="my-0 py-0">{{ $item['dinner']['no_of_child'] ?? '---' }}</td>
-            <td class="my-0 py-0">{{ $item['dinner']['no_of_baby'] ?? '---' }}</td>
+            <td class="my-0 py-0">{{ $item->room_no }}</td>
+            <td class="my-0 py-0">{{ $item->breakfast }}</td>
+            <td class="my-0 py-0">{{ $item->lunch }}</td>
+            <td class="my-0 py-0">{{ $item->dinner }}</td>
+
         </tr>
     </table>
     @endforeach

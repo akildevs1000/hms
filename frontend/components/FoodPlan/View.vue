@@ -21,7 +21,7 @@
                 outlined
                 dense
                 hide-details
-               readonly
+                readonly
                 v-model="payload.title"
                 label="Title"
               ></v-text-field>
@@ -31,7 +31,7 @@
                 outlined
                 dense
                 hide-details
-               readonly
+                readonly
                 v-model="payload.description"
                 label="description"
               ></v-text-field>
@@ -41,10 +41,50 @@
                 outlined
                 dense
                 hide-details
-               readonly
+                readonly
                 v-model="payload.unit_price"
                 label="Unit Price"
               ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.breakfast"
+                readonly
+                outlined
+                dense
+                hide-details
+                label="Breakfast"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.lunch"
+                readonly
+                outlined
+                dense
+                hide-details
+                label="Lunch"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.dinner"
+                readonly
+                outlined
+                dense
+                hide-details
+                label="Dinner"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="12">
+              <v-checkbox
+                outlined
+                readonly
+                dense
+                hide-details
+                v-model="payload.is_for_hall"
+                label="Is this plan for Hall ?"
+              ></v-checkbox>
             </v-col>
           </v-row>
         </v-container>
@@ -60,8 +100,12 @@ export default {
       payload: {
         title: "",
         description: "",
-        no_of_pax: "",
+        no_of_pax: 0,
         unit_price: "",
+
+        breakfast: true,
+        lunch: true,
+        dinner: true,
       },
       dialog: false,
       loading: false,
@@ -73,7 +117,6 @@ export default {
     this.payload = this.item;
   },
   methods: {
-   
     close() {
       this.dialog = false;
       this.loading = false;

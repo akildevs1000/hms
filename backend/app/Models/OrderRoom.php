@@ -75,6 +75,10 @@ class OrderRoom extends Model
         "extra_hours",
         "total_booking_hours",
         "extra_booking_hours_charges",
+
+        "breakfast",
+        "lunch",
+        "dinner",
     ];
 
     /**

@@ -500,6 +500,11 @@ class BookingController extends Controller
                     $orderRooms['extra_bed_qty'] = $bookedRoomId->extra_bed_qty;
                     $orderRooms['early_check_in'] = $bookedRoomId->early_check_in;
                     $orderRooms['late_check_out'] = $bookedRoomId->late_check_out;
+
+                    $orderRooms['breakfast'] = $bookedRoomId->breakfast;
+                    $orderRooms['lunch'] = $bookedRoomId->lunch;
+                    $orderRooms['dinner'] = $bookedRoomId->dinner;
+
                     OrderRoom::create($orderRooms);
                 }
             }

@@ -15,7 +15,7 @@
         <small style="font-size: 10px"
           ><span><v-badge dot left :color="item.color"></v-badge></span>
           {{ item.text }} ({{
-            item.value == 0 ? 10 : parseInt(item.value)
+            item.value == 0 ? 0 : parseInt(item.value)
           }})</small
         >
       </div>

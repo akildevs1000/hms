@@ -5,7 +5,7 @@
         small
         class="pt-4 pb-4 mr-1 elevation-0"
         color="#ECF0F4"
-        @click="process('food_print')"
+        @click="process('foodplan-print')"
       >
         Print
         <v-icon right>mdi-printer</v-icon>
@@ -14,7 +14,7 @@
         small
         class="pt-4 pb-4 elevation-0"
         color="#ECF0F4"
-        @click="process('food_download')"
+        @click="process('foodplan-download')"
       >
         Download
         <v-icon right>mdi-file</v-icon>
@@ -22,51 +22,23 @@
     </div>
     <table v-for="(item, index) in data" :key="index" class="mt-4">
       <tr style="background-color: white; color: black" class="my-0 py-0">
-        <th class="my-0 py-0">Room No - {{ item.room_no || "---" }}</th>
-        <th class="my-0 py-0">Adult</th>
-        <th class="my-0 py-0">Child</th>
-        <th class="my-0 py-0">Baby</th>
+        <th class="my-0 py-0">Room No</th>
+        <th class="my-0 py-0">Breakfast</th>
+        <th class="my-0 py-0">Lunch</th>
+        <th class="my-0 py-0">Dinner</th>
       </tr>
       <tr style="background-color: white" class="my-0 py-0">
         <td class="my-0 py-0">
-          {{ (item && item.breakfast && item.breakfast.title) || "Breakfast" }}
+          {{ item.room_no }}
         </td>
         <td class="my-0 py-0">
-          {{ (item && item.breakfast && item.breakfast.no_of_adult) || "---" }}
+          {{ item.breakfast }}
         </td>
         <td class="my-0 py-0">
-          {{ (item && item.breakfast && item.breakfast.no_of_child) || "---" }}
+          {{ item.lunch }}
         </td>
         <td class="my-0 py-0">
-          {{ (item && item.breakfast && item.breakfast.no_of_baby) || "---" }}
-        </td>
-      </tr>
-      <tr style="background-color: white" class="my-0 py-0">
-        <td class="my-0 py-0">
-          {{ (item && item.lunch && item.lunch.title) || "Lunch" }}
-        </td>
-        <td class="my-0 py-0">
-          {{ (item && item.lunch && item.lunch.no_of_adult) || "---" }}
-        </td>
-        <td class="my-0 py-0">
-          {{ (item && item.lunch && item.lunch.no_of_child) || "---" }}
-        </td>
-        <td class="my-0 py-0">
-          {{ (item && item.lunch && item.lunch.no_of_baby) || "---" }}
-        </td>
-      </tr>
-      <tr style="background-color: white" class="my-0 py-0">
-        <td class="my-0 py-0">
-          {{ (item && item.dinner && item.dinner.title) || "Dinner" }}
-        </td>
-        <td class="my-0 py-0">
-          {{ (item && item.dinner && item.dinner.no_of_adult) || "---" }}
-        </td>
-        <td class="my-0 py-0">
-          {{ (item && item.dinner && item.dinner.no_of_child) || "---" }}
-        </td>
-        <td class="my-0 py-0">
-          {{ (item && item.dinner && item.dinner.no_of_baby) || "---" }}
+          {{ item.dinner }}
         </td>
       </tr>
     </table>
@@ -116,7 +88,7 @@ export default {
           company_id: this.$auth.user.company.id,
         },
       };
-      this.$axios.get(`food/`, payload).then(({ data }) => {
+      this.$axios.get(`booked-foodplans`, payload).then(({ data }) => {
         this.data = data;
       });
     },

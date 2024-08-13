@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FoodPlan\ValidationRequest;
+use App\Models\BookedRoom;
+use App\Models\Company;
 use App\Models\FoodPlan;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class FoodPlanController extends Controller
 {
@@ -63,5 +67,57 @@ class FoodPlanController extends Controller
         FoodPlan::find($id)->delete();
 
         return response()->noContent();
+    }
+
+    public function getFoodPlanCount()
+    {
+        $found = DB::table('booked_rooms')
+            ->where("company_id", request("company_id", 0))
+            ->selectRaw('SUM(breakfast) as breakfast, SUM(lunch) as lunch, SUM(dinner) as dinner')
+            ->first();
+
+        return [
+            "breakfast" => $found->breakfast ?? 0,
+            "lunch" => $found->lunch ??  0,
+            "dinner" => $found->dinner ??  0
+        ];
+    }
+
+    public function getBookedFoodPlans()
+    {
+        return DB::table('booked_rooms')
+            ->where("company_id", request("company_id", 0))
+            ->get([
+                "room_no",
+                "room_type",
+                "breakfast",
+                "lunch",
+                "dinner"
+            ]);
+    }
+
+
+    public function FoodPlanPrint()
+    {
+        $payload = [
+            "data" => $this->getBookedFoodPlans(),
+            "company" => Company::find(request("company_id", 0)),
+        ];
+
+        return Pdf::loadView('food.list', $payload)
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function FoodPlanDownload()
+    {
+        $payload = [
+            "data" => $this->getBookedFoodPlans(),
+            "company" => Company::find(request("company_id", 0)),
+        ];
+
+        return Pdf::loadView('food.list', $payload)
+            ->setPaper('a4', 'portrait')
+            ->download();
     }
 }

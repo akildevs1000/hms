@@ -1556,7 +1556,7 @@
                 label="Select Room"
                 dense
                 outlined
-                @change="getMultipleRoomObjects(multipleRoomId)"
+                return-object
               >
               </v-autocomplete>
             </v-col>
@@ -1595,6 +1595,40 @@
                 "
               ></v-autocomplete>
             </v-col>
+            <!-- <v-col cols="12">
+              <v-row>
+                <v-col cols="4">
+                  <v-checkbox
+                    v-model="temp.breakfast"
+                    readonly
+                    outlined
+                    dense
+                    hide-details
+                    label="Breakfast"
+                  ></v-checkbox>
+                </v-col>
+                <v-col cols="4">
+                  <v-checkbox
+                    v-model="temp.lunch"
+                    readonly
+                    outlined
+                    dense
+                    hide-details
+                    label="Lunch"
+                  ></v-checkbox>
+                </v-col>
+                <v-col cols="4">
+                  <v-checkbox
+                    v-model="temp.dinner"
+                    readonly
+                    outlined
+                    dense
+                    hide-details
+                    label="Dinner"
+                  ></v-checkbox>
+                </v-col>
+              </v-row>
+            </v-col> -->
             <v-col cols="6">
               <v-checkbox
                 v-model="is_early_check_in"
@@ -1628,7 +1662,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-btn block @click="add_room" color="primary" small>
+              <v-btn block @click="add_room(temp)" color="primary" small>
                 Confirm Room
               </v-btn>
             </v-col>
@@ -1765,7 +1799,7 @@ export default {
       priceListTableView: [],
 
       temp: {
-        food_plan_price:1,
+        food_plan_price: 1,
         extra_bed_qty: 0,
         food_plan_id: 1,
         early_check_in: 0,
@@ -1875,7 +1909,7 @@ export default {
       ],
 
       customer: {
-        customer_type:"Walking",
+        customer_type: "Walking",
         title: "Mr",
         whatsapp: "",
         nationality: "India",
@@ -1946,6 +1980,9 @@ export default {
       },
       business_sources: [],
 
+      isValid: false,
+
+      seletedFoodPlan: null,
     };
   },
   async created() {
@@ -2321,15 +2358,7 @@ export default {
       this.temp.cgst = gst;
       this.temp.sgst = gst;
     },
-
-    getMultipleRoomObjects(idToFilter) {
-      this.multipleRoomObjects = this.availableRooms.filter(
-        (item) => item.id == idToFilter
-      );
-    },
     selectRoom(item) {
-      let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
-
       this.selectRoomLoading = true;
 
       let payload = {
@@ -2346,19 +2375,12 @@ export default {
         .get(`get_data_by_select_with_tax`, payload)
         .then(({ data }) => {
           this.selectRoomLoading = false;
-
-          let fPrice = foodplan.unit_price;
-          let adult_food_plan_price = fPrice * this.temp.no_of_adult;
-          let child_food_plan_price = (fPrice * this.temp.no_of_child) / 2;
-          this.selectRoomLoading = false;
           this.temp.room_type = item.name;
-          this.temp.meal_name = foodplan.title;
-          this.temp.food_plan_price =
-            adult_food_plan_price + child_food_plan_price;
           this.temp.company_id = this.$auth.user.company.id;
           this.temp.price = data.total_price;
           this.temp.priceList = data.data;
           this.temp.room_tax = data.total_tax;
+
           this.get_cs_gst(data.total_tax);
         });
     },
@@ -2371,92 +2393,119 @@ export default {
       return upper;
     },
 
-    add_room() {
+    getFoodCalculation({ no_of_adult, no_of_child, food_plan_id }) {
+      let selectedFP = this.foodplans.find((e) => e.id == food_plan_id);
 
-      let selectedRoomsForTableView = [];
+      if (!selectedFP) {
+        return null;
+      }
 
-      let {
-        price,
-        early_check_in,
-        late_check_out,
-        room_discount,
-        room_extra_amount,
-        meal_name,
-        food_plan_price,
-        bed_amount,
-        priceList,
-        room_type,
-        no_of_adult,
-        no_of_child,
-      } = this.temp;
+      let total_members = no_of_adult + no_of_child;
 
-      let sub_total =
-        price +
-        food_plan_price +
+      let { title, unit_price } = selectedFP;
+
+      let food_plan_price = (unit_price * no_of_adult) + ((unit_price * no_of_child) / 2);
+
+      return {
+        meal: "------",
+        meal_name: `${title} (${food_plan_price})`,
+        food_plan_price: food_plan_price,
+        breakfast: selectedFP.breakfast ? total_members : 0,
+        lunch: selectedFP.lunch ? total_members : 0,
+        dinner: selectedFP.dinner ? total_members : 0,
+      };
+    },
+
+    add_room({
+      room_type,
+      price,
+      early_check_in,
+      late_check_out,
+      room_discount,
+      room_extra_amount,
+      bed_amount,
+      priceList,
+      no_of_adult,
+      no_of_child,
+    }) {
+      if (!this.room_type_id || !this.multipleRoomId) {
+        this.alert("Error!", "Room type or Room not selected", "error");
+        return;
+      }
+
+      let selected_food_plan = this.getFoodCalculation(this.temp);
+
+      if (!selected_food_plan) {
+        this.alert("Error!", "Food plan not found!", "error");
+        return;
+      }
+
+      let extras =
         early_check_in +
         late_check_out +
+        bed_amount +
+        selected_food_plan.food_plan_price;
+
+      let sub_total =
+        extras +
+        price +
         parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
 
       let after_discount =
         sub_total - (room_discount == "" ? 0 : room_discount);
 
-      this.room.check_in = this.temp.check_in;
-      this.room.check_out = this.temp.check_out;
+      let room_no = this.multipleRoomId.room_no;
 
-      this.multipleRoomObjects.forEach((item) => {
-        let isSelect = this.selectedRooms.find(
-          (e) => e.room_no == item.room_no
+      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
+
+      if (!isSelect) {
+        let selectedRoomsForTableView = [];
+
+        this.room.check_in = this.temp.check_in;
+        this.room.check_out = this.temp.check_out;
+
+        // console.log(after_discount);return;
+
+        let payload = {
+          ...this.temp,
+          ...selected_food_plan,
+
+          days: this.getDays(),
+          room_discount: room_discount == "" ? 0 : room_discount,
+          after_discount: after_discount,
+          total: after_discount,
+          grand_total: after_discount,
+          room_no: this.multipleRoomId.room_no,
+          room_id: this.multipleRoomId.id,
+        };
+
+        selectedRoomsForTableView.push(payload);
+        this.selectedRooms.push(payload);
+
+        this.runAllFunctions();
+        this.alert("Success!", "success selected room", "success");
+        this.isSelectRoom = false;
+        this.RoomDrawer = false;
+
+        let no_of_rooms = selectedRoomsForTableView.length || 0;
+
+        let arrToMerge = priceList.map((e) => ({
+          ...e,
+          ...selected_food_plan,
+          no_of_rooms,
+          room_type,
+          no_of_adult,
+          no_of_child,
+          early_check_in,
+          late_check_out,
+          bed_amount,
+          total_price: after_discount * no_of_rooms,
+        }));
+
+        this.priceListTableView = this.mergeEntries(
+          this.priceListTableView.concat(arrToMerge)
         );
-
-        if (!isSelect) {
-          let payload = {
-            ...this.temp,
-            meal: "------",
-            days: this.getDays(),
-            room_discount: room_discount == "" ? 0 : room_discount,
-            after_discount: after_discount,
-            total: after_discount,
-            grand_total: after_discount,
-            room_no: item.room_no,
-            room_id: item.id,
-          };
-
-          selectedRoomsForTableView.push(payload);
-          this.selectedRooms.push(payload);
-
-          this.runAllFunctions();
-          this.alert("Success!", "success selected room", "success");
-          this.isSelectRoom = false;
-          this.RoomDrawer = false;
-        }
-      });
-
-      let adult_food_charges = food_plan_price * no_of_adult;
-      let child_food_charges = (food_plan_price * no_of_child) / 2;
-      let total_food_charges = adult_food_charges + child_food_charges;
-
-      let extras =
-      early_check_in + late_check_out + bed_amount + total_food_charges;
-
-      let arrToMerge = priceList.map((e) => ({
-        ...e,
-        price_with_meal: e.price + total_food_charges,
-        no_of_rooms: selectedRoomsForTableView.length,
-        room_type,
-        no_of_adult,
-        no_of_child,
-        meal_name: `${meal_name} (${total_food_charges})`,
-        extras,
-        early_check_in,
-        late_check_out,
-        bed_amount,
-        total_price:
-          (e.price + extras) * selectedRoomsForTableView.length,
-      }));
-
-      this.priceListTableView = this.mergeEntries(
-        this.priceListTableView.concat(arrToMerge)
-      );
+      }
     },
 
     mergeEntries(entries) {

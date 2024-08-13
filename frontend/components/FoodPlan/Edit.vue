@@ -45,6 +45,33 @@
                 label="Unit Price"
               ></v-text-field>
             </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.breakfast"
+                outlined
+                dense
+                hide-details
+                label="Breakfast"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.lunch"
+                outlined
+                dense
+                hide-details
+                label="Lunch"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.dinner"
+                outlined
+                dense
+                hide-details
+                label="Dinner"
+              ></v-checkbox>
+            </v-col>
             <v-col cols="12">
               <v-checkbox
                 outlined
@@ -56,6 +83,9 @@
             </v-col>
             <v-col cols="12" v-if="errorResponse">
               <span class="red--text">{{ errorResponse }}</span>
+            </v-col>
+            <v-col>
+              <pre>{{payload}}</pre>
             </v-col>
             <v-col cols="12" class="text-right">
               <v-btn small color="grey" class="white--text" dark @click="close">
@@ -88,6 +118,10 @@ export default {
         description: "",
         no_of_pax: 0,
         unit_price: "",
+
+        breakfast: true,
+        lunch: true,
+        dinner: true,
       },
       dialog: false,
       loading: false,

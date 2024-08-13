@@ -30,6 +30,11 @@ class ValidationRequest extends FormRequest
             "unit_price" => "required|integer",
             "is_for_hall" => "required",
             "company_id" => "required|integer",
+
+            "breakfast" => "required",
+            "lunch" => "required",
+            "dinner" => "required",
+
         ];
     }
 }

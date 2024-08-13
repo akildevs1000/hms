@@ -53,29 +53,32 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
-                <v-checkbox
-                  outlined
-                  dense
-                  hide-details
-                  label="Breakfast"
-                ></v-checkbox>
-              </v-col>
-              <v-col cols="4">
-                <v-checkbox
-                  outlined
-                  dense
-                  hide-details
-                  label="Lunch"
-                ></v-checkbox>
-              </v-col>
-              <v-col cols="4">
-                <v-checkbox
-                  outlined
-                  dense
-                  hide-details
-                  label="Dinner"
-                ></v-checkbox>
-              </v-col>
+              <v-checkbox
+                v-model="payload.breakfast"
+                outlined
+                dense
+                hide-details
+                label="Breakfast"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.lunch"
+                outlined
+                dense
+                hide-details
+                label="Lunch"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="4">
+              <v-checkbox
+                v-model="payload.dinner"
+                outlined
+                dense
+                hide-details
+                label="Dinner"
+              ></v-checkbox>
+            </v-col>
               <v-col cols="12">
                 <v-checkbox
                   outlined
@@ -129,6 +132,9 @@ export default {
         no_of_pax: 0,
         unit_price: 0,
         is_for_hall: 0,
+        breakfast: true,
+        lunch: true,
+        dinner: true,
         company_id: this.$auth.user.company_id,
       },
       dialog: false,

@@ -338,7 +338,11 @@
             </v-icon>
           </v-toolbar>
           <v-card-text>
-            <check-out :BookingData="checkData" :roomData="roomData" @close-dialog="closeDialogs" />
+            <check-out
+              :BookingData="checkData"
+              :roomData="roomData"
+              @close-dialog="closeDialogs"
+            />
           </v-card-text>
           <v-card-actions> </v-card-actions>
         </v-card>
@@ -650,28 +654,23 @@
               {
                 color: `blue`,
                 text: `Breakfast`,
-                value: `${
-                  onlyBreakfast.adult + onlyBreakfast.child + onlyBreakfast.baby
-                }`,
+                value: foodplan.breakfast,
               },
               {
                 color: `green`,
                 text: `Lunch`,
-                value: `${onlyLunch.adult + onlyLunch.child + onlyLunch.baby}`,
+                value: foodplan.lunch,
               },
               {
                 color: `orange`,
                 text: `Dinner`,
-                value: `${
-                  onlyDinner.adult + onlyDinner.child + onlyDinner.baby
-                }`,
+                value: foodplan.dinner,
               },
             ]"
           />
         </v-card>
       </v-col>
       <v-col cols="12">
-       
         <v-card class="py-2">
           <v-container fluid>
             <v-row>
@@ -710,11 +709,7 @@
                 ></v-select>
               </v-col>
             </v-row>
-            <v-row
-              v-if="Occupied.length"
-              no-gutters
-              class="mt-5"
-            >
+            <v-row v-if="Occupied.length" no-gutters class="mt-5">
               <v-col cols="12">
                 <div>Occupied</div>
               </v-col>
@@ -758,7 +753,6 @@
                   dark
                 >
                   <v-card-text>
-                   
                     <div class="text-center white--text">
                       <v-icon>mdi-bed</v-icon>
                       <div>{{ occupied?.room_no || "---" }}</div>
@@ -989,7 +983,7 @@ import PaidBookedSvg from "../components/svg/PaidBookedSvg.vue";
 import ExpectCheckInSvg from "../components/svg/ExpectCheckInSvg.vue";
 import ExpectCheckOutSvg from "../components/svg/ExpectCheckOutSvg.vue";
 import CheckInSvg from "../components/svg/CheckInSvg.vue";
-import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
+// import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
 import ExpectCheckInReport from "../components/summary_reports/ExpectCheckInReport.vue";
 import ExpectCheckOutReport from "../components/summary_reports/ExpectCheckOutReport.vue";
 import AvailableRoomsReport from "../components/summary_reports/AvailableRoomsReport.vue";
@@ -1018,7 +1012,7 @@ export default {
     CheckInRoomsReport,
     ExpectCheckOutReport,
     ExpectCheckInReport,
-    FoodOrderRooms,
+    // FoodOrderRooms,
     CheckInSvg,
     ExpectCheckOutSvg,
     ExpectCheckInSvg,
@@ -1127,7 +1121,7 @@ export default {
       notAvailableRooms: [],
       availableRooms: [],
       blockedRooms: [],
-      Occupied:[],
+      Occupied: [],
       checkIn: [],
       checkOut: [],
       reservedWithoutAdvance: [],
@@ -1155,9 +1149,7 @@ export default {
         child: 0,
         baby: 0,
       },
-      onlyBreakfast: {},
-      onlyLunch: {},
-      onlyDinner: {},
+      foodplan: null,
       dirtyRooms: 0,
       expectCheckIn: "",
       expectCheckOut: "",
@@ -1225,6 +1217,9 @@ export default {
       this.room_list();
       this.key = this.key + 1;
     }, 1000 * 60 * 2);
+
+
+    this.get_food_plan();
   },
 
   methods: {
@@ -1532,6 +1527,17 @@ export default {
       let advance_price = val;
     },
 
+    get_food_plan() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`foodplan-count`, payload).then(({ data }) => {
+        this.foodplan = data;
+      });
+    },
+
     get_posting() {
       let id = this.evenIid;
       let payload = {
@@ -1565,15 +1571,7 @@ export default {
         }
 
         this.rooms = data;
-        this.onlyBreakfast = {
-          ...data.fooForCustomers.breakfast,
-        };
-        this.onlyLunch = {
-          ...data.fooForCustomers.lunch,
-        };
-        this.onlyDinner = {
-          ...data.fooForCustomers.dinner,
-        };
+
         this.dirtyRooms = data.dirtyRooms;
         this.availableRooms = data.availableRooms;
         this.notAvailableRooms = data.notAvailableRooms;
