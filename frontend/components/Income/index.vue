@@ -97,66 +97,38 @@
                   item.booking.customer.first_name
                 }}
               </td>
-              <td>{{ item.description }}</td>
-
-              <td v-for="i in 7" :key="i" class="text-right">
-                <span
-                  v-if="
-                    (item && item.payment_mode && item.payment_mode.name) ==
-                      'Cash' && i == 1
-                  "
-                >
-                  {{ item.amount }}
-                </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Bank' && i == 4
-                  "
-                >
-                  {{ item.amount }}
-                </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Online' && i == 3
-                  "
-                >
-                  {{ item.amount }}
-                </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'UPI' && i == 5
-                  "
-                >
-                  {{ item.amount }}
-                </span>
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'Card' && i == 2
-                  "
-                >
-                  {{ item.amount }}
-                </span>
-
-                <span
-                  v-else-if="
-                    (item && item.payment_mode.name) == 'City Ledger' && i == 7
-                  "
-                >
-                  {{ item.amount }}
-                </span>
-
-                <span v-else> --- </span>
+              <td class="text-right">{{ item.description }}</td>
+              <td class="text-right">{{ convert_decimal(item.Cash) }}</td>
+              <td class="text-right">{{ convert_decimal(item.Card) }}</td>
+              <td class="text-right">{{ convert_decimal(item.Online) }}</td>
+              <td class="text-right">{{ convert_decimal(item.Bank) }}</td>
+              <td class="text-right">{{ convert_decimal(item.UPI) }}</td>
+              <td class="text-right">{{ convert_decimal(item.Cheque) }}</td>
+              <td class="text-right">
+                {{ convert_decimal(item.CityLedger) }}
               </td>
             </tr>
-            <tr class="text-right">
+            <tr>
               <td colspan="7">Total</td>
-              <td>{{ totalIncomes.Cash }}</td>
-              <td>{{ totalIncomes.Card }}</td>
-              <td>{{ totalIncomes.Online }}</td>
-              <td>{{ totalIncomes.Bank }}</td>
-              <td>{{ totalIncomes.UPI }}</td>
-              <td>{{ totalIncomes.Cheque }}</td>
-              <td>{{ totalIncomes.City_ledger }}</td>
+              <td class="text-right">
+                {{ convert_decimal(incomeStats.Cash) }}
+              </td>
+              <td class="text-right">
+                {{ convert_decimal(incomeStats.Card) }}
+              </td>
+              <td class="text-right">
+                {{ convert_decimal(incomeStats.Online) }}
+              </td>
+              <td class="text-right">
+                {{ convert_decimal(incomeStats.Bank) }}
+              </td>
+              <td class="text-right">{{ convert_decimal(incomeStats.UPI) }}</td>
+              <td class="text-right">
+                {{ convert_decimal(incomeStats.Cheque) }}
+              </td>
+              <td class="text-right">
+                {{ convert_decimal(incomeStats.CityLedger) }}
+              </td>
             </tr>
           </table>
         </v-col>
@@ -192,7 +164,6 @@ export default {
     snackbar: false,
     dialog: false,
     expenseData: [],
-    managementExpenseData: [],
     incomeData: [],
     counts: [],
     loading: false,
@@ -224,9 +195,15 @@ export default {
       amount: null,
       payment_modes: "CASH",
     },
-    totalExpenses: {},
-    managementExpense: {},
-    totalIncomes: {},
+    incomeStats: {
+      Cash: 0,
+      Card: 0,
+      Online: 0,
+      Bank: 0,
+      UPI: 0,
+      Cheque: 0,
+      CityLedger: 0,
+    },
   }),
   created() {
     this.loading = true;
@@ -308,7 +285,9 @@ export default {
         },
       };
       this.$axios.get(this.endpoint, options).then(({ data }) => {
-        this.incomeData = data;
+        this.incomeData = data.data;
+        this.incomeStats = data.stats;
+        this.$emit("stats", data.stats);
         this.loading = false;
       });
     },

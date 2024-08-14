@@ -240,6 +240,7 @@ export default {
       this.$axios.get(this.endpoint, options).then(({ data }) => {
         this.expenseData = data.data;
         this.stats = data.stats;
+        this.$emit("stats", data.stats);
 
         this.loading = false;
       });
