@@ -1218,7 +1218,6 @@ export default {
       this.key = this.key + 1;
     }, 1000 * 60 * 2);
 
-
     this.get_food_plan();
   },
 
@@ -1437,8 +1436,9 @@ export default {
       };
       this.rightClickRoomId = "---";
       this.$axios.get(`get_booked_room`, payload).then(({ data }) => {
+        let { booking, ...roomData } = data;
         this.checkData = data.booking;
-        this.roomData = data;
+        this.roomData = roomData;
         this.bookingId = data.booking.id;
 
         this.rightClickRoomId = data.booking.resourceId;

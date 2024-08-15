@@ -16,7 +16,7 @@ class Room extends Model
 
     protected $guarded = [];
 
-    protected $with = ['room_type:id,name,price'];
+    protected $with = ['room_type:id,name,price,type'];
 
     protected $appends = [
         // 'background',

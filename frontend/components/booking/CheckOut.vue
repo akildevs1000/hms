@@ -1,11 +1,9 @@
 <template>
   <div>
-    <v-row>
+    <v-row v-if="BookingData && BookingData.id">
       <v-col md="7">
         <v-container>
           <table>
-            <v-progress-linear v-if="false" :active="loading" :indeterminate="loading" absolute
-              color="primary"></v-progress-linear>
             <tr>
               <th>Customer Name</th>
               <td style="width: 300px">
@@ -27,13 +25,19 @@
             <tr>
               <th>Check In</th>
               <td>
-                {{ BookingData && BookingData.check_in_date }}
+                {{ roomData && roomData.check_in }}
               </td>
             </tr>
             <tr>
               <th>Check Out</th>
               <td>
-                {{ BookingData && BookingData.check_out_date }}
+                {{ roomData && roomData.check_out }}
+              </td>
+            </tr>
+            <tr>
+              <th>Total Booking Hours</th>
+              <td>
+                {{ roomData && roomData.total_booking_hours }}
               </td>
             </tr>
             <tr>
@@ -42,14 +46,23 @@
                 <span class="error--text">*</span>
               </th>
               <td>
-                <v-select v-model="BookingData.payment_mode_id" :items="[
+                <v-select
+                  v-model="BookingData.payment_mode_id"
+                  :items="[
                     { id: 1, name: 'Cash' },
                     { id: 2, name: 'Card' },
                     { id: 3, name: 'Online' },
                     { id: 4, name: 'Bank' },
                     { id: 5, name: 'UPI' },
                     { id: 6, name: 'Cheque' },
-                  ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-select>
+                  ]"
+                  item-text="name"
+                  item-value="id"
+                  dense
+                  outlined
+                  :hide-details="true"
+                  :height="1"
+                ></v-select>
               </td>
             </tr>
             <tr v-if="BookingData.payment_mode_id != 1">
@@ -58,7 +71,13 @@
                 <span class="error--text">*</span>
               </th>
               <td>
-                <v-text-field dense outlined type="text" v-model="reference" :hide-details="true"></v-text-field>
+                <v-text-field
+                  dense
+                  outlined
+                  type="text"
+                  v-model="reference"
+                  :hide-details="true"
+                ></v-text-field>
               </td>
             </tr>
             <tr>
@@ -73,17 +92,23 @@
             </tr>
             <tr>
               <th>Remaining Balance</th>
-              <td>{{ BookingData.remaining_price }}</td>
+              <td>{{ remaining_price }}</td>
             </tr>
             <tr>
               <th>Remaining Balance With Posting</th>
-              <td>{{ BookingData.grand_remaining_price }}</td>
+              <td>{{ grand_remaining_price }}</td>
             </tr>
             <tr style="background-color: white" v-if="BookingData.paid_by != 2">
               <th>Discount</th>
               <td>
-                <v-text-field dense outlined type="number" v-model="discount" :hide-details="true"
-                  @keyup="get_after_discount_balance(discount)"></v-text-field>
+                <v-text-field
+                  dense
+                  outlined
+                  type="number"
+                  v-model="discount"
+                  :hide-details="true"
+                  @keyup="get_after_discount_balance(discount)"
+                ></v-text-field>
               </td>
             </tr>
             <tr style="background-color: white" v-if="BookingData.paid_by != 2">
@@ -98,18 +123,93 @@
                 <span class="error--text">*</span>
               </th>
               <td>
-                <v-text-field dense outlined type="number" v-model="full_payment" :hide-details="true"></v-text-field>
+                <v-text-field
+                  dense
+                  outlined
+                  type="number"
+                  v-model="full_payment"
+                  :hide-details="true"
+                ></v-text-field>
               </td>
             </tr>
             <tr>
               <th>Print Invoice</th>
               <td>
-                <v-checkbox v-model="isPrintInvoice" :hide-details="true" class="pt-0 py-1 chk-align">
+                <v-checkbox
+                  v-model="isPrintInvoice"
+                  :hide-details="true"
+                  class="pt-0 py-1 chk-align"
+                >
                 </v-checkbox>
               </td>
             </tr>
+            <tr>
+              <th>Change CheckOut Time</th>
+              <td>
+                <v-menu
+                  ref="menu"
+                  v-model="change_checkout_time"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  :return-value.sync="actualCheckoutTime"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      outlined
+                      dense
+                      v-model="actualCheckoutTime"
+                      label=""
+                      append-icon="mdi-clock-time-four-outline"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      hide-details
+                    ></v-text-field>
+                  </template>
+                  <v-time-picker
+                    v-if="change_checkout_time"
+                    v-model="actualCheckoutTime"
+                    no-title
+                    @click:minute="
+                      () => {
+                        $refs.menu.save(actualCheckoutTime);
+                        calculateHoursQty(actualCheckoutTime);
+                      }
+                    "
+                    format="24hr"
+                  ></v-time-picker>
+                </v-menu>
+              </td>
+            </tr>
+            <tr>
+              <th>Additional Hours</th>
+              <td>
+                {{ exceedHoursCharges }}
+              </td>
+            </tr>
           </table>
-          <v-btn class="primary mt-3" height="40" width="25%" small :loading="loading" @click="store_check_out">
+          <!-- <v-text-field
+            readonly
+            class="my-2"
+            v-if="Testing"
+            label="Assumed Time"
+            dense
+            outlined
+            hide-details
+            v-model="actualCheckoutTime"
+          ></v-text-field> -->
+          <v-btn
+            class="primary mt-3"
+            height="40"
+            width="25%"
+            small
+            :loading="loading"
+            @click="store_check_out"
+          >
             Check Out
           </v-btn>
         </v-container>
@@ -124,8 +224,11 @@
             <th>Balance</th>
           </tr>
 
-          <tr v-for="(item, index) in transactions" :key="index"
-            style="font-size: 13px; background-color: white; color: black">
+          <tr
+            v-for="(item, index) in transactions"
+            :key="index"
+            style="font-size: 13px; background-color: white; color: black"
+          >
             <td>
               <b>{{ ++index }}</b>
             </td>
@@ -141,7 +244,7 @@
           <tr style="font-size: 13px; background-color: white; color: black">
             <th colspan="4" class="text-right">Balance</th>
             <td class="text-right" style="background-color: white">
-              {{ totalTransactionAmount }}
+              {{ totalTransactionAmount + exceedHoursCharges }}
             </td>
           </tr>
         </table>
@@ -150,10 +253,27 @@
   </div>
 </template>
 <script>
+const today = new Date();
+
+function formatTime(date) {
+  let hours = date.getHours().toString().padStart(2, "0");
+  let minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
 export default {
-  props: ["BookingData","roomData"],
+  props: ["BookingData", "roomData"],
+
   data() {
     return {
+      change_checkout_time: false,
+
+      grand_remaining_price: 0,
+      remaining_price: 0,
+      Testing: true,
+      isHall: false,
+
+      exceedHoursCharges: 0,
+      actualCheckoutTime: formatTime(today),
       isDiscount: false,
       snackbar: false,
       checkLoader: false,
@@ -201,59 +321,55 @@ export default {
     BookingData() {
       this.discount = 0;
       this.full_payment = 0;
-    }
+    },
   },
-
-  created() {
-    this.preloader = false;
-  },
-
   mounted() {
     this.checkOutDialog = true;
-    this.after_discount_balance = this.BookingData.grand_remaining_price;
-    this.get_transaction();
   },
+  created() {
+    this.preloader = false;
+    if (this.roomData && this.roomData.id) {
+      let { grand_remaining_price, remaining_price } = this.BookingData;
+      this.grand_remaining_price = grand_remaining_price;
+      this.remaining_price = remaining_price;
+      this.after_discount_balance = grand_remaining_price;
 
+      this.actualCheckoutTime = this.roomData.check_out_time;
+
+      this.calculateHoursQty(this.actualCheckoutTime);
+      this.get_transaction();
+    }
+  },
   computed: {},
   methods: {
     get_after_discount_balance(amt = 0) {
       let discount = amt || 0;
-      let blc =
-        parseFloat(this.BookingData.grand_remaining_price) -
-        parseFloat(discount);
+      let blc = parseFloat(this.grand_remaining_price) - parseFloat(discount);
       this.after_discount_balance = blc.toFixed(2) || 0;
     },
 
-    get_transaction() {
-      let id = this.BookingData.id;
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios
-        .get(`get_transaction_by_booking_id/${id}`, payload)
-        .then(({ data }) => {
-          this.transactions = data.transactions;
-          this.totalTransactionAmount = data.totalTransactionAmount;
-        });
-    },
-
     store_check_out() {
-      this.loading = true;
+      let full_payment = parseFloat(this.full_payment);
+      if (full_payment <= 0) {
+        this.alert("Warning", "Payment should be greater than zero","error");
+        return;
+      }
       let payload = {
         booking_id: this.BookingData.id,
-        grand_remaining_price: this.BookingData.grand_remaining_price,
-        remaining_price: this.BookingData.remaining_price,
-        full_payment: this.full_payment,
+        grand_remaining_price: this.grand_remaining_price,
+        remaining_price: this.remaining_price,
+        full_payment: parseFloat(this.full_payment),
         payment_mode_id: this.BookingData.payment_mode_id,
         company_id: this.$auth.user.company.id,
         isPrintInvoice: this.isPrintInvoice,
         reference_number: this.reference,
         discount: this.discount,
         user_id: this.$auth.user.id,
+        isHall: this.isHall,
+        exceedHoursCharges: this.exceedHoursCharges,
       };
 
+      // this.loading = true;
       this.$axios
         .post("/check_out_room", payload)
         .then(({ data }) => {
@@ -293,6 +409,71 @@ export default {
         (u && u.permissions.some((e) => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+
+    calculateHoursQty(actualCheckoutTime) {
+      let { check_out, extra_hours, extra_booking_hours_charges, room } =
+        this.roomData;
+
+      if (room?.room_type?.type !== "hall") {
+        this.isHall = false;
+        return;
+      }
+
+      this.isHall = true;
+
+      const extra_per_hour_charges = extra_booking_hours_charges / extra_hours;
+
+      const start = new Date(check_out);
+      let end = new Date(this.getCurrentDate() + " " + actualCheckoutTime);
+
+      // Check if the end time is earlier than the start time, indicating it falls on the next day
+      if (end < start) {
+        // Add 24 hours (in milliseconds) to the end time
+        end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
+      }
+
+      const differenceInMs = end - start;
+
+      const totalHours = Math.ceil(differenceInMs / (1000 * 60 * 60));
+
+      this.exceedHoursCharges = Math.round(totalHours) * extra_per_hour_charges;
+
+      this.transactions.push({
+        created_at: this.getCurrentDate(),
+        debit: this.exceedHoursCharges,
+        credit: 0,
+        balance: this.exceedHoursCharges,
+      });
+    },
+
+    get_transaction() {
+      let id = this.BookingData.id;
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          // isHall: this.isHall,
+          // exceedHoursCharges: this.exceedHoursCharges,
+          // customer_id: this.BookingData.customer_id,
+          // payment_mode_id: this.BookingData.payment_mode_id,
+          // reference: this.reference,
+          // user_id: this.$auth.user.id,
+        },
+      };
+      this.$axios
+        .get(`get_transaction_by_booking_id/${id}`, payload)
+        .then(({ data }) => {
+          this.transactions = data.transactions;
+          this.totalTransactionAmount = data.totalTransactionAmount;
+        });
+    },
+
+    getCurrentDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     },
 
     alert(title = "Success!", message = "hello", type = "error") {
