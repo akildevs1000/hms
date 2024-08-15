@@ -2,11 +2,34 @@
   <div v-if="can('calendar_create')">
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-bind="attrs" v-on="on" class="primary">
-          <v-icon class="mr-2">mdi-account-group</v-icon> Group
-        </v-btn>
+        <div style="text-align: center">
+          <v-btn
+            dense
+            x-small
+            v-bind="attrs"
+            v-on="on"
+            class="text-center"
+            title="Group"
+            color="#34444c"
+            style="width: 37px; height: 26px"
+          >
+            <v-icon color="white">mdi-account-group</v-icon>
+            <span v-if="!onlyButton"> Group</span>
+          </v-btn>
+          <div v-if="onlyButton" style="font-size: 10px; text-align: center">
+            Group
+          </div>
+        </div>
       </template>
+
       <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Hall Booking Information</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="dialog = false">
+            mdi mdi-close-box
+          </v-icon>
+        </v-toolbar>
         <v-container fluid>
           <v-row>
             <v-dialog v-model="documentDialog" max-width="30%">
@@ -1652,6 +1675,7 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
+  props: ["onlyButton"],
   components: {
     History,
     ImagePreview,

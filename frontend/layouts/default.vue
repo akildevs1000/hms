@@ -81,6 +81,42 @@
       fixed
       app
       :color="sideBarcolor"
+      :width="100"
+      expand-on-hover
+      rail
+    >
+      <v-list v-for="(i, idx) in filteredMenu" :key="idx" :title="i.title">
+        <v-list-item
+          @click="$router.push(i.to)"
+          :class="!miniVariant || 'pl-2'"
+          router
+          style="display: inline-block; padding: 0px 20px"
+          vertical
+        >
+          <div>
+            <v-icon>{{ i.icon }}</v-icon>
+          </div>
+          <div class="text-center p-2">
+            {{ i.title }}
+          </div>
+          <!-- <v-list-item-icon class="ma-2">
+            <v-icon>{{ i.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-title class="text-center p-2">
+            <br />
+            {{ i.title }}
+          </v-list-item-title> -->
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <!-- <v-navigation-drawer
+      v-model="drawer"
+      dark
+      :clipped="clipped"
+      fixed
+      app
+      :color="sideBarcolor"
       :width="150"
     >
       <v-row no-gutters>
@@ -102,8 +138,8 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-navigation-drawer>
-    <v-main class="main_bg">
+    </v-navigation-drawer> -->
+    <v-main class="main_bg" style="padding-left: 65px">
       <v-container fluid>
         <nuxt />
       </v-container>
@@ -712,7 +748,7 @@ export default {
       },
       clipped: true,
       currentTime: "",
-      miniVariant: false,
+
       title: "",
       logout_btn: {
         icon: "mdi-logout",
@@ -955,5 +991,59 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+</style>
+
+<style>
+.v-navigation-drawer {
+  width: 80px !important;
+  text-align: center;
+}
+
+.v-navigation-drawer--is-mouseover {
+  width: 140px !important;
+  text-align: center;
+}
+
+.global-search-textbox .v-input__slot {
+  min-height: 30px !important;
+}
+.global-search-textbox .v-label {
+  line-height: 11px !important;
+}
+.global-search-textbox .v-input__icon {
+  height: 17px !important;
+}
+
+.global-search-select .v-input__slot {
+  min-height: 30px !important;
+}
+.global-search-select .v-label {
+  line-height: 11px !important;
+}
+.global-search-select .v-input__icon {
+  height: 17px !important;
+}
+
+.global-search-select .v-select__selections {
+  padding: 0px !important;
+}
+
+.global-search-select .v-label {
+  top: 13px !important;
+}
+
+.global-search-date .v-input__slot {
+  min-height: 30px !important;
+}
+.global-search-date .v-label {
+  line-height: 11px !important;
+}
+.global-search-date .v-input__icon {
+  height: 17px !important;
+}
+
+.global-search-date .v-label {
+  top: 21px !important;
 }
 </style>
