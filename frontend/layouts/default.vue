@@ -15,6 +15,18 @@
         >{{ topMenu.label }}</v-btn
       >
       <v-spacer></v-spacer>
+
+      <v-spacer>
+        <div>
+          <v-icon style="margin-top: -10px" color="black" size="35"
+            >mdi-clock-outline</v-icon
+          >
+          <span style="font-size: 30px; color: black"> {{ currentTime }}</span>
+          <span style="font-size: 16px; color: black; font-weight: 200">{{
+            todayDate
+          }}</span>
+        </div>
+      </v-spacer>
       <v-badge
         class="mt-2 mr-1"
         :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
@@ -289,6 +301,8 @@ export default {
   },
   data() {
     return {
+      currentTime: "00:00:00",
+      todayDate: "---",
       activeMenu: null, // Keep track of the active menu
       topMenus: [
         {
@@ -758,7 +772,7 @@ export default {
   },
 
   created() {
-    this.title = "EZHMS"; // this.$auth.user?.company?.company_code;
+    this.title = "MyHotel2Cloud"; // this.$auth.user?.company?.company_code;
     setTimeout(() => {
       this.loadNotificationMenu();
     }, 1000 * 60);
@@ -781,6 +795,22 @@ export default {
 
     this.filteredMenu = this.items;
     this.$router.push(this.filteredMenu[0].to ?? "/");
+
+    setInterval(() => {
+      const now = new Date();
+      // Get the day, month, year, and day of the week
+      var day = now.getDate();
+      var month = now.getMonth() + 1; // Month is zero-based, so add 1
+      var year = now.getFullYear();
+
+      day = (day < 10 ? "0" : "") + day;
+      month = (month < 10 ? "0" : "") + month;
+      const formattedDateTime = month + "-" + day + "-" + year;
+
+      this.currentTime = now.toLocaleTimeString([], { hour12: false });
+      this.todayDate =
+        this.$dateFormat.format_date_with_dayname(formattedDateTime);
+    }, 1000);
   },
 
   mounted() {
@@ -1045,5 +1075,46 @@ input[type="number"] {
 
 .global-search-date .v-label {
   top: 21px !important;
+}
+
+.boxheight {
+  height: 55px;
+  list-style: 5px;
+}
+
+.client {
+  width: fit-content;
+  block-size: fit-content;
+  border: solid #000000 1px;
+  padding: 15px;
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2em;
+}
+
+.columns .client {
+  width: auto;
+  flex: 1 1 40%;
+}
+.roombox1 {
+  float: left;
+  width: 55px;
+  height: 55px;
+  margin: 5px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.roombox {
+  /* width: 50px;
+  flex: 0 0 50px;
+  margin: 5px; */
+
+  width: 55px;
+  height: 55px;
+  font-size: 11px !important;
+  line-height: 14px !important;
 }
 </style>

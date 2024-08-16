@@ -17,13 +17,13 @@ class RoomController extends Controller
 {
     public function dropDown()
     {
-        return Room::whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->get();
+        return Room::whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))->get();
     }
     public function index(Request $request)
     {
         $model = Room::query()->with("device");
 
-        $model->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")));
+        $model->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")));
 
         if ($request->filled('status') && $request->status != "-1") {
             $model->where('status', $request->status);
@@ -82,14 +82,14 @@ class RoomController extends Controller
             'room_type_id',
         ];
         $model = $this->process_search($model, $key, $fields);
-        return $model->where("company_id", $request->company_id)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->where("status", $request->status)->paginate($request->per_page);
+        return $model->where("company_id", $request->company_id)->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))->where("status", $request->status)->paginate($request->per_page);
     }
 
     public function filter(Request $request)
     {
         $model = Room::query();
         return $model->where("company_id", $request->company_id)
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->where("status", $request->status)->paginate($request->per_page);
     }
 
@@ -143,7 +143,7 @@ class RoomController extends Controller
     public function getRoom($id)
     {
         return Room::where('status', 0)
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->where('room_type_id', $id)->get(['id', 'room_no']);
     }
 
@@ -156,7 +156,7 @@ class RoomController extends Controller
     {
         $arr = [];
         $data = Room::with('roomType')
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             // ->where('status', 0)
             ->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
@@ -180,7 +180,7 @@ class RoomController extends Controller
         $arr = [];
         $data = Room::with('roomType')->whereHas("roomType")->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
-            
+
             $arr[] = [
                 'id' => $d->room_no,
                 'table_id' => $d->id,
@@ -201,7 +201,7 @@ class RoomController extends Controller
         $arr = [];
         return  $data = Room::with('roomType')
             // ->where('status', 0)
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereCompanyId($request->company_id)->orderBy("room_no", "ASC")->get();
 
 
@@ -209,7 +209,7 @@ class RoomController extends Controller
     }
     public function roomListForMenu()
     {
-        return Room::with('roomType')->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->get();
+        return Room::with('roomType')->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))->get();
     }
 
     private function getCustomersBreakfastOnly($breakfast)
@@ -317,15 +317,21 @@ class RoomController extends Controller
     {
         $company_id = $request->company_id;
 
-        $todayDate = date('Y-m-d');
-        //$todayDate = $request->check_in;
-        $diff_in_seconds = strtotime($request->check_in) - strtotime($todayDate);
-        if ($diff_in_seconds < 0) {
-            return response()->json(['data' => 'Your system Date is wrong', 'status' => false]);
+        /////////$todayDate = date('Y-m-d');
+        ////$todayDate = $request->check_in;
+        // $diff_in_seconds = strtotime($request->check_in) - strtotime($todayDate);
+        // if ($diff_in_seconds < 0) {
+        //     return response()->json(['data' => 'Your system Date is wrong', 'status' => false]);
+        // }
+
+        if ($request->filled("filter_date")) {
+            $todayDate = $request->filter_date;
+        } else {
+            $todayDate = date('Y-m-d');
         }
 
         $expectCheckOut = Room::with('device')
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', '<=', $todayDate);
                 $query->where('company_id', $company_id);
@@ -374,12 +380,12 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $AvailableRooms = Room::where('company_id', $company_id)
+        $AvailableRooms = Room::with('device')->where('company_id', $company_id)
             ->where('status', '!=', Room::Blocked)
-            ->whereDoesntHave('bookedRoom.booking', fn ($q) => $q->where("company_id", $company_id))
+            ->whereDoesntHave('bookedRoom.booking', fn($q) => $q->where("company_id", $company_id))
             ->get();
 
-        $BlockedRooms = Room::where("status", Room::Blocked)->where('company_id', $company_id)->get();
+        $BlockedRooms = Room::with('device')->where("status", Room::Blocked)->where('company_id', $company_id)->get();
 
         $fooForCustomers = Food::whereHas('booking', function ($q) use ($company_id) {
             $q->where('booking_status', '!=', 0);
@@ -398,19 +404,19 @@ class RoomController extends Controller
         ];
 
         $checkIn = Room::with('device')
-        // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
-        ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
-            $query->whereDate('check_in', '<=', $todayDate);
-            $query->where('company_id', $company_id);
-            $query->where('booking_status', 2);
-        })
-        ->with(['bookedRoom' => function ($q) use ($company_id) {
-            $q->where("company_id", $company_id);
-            $q->with("customer");
-        }])
-        ->get();
+            // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+                $query->whereDate('check_in', '<=', $todayDate);
+                $query->where('company_id', $company_id);
+                $query->where('booking_status', 2);
+            })
+            ->with(['bookedRoom' => function ($q) use ($company_id) {
+                $q->where("company_id", $company_id);
+                $q->with("customer");
+            }])
+            ->get();
 
-        $checkOutModel = BookedRoom::query();
+        $checkOutModel = BookedRoom::with('device');
         $checkOut = $checkOutModel->clone()->whereDate('check_out', $todayDate)
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->whereIn('booking_status', [0, 3, 4, 5]);
@@ -419,21 +425,21 @@ class RoomController extends Controller
                 $q->where('company_id', $company_id);
             })->get();
 
-        $confirmedBooking = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
+        $confirmedBooking = BookedRoom::with('device')->whereHas('booking', function ($q) use ($company_id) {
             $q->where('booking_status', '!=', 0);
             $q->where('booking_status', 1);
             $q->where('advance_price', '!=', 0);
             $q->where('company_id', $company_id);
         });
 
-        $waitingBooking = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
+        $waitingBooking = BookedRoom::with('device')->whereHas('booking', function ($q) use ($company_id) {
             $q->where('booking_status', '!=', 0);
             $q->where('booking_status', 1);
             $q->where('advance_price', '=', 0);
             $q->where('company_id', $company_id);
         })->count();
 
-        $checkInRooms = BookedRoom::whereHas('booking', function ($q) use ($company_id) {
+        $checkInRooms = BookedRoom::with('device')->whereHas('booking', function ($q) use ($company_id) {
             $q->where('booking_status', '!=', 0);
             $q->where('company_id', $company_id);
             $q->where('booking_status', 2);
@@ -499,7 +505,7 @@ class RoomController extends Controller
             })
             ->pluck('room_id');
         return Room::whereNotIn('id', $roomIds)
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->where('company_id', $request->company_id)
             ->get();
     }
@@ -520,7 +526,7 @@ class RoomController extends Controller
             ->pluck('room_id');
 
         $availableRooms = Room::whereNotIn('id', $bookedRoomIds)
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->where('company_id', $companyId)
             ->where('room_type_id', $roomTypeId)
             ->get();
@@ -531,8 +537,8 @@ class RoomController extends Controller
     public function getAvailableRoomsForModify(Request $request)
     {
         return Room::with("room_type")
-            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
-            ->when($request->filled("room_type_id"), fn ($q) => $q->where("room_type_id", $request->room_type_id))
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            ->when($request->filled("room_type_id"), fn($q) => $q->where("room_type_id", $request->room_type_id))
             ->where('company_id', $request->company_id)->get();
     }
 
@@ -564,7 +570,7 @@ class RoomController extends Controller
     {
         try {
             $msg = $status == 1 ? 'blocked' : 'unblocked';
-            Room::whereCompanyId($request->company_id)->whereRoomNo($request->room_no)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->update(['status' => $status]);
+            Room::whereCompanyId($request->company_id)->whereRoomNo($request->room_no)->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))->update(['status' => $status]);
             return $this->response('Room ' . $msg, null, true);
         } catch (\Throwable $th) {
             return $this->response('Something wrong.', $th, true);
@@ -578,7 +584,7 @@ class RoomController extends Controller
 
             if ($data) {
 
-                $verifyIsRoom = Room::where('company_id', $request->company_id)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->where('room_no', $request->room_no)->count();
+                $verifyIsRoom = Room::where('company_id', $request->company_id)->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))->where('room_no', $request->room_no)->count();
                 if ($verifyIsRoom == 0) {
 
                     $record = Room::create($data);
@@ -601,7 +607,7 @@ class RoomController extends Controller
 
     public function show($id)
     {
-        return Room::where('id', $id)->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))->first();
+        return Room::where('id', $id)->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))->first();
     }
     public function destroy(Room $lostAndFoundItems, $id)
     {

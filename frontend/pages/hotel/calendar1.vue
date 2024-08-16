@@ -421,9 +421,9 @@
                 <div
                   style="display: flex; justify-content: flex-end; gap: 16px"
                 >
-                  <BookingHall />
-                  <BookingIndividual />
-                  <BookingGroup />
+                  <BookingHall :onlyButton="true" />
+                  <BookingIndividual :onlyButton="true" />
+                  <BookingGroup :onlyButton="true" />
                 </div>
               </v-col>
               <v-col cols="2" class="text-right">
@@ -734,6 +734,8 @@ export default {
       try {
         document.querySelector(".fc-license-message").style.display = "none";
       } catch (error) {}
+
+      this.hilightTodayDateHeaderContent();
     });
   },
   activated() {},
@@ -827,6 +829,21 @@ export default {
     },
   },
   methods: {
+    hilightTodayDateHeaderContent() {
+      const today = new Date();
+      const specificDate = today.toISOString().split("T")[0] + "T00:00:00";
+
+      const thElement = document.querySelector(
+        `th[data-date="${specificDate}"]`
+      );
+
+      if (thElement) {
+        thElement.style.backgroundColor = "#FFD700";
+        thElement.style.color = "#FFFFFF";
+        thElement.style.textAlign = "center";
+      } else {
+      }
+    },
     filterAttr({ from, to }) {
       this.from_date = from;
       this.to_date = to;
@@ -1093,10 +1110,12 @@ export default {
           company_id: this.$auth.user.company.id,
         },
       };
-      this.$axios.get(`room_list_for_calendar_only`, payload).then(({ data }) => {
-        this.calendarOptions.resources = data;
-        this.RoomList = data;
-      });
+      this.$axios
+        .get(`room_list_for_calendar_only`, payload)
+        .then(({ data }) => {
+          this.calendarOptions.resources = data;
+          this.RoomList = data;
+        });
     },
 
     get_posting() {

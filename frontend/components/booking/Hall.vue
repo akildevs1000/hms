@@ -22,7 +22,15 @@
         </div>
       </template>
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar
+          small
+          style="height: 40px !important"
+          class="rounded-md"
+          color="background"
+          dense
+          flat
+          dark
+        >
           <span>Hall Booking Information</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="dialog = false">

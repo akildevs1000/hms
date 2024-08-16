@@ -170,10 +170,10 @@
             >
             <template v-slot:item.latest_status="{ item }">
               <v-icon v-if="item.latest_status == 0" color="red"
-                >mdi-alpha-x-circle
+                >mdi-lightbulb-outline
               </v-icon>
               <v-icon v-else-if="item.latest_status == 1" color="green"
-                >mdi-alpha-y-circle
+                >mdi-lightbulb-on
               </v-icon>
             </template>
             <template v-slot:item.latest_status_time="{ item }">

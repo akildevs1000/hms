@@ -283,7 +283,7 @@
                   absolute
                   color="primary"
                 ></v-progress-linear>
-                <tr v-for="(item, index) in postings" :key="index">
+                <tr v-for="(item, index) in postings" :key="index + 20">
                   <td>{{ ++index }}</td>
                   <td>{{ caps(item.bill_no) }}</td>
                   <td>{{ caps(item && item.booked_room.room_no) }}</td>
@@ -571,11 +571,7 @@
                   text: `Day Use`,
                   value: 20,
                 },
-                {
-                  color: `red`,
-                  text: `Blocked`,
-                  value: 25,
-                },
+
                 {
                   color: `purple`,
                   text: `Complim`,
@@ -749,24 +745,24 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" style="padding-top: 0px">
         <v-card class="py-2">
           <v-container fluid>
             <v-row>
               <v-col></v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 80px">
+              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingHall :onlyButton="true" />
               </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 80px">
+              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingIndividual :onlyButton="true" />
               </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 80px">
+              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingGroup :onlyButton="true" />
               </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 80px">
+              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingQuickCheckIn @success="handleReload" />
               </v-col>
-              <v-col cols="4">
+              <v-col cols="3">
                 <v-row>
                   <v-col cols="6">
                     <v-text-field
@@ -783,7 +779,7 @@
                     <v-menu
                       v-model="menu2"
                       :close-on-content-click="false"
-                      :nudge-right="-80"
+                      :nudge-right="-120"
                       transition="scale-transition"
                       offset-y
                       min-width="auto"
@@ -830,31 +826,135 @@
               </v-col>
             </v-row>
 
-            <v-row>
-              <v-col cols="12"
-                ><v-tabs right>
-                  <v-tab>All</v-tab>
-                  <v-tab>Arrival</v-tab>
-                  <v-tab>Checkout </v-tab>
-                  <v-tab>Blocked</v-tab>
-                  <v-tab>Sold </v-tab>
-                  <v-tab>Available</v-tab>
-                  <v-tab>Compliment</v-tab>
+            <v-row
+              style="margin-top: -30px; padding-top: 0px; min-height: 600px"
+            >
+              <v-col
+                cols="12"
+                style="margin-top: 0px; padding-top: 0px; height: auto"
+                ><v-tabs hide-slider right v-model="tab" color="#0d652d">
+                  <v-tab style="font-weight: bold">All</v-tab>
+                  <v-tab style="font-weight: bold">Occupied</v-tab>
+                  <v-tab style="font-weight: bold">Arrival</v-tab>
+                  <v-tab style="font-weight: bold">Checkout </v-tab>
+                  <v-tab style="font-weight: bold">Blocked</v-tab>
+                  <!-- <v-tab>Sold </v-tab> -->
+                  <v-tab style="font-weight: bold">Available</v-tab>
+                  <!-- <v-tab>Compliment</v-tab> -->
                   <v-tab-item>
-                    <v-card color="basil">
+                    <v-card color="basil" style="height: auto">
                       <v-card-text>
-                        <DashboardBlockedRooms></DashboardBlockedRooms
+                        <DashboardBlockedRooms
+                          name="All"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'All'"
+                          :key="keyTabAll"
+                          :data="rooms"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-card color="basil" style="height: auto">
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          name="occupied"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'occupied'"
+                          :key="keyTabOccupied"
+                          :data="rooms"
+                        ></DashboardBlockedRooms
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card color="basil">
-                      <v-card-text>222222222</v-card-text>
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          name="expected_arrival"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'expected_arrival'"
+                          :key="keyTabexpected_arrival"
+                          :data="rooms"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card color="basil">
-                      <v-card-text>3333333333</v-card-text>
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          name="expected_checkout"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'expected_checkout'"
+                          :key="keyTabexpected_checkout"
+                          :data="rooms"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-card color="basil">
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          name="blocked"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'blocked'"
+                          :key="keyTabblocked"
+                          :data="rooms"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
+                    </v-card>
+                  </v-tab-item>
+
+                  <!-- <v-tab-item>
+                    <v-card color="basil">
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          v-if="tab == 4"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'sold'"
+                          :key="keyTabexpected_arrival"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
+                    </v-card>
+                  </v-tab-item> -->
+                  <v-tab-item>
+                    <v-card color="basil">
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          name="available"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'available'"
+                          :key="keyTabavailable"
+                          :data="rooms"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                  <!-- <v-tab-item>
+                    <v-card color="basil">
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          v-if="tab == 6"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'compliment'"
+                          :key="keyTabcompliment"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
+                    </v-card>
+                  </v-tab-item> -->
+                  <v-tab-item>
+                    <v-card color="basil">
+                      <v-card-text>
+                        <DashboardBlockedRooms
+                          name="dirty"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'dirty'"
+                          :key="keyTabdirty"
+                          :data="rooms"
+                        ></DashboardBlockedRooms
+                      ></v-card-text>
                     </v-card>
                   </v-tab-item>
                 </v-tabs>
@@ -930,6 +1030,7 @@ export default {
   },
   data() {
     return {
+      tab: 0,
       filterDate: "2024-08-15",
       menu2: false,
       colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
@@ -1077,9 +1178,47 @@ export default {
 
       searchQuery: null,
       filterQuery: ``,
+      keyTabAll: 11,
+      keyTabexpected_arrival: 12,
+      keyTabexpected_checkout: 13,
+      keyTabblocked: 18,
+      keyTabavailable: 14,
+      keyTabcompliment: 15,
+      keyTabdirty: 16,
+      keyTabOccupied: 17,
     };
   },
   watch: {
+    searchQuery() {
+      this.keyTabAll++;
+    },
+    filterDate() {
+      this.keyTabAll++;
+      this.room_list();
+    },
+    tab() {
+      // if (this.tab == 0) {
+      //   this.keyTabAll++;
+      // }
+      // if (this.tab == 1) {
+      //   this.keyTabexpected_arrival++;
+      // }
+      // if (this.tab == 2) {
+      //   this.keyTabexpected_checkout++;
+      // }
+      // if (this.tab == 3) {
+      //   this.keyTabblocked++;
+      // }
+      // if (this.tab == 4) {
+      //   this.keyTabavailable++;
+      // }
+      // if (this.tab == 5) {
+      //   this.keyTabcompliment++;
+      // }
+      // if (this.tab == 6) {
+      //   this.keyTabdirty++;
+      // }
+    },
     checkInDialog() {
       this.formTitle = "Check In";
       this.get_data();
@@ -1112,6 +1251,11 @@ export default {
     },
   },
   created() {
+    this.filterDate = new Date(
+      Date.now() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10);
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
 
@@ -1458,11 +1602,8 @@ export default {
         params: {
           company_id: this.$auth.user && this.$auth.user.company.id,
           // check_in: new Date().toJSON().slice(0, 10),
-          check_in: new Date(
-            Date.now() - new Date().getTimezoneOffset() * 60000
-          )
-            .toISOString()
-            .substr(0, 10),
+          check_in: this.filterDate,
+          filter_date: this.filterDate,
         },
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
@@ -1495,6 +1636,14 @@ export default {
         setTimeout(() => {
           this.isPageLoad = true;
         }, 100);
+        this.keyTabAll = 31;
+        this.keyTabexpected_arrival = 33;
+        this.keyTabexpected_checkout = 34;
+        this.keyTabblocked = 35;
+        this.keyTabavailable = 36;
+        this.keyTabcompliment = 37;
+        this.keyTabdirty = 38;
+        this.keyTabOccupied = 39;
       });
     },
 

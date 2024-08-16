@@ -128,7 +128,7 @@ class BookedRoom extends Model
 
     public function foodplan()
     {
-        return $this->belongsTo(FoodPlan::class,"food_plan_id");
+        return $this->belongsTo(FoodPlan::class, "food_plan_id");
     }
 
     /**
@@ -136,6 +136,12 @@ class BookedRoom extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
+
+    public function device()
+    {
+        return $this->belongsTo(Device::class, "room_id", "room_id");
+    }
+
     public function roomType()
     {
         return $this->hasOneThrough(RoomType::class, BookedRoom::class, 'room_id', 'id', 'room_id', 'room_id');
@@ -214,7 +220,7 @@ class BookedRoom extends Model
     //             $this->attributes['check_out'] = $value;
     //         }
     //     } else {
-           
+
     //     }
 
     //     $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));

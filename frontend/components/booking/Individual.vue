@@ -17,7 +17,7 @@
             <span v-if="!onlyButton"> Individual</span>
           </v-btn>
           <div v-if="onlyButton" style="font-size: 10px; text-align: center">
-            Individual
+            Indiv
           </div>
         </div>
       </template>
