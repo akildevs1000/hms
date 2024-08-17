@@ -142,13 +142,13 @@ class Customer extends Model
     {
         if (!$value) return null;
         // return "https://amcbackend.mytime2cloud.com/sign/" . $value;
-        return asset('customer_id_pic/' . $value);
+        return asset('id_frontend_side/' . $value);
     }
 
     public function getIdBackendSideAttribute($value)
     {
         if (!$value) return null;
-        return asset('customer_id_pic/' . $value);
+        return asset('id_backend_side/' . $value);
     }
 
     public function getCapturedPhotoAttribute($value)
