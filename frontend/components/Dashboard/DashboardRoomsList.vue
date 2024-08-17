@@ -704,7 +704,7 @@
           class=""
         >
           <v-card-text
-            class="successroombox"
+            class="success roombox"
             style="padding: 0px"
             title="Expected Arrival"
           >
@@ -760,7 +760,7 @@
           dark
         >
           <v-card-text
-            class="blueroombox"
+            class="blue roombox"
             style="padding: 0px"
             title="Expected Arrival"
           >
@@ -874,7 +874,7 @@
           @touchstart="makeNewBookingForTouch($event, blockedRoom)"
         >
           <v-card-text class="purple" style="padding: opx" title="Blocked">
-            <div class="text-center white--text boxheight">
+            <div class="text-center white--text roombox">
               <v-icon
                 :color="
                   blockedRoom.device && blockedRoom.device.latest_status == 1
