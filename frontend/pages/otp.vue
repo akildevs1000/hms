@@ -53,7 +53,7 @@
                 </div>
                 <div class="col-lg-6 d-flex align-items-center primary">
                   <div class="text-white px-3 py-4 p-md-5 mx-md-4">
-                    <h6>EZ-HMS THE RIGHT SOLUTION FOR YOU</h6>
+                    <h6>MyHotel2Cloud THE RIGHT SOLUTION FOR YOU</h6>
                     <p class="small mb-0">
                       Make it simple, easy and accessible anywhere, anytime.
                       Save time, stay compliant and reduce labor costs by

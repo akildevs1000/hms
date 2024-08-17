@@ -844,65 +844,65 @@
                   <v-tab-item>
                     <v-card color="basil" style="height: auto">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           name="All"
                           :searchQuery="searchQuery"
                           :tabFilter="'All'"
                           :key="keyTabAll"
                           :data="rooms"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card color="basil" style="height: auto">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           name="occupied"
                           :searchQuery="searchQuery"
                           :tabFilter="'occupied'"
                           :key="keyTabOccupied"
                           :data="rooms"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           name="expected_arrival"
                           :searchQuery="searchQuery"
                           :tabFilter="'expected_arrival'"
                           :key="keyTabexpected_arrival"
                           :data="rooms"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           name="expected_checkout"
                           :searchQuery="searchQuery"
                           :tabFilter="'expected_checkout'"
                           :key="keyTabexpected_checkout"
                           :data="rooms"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           name="blocked"
                           :searchQuery="searchQuery"
                           :tabFilter="'blocked'"
                           :key="keyTabblocked"
                           :data="rooms"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
@@ -910,50 +910,50 @@
                   <!-- <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           v-if="tab == 4"
                           :searchQuery="searchQuery"
                           :tabFilter="'sold'"
                           :key="keyTabexpected_arrival"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item> -->
                   <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           name="available"
                           :searchQuery="searchQuery"
                           :tabFilter="'available'"
                           :key="keyTabavailable"
                           :data="rooms"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
                   <!-- <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           v-if="tab == 6"
                           :searchQuery="searchQuery"
                           :tabFilter="'compliment'"
                           :key="keyTabcompliment"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item> -->
                   <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
-                        <DashboardBlockedRooms
+                        <DashboardRoomsList
                           name="dirty"
                           :searchQuery="searchQuery"
                           :tabFilter="'dirty'"
                           :key="keyTabdirty"
                           :data="rooms"
-                        ></DashboardBlockedRooms
+                        ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>

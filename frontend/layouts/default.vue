@@ -4,7 +4,8 @@
       <!-- :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''" -->
 
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      {{ title }}
+      <!-- {{ title }} -->
+      <img src="/logo1.png" style="width: 130px" />
       <v-spacer></v-spacer>
       <v-btn
         text
@@ -18,9 +19,9 @@
 
       <v-spacer>
         <div>
-          <v-icon style="margin-top: -10px" color="black" size="35"
+          <!-- <v-icon style="margin-top: -10px" color="black" size="35"
             >mdi-clock-outline</v-icon
-          >
+          > -->
           <span style="font-size: 30px; color: black"> {{ currentTime }}</span>
           <span style="font-size: 16px; color: black; font-weight: 200">{{
             todayDate
@@ -151,7 +152,7 @@
         </v-col>
       </v-row>
     </v-navigation-drawer> -->
-    <v-main class="main_bg" style="padding-left: 65px">
+    <v-main class="main_bg" style="padding-left: 75px">
       <v-container fluid>
         <nuxt />
       </v-container>
@@ -1044,7 +1045,29 @@ input[type="number"] {
 .global-search-textbox .v-input__icon {
   height: 17px !important;
 }
-
+.global-search-textbox-calender .v-input__slot {
+  min-height: 26px !important;
+}
+.global-search-textbox-calender .v-text-field__slot {
+  height: 30px !important;
+}
+.global-search-textbox-calenderx
+  .v-text-field--outlined.v-input--dense
+  .v-label {
+  top: 4px !important;
+}
+.v-text-field--outlined.v-input--dense .v-label {
+  top: 4px !important;
+}
+/* .global-search-textbox-calender .v-label {
+  line-height: 12px !important;
+} */
+.global-search-textbox-calender .v-input__icon {
+  height: 15px !important;
+}
+.global-search-textbox-calender .v-input input {
+  height: 30px !important;
+}
 .global-search-select .v-input__slot {
   min-height: 30px !important;
 }

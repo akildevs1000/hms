@@ -10,6 +10,8 @@ use App\Http\Requests\Device\UpdateRequest;
 use App\Models\AttendanceLog;
 use App\Models\DeviceLogs;
 use App\Models\Devices;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -129,7 +131,10 @@ class DeviceController extends Controller
         $model = Device::query();
 
         $fields = [
-            'name', 'device_id', 'location', 'short_name',
+            'name',
+            'device_id',
+            'location',
+            'short_name',
             'status' => ['name'],
             'company' => ['name'],
         ];
@@ -159,22 +164,73 @@ class DeviceController extends Controller
     {
 
         $device_room_number = $request->room_number;
-        $device_status = $request->status;
+        $status = $request->status;
         $date_time = date('Y-m-d H:i:s');
-        if ($device_room_number != ''  && $device_status != '') {
+        if ($device_room_number != ''  && $status != '') {
 
             $logs["serial_number"] = $device_room_number;
-            $logs["status"] = $device_status;
+            $logs["status"] = $status;
             $logs["raw_data"] = json_encode($request->all());
-            $logs["log_time"] = $date_time;
 
-            DeviceLogs::create($logs);
+            $timeZone = 'Asia/Dubai';
+            $deviceTimezone = Device::where("serial_number", $device_room_number)->pluck("utc_time_zone")->first();
+            if ($deviceTimezone != '') {
+                $timeZone = $deviceTimezone;
+            }
 
-            $row["latest_status"] = $device_status;
-            $row["latest_status_time"] = $date_time;
+            $dateTime = new DateTime(date("Y-m-d H:i:s"));
+            $dateTime->setTimezone(new DateTimeZone($timeZone));
 
-            Device::where("serial_number", $device_room_number)
-                ->update($row);
+            $logs["log_time"] = $dateTime->format('Y-m-d H:i:s');
+
+            if ($status == 1) {
+
+                $logs["start_datetime"] = $dateTime->format('Y-m-d H:i:s');
+
+                DeviceLogs::create($logs);
+                $row = [];
+                $row["latest_status"] = $status;
+                $row["latest_status_time"] = $dateTime->format('Y-m-d H:i:s');
+
+                Device::where("serial_number", $device_room_number)
+                    ->update($row);
+            } else if ($status == 0) {
+                $latestLog = DeviceLogs::where("serial_number", $device_room_number)->orderBy("start_datetime", "desc")->first();
+                if ($latestLog->status == 1) {
+
+
+                    $logs = [];
+                    $logs["status"] = 0;
+                    $logs["end_datetime"] = $dateTime->format('Y-m-d H:i:s');
+                    // Define the two dates
+                    $date1 = new DateTime($latestLog->start_datetime);
+                    $date2 = new DateTime($logs["end_datetime"]);
+
+                    // Calculate the difference
+                    $interval = $date1->diff($date2);
+
+                    // Convert the difference to minutes
+                    $minutes = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
+
+                    $logs["duration_minutes"] = $minutes;
+
+
+
+                    DeviceLogs::where("id", $latestLog->id)->update($logs);
+
+                    $row["latest_status"] = 0;
+                    $row["latest_status_time"] = $dateTime->format('Y-m-d H:i:s');
+
+                    Device::where("serial_number", $device_room_number)
+                        ->update($row);
+                } else {
+                    return $this->response('Room status is already off', $request->all(), true);
+                }
+            } else {
+                return $this->response('No Data', $request->all(), true);
+            }
+
+
             return $this->response('Successfully Updated', null, true);
         }
 
@@ -185,7 +241,7 @@ class DeviceController extends Controller
     {
 
         // $modelDevicesArray = Devices::query()->where("company_id", $request->company_id)->get()->pluck("serial_number");
-        $model = DeviceLogs::query();
+        $model = DeviceLogs::with("device.room");
 
         $model->whereIn("serial_number", Devices::query()->where("company_id", $request->company_id)->get()->pluck("serial_number"));
         $model->when($request->filled('serial_number'), function ($q) use ($request) {

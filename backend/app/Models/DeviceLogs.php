@@ -20,7 +20,14 @@ class DeviceLogs extends Model
         'status',
         'raw_data',
         'log_time',
+        'start_datetime',
+        'end_datetime',
 
 
     ];
+
+    public function device()
+    {
+        return $this->belongsTo(Device::class, 'serial_number', 'serial_number');
+    }
 }

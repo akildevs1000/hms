@@ -145,6 +145,17 @@ export default ({ app }, inject) => {
 
       return { first: formattedFirstDay, last: formattedLastDay };
     },
+    minutesToHHMM(minutes) {
+      var hours = Math.floor(minutes / 60);
+      var remainingMinutes = minutes % 60;
+      return (
+        (hours < 10 ? "0" : "") +
+        hours +
+        ":" +
+        (remainingMinutes < 10 ? "0" : "") +
+        remainingMinutes
+      );
+    },
     time2Hm: (inputdate) => {
       // Split the time string by ':'
       const timeParts = inputdate.split(":");

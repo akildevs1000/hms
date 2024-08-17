@@ -586,16 +586,14 @@
           dark
         >
           <v-card-text
-            class="red p-3 roombox"
-            style="padding: 0px"
+            class="p-3 roombox"
+            style="padding: 0px; background-color: #db0000"
             title="Occupied"
           >
             <div class="text-center white--text boxheight boxheight">
               <v-icon
                 :color="
-                  occupied.device && occupied.latest_status == 1
-                    ? '#db0000'
-                    : ''
+                  occupied.device && occupied.latest_status == 1 ? 'red' : ''
                 "
                 >mdi-bed</v-icon
               >
@@ -652,7 +650,7 @@
                 :color="
                   noAvailableRoom.device &&
                   noAvailableRoom.device.latest_status == 1
-                    ? '#db0000'
+                    ? 'red'
                     : ''
                 "
                 >mdi-bed</v-icon
@@ -714,7 +712,7 @@
               <v-icon
                 :color="
                   expCheckIn.device && expCheckIn.device.latest_status == 1
-                    ? '#db0000'
+                    ? 'red'
                     : ''
                 "
                 >mdi-bed</v-icon
@@ -778,7 +776,7 @@
                 :color="
                   noAvailableRoom.device &&
                   noAvailableRoom.device.latest_status == 1
-                    ? '#db0000'
+                    ? 'red'
                     : ''
                 "
               >
@@ -836,7 +834,7 @@
             <div class="text-center white--text boxheight">
               <v-icon
                 :color="
-                  room.device && room.device.latest_status == 1 ? '#db0000' : ''
+                  room.device && room.device.latest_status == 1 ? 'red' : ''
                 "
               >
                 mdi mdi-bed
@@ -880,7 +878,7 @@
               <v-icon
                 :color="
                   blockedRoom.device && blockedRoom.device.latest_status == 1
-                    ? '#db0000'
+                    ? 'red'
                     : ''
                 "
               >
@@ -941,12 +939,16 @@
           :class="` darken-2`"
           dark
         >
-          <v-card-text class="red roombox" style="padding: 0px" title="Dirty">
+          <v-card-text
+            class="roombox"
+            style="padding: 0px; background-color: #db0000"
+            title="Dirty"
+          >
             <div class="text-center white--text boxheight">
               <v-icon
                 :color="
                   occupied.device && occupied.device.latest_status == 1
-                    ? '#db0000'
+                    ? 'red'
                     : ''
                 "
                 >mdi-bed</v-icon
