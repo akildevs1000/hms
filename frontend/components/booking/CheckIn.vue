@@ -392,7 +392,6 @@
                       min-width="auto"
                     >
                       <template v-slot:activator="{ on, attrs }">
-                        
                         <v-text-field
                           v-model="guest.dob"
                           readonly
@@ -418,7 +417,7 @@
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
-                
+
                   <v-col md="6" cols="12" sm="12">
                     <v-textarea
                       rows="3"
@@ -455,55 +454,18 @@
             <v-card flat>
               <v-card-text>
                 <v-row>
-                  <v-col md="2" cols="12">
-                    <!-- style="
-                    width: 150px;
-                    height: 150px;
-                    margin: 0 auto;
-                    border-radius: 50%;
-                    " -->
-                    <v-img
-                      @click="onpick_attachment"
-                      style="
-                        max-width: 150px;
-                        margin: 0 auto;
-                        border-radius: 50%;
+                  <v-col md="2" cols="12" class="text-center">
+                    <v-avatar size="120" class="ma-1">
+                      <v-img
+                        :src="customerProfilePic || `/no-profile-image.jpg`"
+                      ></v-img>
+                    </v-avatar>
+
+                    <BookingIDPreview
+                      @customerDocs="
+                        (e) => (customerProfilePic = e.captured_photo)
                       "
-                      :src="showImage"
-                    ></v-img>
-                    <input
-                      required
-                      type="file"
-                      @change="attachment"
-                      style="display: none"
-                      accept="image/*"
-                      ref="attachment_input"
                     />
-                    <span v-if="errors && errors.image" class="red--text mt-2">
-                      {{ errors.image[0] }}</span
-                    >
-                    <div class="mt-2 ml-4" v-if="BookingData.document">
-                      <v-btn
-                        small
-                        dark
-                        class="primary ipad-preview lg-pt-4 lg-pb-4 doc-btn"
-                        @click="preview(BookingData.document)"
-                      >
-                        ID
-                        <v-icon right dark>mdi-file</v-icon>
-                      </v-btn>
-                    </div>
-                    <div class="mt-2 ml-2" v-else>
-                      <v-btn
-                        small
-                        dark
-                        class="primary pt-4 pb-4"
-                        @click="add_document()"
-                      >
-                        <small>Document</small>
-                        <v-icon right dark>mdi-plus</v-icon>
-                      </v-btn>
-                    </div>
                   </v-col>
                   <v-col md="10" cols="12">
                     <v-row>
@@ -1246,6 +1208,7 @@ export default {
   },
   data() {
     return {
+      customerProfilePic: null,
       // ----------------------
       vertical: false,
       activeTab: 0,
@@ -1556,8 +1519,7 @@ export default {
     },
 
     storeSubCustomer() {
-
-      if(!this.BookingData.group_name){
+      if (!this.BookingData.group_name) {
         this.store_check_in(this.BookingData);
         return;
       }
@@ -1633,7 +1595,7 @@ export default {
             return;
           }
           this.room.purpose = this.BookingData.purpose;
-          
+
           this.customer = {
             ...data.data,
             customer_id: data.data.id,
