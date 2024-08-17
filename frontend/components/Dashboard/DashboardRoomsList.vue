@@ -704,7 +704,7 @@
           class=""
         >
           <v-card-text
-            class="success roombox"
+            class="success p-3 roombox"
             style="padding: 0px"
             title="Expected Arrival"
           >
@@ -760,7 +760,7 @@
           dark
         >
           <v-card-text
-            class="blue roombox"
+            class="blue p-3 roombox"
             style="padding: 0px"
             title="Expected Arrival"
           >
@@ -944,7 +944,7 @@
           dark
         >
           <v-card-text
-            class="roombox"
+            class="roombox p-3 roombox"
             style="padding: 0px; background-color: #db0000"
             title="Dirty"
           >
