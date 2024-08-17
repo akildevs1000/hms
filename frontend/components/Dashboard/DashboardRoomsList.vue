@@ -873,7 +873,11 @@
           @mouseover="mouseOverForAvailable(blockedRoom)"
           @touchstart="makeNewBookingForTouch($event, blockedRoom)"
         >
-          <v-card-text class="purple" style="padding: opx" title="Blocked">
+          <v-card-text
+            class="purple p-3 roombox"
+            style="padding: opx"
+            title="Blocked"
+          >
             <div class="text-center white--text roombox">
               <v-icon
                 :color="
