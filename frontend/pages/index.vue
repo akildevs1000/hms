@@ -1482,8 +1482,9 @@ export default {
       };
       this.rightClickRoomId = "---";
       this.$axios.get(`get_booked_room`, payload).then(({ data }) => {
+        let { booking, ...roomData } = data;
         this.checkData = data.booking;
-        this.roomData = data;
+        this.roomData = roomData;
         this.bookingId = data.booking.id;
 
         this.rightClickRoomId = data.booking.resourceId;

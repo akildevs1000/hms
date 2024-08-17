@@ -24,6 +24,11 @@ class Payment extends Model
         return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id');
     }
 
+    public function payment_type()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id');
+    }
+
     public function getTimeAttribute()
     {
         return date('H:i', strtotime($this->created_at));

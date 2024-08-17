@@ -194,14 +194,20 @@ class AdminExpenseController extends Controller
     public function expenseCount()
     {
         $searchKey = request('search', null);
+        $fromDate = request('from_date', null);
+        $toDate = request('to_date', null);
 
 
         $is_admin_expense = request("is_admin_expense", 0);
 
         $modes = PaymentMode::pluck("name")->map(fn($mode) => str_replace(' ', '', $mode))->toArray();
 
-        $items = AdminExpenseItem::whereHas("expense", function ($q) use ($is_admin_expense, $searchKey) {
+        $items = AdminExpenseItem::whereHas("expense", function ($q) use ($is_admin_expense, $searchKey, $fromDate, $toDate) {
             $q->where("is_admin_expense", $is_admin_expense);
+
+            $q->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('created_at', [$fromDate, date('Y-m-d', strtotime($toDate . ' +1 day'))]);
+            });
 
             $q->whereHas("vendor", function ($childQuery) use ($searchKey) {
 
@@ -234,9 +240,12 @@ class AdminExpenseController extends Controller
             'CityLedger' => AdminExpense::CITYLEDGER,
         ];
 
-        $expenses = collect($expenseModes)->mapWithKeys(function ($mode, $key) use ($is_admin_expense, $searchKey) {
+        $stats = collect($expenseModes)->mapWithKeys(function ($mode, $key) use ($is_admin_expense, $searchKey, $fromDate, $toDate) {
             return [
-                $key => AdminExpense::whereHas('payment', function ($q) use ($mode, $is_admin_expense, $searchKey) {
+                $key => AdminExpense::whereHas('payment', function ($q) use ($mode, $is_admin_expense, $searchKey, $fromDate, $toDate) {
+                    $q->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                        $query->whereBetween('created_at', [$fromDate, date('Y-m-d', strtotime($toDate . ' +1 day'))]);
+                    });
                     $q->where('payment_mode', $mode)
                         ->where('is_admin_expense', $is_admin_expense);
                 })
@@ -250,19 +259,15 @@ class AdminExpenseController extends Controller
             ];
         })->toArray();
 
-        $expenses['WithOutCityLedger'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense) {
+        $stats['total'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense) {
             $q->where('payment_mode', '!=', AdminExpense::CITYLEDGER)
                 ->where('is_admin_expense', $is_admin_expense);
-        })->sum('total');
-
-        $expenses['Total'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense) {
-            $q->where('is_admin_expense', $is_admin_expense);
         })->sum('total');
 
 
         return [
             "data" => $items,
-            "stats" => $expenses
+            "stats" => $stats
         ];
     }
 }
