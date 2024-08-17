@@ -13,7 +13,7 @@
                 <div class="col-lg-6">
                   <div class="card-body p-md-5 mx-md-4">
                     <div class="text-center">
-                      <img width="120px" :src="logo" alt="logo" />
+                      <img style="width: 250px" :src="logo" alt="logo" />
                     </div>
 
                     <v-form
@@ -233,7 +233,7 @@ export default {
     // sitekey: "6Lf1wYwhAAAAAOMJYvI73SgjCSrS_OSS2kDJbVvs", // i am not robot
     // reCaptcha: null,
     // showGRC: false,
-    logo: "/logo2.png",
+    logo: "/logo1.png",
     valid: true,
     loading: false,
     snackbar: false,
