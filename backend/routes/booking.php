@@ -12,8 +12,7 @@
     Route::get('booking', [BookingController::class, 'index']);
 
     Route::post('update-pic-and-sign', [BookingController::class, 'updatePicAndSign']);
-
-
+    Route::get('get-lattest-customer-info/{booking_id}', [BookingController::class, 'getLattestCustomerInfo']);
 
     Route::post('store_bulk', [BookingController::class, 'storeBulk']);
     Route::post('booking_validate', [BookingController::class, 'booking_validate']);

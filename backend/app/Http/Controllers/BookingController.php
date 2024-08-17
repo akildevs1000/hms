@@ -92,6 +92,10 @@ class BookingController extends Controller
             return $this->getMessage();
         }
     }
+    public function getLattestCustomerInfo($booking)
+    {
+        return Customer::whereHas("booking", fn($q) => $q->where("id", $booking))->first();
+    }
     public function index(Request $request)
     {
         return Booking::with(["customer:id,first_name,last_name", "room"])
@@ -947,11 +951,11 @@ class BookingController extends Controller
                 'user_id' => $request->user_id,
             ];
 
-           
+
 
             $trans = new TransactionController();
 
-            if($request->isHall && $request->exceedHoursCharges > 0) {
+            if ($request->isHall && $request->exceedHoursCharges > 0) {
                 $transactionData["desc"] = "additional hours charges";
                 $trans->store($transactionData, $request->exceedHoursCharges ?? 0, 'debit');
             }
@@ -1231,7 +1235,7 @@ class BookingController extends Controller
 
     public function get_booked_room(Request $request)
     {
-       
+
 
         $bookedRoom = BookedRoom::with(['booking', 'customer', "room"])->where('company_id', $request->company_id)->findOrFail($request->id);
         $bookedRoom->booking->room_id = $bookedRoom->room_id;
