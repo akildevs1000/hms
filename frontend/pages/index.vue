@@ -22,14 +22,14 @@
       <v-dialog
         v-model="checkInDialog"
         persistent
-        :width="1366"
         class="checkin-models"
+        max-width="1100"
       >
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <v-toolbar class="rounded-md" color="" dense flat >
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="close">mdi mdi-close-box</v-icon>
+            <v-icon dark color="primary" class="pa-0" @click="close">mdi-close</v-icon>
           </v-toolbar>
           <v-card-text>
             <check-in
