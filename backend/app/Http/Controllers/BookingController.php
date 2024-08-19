@@ -929,7 +929,7 @@ class BookingController extends Controller
     {
         try {
 
-            session(['isCheckoutSes' => true]);
+            // session(['isCheckoutSes' => true]);
 
             $booking_id = $request->booking_id;
             $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
@@ -939,6 +939,7 @@ class BookingController extends Controller
                 $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();
                 $bookedRoom->increment('room_discount', $request->discount);
             }
+
 
             $transactionData = [
                 'booking_id' => $booking->id,
@@ -1022,6 +1023,11 @@ class BookingController extends Controller
                 $booking->booking_status = 3;
                 $booking->check_out = date('Y-m-d H:i');
                 $booking->save();
+
+                $bookedRoom->booking_status = 3;
+                $bookedRoom->check_out = date('Y-m-d H:i');
+                $bookedRoom->save();
+
                 // if (app()->isProduction()) {
                 //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
                 // }
