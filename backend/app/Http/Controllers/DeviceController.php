@@ -183,39 +183,34 @@ class DeviceController extends Controller
             $todayDate = date("Y-m-d");
 
 
-            // $model = BookedRoom::query();
-            // $roomIds = $model
-            //     ->whereDate('check_in', '<=', $todayDate)
-            //     ->WhereDate('check_out', '>=', $todayDate)
-            //     ->whereHas('booking', function ($q) use ($company_id) {
-            //         $q->where('booking_status', '!=', 0);
-            //         $q->where('company_id', $company_id);
-            //     })
-            //     ->pluck('room_id');
-            // Room::whereNotIn('id', $roomIds)
-            //     ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
-            //     ->where('company_id', $company_id)
-            //     //->where('room_no', $device_room_number)
-            //     ->get();
 
+            $model = BookedRoom::query();
+            $bookingStatusId = $model
+                ->whereDate('check_in', '<=', $todayDate)
+                ->WhereDate('check_out', '>=', date('Y-m-d', strtotime('+1 day', strtotime($todayDate))))
+                ->where('company_id', $company_id)
+                ->where('room_id',  $device->room_id)
 
+                //->where('room_id',  $device->room_id)
+                ->pluck("booking_status")->first();
 
+            if (!$bookingStatusId) {
+                $bookingStatusId = 0;
+            }
 
-
-
-
-
-
-
+            //BookedRoom::CHECKED_IN
 
 
 
             $date_time = date('Y-m-d H:i:s');
             if ($device_room_number != ''  && $status != '') {
 
+
+
+                $logs["booking_status_id"] = $bookingStatusId;
                 $logs["serial_number"] = $device_room_number;
                 $logs["status"] = $status;
-                $logs["raw_data"] = json_encode($request->all());
+                $logs["raw_data"] = null; //json_encode($request->all());
 
                 $timeZone = 'Asia/Dubai';
 
@@ -227,6 +222,8 @@ class DeviceController extends Controller
                 $dateTime->setTimezone(new DateTimeZone($timeZone));
 
                 $logs["log_time"] = $dateTime->format('Y-m-d H:i:s');
+
+
 
                 if ($status == 1) {
 
@@ -241,7 +238,7 @@ class DeviceController extends Controller
                         ->update($row);
                 } else if ($status == 0) {
                     $latestLog = DeviceLogs::where("serial_number", $device_room_number)->orderBy("start_datetime", "desc")->first();
-                    if ($latestLog->status == 1) {
+                    if ($latestLog && $latestLog->status == 1) {
 
 
                         $logs = [];

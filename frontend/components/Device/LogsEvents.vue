@@ -94,15 +94,28 @@
             <template v-slot:item.duration_minutes="{ item }">
               {{ $dateFormat.minutesToHHMM(item.duration_minutes) }}
             </template>
-
             <template v-slot:item.status="{ item }">
+              <div
+                style="color: red"
+                v-if="
+                  item.booking_status_id == 0 || item.booking_status_id == 4
+                "
+              >
+                Availalbe
+              </div>
+              <div v-else-if="item.booking_status_id == 1">Booked</div>
+              <div v-else-if="item.booking_status_id == 2">Check In</div>
+              <div v-else-if="item.booking_status_id == 3">Check Out</div>
+              <div v-else style="text-align: center">---</div>
+            </template>
+            <!-- <template v-slot:item.status="{ item }">
               <v-icon v-if="item.status == 0" color="black"
                 >mdi-lightbulb-outline
               </v-icon>
               <v-icon v-else-if="item.status == 1" color="green"
                 >mdi-lightbulb-on
               </v-icon>
-            </template>
+            </template> -->
           </v-data-table>
         </v-col>
       </v-row>
@@ -166,7 +179,7 @@ export default {
         align: "left",
       },
       {
-        text: "Status",
+        text: "Room Status",
         value: "status",
         key: "status",
         align: "left",
