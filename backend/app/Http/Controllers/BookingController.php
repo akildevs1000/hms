@@ -938,6 +938,13 @@ class BookingController extends Controller
                 $this->updateTransaction($booking, $request, 'discount', 'debit', -abs($request->discount));
                 $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();
                 $bookedRoom->increment('room_discount', $request->discount);
+
+                BookedRoom::whereBookingId($booking_id)->update(
+                    [
+                        "booking_status" => 3,
+                        "check_out" => date('Y-m-d H:i')
+                    ]
+                );
             }
 
 
@@ -1023,10 +1030,6 @@ class BookingController extends Controller
                 $booking->booking_status = 3;
                 $booking->check_out = date('Y-m-d H:i');
                 $booking->save();
-
-                $bookedRoom->booking_status = 3;
-                $bookedRoom->check_out = date('Y-m-d H:i');
-                $bookedRoom->save();
 
                 // if (app()->isProduction()) {
                 //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
