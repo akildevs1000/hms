@@ -1,10 +1,10 @@
 <template>
   <div v-if="isPageLoad">
     <!-- <link
-        href="matrix/dist/css/style.min.css"
-        rel="stylesheet"
-        v-if="isIndex"
-      /> -->
+          href="matrix/dist/css/style.min.css"
+          rel="stylesheet"
+          v-if="isIndex"
+        /> -->
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -22,14 +22,14 @@
       <v-dialog
         v-model="checkInDialog"
         persistent
+        :width="1366"
         class="checkin-models"
-        max-width="1100"
       >
         <v-card>
-          <v-toolbar class="rounded-md" color="" dense flat >
+          <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark color="primary" class="pa-0" @click="close">mdi-close</v-icon>
+            <v-icon dark class="pa-0" @click="close">mdi mdi-close-box</v-icon>
           </v-toolbar>
           <v-card-text>
             <check-in
@@ -272,7 +272,7 @@
             <v-container>
               <table>
                 <tr>
-                  <th v-for="(item, index) in headers" :key="index">
+                  <th v-for="(item, index) in headers" :key="index + 30">
                     <span v-html="item.text"></span>
                   </th>
                 </tr>
@@ -283,7 +283,7 @@
                   absolute
                   color="primary"
                 ></v-progress-linear>
-                <tr v-for="(item, index) in postings" :key="index + 20">
+                <tr v-for="(item, index) in postings" :key="index + 40">
                   <td>{{ ++index }}</td>
                   <td>{{ caps(item.bill_no) }}</td>
                   <td>{{ caps(item && item.booked_room.room_no) }}</td>
@@ -489,8 +489,8 @@
                 <v-list-item-title>Make Available</v-list-item-title>
               </v-list-item>
               <!-- <v-list-item link @click="setMaintenance">
-                <v-list-item-title>Make Maintenance</v-list-item-title>
-              </v-list-item> -->
+                  <v-list-item-title>Make Maintenance</v-list-item-title>
+                </v-list-item> -->
             </template>
           </v-list-item-group>
         </v-list>
@@ -506,8 +506,8 @@
           <v-list-item-group>
             <!-- {{ newBookingRoom.status }}  NewBooking=true -->
             <!-- <v-list-item link v-if="newBookingRoom.status == 0" @click="goToBookingPage();">
-                <v-list-item-title>CheckIn</v-list-item-title>
-              </v-list-item>-->
+                  <v-list-item-title>CheckIn</v-list-item-title>
+                </v-list-item>-->
             <v-list-item
               link
               v-if="newBookingRoom.status == 0"
@@ -534,466 +534,470 @@
       </v-menu>
     </div>
     <v-row>
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Room Status</v-col
+      <!-- <v-row
+      v-if="tabFilter == 'All' || tabFilter == 'occupied'"
+      no-gutters
+      class="mt-0"
+    >
+      <v-col cols="12">
+        <div>Occupied ({{ filteredRooms(Occupied).length }})</div>
+      </v-col> -->
+
+      <div
+        v-if="filteredRooms(Occupied).length == 0 && tabFilter == 'occupied'"
+      >
+        Not Available
+      </div>
+
+      <div
+        v-if="tabFilter == 'All' || tabFilter == 'occupied'"
+        cols="1"
+        class="roombox1"
+        v-for="(occupied, index) in filteredRooms(Occupied)"
+        :key="index + 50"
+      >
+        <v-card
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="
+            touchstart(
+              $event,
+              occupied && occupied.booked_room && occupied.booked_room.id,
+              occupied &&
+                occupied.booked_room &&
+                occupied.booked_room.booking &&
+                occupied.booked_room.booking.booking_status
+            )
+          "
+          :elevation="0"
+          @mouseover="
+            mouseOver(
+              occupied && occupied.booked_room && occupied.booked_room.id,
+              occupied &&
+                occupied.booked_room &&
+                occupied.booked_room.booking &&
+                occupied.booked_room.booking.booking_status
+            )
+          "
+          @dblclick="dblclick"
+          :class="` darken-2`"
+          dark
+        >
+          <v-card-text
+            class="p-3 roombox"
+            style="padding: 0px; background-color: #db0000"
+            title="Occupied"
+          >
+            <div class="text-center white--text boxheight boxheight">
+              <v-icon
+                :color="
+                  occupied.device && occupied.latest_status == 1 ? 'red' : ''
+                "
+                >mdi-bed</v-icon
               >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="CheckOutReportDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              name="margin"
-              size="100%"
-              :total="'100'"
-              :colors="colors"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Vacant`,
-                  value: 10,
-                },
-                {
-                  color: `green`,
-                  text: `Sold`,
-                  value: 15,
-                },
-                {
-                  color: `orange`,
-                  text: `Day Use`,
-                  value: 20,
-                },
-
-                {
-                  color: `purple`,
-                  text: `Complim`,
-                  value: 30,
-                },
-              ]"
-            />
+              <div>{{ occupied?.room_no || "---" }}</div>
+              <div>
+                {{ occupied ? caps(occupied.room_type.name) : "---" }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
-      </v-col>
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Arrival</v-col
+      </div>
+      <!-- </v-row>
+    <v-row
+      v-if="tabFilter == 'expected_checkout' || tabFilter == 'All'"
+      no-gutters
+      class="mt-0"
+    >
+      <v-col cols="12">
+        <div>Expected Checkout({{ filteredRooms(expectCheckOut).length }})</div>
+      </v-col> -->
+      <div
+        v-if="
+          filteredRooms(expectCheckOut).length == 0 &&
+          tabFilter == 'expected_checkout'
+        "
+      >
+        Not Available
+      </div>
+      <div
+        v-if="tabFilter == 'expected_checkout' || tabFilter == 'All'"
+        cols="1"
+        class="roombox1"
+        v-for="(noAvailableRoom, index) in filteredRooms(expectCheckOut)"
+        :key="index + 60"
+      >
+        <v-card
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="handleTouchstart($event, noAvailableRoom)"
+          @mouseover="handleMouseOver(noAvailableRoom)"
+          @dblclick="dblclick"
+          :class="` darken-2`"
+          dark
+        >
+          <v-card-text
+            class="orange p-3 roombox"
+            style="padding: 0px"
+            title="Expected Checkout"
+          >
+            <div class="text-center white--text boxheight">
+              <v-icon
+                :color="
+                  noAvailableRoom.device &&
+                  noAvailableRoom.device.latest_status == 1
+                    ? 'red'
+                    : ''
+                "
+                >mdi-bed</v-icon
               >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="ArrivalReportDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              name="expectCheckIn"
-              :total="expectCheckIn.length + expectCheckOut.length"
-              size="100%"
-              :colors="colors"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Arrival`,
-                  value: `${expectCheckOut.length}`,
-                },
-                {
-                  color: `green`,
-                  text: `Pending`,
-                  value: `${expectCheckIn.length}`,
-                },
-              ]"
-            />
+              <div>
+                {{ noAvailableRoom?.room_no || "---" }}
+              </div>
+              <div>
+                {{
+                  noAvailableRoom ? caps(noAvailableRoom.room_type.name) : "---"
+                }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
-      </v-col>
-
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Checkout</v-col
+      </div>
+      <!-- </v-row>
+   
+      <v-row
+      v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
+      no-gutters
+      class="mt-0"
+    >
+      <v-col cols="12">
+        <div>Expected Arrival ({{ filteredRooms(expectCheckIn).length }})</div>
+      </v-col> -->
+      <div
+        v-if="
+          filteredRooms(expectCheckIn).length == 0 &&
+          tabFilter == 'expected_arrival'
+        "
+      >
+        Not Available
+      </div>
+      <div
+        v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
+        cols="1"
+        class="roombox1"
+        v-for="(expCheckIn, index) in filteredRooms(expectCheckIn)"
+        :key="index + 70"
+      >
+        <v-card
+          dark
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="handleTouchstart($event, expCheckIn)"
+          @mouseover="handleMouseOver(expCheckIn)"
+          @dblclick="dblclick"
+          class=""
+        >
+          <v-card-text
+            class="success p-3 roombox"
+            style="padding: 0px"
+            title="Expected Arrival"
+          >
+            <div class="text-center white--text boxheight">
+              <v-icon
+                :color="
+                  expCheckIn.device && expCheckIn.device.latest_status == 1
+                    ? 'red'
+                    : ''
+                "
+                >mdi-bed</v-icon
               >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="CheckOutReportDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              name="dirtyRoomsList"
-              :total="dirtyRoomsList.length + expectCheckOut.length"
-              size="100%"
-              :colors="colors"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Checkout`,
-                  value: `${dirtyRoomsList.length}`,
-                },
-                {
-                  color: `green`,
-                  text: `Pending`,
-                  value: `${expectCheckOut.length}`,
-                },
-              ]"
-            />
+              <div>{{ expCheckIn?.room_no || "---" }}</div>
+              <div>
+                {{ expCheckIn ? caps(expCheckIn.room_type.name) : "---" }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
-      </v-col>
-
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >In-House</v-col
+      </div>
+      <!-- </v-row>
+    <v-row
+      v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
+      no-gutters
+      class="mt-0"
+    >
+      <v-col cols="12">
+        <div>Reserved ({{ filteredRooms(reservedWithoutAdvance).length }})</div>
+      </v-col> -->
+      <div
+        v-if="
+          filteredRooms(reservedWithoutAdvance).length == 0 &&
+          tabFilter == 'expected_arrival'
+        "
+      >
+        Not Available
+      </div>
+      <div
+        v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
+        class="roombox1"
+        :class="noAvailableRoom.id"
+        v-for="(noAvailableRoom, i) in filteredRooms(reservedWithoutAdvance)"
+      >
+        <v-card
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="handleTouchstart($event, noAvailableRoom)"
+          @mouseover="handleMouseOver(noAvailableRoom)"
+          @dblclick="dblclick"
+          :class="` `"
+          dark
+        >
+          <v-card-text
+            class="blue p-3 roombox"
+            style="padding: 0px"
+            title="Expected Arrival"
+          >
+            <div class="text-center white--text boxheight">
+              <!-- <v-icon
+                v-if="isDeviceStatusActive(noAvailableRoom)"
+                dark
+                class="pa-0 room-inperson-status"
               >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="CheckOutReportDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              name="members"
-              :total="members.adult + members.child"
-              size="100%"
-              :colors="colors"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Adult`,
-                  value: `${members.adult}`,
-                },
-                {
-                  color: `green`,
-                  text: `Children`,
-                  value: `${members.child}`,
-                },
-              ]"
-            />
+                mdi mdi-bed
+              </v-icon> -->
+              <v-icon
+                :color="
+                  noAvailableRoom.device &&
+                  noAvailableRoom.device.latest_status == 1
+                    ? 'red'
+                    : ''
+                "
+              >
+                mdi mdi-bed
+              </v-icon>
+              <div>
+                {{ noAvailableRoom?.room_no || "---" }}
+              </div>
+              <div>
+                {{
+                  noAvailableRoom ? caps(noAvailableRoom.room_type.name) : "---"
+                }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
-      </v-col>
-
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Food Order</v-col
+      </div>
+      <!-- </v-row>
+    <v-row
+      v-if="tabFilter == 'available' || tabFilter == 'All'"
+      no-gutters
+      class="mt-0"
+    >
+      <v-col cols="12">
+        <div>Available ({{ filteredRooms(availableRooms).length }})</div>
+      </v-col> -->
+      <div
+        v-if="
+          filteredRooms(availableRooms).length == 0 && tabFilter == 'available'
+        "
+      >
+        Not Available
+      </div>
+      <div
+        class="roombox1"
+        v-if="tabFilter == 'available' || tabFilter == 'All'"
+        v-for="(room, index) in filteredRooms(availableRooms)"
+      >
+        <v-card
+          :class="` darken-2 `"
+          dark
+          @contextmenu="makeNewBooking($event, room)"
+          @mouseover="mouseOverForAvailable(room)"
+          @touchstart="makeNewBookingForTouch($event, room)"
+        >
+          <v-card-text
+            class="green p-3 roombox"
+            style="padding: 0px"
+            :title="
+              room.device && room.device.latest_status == 1
+                ? 'Available and Light On'
+                : 'Available'
+            "
+          >
+            <div class="text-center white--text boxheight">
+              <v-icon
+                :color="
+                  room.device && room.device.latest_status == 1 ? 'red' : ''
+                "
               >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="FoodDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-
-            <Donut
-              name="foodplan"
-              size="100%"
-              :colors="colors"
-              :total="
-                foodplan
-                  ? parseInt(foodplan.breakfast) +
-                    parseInt(foodplan.lunch) +
-                    parseInt(foodplan.dinner)
-                  : 0
-              "
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Breakfast`,
-                  value: foodplan ? parseInt(foodplan.breakfast) : 0,
-                },
-                {
-                  color: `green`,
-                  text: `Lunch`,
-                  value: foodplan ? parseInt(foodplan.lunch) : 0,
-                },
-                {
-                  color: `orange`,
-                  text: `Dinner`,
-                  value: foodplan ? parseInt(foodplan.dinner) : 0,
-                },
-              ]"
-            />
+                mdi mdi-bed
+              </v-icon>
+              <div>{{ room?.room_no || "---" }}</div>
+              <div>
+                {{ room ? caps(room.room_type.name) : "---" }}
+              </div>
+            </div>
           </v-card-text>
         </v-card>
-      </v-col>
-      <v-col cols="12" style="padding-top: 0px">
-        <v-card class="py-2">
-          <v-container fluid>
-            <v-row>
-              <v-col></v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingHall :onlyButton="true" />
-              </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingIndividual :onlyButton="true" />
-              </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingGroup :onlyButton="true" />
-              </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingQuickCheckIn @success="handleReload" />
-              </v-col>
-              <v-col cols="3">
-                <v-row>
-                  <v-col cols="6">
-                    <v-text-field
-                      small
-                      class="global-search-textbox"
-                      clearable
-                      dense
-                      label="Search..."
-                      outlined
-                      v-model="searchQuery"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-menu
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :nudge-right="-120"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          outlined
-                          label="Filter Date"
-                          class="global-search-date"
-                          v-model="filterDate"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="filterDate"
-                        @input="menu2 = false"
-                        no-title
-                      ></v-date-picker>
-                    </v-menu>
-                    <!-- <v-select
-                      class="global-search-select"
-                      dense
-                      :items="[
-                        { id: ``, name: `Select All` },
-                        { id: `expected_arrival`, name: `Arrival` },
-                        { id: `expected_checkout`, name: `Checkout` },
-                        { id: `blocked`, name: `Blocked` },
-                        // { id: `expected_arrival`, name: `Sold` },
-                        { id: `available`, name: `Available` },
-                        // { id: `compliment`, name: `Compliment` },
-                        { id: `dirty`, name: `Dirty` },
-                      ]"
-                      item-text="name"
-                      item-value="id"
-                      label="Select  Item"
-                      outlined
-                      v-model="filterQuery"
-                      @change="getRoomsByFilter"
-                    ></v-select> -->
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-
-            <v-row
-              style="margin-top: -30px; padding-top: 0px; min-height: 600px"
-            >
-              <v-col
-                cols="12"
-                style="margin-top: 0px; padding-top: 0px; height: auto"
-                ><v-tabs hide-slider right v-model="tab" color="#0d652d">
-                  <v-tab style="font-weight: bold">All</v-tab>
-                  <v-tab style="font-weight: bold">Occupied</v-tab>
-                  <v-tab style="font-weight: bold">Arrival</v-tab>
-                  <v-tab style="font-weight: bold">Checkout </v-tab>
-                  <v-tab style="font-weight: bold">Blocked</v-tab>
-                  <!-- <v-tab>Sold </v-tab> -->
-                  <v-tab style="font-weight: bold">Available</v-tab>
-                  <!-- <v-tab>Compliment</v-tab> -->
-                  <v-tab-item>
-                    <v-card color="basil" style="height: auto">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          name="All"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'All'"
-                          :key="keyTabAll"
-                          :data="rooms"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil" style="height: auto">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          name="occupied"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'occupied'"
-                          :key="keyTabOccupied"
-                          :data="rooms"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          name="expected_arrival"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'expected_arrival'"
-                          :key="keyTabexpected_arrival"
-                          :data="rooms"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          name="expected_checkout"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'expected_checkout'"
-                          :key="keyTabexpected_checkout"
-                          :data="rooms"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          name="blocked"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'blocked'"
-                          :key="keyTabblocked"
-                          :data="rooms"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-
-                  <!-- <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          v-if="tab == 4"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'sold'"
-                          :key="keyTabexpected_arrival"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item> -->
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          name="available"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'available'"
-                          :key="keyTabavailable"
-                          :data="rooms"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <!-- <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          v-if="tab == 6"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'compliment'"
-                          :key="keyTabcompliment"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item> -->
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          name="dirty"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'dirty'"
-                          :key="keyTabdirty"
-                          :data="rooms"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                </v-tabs>
-              </v-col>
-            </v-row>
-          </v-container>
+      </div>
+      <!-- </v-row>
+    <v-row
+      v-if="tabFilter == 'blocked' || tabFilter == 'All'"
+      no-gutters
+      class="mt-0"
+    >
+      <v-col cols="12">
+        <div>Blocked ({{ filteredRooms(blockedRooms).length }})</div>
+      </v-col> -->
+      <div
+        v-if="filteredRooms(blockedRooms).length == 0 && tabFilter == 'blocked'"
+      >
+        Not Available
+      </div>
+      <div
+        v-if="tabFilter == 'blocked' || tabFilter == 'All'"
+        class="roombox1"
+        v-for="(blockedRoom, index) in filteredRooms(blockedRooms)"
+      >
+        <v-card
+          :class="` darken-2`"
+          dark
+          @contextmenu="makeNewBooking($event, blockedRoom)"
+          @mouseover="mouseOverForAvailable(blockedRoom)"
+          @touchstart="makeNewBookingForTouch($event, blockedRoom)"
+        >
+          <v-card-text
+            class="purple p-3 roombox"
+            style="padding: opx"
+            title="Blocked"
+          >
+            <div class="text-center white--text roombox">
+              <v-icon
+                :color="
+                  blockedRoom.device && blockedRoom.device.latest_status == 1
+                    ? 'red'
+                    : ''
+                "
+              >
+                mdi mdi-bed
+              </v-icon>
+              <div>{{ blockedRoom?.room_no || "---" }}</div>
+              <div>
+                {{ room ? caps(blockedRoom.room_type.name) : "---" }}
+              </div>
+            </div>
+          </v-card-text>
         </v-card>
-      </v-col>
+      </div>
+      <!--</v-row>
+
+    <v-row
+      v-if="tabFilter == 'All' || tabFilter == 'dirty'"
+      no-gutters
+      class="mt-0"
+    > -->
+      <!-- <v-col cols="12">
+        <div>Dirty ({{ filteredRooms(Occupied).length }})</div>
+      </v-col> -->
+      <div v-if="filteredRooms(Occupied).length == 0 && tabFilter == 'dirty'">
+        Not Available
+      </div>
+      <div
+        v-if="tabFilter == 'All' || tabFilter == 'dirty'"
+        class="roombox1"
+        v-for="(occupied, index) in filteredRooms(Occupied)"
+      >
+        <v-card
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="show"
+          @touchstart="
+            touchstart(
+              $event,
+              occupied && occupied.booked_room && occupied.booked_room.id,
+              occupied &&
+                occupied.booked_room &&
+                occupied.booked_room.booking &&
+                occupied.booked_room.booking.booking_status
+            )
+          "
+          :elevation="0"
+          @mouseover="
+            mouseOver(
+              occupied && occupied.booked_room && occupied.booked_room.id,
+              occupied &&
+                occupied.booked_room &&
+                occupied.booked_room.booking &&
+                occupied.booked_room.booking.booking_status
+            )
+          "
+          @dblclick="dblclick"
+          :class="` darken-2`"
+          dark
+        >
+          <v-card-text
+            class="roombox p-3 roombox"
+            style="padding: 0px; background-color: #db0000"
+            title="Dirty"
+          >
+            <div class="text-center white--text boxheight">
+              <v-icon
+                :color="
+                  occupied.device && occupied.device.latest_status == 1
+                    ? 'red'
+                    : ''
+                "
+                >mdi-bed</v-icon
+              >
+              <div>{{ occupied?.room_no || "---" }}</div>
+              <div>
+                {{ room ? caps(occupied.room_type.name) : "---" }}
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </div>
+      <!-- </v-row> -->
     </v-row>
   </div>
   <Preloader v-else />
 </template>
 <script>
-import Posting from "../components/booking/Posting";
-import PayAdvance from "../components/booking/PayAdvance";
-import CheckIn from "../components/booking/CheckIn.vue";
-import CheckOut from "../components/booking/CheckOut.vue";
-import NewCheckIn from "../components/booking/NewCheckIn.vue";
-import ReservationList from "../components/reservation/ReservationList.vue";
-import Available from "../components/svg/Available.vue";
-import Dirty from "../components/svg/Dirty.vue";
-import Booked from "../components/svg/Booked.vue";
-import CheckOutSvg from "../components/svg/CheckOutSvg.vue";
-import PaidBookedSvg from "../components/svg/PaidBookedSvg.vue";
-import ExpectCheckInSvg from "../components/svg/ExpectCheckInSvg.vue";
-import ExpectCheckOutSvg from "../components/svg/ExpectCheckOutSvg.vue";
-import CheckInSvg from "../components/svg/CheckInSvg.vue";
-// import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
-import ExpectCheckInReport from "../components/summary_reports/ExpectCheckInReport.vue";
-import ExpectCheckOutReport from "../components/summary_reports/ExpectCheckOutReport.vue";
-import AvailableRoomsReport from "../components/summary_reports/AvailableRoomsReport.vue";
-import CheckInRoomsReport from "../components/summary_reports/CheckInRoomsReport.vue";
-import BookedRoomsReport from "../components/summary_reports/BookedRoomsReport.vue";
-import PaidRoomsReport from "../components/summary_reports/PaidRoomsReport.vue";
-import CheckOutRoomsReport from "../components/summary_reports/CheckOutRoomsReport.vue";
-import DirtyRoomsReport from "../components/summary_reports/DirtyRoomsReport.vue";
-import Grc from "../components/booking/GRC.vue";
+import Posting from "../booking/Posting.vue";
+import PayAdvance from "../booking/PayAdvance.vue";
+import CheckIn from "../booking/CheckIn.vue";
+import CheckOut from "../booking/CheckOut.vue";
+import NewCheckIn from "../booking/NewCheckIn.vue";
+import ReservationList from "../reservation/ReservationList.vue";
+import Available from "../svg/Available.vue";
+import Dirty from "../svg/Dirty.vue";
+import Booked from "../svg/Booked.vue";
+import CheckOutSvg from "../svg/CheckOutSvg.vue";
+import PaidBookedSvg from "../svg/PaidBookedSvg.vue";
+import ExpectCheckInSvg from "../svg/ExpectCheckInSvg.vue";
+import ExpectCheckOutSvg from "../svg/ExpectCheckOutSvg.vue";
+import CheckInSvg from "../svg/CheckInSvg.vue";
+// import FoodOrderRooms from "../food/FoodOrderRooms.vue";
+import ExpectCheckInReport from "../summary_reports/ExpectCheckInReport.vue";
+import ExpectCheckOutReport from "../summary_reports/ExpectCheckOutReport.vue";
+import AvailableRoomsReport from "../summary_reports/AvailableRoomsReport.vue";
+import CheckInRoomsReport from "../summary_reports/CheckInRoomsReport.vue";
+import BookedRoomsReport from "../summary_reports/BookedRoomsReport.vue";
+import PaidRoomsReport from "../summary_reports/PaidRoomsReport.vue";
+import CheckOutRoomsReport from "../summary_reports/CheckOutRoomsReport.vue";
+import DirtyRoomsReport from "../summary_reports/DirtyRoomsReport.vue";
+import Grc from "../booking/GRC.vue";
 
 export default {
+  props: ["searchQuery", "tabFilter", "data"],
   layout({ $auth }) {
     if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {
       return "guest";
@@ -1030,7 +1034,7 @@ export default {
   },
   data() {
     return {
-      tab: 0,
+      room: "",
       filterDate: "2024-08-15",
       menu2: false,
       colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
@@ -1176,49 +1180,11 @@ export default {
         AvailableRooms: [],
       },
 
-      searchQuery: null,
-      filterQuery: ``,
-      keyTabAll: 11,
-      keyTabexpected_arrival: 12,
-      keyTabexpected_checkout: 13,
-      keyTabblocked: 18,
-      keyTabavailable: 14,
-      keyTabcompliment: 15,
-      keyTabdirty: 16,
-      keyTabOccupied: 17,
+      //searchQuery: null,
+      //tabFilter: ``,
     };
   },
   watch: {
-    searchQuery() {
-      this.keyTabAll++;
-    },
-    filterDate() {
-      this.keyTabAll++;
-      this.room_list();
-    },
-    tab() {
-      // if (this.tab == 0) {
-      //   this.keyTabAll++;
-      // }
-      // if (this.tab == 1) {
-      //   this.keyTabexpected_arrival++;
-      // }
-      // if (this.tab == 2) {
-      //   this.keyTabexpected_checkout++;
-      // }
-      // if (this.tab == 3) {
-      //   this.keyTabblocked++;
-      // }
-      // if (this.tab == 4) {
-      //   this.keyTabavailable++;
-      // }
-      // if (this.tab == 5) {
-      //   this.keyTabcompliment++;
-      // }
-      // if (this.tab == 6) {
-      //   this.keyTabdirty++;
-      // }
-    },
     checkInDialog() {
       this.formTitle = "Check In";
       this.get_data();
@@ -1251,11 +1217,6 @@ export default {
     },
   },
   created() {
-    this.filterDate = new Date(
-      Date.now() - new Date().getTimezoneOffset() * 60000
-    )
-      .toISOString()
-      .substr(0, 10);
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
 
@@ -1472,6 +1433,8 @@ export default {
     },
 
     get_data(jsEvent = null) {
+      console.log("this.evenIid", this.evenIid);
+      if (this.evenIid == false) return false;
       this.selected_booked_room_id = this.evenIid;
 
       let payload = {
@@ -1482,9 +1445,8 @@ export default {
       };
       this.rightClickRoomId = "---";
       this.$axios.get(`get_booked_room`, payload).then(({ data }) => {
-        let { booking, ...roomData } = data;
         this.checkData = data.booking;
-        this.roomData = roomData;
+        this.roomData = data;
         this.bookingId = data.booking.id;
 
         this.rightClickRoomId = data.booking.resourceId;
@@ -1599,20 +1561,8 @@ export default {
       this.$swal(title, message, type);
     },
     room_list() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user && this.$auth.user.company.id,
-          // check_in: new Date().toJSON().slice(0, 10),
-          check_in: this.filterDate,
-          filter_date: this.filterDate,
-        },
-      };
-      this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
-        if (!data.status) {
-          this.alert("Failure!", data.data, "error");
-          return false;
-        }
-
+      if (this.data) {
+        let data = this.data;
         this.rooms = data;
 
         this.dirtyRooms = data.dirtyRooms;
@@ -1637,15 +1587,51 @@ export default {
         setTimeout(() => {
           this.isPageLoad = true;
         }, 100);
-        this.keyTabAll = 31;
-        this.keyTabexpected_arrival = 33;
-        this.keyTabexpected_checkout = 34;
-        this.keyTabblocked = 35;
-        this.keyTabavailable = 36;
-        this.keyTabcompliment = 37;
-        this.keyTabdirty = 38;
-        this.keyTabOccupied = 39;
-      });
+        return false;
+      } else {
+        let payload = {
+          params: {
+            company_id: this.$auth.user && this.$auth.user.company.id,
+            // check_in: new Date().toJSON().slice(0, 10),
+            check_in: new Date(
+              Date.now() - new Date().getTimezoneOffset() * 60000
+            )
+              .toISOString()
+              .substr(0, 10),
+          },
+        };
+        this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
+          if (!data.status) {
+            this.alert("Failure!", data.data, "error");
+            return false;
+          }
+
+          this.rooms = data;
+
+          this.dirtyRooms = data.dirtyRooms;
+          this.availableRooms = data.availableRooms;
+          this.notAvailableRooms = data.notAvailableRooms;
+          this.blockedRooms = data.blockedRooms;
+
+          this.confirmedBooking = data.confirmedBooking;
+          this.waitingBooking = data.waitingBooking;
+          this.expectCheckIn = data.expectCheckIn;
+          this.expectCheckOut = data.expectCheckOut;
+          this.Occupied = data.checkIn;
+          this.checkOut = data.checkOut;
+          this.confirmedBookingList = data.confirmedBookingList;
+          this.dirtyRoomsList = data.dirtyRoomsList;
+          this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+
+          this.members = {
+            ...data.members,
+          };
+          this.isIndex = true;
+          setTimeout(() => {
+            this.isPageLoad = true;
+          }, 100);
+        });
+      }
     },
 
     dblclick() {

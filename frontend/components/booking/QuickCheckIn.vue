@@ -2,10 +2,42 @@
   <div>
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-bind="attrs" v-on="on" class="primary">
-          <v-icon class="mr-2">mdi-clock-outline</v-icon> Quick Checkin
-        </v-btn>
+        <div style="text-align: center">
+          <v-btn
+            dense
+            x-small
+            v-bind="attrs"
+            v-on="on"
+            class="text-center"
+            title="Quick"
+            color="#34444c"
+            style="width: 37px; height: 26px"
+          >
+            <v-icon color="white">mdi-clock-fast</v-icon>
+          </v-btn>
+          <div style="font-size: 10px; text-align: center">Quick</div>
+        </div>
       </template>
+      <!-- <template v-slot:activator="{ on, attrs }">
+        <div style="text-align: center">
+          <v-btn
+            dense
+            x-small
+            v-bind="attrs"
+            v-on="on"
+            class="text-center"
+            title="Quick Checkin"
+            color="#34444c"
+            style="width: 37px; height: 26px"
+          >
+            <v-icon color="white">mdi-google-classroom</v-icon>
+            <span v-if="!onlyButton">Quick Checkin</span>
+          </v-btn>
+          <div v-if="onlyButton" style="font-size: 10px; text-align: center">
+            Quick Checkin
+          </div>
+        </div>
+      </template> -->
 
       <v-dialog v-model="imgView">
         <v-card>

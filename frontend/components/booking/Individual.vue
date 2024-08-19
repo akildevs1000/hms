@@ -2,11 +2,33 @@
   <div v-if="can('calendar_create')">
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-bind="attrs" v-on="on" class="primary">
-          <v-icon class="mr-2">mdi-account</v-icon> Individual
-        </v-btn>
+        <div style="text-align: center">
+          <v-btn
+            dense
+            x-small
+            v-bind="attrs"
+            v-on="on"
+            class="text-center"
+            title="Individual"
+            color="#34444c"
+            style="width: 37px; height: 26px"
+          >
+            <v-icon color="white">mdi-account</v-icon>
+            <span v-if="!onlyButton"> Individual</span>
+          </v-btn>
+          <div v-if="onlyButton" style="font-size: 10px; text-align: center">
+            Indiv
+          </div>
+        </div>
       </template>
       <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Individual Booking Information</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="dialog = false">
+            mdi mdi-close-box
+          </v-icon>
+        </v-toolbar>
         <v-container fluid>
           <v-row>
             <v-dialog v-model="documentDialog" max-width="30%">
@@ -280,7 +302,7 @@
                               ></v-autocomplete>
                             </v-col>
                             <v-col md="2"></v-col>
-                           
+
                             <v-col md="4" cols="12" sm="12">
                               <v-text-field
                                 label="First Name *"
@@ -353,32 +375,32 @@
                               ></v-text-field>
                             </v-col>
                             <v-col md="4" cols="12" sm="12">
-                          <v-menu
-                            v-model="customer.dob_menu"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
-                                v-model="customer.dob"
-                                readonly
-                                label="DOB"
-                                v-on="on"
-                                v-bind="attrs"
-                                :hide-details="true"
-                                dense
-                                outlined
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              v-model="customer.dob"
-                              @input="customer.dob_menu = false"
-                            ></v-date-picker>
-                          </v-menu>
-                        </v-col>
+                              <v-menu
+                                v-model="customer.dob_menu"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="customer.dob"
+                                    readonly
+                                    label="DOB"
+                                    v-on="on"
+                                    v-bind="attrs"
+                                    :hide-details="true"
+                                    dense
+                                    outlined
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="customer.dob"
+                                  @input="customer.dob_menu = false"
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
                           </v-row>
                         </v-col>
                       </v-row>
@@ -400,7 +422,7 @@
                             outlined
                           ></v-select>
                         </v-col>
-                      
+
                         <v-col md="3">
                           <v-select
                             label="Purpose"
@@ -471,7 +493,6 @@
                             "
                           ></v-text-field>
                         </v-col>
-                       
                       </v-row>
                       <FullAddress @location="handleFullAddress" />
                       <v-row>
@@ -677,7 +698,7 @@
                                           {{ item.day_type }}
                                         </td>
                                         <td>
-                                          {{ (item.room_price) }}
+                                          {{ item.room_price }}
                                         </td>
                                         <td>{{ item.no_of_adult }}</td>
                                         <td>{{ item.no_of_child }}</td>
@@ -1680,6 +1701,7 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
+  props: ["onlyButton"],
   components: {
     History,
     ImagePreview,
@@ -2002,7 +2024,6 @@ export default {
     await this.get_additional_charges();
 
     await this.get_business_sources();
-
   },
   computed: {
     formattedCheckinDate() {
@@ -2404,7 +2425,8 @@ export default {
 
       let { title, unit_price } = selectedFP;
 
-      let food_plan_price = (unit_price * no_of_adult) + ((unit_price * no_of_child) / 2);
+      let food_plan_price =
+        unit_price * no_of_adult + (unit_price * no_of_child) / 2;
 
       return {
         meal: "------",

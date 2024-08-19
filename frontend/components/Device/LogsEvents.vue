@@ -42,7 +42,7 @@
     </v-row>
     <v-card class="mb-5" elevation="0">
       <v-toolbar v-if="viewType == 'page'" class="rounded-md mb-2" dense flat>
-        <v-toolbar-title><span>Devices Logs</span></v-toolbar-title>
+        <v-toolbar-title><span>Lights On and Off Logs</span></v-toolbar-title>
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -87,12 +87,20 @@
             <template v-slot:item.room.room_no="{ item }">
               {{ item.room.room_no }}</template
             >
+
+            <template v-slot:item.device.room.room_type.name="{ item }">
+              {{ caps(item.device.room.room_type.name) }}
+            </template>
+            <template v-slot:item.duration_minutes="{ item }">
+              {{ $dateFormat.minutesToHHMM(item.duration_minutes) }}
+            </template>
+
             <template v-slot:item.status="{ item }">
-              <v-icon v-if="item.status == 0" color="red"
-                >mdi-alpha-x-circle
+              <v-icon v-if="item.status == 0" color="black"
+                >mdi-lightbulb-outline
               </v-icon>
               <v-icon v-else-if="item.status == 1" color="green"
-                >mdi-alpha-y-circle
+                >mdi-lightbulb-on
               </v-icon>
             </template>
           </v-data-table>
@@ -127,33 +135,41 @@ export default {
         text: "#",
         value: "sno",
         align: "left",
-        sortable: false,
-        filterable: false,
       },
       {
-        text: "Serial Number",
-        value: "serial_number",
+        text: "Room Number",
+        value: "device.name",
         align: "left",
-        sortable: true,
-        filterable: true,
       },
       {
-        text: "status",
+        text: "Category",
+        value: "device.room.room_type.name",
+        align: "left",
+      },
+
+      {
+        text: "ON",
+        value: "start_datetime",
+        key: "start_datetime",
+        align: "left",
+      },
+      {
+        text: "OFF",
+        value: "end_datetime",
+        key: "end_datetime",
+        align: "left",
+      },
+      {
+        text: "Hours(HH:MM)",
+        value: "duration_minutes",
+        key: "duration_minutes",
+        align: "left",
+      },
+      {
+        text: "Status",
         value: "status",
         key: "status",
         align: "left",
-        sortable: true,
-        filterable: true,
-        filterSpecial: true,
-      },
-      {
-        text: "log_time",
-        value: "log_time",
-        key: "log_time",
-        align: "left",
-        sortable: true,
-        filterable: true,
-        filterSpecial: true,
       },
     ],
     roomList: [],
@@ -204,6 +220,9 @@ export default {
     //   "Attendance : " + this.date_from + " to " + this.date_to;
   },
   methods: {
+    caps(str) {
+      return str.replace(/\b\w/g, (c) => c.toUpperCase());
+    },
     can(per) {
       let u = this.$auth.user;
       return (

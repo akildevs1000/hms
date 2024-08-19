@@ -1,12 +1,13 @@
 <template>
   <date-picker
-    style="width: 100%"
+    style="width: 100%; height: 50px"
     value-type="format"
     format="YYYY-MM-DD"
     type="date"
     v-model="time3"
     @change="CustomFilter()"
     range
+    :class="height ? 'small-text' : ''"
   ></date-picker>
 </template>
 
@@ -17,7 +18,7 @@ export default {
   components: {
     DatePicker,
   },
-  props: ["defaultFilterType"],
+  props: ["defaultFilterType", "height"],
   data() {
     return {
       // -------------------end chart ----------------
@@ -89,8 +90,8 @@ export default {
 </script>
 
 <style>
-.mx-input {
-  height: 40px !important;
+.small-text .mx-input {
+  height: 30px !important;
   border: 1px solid #9e9e9e !important;
   color: black !important;
 }

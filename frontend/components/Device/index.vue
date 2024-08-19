@@ -67,7 +67,22 @@
                   errors.name[0]
                 }}</span>
               </v-col>
-              <v-col cols="12">
+              <v-col cols="6">
+                {{ editedItem.utc_time_zone }}
+                <v-autocomplete
+                  class="pb-0"
+                  :hide-details="!editedItem.utc_time_zone"
+                  v-model="editedItem.utc_time_zone"
+                  placeholder="Time Zone"
+                  outlined
+                  dense
+                  label="Time Zone(Ex:UTC+) *"
+                  :items="getTimezones()"
+                  item-value="key"
+                  item-text="text"
+                ></v-autocomplete
+              ></v-col>
+              <v-col cols="6">
                 <v-select
                   :disabled="viewMode"
                   :items="roomList"
@@ -169,11 +184,11 @@
               {{ item.room_type.name }}</template
             >
             <template v-slot:item.latest_status="{ item }">
-              <v-icon v-if="item.latest_status == 0" color="red"
-                >mdi-alpha-x-circle
+              <v-icon v-if="item.latest_status == 0" color="black"
+                >mdi-lightbulb-outline
               </v-icon>
               <v-icon v-else-if="item.latest_status == 1" color="green"
-                >mdi-alpha-y-circle
+                >mdi-lightbulb-on
               </v-icon>
             </template>
             <template v-slot:item.latest_status_time="{ item }">
@@ -243,11 +258,13 @@
   <NoAccess v-else />
 </template>
 <script>
+import timeZones from "../../defaults/utc_time_zones.json";
 export default {
   props: ["addNew"],
   data: () => ({
     //datatable varables
     page: 1,
+    timeZones: timeZones,
     perPage: 0,
     currentPage: 1,
     cumulativeIndex: 1,
@@ -300,7 +317,15 @@ export default {
         filterable: true,
         filterSpecial: true,
       },
-
+      {
+        text: "Timezone",
+        value: "utc_time_zone",
+        align: "left",
+        sortable: true,
+        key: "utc_time_zone",
+        filterable: true,
+        filterSpecial: true,
+      },
       {
         text: "Status Time",
         value: "latest_status_time",
@@ -350,6 +375,14 @@ export default {
     // }, 1000 * 60 * 2);
   },
   methods: {
+    getTimezones() {
+      return Object.keys(this.timeZones).map((key) => ({
+        offset: this.timeZones[key].offset,
+        time_zone: this.timeZones[key].time_zone,
+        key: key,
+        text: key + " - " + this.timeZones[key].offset,
+      }));
+    },
     can(per) {
       let u = this.$auth.user;
       return (
@@ -449,6 +482,7 @@ export default {
             room_id: this.editedItem.room_id,
             name: this.editedItem.name,
             user_id: this.$auth.user.id,
+            utc_time_zone: this.editedItem.utc_time_zone,
           },
         };
 

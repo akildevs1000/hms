@@ -4,7 +4,8 @@
       <!-- :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''" -->
 
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      {{ title }}
+      <!-- {{ title }} -->
+      <img src="/logo1.png" style="width: 130px" />
       <v-spacer></v-spacer>
       <v-btn
         text
@@ -15,6 +16,18 @@
         >{{ topMenu.label }}</v-btn
       >
       <v-spacer></v-spacer>
+
+      <v-spacer>
+        <div>
+          <!-- <v-icon style="margin-top: -10px" color="black" size="35"
+            >mdi-clock-outline</v-icon
+          > -->
+          <span style="font-size: 30px; color: black"> {{ currentTime }}</span>
+          <span style="font-size: 16px; color: black; font-weight: 200">{{
+            todayDate
+          }}</span>
+        </div>
+      </v-spacer>
       <v-badge
         class="mt-2 mr-1"
         :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
@@ -81,6 +94,42 @@
       fixed
       app
       :color="sideBarcolor"
+      :width="100"
+      expand-on-hover
+      rail
+    >
+      <v-list v-for="(i, idx) in filteredMenu" :key="idx" :title="i.title">
+        <v-list-item
+          @click="$router.push(i.to)"
+          :class="!miniVariant || 'pl-2'"
+          router
+          style="display: inline-block; padding: 0px 20px"
+          vertical
+        >
+          <div>
+            <v-icon>{{ i.icon }}</v-icon>
+          </div>
+          <div class="text-center p-2">
+            {{ i.title }}
+          </div>
+          <!-- <v-list-item-icon class="ma-2">
+            <v-icon>{{ i.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-title class="text-center p-2">
+            <br />
+            {{ i.title }}
+          </v-list-item-title> -->
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <!-- <v-navigation-drawer
+      v-model="drawer"
+      dark
+      :clipped="clipped"
+      fixed
+      app
+      :color="sideBarcolor"
       :width="150"
     >
       <v-row no-gutters>
@@ -102,8 +151,8 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-navigation-drawer>
-    <v-main class="main_bg">
+    </v-navigation-drawer> -->
+    <v-main class="main_bg" style="padding-left: 75px">
       <v-container fluid>
         <nuxt />
       </v-container>
@@ -253,6 +302,8 @@ export default {
   },
   data() {
     return {
+      currentTime: "00:00:00",
+      todayDate: "---",
       activeMenu: null, // Keep track of the active menu
       topMenus: [
         {
@@ -712,7 +763,7 @@ export default {
       },
       clipped: true,
       currentTime: "",
-      miniVariant: false,
+
       title: "",
       logout_btn: {
         icon: "mdi-logout",
@@ -722,7 +773,7 @@ export default {
   },
 
   created() {
-    this.title = "EZHMS"; // this.$auth.user?.company?.company_code;
+    this.title = "MyHotel2Cloud"; // this.$auth.user?.company?.company_code;
     setTimeout(() => {
       this.loadNotificationMenu();
     }, 1000 * 60);
@@ -745,6 +796,22 @@ export default {
 
     this.filteredMenu = this.items;
     this.$router.push(this.filteredMenu[0].to ?? "/");
+
+    setInterval(() => {
+      const now = new Date();
+      // Get the day, month, year, and day of the week
+      var day = now.getDate();
+      var month = now.getMonth() + 1; // Month is zero-based, so add 1
+      var year = now.getFullYear();
+
+      day = (day < 10 ? "0" : "") + day;
+      month = (month < 10 ? "0" : "") + month;
+      const formattedDateTime = month + "-" + day + "-" + year;
+
+      this.currentTime = now.toLocaleTimeString([], { hour12: false });
+      this.todayDate =
+        this.$dateFormat.format_date_with_dayname(formattedDateTime);
+    }, 1000);
   },
 
   mounted() {
@@ -955,5 +1022,122 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+</style>
+
+<style>
+.v-navigation-drawer {
+  width: 80px !important;
+  text-align: center;
+}
+
+.v-navigation-drawer--is-mouseover {
+  width: 140px !important;
+  text-align: center;
+}
+
+.global-search-textbox .v-input__slot {
+  min-height: 30px !important;
+}
+.global-search-textbox .v-label {
+  line-height: 11px !important;
+}
+.global-search-textbox .v-input__icon {
+  height: 17px !important;
+}
+.global-search-textbox-calender .v-input__slot {
+  min-height: 26px !important;
+}
+.global-search-textbox-calender .v-text-field__slot {
+  height: 30px !important;
+}
+.global-search-textbox-calenderx
+  .v-text-field--outlined.v-input--dense
+  .v-label {
+  top: 4px !important;
+}
+.v-text-field--outlined.v-input--dense .v-label {
+  top: 4px !important;
+}
+/* .global-search-textbox-calender .v-label {
+  line-height: 12px !important;
+} */
+.global-search-textbox-calender .v-input__icon {
+  height: 15px !important;
+}
+.global-search-textbox-calender .v-input input {
+  height: 30px !important;
+}
+.global-search-select .v-input__slot {
+  min-height: 30px !important;
+}
+.global-search-select .v-label {
+  line-height: 11px !important;
+}
+.global-search-select .v-input__icon {
+  height: 17px !important;
+}
+
+.global-search-select .v-select__selections {
+  padding: 0px !important;
+}
+
+.global-search-select .v-label {
+  top: 13px !important;
+}
+
+.global-search-date .v-input__slot {
+  min-height: 30px !important;
+}
+.global-search-date .v-label {
+  line-height: 11px !important;
+}
+.global-search-date .v-input__icon {
+  height: 17px !important;
+}
+
+.global-search-date .v-label {
+  top: 21px !important;
+}
+
+.boxheight {
+  height: 55px;
+  list-style: 5px;
+}
+
+.client {
+  width: fit-content;
+  block-size: fit-content;
+  border: solid #000000 1px;
+  padding: 15px;
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2em;
+}
+
+.columns .client {
+  width: auto;
+  flex: 1 1 40%;
+}
+.roombox1 {
+  float: left;
+  width: 55px;
+  height: 55px;
+  margin: 5px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.roombox {
+  /* width: 50px;
+  flex: 0 0 50px;
+  margin: 5px; */
+
+  width: 55px;
+  height: 55px;
+  font-size: 11px !important;
+  line-height: 14px !important;
 }
 </style>

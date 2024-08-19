@@ -26,19 +26,28 @@ class UpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $deviceId = $this->serial_number;
+        $companyId = $this->company_id;
+
 
         return [
 
 
+            'serial_number' => [
+                'required'
 
-            'serial_number' => ['required', Rule::unique('devices')->ignore($this->input('id'))->where(function ($query) {
-                return $query->where('company_id', $this->input('company_id'));
-            })],
+                // ,
+                // Rule::unique('devices')->ignore($this->input('room_id'))->where(function ($query) use ($deviceId) {
+                //     return $query->where('serial_number', $deviceId)->where('company_id', $this->input('company_id'));
+                // })
+
+
+            ],
 
             'name' => ['required', 'min:2', 'max:50'],
             'company_id' => ['required'],
             'room_id' => ['required'],
-
+            'utc_time_zone' => ['nullable'],
 
         ];
     }

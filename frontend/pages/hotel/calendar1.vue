@@ -421,14 +421,15 @@
                 <div
                   style="display: flex; justify-content: flex-end; gap: 16px"
                 >
-                  <BookingHall />
-                  <BookingIndividual />
-                  <BookingGroup />
+                  <BookingHall :onlyButton="true" />
+                  <BookingIndividual :onlyButton="true" />
+                  <BookingGroup :onlyButton="true" />
                 </div>
               </v-col>
               <v-col cols="2" class="text-right">
                 <v-text-field
                   outlined
+                  class="global-search-textbox-calender"
                   hide-details
                   dense
                   append-icon="mdi-magnify"
@@ -438,9 +439,9 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="2" class="text-right">
-                <FilterDateRange @filter-attr="filterAttr" />
+                <FilterDateRange @filter-attr="filterAttr" height="small" />
               </v-col>
-              <v-col cols="12">
+              <v-col cols="12" style="padding-top: 0px">
                 <FullCalendar
                   ref="fullCalendar"
                   @datesRender="handleDatesRender"
@@ -460,6 +461,9 @@
 import Posting from "../../components/booking/Posting";
 import FullCalendar from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
+
+//import momentPlugin from "@fullcalendar/moment ";
+
 import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import CheckIn from "../../components/booking/CheckIn.vue";
@@ -531,7 +535,13 @@ export default {
       prevCounter: 0,
 
       calendarOptions: {
-        plugins: [interactionPlugin, dayGridPlugin, resourceTimelinePlugin],
+        plugins: [
+          interactionPlugin,
+          dayGridPlugin,
+          resourceTimelinePlugin,
+
+          //momentPlugin,
+        ],
         locale: "en",
         initialDate: startDate, // Set initial date to 7 days ago
         headerToolbar: false,
@@ -544,20 +554,53 @@ export default {
         displayEventTime: false,
         selectable: true,
         initialView: "resourceTimelineYear",
+        // dayHeaderFormat: {
+        //   day: "numeric",
+        //   // weekday: "long",
+        //   // month: "numeric",
+
+        //   omitCommas: true,
+        //   // weekday: "long",
+        //   titleFormat: "D dddd ",
+        //   //titleFormat: "dddd D , MMMM , YYYY",
+        //   //  titleFormat: "ddd  D, MMM, YY",
+        //   // titleFormat: function (date) {
+        //   //   return date.toString() + "!!!";
+        //   // },
+        // },
         dayHeaderFormat: {
-          weekday: "long",
-          month: "numeric",
-          day: "numeric",
-          omitCommas: true,
-          weekday: "long",
+          day: "2-digit",
+          weekday: "short",
+          omitCommas: false,
+
+          weekday: "short", // Display short weekday name
+          // year: "numeric",
+
+          month: "short",
+          // titleFormat: "D dddd",
+          titleFormat: "ddd  D, MMM, YY",
+          // titleFormat: function (date) {
+          //   return date.toString() + "!!!";
+          // },
         },
         views: {
           resourceTimelineYear: {
             type: "resourceTimeline",
             duration: { days: 15 },
             slotLabelFormat: {
-              day: "numeric", // Display day number only
+              day: "2-digit",
+              weekday: "short",
+              omitCommas: false,
+
               weekday: "short", // Display short weekday name
+              // year: "numeric",
+
+              month: "short",
+              // titleFormat: "D dddd",
+              titleFormat: "ddd  D, MMM, YY",
+              // titleFormat: function (date) {
+              //   return date.toString() + "!!!";
+              // },
             },
             slotDuration: "24:00:00", // Hide time slots
             // slotEventOverlap: false, // Prevent events from overlapping in the timeline
@@ -729,11 +772,16 @@ export default {
     this.get_events();
 
     this.$nextTick(function () {
-      // Code that will run only after the
-      // entire view has been rendered
+      // Code that will run only after the // entire view has been rendered
       try {
         document.querySelector(".fc-license-message").style.display = "none";
       } catch (error) {}
+
+      //alert("Hellomounted");
+
+      try {
+        this.hilightTodayDateHeaderContent();
+      } catch (e) {}
     });
   },
   activated() {},
@@ -827,6 +875,33 @@ export default {
     },
   },
   methods: {
+    hilightTodayDateHeaderContent() {
+      const today = new Date();
+      const specificDate = today.toISOString().split("T")[0] + "T00:00:00";
+
+      const thElement = document.querySelector(
+        `th[data-date="${specificDate}"]`
+      );
+
+      if (thElement) {
+        thElement.style.backgroundColor = "#e3e2e2";
+        // thElement.style.color = "#FFFFFF";
+        thElement.style.textAlign = "center";
+      } else {
+      }
+      // console.log(specificDate);
+      // const date = new Date(specificDate);
+
+      // const optionsDay = { weekday: "short", day: "numeric" };
+      // const optionsMonthYear = { month: "short", year: "2-digit" };
+
+      // const formattedDate =
+      //   date.toLocaleDateString("en-US", optionsDay) +
+      //   "<br/>" +
+      //   date.toLocaleDateString("en-US", optionsMonthYear);
+
+      // thElement.innerHTML = formattedDate; // specificDate + "<div>2004</div>";
+    },
     filterAttr({ from, to }) {
       this.from_date = from;
       this.to_date = to;
@@ -931,7 +1006,16 @@ export default {
               slotDuration: "24:00:00",
               buttonText: `${this.durationDays} days`,
               slotLabelFormat: [
-                { day: "2-digit", weekday: "short", omitCommas: true },
+                {
+                  day: "2-digit",
+                  weekday: "short",
+
+                  weekday: "short", // Display short weekday name
+                  // year: "numeric",
+                  omitCommas: false,
+                  month: "short",
+                  titleFormat: "ddd, D, MMM D, YY",
+                },
               ],
             },
           },
@@ -1093,10 +1177,12 @@ export default {
           company_id: this.$auth.user.company.id,
         },
       };
-      this.$axios.get(`room_list_for_calendar_only`, payload).then(({ data }) => {
-        this.calendarOptions.resources = data;
-        this.RoomList = data;
-      });
+      this.$axios
+        .get(`room_list_for_calendar_only`, payload)
+        .then(({ data }) => {
+          this.calendarOptions.resources = data;
+          this.RoomList = data;
+        });
     },
 
     get_posting() {
@@ -1394,5 +1480,23 @@ export default {
 .fc-datagrid-cell-frame {
   height: 30px !important;
   overflow: hidden;
+}
+
+/* .fc-scroller-harness {
+  border: 1px solid black;
+} */
+.fc-scroller {
+  margin-top: -10px;
+  overflow: auto;
+}
+.fc-timeline-header-row {
+  border: 1px solid black;
+}
+.fc-datagrid-header {
+  height: 27px;
+  margin-top: 8px;
+}
+.fc-timeline-slot a {
+  font-weight: 600 !important;
 }
 </style>

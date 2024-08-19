@@ -42,6 +42,10 @@ class StoreRequest extends FormRequest
             'name' => ['required', 'min:2', 'max:50'],
             'company_id' => ['required'],
             'room_id' => ['required'],
+            'utc_time_zone' => ['nullable'],
+
+
+
 
 
         ];
