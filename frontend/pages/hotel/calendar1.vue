@@ -997,7 +997,63 @@ export default {
           events: data.map((e) => ({
             ...e,
             start: e.checkin_datetime_only,
+            classNames: ["my-extra-class"], // Add your custom class here
+            source: e.booking.source,
+            type: e.booking.type,
+            title: e.title,
           })),
+          // eventContent: function (info) {
+          //   console.log(info);
+          //   return {
+          //     html: "<span style='width:50px;float:left'>1111</span><span style='width:50px'>bbbbb</span>", //info.event.extendedProps.content,
+          //   };
+          // },
+
+          eventContent: function (eventInfo) {
+            // console.log(eventInfo.event.extendedProps);
+            // console.log(eventInfo.event.title);
+            //console.log(eventInfo.event.extendedProps.source);
+            let sourceColor = "#4285F4";
+            if (eventInfo.event.extendedProps.type == "Walking") {
+              sourceColor = "#DB4437";
+            } else if (eventInfo.event.extendedProps.type == "Complimentary") {
+              sourceColor = "#F4B400";
+            } else if (eventInfo.event.extendedProps.type == "Online") {
+              sourceColor = "#0F9D58";
+            } else if (eventInfo.event.extendedProps.type == "Travel Agency") {
+              sourceColor = "#FF5A5F";
+            } else if (eventInfo.event.extendedProps.type == "Corporate") {
+              sourceColor = "#00A699";
+            }
+            console.log(eventInfo.event.extendedProps.source, sourceColor);
+            return {
+              html:
+                "<span title='" +
+                eventInfo.event.extendedProps.type +
+                "' class='eventBorderboxSource " +
+                eventInfo.event.extendedProps.source +
+                "' style=' color:" +
+                sourceColor +
+                ";background: " +
+                sourceColor +
+                " !important;padding-top: 5px !important;padding-bottom: 9px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span> " +
+                eventInfo.event.title +
+                "</span>",
+            };
+            // return {
+            //   html:
+            //     eventInfo.event.title +
+            //     "<br> " +
+            //     eventInfo.event.extendedProps.places +
+            //     " Places",
+            // };
+          },
+
+          // eventRender: function (info) {
+          //   info.el.querySelectorAll(".fc-title")[0].innerHTML =
+          //     "<span>1111</span>" +
+          //     info.el.querySelectorAll(".fc-title")[0].innerText;
+          // },
           initialDate: this.from_date,
           views: {
             resourceTimelineYear: {
@@ -1498,5 +1554,17 @@ export default {
 }
 .fc-timeline-slot a {
   font-weight: 600 !important;
+}
+.eventBorderBoxSource {
+  width: 10px;
+  padding: 5px;
+  float: left;
+}
+.source-waling {
+  background: red !important;
+  padding-top: 5px !important;
+  padding-bottom: 9px !important;
+  border-radius: 2px !important;
+  margin-left: -2px !important;
 }
 </style>
