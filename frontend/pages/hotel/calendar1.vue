@@ -1028,21 +1028,21 @@ export default {
               sourceColor = "#00A699";
             }
 
-            if (eventInfo.event.extendedProps.bookingStatus == 0) {
-              titlDisplay += " Available";
-            }
-            if (eventInfo.event.extendedProps.bookingStatus == 1) {
-              titlDisplay += " Booking";
-            }
-            if (eventInfo.event.extendedProps.bookingStatus == 2) {
-              titlDisplay += " Checked In";
-            }
-            if (eventInfo.event.extendedProps.bookingStatus == 3) {
-              titlDisplay += " Checked Out";
-            }
-            if (eventInfo.event.extendedProps.bookingStatus == 4) {
-              titlDisplay += " Dirty";
-            }
+            // if (eventInfo.event.extendedProps.bookingStatus == 0) {
+            //   titlDisplay += " Available";
+            // }
+            // if (eventInfo.event.extendedProps.bookingStatus == 1) {
+            //   titlDisplay += " Booking";
+            // }
+            // if (eventInfo.event.extendedProps.bookingStatus == 2) {
+            //   titlDisplay += " Checked In";
+            // }
+            // if (eventInfo.event.extendedProps.bookingStatus == 3) {
+            //   titlDisplay += " Checked Out";
+            // }
+            // if (eventInfo.event.extendedProps.bookingStatus == 4) {
+            //   titlDisplay += " Dirty";
+            // }
             console.log(eventInfo.event.extendedProps.source, sourceColor);
             return {
               html:
@@ -1562,7 +1562,7 @@ export default {
   border: 1px solid black;
 } */
 .fc-scroller {
-  margin-top: -10px;
+  margin-top: -1px;
   overflow: auto;
 }
 .fc-timeline-header-row {
@@ -1583,7 +1583,7 @@ export default {
 .source-waling {
   background: red !important;
   padding-top: 5px !important;
-  padding-bottom: 9px !important;
+  padding-bottom: 6px !important;
   border-radius: 2px !important;
   margin-left: -2px !important;
 }
