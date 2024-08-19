@@ -21,7 +21,7 @@
           :default_date_from="date_from"
           :default_date_to="date_to"
           :defaultFilterType="1"
-          :height="'35px '"
+          :height="'40px '"
         />
       </v-col>
       <v-col cols="2">
@@ -91,22 +91,38 @@
             <template v-slot:item.device.room.room_type.name="{ item }">
               {{ caps(item.device.room.room_type.name) }}
             </template>
+            <template v-slot:item.start_datetime="{ item }">
+              <div v-if="item.start_datetime"></div>
+              {{ $dateFormat.format6(item.start_datetime) }}
+              <div class="small-text">
+                {{ $dateFormat.format11(item.start_datetime) }}
+              </div>
+            </template>
+            <template v-slot:item.end_datetime="{ item }">
+              <div v-if="item.end_datetime">
+                <div v-if="item.end_datetime"></div>
+                {{ $dateFormat.format6(item.end_datetime) }}
+                <div class="small-text">
+                  {{ $dateFormat.format11(item.end_datetime) }}
+                </div>
+              </div>
+              <div v-else>---</div>
+            </template>
             <template v-slot:item.duration_minutes="{ item }">
-              {{ $dateFormat.minutesToHHMM(item.duration_minutes) }}
+              <div v-if="item.end_datetime">
+                {{ $dateFormat.minutesToHHMM(item.duration_minutes) }}
+              </div>
+              <div v-else>---</div>
             </template>
             <template v-slot:item.status="{ item }">
-              <div
-                style="color: red"
-                v-if="
-                  item.booking_status_id == 0 || item.booking_status_id == 4
-                "
-              >
+              <div style="color: red" v-if="item.booking_status_id == 0">
                 Availalbe
               </div>
               <div v-else-if="item.booking_status_id == 1">Booked</div>
               <div v-else-if="item.booking_status_id == 2">Check In</div>
               <div v-else-if="item.booking_status_id == 3">Check Out</div>
-              <div v-else style="text-align: center">---</div>
+              <div v-else-if="item.booking_status_id == 4">Dirty</div>
+              <div v-else>---</div>
             </template>
             <!-- <template v-slot:item.status="{ item }">
               <v-icon v-if="item.status == 0" color="black"

@@ -847,6 +847,47 @@
           </v-card-text>
         </v-card>
       </div>
+      <div
+        v-if="filteredRooms(blockedRooms).length == 0 && tabFilter == 'blocked'"
+      >
+        Not Available
+      </div>
+      <div
+        class="roombox1"
+        v-if="tabFilter == 'blocked' || tabFilter == 'All'"
+        v-for="(blockedRoom, index) in filteredRooms(blockedRooms)"
+      >
+        <v-card
+          :class="` darken-2 `"
+          dark
+          @contextmenu="makeNewBooking($event, blockedRoom)"
+          @mouseover="mouseOverForAvailable(blockedRoom)"
+          @touchstart="makeNewBookingForTouch($event, blockedRoom)"
+        >
+          <v-card-text
+            class="purple p-3 roombox"
+            style="padding: 0px"
+            title=" Blocked
+            "
+          >
+            <div class="text-center white--text boxheight">
+              <v-icon
+                :color="
+                  blockedRoom.device && blockedRoom.device.latest_status == 1
+                    ? 'red'
+                    : ''
+                "
+              >
+                mdi mdi-bed
+              </v-icon>
+              <div>{{ blockedRoom?.room_no || "---" }}</div>
+              <div>
+                {{ blockedRoom ? caps(blockedRoom.room_type.name) : "---" }}
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </div>
       <!-- </v-row>
     <v-row
       v-if="tabFilter == 'blocked' || tabFilter == 'All'"
@@ -856,7 +897,7 @@
       <v-col cols="12">
         <div>Blocked ({{ filteredRooms(blockedRooms).length }})</div>
       </v-col> -->
-      <div
+      <!-- <div
         v-if="filteredRooms(blockedRooms).length == 0 && tabFilter == 'blocked'"
       >
         Not Available
@@ -895,7 +936,7 @@
             </div>
           </v-card-text>
         </v-card>
-      </div>
+      </div> -->
       <!--</v-row>
 
     <v-row

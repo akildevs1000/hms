@@ -318,7 +318,7 @@ export default {
       },
 
       {
-        text: "Status",
+        text: "Light Status",
         value: "latest_status",
         align: "left",
         sortable: true,
