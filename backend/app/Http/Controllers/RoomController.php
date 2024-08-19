@@ -347,8 +347,8 @@ class RoomController extends Controller
         $expectCheckOut = Room::with('device')
             ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
-                // $query->whereDate('check_in', '<=', $todayDate);
-                $query->whereDate('check_out', date("Y-m-d"));
+                $query->whereDate('check_in', '<=', $todayDate);
+                // $query->whereDate('check_out', date("Y-m-d"));
 
                 $query->where('company_id', $company_id);
                 $query->where('booking_status', 2);
