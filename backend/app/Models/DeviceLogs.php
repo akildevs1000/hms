@@ -9,22 +9,24 @@ class DeviceLogs extends Model
 {
     use HasFactory;
     protected $table = 'device_logs';
-
+    protected $guarded = [];
     protected $casts = [
         'created_at' => 'datetime:d-M-y H:m',
 
     ];
-    protected $fillable = [
+    // protected $fillable = [
 
-        'serial_number',
-        'status',
-        'raw_data',
-        'log_time',
-        'start_datetime',
-        'end_datetime',
+    //     'serial_number',
+    //     'status',
+    //     'raw_data',
+    //     'log_time',
+    //     'start_datetime',
+    //     'end_datetime',
+    //     'end_datetime',
 
 
-    ];
+
+    // ];
 
     public function device()
     {

@@ -307,6 +307,15 @@ export default {
         filterable: true,
         filterSpecial: true,
       },
+      {
+        text: "Timezone",
+        value: "utc_time_zone",
+        align: "left",
+        sortable: true,
+        key: "utc_time_zone",
+        filterable: true,
+        filterSpecial: true,
+      },
 
       {
         text: "Status",
@@ -318,16 +327,7 @@ export default {
         filterSpecial: true,
       },
       {
-        text: "Timezone",
-        value: "utc_time_zone",
-        align: "left",
-        sortable: true,
-        key: "utc_time_zone",
-        filterable: true,
-        filterSpecial: true,
-      },
-      {
-        text: "Status Time",
+        text: "Light Status Time",
         value: "latest_status_time",
         align: "left",
         sortable: true,

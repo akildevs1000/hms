@@ -17,6 +17,8 @@ class BookedRoom extends Model
     const CHECKED_OUT = 3;
     const DIRTY_ROOM = 4;
 
+    const ROOM_STATUS = [0 => "Available", 1 => "Booked", 2 => "Checked In", 3 => "Checked Out", 4 => "Checked", 5 => "Dirty"];
+
 
     // protected $fillable = [
     //     "room_no",

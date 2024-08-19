@@ -1045,18 +1045,23 @@ input[type="number"] {
 .global-search-textbox .v-input__icon {
   height: 17px !important;
 }
+.global-search-textbox .v-text-field--outlined.v-input--dense .v-label {
+  top: 4px !important;
+}
 .global-search-textbox-calender .v-input__slot {
   min-height: 26px !important;
 }
 .global-search-textbox-calender .v-text-field__slot {
   height: 30px !important;
 }
-.global-search-textbox-calenderx
+.global-search-textbox-calender
   .v-text-field--outlined.v-input--dense
   .v-label {
   top: 4px !important;
 }
-.v-text-field--outlined.v-input--dense .v-label {
+.global-search-textbox-calender
+  .v-text-field--outlined.v-input--dense
+  .v-label {
   top: 4px !important;
 }
 /* .global-search-textbox-calender .v-label {
