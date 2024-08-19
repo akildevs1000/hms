@@ -548,7 +548,7 @@ class RoomController extends Controller
         $availableRooms = Room::whereNotIn('id', $bookedRoomIds)
             ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->where('company_id', $companyId)
-            ->where('tatus', '!=', Room::Blocked)
+            ->where('status', '!=', Room::Blocked)
             ->where('room_type_id', $roomTypeId)
             ->get();
 
