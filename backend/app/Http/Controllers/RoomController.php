@@ -330,10 +330,26 @@ class RoomController extends Controller
             $todayDate = date('Y-m-d');
         }
 
+        $CheckedOut = Room::with('device')
+            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            ->whereHas('booking', function ($query) use ($company_id, $todayDate) {
+                $query->whereDate('check_out', date("Y-m-d"));
+
+                $query->where('company_id', $company_id);
+                $query->where('booking_status', 3);
+            })
+            ->with(['bookedRoom' => function ($q) use ($company_id) {
+                $q->where("company_id", $company_id);
+                $q->with("customer");
+            }])
+            ->get();
+
         $expectCheckOut = Room::with('device')
             ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', '<=', $todayDate);
+                $query->whereDate('check_out', date("Y-m-d"));
+
                 $query->where('company_id', $company_id);
                 $query->where('booking_status', 2);
             })
@@ -468,6 +484,7 @@ class RoomController extends Controller
         // ======================
 
         return [
+            'checkedOut' => $CheckedOut,
             'dirtyRooms' => $dirtyRooms->count(),
             'dirtyRoomsList' => $dirtyRooms->get(),
             'availableRooms' => $AvailableRooms,
