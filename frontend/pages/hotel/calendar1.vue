@@ -1001,6 +1001,7 @@ export default {
             source: e.booking.source,
             type: e.booking.type,
             title: e.title,
+            bookingStatus: e.booking_status,
           })),
           // eventContent: function (info) {
           //   console.log(info);
@@ -1014,6 +1015,7 @@ export default {
             // console.log(eventInfo.event.title);
             //console.log(eventInfo.event.extendedProps.source);
             let sourceColor = "#4285F4";
+            let titlDisplay = eventInfo.event.extendedProps.type;
             if (eventInfo.event.extendedProps.type == "Walking") {
               sourceColor = "#DB4437";
             } else if (eventInfo.event.extendedProps.type == "Complimentary") {
@@ -1025,18 +1027,36 @@ export default {
             } else if (eventInfo.event.extendedProps.type == "Corporate") {
               sourceColor = "#00A699";
             }
+
+            if (eventInfo.event.extendedProps.bookingStatus == 0) {
+              titlDisplay += " Available";
+            }
+            if (eventInfo.event.extendedProps.bookingStatus == 1) {
+              titlDisplay += " Booking";
+            }
+            if (eventInfo.event.extendedProps.bookingStatus == 2) {
+              titlDisplay += " Checked In";
+            }
+            if (eventInfo.event.extendedProps.bookingStatus == 3) {
+              titlDisplay += " Checked Out";
+            }
+            if (eventInfo.event.extendedProps.bookingStatus == 4) {
+              titlDisplay += " Dirty";
+            }
             console.log(eventInfo.event.extendedProps.source, sourceColor);
             return {
               html:
                 "<span title='" +
-                eventInfo.event.extendedProps.type +
+                titlDisplay +
                 "' class='eventBorderboxSource " +
                 eventInfo.event.extendedProps.source +
                 "' style=' color:" +
                 sourceColor +
                 ";background: " +
                 sourceColor +
-                " !important;padding-top: 5px !important;padding-bottom: 9px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span> " +
+                " !important;padding-top: 5px !important;padding-bottom: 9px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span title='" +
+                titlDisplay +
+                "' > " +
                 eventInfo.event.title +
                 "</span>",
             };
