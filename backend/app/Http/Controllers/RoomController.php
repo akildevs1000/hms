@@ -520,7 +520,9 @@ class RoomController extends Controller
         $bookedRoomIds = BookedRoom::whereDate('check_in', '<=', $checkIn)
             ->whereDate('check_out', '>=', $checkOut)
             ->whereHas('booking', function ($query) use ($companyId) {
-                $query->where('booking_status', '!=', 0)
+                $query
+                    ->where('booking_status', '!=', 0)
+                    ->where('booking_status', '!=', 3)
                     ->where('company_id', $companyId);
             })
             ->pluck('room_id');
