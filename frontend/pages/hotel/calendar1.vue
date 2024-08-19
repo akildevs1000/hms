@@ -1054,7 +1054,7 @@ export default {
                 sourceColor +
                 ";background: " +
                 sourceColor +
-                " !important;padding-top: 5px !important;padding-bottom: 9px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span title='" +
+                " !important;padding-top: 5px !important;padding-bottom:6px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span title='" +
                 titlDisplay +
                 "' > " +
                 eventInfo.event.title +
@@ -1580,11 +1580,11 @@ export default {
   padding: 5px;
   float: left;
 }
-.source-waling {
+/* .source-waling {
   background: red !important;
   padding-top: 5px !important;
   padding-bottom: 6px !important;
   border-radius: 2px !important;
   margin-left: -2px !important;
-}
+} */
 </style>
