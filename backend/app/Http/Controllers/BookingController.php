@@ -505,9 +505,9 @@ class BookingController extends Controller
                     $orderRooms['early_check_in'] = $bookedRoomId->early_check_in;
                     $orderRooms['late_check_out'] = $bookedRoomId->late_check_out;
 
-                    $orderRooms['breakfast'] = $bookedRoomId->breakfast;
-                    $orderRooms['lunch'] = $bookedRoomId->lunch;
-                    $orderRooms['dinner'] = $bookedRoomId->dinner;
+                    $orderRooms['breakfast'] = $bookedRoomId->breakfast ?? 0;
+                    $orderRooms['lunch'] = $bookedRoomId->lunch ?? 0;
+                    $orderRooms['dinner'] = $bookedRoomId->dinner ?? 0;
 
                     OrderRoom::create($orderRooms);
                 }

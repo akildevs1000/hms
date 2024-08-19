@@ -15,139 +15,24 @@
         <v-card-actions> </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="documentDialog" max-width="30%">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Add ID</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="documentDialog = false"
-            >mdi mdi-close-box</v-icon
-          >
-        </v-toolbar>
-        <v-container class="pa-5">
-          <v-row>
-            <v-col md="12" sm="12" cols="12" dense>
-              <v-select
-                v-model="checkIn.id_card_type_id"
-                :items="idCards"
-                dense
-                label="ID Card Type"
-                outlined
-                item-text="name"
-                item-value="id"
-                :hide-details="errors && !errors.id_card_type_id"
-                :error="errors && errors.id_card_type_id"
-                :error-messages="
-                  errors && errors.id_card_type_id
-                    ? errors.id_card_type_id[0]
-                    : ''
-                "
-              ></v-select>
-            </v-col>
-            <v-col md="12" cols="12" sm="12">
-              <v-text-field
-                dense
-                label="ID Card"
-                outlined
-                type="text"
-                v-model="checkIn.id_card_no"
-                :hide-details="errors && !errors.id_card_no"
-                :error="errors && errors.id_card_no"
-                :error-messages="
-                  errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                "
-              ></v-text-field>
-            </v-col>
-            <v-col md="12" cols="12" sm="12">
-              <v-menu
-                v-model="checkIn.exp_menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="checkIn.exp"
-                    readonly
-                    label="Expired"
-                    v-on="on"
-                    v-bind="attrs"
-                    :hide-details="true"
-                    dense
-                    outlined
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="checkIn.exp"
-                  @input="checkIn.exp_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col md="12">
-              <v-file-input
-                v-model="checkIn.checkIn_document"
-                color="primary"
-                counter
-                placeholder="Select your files"
-                outlined
-                :show-size="1000"
-              >
-                <template v-slot:selection="{ index, text }">
-                  <v-chip v-if="index < 2" color="primary" dark label small>
-                    {{ text }}
-                  </v-chip>
-
-                  <span
-                    v-else-if="index === 2"
-                    class="text-overline grey--text text--darken-3 mx-2"
-                  >
-                    +{{ checkIn.checkIn_document.length - 2 }} File(s)
-                  </span>
-                </template>
-              </v-file-input>
-            </v-col>
-            <v-divider></v-divider>
-            <v-col md="12">
-              <!-- @click="documentDialog = false" -->
-
-              <v-btn
-                small
-                dark
-                class="primary pt-4 pb-4"
-                @click="store_document(BookingData.id)"
-              >
-                Submit
-                <v-icon right dark>mdi-file</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-        <v-card-actions> </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-row class="m-0 p-0 mt-1">
-      <v-col md="8">
-        <v-tabs
-          v-model="activeTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
-          <div class="py-3" style="background-color: #1259a7">
+      <v-col md="12">
+        <v-tabs right v-model="activeTab" background-color="primary" dark>
+          <!-- <div class="py-3" style="background-color: #1259a7">
             <span class="mx-2">Check In</span>
-          </div>
-          <v-spacer></v-spacer>
-          <v-tab v-if="BookingData.group_name" active-class="active-link">
+          </div> -->
+          <!-- <v-spacer></v-spacer> -->
+          <v-tab v-if="BookingData.group_name">
             <v-icon> mdi mdi-account </v-icon>
           </v-tab>
-          <v-tab active-class="active-link">
+          <v-tab>
             <v-icon> mdi mdi-account-tie </v-icon>
           </v-tab>
-          <v-tab active-class="active-link" v-if="customer.id > 0">
+          <v-tab v-if="customer.id > 0">
+            <v-icon>mdi-bed </v-icon>
+          </v-tab>
+          <v-tab v-if="customer.id > 0">
             <v-icon> mdi mdi-clipboard-text-clock </v-icon>
           </v-tab>
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
@@ -155,7 +40,7 @@
             <v-card flat>
               <v-card-text>
                 <v-row>
-                  <v-col md="3" cols="12">
+                  <v-col md="4" cols="12">
                     <v-row>
                       <v-col md="12" class="text-center">
                         <v-img
@@ -208,7 +93,7 @@
                       </v-col>
                     </v-row>
                   </v-col>
-                  <v-col md="9" cols="12">
+                  <v-col md="8" cols="12">
                     <v-row>
                       <v-col md="4" dense>
                         <v-text-field
@@ -453,23 +338,137 @@
           <v-tab-item>
             <v-card flat>
               <v-card-text>
-                <v-row>
-                  <v-col md="2" cols="12" class="text-center">
-                    <v-avatar size="120" class="ma-1">
-                      <v-img
-                        :src="customerProfilePic || `/no-profile-image.jpg`"
-                      ></v-img>
-                    </v-avatar>
+                <v-container>
+                  <v-row>
+                    <v-col md="3" cols="12" class="text-center">
+                      <v-row>
+                        <v-col cols="12">
+                          <v-img
+                            style="max-height: 200px"
+                            :src="
+                              customer.captured_photo || `/no-profile-image.jpg`
+                            "
+                          ></v-img>
+                        </v-col>
 
-                    <BookingIDPreview
-                      @customerDocs="
-                        (e) => (customerProfilePic = e.captured_photo)
-                      "
-                    />
-                  </v-col>
-                  <v-col md="10" cols="12">
-                    <v-row>
-                      <v-col md="5" dense>
+                        <v-col cols="12">
+                          <v-img
+                            :src="
+                              customer.id_frontend_side ||
+                              `/no-profile-image.jpg`
+                            "
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-img
+                            :src="
+                              customer.id_backend_side ||
+                              `/no-profile-image.jpg`
+                            "
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="12">
+                          <BookingIDPreview
+                            @getCustomerDocs="(e) => (customerDocs = e)"
+                          />
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col md="9" cols="12">
+                      <v-row>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-select
+                            v-model="customer.title"
+                            :items="titleItems"
+                            label="Tittle *"
+                            dense
+                            item-text="name"
+                            item-value="name"
+                            :hide-details="errors && !errors.title"
+                            :error="errors && errors.title"
+                            :error-messages="
+                              errors && errors.title ? errors.title[0] : ''
+                            "
+                            outlined
+                          ></v-select>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            label="First Name *"
+                            dense
+                            outlined
+                            type="text"
+                            v-model="customer.first_name"
+                            :hide-details="errors && !errors.first_name"
+                            :error="errors && errors.first_name"
+                            :error-messages="
+                              errors && errors.first_name
+                                ? errors.first_name[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            label="Last Name"
+                            dense
+                            :hide-details="true"
+                            outlined
+                            type="text"
+                            v-model="customer.last_name"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="Contact No *"
+                            outlined
+                            type="number"
+                            v-model="customer.contact_no"
+                            :hide-details="errors && !errors.contact_no"
+                            :error="errors && errors.contact_no"
+                            :error-messages="
+                              errors && errors.contact_no
+                                ? errors.contact_no[0]
+                                : ''
+                            "
+                            @keyup="mergeContact"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="Whatsapp No"
+                            outlined
+                            type="number"
+                            v-model="customer.whatsapp"
+                            :hide-details="errors && !errors.whatsapp"
+                            :error="errors && errors.whatsapp"
+                            :error-messages="
+                              errors && errors.whatsapp
+                                ? errors.whatsapp[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="Email *"
+                            outlined
+                            type="email"
+                            v-model="customer.email"
+                            :hide-details="errors && !errors.email"
+                            :error="errors && errors.email"
+                            :error-messages="
+                              errors && errors.email ? errors.email[0] : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <FullAddress @location="handleFullAddress" />
+                        </v-col>
+                        <!-- <v-col md="5" dense>
                         <v-text-field
                           label="Reservation Number"
                           v-model="BookingData.reservation_no"
@@ -492,182 +491,725 @@
                           disabled
                           :hide-details="true"
                         ></v-text-field>
-                      </v-col>
-                      <v-col md="3" cols="12" sm="12">
-                        <v-select
-                          v-model="customer.title"
-                          :items="titleItems"
-                          label="Tittle *"
-                          dense
-                          item-text="name"
-                          item-value="name"
-                          :hide-details="errors && !errors.title"
-                          :error="errors && errors.title"
-                          :error-messages="
-                            errors && errors.title ? errors.title[0] : ''
-                          "
-                          outlined
-                        ></v-select>
-                      </v-col>
-                      <v-col md="5" cols="12" sm="12">
-                        <v-text-field
-                          label="First Name *"
-                          dense
-                          outlined
-                          type="text"
-                          v-model="customer.first_name"
-                          :hide-details="errors && !errors.first_name"
-                          :error="errors && errors.first_name"
-                          :error-messages="
-                            errors && errors.first_name
-                              ? errors.first_name[0]
-                              : ''
-                          "
-                        ></v-text-field>
-                      </v-col>
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          label="Last Name"
-                          dense
-                          :hide-details="true"
-                          outlined
-                          type="text"
-                          v-model="customer.last_name"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Contact No *"
-                          outlined
-                          type="number"
-                          v-model="customer.contact_no"
-                          :hide-details="errors && !errors.contact_no"
-                          :error="errors && errors.contact_no"
-                          :error-messages="
-                            errors && errors.contact_no
-                              ? errors.contact_no[0]
-                              : ''
-                          "
-                          @keyup="mergeContact"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Whatsapp No"
-                          outlined
-                          type="number"
-                          v-model="customer.whatsapp"
-                          :hide-details="errors && !errors.whatsapp"
-                          :error="errors && errors.whatsapp"
-                          :error-messages="
-                            errors && errors.whatsapp ? errors.whatsapp[0] : ''
-                          "
-                        ></v-text-field>
-                      </v-col>
+                      </v-col> -->
 
-                      <v-col md="4" cols="12" sm="12">
-                        <v-text-field
-                          dense
-                          label="Email *"
-                          outlined
-                          type="email"
-                          v-model="customer.email"
-                          :hide-details="errors && !errors.email"
-                          :error="errors && errors.email"
-                          :error-messages="
-                            errors && errors.email ? errors.email[0] : ''
-                          "
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col md="4" cols="12" sm="12">
-                    <v-select
-                      v-model="customer.nationality"
-                      :items="countryList"
-                      label="Nationality"
-                      item-text="name"
-                      item-value="name"
-                      :hide-details="errors && !errors.nationality"
-                      :error="errors && errors.nationality"
-                      :error-messages="
-                        errors && errors.nationality
-                          ? errors.nationality[0]
-                          : ''
-                      "
-                      dense
-                      outlined
-                    ></v-select>
-                  </v-col>
-                  <v-col md="4" cols="12" sm="12">
-                    <v-menu
-                      v-model="customer.dob_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="customer.dob"
-                          readonly
-                          label="DOB"
-                          v-on="on"
-                          v-bind="attrs"
-                          :hide-details="true"
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        no-title
-                        v-model="customer.dob"
-                        @input="customer.dob_menu = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col md="4">
-                    <v-select
-                      label="Purpose"
-                      v-model="room.purpose"
-                      :items="purposes"
-                      dense
-                      :hide-details="true"
-                      outlined
-                    ></v-select>
-                  </v-col>
-                </v-row>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-select
+                            v-model="customer.nationality"
+                            :items="countryList"
+                            label="Nationality"
+                            item-text="name"
+                            item-value="name"
+                            :hide-details="errors && !errors.nationality"
+                            :error="errors && errors.nationality"
+                            :error-messages="
+                              errors && errors.nationality
+                                ? errors.nationality[0]
+                                : ''
+                            "
+                            dense
+                            outlined
+                          ></v-select>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-menu
+                            v-model="customer.dob_menu"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="customer.dob"
+                                readonly
+                                label="DOB"
+                                v-on="on"
+                                v-bind="attrs"
+                                :hide-details="true"
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              no-title
+                              v-model="customer.dob"
+                              @input="customer.dob_menu = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+                        <v-col md="3">
+                          <v-select
+                            label="Purpose"
+                            v-model="room.purpose"
+                            :items="purposes"
+                            dense
+                            :hide-details="true"
+                            outlined
+                          ></v-select>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-text-field
+                            label="Car Number *"
+                            dense
+                            outlined
+                            type="text"
+                            v-model="customer.car_no"
+                            :hide-details="errors && !errors.car_no"
+                            :error="errors && errors.car_no"
+                            :error-messages="
+                              errors && errors.car_no ? errors.car_no[0] : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" sm="12" cols="12" dense>
+                          <v-autocomplete
+                            v-model="checkIn.id_card_type_id"
+                            :items="idCards"
+                            dense
+                            label="ID Card Type"
+                            outlined
+                            item-text="name"
+                            item-value="id"
+                            :hide-details="errors && !errors.id_card_type_id"
+                            :error="errors && errors.id_card_type_id"
+                            :error-messages="
+                              errors && errors.id_card_type_id
+                                ? errors.id_card_type_id[0]
+                                : ''
+                            "
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="ID Card"
+                            outlined
+                            type="text"
+                            v-model="checkIn.id_card_no"
+                            :hide-details="errors && !errors.id_card_no"
+                            :error="errors && errors.id_card_no"
+                            :error-messages="
+                              errors && errors.id_card_no
+                                ? errors.id_card_no[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-menu
+                            v-model="checkIn.exp_menu"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="checkIn.exp"
+                                readonly
+                                label="Expired"
+                                v-on="on"
+                                v-bind="attrs"
+                                :hide-details="true"
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              no-title
+                              v-model="checkIn.exp"
+                              @input="checkIn.exp_menu = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
 
-                <v-row>
-                  <v-col md="6" cols="12" sm="12">
-                    <v-textarea
-                      rows="3"
-                      label="Address"
-                      v-model="customer.address"
-                      outlined
-                      :hide-details="true"
-                    ></v-textarea>
-                  </v-col>
-                  <v-col md="6">
-                    <v-textarea
-                      rows="3"
-                      label="Customer Request"
-                      v-model="room.request"
-                      :hide-details="true"
-                      outlined
-                    ></v-textarea>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12" class="text-right">
-                    <v-btn small @click="nextTab" color="primary">Next</v-btn>
-                  </v-col>
-                </v-row>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="Business Source"
+                            outlined
+                            type="text"
+                            v-model="customer.customer_type"
+                            :hide-details="errors && !errors.customer_type"
+                            :error="errors && errors.customer_type"
+                            :error-messages="
+                              errors && errors.customer_type
+                                ? errors.customer_type[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="3" sm="12" cols="12">
+                          <v-text-field
+                            readonly
+                            dense
+                            label="Business Type"
+                            outlined
+                            type="text"
+                            v-model="BookingData.type"
+                            :hide-details="errors && !errors.type"
+                            :error="errors && errors.type"
+                            :error-messages="
+                              errors && errors.type ? errors.type[0] : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="3" sm="12" cols="12">
+                          <v-text-field
+                            readonly
+                            dense
+                            label="Reference Number"
+                            outlined
+                            type="text"
+                            v-model="BookingData.reference_no"
+                            :hide-details="errors && !errors.reference_no"
+                            :error="errors && errors.reference_no"
+                            :error-messages="
+                              errors && errors.reference_no
+                                ? errors.reference_no[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="3" sm="12" cols="12">
+                          <v-text-field
+                            readonly
+                            dense
+                            label="Paid By"
+                            outlined
+                            type="text"
+                            v-model="BookingData.paid_by"
+                            :hide-details="errors && !errors.paid_by"
+                            :error="errors && errors.paid_by"
+                            :error-messages="
+                              errors && errors.paid_by ? errors.paid_by[0] : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+
+                        <!-- <v-col md="3">
+                        <v-file-input
+                        hide-details
+                        dense
+                          prepend-icon=""
+                          v-model="checkIn.checkIn_document"
+                          color="primary"
+                          counter
+                          placeholder="Select your files"
+                          outlined
+                          :show-size="1000"
+                        >
+                          <template v-slot:selection="{ index, text }">
+                            <v-chip
+                              v-if="index < 2"
+                              color="primary"
+                              dark
+                              label
+                              small
+                            >
+                              {{ text }}
+                            </v-chip>
+
+                            <span
+                              v-else-if="index === 2"
+                              class="text-overline grey--text text--darken-3 mx-2"
+                            >
+                              +{{ checkIn.checkIn_document.length - 2 }} File(s)
+                            </span>
+                          </template>
+                        </v-file-input>
+                      </v-col> -->
+                        <v-col md="12">
+                          <v-textarea
+                            rows="3"
+                            label="Notes"
+                            v-model="room.request"
+                            :hide-details="true"
+                            outlined
+                          ></v-textarea>
+                        </v-col>
+                        <v-col cols="12" class="text-right">
+                          <v-btn small @click="nextTab" color="primary"
+                            >Next</v-btn
+                          >
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <v-tabs
+                  color="primary"
+                  v-model="activeSummaryTab"
+                  :vertical="vertical"
+                  background-color="primary"
+                  dark
+                  show-arrows
+                >
+                  <v-spacer></v-spacer>
+                  <v-tab active-class="active-link">
+                    <v-icon> mdi mdi-list-box-outline </v-icon>
+                  </v-tab>
+                  <v-tab
+                    class="p-0 m-0"
+                    active-class="active-link"
+                    style="min-width: 10px !important"
+                    v-for="(item, index) in selectedRooms"
+                    :key="index"
+                  >
+                    <small>
+                      {{ item && item.room_no }}
+                    </small>
+                  </v-tab>
+                  <v-tabs-slider color="#1259a7"></v-tabs-slider>
+                  <!-- room summary -->
+                  <v-tab-item>
+                    <v-card flat>
+                      <v-divider class="px-5 py-0"></v-divider>
+                      <section>
+                        <div class="input-group input-group-sm px-0 py-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Name
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.title || "---" }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Contact
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.contact_no || "---" }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Check In
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.check_in_date || "---" }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Check Out
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.check_out_date || "---" }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Days
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.total_days || "---" }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm mb-2 px-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm "
+                          >
+                            No. Rooms
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.rooms || "---" }}
+                          </div>
+                        </div>
+                      </section>
+
+                      <!-- <v-divider class="px-5 py-0"></v-divider> -->
+                      <section class="payment-section pt-0">
+                        <div class="input-group input-group-sm px-0 mt-3">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Room Price
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.total_price || "0" }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Total
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.total_price }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Advance Payment
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ BookingData.advance_price }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-0 mb-0">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            <strong>Balance Amount</strong>
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control red--text"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            <strong>{{ BookingData.remaining_price }}</strong>
+                          </div>
+                        </div>
+                        <v-card-actions class="pl-0 pr-2">
+                          <!-- <v-btn class="primary" small width="100%" height="60" @click="store_check_in(BookingData)"
+                    :loading="loading">Check In</v-btn> -->
+
+                          <v-row>
+                            <v-col class="text-rights">
+                              <v-btn
+                                class="primary"
+                                @click="advanceDialog = true"
+                                dark
+                              >
+                                Pay
+                              </v-btn>
+                              <v-btn
+                                style="background-color: #5fafa3"
+                                @click="storeSubCustomer"
+                                :loading="loading"
+                                dark
+                                >CheckIn</v-btn
+                              >
+                            </v-col>
+                          </v-row>
+                        </v-card-actions>
+                      </section>
+                    </v-card>
+                  </v-tab-item>
+                  <!-- end room summary -->
+
+                  <v-tab-item
+                    v-for="(item, index) in selectedRooms"
+                    :key="index"
+                  >
+                    <v-card flat>
+                      <div
+                        class="px-5 pt-2 d-flex justify-space-between"
+                        style="font-size: 16px; color: #aaaaaa"
+                      >
+                        <span> Room - {{ item.room_no }}</span>
+                        <span> {{ item.room_type }}</span>
+                      </div>
+                      <v-divider></v-divider>
+                      <section class="payment-section">
+                        <div
+                          class="input-group input-group-sm px-5 pt-2 text-center"
+                        >
+                          <v-card class="pa-2" style="width: 25%" outlined tile>
+                            <div class="d-flex justify-space-between">
+                              <span
+                                class="pa-0 m-0"
+                                style="width: 33.33%"
+                                outlined
+                              >
+                                {{ item.no_of_adult }}|
+                              </span>
+                              <span
+                                class="pa-0 m-0"
+                                style="width: 33.33%"
+                                outlined
+                              >
+                                {{ item.no_of_child }} |
+                              </span>
+                              <span
+                                class="pa-0 m-0"
+                                style="width: 33.33%"
+                                outlined
+                              >
+                                {{ item.no_of_baby }}
+                              </span>
+                            </div>
+                          </v-card>
+                          <v-card class="pa-2" style="width: 25%" outlined tile>
+                            {{ getMealSeparate(item.meal)[0] }}
+                          </v-card>
+                          <v-card class="pa-2" style="width: 25%" outlined tile>
+                            {{ getMealSeparate(item.meal)[1] }}
+                          </v-card>
+                          <v-card class="pa-2" style="width: 25%" outlined tile>
+                            {{ getMealSeparate(item.meal)[2] }}
+                          </v-card>
+                        </div>
+                        <div class="input-group input-group-sm px-5 pt-2">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Amount
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ item.price }}
+                          </div>
+                        </div>
+
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Discount
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ convert_decimal(item.room_discount) }}
+                          </div>
+                        </div>
+
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            After Dis.
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ convert_decimal(item.after_discount) }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            GST
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ convert_decimal(item.room_tax) }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            T.R Rent
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ convert_decimal(item.total_with_tax) }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Adult Food
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ convert_decimal(item.tot_adult_food) }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Child Food
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ convert_decimal(item.tot_child_food) }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Total Food
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{
+                              convert_decimal(
+                                item.tot_adult_food + item.tot_child_food
+                              )
+                            }}
+                          </div>
+                        </div>
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Grand Total
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ convert_decimal(item.total) }}
+                          </div>
+                        </div>
+
+                        <div class="input-group input-group-sm px-5">
+                          <span
+                            class="input-group-text"
+                            id="inputGroup-sizing-sm"
+                          >
+                            Discount Reason
+                          </span>
+                          <div
+                            type="text"
+                            class="form-control"
+                            aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm"
+                            disabled
+                          >
+                            {{ item.discount_reason || "---" }}
+                          </div>
+                        </div>
+                      </section>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -676,394 +1218,6 @@
               <v-card-text>
                 <History :customerId="customer.id"></History>
               </v-card-text>
-            </v-card>
-          </v-tab-item>
-        </v-tabs>
-      </v-col>
-
-      <v-col md="4">
-        <v-tabs
-          color="primary"
-          v-model="activeSummaryTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
-          <v-spacer></v-spacer>
-          <v-tab active-class="active-link">
-            <v-icon> mdi mdi-list-box-outline </v-icon>
-          </v-tab>
-          <v-tab
-            class="p-0 m-0"
-            active-class="active-link"
-            style="min-width: 10px !important"
-            v-for="(item, index) in selectedRooms"
-            :key="index"
-          >
-            <small>
-              {{ item && item.room_no }}
-            </small>
-          </v-tab>
-          <v-tabs-slider color="#1259a7"></v-tabs-slider>
-          <!-- room summary -->
-          <v-tab-item>
-            <v-card flat>
-              <v-divider class="px-5 py-0"></v-divider>
-              <section>
-                <div class="input-group input-group-sm px-0 py-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Name
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.title || "---" }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Contact
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.contact_no || "---" }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Check In
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.check_in_date || "---" }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Check Out
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.check_out_date || "---" }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Days
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.total_days || "---" }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm mb-2 px-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm ">
-                    No. Rooms
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.rooms || "---" }}
-                  </div>
-                </div>
-              </section>
-
-              <!-- <v-divider class="px-5 py-0"></v-divider> -->
-              <section class="payment-section pt-0">
-                <div class="input-group input-group-sm px-0 mt-3">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Room Price
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.total_price || "0" }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Total
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.total_price }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Advance Payment
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ BookingData.advance_price }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-0 mb-0">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    <strong>Balance Amount</strong>
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control red--text"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    <strong>{{ BookingData.remaining_price }}</strong>
-                  </div>
-                </div>
-                <v-card-actions class="pl-0 pr-2">
-                  <!-- <v-btn class="primary" small width="100%" height="60" @click="store_check_in(BookingData)"
-                    :loading="loading">Check In</v-btn> -->
-
-                  <v-btn
-                    style="background-color: #4390fc; margin-right: 5px"
-                    width="50%"
-                    height="40"
-                    @click="advanceDialog = true"
-                    dark
-                  >
-                    Pay
-                  </v-btn>
-                  <v-btn
-                    style="background-color: #5fafa3"
-                    width="50%"
-                    height="40"
-                    @click="storeSubCustomer"
-                    :loading="loading"
-                    dark
-                    >CheckIn</v-btn
-                  >
-                </v-card-actions>
-              </section>
-            </v-card>
-          </v-tab-item>
-          <!-- end room summary -->
-
-          <v-tab-item v-for="(item, index) in selectedRooms" :key="index">
-            <v-card flat>
-              <div
-                class="px-5 pt-2 d-flex justify-space-between"
-                style="font-size: 16px; color: #aaaaaa"
-              >
-                <span> Room - {{ item.room_no }}</span>
-                <span> {{ item.room_type }}</span>
-              </div>
-              <v-divider></v-divider>
-              <section class="payment-section">
-                <div class="input-group input-group-sm px-5 pt-2 text-center">
-                  <v-card class="pa-2" style="width: 25%" outlined tile>
-                    <div class="d-flex justify-space-between">
-                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
-                        {{ item.no_of_adult }}|
-                      </span>
-                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
-                        {{ item.no_of_child }} |
-                      </span>
-                      <span class="pa-0 m-0" style="width: 33.33%" outlined>
-                        {{ item.no_of_baby }}
-                      </span>
-                    </div>
-                  </v-card>
-                  <v-card class="pa-2" style="width: 25%" outlined tile>
-                    {{ getMealSeparate(item.meal)[0] }}
-                  </v-card>
-                  <v-card class="pa-2" style="width: 25%" outlined tile>
-                    {{ getMealSeparate(item.meal)[1] }}
-                  </v-card>
-                  <v-card class="pa-2" style="width: 25%" outlined tile>
-                    {{ getMealSeparate(item.meal)[2] }}
-                  </v-card>
-                </div>
-                <div class="input-group input-group-sm px-5 pt-2">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Amount
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ item.price }}
-                  </div>
-                </div>
-
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Discount
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.room_discount) }}
-                  </div>
-                </div>
-
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    After Dis.
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.after_discount) }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    GST
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.room_tax) }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    T.R Rent
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.total_with_tax) }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Adult Food
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.tot_adult_food) }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Child Food
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.tot_child_food) }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Total Food
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{
-                      convert_decimal(item.tot_adult_food + item.tot_child_food)
-                    }}
-                  </div>
-                </div>
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Grand Total
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ convert_decimal(item.total) }}
-                  </div>
-                </div>
-
-                <div class="input-group input-group-sm px-5">
-                  <span class="input-group-text" id="inputGroup-sizing-sm">
-                    Discount Reason
-                  </span>
-                  <div
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-sm"
-                    disabled
-                  >
-                    {{ item.discount_reason || "---" }}
-                  </div>
-                </div>
-              </section>
             </v-card>
           </v-tab-item>
         </v-tabs>
@@ -1208,7 +1362,7 @@ export default {
   },
   data() {
     return {
-      customerProfilePic: null,
+      customerDocs: null,
       // ----------------------
       vertical: false,
       activeTab: 0,
@@ -1417,6 +1571,12 @@ export default {
     },
   },
   methods: {
+    handleFullAddress(e) {
+      this.customer = {
+        ...this.customer,
+        ...e,
+      };
+    },
     nextTab() {
       this.activeTab += 1;
     },
