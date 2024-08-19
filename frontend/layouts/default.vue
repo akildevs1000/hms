@@ -1145,4 +1145,7 @@ input[type="number"] {
   font-size: 11px !important;
   line-height: 14px !important;
 }
+.small-text {
+  font-size: 10px;
+}
 </style>

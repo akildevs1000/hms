@@ -91,8 +91,28 @@
             <template v-slot:item.device.room.room_type.name="{ item }">
               {{ caps(item.device.room.room_type.name) }}
             </template>
+            <template v-slot:item.start_datetime="{ item }">
+              <div v-if="item.start_datetime"></div>
+              {{ $dateFormat.format6(item.start_datetime) }}
+              <div class="small-text">
+                {{ $dateFormat.format11(item.start_datetime) }}
+              </div>
+            </template>
+            <template v-slot:item.end_datetime="{ item }">
+              <div v-if="item.end_datetime">
+                <div v-if="item.end_datetime"></div>
+                {{ $dateFormat.format6(item.end_datetime) }}
+                <div class="small-text">
+                  {{ $dateFormat.format11(item.end_datetime) }}
+                </div>
+              </div>
+              <div v-else>---</div>
+            </template>
             <template v-slot:item.duration_minutes="{ item }">
-              {{ $dateFormat.minutesToHHMM(item.duration_minutes) }}
+              <div v-if="item.end_datetime">
+                {{ $dateFormat.minutesToHHMM(item.duration_minutes) }}
+              </div>
+              <div v-else>---</div>
             </template>
             <template v-slot:item.status="{ item }">
               <div style="color: red" v-if="item.booking_status_id == 0">

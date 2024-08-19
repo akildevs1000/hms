@@ -12,6 +12,24 @@ export default ({ app }, inject) => {
       const formattedDate = inputDate.toLocaleDateString("en-US", options);
       return formattedDate;
     },
+    format11: (inputdate) => {
+      // Create a Date object with the provided date
+      const inputDate = new Date(inputdate);
+
+      // Specify the formatting options
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+      };
+
+      // Format the date
+      const formattedDate = inputDate
+        .toLocaleDateString("en-GB", options)
+        .replace(",", "");
+
+      return formattedDate;
+    },
     format2: (inputdate) => {
       // Create a Date object with the date "2023-09-13"  Output: "23-09-13"
       const date = new Date(inputdate);
