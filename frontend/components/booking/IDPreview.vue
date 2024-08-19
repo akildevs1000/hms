@@ -2,7 +2,7 @@
   <div class="text-center">
     <v-dialog v-model="dialog" width="900">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn small color="primary" dark v-bind="attrs" v-on="on">
+        <v-btn block small color="primary" dark v-bind="attrs" v-on="on">
           ID <v-icon right>mdi-eye-outline</v-icon>
         </v-btn>
       </template>
@@ -64,7 +64,7 @@ export default {
       }
     },
     close(){
-        this.$emit(`customerDocs`, this.customer);
+        this.$emit(`getCustomerDocs`, this.customer);
         this.dialog = false;
     }
   },
