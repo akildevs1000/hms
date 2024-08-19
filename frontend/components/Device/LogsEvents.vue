@@ -21,7 +21,7 @@
           :default_date_from="date_from"
           :default_date_to="date_to"
           :defaultFilterType="1"
-          :height="'35px '"
+          :height="'40px '"
         />
       </v-col>
       <v-col cols="2">
