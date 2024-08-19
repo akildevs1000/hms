@@ -332,7 +332,7 @@ class RoomController extends Controller
 
         $CheckedOut = Room::with('device')
             ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
-            ->whereHas('booking', function ($query) use ($company_id, $todayDate) {
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_out', date("Y-m-d"));
 
                 $query->where('company_id', $company_id);
