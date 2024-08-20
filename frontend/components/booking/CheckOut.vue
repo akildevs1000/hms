@@ -35,12 +35,6 @@
               </td>
             </tr>
             <tr>
-              <th>Total Booking Hours</th>
-              <td>
-                {{ roomData && roomData.total_booking_hours }}
-              </td>
-            </tr>
-            <tr>
               <th>
                 Payment Mode
                 <span class="error--text">*</span>
@@ -143,7 +137,7 @@
                 </v-checkbox>
               </td>
             </tr>
-            <tr>
+            <tr v-if="roomData?.room?.room_type?.type == 'hall'">
               <th>Change CheckOut Time</th>
               <td>
                 <v-menu
@@ -185,7 +179,13 @@
                 </v-menu>
               </td>
             </tr>
-            <tr>
+            <tr v-if="roomData?.room?.room_type?.type == 'hall'">
+              <th>Total Booking Hours</th>
+              <td>
+                {{ roomData && roomData.total_booking_hours }}
+              </td>
+            </tr>
+            <tr v-if="roomData?.room?.room_type?.type == 'hall'">
               <th>Additional Hours</th>
               <td>
                 {{ exceedHoursCharges }}
@@ -349,11 +349,11 @@ export default {
     },
 
     store_check_out() {
-      let full_payment = parseFloat(this.full_payment);
-      if (full_payment <= 0) {
-        this.alert("Warning", "Payment should be greater than zero","error");
-        return;
-      }
+      // let full_payment = parseFloat(this.full_payment);
+      // if (full_payment <= 0) {
+      //   this.alert("Warning", "Payment should be greater than zero","error");
+      //   return;
+      // }
       let payload = {
         booking_id: this.BookingData.id,
         grand_remaining_price: this.grand_remaining_price,
@@ -378,12 +378,13 @@ export default {
             this.loading = false;
           } else {
             this.loading = false;
+            this.$emit("close-dialog");
 
-            this.closeDialog(payload);
-            this.alert("Success", "Successfully Checkout", "success");
-            if (this.isPrintInvoice) {
-              this.redirect_to_invoice(data.bookingId);
-            }
+            // this.closeDialog(payload);
+            // this.alert("Success", "Successfully Checkout", "success");
+            // if (this.isPrintInvoice) {
+            //   this.redirect_to_invoice(data.bookingId);
+            // }
           }
         })
         .catch((e) => console.log(e));

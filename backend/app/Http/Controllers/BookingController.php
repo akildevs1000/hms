@@ -30,12 +30,18 @@ use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
+    public function verifyBooking(Request $request)
+    {
+        return Booking::where([
+            "id" => $request->booking_id ?? 0,
+            "customer_id" => $request->customer_id ?? 0,
+        ])->update(["verified" => Booking::VERIFICATION_COMPLETED]);
+    }
 
     public function updatePicAndSign()
     {
         try {
-
-            $customer_id =  Booking::orderByDesc("id")->value("customer_id");
+            $customer_id =  Booking::where("verified", Booking::VERIFICATION_REQUIRED)->orderByDesc("id")->value("customer_id");
 
             $customer = [];
 
@@ -929,7 +935,7 @@ class BookingController extends Controller
     {
         try {
 
-            session(['isCheckoutSes' => true]);
+            // session(['isCheckoutSes' => true]);
 
             $booking_id = $request->booking_id;
             $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
@@ -939,6 +945,7 @@ class BookingController extends Controller
                 $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();
                 $bookedRoom->increment('room_discount', $request->discount);
             }
+
 
             $transactionData = [
                 'booking_id' => $booking->id,
@@ -1022,6 +1029,14 @@ class BookingController extends Controller
                 $booking->booking_status = 3;
                 $booking->check_out = date('Y-m-d H:i');
                 $booking->save();
+
+                BookedRoom::whereBookingId($booking_id)->update(
+                    [
+                        "booking_status" => 3,
+                        "check_out" => date('Y-m-d H:i')
+                    ]
+                );
+
                 // if (app()->isProduction()) {
                 //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
                 // }
@@ -2316,7 +2331,7 @@ class BookingController extends Controller
         $data['remaining_price'] = (float) $request->total_price - (float) $request->advance_price;
         $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
         $data['reservation_no'] = $this->getReservationNumber($data);
-
+        $data['verified'] = Booking::VERIFICATION_REQUIRED;
 
         if ($request->filled('api_json_reference_number')) {
             $data['widget_confirmation_number'] = $request->api_json_reference_number;
@@ -2461,10 +2476,10 @@ class BookingController extends Controller
     public function hallBooking(Request $request)
     {
 
-        $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
-        if ($diff_in_seconds < 0) {
-            return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
-        }
+        // $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
+        // if ($diff_in_seconds < 0) {
+        //     return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        // }
 
         $booking = null;
 

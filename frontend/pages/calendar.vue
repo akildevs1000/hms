@@ -1378,9 +1378,11 @@ export default {
     },
 
     redirect_to_invoice(id) {
+      let url = process.env.BACKEND_URL + "invoice/" + id;
+
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `http://127.0.0.1:8000/api/invoice/${id}`);
+      element.setAttribute("href", url);
       document.body.appendChild(element);
       element.click();
     },

@@ -27,6 +27,7 @@
               <v-tab> Whatsapp </v-tab>
 
               <v-tab> Night Audit Email </v-tab>
+              <v-tab> Verfication </v-tab>
 
               <v-tab-item>
                 <v-card flat>
@@ -185,27 +186,27 @@
                         <v-card max-width="300" class="pa-1" outlined>
                           <div class="text-center">
                             <v-avatar tile size="250">
-                            <img
-                              @click="onpick_attachment"
-                              :src="
-                                previewImage ||
-                                company_payload.logo ||
-                                '/no-profile-image.jpg'
-                              "
-                            />
-                          </v-avatar>
+                              <img
+                                @click="onpick_attachment"
+                                :src="
+                                  previewImage ||
+                                  company_payload.logo ||
+                                  '/no-profile-image.jpg'
+                                "
+                              />
+                            </v-avatar>
                           </div>
-                          <br>
+                          <br />
                           <v-btn
-                          color="primary"
-                          
-                          block
-                          @click="onpick_attachment"
-                          >{{ !upload.name ? "Upload Logo" : "Logo Uploaded" }}
-                          <v-icon right dark>mdi-cloud-upload</v-icon>
-                        </v-btn>
+                            color="primary"
+                            block
+                            @click="onpick_attachment"
+                            >{{
+                              !upload.name ? "Upload Logo" : "Logo Uploaded"
+                            }}
+                            <v-icon right dark>mdi-cloud-upload</v-icon>
+                          </v-btn>
                         </v-card>
-                       
 
                         <input
                           required
@@ -692,6 +693,15 @@
               </v-tab-item>
               <v-tab-item>
                 <EmailNotifications />
+              </v-tab-item>
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-text>
+                    <v-avatar tile size="300">
+                      <v-img src="/qrcode.png"></v-img>
+                    </v-avatar>
+                  </v-card-text>
+                </v-card>
               </v-tab-item>
             </v-tabs>
           </v-card>

@@ -173,27 +173,6 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="DirtyRoomsReportDialog" persistent max-width="700px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Dirty Rooms Report</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="DirtyRoomsReportDialog = false">
-              mdi mdi-close-box
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <DirtyRoomsReport
-                :data="dirtyRoomsList"
-                @close-dialog="closeDialogs"
-              />
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
       <v-dialog
         v-model="AvailableRoomsReportDialog"
         persistent
@@ -753,16 +732,27 @@
             <v-row>
               <v-col></v-col>
               <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingHall :onlyButton="true" />
+                <BookingHall
+                  @success="handleSuccess(`Hall has been Booked`)"
+                  :onlyButton="true"
+                />
               </v-col>
               <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingIndividual :onlyButton="true" />
+                <BookingIndividual
+                  @success="handleSuccess(`Room has been Booked`)"
+                  :onlyButton="true"
+                />
               </v-col>
               <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingGroup :onlyButton="true" />
+                <BookingGroup
+                  @success="handleSuccess(`Room(s) has been Booked`)"
+                  :onlyButton="true"
+                />
               </v-col>
               <v-col cols="1" class="mt-0" style="max-width: 60px">
-                <BookingQuickCheckIn @success="handleReload" />
+                <BookingQuickCheckIn
+                  @success="handleSuccess(`Room(s) has been Checked In`)"
+                />
               </v-col>
               <v-col cols="3">
                 <v-row>
@@ -834,7 +824,9 @@
               <v-col
                 cols="12"
                 style="margin-top: 0px; padding-top: 0px; height: auto"
-                ><v-tabs hide-slider right v-model="tab" color="#0d652d">
+              >
+                <!-- <pre>{{Occupied}}</pre> -->
+                <v-tabs hide-slider right v-model="tab" color="#0d652d">
                   <v-tab style="font-weight: bold">All</v-tab>
                   <v-tab style="font-weight: bold">Occupied</v-tab>
                   <v-tab style="font-weight: bold">Arrival</v-tab>
@@ -847,13 +839,14 @@
                     <v-card color="basil" style="height: auto">
                       <v-card-text>
                         <DashboardRoomsList
-                          v-if="calenderColorCodes"
+                          ref="RoomComp"
                           name="All"
                           :searchQuery="searchQuery"
                           :tabFilter="'All'"
                           :key="keyTabAll"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
+                          @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -862,28 +855,30 @@
                     <v-card color="basil" style="height: auto">
                       <v-card-text>
                         <DashboardRoomsList
-                          v-if="calenderColorCodes"
+                          ref="RoomComp"
                           name="occupied"
                           :searchQuery="searchQuery"
-                          :tabFilter="'occupied'"
+                          :tabFilter="'checkIn'"
                           :key="keyTabOccupied"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
-                        ></DashboardRoomsList
-                      ></v-card-text>
+                          @call_room_list="refreshRoomList"
+                        ></DashboardRoomsList>
+                      </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
-                          v-if="calenderColorCodes"
+                          ref="RoomComp"
                           name="expected_arrival"
                           :searchQuery="searchQuery"
                           :tabFilter="'expected_arrival'"
                           :key="keyTabexpected_arrival"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
+                          @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -892,13 +887,14 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
-                          v-if="calenderColorCodes"
-                          name="expected_checkout"
+                          ref="RoomComp"
+                          name="checkedOut"
                           :searchQuery="searchQuery"
-                          :tabFilter="'expected_checkout'"
-                          :key="keyTabexpected_checkout"
+                          :tabFilter="'checkedOut'"
+                          :key="keyTabdirty"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
+                          @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -907,13 +903,14 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
-                          v-if="calenderColorCodes"
+                          ref="RoomComp"
                           name="blocked"
                           :searchQuery="searchQuery"
                           :tabFilter="'blocked'"
                           :key="keyTabblocked"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
+                          @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -923,6 +920,7 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
+                          ref="RoomComp"
                           v-if="tab == 4"
                           :searchQuery="searchQuery"
                           :tabFilter="'sold'"
@@ -935,13 +933,14 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
-                          v-if="calenderColorCodes"
+                          ref="RoomComp"
                           name="available"
                           :searchQuery="searchQuery"
                           :tabFilter="'available'"
                           :key="keyTabavailable"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
+                          @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -950,6 +949,7 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
+                          ref="RoomComp"
                           v-if="tab == 6"
                           :searchQuery="searchQuery"
                           :tabFilter="'compliment'"
@@ -962,13 +962,14 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
-                          v-if="calenderColorCodes"
+                          ref="RoomComp"
                           name="dirty"
                           :searchQuery="searchQuery"
                           :tabFilter="'dirty'"
                           :key="keyTabdirty"
                           :calenderColorCodes="calenderColorCodes"
                           :data="rooms"
+                          @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -1046,9 +1047,9 @@ export default {
   },
   data() {
     return {
-      calenderColorCodes: null,
+      calenderColorCodes: [],
       tab: 0,
-      filterDate: "",
+      filterDate: "2024-08-15",
       menu2: false,
       colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
       key: 1,
@@ -1197,7 +1198,7 @@ export default {
       filterQuery: ``,
       keyTabAll: 11,
       keyTabexpected_arrival: 12,
-      keyTabexpected_checkout: 13,
+      keyTabdirty: 13,
       keyTabblocked: 18,
       keyTabavailable: 14,
       keyTabcompliment: 15,
@@ -1221,7 +1222,7 @@ export default {
       //   this.keyTabexpected_arrival++;
       // }
       // if (this.tab == 2) {
-      //   this.keyTabexpected_checkout++;
+      //   this.keyTabdirty++;
       // }
       // if (this.tab == 3) {
       //   this.keyTabblocked++;
@@ -1294,41 +1295,15 @@ export default {
   },
 
   methods: {
-    handleReload() {
+    handleSuccess(message) {
       this.room_list();
+      this.alert("Success!", message, "success");
+      this.checkInDialog = false;
+      this.keyTabAll++;
     },
-    getRoomsByFilter() {},
-    filteredRooms(rooms) {
-      if (!this.searchQuery) return rooms; // Early return for empty search
-
-      // Optimized search function for multiple customer fields
-      const searchCustomer = (customer, searchQuery) => {
-        const searchFields = [
-          "first_name",
-          "last_name",
-          "contact_no",
-          "whatsapp",
-          "email",
-          "nationality",
-          "address",
-          "full_name",
-        ];
-
-        const searchText = searchQuery.toLowerCase();
-        return searchFields.some((field) =>
-          customer[field]?.toLowerCase().includes(searchText)
-        );
-      };
-
-      return rooms.filter((room) => {
-        const { booked_room: { customer } = {} } = room; // Destructuring with default value for customer
-
-        // Combine room number and customer search, using toLowerCase() for case-insensitive search
-        return (
-          room.room_no.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          (customer && searchCustomer(customer, this.searchQuery))
-        );
-      });
+    refreshRoomList() {
+      this.room_list();
+      this.keyTabAll++;
     },
 
     get_next_day() {
@@ -1665,7 +1640,7 @@ export default {
         }, 100);
         this.keyTabAll = 31;
         this.keyTabexpected_arrival = 33;
-        this.keyTabexpected_checkout = 34;
+        this.keyTabdirty = 34;
         this.keyTabblocked = 35;
         this.keyTabavailable = 36;
         this.keyTabcompliment = 37;

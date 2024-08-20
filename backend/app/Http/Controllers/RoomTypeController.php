@@ -27,6 +27,13 @@ class RoomTypeController extends Controller
         return RoomType::whereCompanyId($request->company_id)->where("type", request("type", "room"))->get();
     }
 
+    public function roomTypeForHall(Request $request)
+    {
+        return RoomType::whereCompanyId($request->company_id)
+            // ->whereDoesntHave("booking")
+            ->where("type", request("type", "hall"))->get();
+    }
+
     public function getRoomType(Request $request)
     {
         $model = RoomType::whereCompanyId($request->company_id)->where("type", request("type", "room"));
@@ -253,8 +260,8 @@ class RoomTypeController extends Controller
 
         $prices = RoomType::whereCompanyId($request->company_id)->whereName($request->roomType)
             ->first([
-                'holiday_price', 
-                'weekend_price', 
+                'holiday_price',
+                'weekend_price',
                 'weekday_price',
                 'hall_min_hours',
                 'cleaning_charges',
@@ -332,7 +339,7 @@ class RoomTypeController extends Controller
             ->first();
     }
 
-    
+
     public function getTaxSlab($amount, $company_id)
     {
 
@@ -388,7 +395,7 @@ class RoomTypeController extends Controller
     {
         //$wordpress_push_prices_url = Company::where("id", $request->company_id)->pluck('wordpress_push_prices_url')->first();
         try {
-            RoomType::where("id",$id)->update($request->all());
+            RoomType::where("id", $id)->update($request->all());
 
             return $this->response('Successfully update', null, true);
         } catch (\Throwable $th) {

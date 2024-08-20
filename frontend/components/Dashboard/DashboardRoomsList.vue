@@ -341,7 +341,7 @@
             <check-out
               :BookingData="checkData"
               :roomData="roomData"
-              @close-dialog="closeDialogs"
+              @close-dialog="closeCheckInAndOpenGRC"
             />
           </v-card-text>
           <v-card-actions> </v-card-actions>
@@ -411,21 +411,6 @@
       <!-- end cancel room -->
 
       <!-- New Booking room  -->
-      <v-dialog v-model="NewBooking" persistent width="90%">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="closeNewCheckin"
-              >mdi mdi-close-box
-            </v-icon>
-          </v-toolbar>
-          <v-card-text v-if="NewBooking">
-            <new-check-in :reservation="newBookingRoom" />
-          </v-card-text>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
     </div>
     <!--end dialogs -->
 
@@ -511,9 +496,14 @@
             <v-list-item
               link
               v-if="newBookingRoom.status == 0"
-              @click="NewBooking = true"
             >
-              <v-list-item-title>CheckIn</v-list-item-title>
+              <v-list-item-title>
+                <BookingDirectCheckIn
+                  :reservation="newBookingRoom"
+                  @success="handleSuccess(`Room has been Booked`)"
+                  :onlyButton="true"
+                />
+              </v-list-item-title>
             </v-list-item>
             <v-list-item
               link
@@ -616,14 +606,13 @@
       </v-col> -->
       <div
         v-if="
-          filteredRooms(expectCheckOut).length == 0 &&
-          tabFilter == 'expected_checkout'
+          filteredRooms(expectCheckOut).length == 0 && tabFilter == 'checkIn'
         "
       >
         Not Available
       </div>
       <div
-        v-if="tabFilter == 'expected_checkout' || tabFilter == 'All'"
+        v-if="tabFilter == 'checkIn' || tabFilter == 'All'"
         cols="1"
         class="roombox1"
         v-for="(noAvailableRoom, index) in filteredRooms(expectCheckOut)"
@@ -897,7 +886,7 @@
       <v-col cols="12">
         <div>Blocked ({{ filteredRooms(blockedRooms).length }})</div>
       </v-col> -->
-      <!-- <div
+      <div
         v-if="filteredRooms(blockedRooms).length == 0 && tabFilter == 'blocked'"
       >
         Not Available
@@ -936,52 +925,31 @@
             </div>
           </v-card-text>
         </v-card>
-      </div> -->
-      <!--</v-row>
+      </div>
 
-    <v-row
-      v-if="tabFilter == 'All' || tabFilter == 'dirty'"
-      no-gutters
-      class="mt-0"
-    > -->
-      <!-- <v-col cols="12">
-        <div>Dirty ({{ filteredRooms(Occupied).length }})</div>
-      </v-col> -->
-      <div v-if="filteredRooms(Occupied).length == 0 && tabFilter == 'dirty'">
+      <div
+        v-if="
+          filteredRooms(checkedOut).length == 0 && tabFilter == 'checkedOut'
+        "
+      >
         Not Available
       </div>
+
       <div
-        v-if="tabFilter == 'All' || tabFilter == 'dirty'"
+        v-if="tabFilter == 'checkedOut' || tabFilter == 'All'"
         class="roombox1"
-        v-for="(occupied, index) in filteredRooms(Occupied)"
+        :class="noAvailableRoom.id"
+        v-for="(noAvailableRoom, i) in filteredRooms(checkedOut)"
       >
         <v-card
           @mouseenter="showMenu = false"
           @mousedown="showMenu = false"
           @mouseup="showMenu = false"
           @contextmenu="show"
-          @touchstart="
-            touchstart(
-              $event,
-              occupied && occupied.booked_room && occupied.booked_room.id,
-              occupied &&
-                occupied.booked_room &&
-                occupied.booked_room.booking &&
-                occupied.booked_room.booking.booking_status
-            )
-          "
-          :elevation="0"
-          @mouseover="
-            mouseOver(
-              occupied && occupied.booked_room && occupied.booked_room.id,
-              occupied &&
-                occupied.booked_room &&
-                occupied.booked_room.booking &&
-                occupied.booked_room.booking.booking_status
-            )
-          "
+          @touchstart="handleTouchstart($event, noAvailableRoom)"
+          @mouseover="handleMouseOver(noAvailableRoom)"
           @dblclick="dblclick"
-          :class="` darken-2`"
+          :class="` `"
           dark
         >
           <v-card-text
@@ -990,23 +958,35 @@
             title="Dirty"
           >
             <div class="text-center white--text boxheight">
+              <!-- <v-icon
+                v-if="isDeviceStatusActive(noAvailableRoom)"
+                dark
+                class="pa-0 room-inperson-status"
+              >
+                mdi mdi-bed
+              </v-icon> -->
               <v-icon
                 :color="
-                  occupied.device && occupied.device.latest_status == 1
+                  noAvailableRoom.device &&
+                  noAvailableRoom.device.latest_status == 1
                     ? 'red'
                     : ''
                 "
-                >mdi-bed</v-icon
               >
-              <div>{{ occupied?.room_no || "---" }}</div>
+                mdi mdi-bed
+              </v-icon>
               <div>
-                {{ room ? caps(occupied.room_type.name) : "---" }}
+                {{ noAvailableRoom?.room_no || "---" }}
+              </div>
+              <div>
+                {{
+                  noAvailableRoom ? caps(noAvailableRoom.room_type.name) : "---"
+                }}
               </div>
             </div>
           </v-card-text>
         </v-card>
       </div>
-      <!-- </v-row> -->
     </v-row>
   </div>
   <Preloader v-else />
@@ -1173,6 +1153,7 @@ export default {
       checkIn: [],
       checkOut: [],
       reservedWithoutAdvance: [],
+      checkedOut: [],
       confirmedBooking: "",
       waitingBooking: "",
       reason: "",
@@ -1304,6 +1285,9 @@ export default {
     },
     handleReload() {
       this.room_list();
+      this.alert("Success!", message, "success");
+      this.checkInDialog = false;
+      this.keyTabAll++;
     },
     getRoomsByFilter() {},
     filteredRooms(rooms) {
@@ -1652,6 +1636,7 @@ export default {
         this.confirmedBookingList = data.confirmedBookingList;
         this.dirtyRoomsList = data.dirtyRoomsList;
         this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+        this.checkedOut = data.checkedOut;
 
         this.members = {
           ...data.members,
@@ -1695,6 +1680,7 @@ export default {
           this.confirmedBookingList = data.confirmedBookingList;
           this.dirtyRoomsList = data.dirtyRoomsList;
           this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+          this.checkedOut = data.checkedOut;
 
           this.members = {
             ...data.members,
@@ -1892,6 +1878,7 @@ export default {
 
     closeCheckInAndOpenGRC() {
       this.room_list();
+      this.$emit(`call_room_list`);
       this.checkInDialog = false;
       // this.GRCDialog = true;
     },

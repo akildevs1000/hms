@@ -91,7 +91,7 @@ let currentDate = y + "-" + m + "-" + d;
 export default {
   data: () => ({
     Model: "Invoice",
-    endpoint: "invoice",
+    endpoint: "invoice-v1",
     currentDate,
     filters: {},
     options: {},

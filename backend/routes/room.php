@@ -14,6 +14,8 @@
   Route::get('/get_room/{id}', [RoomController::class, 'getRoom']);
 
   Route::get('room_type', [RoomTypeController::class, 'index']);
+  Route::get('room_type_for_hall', [RoomTypeController::class, 'roomTypeForHall']);
+
   Route::get('get_data_by_select', [RoomTypeController::class, 'getDataBySelect']);
   Route::get('get_data_by_select_with_tax', [RoomTypeController::class, 'getDataBySelectWithTax']);
   Route::get('get_hall_pricing_list', [RoomTypeController::class, 'get_hall_pricing_list']);

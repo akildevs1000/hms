@@ -330,10 +330,26 @@ class RoomController extends Controller
             $todayDate = date('Y-m-d');
         }
 
+        $CheckedOut = Room::with('device')
+            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+                $query->whereDate('check_out', date("Y-m-d"));
+
+                $query->where('company_id', $company_id);
+                $query->where('booking_status', 3);
+            })
+            ->with(['bookedRoom' => function ($q) use ($company_id) {
+                $q->where("company_id", $company_id);
+                $q->with("customer");
+            }])
+            ->get();
+
         $expectCheckOut = Room::with('device')
-            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', '<=', $todayDate);
+                // $query->whereDate('check_out', date("Y-m-d"));
+
                 $query->where('company_id', $company_id);
                 $query->where('booking_status', 2);
             })
@@ -467,7 +483,10 @@ class RoomController extends Controller
 
         // ======================
 
+        // return $checkIn;
+
         return [
+            'checkedOut' => $CheckedOut,
             'dirtyRooms' => $dirtyRooms->count(),
             'dirtyRoomsList' => $dirtyRooms->get(),
             'availableRooms' => $AvailableRooms,
@@ -520,7 +539,9 @@ class RoomController extends Controller
         $bookedRoomIds = BookedRoom::whereDate('check_in', '<=', $checkIn)
             ->whereDate('check_out', '>=', $checkOut)
             ->whereHas('booking', function ($query) use ($companyId) {
-                $query->where('booking_status', '!=', 0)
+                $query
+                    ->where('booking_status', '!=', 0)
+                    ->where('booking_status', '!=', 3)
                     ->where('company_id', $companyId);
             })
             ->pluck('room_id');
@@ -528,6 +549,7 @@ class RoomController extends Controller
         $availableRooms = Room::whereNotIn('id', $bookedRoomIds)
             ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->where('company_id', $companyId)
+            ->where('status', '!=', Room::Blocked)
             ->where('room_type_id', $roomTypeId)
             ->get();
 

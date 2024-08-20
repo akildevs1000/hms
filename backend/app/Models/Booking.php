@@ -16,6 +16,11 @@ class Booking extends Model
 {
     use HasFactory;
 
+    const VERIFICATION_SLEEP = 0;
+    const VERIFICATION_REQUIRED = 1;
+    const VERIFICATION_COMPLETED = 2;
+
+
     protected $guarded = [];
     protected $appends = [
         'resourceId',
