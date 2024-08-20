@@ -26,10 +26,12 @@
         max-width="1100"
       >
         <v-card>
-          <v-toolbar class="rounded-md" color="" dense flat >
+          <v-toolbar class="rounded-md" color="" dense flat>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark color="primary" class="pa-0" @click="close">mdi-close</v-icon>
+            <v-icon dark color="primary" class="pa-0" @click="close"
+              >mdi-close</v-icon
+            >
           </v-toolbar>
           <v-card-text>
             <check-in
@@ -850,6 +852,7 @@
                           :tabFilter="'All'"
                           :key="keyTabAll"
                           :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -863,6 +866,7 @@
                           :tabFilter="'occupied'"
                           :key="keyTabOccupied"
                           :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -876,6 +880,7 @@
                           :tabFilter="'expected_arrival'"
                           :key="keyTabexpected_arrival"
                           :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -889,6 +894,7 @@
                           :tabFilter="'expected_checkout'"
                           :key="keyTabexpected_checkout"
                           :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -902,6 +908,7 @@
                           :tabFilter="'blocked'"
                           :key="keyTabblocked"
                           :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -928,6 +935,7 @@
                           :tabFilter="'available'"
                           :key="keyTabavailable"
                           :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
@@ -952,6 +960,7 @@
                           :searchQuery="searchQuery"
                           :tabFilter="'dirty'"
                           :key="keyTabdirty"
+                          :calenderColorCodes="calenderColorCodes"
                           :data="rooms"
                         ></DashboardRoomsList
                       ></v-card-text>
@@ -1030,6 +1039,7 @@ export default {
   },
   data() {
     return {
+      calenderColorCodes: [],
       tab: 0,
       filterDate: "2024-08-15",
       menu2: false,
@@ -1265,6 +1275,15 @@ export default {
     }, 1000 * 60 * 2);
 
     this.get_food_plan();
+
+    let payload = {
+      params: {
+        company_id: this.$auth.user.company.id,
+      },
+    };
+    this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
+      this.calenderColorCodes = data;
+    });
   },
 
   methods: {

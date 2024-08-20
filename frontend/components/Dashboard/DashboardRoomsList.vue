@@ -587,7 +587,7 @@
         >
           <v-card-text
             class="p-3 roombox"
-            style="padding: 0px; background-color: #db0000"
+            :style="'padding: 0px;' + getColorCode('occupied')"
             title="Occupied"
           >
             <div class="text-center white--text boxheight boxheight">
@@ -641,8 +641,8 @@
           dark
         >
           <v-card-text
-            class="orange p-3 roombox"
-            style="padding: 0px"
+            class="orange3333 p-3 roombox"
+            :style="'padding: 0px;' + getColorCode('expected_checkout')"
             title="Expected Checkout"
           >
             <div class="text-center white--text boxheight">
@@ -704,8 +704,8 @@
           class=""
         >
           <v-card-text
-            class="success p-3 roombox"
-            style="padding: 0px"
+            class="success1111 p-3 roombox"
+            :style="'padding: 0px;' + getColorCode('expected_arrival')"
             title="Expected Arrival"
           >
             <div class="text-center white--text boxheight">
@@ -760,8 +760,8 @@
           dark
         >
           <v-card-text
-            class="blue p-3 roombox"
-            style="padding: 0px"
+            class="blue1111 p-3 roombox"
+            :style="'padding: 0px;' + getColorCode('expected_arrival')"
             title="Expected Arrival"
           >
             <div class="text-center white--text boxheight">
@@ -823,8 +823,8 @@
           @touchstart="makeNewBookingForTouch($event, room)"
         >
           <v-card-text
-            class="green p-3 roombox"
-            style="padding: 0px"
+            class="green111 p-3 roombox"
+            :style="'padding: 0px;' + getColorCode('available')"
             :title="
               room.device && room.device.latest_status == 1
                 ? 'Available and Light On'
@@ -865,8 +865,8 @@
           @touchstart="makeNewBookingForTouch($event, blockedRoom)"
         >
           <v-card-text
-            class="purple p-3 roombox"
-            style="padding: 0px"
+            class="purple333 p-3 roombox"
+            :style="'padding: 0px;' + getColorCode('blocked')"
             title=" Blocked
             "
           >
@@ -986,7 +986,7 @@
         >
           <v-card-text
             class="roombox p-3 roombox"
-            style="padding: 0px; background-color: #db0000"
+            :style="'padding: 0px;' + getColorCode('dirty')"
             title="Dirty"
           >
             <div class="text-center white--text boxheight">
@@ -1038,7 +1038,7 @@ import DirtyRoomsReport from "../summary_reports/DirtyRoomsReport.vue";
 import Grc from "../booking/GRC.vue";
 
 export default {
-  props: ["searchQuery", "tabFilter", "data"],
+  props: ["searchQuery", "tabFilter", "data", "calenderColorCodes"],
   layout({ $auth }) {
     if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {
       return "guest";
@@ -1270,6 +1270,37 @@ export default {
   },
 
   methods: {
+    getColorCode(status) {
+      let status_id = "---";
+      if (status == "available") {
+        status_id = 0;
+      } else if (status == "booked") {
+        status_id = 1;
+      } else if (status == "occupied") {
+        status_id = 2;
+      } else if (status == "dirty") {
+        status_id = 3;
+      } else if (status == "expected_arrival") {
+        status_id = 4;
+      } else if (status == "expected_arrival") {
+        status_id = 4;
+      } else if (status == "blocked") {
+        status_id = 6;
+      } else if (status == "expected_checkout") {
+        status_id = 7;
+      } else if (status == "checkedout_due_payment") {
+        status_id = 8;
+      }
+
+      if (status_id != "---" && this.calenderColorCodes)
+        return (
+          ";background-color:" +
+          this.calenderColorCodes.filter((e) => e.status_id == status_id)[0]
+            .color +
+          ";"
+        );
+      return " ";
+    },
     handleReload() {
       this.room_list();
     },

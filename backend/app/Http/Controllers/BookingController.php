@@ -2632,4 +2632,38 @@ class BookingController extends Controller
             throw new Exception($e->getMessage());
         }
     }
+    public function  getRoomStatusColorCode($status)
+
+    {
+        $colors = (new BookingController())->RoomColorCodes();
+        $index = array_search($status, array_column($colors, 'status_id'));
+        return     $index !== false ? $colors[$index]['color'] : null;
+    }
+    public function  RoomColorCodes()
+    {
+        return [
+            ['status_id' => 0, 'color' => '#4caf50', "desc" => "avaialbe"],
+            ['status_id' => 1, 'color' => '#538234', "desc" => "booked"],
+            ['status_id' => 2, 'color' => '#0f642b', "desc" => "checkedin"],
+            ['status_id' => 3, 'color' => '#fb0103', "desc" => "checkedout/dirty"],
+            ['status_id' => 4, 'color' => '#92d051', "desc" => "expected_arrival"],
+            ['status_id' => 5, 'color' => '#92d051', "desc" => "avaialbe"],
+            ['status_id' => 6, 'color' => '#8faadd', "desc" => "booking done-nopayment"],
+            ['status_id' => 7, 'color' => '#c55a12', "desc" => "expected checkout"],
+            ['status_id' => 8, 'color' => '#702fa5', "desc" => "checkedout but due payment"],
+
+
+
+
+
+
+            ['status_id' => 11, 'color' => '#04b0f2', "desc" => "OTA Online Travel Agency"],
+            ['status_id' => 12, 'color' => '#7551e5', "desc" => "Walkin customer "],
+            ['status_id' => 13, 'color' => '#ff00dc', "desc" => "Travel agent"],
+            ['status_id' => 14, 'color' => '#010002', "desc" => "Compliment"],
+            ['status_id' => 15, 'color' => '#c65a12', "desc" => "Corporate"],
+
+
+        ];
+    }
 }
