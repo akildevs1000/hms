@@ -1273,13 +1273,14 @@ export default {
         status_id = 8;
       }
 
-      if (status_id != "---" && this.calenderColorCodes)
-        return (
-          ";background-color:" +
-          this.calenderColorCodes.filter((e) => e.status_id == status_id)[0]
-            .color +
-          ";"
+      if (status_id != "---" && this.calenderColorCodes) {
+        let color1 = this.calenderColorCodes.filter(
+          (e) => e.status_id == status_id
         );
+        if (color1.length) {
+          return ";background-color:" + color1[0].color + ";";
+        } else return " ";
+      }
       return " ";
     },
     handleReload() {
