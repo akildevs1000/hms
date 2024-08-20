@@ -862,8 +862,6 @@
                           :key="keyTabOccupied"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
-                        ></DashboardRoomsList
-                      ></v-card-text>
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList>
                       </v-card-text>
