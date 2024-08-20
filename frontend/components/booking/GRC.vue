@@ -281,7 +281,7 @@ export default {
   },
 };
 </script>
-<!-- 
+
 <style scoped>
 .text-box {
   border: 1px solid rgb(215, 211, 211);
@@ -295,4 +295,4 @@ export default {
 .text-box p {
   margin: 5px;
 }
-</style> -->
+</style>

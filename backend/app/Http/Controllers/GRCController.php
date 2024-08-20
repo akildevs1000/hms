@@ -115,4 +115,16 @@ class GRCController extends Controller
             ->setPaper('a4', 'portrait')
             ->download();
     }
+
+    public function downloadCustomerAttachments($id)
+    {
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
+
+        // return $booking->customer;
+
+        return Pdf::loadView('customer.index', compact('booking', 'trans'))
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
 }

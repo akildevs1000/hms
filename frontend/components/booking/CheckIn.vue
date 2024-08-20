@@ -405,7 +405,7 @@
                           </v-btn>
                         </v-col>
                         <v-col cols="6" class="pa-0 ma-0">
-                          <v-btn small color="primary" dark>
+                          <v-btn small color="primary" dark @click="downloadCustomerAttachments">
                             <v-icon>mdi-download-outline</v-icon>
                             <v-icon>mdi-account-tie</v-icon>
                           </v-btn>
@@ -1662,6 +1662,14 @@ export default {
     },
   },
   methods: {
+    downloadCustomerAttachments(){
+      let id = this.BookingData.id;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${process.env.BACKEND_URL}download_customer_attachments/${id}`);
+      document.body.appendChild(element);
+      element.click();
+    },
     getStates(country) {
       // Find the country object from the countries array
       const countryObj = this.countries.find((e) => e.name === country);
