@@ -266,10 +266,9 @@
 
 
     <div class="row mt-3">
-        <div class="col-2">
+        <div class="col-12">
             <label for="name" class="label-txt">Customer Picture:</label>
-        </div>
-        <div class="col-10">
+            <br>
 
             @if (env('APP_ENV') == 'local')
                 <img src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
@@ -282,11 +281,9 @@
     <hr>
 
     <div class="row mt-3">
-        <div class="col-2">
+        <div class="col-12">
             <label for="name" class="label-txt">Customer ID (Front):</label>
-        </div>
-        <div class="col-10">
-
+            <br>
             @if (env('APP_ENV') == 'local')
                 <img src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
             @else
@@ -299,10 +296,9 @@
     <hr>
 
     <div class="row mt-3">
-        <div class="col-2">
+        <div class="col-12">
             <label for="name" class="label-txt">Customer ID (Back):</label>
-        </div>
-        <div class="col-10">
+            <br>
 
             @if (env('APP_ENV') == 'local')
                 <img src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
