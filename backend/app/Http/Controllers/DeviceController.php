@@ -174,6 +174,12 @@ class DeviceController extends Controller
         $device_room_number = $request->room_number;
         $status = $request->status;
 
+        if ($request->statu == 1) {
+            $status = 0;
+        } else if ($request->statu == 0) {
+            $status = 1;
+        }
+
 
         $device = Device::where("serial_number", $device_room_number)->first();
         if ($device) {
