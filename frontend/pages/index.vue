@@ -847,6 +847,7 @@
                     <v-card color="basil" style="height: auto">
                       <v-card-text>
                         <DashboardRoomsList
+                          v-if="calenderColorCodes"
                           name="All"
                           :searchQuery="searchQuery"
                           :tabFilter="'All'"
@@ -861,6 +862,7 @@
                     <v-card color="basil" style="height: auto">
                       <v-card-text>
                         <DashboardRoomsList
+                          v-if="calenderColorCodes"
                           name="occupied"
                           :searchQuery="searchQuery"
                           :tabFilter="'occupied'"
@@ -875,6 +877,7 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
+                          v-if="calenderColorCodes"
                           name="expected_arrival"
                           :searchQuery="searchQuery"
                           :tabFilter="'expected_arrival'"
@@ -889,6 +892,7 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
+                          v-if="calenderColorCodes"
                           name="expected_checkout"
                           :searchQuery="searchQuery"
                           :tabFilter="'expected_checkout'"
@@ -903,6 +907,7 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
+                          v-if="calenderColorCodes"
                           name="blocked"
                           :searchQuery="searchQuery"
                           :tabFilter="'blocked'"
@@ -930,6 +935,7 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
+                          v-if="calenderColorCodes"
                           name="available"
                           :searchQuery="searchQuery"
                           :tabFilter="'available'"
@@ -956,6 +962,7 @@
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
+                          v-if="calenderColorCodes"
                           name="dirty"
                           :searchQuery="searchQuery"
                           :tabFilter="'dirty'"
@@ -1039,9 +1046,9 @@ export default {
   },
   data() {
     return {
-      calenderColorCodes: [],
+      calenderColorCodes: null,
       tab: 0,
-      filterDate: "2024-08-15",
+      filterDate: "",
       menu2: false,
       colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
       key: 1,
