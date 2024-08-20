@@ -470,6 +470,7 @@ import CheckIn from "../../components/booking/CheckIn.vue";
 import CheckOut from "../../components/booking/CheckOut.vue";
 import PayAdvance from "../../components/booking/PayAdvance.vue";
 import ChangeRoom from "../../components/booking/ChangeRoom.vue";
+// import { borderTopRightRadius } from "html2canvas/dist/types/css/property-descriptors/border-radius";
 // import VueMask from "vue-the-mask";
 // import MaskedInput from "vue-masked-input";
 export default {
@@ -500,6 +501,7 @@ export default {
     ); // Calculate start date 7 days ago
 
     return {
+      calenderColorCodes: [],
       durationDays: 15,
       from_date: null,
       to_date: endDate.toISOString().slice(0, 10),
@@ -759,6 +761,15 @@ export default {
   },
 
   created() {
+    let payload = {
+      params: {
+        company_id: this.$auth.user.company.id,
+      },
+    };
+    this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
+      this.calenderColorCodes = data;
+    });
+    console.log(this.calenderColorCodes);
     this.currentDate;
     this.currentDateForNow;
   },
@@ -1002,6 +1013,7 @@ export default {
             type: e.booking.type,
             title: e.title,
             bookingStatus: e.booking_status,
+            calenderColorCodes: this.calenderColorCodes,
           })),
           // eventContent: function (info) {
           //   console.log(info);
@@ -1016,18 +1028,40 @@ export default {
             //console.log(eventInfo.event.extendedProps.source);
             let sourceColor = "#4285F4";
             let titlDisplay = eventInfo.event.extendedProps.type;
-            if (eventInfo.event.extendedProps.type == "Walking") {
-              sourceColor = "#DB4437";
-            } else if (eventInfo.event.extendedProps.type == "Complimentary") {
-              sourceColor = "#F4B400";
-            } else if (eventInfo.event.extendedProps.type == "Online") {
-              sourceColor = "#0F9D58";
-            } else if (eventInfo.event.extendedProps.type == "Travel Agency") {
-              sourceColor = "#FF5A5F";
-            } else if (eventInfo.event.extendedProps.type == "Corporate") {
-              sourceColor = "#00A699";
+            let calenderColorCodes =
+              eventInfo.event.extendedProps.calenderColorCodes;
+            if (calenderColorCodes) {
+              if (eventInfo.event.extendedProps.type == "Walking") {
+                sourceColor =
+                  calenderColorCodes.filter((e) => e.status_id == 12)[0]
+                    ?.color || "--";
+                // sourceColor = "#DB4437";
+              } else if (
+                eventInfo.event.extendedProps.type == "Complimentary"
+              ) {
+                sourceColor =
+                  calenderColorCodes.filter((e) => e.status_id == 14)[0]
+                    ?.color || "--";
+                //sourceColor = "#F4B400";
+              } else if (eventInfo.event.extendedProps.type == "Online") {
+                sourceColor =
+                  calenderColorCodes.filter((e) => e.status_id == 11)[0]
+                    ?.color || "--";
+                //sourceColor = "#0F9D58";
+              } else if (
+                eventInfo.event.extendedProps.type == "Travel Agency"
+              ) {
+                sourceColor =
+                  calenderColorCodes.filter((e) => e.status_id == 13)[0]
+                    ?.color || "--";
+                //sourceColor = "#FF5A5F";
+              } else if (eventInfo.event.extendedProps.type == "Corporate") {
+                sourceColor =
+                  calenderColorCodes.filter((e) => e.status_id == 15)[0]
+                    ?.color || "--";
+                //sourceColor = "#00A699";
+              }
             }
-
             // if (eventInfo.event.extendedProps.bookingStatus == 0) {
             //   titlDisplay += " Available";
             // }
@@ -1043,7 +1077,7 @@ export default {
             // if (eventInfo.event.extendedProps.bookingStatus == 4) {
             //   titlDisplay += " Dirty";
             // }
-            console.log(eventInfo.event.extendedProps.source, sourceColor);
+            //console.log(eventInfo.event.extendedProps.source, sourceColor);
             return {
               html:
                 "<span title='" +
@@ -1259,6 +1293,7 @@ export default {
           this.calendarOptions.resources = data;
           this.RoomList = data;
         });
+      //get color codes
     },
 
     get_posting() {

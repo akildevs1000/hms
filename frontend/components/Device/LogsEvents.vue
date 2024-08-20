@@ -84,8 +84,8 @@
                   : ""
               }}
             </template>
-            <template v-slot:item.room.room_no="{ item }">
-              {{ item.room.room_no }}</template
+            <template v-slot:item.device.name="{ item }">
+              {{ item.device.room.room_no }}</template
             >
 
             <template v-slot:item.device.room.room_type.name="{ item }">
