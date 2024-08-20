@@ -1,15 +1,15 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="900">
+    <v-dialog v-model="dialog" width="1100">
       <template v-slot:activator="{ on, attrs }">
         <v-btn block small color="primary" dark v-bind="attrs" v-on="on">
-          ID <v-icon right>mdi-eye-outline</v-icon>
+          ID <v-icon right>mdi-camera-outline</v-icon>
         </v-btn>
       </template>
 
       <v-card>
         <v-toolbar flat class="primary" dense dark>
-          Picture and ID
+          Picture and ID {{customer.id}}
           <v-spacer></v-spacer>
           <v-icon @click="close"> mdi-close </v-icon>
         </v-toolbar>
@@ -31,6 +31,9 @@
               <v-col cols="6">
                 <v-img :src="customer.id_backend_side"></v-img>
               </v-col>
+              <v-col cols="12">
+                <v-btn class="primary" block @click="confirm"> Confirm </v-btn>
+              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -44,7 +47,7 @@ export default {
   data() {
     return {
       endpoint: "https://backend.myhotel2cloud.com/api",
-    //   endpoint: "https://hms-backend.test/api",
+      //   endpoint: "https://hms-backend.test/api",
 
       dialog: false,
       customer: {},
@@ -63,10 +66,22 @@ export default {
         console.log(error);
       }
     },
-    close(){
+    async confirm() {
+      let payload = {
+        booking_id: this.BookingId,
+        customer_id: this.customer.id,
+      };
+      try {
+        await this.$axios.post(`booking-verify`, payload);
         this.$emit(`getCustomerDocs`, this.customer);
         this.dialog = false;
-    }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    close() {
+      this.dialog = false;
+    },
   },
 };
 </script>

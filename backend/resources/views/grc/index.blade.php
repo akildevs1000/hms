@@ -240,13 +240,16 @@
                 class="header-txt-span">{{ $booking->company_id == 1 ? 'The Business Hotel' : 'The Luxuery Hotel' }}</span>
         </div>
         <div class="col-4" style="margin: 0px">
-            @if ($booking->company_id == 1)
+            {{-- @if ($booking->company_id == 1)
                 <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
                     style="margin-left: 50px;margin-top: 0px">
             @elseif ($booking->company_id == 2)
                 <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
                     style="margin-left: 50px;margin-top: 0px">
-            @endif
+            @endif --}}
+
+            <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
+                style="margin-left: 50px;margin-top: 0px">
         </div>
         <div class="col-4 header-txt-address" style="text-align:right">
             <div style="text-align:left; margin-left:70px" class="header-txt-address">
@@ -466,15 +469,22 @@
         The Property Is Privately Owned, Managemnt Reserves The Right To Refuse Service To Anyone. We Will Not Be
         Responsible For Accidents Or For Loss Of Money, Jewellery Or Valuable Of Any Kind.
     </p>
+    <div>
+        @if (env('APP_ENV') == 'local')
+            <img style="border:;height: 100px; width: 100px;"
+                src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
+        @else
+            sdlfkjsdflk
+        @endif
 
-    <div class="row mt-3">
+    </div>
+
+    <div class="row" style="margin-top: -20px">
         <div class="col-6">
-            <br>
             <p>------------------------------</p>
             <label for="name" class="label-txt" style="margin-left:25px">Guest Signature:</label>
         </div>
         <div class="col-6" style="text-align:right">
-            <br>
             <p>------------------------------</p>
             <label for="name" class="label-txt" style="margin-right:10px">Receptionist Signature:</label>
         </div>

@@ -331,7 +331,7 @@ class RoomController extends Controller
         }
 
         $CheckedOut = Room::with('device')
-            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_out', date("Y-m-d"));
 
@@ -345,7 +345,7 @@ class RoomController extends Controller
             ->get();
 
         $expectCheckOut = Room::with('device')
-            ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', '<=', $todayDate);
                 // $query->whereDate('check_out', date("Y-m-d"));
@@ -384,7 +384,6 @@ class RoomController extends Controller
             $q->where('company_id', $company_id);
             $q->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('advance_price', 0);
-                $q->where('booking_status', 1);
                 $q->where('company_id', $company_id);
             });
             $q->whereNotNull('room_id');
@@ -483,6 +482,8 @@ class RoomController extends Controller
         //0 available;
 
         // ======================
+
+        // return $checkIn;
 
         return [
             'checkedOut' => $CheckedOut,

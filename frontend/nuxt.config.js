@@ -80,6 +80,8 @@ export default {
     },
 
     "~/plugins/qrcode.js",
+    "~/plugins/custom-methods.js",
+
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -396,6 +396,7 @@
                                   ></v-text-field>
                                 </template>
                                 <v-date-picker
+                                  no-title
                                   v-model="customer.dob"
                                   @input="customer.dob_menu = false"
                                 ></v-date-picker>
@@ -1581,7 +1582,7 @@
               >
               </v-autocomplete>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="6">
               <v-autocomplete
                 label="Adult Per Room"
                 :items="[0, 1, 2, 3]"
@@ -1591,7 +1592,7 @@
                 :hide-details="true"
               ></v-autocomplete>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="6">
               <v-autocomplete
                 label="Child Per Room"
                 :items="[0, 1, 2, 3]"
@@ -1717,7 +1718,7 @@ export default {
       multipleRoomId: null,
       checkin_menu: false,
       checkout_menu: false,
-      room_type_id: 1,
+      room_type_id: {},
       documentDialog: false,
       // -------customer history---------------
       customer: "",
@@ -2692,14 +2693,11 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.store_document(data.data);
-            this.alert("Success!", "Successfully room added", "success");
-
-            if (this.reservation.booking_status == 2) {
-              this.$router.push("/reservation/in_house");
-              return "";
-            }
-            this.$router.push("/");
+            this.selectedRooms = [];
+            this.priceListTableView = [];
+            this.room_type_id = {};
+            this.$emit(`success`);
+            this.dialog = false;
           }
         })
         .catch((e) => console.log(e));

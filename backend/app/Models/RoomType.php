@@ -20,6 +20,10 @@ class RoomType extends Model
     {
         return $this->hasMany(Room::class);
     }
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
     public function widget_available_rooms()
     {
         return $this->hasMany(Room::class)->where('online_available',   1)->where('status', 0);;

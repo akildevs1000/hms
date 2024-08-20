@@ -336,6 +336,33 @@
             </v-card>
           </v-tab-item>
           <v-tab-item>
+            <v-dialog
+              v-model="GRCDialog"
+              persistent
+              :width="900"
+              class="checkin-models"
+            >
+              <v-card>
+                <v-toolbar
+                  class="rounded-md"
+                  color="background"
+                  dense
+                  flat
+                  dark
+                >
+                  <span>{{ "GRC" }}</span>
+                  <v-spacer></v-spacer>
+                  <v-icon dark class="pa-0" @click="GRCDialog = false"
+                    >mdi mdi-close</v-icon
+                  >
+                </v-toolbar>
+                <v-card-text>
+                  <BookingGRC :bookingId="BookingData.id"> </BookingGRC>
+                </v-card-text>
+                <v-container></v-container>
+                <v-card-actions> </v-card-actions>
+              </v-card>
+            </v-dialog>
             <v-card flat>
               <v-card-text>
                 <v-container>
@@ -344,31 +371,48 @@
                       <v-row>
                         <v-col cols="12">
                           <v-img
-                            style="max-height: 200px"
+                            class="my-2"
+                            style="max-height: 175px"
                             :src="
-                              customer.captured_photo || `/no-profile-image.jpg`
+                              (customerDocs && customerDocs.captured_photo) ||
+                              `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`
+                            "
+                          ></v-img>
+                          <v-img
+                            class="my-2"
+                            :src="
+                              (customerDocs && customerDocs.id_frontend_side) ||
+                              `https://th.bing.com/th/id/OIP.ACtFyuYiJkcGt3vHXzZbvgHaE9?w=290&h=194&c=7&r=0&o=5&pid=1.7`
+                            "
+                          ></v-img>
+                          <v-img
+                            class="my-2"
+                            :src="
+                              (customerDocs && customerDocs.id_backend_side) ||
+                              `https://th.bing.com/th/id/OIP.ACtFyuYiJkcGt3vHXzZbvgHaE9?w=290&h=194&c=7&r=0&o=5&pid=1.7`
                             "
                           ></v-img>
                         </v-col>
 
-                        <v-col cols="12">
-                          <v-img
-                            :src="
-                              customer.id_frontend_side ||
-                              `/no-profile-image.jpg`
-                            "
-                          ></v-img>
+                        <v-col cols="6" class="pa-0 ma-0">
+                          <v-btn
+                            small
+                            color="primary"
+                            dark
+                            @click="GRCDialog = true"
+                          >
+                            <v-icon>mdi-printer-outline</v-icon> GRC
+                          </v-btn>
                         </v-col>
-                        <v-col cols="12">
-                          <v-img
-                            :src="
-                              customer.id_backend_side ||
-                              `/no-profile-image.jpg`
-                            "
-                          ></v-img>
+                        <v-col cols="6" class="pa-0 ma-0">
+                          <v-btn small color="primary" dark>
+                            <v-icon>mdi-download-outline</v-icon>
+                            <v-icon>mdi-account-tie</v-icon>
+                          </v-btn>
                         </v-col>
                         <v-col cols="12">
                           <BookingIDPreview
+                            :BookingId="BookingData.id"
                             @getCustomerDocs="(e) => (customerDocs = e)"
                           />
                         </v-col>
@@ -465,8 +509,51 @@
                             "
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12">
-                          <FullAddress @location="handleFullAddress" />
+                        <v-col md="3" cols="12" sm="12">
+                          <!-- <pre> {{countries}}</pre> -->
+                          <v-autocomplete
+                            :items="countries"
+                            item-text="name"
+                            item-value="name"
+                            label="Country"
+                            v-model="customer.country"
+                            outlined
+                            :hide-details="true"
+                            dense
+                            @change="getStates(customer.country)"
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-autocomplete
+                            :items="states"
+                            item-text="name"
+                            item-value="name"
+                            label="State"
+                            v-model="customer.state"
+                            outlined
+                            :hide-details="true"
+                            dense
+                            @change="getCities"
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-autocomplete
+                            :items="cities"
+                            label="City"
+                            v-model="customer.city"
+                            outlined
+                            :hide-details="true"
+                            dense
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-text-field
+                            label="Zip Code"
+                            v-model="customer.zip_code"
+                            outlined
+                            :hide-details="true"
+                            dense
+                          ></v-text-field>
                         </v-col>
                         <!-- <v-col md="5" dense>
                         <v-text-field
@@ -1362,7 +1449,11 @@ export default {
   },
   data() {
     return {
+      countries: require("../../json/countries.json"),
+      states: [],
+      cities: [],
       customerDocs: null,
+      GRCDialog: false,
       // ----------------------
       vertical: false,
       activeTab: 0,
@@ -1571,11 +1662,34 @@ export default {
     },
   },
   methods: {
-    handleFullAddress(e) {
-      this.customer = {
-        ...this.customer,
-        ...e,
-      };
+    getStates(country) {
+      // Find the country object from the countries array
+      const countryObj = this.countries.find((e) => e.name === country);
+
+      // Check if the country object exists
+      if (countryObj) {
+        // Set the states array from the found country object
+        this.states = countryObj.states || [];
+      } else {
+        // If country not found, clear the states array and handle error
+        this.states = [];
+        console.warn(`Country with slug "${country}" not found.`);
+      }
+    },
+
+    getCities(state) {
+      // Find the state object from the states array
+      const stateObj = this.states.find((e) => e.name === state);
+
+      // Check if the state object exists
+      if (stateObj) {
+        // Set the cities array from the found state object
+        this.cities = stateObj.cities || [];
+      } else {
+        // If state not found, clear the cities array and handle error
+        this.cities = [];
+        console.warn(`State "${state}" not found.`);
+      }
     },
     nextTab() {
       this.activeTab += 1;
@@ -1649,9 +1763,8 @@ export default {
             this.errors = data.errors;
             this.loading = false;
           } else {
-            this.$emit("close-dialog", data);
-            this.alert("Success!", "success check in", "success");
-            // this.redirect_to_invoice(bookingId);
+            this.$emit("close-dialog");
+
             this.loading = false;
             // if ($nuxt.$route.name == "hotel-calendar1") {
             //   this.$router.push(`/`);
@@ -1722,7 +1835,6 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      console.log(id);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${process.env.BACKEND_URL}grc/${id}`);
@@ -1760,6 +1872,9 @@ export default {
             ...data.data,
             customer_id: data.data.id,
           };
+
+          this.getStates(data.data.country);
+          this.getCities(data.data.state);
           this.customer.id_card_type_id = parseInt(
             this.customer.id_card_type_id
           );

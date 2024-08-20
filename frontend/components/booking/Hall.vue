@@ -676,7 +676,6 @@
                                         <th><small>Adult</small></th>
                                         <th><small>Child</small></th>
                                         <th><small>Meal</small></th>
-                                        <th><small>No of Rooms</small></th>
                                         <th><small>Price</small></th>
                                         <th><small>Cleaning</small></th>
                                         <th><small>Electricity</small></th>
@@ -718,7 +717,6 @@
                                         <td>{{ item.no_of_adult }}</td>
                                         <td>{{ item.no_of_child }}</td>
                                         <td>{{ item.meal_name }}</td>
-                                        <td>{{ item.no_of_rooms }}</td>
                                         <td>
                                           {{ convert_decimal(item.price) }}
                                         </td>
@@ -1687,6 +1685,7 @@
             </v-col>
             <v-col cols="12">
               <v-text-field
+                readonly
                 label="Total Hours"
                 outlined
                 hide-details
@@ -2485,7 +2484,7 @@ export default {
           type: "hall",
         },
       };
-      this.$axios.get(`room_type`, payload).then(({ data }) => {
+      this.$axios.get(`room_type_for_hall`, payload).then(({ data }) => {
         this.roomTypes = data;
       });
     },
@@ -2641,6 +2640,10 @@ export default {
       total_booking_hours,
       extra_hours_charges,
     }) {
+      if (!this.availableRooms.length) {
+        this.alert("Warning!", `"${room_type}" not available`, "error");
+        return;
+      }
       let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
 
       if (!isSelect) {
@@ -2662,13 +2665,13 @@ export default {
         let total_food_charges = adult_food_charges + child_food_charges;
 
         let extras =
-          cleaning +
-          electricity +
-          generator +
-          audio +
-          projector +
-          extra_booking_hours_charges +
-          total_food_charges;
+          parseFloat(cleaning) +
+          parseFloat(electricity) +
+          parseFloat(generator) +
+          parseFloat(audio) +
+          parseFloat(projector) +
+          parseFloat(extra_booking_hours_charges) +
+          parseFloat(total_food_charges);
 
         let sub_total =
           price +
@@ -2770,10 +2773,17 @@ export default {
         .then(({ data }) => {
           this.availableRooms = data;
 
-          if (data.length) {
-            this.temp.room_id = data[0].id || "";
-            this.temp.room_no = data[0].room_no || "";
+          if (!this.availableRooms.length) {
+            this.alert(
+              "Warning!",
+              `"${this.temp.room_type}" not available`,
+              "error"
+            );
+            return;
           }
+
+          this.temp.room_id = data[0].id || "";
+          this.temp.room_no = data[0].room_no || "";
         });
       this.runAllFunctions();
     },
@@ -2898,14 +2908,20 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.store_document(data.data);
-            this.alert("Success!", "Successfully room added", "success");
+            this.selectedRooms = [];
+            this.priceListTableView = [];
+            this.room_type_id = {};
+            this.$emit(`success`);
+            this.dialog = false;
 
-            if (this.reservation.booking_status == 2) {
-              this.$router.push("/reservation/in_house");
-              return "";
-            }
-            this.$router.push("/");
+            // this.store_document(data.data);
+            // this.alert("Success!", "Successfully room added", "success");
+
+            // if (this.reservation.booking_status == 2) {
+            //   this.$router.push("/reservation/in_house");
+            //   return "";
+            // }
+            // this.$router.push("/");
           }
         })
         .catch((e) => console.log(e));

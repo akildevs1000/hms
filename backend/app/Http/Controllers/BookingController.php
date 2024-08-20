@@ -30,12 +30,18 @@ use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
+    public function verifyBooking(Request $request)
+    {
+        return Booking::where([
+            "id" => $request->booking_id ?? 0,
+            "customer_id" => $request->customer_id ?? 0,
+        ])->update(["verified" => Booking::VERIFICATION_COMPLETED]);
+    }
 
     public function updatePicAndSign()
     {
         try {
-
-            $customer_id =  Booking::orderByDesc("id")->value("customer_id");
+            $customer_id =  Booking::where("verified", Booking::VERIFICATION_REQUIRED)->orderByDesc("id")->value("customer_id");
 
             $customer = [];
 
@@ -2325,7 +2331,7 @@ class BookingController extends Controller
         $data['remaining_price'] = (float) $request->total_price - (float) $request->advance_price;
         $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
         $data['reservation_no'] = $this->getReservationNumber($data);
-
+        $data['verified'] = Booking::VERIFICATION_REQUIRED;
 
         if ($request->filled('api_json_reference_number')) {
             $data['widget_confirmation_number'] = $request->api_json_reference_number;

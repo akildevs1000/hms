@@ -159,6 +159,23 @@
         </div>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col md="4" class="text-left">
+        <div>
+          <label for="name" class="label-txt">Sign:</label>
+        </div>
+        <v-avatar tile size="200">
+          <v-img
+            v-if="data?.customer?.sign == 'https://hms-backend.test/sign/1'"
+            :src="`https://backend.myhotel2cloud.com/sign/sign-1724149220.png`"
+          ></v-img>
+          <v-img
+            v-else
+            :src="data?.customer?.sign"
+          ></v-img>
+        </v-avatar>
+      </v-col>
+    </v-row>
     <v-divider class="my-2"></v-divider>
     <div class="d-flex justify-center mt-4">
       <v-btn
@@ -264,7 +281,7 @@ export default {
   },
 };
 </script>
-
+<!-- 
 <style scoped>
 .text-box {
   border: 1px solid rgb(215, 211, 211);
@@ -278,4 +295,4 @@ export default {
 .text-box p {
   margin: 5px;
 }
-</style>
+</style> -->
