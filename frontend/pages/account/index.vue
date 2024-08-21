@@ -1,12 +1,186 @@
 <template>
   <div v-if="can('management_income_access') && can('management_income_view')">
     <v-row dense>
-      <v-col cols="12" md="4">
+      <v-col cols="3">
+        <v-card class="elevation-2" style="height: 250px">
+          <v-card-text>
+            <v-row style="margin-top: -12px"
+              ><v-col cols="8" style="color: black; font-size: 12px"
+                >Income
+              </v-col>
+
+              <v-col cols="4" class="text-right align-right"
+                ><img
+                  @click="CheckOutReportDialog = true"
+                  src="/dashboard-arrow.png"
+                  style="width: 18px; padding-top: 5px"
+              /></v-col>
+            </v-row>
+            <v-divider color="#DDD" style="margin-bottom: 10px" />
+            <Donut
+              v-if="income"
+              :width="'200px'"
+              showPriceFormat="true"
+              name="margin"
+              size="100%"
+              :total="'100'"
+              :colors="colors"
+              :labels="[
+                { color: `#4caf50`, text: `Cash`, value: income.Cash },
+                { color: `#538234`, text: `Card`, value: income.Card },
+                { color: `#0f642b`, text: `Online`, value: income.Online },
+                { color: `#010002`, text: `Bank`, value: income.Bank },
+                { color: `#010002`, text: `UPI`, value: income.UPI },
+                { color: `#010002`, text: `Cheque`, value: income.Cheque },
+                {
+                  color: `#010002`,
+                  text: `CityLedger`,
+                  value: income.CityLedger,
+                },
+              ]"
+            />
+            <div v-else>Loading...</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="3">
+        <v-card class="elevation-2" style="height: 250px">
+          <v-card-text>
+            <v-row style="margin-top: -12px"
+              ><v-col cols="8" style="color: black; font-size: 12px"
+                >Expenses
+              </v-col>
+
+              <v-col cols="4" class="text-right align-right"
+                ><img
+                  @click="CheckOutReportDialog = true"
+                  src="/dashboard-arrow.png"
+                  style="width: 18px; padding-top: 5px"
+              /></v-col>
+            </v-row>
+            <v-divider color="#DDD" style="margin-bottom: 10px" />
+            <Donut
+              v-if="expense"
+              :width="'200px'"
+              showPriceFormat="true"
+              name="margin"
+              size="100%"
+              :total="'100'"
+              :colors="colors"
+              :labels="[
+                { color: `#4caf50`, text: `Cash`, value: expense.Cash },
+                { color: `#538234`, text: `Card`, value: expense.Card },
+                { color: `#0f642b`, text: `Online`, value: expense.Online },
+                { color: `#010002`, text: `Bank`, value: expense.Bank },
+                { color: `#010002`, text: `UPI`, value: expense.UPI },
+                { color: `#010002`, text: `Cheque`, value: expense.Cheque },
+              ]"
+            />
+            <div v-else>Loading...</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="3">
+        <v-card class="elevation-2" style="height: 250px">
+          <v-card-text>
+            <v-row style="margin-top: -12px"
+              ><v-col cols="8" style="color: black; font-size: 12px"
+                >Management Expenses
+              </v-col>
+
+              <v-col cols="4" class="text-right align-right"
+                ><img
+                  @click="CheckOutReportDialog = true"
+                  src="/dashboard-arrow.png"
+                  style="width: 18px; padding-top: 5px"
+              /></v-col>
+            </v-row>
+            <v-divider color="#DDD" style="margin-bottom: 10px" />
+            <Donut
+              v-if="managementExpense"
+              :width="'200px'"
+              showPriceFormat="true"
+              name="margin"
+              size="100%"
+              :total="'100'"
+              :colors="colors"
+              :labels="[
+                {
+                  color: `#4caf50`,
+                  text: `Cash`,
+                  value: managementExpense.Cash,
+                },
+                {
+                  color: `#538234`,
+                  text: `Card`,
+                  value: managementExpense.Card,
+                },
+                {
+                  color: `#0f642b`,
+                  text: `Online`,
+                  value: managementExpense.Online,
+                },
+                {
+                  color: `#010002`,
+                  text: `Bank`,
+                  value: managementExpense.Bank,
+                },
+                { color: `#010002`, text: `UPI`, value: managementExpense.UPI },
+                {
+                  color: `#010002`,
+                  text: `Cheque`,
+                  value: managementExpense.Cheque,
+                },
+              ]"
+            />
+            <div v-else>Loading...</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="3">
+        <v-card class="elevation-2" style="height: 250px">
+          <v-card-text>
+            <v-row style="margin-top: -12px"
+              ><v-col cols="8" style="color: black; font-size: 12px"
+                >Proffit and Loss
+              </v-col>
+
+              <v-col cols="4" class="text-right align-right"
+                ><img
+                  @click="CheckOutReportDialog = true"
+                  src="/dashboard-arrow.png"
+                  style="width: 18px; padding-top: 5px"
+              /></v-col>
+            </v-row>
+            <v-divider color="#DDD" style="margin-bottom: 10px" />
+            <Donut
+              v-if="income"
+              :width="'200px'"
+              showPriceFormat="true"
+              name="margin"
+              size="100%"
+              :total="'100'"
+              :colors="colors"
+              :labels="[
+                { color: `#4caf50`, text: `Profit`, value: profit },
+                { color: `#538234`, text: `Loss`, value: loss },
+                {
+                  color: `#0f642b`,
+                  text: `City Ledger`,
+                  value: income.CityLedger,
+                },
+              ]"
+            />
+            <div v-else>Loading...</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <!-- <v-col cols="12" md="4">
         <v-card style="border-radius: 12px" class="green" dark>
           <v-card-title class="white-text"
-            >Income
-            <br />
-            {{ getPriceFormat(income.total) }}
+            >Income <br />
+
+            {{ getPriceFormat(income?.total || 0) }}
           </v-card-title>
         </v-card>
       </v-col>
@@ -15,7 +189,7 @@
         <v-card style="border-radius: 12px" class="orange" dark>
           <v-card-title
             >Expense <br />
-            {{ getPriceFormat(expense.total) }}
+            {{ getPriceFormat(expense?.total || 0) }}
           </v-card-title>
         </v-card>
       </v-col>
@@ -24,7 +198,7 @@
         <v-card style="border-radius: 12px" class="pink" dark>
           <v-card-title
             >Management Expense <br />
-            {{ getPriceFormat(managementExpense.total) }}</v-card-title
+            {{ getPriceFormat(managementExpense?.total || 0) }}</v-card-title
           >
         </v-card>
       </v-col>
@@ -51,32 +225,30 @@
         <v-card style="border-radius: 12px" class="primary" dark>
           <v-card-title
             >City Ledger <br />
-            {{ getPriceFormat(income.CityLedger) }}</v-card-title
+            {{ getPriceFormat(income?.CityLedger || 0) }}</v-card-title
           >
         </v-card>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <v-row>
       <v-col cols="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-tabs
-            v-model="activeTab"
-            background-color="primary"
-            dark
-            show-arrows
-          >
-            <v-spacer></v-spacer>
-            <v-tab active-class="active-link"> Income List </v-tab>
-            <v-tab active-class="active-link"> Expense List </v-tab>
+        <v-card
+          class="mb-5 rounded-md mt-0"
+          elevation="3"
+          style="min-height: 400px"
+        >
+          <v-tabs hide-slider right v-model="activeTab" color="#0d652d">
+            <v-tab style="font-weight: bold"> Income List </v-tab>
+            <v-tab style="font-weight: bold"> Expense List </v-tab>
             <v-tab
-              active-class="active-link"
+              style="font-weight: bold"
               v-if="can('management_income_view')"
             >
-              Management Expense List
+              Management Expenses
             </v-tab>
 
-            <v-tabs-slider color="#1259a7"></v-tabs-slider>
+            <!-- <v-tabs-slider color="#1259a7"></v-tabs-slider> -->
 
             <v-tab-item>
               <Income @stats="(e) => (income = e)" />
@@ -102,57 +274,80 @@
 <script>
 export default {
   data: () => ({
+    colors: [
+      "#92d050",
+      "#ff0000",
+      "#ffc000",
+      "#0D652D",
+      "#174EA6",
+      "#2E3945",
+      "#2ECC71",
+      "#CE0E2D",
+      "#0077B5",
+    ],
     Model: "Expense",
-    income: {
-      Cash: 0,
-      Card: 0,
-      Online: 0,
-      Bank: 0,
-      UPI: 0,
-      Cheque: 0,
-      CityLedger: 0,
-      total: 0,
-    },
-    expense: {
-      Cash: 0,
-      Card: 0,
-      Online: 0,
-      Bank: 0,
-      UPI: 0,
-      Cheque: 0,
-      total: 0,
-    },
-    managementExpense: {
-      Cash: 0,
-      Card: 0,
-      Online: 0,
-      Bank: 0,
-      UPI: 0,
-      Cheque: 0,
-      total: 0,
-    },
+    activeTab: 0,
+    income: null,
+    expense: null,
+    managementExpense: null,
 
     loading: false,
   }),
   created() {
     this.loading = true;
     // this.setCount();
+    // setTimeout(() => {
+    if (this.income) this.activeTab = 1;
+    else
+      setTimeout(() => {
+        this.activeTab = 0;
+      }, 1000);
+    // }, 1000);
+    // setTimeout(() => {
+    if (this.expense) this.activeTab = 2;
+    else
+      setTimeout(() => {
+        this.activeTab = 0;
+      }, 2000);
+    // }, 2000);
+    // setTimeout(() => {
+    if (this.managementExpense) this.activeTab = 0;
+    else
+      setTimeout(() => {
+        this.activeTab = 0;
+      }, 1000);
+    // }, 3000);
+  },
+  watch: {
+    income() {
+      if (this.income) this.activeTab = 1;
+    },
+    expense() {
+      if (this.expense) this.activeTab = 2;
+    },
+    managementExpense() {
+      if (this.managementExpense) this.activeTab = 0;
+    },
   },
   computed: {
     loss() {
-      let combinedExpense = this.expense.total + this.managementExpense.total;
+      if (this.income && this.expense && this.managementExpense) {
+        let combinedExpense = this.expense.total + this.managementExpense.total;
 
-      let result = this.income.total - combinedExpense;
+        let result = this.income.total - combinedExpense;
 
-      return result > 0 ? 0 : result ;
+        return result > 0 ? 0 : result;
+      } else return 0;
     },
 
     profit() {
-      let combinedExpense = this.expense.total + this.managementExpense.total;
+      if (this.income && this.expense && this.managementExpense) {
+        let combinedExpense = this.expense.total + this.managementExpense.total;
 
-      let result = this.income.total - combinedExpense;
+        let result = this.income.total - combinedExpense;
 
-      return result < 0 ? 0 : result ;
+        return result < 0 ? 0 : result;
+      } else return 0;
     },
   },
   methods: {

@@ -1621,4 +1621,8 @@ export default {
   border-radius: 2px !important;
   margin-left: -2px !important;
 } */
+
+.fc-event-main {
+  /* max-height: 25px; */
+}
 </style>
