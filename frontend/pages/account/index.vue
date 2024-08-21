@@ -2,7 +2,7 @@
   <div v-if="can('management_income_access') && can('management_income_view')">
     <v-row dense>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 250px">
+        <v-card class="elevation-2" style="height: 230px">
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -45,7 +45,7 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 250px">
+        <v-card class="elevation-2" style="height: 230px">
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -83,7 +83,7 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 250px">
+        <v-card class="elevation-2" style="height: 230px">
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -141,7 +141,7 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 250px">
+        <v-card class="elevation-2" style="height: 230px">
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -236,7 +236,7 @@
     </v-row>
 
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" class="pt-0">
         <v-card
           class="mb-5 rounded-md mt-0"
           elevation="3"
