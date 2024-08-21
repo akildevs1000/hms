@@ -412,19 +412,7 @@
 
       <!-- New Booking room  -->
       <v-dialog v-model="NewBooking" persistent width="90%">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="closeNewCheckin"
-              >mdi mdi-close-box
-            </v-icon>
-          </v-toolbar>
-          <v-card-text v-if="NewBooking">
-            <new-check-in :reservation="newBookingRoom" />
-          </v-card-text>
-          <v-card-actions> </v-card-actions>
-        </v-card>
+        <BookingDirectCheckIn v-if="NewBooking" @close-dialog="NewBooking = false" :reservation="newBookingRoom" />
       </v-dialog>
     </div>
     <!--end dialogs -->
@@ -514,7 +502,7 @@
               v-if="newBookingRoom.status == 0"
               @click="NewBooking = true"
             >
-              <v-list-item-title>CheckIn</v-list-item-title>
+              <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
             <v-list-item
               link
