@@ -251,7 +251,7 @@ export default {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
-        return n + ".00";
+        return n + ".00".replace(".00.00", ".00");
       }
     },
     goToRevView(item) {

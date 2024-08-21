@@ -154,7 +154,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
-              v-if="profit && managementExpense"
+              v-if="income"
               :width="'200px'"
               showPriceFormat="true"
               name="margin"
@@ -298,12 +298,24 @@ export default {
     // this.setCount();
     // setTimeout(() => {
     if (this.income) this.activeTab = 1;
+    else
+      setTimeout(() => {
+        this.activeTab = 0;
+      }, 1000);
     // }, 1000);
     // setTimeout(() => {
     if (this.expense) this.activeTab = 2;
+    else
+      setTimeout(() => {
+        this.activeTab = 0;
+      }, 2000);
     // }, 2000);
     // setTimeout(() => {
     if (this.managementExpense) this.activeTab = 0;
+    else
+      setTimeout(() => {
+        this.activeTab = 0;
+      }, 1000);
     // }, 3000);
   },
   watch: {
@@ -325,7 +337,7 @@ export default {
         let result = this.income.total - combinedExpense;
 
         return result > 0 ? 0 : result;
-      }
+      } else return 0;
     },
 
     profit() {
@@ -335,7 +347,7 @@ export default {
         let result = this.income.total - combinedExpense;
 
         return result < 0 ? 0 : result;
-      }
+      } else return 0;
     },
   },
   methods: {
