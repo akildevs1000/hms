@@ -488,12 +488,14 @@ class BookingController extends Controller
                     $orderRooms['room_discount'] = $singleDayDiscount;
                     $orderRooms['after_discount'] = $list['price'] - $orderRooms['room_discount'] + $singleDayExtraAmount;
 
-                    $orderRooms['price'] = $singleDayPrice;
+                    $price = $orderRooms['after_discount'];
 
-                    $orderRooms['total_with_tax'] = $orderRooms['after_discount'];
+                    $orderRooms['total'] = $price + $bookedRoomId->food_plan_price;
+                    $orderRooms['grand_total'] = $price + $bookedRoomId->food_plan_price;
 
-                    $orderRooms['total'] = $orderRooms['total_with_tax'];
-                    $orderRooms['grand_total'] = $orderRooms['total_with_tax'];
+                    $orderRooms['total_with_tax'] = $price;
+
+                    $orderRooms['price'] =  $price;
 
                     $orderRooms['days'] = 1;
                     $orderRooms['room_tax'] = $list['tax'];
@@ -1729,9 +1731,7 @@ class BookingController extends Controller
         $booking_remaining_price = $request->booking_remaining_price;
         $booking_total_price = $request->booking_total_price;
 
-
-        OrderRoom::where('booking_id', $booking_id)->delete();
-
+        OrderRoom::where('booking_id', $booking_id)->where("booked_room_id", $id)->delete();
 
         $arr = [];
 
@@ -1740,7 +1740,7 @@ class BookingController extends Controller
 
             $arr[] = [
 
-                'booked_room_id' => $room_id,
+                'booked_room_id' => $id,
                 'company_id' => $company_id,
                 'booking_id' => $booking_id,
                 'date' => $room_order['date'],
@@ -1793,7 +1793,7 @@ class BookingController extends Controller
         unset($arr[0]["date"]);
         unset($arr[0]["price_adjusted_after_dsicount"]);
 
-        BookedRoom::where('booking_id', $booking_id)->update($arr[0]);
+        BookedRoom::where('id', $id)->update($arr[0]);
 
 
         Booking::where("id", $booking_id)

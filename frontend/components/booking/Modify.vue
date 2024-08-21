@@ -292,6 +292,8 @@ export default {
         food_plan_price: 0,
         room_price: 0,
         booking_total_price: 0,
+        room_id: 0,
+        room_type_id: 0,
       },
       payload: {
         booking_remaining_price: 0,
@@ -460,7 +462,6 @@ export default {
           room_no: found.room_no,
           checkin: this.payload.check_in,
           checkout: this.payload.check_out,
-
           BookedRoomId: this.BookedRoomId,
         },
       };
@@ -480,8 +481,6 @@ export default {
           let new_room_price_single_day = data.total_price / total_days;
           let room_price_with_meal = unit_price + new_room_price_single_day;
 
-          // return;
-
           this.payload = {
             ...this.payload,
             food_plan_price: unit_price,
@@ -494,13 +493,26 @@ export default {
             total_tax: data.total_tax,
             room_tax: data.total_tax / total_days,
             booking_total_price:
-            this.payload.bed_amount + data.total_price + food_plan_price_for_all_days,
+              this.payload.bed_amount +
+              data.total_price +
+              food_plan_price_for_all_days,
 
             booking_remaining_price:
               this.payload.booking_remaining_price - this.payload.advance_price,
             remaining_price: room_price_with_meal - this.payload.advance_price,
             total_discount: data.total_discount,
           };
+
+          if (this.bookingResponse.booking.group_name) {
+            if (
+              this.old.booking_total_price !== this.payload.booking_total_price
+            ) {
+              let roomPrice = this.old.food_plan_price + this.old.room_price;
+              let restOfPrices = this.old.booking_total_price - roomPrice;
+              this.payload.booking_total_price =
+                this.payload.booking_total_price + restOfPrices;
+            }
+          }
         });
     },
 
@@ -527,6 +539,8 @@ export default {
           extra_bed_qty: data.extra_bed_qty,
           bed_amount: data.bed_amount,
           booking_total_price: data.booking.total_price,
+          room_id: data.room_id,
+          room_type_id: data.room_type_id,
         };
 
         // this.early_check_in = data.early_check_in;
@@ -586,6 +600,7 @@ export default {
       return date.toISOString().split("T")[0];
     },
     submit() {
+
       if (!this.room_orders.length) {
         this.alert("Warning!", "No changes detected", "error");
         return;
