@@ -769,7 +769,7 @@ export default {
     this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
       this.calenderColorCodes = data;
     });
-    console.log(this.calenderColorCodes);
+    // console.log(this.calenderColorCodes);
     this.currentDate;
     this.currentDateForNow;
   },
@@ -874,7 +874,7 @@ export default {
 
       let date = `${year}-${month}-0${1}`;
       this.calendarOptions.now = date;
-      console.log(date);
+      // console.log(date);
       // now: "2022-11-01",
       return date;
 
@@ -941,10 +941,10 @@ export default {
     handleDatesRender(info) {
       let start = info.view.activeStart;
       let end = info.view.activeEnd;
-      console.log(start);
-      console.log(
-        `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`
-      );
+      // console.log(start);
+      // console.log(
+      //   `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`
+      // );
     },
     can(per) {
       let u = this.$auth.user;
@@ -1014,6 +1014,7 @@ export default {
             title: e.title,
             bookingStatus: e.booking_status,
             calenderColorCodes: this.calenderColorCodes,
+            groupName: e.booking.group_name,
           })),
           // eventContent: function (info) {
           //   console.log(info);
@@ -1028,6 +1029,12 @@ export default {
             //console.log(eventInfo.event.extendedProps.source);
             let sourceColor = "#4285F4";
             let titlDisplay = eventInfo.event.extendedProps.type;
+            let groupName = eventInfo.event.extendedProps.groupName
+              ? eventInfo.event.extendedProps.groupName
+              : "";
+            let groupNameIcon = eventInfo.event.extendedProps.groupName
+              ? "<span style='color:black'   class='mdi mdi-account-group  '></span> "
+              : "";
             let calenderColorCodes =
               eventInfo.event.extendedProps.calenderColorCodes;
             if (calenderColorCodes) {
@@ -1062,26 +1069,13 @@ export default {
                 //sourceColor = "#00A699";
               }
             }
-            // if (eventInfo.event.extendedProps.bookingStatus == 0) {
-            //   titlDisplay += " Available";
-            // }
-            // if (eventInfo.event.extendedProps.bookingStatus == 1) {
-            //   titlDisplay += " Booking";
-            // }
-            // if (eventInfo.event.extendedProps.bookingStatus == 2) {
-            //   titlDisplay += " Checked In";
-            // }
-            // if (eventInfo.event.extendedProps.bookingStatus == 3) {
-            //   titlDisplay += " Checked Out";
-            // }
-            // if (eventInfo.event.extendedProps.bookingStatus == 4) {
-            //   titlDisplay += " Dirty";
-            // }
-            //console.log(eventInfo.event.extendedProps.source, sourceColor);
+
             return {
               html:
                 "<span title='" +
                 titlDisplay +
+                "-" +
+                groupName +
                 "' class='eventBorderboxSource " +
                 eventInfo.event.extendedProps.source +
                 "' style=' color:" +
@@ -1090,7 +1084,11 @@ export default {
                 sourceColor +
                 " !important;padding-top: 5px !important;padding-bottom:6px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span title='" +
                 titlDisplay +
-                "' > " +
+                "-" +
+                groupName +
+                "' >  " +
+                groupNameIcon +
+                "" +
                 eventInfo.event.title +
                 "</span>",
             };
@@ -1205,7 +1203,6 @@ export default {
       return date.toISOString().split("T")[0];
     },
     get_room_types(e, obj) {
-      console.log(obj.room_type);
       this.reservation.isCalculate = true;
       this.reservation.room_id = this.RoomList.find(
         (e) => e.room_no == obj.room_no
@@ -1579,8 +1576,10 @@ export default {
 }
 
 .fc-timeline-event-harness {
-  margin-left: -6px;
-  margin-right: -28px;
+  /* margin-left: -6px;
+  margin-right: -28px; */
+  margin-left: -25px;
+  margin-right: -40px;
 }
 
 .Hall {
