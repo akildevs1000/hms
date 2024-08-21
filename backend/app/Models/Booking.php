@@ -63,12 +63,12 @@ class Booking extends Model
 
     public function getCheckInDateAttribute()
     {
-        return date('Y-m-d H:i', strtotime($this->check_in));
+        return date('Y-m-d 12:00', strtotime($this->check_in));
     }
 
     public function getCheckOutDateAttribute()
     {
-        return date('Y-m-d H:i', strtotime($this->check_out));
+        return date('Y-m-d 11:00', strtotime($this->check_out));
     }
 
     public function GetTitleAttribute()
