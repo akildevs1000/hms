@@ -429,7 +429,7 @@
               <v-col cols="2" class="text-right">
                 <v-text-field
                   outlined
-                  class="global-search-textbox-calender"
+                  class="global-search-textbox"
                   hide-details
                   dense
                   append-icon="mdi-magnify"

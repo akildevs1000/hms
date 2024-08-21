@@ -1054,15 +1054,15 @@ input[type="number"] {
 .global-search-textbox-calender .v-text-field__slot {
   height: 30px !important;
 }
-.global-search-textbox-calender
+/* .global-search-textbox-calender
   .v-text-field--outlined.v-input--dense
   .v-label {
   top: 4px !important;
-}
+} */
 .global-search-textbox-calender
   .v-text-field--outlined.v-input--dense
   .v-label {
-  top: 4px !important;
+  top: 0px !important;
 }
 /* .global-search-textbox-calender .v-label {
   line-height: 12px !important;
