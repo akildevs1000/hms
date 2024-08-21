@@ -162,7 +162,6 @@ export default {
     totalIncomes: {},
   }),
   created() {
-    this.loading = true;
     this.getExpenseData();
   },
   computed: {},
@@ -228,6 +227,7 @@ export default {
       element.click();
     },
     getExpenseData() {
+      if (this.loading) return false;
       this.loading = true;
       let options = {
         params: {

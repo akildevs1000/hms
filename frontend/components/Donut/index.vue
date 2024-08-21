@@ -117,6 +117,10 @@ export default {
                 color: "#373d3f",
                 formatter: function (val) {
                   return val.config.customTotalValue;
+                  // console.log(showPriceFormat);
+                  // if (showPriceFormat) {
+                  //   return getPriceFormat(val.config.customTotalValue);
+                  // } else return val.config.customTotalValue;
                 },
               },
             },

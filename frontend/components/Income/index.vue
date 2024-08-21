@@ -207,7 +207,6 @@ export default {
     },
   }),
   created() {
-    this.loading = true;
     this.getIncomeData();
   },
   computed: {},
@@ -273,6 +272,7 @@ export default {
       element.click();
     },
     getIncomeData() {
+      if (this.loading) return false;
       this.loading = true;
       let options = {
         params: {
