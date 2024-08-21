@@ -1030,7 +1030,7 @@ export default {
             let sourceColor = "#4285F4";
             let titlDisplay = eventInfo.event.extendedProps.type;
             let groupName = eventInfo.event.extendedProps.groupName
-              ? eventInfo.event.extendedProps.groupName
+              ? "-" + eventInfo.event.extendedProps.groupName
               : "";
             let groupNameIcon = eventInfo.event.extendedProps.groupName
               ? "<span style='color:black'   class='mdi mdi-account-group  '></span> "
@@ -1084,7 +1084,7 @@ export default {
                 sourceColor +
                 " !important;padding-top: 5px !important;padding-bottom:6px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span title='" +
                 titlDisplay +
-                "-" +
+                " " +
                 groupName +
                 "' >  " +
                 groupNameIcon +
