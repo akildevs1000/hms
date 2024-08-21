@@ -2,25 +2,16 @@
   <div v-if="can('calendar_create')">
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <div style="text-align: center">
-          <v-btn
-            dense
-            x-small
-            v-bind="attrs"
-            v-on="on"
-            class="text-center"
-            title="Individual"
-            color="#34444c"
-            style="width: 37px; height: 26px"
-          >
-            <v-icon color="white">mdi-account</v-icon>
-            <span>Individual</span>
-          </v-btn>
+        <div v-bind="attrs" v-on="on" style="text-align: center">
+          <span>Individual</span>
         </div>
       </template>
       <v-card>
+        <pre>
+          {{ reservation }}
+        </pre>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Individual Booking Information</span>
+          <span>Check In</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="dialog = false">
             mdi mdi-close-box
@@ -1699,13 +1690,15 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["onlyButton"],
+  props: ["onlyButton", "reservation"],
   components: {
     History,
     ImagePreview,
   },
   data() {
     return {
+      check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+      check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
       additional_charges: {},
       is_early_check_in: false,
       is_late_check_out: false,
@@ -1901,21 +1894,7 @@ export default {
         purpose: "Tour",
         // priceList: [],
       },
-      reservation: {
-        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
-        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        room_no: "",
-        room_id: 82,
-        room_type: "",
-        price: 0,
-        origin_price: "",
-        isCalculate: true,
-        priceList: [],
-        total_tax: 0,
-        total_price_after_discount: 0,
-        total_price: 0,
-        total_discount: 0,
-      },
+
       countryList: [],
       foodPriceList: [],
       person_type_arr: [],
@@ -2190,16 +2169,31 @@ export default {
     },
 
     get_reservation() {
-      this.temp.room_id = this.reservation.room_id;
+      // reservation: {
+
+      //   room_no: "",
+      //   room_id: 82,
+      //   room_type: "",
+      //   price: 0,
+      //   origin_price: "",
+      //   isCalculate: true,
+      //   priceList: [],
+      //   total_tax: 0,
+      //   total_price_after_discount: 0,
+      //   total_price: 0,
+      //   total_discount: 0,
+
+      this.room_type_id = this.reservation.room_type_id
+      this.temp.check_in = this.check_in;
+      this.temp.check_out = this.check_out;
+      this.room.check_in = this.check_in;
+      this.room.check_out = this.check_out;
+      this.temp.room_id = this.reservation.id;
       this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type;
-      this.temp.price = this.reservation.price;
-      this.temp.check_in = this.reservation.check_in;
-      this.temp.check_out = this.reservation.check_out;
-      this.temp.room_tax = this.reservation.total_tax;
-      this.room.check_in = this.reservation.check_in;
-      this.room.check_out = this.reservation.check_out;
-      this.temp.priceList = this.reservation.priceList;
+      this.temp.room_type = this.reservation.room_type.name;
+      this.temp.price = 0;
+      this.temp.room_tax = 0;
+      this.temp.priceList = [];
       this.get_cs_gst(this.temp.room_tax);
     },
 

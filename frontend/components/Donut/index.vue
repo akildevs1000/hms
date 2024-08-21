@@ -1,10 +1,10 @@
 <template>
   <v-row v-if="labels.length">
-    <v-col cols="6" style="padding-left: 0px">
+    <v-col cols="5" style="padding-left: 0px">
       <apexchart
         :key="key"
         style="margin: 0 auto; text-align: left; margin-left: -35px"
-        width="170px"
+        :width="width ?? '170px'"
         type="donut"
         legend="false"
         :options="chartOptions"
@@ -12,17 +12,25 @@
       ></apexchart
     ></v-col>
     <v-col
-      cols="6"
+      cols="7"
       style="padding-left: 0px; margin: auto; font-size: 11px"
       class="pt-0"
     >
       <div v-for="(item, index) in labels" :key="index">
         <v-row>
-          <v-col cols="9"
+          <v-col cols="8"
             ><v-icon :color="colors[index]">mdi mdi-square-medium</v-icon
             >{{ item.text }}</v-col
-          ><v-col cols="3" style="padding-left: 0px">
-            {{ item.value == 0 ? 0 : parseInt(item.value) }}
+          ><v-col cols="4" style="padding-left: 0px">
+            <div
+              style="text-align: right"
+              v-if="showPriceFormat && showPriceFormat == 'true'"
+            >
+              {{ getPriceFormat(item.value) }}
+            </div>
+            <div v-else>
+              {{ item.value == 0 ? 0 : parseInt(item.value) }}
+            </div>
           </v-col>
         </v-row>
 
@@ -61,7 +69,15 @@
 
 <script>
 export default {
-  props: ["compId", "labels", "colors", "size", "total"],
+  props: [
+    "compId",
+    "labels",
+    "colors",
+    "size",
+    "total",
+    "width",
+    "showPriceFormat",
+  ],
 
   data: () => ({
     key: 1,
@@ -101,6 +117,10 @@ export default {
                 color: "#373d3f",
                 formatter: function (val) {
                   return val.config.customTotalValue;
+                  // console.log(showPriceFormat);
+                  // if (showPriceFormat) {
+                  //   return getPriceFormat(val.config.customTotalValue);
+                  // } else return val.config.customTotalValue;
                 },
               },
             },
@@ -120,12 +140,15 @@ export default {
     this.chartOptions.labels = [];
     this.chartOptions.series = [];
     //this.series = [];
-    console.log(this.labels.length);
+    //console.log(this.labels.length);
+    let total = 0;
     this.labels.forEach((element) => {
+      if (element.text == "Profit") console.log(element.value);
       this.chartOptions.labels[counter] = element.text;
-      this.chartOptions.series[counter] = element.value;
+      this.chartOptions.series[counter] = Math.abs(element.value); //
       this.chartOptions.colors[counter] = this.colors[counter];
-      this.series[counter] = parseInt(element.value);
+      this.series[counter] = Math.abs(element.value); // (element.value + "").replace("-", "");
+      total = total + parseInt(element.value);
       counter++;
     });
     // this.chartOptions.labels[0] = "Low";
@@ -134,12 +157,26 @@ export default {
     // this.chartOptions.series[1] = data["2"]?.length ?? 0;
     // this.chartOptions.labels[2] = "High";
     // this.chartOptions.series[2] = data["3"]?.length ?? 0;
-    this.chartOptions.customTotalValue = this.total;
+    //this.chartOptions.customTotalValue = this.total;
+    this.chartOptions.customTotalValue = total;
+
     // } catch (e) {}
     this.key += 1;
 
     // console.log(this.series);
     //}, 1000 * 1);
+  },
+  methods: {
+    getPriceFormat(price) {
+      let currency = this.$auth.user.company.currency ?? "";
+      return (
+        currency +
+        "" +
+        parseFloat(price).toLocaleString("en-IN", {
+          maximumFractionDigits: 2,
+        })
+      );
+    },
   },
 };
 </script>

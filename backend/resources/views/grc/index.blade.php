@@ -474,7 +474,7 @@
             <img style="border:;height: 100px; width: 100px;"
                 src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
         @else
-            sdlfkjsdflk
+            <img style="border:;height: 100px; width: 100px;" src="{{ $booking->customer->sign }}" alt="">
         @endif
 
     </div>

@@ -49,6 +49,7 @@
    Route::get('grc_by_checkin/{id}', [GRCController::class, 'grcByCheckin']);
    Route::get('grc_report_print/{id}', [GRCController::class, 'grcPrint']);
    Route::get('grc_report_download/{id}', [GRCController::class, 'grcDownload']);
+   Route::get('download_customer_attachments/{id}', [GRCController::class, 'downloadCustomerAttachments']);
 
    Route::get('revenue_monthly_report_print', [ReportController::class, 'revenueMonthlyReportPrint']);
    Route::get('revenue_monthly_report_download', [ReportController::class, 'revenueMonthlyReportDownload']);

@@ -212,7 +212,8 @@
           </v-toolbar>
           <v-card-text>
             <v-container>
-              <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms>
+              <FoodOrderRooms :key="key" @close-dialog="closeDialogs">
+              </FoodOrderRooms>
             </v-container>
           </v-card-text>
         </v-card>
@@ -538,23 +539,23 @@
               :colors="colors"
               :labels="[
                 {
-                  color: `blue`,
+                  color: `#4caf50`,
                   text: `Vacant`,
                   value: 10,
                 },
                 {
-                  color: `green`,
+                  color: `#538234`,
                   text: `Sold`,
                   value: 15,
                 },
                 {
-                  color: `orange`,
+                  color: `#0f642b`,
                   text: `Day Use`,
                   value: 20,
                 },
 
                 {
-                  color: `purple`,
+                  color: `#010002`,
                   text: `Complim`,
                   value: 30,
                 },
@@ -606,7 +607,7 @@
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
-                >Checkout</v-col
+                >Checkedout</v-col
               >
 
               <v-col cols="4" class="text-right align-right"
@@ -682,7 +683,7 @@
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
-                >Food Order</v-col
+                >Food Order {{ key }}</v-col
               >
 
               <v-col cols="4" class="text-right align-right"
@@ -695,15 +696,14 @@
             <v-divider color="#DDD" style="margin-bottom: 10px" />
 
             <Donut
+              v-if="foodplan"
               name="foodplan"
               size="100%"
               :colors="colors"
               :total="
-                foodplan
-                  ? parseInt(foodplan.breakfast) +
-                    parseInt(foodplan.lunch) +
-                    parseInt(foodplan.dinner)
-                  : 0
+                parseInt(foodplan.breakfast) +
+                parseInt(foodplan.lunch) +
+                parseInt(foodplan.dinner)
               "
               :labels="[
                 {
@@ -830,7 +830,7 @@
                   <v-tab style="font-weight: bold">All</v-tab>
                   <v-tab style="font-weight: bold">Occupied</v-tab>
                   <v-tab style="font-weight: bold">Arrival</v-tab>
-                  <v-tab style="font-weight: bold">Checkout </v-tab>
+                  <v-tab style="font-weight: bold">Checkedout </v-tab>
                   <v-tab style="font-weight: bold">Blocked</v-tab>
                   <!-- <v-tab>Sold </v-tab> -->
                   <v-tab style="font-weight: bold">Available</v-tab>
@@ -858,7 +858,7 @@
                           ref="RoomComp"
                           name="occupied"
                           :searchQuery="searchQuery"
-                          :tabFilter="'checkIn'"
+                          :tabFilter="'occupied'"
                           :key="keyTabOccupied"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
@@ -888,6 +888,16 @@
                       <v-card-text>
                         <DashboardRoomsList
                           ref="RoomComp"
+                          name="checkedout"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'checkedout'"
+                          :key="keyTabdirty"
+                          :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
+                          @call_room_list="refreshRoomList"
+                        ></DashboardRoomsList>
+                        <!-- <DashboardRoomsList
+                          ref="RoomComp"
                           name="checkedOut"
                           :searchQuery="searchQuery"
                           :tabFilter="'checkedOut'"
@@ -896,7 +906,8 @@
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
-                      ></v-card-text>
+                      > -->
+                      </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
@@ -958,14 +969,14 @@
                       ></v-card-text>
                     </v-card>
                   </v-tab-item> -->
-                  <v-tab-item>
+                  <!-- <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
                           ref="RoomComp"
-                          name="dirty"
+                          name="checkedout"
                           :searchQuery="searchQuery"
-                          :tabFilter="'dirty'"
+                          :tabFilter="'checkedout'"
                           :key="keyTabdirty"
                           :calenderColorCodes="calenderColorCodes"
                           :data="rooms"
@@ -973,7 +984,7 @@
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
-                  </v-tab-item>
+                  </v-tab-item> -->
                 </v-tabs>
               </v-col>
             </v-row>
@@ -1292,6 +1303,10 @@ export default {
     this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
       this.calenderColorCodes = data;
     });
+
+    setTimeout(() => {
+      this.key += 1;
+    }, 1000);
   },
 
   methods: {

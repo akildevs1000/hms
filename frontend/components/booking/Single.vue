@@ -364,6 +364,7 @@
                     <th>Adults</th>
                     <th>Child</th>
                     <th>Meal</th>
+                    <th>Extra Bed</th>
                     <th class="text-right">Price</th>
                     <th class="text-right">Total</th>
                   </tr>
@@ -377,7 +378,10 @@
                     <td>{{ item.room_type || "---" }}</td>
                     <td>{{ item.no_of_adult }}</td>
                     <td>{{ item.no_of_child }}</td>
-                    <td>{{ item?.foodplan?.title || "---" }}</td>
+                    <td>{{item?.foodplan?.title + " ("+item?.foodplan?.unit_price+") " || "---"}}</td>
+                    <td class="text-right">
+                      {{ item.bed_amount || "---" }}
+                    </td>
                     <td class="text-right">
                       {{ item.price || "---" }}
                     </td>
