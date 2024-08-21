@@ -606,7 +606,7 @@
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
-                >Checkout</v-col
+                >Checkedout</v-col
               >
 
               <v-col cols="4" class="text-right align-right"
@@ -830,7 +830,7 @@
                   <v-tab style="font-weight: bold">All</v-tab>
                   <v-tab style="font-weight: bold">Occupied</v-tab>
                   <v-tab style="font-weight: bold">Arrival</v-tab>
-                  <v-tab style="font-weight: bold">Checkout </v-tab>
+                  <v-tab style="font-weight: bold">Checkedout </v-tab>
                   <v-tab style="font-weight: bold">Blocked</v-tab>
                   <!-- <v-tab>Sold </v-tab> -->
                   <v-tab style="font-weight: bold">Available</v-tab>
@@ -888,9 +888,9 @@
                       <v-card-text>
                         <DashboardRoomsList
                           ref="RoomComp"
-                          name="expected_checkout"
+                          name="checkedout"
                           :searchQuery="searchQuery"
-                          :tabFilter="'expected_checkout'"
+                          :tabFilter="'checkedout'"
                           :key="keyTabdirty"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
