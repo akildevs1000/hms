@@ -538,23 +538,23 @@
               :colors="colors"
               :labels="[
                 {
-                  color: `blue`,
+                  color: `#4caf50`,
                   text: `Vacant`,
                   value: 10,
                 },
                 {
-                  color: `green`,
+                  color: `#538234`,
                   text: `Sold`,
                   value: 15,
                 },
                 {
-                  color: `orange`,
+                  color: `#0f642b`,
                   text: `Day Use`,
                   value: 20,
                 },
 
                 {
-                  color: `purple`,
+                  color: `#010002`,
                   text: `Complim`,
                   value: 30,
                 },
@@ -858,7 +858,7 @@
                           ref="RoomComp"
                           name="occupied"
                           :searchQuery="searchQuery"
-                          :tabFilter="'checkIn'"
+                          :tabFilter="'occupied'"
                           :key="keyTabOccupied"
                           :data="rooms"
                           :calenderColorCodes="calenderColorCodes"
@@ -888,6 +888,16 @@
                       <v-card-text>
                         <DashboardRoomsList
                           ref="RoomComp"
+                          name="expected_checkout"
+                          :searchQuery="searchQuery"
+                          :tabFilter="'expected_checkout'"
+                          :key="keyTabdirty"
+                          :data="rooms"
+                          :calenderColorCodes="calenderColorCodes"
+                          @call_room_list="refreshRoomList"
+                        ></DashboardRoomsList>
+                        <!-- <DashboardRoomsList
+                          ref="RoomComp"
                           name="checkedOut"
                           :searchQuery="searchQuery"
                           :tabFilter="'checkedOut'"
@@ -896,7 +906,8 @@
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
-                      ></v-card-text>
+                      > -->
+                      </v-card-text>
                     </v-card>
                   </v-tab-item>
                   <v-tab-item>
@@ -958,14 +969,14 @@
                       ></v-card-text>
                     </v-card>
                   </v-tab-item> -->
-                  <v-tab-item>
+                  <!-- <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
                         <DashboardRoomsList
                           ref="RoomComp"
-                          name="dirty"
+                          name="checkedout"
                           :searchQuery="searchQuery"
-                          :tabFilter="'dirty'"
+                          :tabFilter="'checkedout'"
                           :key="keyTabdirty"
                           :calenderColorCodes="calenderColorCodes"
                           :data="rooms"
@@ -973,7 +984,7 @@
                         ></DashboardRoomsList
                       ></v-card-text>
                     </v-card>
-                  </v-tab-item>
+                  </v-tab-item> -->
                 </v-tabs>
               </v-col>
             </v-row>
