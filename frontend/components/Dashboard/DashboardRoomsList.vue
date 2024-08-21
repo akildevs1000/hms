@@ -431,6 +431,7 @@
 
     <div>
       <v-row class="flex" justify="center"> </v-row>
+
       <v-menu
         v-model="showMenu"
         :position-x="x"
@@ -546,7 +547,7 @@
       <div
         v-if="filteredRooms(Occupied).length == 0 && tabFilter == 'occupied'"
       >
-        Not Available
+        Occupied Rooms are Not Available
       </div>
 
       <div
@@ -605,22 +606,11 @@
           </v-card-text>
         </v-card>
       </div>
-      <!-- </v-row>
-    <v-row
-      v-if="tabFilter == 'expected_checkout' || tabFilter == 'All'"
-      no-gutters
-      class="mt-0"
-    >
-      <v-col cols="12">
-        <div>Expected Checkout({{ filteredRooms(expectCheckOut).length }})</div>
-      </v-col> -->
+
       <div
-        v-if="
-          filteredRooms(expectCheckOut).length == 0 &&
-          tabFilter == 'expected_checkout'
-        "
+        v-if="expectCheckOut.length == 0 && tabFilter == 'expected_checkout'"
       >
-        Not Available
+        Expected Checkout are Not Available
       </div>
       <div
         v-if="tabFilter == 'expected_checkout' || tabFilter == 'All'"
@@ -677,13 +667,13 @@
       <v-col cols="12">
         <div>Expected Arrival ({{ filteredRooms(expectCheckIn).length }})</div>
       </v-col> -->
-      <div
+      <!-- <div
         v-if="
           filteredRooms(expectCheckIn).length == 0 &&
           tabFilter == 'expected_arrival'
         "
       >
-        Not Available
+        Not Available1
       </div>
       <div
         v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
@@ -724,7 +714,7 @@
             </div>
           </v-card-text>
         </v-card>
-      </div>
+      </div> -->
       <!-- </v-row>
     <v-row
       v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
@@ -740,7 +730,7 @@
           tabFilter == 'expected_arrival'
         "
       >
-        Not Available
+        Arraival Rooms are not available
       </div>
       <div
         v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
@@ -765,13 +755,6 @@
             title="Expected Arrival"
           >
             <div class="text-center white--text boxheight">
-              <!-- <v-icon
-                v-if="isDeviceStatusActive(noAvailableRoom)"
-                dark
-                class="pa-0 room-inperson-status"
-              >
-                mdi mdi-bed
-              </v-icon> -->
               <v-icon
                 :color="
                   noAvailableRoom.device &&
@@ -847,10 +830,11 @@
           </v-card-text>
         </v-card>
       </div>
+
       <div
         v-if="filteredRooms(blockedRooms).length == 0 && tabFilter == 'blocked'"
       >
-        Not Available
+        Blocked rooms are Not Available
       </div>
       <div
         class="roombox1"
@@ -888,6 +872,48 @@
           </v-card-text>
         </v-card>
       </div>
+
+      <!-- <div v-if="dirtyRoomsList.length == 0 && tabFilter == 'checkedOut'">
+        CheckedOut Rooms are Not Available
+      </div>
+      <div
+        class="roombox1"
+        v-if="tabFilter == 'checkedout' || tabFilter == 'All'"
+        v-for="(checkedOutRoom, index) in filteredRooms(dirtyRoomsList)"
+      >
+        <v-card
+          :class="` darken-2 `"
+          dark
+          @contextmenu="makeNewBooking($event, checkedOutRoom)"
+          @mouseover="mouseOverForAvailable(checkedOutRoom)"
+          @touchstart="makeNewBookingForTouch($event, checkedOutRoom)"
+        >
+          <v-card-text
+            class="purple333 p-3 roombox"
+            :style="'padding: 0px;' + getColorCode('checked_out')"
+            title="Checked Out/Dirty"
+          >
+            <div class="text-center white--text boxheight">
+              <v-icon
+                :color="
+                  checkedOutRoom.device &&
+                  checkedOutRoom.device.latest_status == 1
+                    ? 'red'
+                    : ''
+                "
+              >
+                mdi mdi-bed
+              </v-icon>
+              <div>{{ checkedOutRoom?.room_no || "---" }}</div>
+              <div>
+                {{
+                  checkedOutRoom ? caps(checkedOutRoom.room_type.name) : "---"
+                }}
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </div> -->
       <!-- </v-row>
     <v-row
       v-if="tabFilter == 'blocked' || tabFilter == 'All'"
@@ -947,65 +973,7 @@
       <!-- <v-col cols="12">
         <div>Dirty ({{ filteredRooms(Occupied).length }})</div>
       </v-col> -->
-      <div v-if="filteredRooms(Occupied).length == 0 && tabFilter == 'dirty'">
-        Not Available
-      </div>
-      <div
-        v-if="tabFilter == 'All' || tabFilter == 'dirty'"
-        class="roombox1"
-        v-for="(occupied, index) in filteredRooms(Occupied)"
-      >
-        <v-card
-          @mouseenter="showMenu = false"
-          @mousedown="showMenu = false"
-          @mouseup="showMenu = false"
-          @contextmenu="show"
-          @touchstart="
-            touchstart(
-              $event,
-              occupied && occupied.booked_room && occupied.booked_room.id,
-              occupied &&
-                occupied.booked_room &&
-                occupied.booked_room.booking &&
-                occupied.booked_room.booking.booking_status
-            )
-          "
-          :elevation="0"
-          @mouseover="
-            mouseOver(
-              occupied && occupied.booked_room && occupied.booked_room.id,
-              occupied &&
-                occupied.booked_room &&
-                occupied.booked_room.booking &&
-                occupied.booked_room.booking.booking_status
-            )
-          "
-          @dblclick="dblclick"
-          :class="` darken-2`"
-          dark
-        >
-          <v-card-text
-            class="roombox p-3 roombox"
-            :style="'padding: 0px;' + getColorCode('dirty')"
-            title="Dirty"
-          >
-            <div class="text-center white--text boxheight">
-              <v-icon
-                :color="
-                  occupied.device && occupied.device.latest_status == 1
-                    ? 'red'
-                    : ''
-                "
-                >mdi-bed</v-icon
-              >
-              <div>{{ occupied?.room_no || "---" }}</div>
-              <div>
-                {{ room ? caps(occupied.room_type.name) : "---" }}
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </div>
+
       <!-- </v-row> -->
     </v-row>
   </div>
@@ -1278,7 +1246,7 @@ export default {
         status_id = 1;
       } else if (status == "occupied") {
         status_id = 2;
-      } else if (status == "dirty") {
+      } else if (status == "dirty" || status == "checked_out") {
         status_id = 3;
       } else if (status == "expected_arrival") {
         status_id = 4;
@@ -1485,6 +1453,7 @@ export default {
     },
 
     mouseOver(bookedRoomId, bookingStatus) {
+      console.log(bookingStatus);
       this.evenIid = bookedRoomId;
       this.bookingStatus = bookingStatus;
     },
@@ -1870,7 +1839,7 @@ export default {
       this.errors = [];
       this.loading = false;
       this.snackbar = true;
-      this.response = data.message;
+      if (data) this.response = data.message;
     },
 
     close() {
