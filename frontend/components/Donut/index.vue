@@ -143,10 +143,11 @@ export default {
     //console.log(this.labels.length);
     let total = 0;
     this.labels.forEach((element) => {
+      if (element.text == "Profit") console.log(element.value);
       this.chartOptions.labels[counter] = element.text;
-      this.chartOptions.series[counter] = element.value; //
+      this.chartOptions.series[counter] = Math.abs(element.value); //
       this.chartOptions.colors[counter] = this.colors[counter];
-      this.series[counter] = parseInt(element.value);
+      this.series[counter] = Math.abs(element.value); // (element.value + "").replace("-", "");
       total = total + parseInt(element.value);
       counter++;
     });
