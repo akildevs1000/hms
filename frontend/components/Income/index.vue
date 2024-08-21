@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mb-5 rounded-md mt-3" elevation="0">
+  <v-card class="mb-5 rounded-md mt-0" elevation="0">
     <!-- <v-toolbar
                     class="rounded-md"
                     color="background"
@@ -46,6 +46,7 @@
         <v-col cols="8"></v-col>
         <v-col cols="2">
           <v-text-field
+            class="global-search-textbox"
             label="Search..."
             clearable
             dense
@@ -56,7 +57,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="2" class="text-right">
-          <FilterDateRange @filter-attr="filterAttr" />
+          <FilterDateRange height="30" @filter-attr="filterAttr" />
         </v-col>
         <v-col>
           <table>
