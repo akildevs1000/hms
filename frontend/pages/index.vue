@@ -212,7 +212,8 @@
           </v-toolbar>
           <v-card-text>
             <v-container>
-              <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms>
+              <FoodOrderRooms :key="key" @close-dialog="closeDialogs">
+              </FoodOrderRooms>
             </v-container>
           </v-card-text>
         </v-card>
@@ -682,7 +683,7 @@
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
-                >Food Order</v-col
+                >Food Order {{ key }}</v-col
               >
 
               <v-col cols="4" class="text-right align-right"
@@ -695,15 +696,14 @@
             <v-divider color="#DDD" style="margin-bottom: 10px" />
 
             <Donut
+              v-if="foodplan"
               name="foodplan"
               size="100%"
               :colors="colors"
               :total="
-                foodplan
-                  ? parseInt(foodplan.breakfast) +
-                    parseInt(foodplan.lunch) +
-                    parseInt(foodplan.dinner)
-                  : 0
+                parseInt(foodplan.breakfast) +
+                parseInt(foodplan.lunch) +
+                parseInt(foodplan.dinner)
               "
               :labels="[
                 {
@@ -1303,6 +1303,10 @@ export default {
     this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
       this.calenderColorCodes = data;
     });
+
+    setTimeout(() => {
+      this.key += 1;
+    }, 1000);
   },
 
   methods: {

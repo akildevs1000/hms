@@ -18,6 +18,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
+              :key="key"
               v-if="income"
               :width="'200px'"
               showPriceFormat="true"
@@ -60,6 +61,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
+              :key="key"
               v-if="expense"
               :width="'200px'"
               showPriceFormat="true"
@@ -97,6 +99,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
+              :key="key"
               v-if="managementExpense"
               :width="'200px'"
               showPriceFormat="true"
@@ -154,6 +157,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
+              :key="key"
               v-if="income"
               :width="'200px'"
               showPriceFormat="true"
@@ -274,6 +278,7 @@
 <script>
 export default {
   data: () => ({
+    key: 1,
     colors: [
       "#92d050",
       "#ff0000",
@@ -327,6 +332,12 @@ export default {
     },
     managementExpense() {
       if (this.managementExpense) this.activeTab = 0;
+    },
+    loss() {
+      this.key += 1;
+    },
+    profit() {
+      this.key += 1;
     },
   },
   computed: {
