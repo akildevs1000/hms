@@ -607,7 +607,7 @@
         </v-card>
       </div>
 
-      <div
+      <!-- <div
         v-if="expectCheckOut.length == 0 && tabFilter == 'expected_checkout'"
       >
         Expected Checkout are Not Available
@@ -656,7 +656,7 @@
             </div>
           </v-card-text>
         </v-card>
-      </div>
+      </div> -->
       <!-- </v-row>
    
       <v-row
@@ -873,7 +873,7 @@
         </v-card>
       </div>
 
-      <!-- <div v-if="dirtyRoomsList.length == 0 && tabFilter == 'checkedOut'">
+      <div v-if="dirtyRoomsList.length == 0 && tabFilter == 'checkedout'">
         CheckedOut Rooms are Not Available
       </div>
       <div
@@ -913,7 +913,7 @@
             </div>
           </v-card-text>
         </v-card>
-      </div> -->
+      </div>
       <!-- </v-row>
     <v-row
       v-if="tabFilter == 'blocked' || tabFilter == 'All'"
