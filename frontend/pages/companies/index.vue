@@ -698,7 +698,7 @@
                 <v-card flat>
                   <v-card-text>
                     <v-avatar tile size="300">
-                      <v-img src="/qrcode.png"></v-img>
+                      <v-img :src="qrCodeImage"></v-img>
                     </v-avatar>
                   </v-card-text>
                 </v-card>
@@ -773,11 +773,28 @@ export default {
     data: {},
     response: "",
     snackbar: false,
+    qrCodeImage: null,
   }),
   async created() {
     this.getDataFromApi();
+    this.generateQRCode(
+      `https://verify.myhotel2cloud.com/` + this.$auth.user.company_id,
+      300
+    );
   },
   methods: {
+    async generateQRCode(url, width) {
+      console.log(url);
+
+      try {
+        this.qrCodeImage = await this.$qrcode.generate(url, {
+          width,
+        });
+        if (this.qrCodeImage) return this.qrCodeImage;
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    },
     update_currency() {
       this.$axios
         .post(`/company/${this.id}/update-currency`, {
