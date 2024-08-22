@@ -165,60 +165,16 @@
                     <v-row>
                       <v-col md="2" cols="12">
                         <v-img
-                          @click="onpick_attachment"
                           style="
                             width: 150px;
                             height: 150px;
                             margin: 0 auto;
                             border-radius: 50%;
                           "
-                          :src="showImage"
-                        ></v-img>
-                        <input
-                          required
-                          type="file"
-                          @change="attachment"
-                          style="display: none"
-                          accept="image/*"
-                          ref="attachment_input"
-                        />
-                        <span
-                          v-if="errors && errors.image"
-                          class="red--text mt-2"
-                        >
-                          {{ errors.image[0] }}</span
-                        >
-                        <div
-                          class="mt-2 ml-4"
-                          v-if="
-                            customer.document &&
-                            this.reservation.booking_status == 1
+                          :src="
+                            customer.captured_photo || '/no-profile-image.jpg'
                           "
-                        >
-                          <v-btn
-                            small
-                            dark
-                            class="primary pt-4 pb-4"
-                            @click="preview(customer.document)"
-                          >
-                            ID
-                            <v-icon right dark>mdi-file</v-icon>
-                          </v-btn>
-                        </div>
-                        <div
-                          class="mt-2 ml-2"
-                          v-if="this.reservation.booking_status == 2"
-                        >
-                          <v-btn
-                            small
-                            dark
-                            class="primary pt-4 pb-4"
-                            @click="documentDialog = true"
-                          >
-                            <small>ID</small>
-                            <v-icon right dark>mdi-plus</v-icon>
-                          </v-btn>
-                        </div>
+                        ></v-img>
                       </v-col>
                       <v-col md="10" cols="12">
                         <v-row>

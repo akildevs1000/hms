@@ -71,24 +71,25 @@
               <v-row>
                 <v-col md="2" cols="12">
                   <v-row>
-                    <v-col md="12">
-                      <v-img class="guest-avatar" :src="showImage"> </v-img>
-                    </v-col>
-                    <v-col md="12">
-                      <div class="d-flex justify-space-between">
-                        <v-btn v-if="booking && booking.document" style="width: 50%" small dark
-                          class="primary pt-4 pb-4 mt-4 mr-1 w-50 ipad-preview"
-                          @click="preview(booking && booking.document)">
-                          ID
-                          <v-icon right dark>mdi-file</v-icon>
-                        </v-btn>
-                        <v-btn style="width: 50%" small dark class="primary pt-4 pb-4 mt-4 w-50"
+                    <v-col cols="12" class="text-center">
+                       <v-avatar size="200">
+                        <v-img
+                            :src="booking?.customer?.captured_photo || '/no-profile-image.jpg'"
+                          ></v-img>
+                       </v-avatar>
+                      </v-col>
+                      <v-col cols="12" class="text-center">
+                        <v-btn small dark class="primary"
                           @click="process_grc(booking.id)">
                           GRC
                           <v-icon right dark>mdi-file</v-icon>
                         </v-btn>
-                      </div>
-                    </v-col>
+                        <v-btn small dark class="primary"
+                        @click="downloadCustomerAttachments">
+                        <v-icon>mdi-download-outline</v-icon>
+                        <v-icon>mdi-account-tie</v-icon>
+                        </v-btn>
+                      </v-col>
                     <v-col md="12" class="pr-0 mr-0">
                       <div class="text-box-amt">
                         <table>
@@ -1034,6 +1035,14 @@ export default {
   mounted() { },
 
   methods: {
+    downloadCustomerAttachments(){
+      let id = this.$route.params.id;      
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${process.env.BACKEND_URL}download_customer_attachments/${id}`);
+      document.body.appendChild(element);
+      element.click();
+    },
     getDate(dataTime) {
       return dataTime;
     },

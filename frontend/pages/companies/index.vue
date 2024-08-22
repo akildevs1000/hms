@@ -777,10 +777,7 @@ export default {
   }),
   async created() {
     this.getDataFromApi();
-    this.generateQRCode(
-      `https://verify.myhotel2cloud.com/` + this.$auth.user.company_id,
-      300
-    );
+    this.generateQRCode(`https://verify.myhotel2cloud.com`, 300);
   },
   methods: {
     async generateQRCode(url, width) {
