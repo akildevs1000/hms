@@ -1702,7 +1702,7 @@
                 hide-details
                 item-value="id"
                 item-text="name"
-                v-model="room_type_id"
+                v-model="room_type_list"
                 @change="
                   ($event) => {
                     get_available_rooms($event);
@@ -1851,7 +1851,7 @@ export default {
       checkout_date_menu: false,
       checkin_time_menu: false,
       checkout_time_menu: false,
-      room_type_id: ``,
+      room_type_list: ``,
       documentDialog: false,
       // -------customer history---------------
       customer: "",
@@ -2296,6 +2296,8 @@ export default {
       }
       const date = new Date(originalDate);
 
+      this.temp.check_out = date.toISOString().split("T")[0];
+
       date.setDate(date.getDate() + 1);
 
       return date.toISOString().split("T")[0];
@@ -2567,6 +2569,11 @@ export default {
     selectRoom() {
       this.selectRoomLoading = true;
 
+      if (!this.temp.room_type) {
+        this.alert("Warning", "Hall must be selected");
+        return;
+      }
+
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -2620,11 +2627,22 @@ export default {
       return upper;
     },
 
+    checkRoomAvailability(room_type) {
+      if (!this.availableRooms.length) {
+        this.room_type_list = {
+          id: ``,
+          name: `Select Hall Type`,
+        };
+        this.alert("Warning!", `"${room_type}" is already booked`, "error");
+        return false;
+      }
+      return true;
+    },
+
     confirm_hall({
       price,
       room_discount,
       room_extra_amount,
-      bed_amount,
       priceList,
       no_of_adult,
       no_of_child,
@@ -2640,10 +2658,17 @@ export default {
       total_booking_hours,
       extra_hours_charges,
     }) {
-      if (!this.availableRooms.length) {
-        this.alert("Warning!", `"${room_type}" not available`, "error");
+      if (!this.checkRoomAvailability(room_type)) {
         return;
       }
+
+      let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
+
+      if (!foodplan) {
+        this.alert("Warning!", `Food Plan must be selected`, "error");
+        return;
+      }
+
       let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
 
       if (!isSelect) {
@@ -2655,10 +2680,6 @@ export default {
           extra_booking_hours_charges < 0 ? 0 : extra_booking_hours_charges;
 
         let selectedRoomsForTableView = [];
-
-        let foodplan = this.foodplans.find(
-          (e) => e.id == this.temp.food_plan_id
-        );
 
         let adult_food_charges = foodplan.unit_price * no_of_adult;
         let child_food_charges = (foodplan.unit_price * no_of_child) / 2;
@@ -2755,11 +2776,15 @@ export default {
     get_available_rooms(item) {
       this.temp.room_type = item.name;
 
-      if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
-        alert("Please select date");
-        this.RoomDrawer = false;
+      if (item.id == ``) {
+        this.alert(
+          "Warning!",
+          `"${this.temp.room_type}" must be selected`,
+          "error"
+        );
         return;
       }
+
       this.$axios
         .get(`get_available_rooms_by_date_and_room_type`, {
           params: {
@@ -2773,12 +2798,7 @@ export default {
         .then(({ data }) => {
           this.availableRooms = data;
 
-          if (!this.availableRooms.length) {
-            this.alert(
-              "Warning!",
-              `"${this.temp.room_type}" not available`,
-              "error"
-            );
+          if (!this.checkRoomAvailability(this.temp.room_type)) {
             return;
           }
 
@@ -2910,7 +2930,7 @@ export default {
           } else {
             this.selectedRooms = [];
             this.priceListTableView = [];
-            this.room_type_id = {};
+            this.room_type_list = {};
             this.$emit(`success`);
             this.dialog = false;
 
