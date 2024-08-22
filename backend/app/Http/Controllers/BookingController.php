@@ -99,7 +99,7 @@ class BookingController extends Controller
                 $customer["sign"] = $imageName;
             }
 
-            $customer["company_id"] = request('company_id');
+            // $customer["company_id"] = request('company_id');
 
             return Customer::where("id", $customer_id)->update($customer);
         } catch (\Exception $e) {
