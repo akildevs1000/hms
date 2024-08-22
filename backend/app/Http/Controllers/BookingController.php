@@ -41,7 +41,12 @@ class BookingController extends Controller
     public function updatePicAndSign()
     {
         try {
-            $customer_id =  Booking::where("verified", Booking::VERIFICATION_REQUIRED)->orderByDesc("id")->value("customer_id");
+            $customer_id =  Booking::where(
+                [
+                    "verified" => Booking::VERIFICATION_REQUIRED,
+                    "company_id" => request('company_id'),
+                ]
+            )->orderByDesc("id")->value("customer_id");
 
             $customer = [];
 
@@ -92,6 +97,8 @@ class BookingController extends Controller
 
                 $customer["sign"] = $imageName;
             }
+
+            $customer["company_id"] = request('company_id');
 
             return Customer::where("id", $customer_id)->update($customer);
         } catch (\Exception $e) {
@@ -1228,7 +1235,7 @@ class BookingController extends Controller
                     });
                 });
             })
-
+            ->with("room")
             ->get(['id', 'room_id', 'booking_id', 'customer_id', 'check_in', 'check_in as start', 'check_out', 'booking_status', 'room_category_type as className']);
     }
 
@@ -1241,12 +1248,13 @@ class BookingController extends Controller
 
     public function get_booking(Request $request)
     {
-        $bookedRoom = BookedRoom::with(['booking', 'customer'])->where('company_id', $request->company_id)->findOrFail($request->id);
+        $bookedRoom = BookedRoom::with(['booking', 'customer', "room"])->where('company_id', $request->company_id)->findOrFail($request->id);
         $bookedRoom->booking->room_id = $bookedRoom->room_id;
         $bookedRoom->booking->room_no = $bookedRoom->room_no;
         $bookedRoom->booking->room_type = $bookedRoom->room_type;
-        $bookedRoom->booking->contact_no = $bookedRoom->customer->contact_no;
+        $bookedRoom->booking->isHall = $bookedRoom->room->room_type->type == "hall" ?? false;
         return $bookedRoom->booking;
+
         // return response()->json(['booking' => $bookedRoom->booking, 'status' => true]);
     }
 
