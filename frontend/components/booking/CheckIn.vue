@@ -1449,7 +1449,7 @@ export default {
   },
   data() {
     return {
-      countries: require("../../json/countries.json"),
+      countries: require("@/json/countries.json"),
       states: [],
       cities: [],
       customerDocs: null,

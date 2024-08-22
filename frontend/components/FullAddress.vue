@@ -53,7 +53,7 @@
 export default {
   props: ["data", "headers"],
   data: () => ({
-    countries: require("../json/countries.json"),
+    countries: require("@/json/countries.json"),
     states: [],
     cities: [],
     location: {
