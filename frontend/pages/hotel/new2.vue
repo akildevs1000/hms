@@ -1377,6 +1377,7 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
+                readonly
                 label="Room Type"
                 outlined
                 dense
@@ -1396,6 +1397,7 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
+                readonly
                 v-model="multipleRoomId"
                 hide-details
                 :items="availableRooms"
