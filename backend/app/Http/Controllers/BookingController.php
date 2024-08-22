@@ -40,7 +40,7 @@ class BookingController extends Controller
 
     public function updatePicAndSign()
     {
-        Logger::log("info", request()->all());
+        Logger::log("info", "FRANCIS " . request('company_id'));
         try {
             $customer_id =  Booking::where(
                 [
