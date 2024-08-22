@@ -86,20 +86,24 @@ export default {
       dialog: false,
       customer: null,
       url: null,
-
     };
   },
   async created() {
     await this.getData(this.BookingId);
   },
-  computed:{
-    isValid(){
+  computed: {
+    isValid() {
       let customer = this.customer;
-      if(!customer) {
+      if (!customer) {
         return false;
       }
-      return customer.captured_photo && customer.sign && customer.id_frontend_side && customer.id_backend_side
-    }
+      return (
+        customer.captured_photo &&
+        customer.sign &&
+        customer.id_frontend_side &&
+        customer.id_backend_side
+      );
+    },
   },
   methods: {
     async getData(BookingId = 1) {
@@ -130,9 +134,11 @@ export default {
       } catch (error) {
         console.log(error);
         this.confirmLoading = false;
+        this.$emit(`getCustomerDocs`, null);
       }
     },
     close() {
+      this.$emit(`getCustomerDocs`, null);
       this.dialog = false;
     },
   },
