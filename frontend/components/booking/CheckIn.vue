@@ -405,7 +405,12 @@
                           </v-btn>
                         </v-col>
                         <v-col cols="6" class="pa-0 ma-0">
-                          <v-btn small color="primary" dark @click="downloadCustomerAttachments">
+                          <v-btn
+                            small
+                            color="primary"
+                            dark
+                            @click="downloadCustomerAttachments"
+                          >
                             <v-icon>mdi-download-outline</v-icon>
                             <v-icon>mdi-account-tie</v-icon>
                           </v-btn>
@@ -819,7 +824,11 @@
                           ></v-textarea>
                         </v-col>
                         <v-col cols="12" class="text-right">
-                          <v-btn small @click="nextTab" color="primary"
+                          <v-btn
+                            :disabled="!customerDocs"
+                            small
+                            @click="nextTab"
+                            color="primary"
                             >Next</v-btn
                           >
                         </v-col>
@@ -1043,17 +1052,18 @@
                           <v-row>
                             <v-col class="text-rights">
                               <v-btn
-                                class="primary"
+                                :disabled="!customerDocs"
                                 @click="advanceDialog = true"
-                                dark
+                                color="primary"
+                                >Pay</v-btn
                               >
-                                Pay
-                              </v-btn>
+
                               <v-btn
+                                :disabled="!customerDocs"
+                                class="white--text"
                                 style="background-color: #5fafa3"
                                 @click="storeSubCustomer"
                                 :loading="loading"
-                                dark
                                 >CheckIn</v-btn
                               >
                             </v-col>
@@ -1662,11 +1672,14 @@ export default {
     },
   },
   methods: {
-    downloadCustomerAttachments(){
+    downloadCustomerAttachments() {
       let id = this.BookingData.id;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}download_customer_attachments/${id}`);
+      element.setAttribute(
+        "href",
+        `${process.env.BACKEND_URL}download_customer_attachments/${id}`
+      );
       document.body.appendChild(element);
       element.click();
     },
@@ -1700,7 +1713,9 @@ export default {
       }
     },
     nextTab() {
-      this.activeTab += 1;
+      if (this.customerDocs) {
+        this.activeTab += 1;
+      }
     },
 
     prevTab() {
