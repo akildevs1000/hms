@@ -9,7 +9,7 @@
 
       <v-card>
         <v-toolbar flat class="primary" dense dark>
-          Picture and ID {{customer.id}}
+          Picture and ID
           <v-spacer></v-spacer>
           <v-icon @click="close"> mdi-close </v-icon>
         </v-toolbar>
@@ -31,9 +31,17 @@
               <v-col cols="6">
                 <v-img :src="customer.id_backend_side"></v-img>
               </v-col>
-              <v-col cols="12">
+              <v-col cols="6">
+                <v-btn class="primary" block @click="getData(BookingId)">
+                  <v-icon>mdi-reload</v-icon>
+                </v-btn>
+              </v-col>
+              <v-col cols="6">
                 <v-btn class="primary" block @click="confirm"> Confirm </v-btn>
               </v-col>
+              <!-- <v-col cols="12">
+                {{ url }}
+              </v-col> -->
             </v-row>
           </v-container>
         </v-card-text>
@@ -51,6 +59,7 @@ export default {
 
       dialog: false,
       customer: {},
+      url: null,
     };
   },
   async created() {
@@ -59,8 +68,8 @@ export default {
   methods: {
     async getData(BookingId = 1) {
       try {
-        let endpoint = `${this.endpoint}/get-lattest-customer-info/${BookingId}`;
-        let { data } = await this.$axios.get(endpoint);
+        this.url = `${this.endpoint}/get-lattest-customer-info/${BookingId}`;
+        let { data } = await this.$axios.get(this.url);
         this.customer = data;
       } catch (error) {
         console.log(error);
