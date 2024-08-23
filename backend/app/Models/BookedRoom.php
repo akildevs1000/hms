@@ -52,6 +52,7 @@ class BookedRoom extends Model
         'resourceId',
         'title',
         'background',
+        'check_in_time',
         'check_out_time',
         'end',
 
@@ -87,6 +88,7 @@ class BookedRoom extends Model
     {
         $attributes = $this->attributesToArray();
 
+        unset($attributes['check_in_time']);
         unset($attributes['check_out_time']);
         unset($attributes['end']);
         unset($attributes['background']);
@@ -249,6 +251,14 @@ class BookedRoom extends Model
     //     // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
 
     // }
+
+    public function GetCheckInTimeAttribute()
+    {
+        // CheckOUtDateForEachDate
+        $time = $this->check_in;
+
+        return date('H:i', strtotime($time));
+    }
 
     public function GetCheckOutTimeAttribute()
     {
