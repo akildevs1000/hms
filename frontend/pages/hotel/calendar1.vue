@@ -1254,6 +1254,11 @@ export default {
           };
           //console.log('reservation1', commitObj);
           this.$store.commit("reservation", commitObj);
+
+          if (data?.room?.room_type?.type == "hall") {
+            this.$router.push(`/booking/hall`);
+            return;
+          }
           this.$router.push(`/hotel/new2`);
         });
     },
