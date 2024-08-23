@@ -392,6 +392,7 @@ class RoomController extends Controller
             ->with('device')
             ->with(['bookedRoom' => function ($q) use ($company_id) {
                 $q->where("company_id", $company_id);
+                $q->where("booking_status", ">", 0);
                 $q->with("customer");
             }])
             ->get();
