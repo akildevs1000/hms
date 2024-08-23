@@ -19,31 +19,7 @@
 
     <!-- dialogs -->
     <div>
-      <v-dialog
-        v-model="checkInDialog"
-        persistent
-        class="checkin-models"
-        max-width="1100"
-      >
-        <v-card>
-          <v-toolbar class="rounded-md" color="" dense flat>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark color="primary" class="pa-0" @click="close"
-              >mdi-close</v-icon
-            >
-          </v-toolbar>
-          <v-card-text>
-            <check-in
-              :key="checkInKey"
-              :BookingData="checkData"
-              @close-dialog="closeCheckInAndOpenGRC"
-            ></check-in>
-          </v-card-text>
-          <v-container></v-container>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
+   
 
       <v-dialog
         v-model="GRCDialog"
@@ -1845,12 +1821,6 @@ export default {
 
     closeDialogs(res) {
       this.succuss(res);
-    },
-
-    closeCheckInAndOpenGRC() {
-      this.room_list();
-      this.checkInDialog = false;
-      // this.GRCDialog = true;
     },
   },
 };
