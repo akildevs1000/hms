@@ -853,7 +853,7 @@
                                     <v-icon color="white" small
                                       >mdi-plus</v-icon
                                     >
-                                    Add Room
+                                    Add Hall
                                   </v-btn>
                                 </v-col>
                               </v-row>
@@ -989,12 +989,12 @@
                           {{ getDays() }}
                         </div>
                       </div>
-                      <div class="input-group input-group-sm mb-2 px-5">
+                      <!-- <div class="input-group input-group-sm mb-2 px-5">
                         <span
                           class="input-group-text"
                           id="inputGroup-sizing-sm"
                         >
-                          No. Rooms
+                          No. Halls
                         </span>
                         <div
                           type="text"
@@ -1005,7 +1005,7 @@
                         >
                           {{ selectedRooms.length || 0 }}
                         </div>
-                      </div>
+                      </div> -->
                     </section>
                     <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
                 Payment
