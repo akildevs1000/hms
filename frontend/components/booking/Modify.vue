@@ -222,26 +222,20 @@
               <tr>
                 <th>Advance Payment</th>
                 <td class="text-right">
-                  {{ convert_decimal(payload.advance_price) }}
+                  {{ payload.advance_price }}
                 </td>
               </tr>
-              <!-- <tr>
-                <th>Balance Amount</th>
-                <td class="text-right">
-                  {{ convert_decimal(payload.booking_remaining_price) }}
-                </td>
-              </tr> -->
               <tr>
                 <th>Old Grand Total</th>
                 <td class="text-right">
-                  {{ convert_decimal(old.booking_total_price) }}
+                  {{ old.booking_total_price }}
                 </td>
               </tr>
               <tr>
                 <th>Grand Total</th>
                 <td class="text-right">
                   <!-- <pre>{{ payload }}</pre> -->
-                  {{ convert_decimal(payload.booking_total_price) }}
+                  {{ payload.booking_total_price }}
                 </td>
               </tr>
             </table>
@@ -492,11 +486,11 @@ export default {
             total_price: room_price_with_meal,
             total_tax: data.total_tax,
             room_tax: data.total_tax / total_days,
-            booking_total_price:
-              this.payload.bed_amount +
-              data.total_price +
-              food_plan_price_for_all_days,
-
+            booking_total_price: this.convert_decimal(
+              parseFloat(this.payload.bed_amount) +
+                parseFloat(data.total_price) +
+                parseFloat(food_plan_price_for_all_days)
+            ),
             booking_remaining_price:
               this.payload.booking_remaining_price - this.payload.advance_price,
             remaining_price: room_price_with_meal - this.payload.advance_price,
@@ -510,7 +504,7 @@ export default {
               let roomPrice = this.old.food_plan_price + this.old.room_price;
               let restOfPrices = this.old.booking_total_price - roomPrice;
               this.payload.booking_total_price =
-                this.payload.booking_total_price + restOfPrices;
+                this.convert_decimal(this.payload.booking_total_price + restOfPrices);
             }
           }
         });
@@ -600,7 +594,6 @@ export default {
       return date.toISOString().split("T")[0];
     },
     submit() {
-
       if (!this.room_orders.length) {
         this.alert("Warning!", "No changes detected", "error");
         return;
