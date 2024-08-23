@@ -479,7 +479,13 @@ class RoomController extends Controller
                 $q->where('booking_status', 3);
                 $q->where('company_id', $company_id);
                 $q->orderBy('id', 'ASC');
-            });
+            })
+
+            ->with(['bookedRoom' => function ($q) use ($company_id) {
+                $q->where("company_id", $company_id);
+                $q->where('booking_status', 3);
+                $q->with("customer");
+            }]);
 
         //booking 1
         //checking 2
