@@ -334,13 +334,11 @@ class RoomController extends Controller
             // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_out', date("Y-m-d"));
-
                 $query->where('company_id', $company_id);
                 $query->where('booking_status', 3);
             })
             ->with(['bookedRoom' => function ($q) use ($company_id) {
                 $q->where("company_id", $company_id);
-                $q->where("booking_status", 3);
                 $q->with("customer");
             }])
             ->get();
