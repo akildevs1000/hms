@@ -398,7 +398,7 @@ class RoomController extends Controller
 
         $AvailableRooms = Room::with('device')->where('company_id', $company_id)
             ->where('status', '!=', Room::Blocked)
-            ->whereDoesntHave('bookedRoom.booking', fn($q) => $q->where("company_id", $company_id))
+            // ->whereDoesntHave('bookedRoom.booking', fn($q) => $q->where("company_id", $company_id))
             ->get();
 
         $BlockedRooms = Room::with('device')->where("status", Room::Blocked)->where('company_id', $company_id)->get();
