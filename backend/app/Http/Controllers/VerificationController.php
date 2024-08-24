@@ -27,7 +27,7 @@ class VerificationController extends Controller
             "sign" => $verification->sign,
         ];
 
-        $updated = Customer::where("id", $customerId)->where("booking_id", $booking_id)->update($payload);
+        $updated = Customer::where("id", $customerId)->update($payload);
 
         if(!$updated) {
             return 0;
