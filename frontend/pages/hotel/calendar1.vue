@@ -348,9 +348,11 @@
             >
               <v-list-item-title>
                 <BookingSingle
+                  v-if="bookingId"
                   @close="get_events()"
                   :key="evenIid"
                   :BookedRoomId="evenIid"
+                  :booking_id="bookingId"
                 />
               </v-list-item-title>
             </v-list-item>
@@ -365,6 +367,7 @@
             >
               <v-list-item-title>
                 <BookingModify
+                  :isHall="isHall"
                   @close="get_events()"
                   :key="evenIid"
                   :BookedRoomId="evenIid"
@@ -501,6 +504,7 @@ export default {
     ); // Calculate start date 7 days ago
 
     return {
+      isHall: false,
       calenderColorCodes: [],
       durationDays: 15,
       from_date: null,
@@ -636,6 +640,12 @@ export default {
           }
 
           arg.el.addEventListener("contextmenu", (jsEvent) => {
+            this.bookingId = arg.event.extendedProps.booking_id;
+
+            this.isHall =
+              arg.event.extendedProps?.room?.room_type?.type == "hall"
+                ? true
+                : false;
             this.showTooltip = false;
             this.show(eventId, jsEvent);
             jsEvent.preventDefault();

@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="800">
+    <v-dialog v-model="dialog" width="900">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
@@ -24,16 +24,96 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-autocomplete
+                <SearchCustomer @foundCustomer="handleFoundCustomer" />
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
                   outlined
                   dense
                   hide-details
-                  item-value="id"
-                  item-text="first_name"
-                  v-model="payload.customer_id"
-                  :items="customers"
-                  placeholder="Customers"
-                ></v-autocomplete>
+                  v-model="customerPayload.full_name"
+                  label="Full Name"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="customerPayload.email"
+                  label="Email"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="customerPayload.contact_no"
+                  label="Contact No"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="customerPayload.whatsapp"
+                  label="Whatsapp"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="3">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="customerPayload.country"
+                  label="Country"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="customerPayload.state"
+                  label="State"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="customerPayload.city"
+                  label="City"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  outlined
+                  dense
+                  hide-details
+                  v-model="customerPayload.zip_code"
+                  label="Zip Code"
+                  persistent-hint
+                  readonly
+                ></v-text-field>
               </v-col>
               <v-col cols="4">
                 <v-menu
@@ -346,6 +426,20 @@ export default {
       arrival_date_menu: false,
       departure_date_menu: false,
 
+      customerPayload: {
+        id: 0,
+        title: null,
+        full_name: null,
+        contact_no: null,
+        whatsapp: null,
+        email: null,
+        captured_photo: null,
+        country: null,
+        state: null,
+        city: null,
+        zip_code: null,
+      },
+
       payload: {
         customer_id: 0,
         book_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -397,6 +491,24 @@ export default {
     await this.getVendorCategory();
   },
   methods: {
+    handleFoundCustomer(e) {
+      let customer = {
+        id: e.id,
+        title: e.title,
+        full_name: e.full_name,
+        contact_no: e.contact_no,
+        whatsapp: e.whatsapp,
+        email: e.email,
+        captured_photo: e.captured_photo,
+        country: e.country,
+        state: e.state,
+        city: e.city,
+        zip_code: e.zip_code,
+      };
+
+      this.customerPayload = customer;
+      this.payload.customer_id = customer.id;
+    },
     handleMultipleFileSelection(e) {
       e.forEach((v, i) => {
         const attachmentExists = this.payload.attachments.some(

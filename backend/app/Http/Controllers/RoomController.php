@@ -384,15 +384,21 @@ class RoomController extends Controller
             $q->whereDate('check_in', '<=', $todayDate);
             $q->where('booking_status', BookedRoom::BOOKED);
             $q->where('company_id', $company_id);
-            $q->whereHas('booking', function ($q) use ($company_id) {
+            $q->whereNotNull('room_id');
+            $q->where('company_id', $company_id);
+            $q->whereHas('booking', function ($q) use ($company_id, $todayDate) {
+                $q->where('booking_date', $todayDate);
                 $q->where('advance_price', 0);
                 $q->where('company_id', $company_id);
             });
-            $q->whereNotNull('room_id');
-            $q->where('company_id', $company_id);
         })
             ->with('device')
-            ->with(['bookedRoom' => function ($q) use ($company_id) {
+            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
+                $q->whereHas('booking', function ($q) use ($company_id, $todayDate) {
+                    $q->where('booking_date', $todayDate);
+                    $q->where('advance_price', 0);
+                    $q->where('company_id', $company_id);
+                });
                 $q->where("company_id", $company_id);
                 $q->where("booking_status", ">", 0);
                 $q->with("customer");
