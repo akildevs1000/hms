@@ -20,24 +20,28 @@ class Verification extends Model
 
     public function getIdFrontendSideUrlAttribute($value)
     {
+        $value = $this->id_frontend_side;
         if (!$value) return null;
         return asset('id_frontend_side/' . $value);
     }
 
     public function getIdBackendSideUrlAttribute($value)
     {
+        $value = $this->id_backend_side;
         if (!$value) return null;
         return asset('id_backend_side/' . $value);
     }
 
     public function getCapturedPhotoUrlAttribute($value)
     {
+        $value = $this->captured_photo;
         if (!$value) return null;
         return asset('captured_photo/' . $value);
     }
 
     public function getSignUrlAttribute($value)
     {
+        $value = $this->sign;
         if (!$value) return null;
         return asset('sign/' . $value);
     }
