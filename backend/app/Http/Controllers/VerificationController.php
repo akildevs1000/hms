@@ -29,7 +29,13 @@ class VerificationController extends Controller
 
         $updated = Customer::where("id", $customerId)->where("booking_id", $booking_id)->update($payload);
 
-        return $updated ? 1 : 0;
+        if(!$updated) {
+            return 0;
+        }
+
+        $verification->delete();
+
+        return true;
 
     }
 
