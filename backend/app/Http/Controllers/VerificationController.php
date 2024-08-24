@@ -15,7 +15,7 @@ class VerificationController extends Controller
 
     public function verifyBooking($id)
     {
-        return Booking::find($id)->value("customer_id") ?? 0;
+        return Booking::where("id", $id)->value("customer_id") ?? 0;
 
         // return Verification::where([
         //     "company_id" => ,
