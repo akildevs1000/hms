@@ -7,6 +7,18 @@ use Illuminate\Http\Request;
 
 class VerificationController extends Controller
 {
+    public function getVerifyInfo($id = 0)
+    {
+        return Verification::where("company_id", $id)->first();
+    }
+
+    // public function verifyBooking(Request $request)
+    // {
+    //     return Verification::where([
+    //         "company_id" => ,
+    //     ])->update(["verified" => Booking::VERIFICATION_COMPLETED]);
+    // }
+
     public function verifyCustomer()
     {
         try {
