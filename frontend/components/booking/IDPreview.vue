@@ -137,6 +137,7 @@ export default {
         await this.$axios.post(url, payload);
         this.$emit(`getCustomerDocs`, this.customer);
         this.confirmLoading = false;
+        this.dialog = false;
       } catch (error) {
         console.log(error);
         this.confirmLoading = false;

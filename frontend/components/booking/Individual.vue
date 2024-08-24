@@ -2634,6 +2634,10 @@ export default {
         user_id: this.$auth.user.id,
       };
 
+      console.log("🚀 ~ store_booking ~ payload:", payload)
+      // return;
+      
+
       this.subLoad = false;
 
       this.$axios
