@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Quotation\ValidationRequest;
+use App\Models\Customer;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
 use App\Models\Template;
@@ -36,6 +37,22 @@ class QuotationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function getCustomerFields()
+    {
+        return [
+            "title",
+            "whatsapp",
+            "first_name",
+            "last_name",
+            "contact_no",
+            "email",
+            "company_id",
+            "country",
+            "state",
+            "city",
+            "zip_code",
+        ];
+    }
     public function store(ValidationRequest $request)
     {
         // Quotation::truncate();
@@ -48,6 +65,24 @@ class QuotationController extends Controller
             $data["bank_details"] = "null";
             $data["terms_and_conditions"] = "null";
 
+            $customerData = $request->input('customer');
+            $filteredData = collect($customerData)->only($this->getCustomerFields())->toArray();
+
+
+            $data["customer_id"] = $this->customerStore($filteredData);
+
+
+            // 'customer_id' => 'required',
+            // 'book_date' => 'required|date',
+            // 'arrival_date' => 'required|date',
+            // 'departure_date' => 'required|date',
+            // 'sub_total' => 'required|max:255',
+            // 'discount' => 'required|max:255',
+            // 'tax' => 'required|max:255',
+            // 'total' => 'required|max:255',
+
+            // return $data;
+
 
             $lastquotationId = Quotation::max("id") + 1;
 
@@ -57,29 +92,29 @@ class QuotationController extends Controller
 
             $quotation =  Quotation::create($data);
 
-            $items = array_map(function ($item) use ($quotation) {
-                $item['quotation_id'] = $quotation->id;
-                $item['created_at'] = now();
-                return $item;
-            }, $request->items);
+            // $items = array_map(function ($item) use ($quotation) {
+            //     $item['quotation_id'] = $quotation->id;
+            //     $item['created_at'] = now();
+            //     return $item;
+            // }, $request->items);
 
-            QuotationItem::insert($items);
+            // QuotationItem::insert($items);
 
 
-            $quotation = Quotation::with(["customer", "items"])->first();
+            // $quotation = Quotation::with(["customer", "items"])->first();
 
-            $fields = [
-                "title"     => $quotation->customer->title,
-                "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
-                "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
-                "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
-                "rooms_type" => $quotation->rooms_type,
-                "email" => $quotation->customer->email,
-                "whatsapp" => $quotation->customer->whatsapp,
-            ];
+            // $fields = [
+            //     "title"     => $quotation->customer->title,
+            //     "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
+            //     "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
+            //     "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
+            //     "rooms_type" => $quotation->rooms_type,
+            //     "email" => $quotation->customer->email,
+            //     "whatsapp" => $quotation->customer->whatsapp,
+            // ];
 
-            $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
-            $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
+            // $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
+            // $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
 
             DB::commit();
 
@@ -125,5 +160,28 @@ class QuotationController extends Controller
         $Quotation->delete();
 
         return response()->noContent();
+    }
+
+    public function customerStore($customer)
+    {
+        try {
+            $isExistCustomer = false;
+            if (!is_null($customer['contact_no'])) {
+                $isExistCustomer = Customer::whereContactNo($customer['contact_no'])->whereCompanyId($customer['company_id'])->first();
+            }
+            $id = "";
+            if ($isExistCustomer) {
+                $id = $isExistCustomer->id;
+                $isExistCustomer->update($customer);
+            } else {
+
+                $record = Customer::create($customer);
+                $id = $record->id ?? 0;
+            }
+            return $id;
+            return $this->response('Customer successfully added.', $id, true);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

@@ -25,7 +25,7 @@ class ValidationRequest extends FormRequest
     {
         return [
             'ref_no' => 'nullable',
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'nullable',
             'book_date' => 'required|date',
             'arrival_date' => 'required|date',
             'departure_date' => 'required|date',
