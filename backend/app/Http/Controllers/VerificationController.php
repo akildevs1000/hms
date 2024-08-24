@@ -35,7 +35,7 @@ class VerificationController extends Controller
 
         $verification->delete();
 
-        return true;
+        return 1;
 
     }
 

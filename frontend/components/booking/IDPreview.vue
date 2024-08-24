@@ -106,13 +106,18 @@ export default {
     },
   },
   methods: {
-    async getData(BookingId = 1) {
+    async getData() {
       this.reloadLoading = true;
 
       try {
-        this.url = `${this.endpoint}/get-lattest-customer-info/${BookingId}`;
+        this.url = `${this.endpoint}/get-verify-info/${this.$auth.user.company_id}`;
         let { data } = await this.$axios.get(this.url);
-        this.customer = data;
+        this.customer = {
+          captured_photo: data.captured_photo_url,
+          sign: data.sign_url,
+          id_frontend_side: data.id_frontend_side_url,
+          id_backend_side: data.id_backend_side_url,
+        };
         this.reloadLoading = false;
       } catch (error) {
         this.reloadLoading = false;
@@ -123,13 +128,14 @@ export default {
       this.confirmLoading = true;
 
       let payload = {
-        booking_id: this.BookingId,
-        customer_id: this.customer.id,
+        ...this.customer,
+        company_id: this.$auth.user.company_id,
       };
+
       try {
-        await this.$axios.post(`booking-verify`, payload);
+        let url = `verify-customer/${this.BookingId}`;
+        await this.$axios.post(url, payload);
         this.$emit(`getCustomerDocs`, this.customer);
-        this.dialog = false;
         this.confirmLoading = false;
       } catch (error) {
         console.log(error);
