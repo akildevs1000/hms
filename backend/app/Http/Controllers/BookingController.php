@@ -47,7 +47,9 @@ class BookingController extends Controller
                     "verified" => Booking::VERIFICATION_REQUIRED,
                     "company_id" => request('company_id'),
                 ]
-            )->orderByDesc("id")->value("customer_id");
+            )
+                ->wheredate("check_in", date("Y-m-d"))
+                ->orderByDesc("id")->value("customer_id");
 
             $customer = [];
 
