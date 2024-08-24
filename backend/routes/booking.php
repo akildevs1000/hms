@@ -98,6 +98,6 @@ use App\Http\Controllers\WeekdayController;
 
   Route::post('group-booking', [BookingController::class, 'groupBooking']);
   Route::post('hall-booking', [BookingController::class, 'hallBooking']);
-  Route::post('booking-verify', [BookingController::class, 'verifyBooking']);
+  Route::post('verify-customer/{id}', [VerificationController::class, 'verifyBooking']);
 
   Route::apiResource('booking-source-type', BookingSourceTypeController::class);

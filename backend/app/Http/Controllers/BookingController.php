@@ -30,18 +30,6 @@ use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
-    public function verifyBooking(Request $request)
-    {
-        return Booking::where([
-            "id" => $request->booking_id ?? 0,
-            "customer_id" => $request->customer_id ?? 0,
-        ])->update(["verified" => Booking::VERIFICATION_COMPLETED]);
-    }
-
-    public function getLattestCustomerInfo($booking)
-    {
-        return Customer::whereHas("booking", fn($q) => $q->where("id", $booking))->first();
-    }
     public function index(Request $request)
     {
         return Booking::with(["customer:id,first_name,last_name", "room"])

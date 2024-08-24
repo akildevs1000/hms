@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Verification;
 use Illuminate\Http\Request;
 
@@ -12,12 +13,13 @@ class VerificationController extends Controller
         return Verification::where("company_id", $id)->first();
     }
 
-    // public function verifyBooking(Request $request)
-    // {
-    //     return Verification::where([
-    //         "company_id" => ,
-    //     ])->update(["verified" => Booking::VERIFICATION_COMPLETED]);
-    // }
+    public function verifyBooking($id)
+    {
+        return Booking::find($id);
+        // return Verification::where([
+        //     "company_id" => ,
+        // ])->update(["verified" => Booking::VERIFICATION_COMPLETED]);
+    }
 
     public function verifyCustomer()
     {
