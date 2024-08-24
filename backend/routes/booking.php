@@ -5,14 +5,15 @@
   use App\Http\Controllers\FoodController;
   use App\Http\Controllers\HolidayController;
   use App\Http\Controllers\TaxableController;
-  use App\Http\Controllers\WeekdayController;
+use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\WeekdayController;
   use App\Http\Controllers\WeekendController;
   use Illuminate\Support\Facades\Route;
 
   Route::get('booking', [BookingController::class, 'index']);
   Route::get('room-color-codes', [BookingController::class, 'RoomColorCodes']);
 
-  Route::post('update-pic-and-sign', [BookingController::class, 'updatePicAndSign']);
+  Route::post('update-pic-and-sign', [VerificationController::class, 'verifyCustomer']);
   Route::get('get-lattest-customer-info/{booking_id}', [BookingController::class, 'getLattestCustomerInfo']);
 
   Route::post('store_bulk', [BookingController::class, 'storeBulk']);
