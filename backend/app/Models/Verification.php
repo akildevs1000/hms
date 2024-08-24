@@ -11,25 +11,32 @@ class Verification extends Model
 
     protected $guarded = [];
 
-    public function getIdFrontendSideAttribute($value)
+    protected $appends = [
+        'id_frontend_side_url',
+        'id_backend_side_url',
+        'captured_photo_url',
+        'sign_url'
+    ];
+
+    public function getIdFrontendSideUrlAttribute($value)
     {
         if (!$value) return null;
         return asset('id_frontend_side/' . $value);
     }
 
-    public function getIdBackendSideAttribute($value)
+    public function getIdBackendSideUrlAttribute($value)
     {
         if (!$value) return null;
         return asset('id_backend_side/' . $value);
     }
 
-    public function getCapturedPhotoAttribute($value)
+    public function getCapturedPhotoUrlAttribute($value)
     {
         if (!$value) return null;
         return asset('captured_photo/' . $value);
     }
 
-    public function getSignAttribute($value)
+    public function getSignUrlAttribute($value)
     {
         if (!$value) return null;
         return asset('sign/' . $value);
