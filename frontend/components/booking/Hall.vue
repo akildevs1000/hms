@@ -218,7 +218,9 @@
                               margin: 0 auto;
                               border-radius: 50%;
                             "
-                            :src="customer.captured_photo || '/no-profile-image.jpg'"
+                            :src="
+                              customer.captured_photo || '/no-profile-image.jpg'
+                            "
                           ></v-img>
                         </v-col>
                         <v-col md="10" cols="12">
@@ -845,7 +847,12 @@
 
                               <v-row>
                                 <v-col md="12" class="text-right">
-                                  <v-btn
+                                  <HallDialog
+                                    label="Add Hall"
+                                    @tableData="handleTableData"
+                                  />
+
+                                  <!-- <v-btn
                                     color="primary"
                                     @click="RoomDrawer = true"
                                     small
@@ -854,7 +861,7 @@
                                       >mdi-plus</v-icon
                                     >
                                     Add Hall
-                                  </v-btn>
+                                  </v-btn> -->
                                 </v-col>
                               </v-row>
                             </div>
@@ -1208,7 +1215,25 @@
                           {{ convert_decimal(item.audio) }}
                         </div>
                       </div>
-
+                      <div class="input-group input-group-sm px-5">
+                        <span
+                          class="input-group-text"
+                          id="inputGroup-sizing-sm"
+                        >
+                          Extra Hour
+                        </span>
+                        <div
+                          type="text"
+                          class="form-control"
+                          aria-label="Sizing example input"
+                          aria-describedby="inputGroup-sizing-sm"
+                          disabled
+                        >
+                          {{
+                            convert_decimal(item.extra_booking_hours_charges)
+                          }}
+                        </div>
+                      </div>
                       <div class="input-group input-group-sm px-5">
                         <span
                           class="input-group-text"
@@ -1485,283 +1510,6 @@
             <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="RoomDrawer" max-width="400">
-      <v-card>
-        <v-toolbar flat class="primary white--text" dense>
-          Hall Booking <v-spacer></v-spacer
-          ><v-icon @click="RoomDrawer = false" color="white"
-            >mdi-close</v-icon
-          ></v-toolbar
-        >
-        <v-container>
-          <v-row>
-            <v-col cols="6">
-              <v-menu
-                v-model="checkin_date_menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    label="Check In Date"
-                    append-icon="mdi-calendar"
-                    outlined
-                    dense
-                    hide-details
-                    v-model="temp.check_in"
-                    persistent-hint
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  :min="new Date().toISOString().substr(0, 10)"
-                  v-model="temp.check_in"
-                  no-title
-                  @input="checkin_date_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="6">
-              <v-menu
-                ref="menu"
-                v-model="checkin_time_menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                :return-value.sync="temp.check_in_time"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    outlined
-                    dense
-                    v-model="temp.check_in_time"
-                    label="Check In Time"
-                    append-icon="mdi-clock-time-four-outline"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                    hide-details
-                  ></v-text-field>
-                </template>
-                <v-time-picker
-                  v-if="checkin_time_menu"
-                  v-model="temp.check_in_time"
-                  no-title
-                  @click:minute="$refs.menu.save(temp.check_in_time)"
-                  format="24hr"
-                ></v-time-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="6">
-              <v-menu
-                v-model="checkout_date_menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    label="Check Out Date"
-                    append-icon="mdi-calendar"
-                    outlined
-                    dense
-                    hide-details
-                    v-model="temp.check_out"
-                    persistent-hint
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  :max="addOneDay(temp.check_in)"
-                  :min="temp.check_in"
-                  v-model="temp.check_out"
-                  no-title
-                  @input="checkout_date_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-
-            <v-col cols="6">
-              <v-menu
-                ref="menu2"
-                v-model="checkout_time_menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                :return-value.sync="temp.check_out_time"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    outlined
-                    dense
-                    v-model="temp.check_out_time"
-                    label="Check Out Time"
-                    append-icon="mdi-clock-time-four-outline"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                    hide-details
-                  ></v-text-field>
-                </template>
-                <v-time-picker
-                  v-if="checkout_time_menu"
-                  v-model="temp.check_out_time"
-                  no-title
-                  @click:minute="
-                    () => {
-                      $refs.menu2.save(temp.check_out_time);
-                      calculateHoursQty();
-                    }
-                  "
-                  format="24hr"
-                ></v-time-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                readonly
-                label="Total Hours"
-                outlined
-                hide-details
-                outline
-                dense
-                v-model="temp.total_booking_hours"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                label="Hall"
-                outlined
-                dense
-                hide-details
-                item-value="id"
-                item-text="name"
-                v-model="room_type_list"
-                @change="
-                  ($event) => {
-                    get_available_rooms($event);
-                  }
-                "
-                :items="[{ id: ``, name: `Select Hall Type` }, ...roomTypes]"
-                return-object
-              ></v-autocomplete>
-            </v-col>
-            <!-- <v-col cols="12">
-              <v-autocomplete
-                v-model="temp.room_no"
-                hide-details
-                :items="availableRooms"
-                item-value="room_no"
-                item-text="room_no"
-                label="Select Hall"
-                dense
-                outlined
-              >
-              </v-autocomplete>
-            </v-col> -->
-            <v-col cols="6">
-              <v-text-field
-                label="Adult Per Room"
-                dense
-                outlined
-                v-model.number="temp.no_of_adult"
-                :hide-details="true"
-                type="number"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                label="Child Per Room"
-                dense
-                outlined
-                v-model.number="temp.no_of_child"
-                :hide-details="true"
-                type="number"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                label="Food Plan"
-                outlined
-                dense
-                hide-details
-                item-value="id"
-                item-text="title"
-                v-model="temp.food_plan_id"
-                :items="[{ id: ``, title: `Select Food Plan` }, ...foodplans]"
-              ></v-autocomplete>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="is_cleaning_charges"
-                :label="`Cleaning`"
-                :hide-details="true"
-                dense
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col
-              ><v-checkbox
-                v-model="is_electricity_charges"
-                :label="`Electricity`"
-                :hide-details="true"
-                dense
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col
-              ><v-checkbox
-                v-model="is_generator_charges"
-                :label="`Generator `"
-                :hide-details="true"
-                dense
-              >
-              </v-checkbox>
-            </v-col>
-
-            <v-col
-              ><v-checkbox
-                v-model="is_audio_charges"
-                :label="`Audio `"
-                :hide-details="true"
-                dense
-              >
-              </v-checkbox>
-            </v-col>
-
-            <v-col
-              ><v-checkbox
-                v-model="is_projector_charges"
-                :label="`Projector Charges`"
-                :hide-details="true"
-                dense
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col cols="12">
-              <v-btn block @click="selectRoom" color="primary" small>
-                Confirm Hall
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
       </v-card>
     </v-dialog>
   </div>
@@ -2170,6 +1918,18 @@ export default {
     },
   },
   methods: {
+    handleTableData({ arrToMerge, payload }) {
+      let isSelect = this.selectedRooms.find(
+        (sr) => sr.room_no == payload.room_no
+      );
+
+      if (!isSelect) {
+        this.selectedRooms.push(payload);
+        this.priceListTableView = this.mergeEntries(
+          this.priceListTableView.concat(arrToMerge)
+        );
+      }
+    },
     async get_business_sources() {
       let config = {
         params: {
