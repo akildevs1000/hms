@@ -34,7 +34,8 @@
   Route::get('room_list_menu', [RoomController::class, 'roomListForMenu']);
   Route::get('get_available_rooms_by_date', [RoomController::class, 'getAvailableRoomsByDate']);
   Route::get('get_available_rooms_by_date_and_room_type', [RoomController::class, 'getAvailableRoomsByDateAndRoomType']);
-
+  Route::get('get_available_rooms_for_quotation', [RoomController::class, 'getAvailableRoomsForQuotation']);
+  
   Route::get('get_available_rooms_for_modify', [RoomController::class, 'getAvailableRoomsForModify']);
 
   Route::get('get_food_prices', [RoomController::class, 'getFoodPrices']);

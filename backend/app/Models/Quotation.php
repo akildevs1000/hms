@@ -15,6 +15,11 @@ class Quotation extends Model
         "created_at" => "datetime:d-M-y"
     ];
 
+    public function getTotalAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
     /**
      * Get the customer that owns the Quotation
      *

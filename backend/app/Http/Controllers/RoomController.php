@@ -565,6 +565,16 @@ class RoomController extends Controller
         return $availableRooms;
     }
 
+
+    public function getAvailableRoomsForQuotation(Request $request)
+    {
+        return Room::whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            ->where('company_id', $request->company_id)
+            ->where('status', '!=', Room::Blocked)
+            ->where('room_type_id', $request->room_type_id)
+            ->get();
+    }
+
     public function getAvailableRoomsForModify(Request $request)
     {
         return Room::with("room_type")

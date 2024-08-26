@@ -72,18 +72,6 @@ class QuotationController extends Controller
             $data["customer_id"] = $this->customerStore($filteredData);
 
 
-            // 'customer_id' => 'required',
-            // 'book_date' => 'required|date',
-            // 'arrival_date' => 'required|date',
-            // 'departure_date' => 'required|date',
-            // 'sub_total' => 'required|max:255',
-            // 'discount' => 'required|max:255',
-            // 'tax' => 'required|max:255',
-            // 'total' => 'required|max:255',
-
-            // return $data;
-
-
             $lastquotationId = Quotation::max("id") + 1;
 
             $ref_no = $lastquotationId < 1000 ? $lastquotationId + 1000 : $lastquotationId;
@@ -92,14 +80,28 @@ class QuotationController extends Controller
 
             $quotation =  Quotation::create($data);
 
-            // $items = array_map(function ($item) use ($quotation) {
-            //     $item['quotation_id'] = $quotation->id;
-            //     $item['created_at'] = now();
-            //     return $item;
-            // }, $request->items);
+            $items = array_map(function ($item) use ($quotation) {
 
-            // QuotationItem::insert($items);
+                unset($item["extras"]);
+                unset($item["audio"]);
+                unset($item["cleaning"]);
+                unset($item["electricity"]);
+                unset($item["extra_booking_hours_charges"]);
+                unset($item["generator"]);
+                unset($item["projector"]);
+                unset($item["price_with_meal"]);
 
+                $item["early_check_in"] = 0;
+                $item["late_check_out"] = 0;
+                $item["bed_amount"] = 0;
+
+
+                $item['quotation_id'] = $quotation->id;
+                $item['created_at'] = now();
+                return $item;
+            }, $request->items);
+
+            QuotationItem::insert($items);
 
             // $quotation = Quotation::with(["customer", "items"])->first();
 
@@ -122,7 +124,7 @@ class QuotationController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             // Log the exception or handle it as necessary
-            return $e->getMessage();
+            return response()->json($e->getMessage(), 500);
         }
     }
 
