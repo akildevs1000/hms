@@ -1133,7 +1133,7 @@
                           aria-describedby="inputGroup-sizing-sm"
                           disabled
                         >
-                          {{ convert_decimal(item.food_plan_price) }}
+                          {{ convert_decimal(item.total_food_charges) }}
                         </div>
                       </div>
 
@@ -2658,6 +2658,7 @@ export default {
 
         let payload = {
           ...this.temp,
+          total_food_charges,
           meal: "------",
           days: this.getDays(),
           room_discount: room_discount == "" ? 0 : room_discount,
