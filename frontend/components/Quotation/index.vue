@@ -146,12 +146,12 @@ export default {
         value: "arrival_date",
       },
       {
-        text: "Arrival Date",
-        value: "arrival_date",
-      },
-      {
         text: "Departure Date",
         value: "departure_date",
+      },
+      {
+        text: "Total",
+        value: "total",
       },
       {
         text: "Status",
