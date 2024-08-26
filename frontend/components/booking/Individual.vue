@@ -654,7 +654,7 @@
                                         </td>
                                         <td>{{ item.no_of_adult }}</td>
                                         <td>{{ item.no_of_child }}</td>
-                                        <td>{{ item.meal_name }}</td>
+                                        {{ item.meal_name }} ({{ item.food_plan_price }})
                                         <td>{{ item.no_of_rooms }}</td>
                                         <td>
                                           {{ convert_decimal(item.price) }}
@@ -822,7 +822,9 @@
 
                               <v-row>
                                 <v-col md="12" class="text-right">
-                                  <v-btn
+                                  <RoomDialog label="Add Room" @tableData="handleTableData" />
+
+                                  <!-- <v-btn
                                     color="primary"
                                     @click="get_available_rooms"
                                     small
@@ -831,7 +833,7 @@
                                       >mdi-plus</v-icon
                                     >
                                     Add Room
-                                  </v-btn>
+                                  </v-btn> -->
                                 </v-col>
                               </v-row>
                             </div>
@@ -2007,6 +2009,18 @@ export default {
     },
   },
   methods: {
+    handleTableData({ arrToMerge, payload }) {
+      let isSelect = this.selectedRooms.find(
+        (sr) => sr.room_no == payload.room_no
+      );
+
+      if (!isSelect) {
+        this.selectedRooms.push(payload);
+        this.priceListTableView = this.mergeEntries(
+          this.priceListTableView.concat(arrToMerge)
+        );
+      }
+    },
     async get_business_sources() {
       let config = {
         params: {
@@ -2492,7 +2506,7 @@ export default {
 
         if (existingEntry) {
           existingEntry.no_of_rooms += entry.no_of_rooms;
-          existingEntry.total_price += entry.total_price;
+          // existingEntry.total_price += entry.total_price;
         } else {
           result.push({ ...entry });
         }
