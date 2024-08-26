@@ -1430,221 +1430,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="RoomDrawer" max-width="400">
-      <v-card>
-        <v-toolbar flat class="primary white--text" dense>
-          Individual Booking <v-spacer></v-spacer
-          ><v-icon @click="RoomDrawer = false" color="white"
-            >mdi-close</v-icon
-          ></v-toolbar
-        >
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-menu
-                v-model="checkin_menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    label="Check In"
-                    append-icon="mdi-calendar"
-                    outlined
-                    dense
-                    hide-details
-                    v-model="formattedCheckinDate"
-                    persistent-hint
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  :min="new Date().toISOString().substr(0, 10)"
-                  v-model="temp.check_in"
-                  no-title
-                  @input="checkin_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="12">
-              <v-menu
-                v-model="checkout_menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    label="Check Out"
-                    append-icon="mdi-calendar"
-                    outlined
-                    dense
-                    hide-details
-                    v-model="formattedCheckOutDate"
-                    persistent-hint
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  :min="addOneDay(temp.check_in)"
-                  v-model="temp.check_out"
-                  no-title
-                  @input="checkout_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                label="Room Type"
-                outlined
-                dense
-                hide-details
-                item-value="id"
-                item-text="name"
-                v-model="room_type_id"
-                @change="
-                  ($event) => {
-                    get_available_rooms($event);
-                    selectRoom($event);
-                  }
-                "
-                :items="roomTypes"
-                return-object
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                v-model="multipleRoomId"
-                hide-details
-                :items="availableRooms"
-                item-value="id"
-                item-text="room_no"
-                label="Select Room"
-                dense
-                outlined
-                return-object
-              >
-              </v-autocomplete>
-            </v-col>
-            <v-col cols="6">
-              <v-autocomplete
-                label="Adult Per Room"
-                :items="[0, 1, 2, 3]"
-                dense
-                outlined
-                v-model="temp.no_of_adult"
-                :hide-details="true"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="6">
-              <v-autocomplete
-                label="Child Per Room"
-                :items="[0, 1, 2, 3]"
-                dense
-                outlined
-                v-model="temp.no_of_child"
-                :hide-details="true"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                label="Food Plan"
-                outlined
-                dense
-                hide-details
-                item-value="id"
-                item-text="title"
-                v-model="temp.food_plan_id"
-                :items="foodplans"
-                @change="
-                  selectRoom({ name: temp.room_type, room_no: temp.room_no })
-                "
-              ></v-autocomplete>
-            </v-col>
-            <!-- <v-col cols="12">
-              <v-row>
-                <v-col cols="4">
-                  <v-checkbox
-                    v-model="temp.breakfast"
-                    readonly
-                    outlined
-                    dense
-                    hide-details
-                    label="Breakfast"
-                  ></v-checkbox>
-                </v-col>
-                <v-col cols="4">
-                  <v-checkbox
-                    v-model="temp.lunch"
-                    readonly
-                    outlined
-                    dense
-                    hide-details
-                    label="Lunch"
-                  ></v-checkbox>
-                </v-col>
-                <v-col cols="4">
-                  <v-checkbox
-                    v-model="temp.dinner"
-                    readonly
-                    outlined
-                    dense
-                    hide-details
-                    label="Dinner"
-                  ></v-checkbox>
-                </v-col>
-              </v-row>
-            </v-col> -->
-            <v-col cols="6">
-              <v-checkbox
-                v-model="is_early_check_in"
-                label="Early Check In"
-                :hide-details="true"
-                dense
-                @change="set_additional_charges"
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col cols="6"
-              ><v-checkbox
-                v-model="is_late_check_out"
-                label="Late Check Out"
-                :hide-details="true"
-                dense
-                @change="set_additional_charges"
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                label="Extra Bed"
-                min="0"
-                dense
-                outlined
-                type="number"
-                v-model="temp.extra_bed_qty"
-                :hide-details="true"
-                @keyup="set_additional_charges"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-btn block @click="add_room(temp)" color="primary" small>
-                Confirm Room
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
-    </v-dialog>
   </div>
   <NoAccess v-else />
 </template>
@@ -2067,6 +1852,11 @@ export default {
       this.foodplans = foodplans;
     },
     addOneDay(originalDate) {
+      this.get_available_rooms({ id: this.room_type_id });
+      this.selectRoom({
+        name: this.temp.room_type,
+        room_no: this.temp.room_no,
+      });
       if (!originalDate) {
         return new Date().toISOString().substr(0, 10);
       }
@@ -2451,24 +2241,6 @@ export default {
 
         this.room.check_in = this.temp.check_in;
         this.room.check_out = this.temp.check_out;
-
-        // console.log(after_discount);return;
-
-        let payload = {
-          ...this.temp,
-          ...selected_food_plan,
-
-          days: this.getDays(),
-          room_discount: room_discount == "" ? 0 : room_discount,
-          after_discount: after_discount,
-          total: after_discount,
-          grand_total: after_discount,
-          room_no: this.multipleRoomId.room_no,
-          room_id: this.multipleRoomId.id,
-        };
-
-        selectedRoomsForTableView.push(payload);
-        this.selectedRooms.push(payload);
 
         this.runAllFunctions();
         this.alert("Success!", "success selected room", "success");

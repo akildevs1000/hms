@@ -1104,7 +1104,7 @@
                         aria-describedby="inputGroup-sizing-sm"
                         disabled
                       >
-                        {{ convert_decimal(item.total) }}
+                        {{ convert_decimal(item.total_price) }}
                       </div>
                     </div>
 
@@ -1385,12 +1385,6 @@
                 item-value="id"
                 item-text="name"
                 v-model="room_type_id"
-                @change="
-                  ($event) => {
-                    get_available_rooms($event);
-                    selectRoom($event);
-                  }
-                "
                 :items="roomTypes"
                 return-object
               ></v-autocomplete>
@@ -1932,6 +1926,12 @@ export default {
       this.foodplans = foodplans;
     },
     addOneDay(originalDate) {
+      this.get_available_rooms({ id: this.room_type_id });
+      this.selectRoom({
+        name: this.temp.room_type,
+        room_no: this.temp.room_no,
+      });
+
       if (!originalDate) {
         return new Date().toISOString().substr(0, 10);
       }
@@ -2325,24 +2325,6 @@ export default {
         this.room.check_in = this.temp.check_in;
         this.room.check_out = this.temp.check_out;
 
-        // console.log(after_discount);return;
-
-        let payload = {
-          ...this.temp,
-          ...selected_food_plan,
-
-          days: this.getDays(),
-          room_discount: room_discount == "" ? 0 : room_discount,
-          after_discount: after_discount,
-          total: after_discount,
-          grand_total: after_discount,
-          room_no: this.multipleRoomId.room_no,
-          room_id: this.multipleRoomId.id,
-        };
-
-        selectedRoomsForTableView.push(payload);
-        this.selectedRooms.push(payload);
-
         this.runAllFunctions();
         this.alert("Success!", "success selected room", "success");
         this.isSelectRoom = false;
@@ -2360,12 +2342,38 @@ export default {
           early_check_in,
           late_check_out,
           bed_amount,
-          total_price: after_discount * no_of_rooms,
+          total_price:
+            e.price +
+            early_check_in +
+            late_check_out +
+            bed_amount +
+            selected_food_plan.food_plan_price,
         }));
 
         this.priceListTableView = this.mergeEntries(
           this.priceListTableView.concat(arrToMerge)
         );
+
+        // console.log(after_discount);return;
+        let meal_price =
+          selected_food_plan.food_plan_price * this.priceListTableView.length;
+
+        let payload = {
+          ...this.temp,
+          ...selected_food_plan,
+          food_plan_price: meal_price,
+          days: this.getDays(),
+          room_discount: room_discount == "" ? 0 : room_discount,
+          after_discount:  price + early_check_in + late_check_out + bed_amount + meal_price,
+          total_price:
+            price + early_check_in + late_check_out + bed_amount + meal_price,
+          grand_total:  price + early_check_in + late_check_out + bed_amount + meal_price,
+          room_no: this.multipleRoomId.room_no,
+          room_id: this.multipleRoomId.id,
+        };
+
+        selectedRoomsForTableView.push(payload);
+        this.selectedRooms.push(payload);
       }
     },
 
@@ -2379,7 +2387,7 @@ export default {
 
         if (existingEntry) {
           existingEntry.no_of_rooms += entry.no_of_rooms;
-          existingEntry.total_price += entry.total_price;
+          // existingEntry.total_price += entry.total_price;
         } else {
           result.push({ ...entry });
         }

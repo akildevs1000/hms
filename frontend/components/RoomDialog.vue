@@ -721,20 +721,26 @@ export default {
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
 
-      // console.log(after_discount);return;
+       let meal_price =
+          selected_food_plan.food_plan_price * this.getDays();
 
-      let payload = {
-        ...this.temp,
-        ...selected_food_plan,
+        let payload = {
+          ...this.temp,
+          ...selected_food_plan,
+          food_plan_price: meal_price,
+          days: this.getDays(),
+          room_discount: room_discount == "" ? 0 : room_discount,
+          after_discount:  price + early_check_in + late_check_out + bed_amount + meal_price,
+          total_price:
+            price + early_check_in + late_check_out + bed_amount + meal_price,
+          grand_total:  price + early_check_in + late_check_out + bed_amount + meal_price,
+          room_no: this.multipleRoomId.room_no,
+          room_id: this.multipleRoomId.id,
+        };
 
-        days: this.getDays(),
-        room_discount: room_discount == "" ? 0 : room_discount,
-        after_discount: after_discount,
-        total: after_discount,
-        grand_total: after_discount,
-        room_no: this.multipleRoomId.room_no,
-        room_id: this.multipleRoomId.id,
-      };
+        selectedRoomsForTableView.push(payload);
+        this.selectedRooms.push(payload);
+
 
       selectedRoomsForTableView.push(payload);
 
@@ -761,6 +767,9 @@ export default {
         payload
       });
       this.RoomDrawer = false;
+
+
+     
     },
 
     get_available_rooms(item) {
