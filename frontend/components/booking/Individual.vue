@@ -790,17 +790,6 @@
                         label="Add Room"
                         @tableData="handleTableData"
                       />
-
-                      <!-- <v-btn
-                                    color="primary"
-                                    @click="get_available_rooms"
-                                    small
-                                  >
-                                    <v-icon color="white" small
-                                      >mdi-plus</v-icon
-                                    >
-                                    Add Room
-                                  </v-btn> -->
                     </v-col>
                   </v-row>
                 </v-tab-item>
@@ -1804,21 +1793,6 @@ export default {
 
       this.foodplans = foodplans;
     },
-    addOneDay(originalDate) {
-      this.get_available_rooms({ id: this.room_type_id });
-      this.selectRoom({
-        name: this.temp.room_type,
-        room_no: this.temp.room_no,
-      });
-      if (!originalDate) {
-        return new Date().toISOString().substr(0, 10);
-      }
-      const date = new Date(originalDate);
-
-      date.setDate(date.getDate() + 1);
-
-      return date.toISOString().split("T")[0];
-    },
 
     nextTab() {
       // if (this.activeTab) {
@@ -2071,17 +2045,6 @@ export default {
         this.idCards = data;
       });
     },
-    searchAvailableRoom(val) {
-      let arr = this.availableRooms;
-      let res = arr.filter((e) => e.room_no == val);
-      if (val.length == 0) {
-        this.get_available_rooms();
-        return;
-      }
-      if (res.length > 0) {
-        this.availableRooms = res;
-      }
-    },
 
     get_cs_gst(amount) {
       let gst = parseFloat(amount) / 2;
@@ -2113,154 +2076,6 @@ export default {
 
           this.get_cs_gst(data.total_tax);
         });
-    },
-
-    capsTitle(val) {
-      if (!val) return "---";
-      let res = val;
-      let upper = res.toUpperCase();
-      // let title = upper.replace(/[^A-Z]/g, " ");
-      return upper;
-    },
-
-    getFoodCalculation({ no_of_adult, no_of_child, food_plan_id }) {
-      let selectedFP = this.foodplans.find((e) => e.id == food_plan_id);
-
-      if (!selectedFP) {
-        return null;
-      }
-
-      let total_members = no_of_adult + no_of_child;
-
-      let { title, unit_price } = selectedFP;
-
-      let food_plan_price =
-        unit_price * no_of_adult + (unit_price * no_of_child) / 2;
-
-      return {
-        meal: "------",
-        meal_name: `${title} (${food_plan_price})`,
-        food_plan_price: food_plan_price,
-        breakfast: selectedFP.breakfast ? total_members : 0,
-        lunch: selectedFP.lunch ? total_members : 0,
-        dinner: selectedFP.dinner ? total_members : 0,
-      };
-    },
-
-    add_room({
-      room_type,
-      price,
-      early_check_in,
-      late_check_out,
-      room_discount,
-      room_extra_amount,
-      bed_amount,
-      priceList,
-      no_of_adult,
-      no_of_child,
-    }) {
-      if (!this.room_type_id || !this.multipleRoomId) {
-        this.alert("Error!", "Room type or Room not selected", "error");
-        return;
-      }
-
-      let selected_food_plan = this.getFoodCalculation(this.temp);
-
-      if (!selected_food_plan) {
-        this.alert("Error!", "Food plan not found!", "error");
-        return;
-      }
-
-      let extras =
-        early_check_in +
-        late_check_out +
-        bed_amount +
-        selected_food_plan.food_plan_price;
-
-      let sub_total =
-        extras +
-        price +
-        parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
-
-      let after_discount =
-        sub_total - (room_discount == "" ? 0 : room_discount);
-
-      let room_no = this.multipleRoomId.room_no;
-
-      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
-
-      if (!isSelect) {
-        let selectedRoomsForTableView = [];
-
-        this.room.check_in = this.temp.check_in;
-        this.room.check_out = this.temp.check_out;
-
-        this.runAllFunctions();
-        this.alert("Success!", "success selected room", "success");
-        this.isSelectRoom = false;
-        this.RoomDrawer = false;
-
-        let no_of_rooms = selectedRoomsForTableView.length || 0;
-
-        let arrToMerge = priceList.map((e) => ({
-          ...e,
-          ...selected_food_plan,
-          no_of_rooms,
-          room_type,
-          no_of_adult,
-          no_of_child,
-          early_check_in,
-          late_check_out,
-          bed_amount,
-          total_price: after_discount * no_of_rooms,
-        }));
-
-        this.priceListTableView = this.mergeEntries(
-          this.priceListTableView.concat(arrToMerge)
-        );
-      }
-    },
-
-    mergeEntries(entries) {
-      const result = [];
-
-      entries.forEach((entry) => {
-        const existingEntry = result.find(
-          (e) => e.room_type === entry.room_type && e.date === entry.date
-        );
-
-        if (existingEntry) {
-          existingEntry.no_of_rooms = entry.no_of_rooms;
-          // existingEntry.total_price += entry.total_price;
-        } else {
-          result.push({ ...entry });
-        }
-      });
-
-      return result;
-    },
-
-    get_available_rooms(item) {
-      if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
-        alert("Please select date");
-        this.RoomDrawer = false;
-        return;
-      }
-
-      this.RoomDrawer = true;
-      this.$axios
-        .get(`get_available_rooms_by_date_and_room_type`, {
-          params: {
-            check_in: this.temp.check_in,
-            check_out: this.temp.check_out,
-            room_type_id: item.id,
-            company_id: this.$auth.user.company.id,
-          },
-        })
-        .then(({ data }) => {
-          this.availableRooms = data;
-        });
-      this.runAllFunctions();
     },
 
     get_customer() {
