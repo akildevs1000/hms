@@ -190,18 +190,12 @@
                         <td><small>Day</small></td>
                         <td><small>Room Type</small></td>
                         <td><small>Type</small></td>
-                        <!-- <td><small>Rooms</small></td> -->
                         <td><small>Adult</small></td>
                         <td><small>Child</small></td>
                         <td><small>Meal</small></td>
                         <td><small>Tariff</small></td>
                         <td><small>Extras</small></td>
-
-                        <!-- <td><small>Early Checkin</small></td>
-                        <td><small>Late Checkout</small></td>
-                        <td><small>Extra Bed</small></td> -->
                         <td><small>Total</small></td>
-                        <td style="color: #4390fc">------</td>
                       </tr>
                     </thead>
                     <tbody>
@@ -221,10 +215,6 @@
                         <td>
                           {{ item.day_type }}
                         </td>
-                        <!-- <td>
-                          <small>{{ item.rooms }}</small>
-                        </td> -->
-
                         <td>{{ item.no_of_adult }}</td>
                         <td>{{ item.no_of_child }}</td>
                         <td>
@@ -233,25 +223,11 @@
                         <td>
                           {{ convert_decimal(item.room_price_with_tax) }}
                         </td>
-                        <!-- <td>
-                          {{ convert_decimal(item.early_check_in) }}
-                        </td>
-                        <td>
-                          {{ convert_decimal(item.late_check_out) }}
-                        </td>
-                        <td>
-                          {{ convert_decimal(item.bed_amount) }}
-                        </td> -->
                         <td>
                           {{ convert_decimal(item.extras) }}
                         </td>
                         <td>
                           {{ convert_decimal(item.total_price) }}
-                        </td>
-                        <td class="text-center">
-                          <v-icon color="red" @click="deleteItem(index, item)"
-                            >mdi-close</v-icon
-                          >
                         </td>
                       </tr>
                     </tbody>
