@@ -613,7 +613,6 @@
                             <td><small>Adult</small></td>
                             <td><small>Child</small></td>
                             <td><small>Meal</small></td>
-                            <td><small>No of Rooms</small></td>
                             <td><small>Price</small></td>
                             <td><small>Early Checkin</small></td>
                             <td><small>Late Checkout</small></td>
@@ -650,7 +649,6 @@
                             ({{
                               item.food_plan_price
                             }})
-                            <td>{{ item.no_of_rooms }}</td>
                             <td>
                               {{ convert_decimal(item.price) }}
                             </td>
