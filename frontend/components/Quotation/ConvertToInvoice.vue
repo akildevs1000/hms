@@ -1187,7 +1187,7 @@ export default {
         .post(`${this.endpoint}`, quotaion)
         .then(({ data }) => {
           this.loading = false;
-          this.alert("Success!", "Quotation has been updated", "success");
+          this.alert("Success!", "Quotation has been convert to Invoice", "success");
           this.$emit("response");
           this.dialog = false;
         })

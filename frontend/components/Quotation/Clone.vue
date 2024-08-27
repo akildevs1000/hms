@@ -1187,11 +1187,8 @@ export default {
         .post(`${this.endpoint}`, quotaion)
         .then(({ data }) => {
           this.loading = false;
-          this.alert("Success!", "Quotation has been updated", "success");
+          this.alert("Success!", "Quotation has been cloned", "success");
           this.$emit("response");
-          this.selectedRooms = [];
-          this.priceListTableView = [];
-          this.room_type_id = {};
           this.dialog = false;
         })
         .catch((e) => {

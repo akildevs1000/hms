@@ -1189,9 +1189,6 @@ export default {
           this.loading = false;
           this.alert("Success!", "Quotation has been updated", "success");
           this.$emit("response");
-          this.selectedRooms = [];
-          this.priceListTableView = [];
-          this.room_type_id = {};
           this.dialog = false;
         })
         .catch((e) => {
