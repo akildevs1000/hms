@@ -210,7 +210,9 @@
                               margin: 0 auto;
                               border-radius: 50%;
                             "
-                            :src="customer.captured_photo || '/no-profile-image.jpg'"
+                            :src="
+                              customer.captured_photo || '/no-profile-image.jpg'
+                            "
                           ></v-img>
                         </v-col>
                         <v-col md="10" cols="12">
@@ -593,238 +595,205 @@
                   </v-card>
                 </v-tab-item>
 
-                <v-tab-item>
-                  <v-card flat>
-                    <v-card-text>
-                      <v-row>
-                        <v-col md="12" cols="12">
-                          <v-alert colored-border elevation="0">
-                            <div class="mt-3">
-                              <!-- <pre>{{ priceListTableView }}</pre> -->
-                              <v-row>
-                                <v-col
-                                  md="12"
-                                  cols="12"
-                                  class="d-flex py-0 my-0 justify-center"
-                                >
-                                  <table
-                                    class="styled-table py-0 my-0"
-                                    style="width: 100%"
-                                  >
-                                    <thead>
-                                      <tr>
-                                        <th><small>Date</small></th>
-                                        <th><small>Day</small></th>
-                                        <th><small>Room Type</small></th>
-                                        <th><small>Type</small></th>
-                                        <th><small>Tariff</small></th>
-                                        <th><small>Adult</small></th>
-                                        <th><small>Child</small></th>
-                                        <th><small>Meal</small></th>
-                                        <th><small>No of Rooms</small></th>
-                                        <th><small>Price</small></th>
-                                        <th><small>Early Checkin</small></th>
-                                        <th><small>Late Checkout</small></th>
-                                        <th><small>Extra Bed</small></th>
-                                        <th><small>Total</small></th>
-                                        <th></th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      <tr
-                                        v-for="(
-                                          item, index
-                                        ) in priceListTableView"
-                                        :key="index"
-                                      >
-                                        <td>
-                                          {{ item.date }}
-                                        </td>
-                                        <td>
-                                          {{ item.day }}
-                                        </td>
-                                        <td>
-                                          {{ item.room_type }}
-                                        </td>
-                                        <td>
-                                          {{ item.day_type }}
-                                        </td>
-                                        <td>
-                                          {{ item.room_price }}
-                                        </td>
-                                        <td>{{ item.no_of_adult }}</td>
-                                        <td>{{ item.no_of_child }}</td>
-                                        {{ item.meal_name }} ({{ item.food_plan_price }})
-                                        <td>{{ item.no_of_rooms }}</td>
-                                        <td>
-                                          {{ convert_decimal(item.price) }}
-                                        </td>
-                                        <td>
-                                          {{
-                                            convert_decimal(item.early_check_in)
-                                          }}
-                                        </td>
-                                        <td>
-                                          {{
-                                            convert_decimal(item.late_check_out)
-                                          }}
-                                        </td>
-                                        <td>
-                                          {{ convert_decimal(item.bed_amount) }}
-                                        </td>
-                                        <td>
-                                          {{
-                                            convert_decimal(item.total_price)
-                                          }}
-                                        </td>
-                                        <td class="text-center">
-                                          <v-icon
-                                            color="red"
-                                            @click="deleteItem(index)"
-                                            >mdi-close</v-icon
-                                          >
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </v-col>
-                                <v-col
-                                  md="12"
-                                  style="padding-top: 0px; font-weight: bold"
-                                >
-                                  <div
-                                    class="d-flex justify-space-around py-3 styled-table"
-                                    style="margin-top: 5px"
-                                  >
-                                    <v-col cols="10" class="text-right">
-                                      <div>Sub Total:</div>
-                                      <div>Add :</div>
-                                      <div>Discount :</div>
-                                      <v-divider color="#4390FC"></v-divider>
-                                      <div
-                                        style="
-                                          font-size: 18px;
-                                          font-weight: bold;
-                                        "
-                                      >
-                                        Total :
-                                      </div>
-                                    </v-col>
-                                    <v-col cols="2" class="text-right">
-                                      <div>
-                                        {{ convert_decimal(subTotal()) }}
-                                      </div>
+                <v-tab-item class="pt-5">
+                  <v-row>
+                    <v-col
+                      md="12"
+                      cols="12"
+                      class="d-flex py-0 my-0 justify-center"
+                    >
+                      <table class="styled-table py-0 my-0" style="width: 100%">
+                        <thead>
+                          <tr>
+                            <td><small>Date</small></td>
+                            <td><small>Day</small></td>
+                            <td><small>Room Type</small></td>
+                            <td><small>Type</small></td>
+                            <td><small>Tariff</small></td>
+                            <td><small>Adult</small></td>
+                            <td><small>Child</small></td>
+                            <td><small>Meal</small></td>
+                            <td><small>No of Rooms</small></td>
+                            <td><small>Price</small></td>
+                            <td><small>Early Checkin</small></td>
+                            <td><small>Late Checkout</small></td>
+                            <td><small>Extra Bed</small></td>
+                            <td><small>Total</small></td>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(item, index) in priceListTableView"
+                            :key="index"
+                          >
+                            <td>
+                              {{ item.date }}
+                            </td>
+                            <td>
+                              {{ item.day }}
+                            </td>
+                            <td>
+                              {{ item.room_type }}
+                            </td>
+                            <td>
+                              {{ item.day_type }}
+                            </td>
+                            <td>
+                              {{ item.room_price }}
+                            </td>
+                            <td>{{ item.no_of_adult }}</td>
+                            <td>{{ item.no_of_child }}</td>
+                            {{
+                              item.meal_name
+                            }}
+                            ({{
+                              item.food_plan_price
+                            }})
+                            <td>{{ item.no_of_rooms }}</td>
+                            <td>
+                              {{ convert_decimal(item.price) }}
+                            </td>
+                            <td>
+                              {{ convert_decimal(item.early_check_in) }}
+                            </td>
+                            <td>
+                              {{ convert_decimal(item.late_check_out) }}
+                            </td>
+                            <td>
+                              {{ convert_decimal(item.bed_amount) }}
+                            </td>
+                            <td>
+                              {{ convert_decimal(item.total_price) }}
+                            </td>
+                            <td class="text-center">
+                              <v-icon color="red" @click="deleteItem(index)"
+                                >mdi-close</v-icon
+                              >
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </v-col>
+                    <v-col md="12" style="padding-top: 0px; font-weight: bold">
+                      <div
+                        class="d-flex justify-space-around py-3 styled-table"
+                        style="margin-top: 5px"
+                      >
+                        <v-col cols="10" class="text-right">
+                          <div>Sub Total:</div>
+                          <div>Add :</div>
+                          <div>Discount :</div>
+                          <v-divider color="#4390FC"></v-divider>
+                          <div style="font-size: 18px; font-weight: bold">
+                            Total :
+                          </div>
+                        </v-col>
+                        <v-col cols="2" class="text-right">
+                          <div>
+                            {{ convert_decimal(subTotal()) }}
+                          </div>
 
-                                      <div>
-                                        {{
-                                          convert_decimal(
-                                            temp.room_extra_amount
-                                          )
-                                        }}
-                                      </div>
-                                      <div style="color: red">
-                                        -{{
-                                          convert_decimal(temp.room_discount)
-                                        }}
-                                      </div>
-                                      <v-divider color="#4390FC"></v-divider>
-                                      <div
-                                        style="
-                                          font-size: 18px;
-                                          font-weight: bold;
-                                        "
-                                      >
-                                        {{
-                                          convert_decimal(processCalculation())
-                                        }}
-                                      </div>
-                                    </v-col>
-                                  </div>
-                                  <v-divider color="#4390FC"></v-divider>
-                                </v-col>
-                                <v-col md="3" sm="12" cols="12" dense>
-                                  <v-select
-                                    label="Discount/Extra"
-                                    v-model="extraPayType"
-                                    :items="['Discount', 'ExtraAmount']"
-                                    dense
-                                    :hide-details="true"
-                                    outlined
-                                  ></v-select>
-                                </v-col>
-                                <v-col
-                                  md="4"
-                                  sm="12"
-                                  cols="12"
-                                  dense
-                                  v-if="extraPayType == 'Discount'"
-                                >
-                                  <v-text-field
-                                    label="Discount Amount"
-                                    dense
-                                    outlined
-                                    type="number"
-                                    v-model="temp.room_discount"
-                                    :hide-details="true"
-                                    @keyup="processCalculation"
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col
-                                  md="4"
-                                  sm="12"
-                                  cols="12"
-                                  dense
-                                  v-if="extraPayType == 'Discount'"
-                                >
-                                  <v-text-field
-                                    label="Reason"
-                                    dense
-                                    outlined
-                                    type="text"
-                                    v-model="temp.discount_reason"
-                                    :hide-details="true"
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col
-                                  md="4"
-                                  sm="12"
-                                  cols="12"
-                                  dense
-                                  v-if="extraPayType == 'ExtraAmount'"
-                                >
-                                  <v-text-field
-                                    label="Extra Amount"
-                                    dense
-                                    outlined
-                                    type="number"
-                                    v-model="temp.room_extra_amount"
-                                    @keyup="processCalculation"
-                                    :hide-details="true"
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col
-                                  md="4"
-                                  sm="12"
-                                  cols="12"
-                                  dense
-                                  v-if="extraPayType == 'ExtraAmount'"
-                                >
-                                  <v-text-field
-                                    label="Reason"
-                                    dense
-                                    outlined
-                                    type="text"
-                                    v-model="temp.extra_amount_reason"
-                                    :hide-details="true"
-                                  ></v-text-field>
-                                </v-col>
-                              </v-row>
+                          <div>
+                            {{ convert_decimal(temp.room_extra_amount) }}
+                          </div>
+                          <div style="color: red">
+                            -{{ convert_decimal(temp.room_discount) }}
+                          </div>
+                          <v-divider color="#4390FC"></v-divider>
+                          <div style="font-size: 18px; font-weight: bold">
+                            {{ convert_decimal(processCalculation()) }}
+                          </div>
+                        </v-col>
+                      </div>
+                      <v-divider color="#4390FC"></v-divider>
+                    </v-col>
+                    <v-col md="3" sm="12" cols="12" dense>
+                      <v-select
+                        label="Discount/Extra"
+                        v-model="extraPayType"
+                        :items="['Discount', 'ExtraAmount']"
+                        dense
+                        :hide-details="true"
+                        outlined
+                      ></v-select>
+                    </v-col>
+                    <v-col
+                      md="4"
+                      sm="12"
+                      cols="12"
+                      dense
+                      v-if="extraPayType == 'Discount'"
+                    >
+                      <v-text-field
+                        label="Discount Amount"
+                        dense
+                        outlined
+                        type="number"
+                        v-model="temp.room_discount"
+                        :hide-details="true"
+                        @keyup="processCalculation"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col
+                      md="4"
+                      sm="12"
+                      cols="12"
+                      dense
+                      v-if="extraPayType == 'Discount'"
+                    >
+                      <v-text-field
+                        label="Reason"
+                        dense
+                        outlined
+                        type="text"
+                        v-model="temp.discount_reason"
+                        :hide-details="true"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col
+                      md="4"
+                      sm="12"
+                      cols="12"
+                      dense
+                      v-if="extraPayType == 'ExtraAmount'"
+                    >
+                      <v-text-field
+                        label="Extra Amount"
+                        dense
+                        outlined
+                        type="number"
+                        v-model="temp.room_extra_amount"
+                        @keyup="processCalculation"
+                        :hide-details="true"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col
+                      md="4"
+                      sm="12"
+                      cols="12"
+                      dense
+                      v-if="extraPayType == 'ExtraAmount'"
+                    >
+                      <v-text-field
+                        label="Reason"
+                        dense
+                        outlined
+                        type="text"
+                        v-model="temp.extra_amount_reason"
+                        :hide-details="true"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
 
-                              <v-row>
-                                <v-col md="12" class="text-right">
-                                  <RoomDialog label="Add Room" @tableData="handleTableData" />
+                  <v-row>
+                    <v-col md="12" class="text-right">
+                      <RoomDialog
+                        label="Add Room"
+                        @tableData="handleTableData"
+                      />
 
-                                  <!-- <v-btn
+                      <!-- <v-btn
                                     color="primary"
                                     @click="get_available_rooms"
                                     small
@@ -834,14 +803,8 @@
                                     >
                                     Add Room
                                   </v-btn> -->
-                                </v-col>
-                              </v-row>
-                            </div>
-                          </v-alert>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-                  </v-card>
+                    </v-col>
+                  </v-row>
                 </v-tab-item>
 
                 <v-tab-item>
@@ -1795,16 +1758,8 @@ export default {
   },
   methods: {
     handleTableData({ arrToMerge, payload }) {
-      let isSelect = this.selectedRooms.find(
-        (sr) => sr.room_no == payload.room_no
-      );
-
-      if (!isSelect) {
-        this.selectedRooms.push(payload);
-        this.priceListTableView = this.mergeEntries(
-          this.priceListTableView.concat(arrToMerge)
-        );
-      }
+      this.selectedRooms = [payload];
+      this.priceListTableView = arrToMerge;
     },
     async get_business_sources() {
       let config = {
@@ -2277,7 +2232,7 @@ export default {
         );
 
         if (existingEntry) {
-          existingEntry.no_of_rooms += entry.no_of_rooms;
+          existingEntry.no_of_rooms = entry.no_of_rooms;
           // existingEntry.total_price += entry.total_price;
         } else {
           result.push({ ...entry });
@@ -2420,9 +2375,8 @@ export default {
         user_id: this.$auth.user.id,
       };
 
-      console.log("🚀 ~ store_booking ~ payload:", payload)
+      console.log("🚀 ~ store_booking ~ payload:", payload);
       // return;
-      
 
       this.subLoad = false;
 
