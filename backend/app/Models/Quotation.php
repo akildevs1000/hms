@@ -12,7 +12,8 @@ class Quotation extends Model
     protected $guarded = [];
 
     protected $casts = [
-        "created_at" => "datetime:d-M-y"
+        "created_at" => "datetime:d-M-y",
+        'items' => 'array',
     ];
 
     public function getTotalAttribute($value)
@@ -28,16 +29,6 @@ class Quotation extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    /**
-     * Get all of the items for the Expense
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function items()
-    {
-        return $this->hasMany(QuotationItem::class);
     }
 
     /**

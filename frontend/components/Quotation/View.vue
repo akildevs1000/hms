@@ -1,15 +1,15 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-dialog v-model="dialog" max-width="1100">
+    <v-dialog persistent v-model="dialog" max-width="1100">
       <template v-slot:activator="{ on, attrs }">
-      <div v-bind="attrs" v-on="on">
-        <v-icon color="blue" small> mdi-eye </v-icon>
-        View
-      </div>
-    </template>
+        <div v-bind="attrs" v-on="on">
+          <v-icon color="blue" small> mdi-eye </v-icon>
+          View
+        </div>
+      </template>
       <v-card>
         <v-toolbar color="primary" dense flat dark>
-          <span>Quotaion Create</span>
+          <span>{{ model }} Edit</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="dialog = false"> mdi-close </v-icon>
         </v-toolbar>
@@ -17,17 +17,6 @@
           <v-container class="pa-5">
             <v-row>
               <v-col md="3" cols="12">
-                <div class="">
-                  <v-btn
-                    small
-                    class="mb-2"
-                    color="primary"
-                    @click="searchDialog = true"
-                  >
-                    Search
-                    <v-icon right dark>mdi-magnify</v-icon>
-                  </v-btn>
-                </div>
                 <div class="text-center">
                   <v-avatar size="150">
                     <v-img
@@ -126,7 +115,59 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <FullAddress @location="handleFullAddress" />
+                      <v-row>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-autocomplete
+                            append-icon=""
+                            readonly
+                            :items="countries"
+                            item-text="name"
+                            item-value="name"
+                            label="Country"
+                            v-model="customer.country"
+                            outlined
+                            :hide-details="true"
+                            dense
+                            @change="getStates(customer.country)"
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-autocomplete
+                          append-icon=""
+                            readonly
+                            :items="states"
+                            item-text="name"
+                            item-value="name"
+                            label="State"
+                            v-model="customer.state"
+                            outlined
+                            :hide-details="true"
+                            dense
+                            @change="getCities"
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-autocomplete
+                          append-icon=""
+                            readonly
+                            :items="cities"
+                            label="City"
+                            v-model="customer.city"
+                            outlined
+                            :hide-details="true"
+                            dense
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-text-field
+                            label="Zip Code"
+                            v-model="customer.zip_code"
+                            outlined
+                            :hide-details="true"
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -135,21 +176,20 @@
             <v-container>
               <v-row>
                 <v-col md="12">
-                  <table style="width:100%;" class="styled-table py-0 my-0">
+                  <table style="width: 100%" class="styled-table py-0 my-0">
                     <thead>
                       <tr>
                         <td><small>Date</small></td>
                         <td><small>Day</small></td>
                         <td><small>Room Type</small></td>
                         <td><small>Type</small></td>
-                        
+                        <!-- <td><small>Rooms</small></td> -->
                         <td><small>Adult</small></td>
                         <td><small>Child</small></td>
                         <td><small>Meal</small></td>
                         <td><small>Tariff</small></td>
                         <td><small>Extras</small></td>
 
-                        
                         <!-- <td><small>Early Checkin</small></td>
                         <td><small>Late Checkout</small></td>
                         <td><small>Extra Bed</small></td> -->
@@ -174,13 +214,17 @@
                         <td>
                           {{ item.day_type }}
                         </td>
+                        <!-- <td>
+                          <small>{{ item.rooms }}</small>
+                        </td> -->
+
                         <td>{{ item.no_of_adult }}</td>
                         <td>{{ item.no_of_child }}</td>
                         <td>
                           {{ item.meal_name }} ({{ item.food_plan_price }})
                         </td>
                         <td>
-                          {{ convert_decimal(item.price) }}
+                          {{ convert_decimal(item.room_price_with_tax) }}
                         </td>
                         <!-- <td>
                           {{ convert_decimal(item.early_check_in) }}
@@ -198,7 +242,7 @@
                           {{ convert_decimal(item.total_price) }}
                         </td>
                         <td class="text-center">
-                          <v-icon color="red" @click="deleteItem(index)"
+                          <v-icon color="red" @click="deleteItem(index, item)"
                             >mdi-close</v-icon
                           >
                         </td>
@@ -238,21 +282,6 @@
                     </v-col>
                   </div>
                 </v-col>
-                <v-col md="12" class="text-right">
-                  <QuotationItemsDialog
-                    label="Add"
-                    @tableData="handleTableData"
-                  />
-                  <v-btn
-                    style="background-color: #5fafa3"
-                    @click="store"
-                    small
-                    dark
-                  >
-                    <v-icon color="white" small>mdi-floppy</v-icon>
-                    Submit
-                  </v-btn>
-                </v-col>
               </v-row>
             </v-container>
           </v-container>
@@ -263,17 +292,11 @@
   <NoAccess v-else />
 </template>
 <script>
-import History from "../../components/customer/History.vue";
-import ImagePreview from "../../components/images/ImagePreview.vue";
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["model"],
-  components: {
-    History,
-    ImagePreview,
-  },
+  props: ["model", "endpoint", "item"],
   data() {
     return {
       is_early_check_in: false,
@@ -515,9 +538,28 @@ export default {
         company_id: this.$auth.user.company.id,
         dob_menu: false,
         dob: null,
-        //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        //   .toISOString()
-        //   .substr(0, 10)
+      },
+
+      defaultCustomer: {
+        customer_type: "Walking",
+        title: "Mr",
+        whatsapp: "",
+        nationality: "India",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        id_card_type_id: "",
+        id_card_no: "",
+        car_no: "",
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: null,
       },
       id_card_type_id: 0,
       errors: [],
@@ -570,6 +612,7 @@ export default {
       isValid: false,
 
       seletedFoodPlan: null,
+      countries: require("@/json/countries.json"),
     };
   },
   async created() {
@@ -583,6 +626,13 @@ export default {
     // this.getImage();
     this.preloader = false;
     await this.get_business_sources();
+    this.customer = this.item.customer;
+    this.customer.nationality = "India";
+
+    this.getStates(this.customer.country);
+    this.getCities(this.customer.state);
+    this.priceListTableView = this.item.items;
+    this.selectedRooms = this.item.items[0].rooms;
   },
   computed: {
     formattedCheckinDate() {
@@ -614,13 +664,42 @@ export default {
     },
   },
   methods: {
+    getStates(country) {
+      // Find the country object from the countries array
+      const countryObj = this.countries.find((e) => e.name === country);
+
+      // Check if the country object exists
+      if (countryObj) {
+        // Set the states array from the found country object
+        this.states = countryObj.states || [];
+      } else {
+        // If country not found, clear the states array and handle error
+        this.states = [];
+        console.warn(`Country with slug "${country}" not found.`);
+      }
+    },
+
+    getCities(state) {
+      // Find the state object from the states array
+      const stateObj = this.states.find((e) => e.name === state);
+
+      // Check if the state object exists
+      if (stateObj) {
+        // Set the cities array from the found state object
+        this.cities = stateObj.cities || [];
+      } else {
+        // If state not found, clear the cities array and handle error
+        this.cities = [];
+        console.warn(`State "${state}" not found.`);
+      }
+    },
     handleTableData({ arrToMerge, payload }) {
-      let isSelect = this.selectedRooms.find(
-        (sr) => sr.room_no == payload.room_no
-      );
+      console.log(arrToMerge);
+      let { room_id, room_no, room_tax, room_type } = payload;
+      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
 
       if (!isSelect) {
-        this.selectedRooms.push(payload);
+        this.selectedRooms.push({ room_id, room_no, room_tax, room_type });
         this.priceListTableView = this.mergeEntries(
           this.priceListTableView.concat(arrToMerge)
         );
@@ -635,7 +714,7 @@ export default {
       let { data } = await this.$axios.get("business-source-list", config);
       this.business_sources = data;
     },
-    
+
     async get_business_sources() {
       let config = {
         params: {
@@ -651,9 +730,11 @@ export default {
         ...e,
       };
     },
-    deleteItem(index) {
+    deleteItem(index, item) {
       this.priceListTableView.splice(index, 1);
-      this.selectedRooms.splice(index, 1);
+      this.selectedRooms = this.selectedRooms.filter(
+        (e) => e.room_type !== item.room_type
+      );
     },
 
     preview(file) {
@@ -739,7 +820,8 @@ export default {
         (total, num) => total + num.total_price,
         0
       ));
-    },Type(val) {
+    },
+    Type(val) {
       if (val == "Online") {
         this.isOnline = true;
         this.isCorporate = false;
@@ -843,16 +925,16 @@ export default {
           this.idCards = data;
         });
     },
-    mergeEntries(entries) {
+    mergeEntries(entries, payload) {
       const result = [];
 
       entries.forEach((entry) => {
         const existingEntry = result.find(
-          (e) => e.room_type === entry.room_type && e.date === entry.date
+          (e) => e.room_type === entry.room_type
         );
 
         if (existingEntry) {
-          existingEntry.no_of_rooms = entry.no_of_rooms;
+          existingEntry.total_price += entry.total_price;
         } else {
           result.push({ ...entry });
         }
@@ -923,12 +1005,108 @@ export default {
       this.runAllFunctions();
     },
 
+    get_customer() {
+      this.errors = [];
+      this.checkLoader = true;
+      let contact_no = this.search.mobile;
+      if (contact_no == undefined || contact_no == "") {
+        alert("Enter contact number");
+        this.checkLoader = false;
+        return;
+      }
+
+      this.$axios
+        .get(`get_customer/${contact_no}`, {
+          params: {
+            company_id: this.$auth.user.company.id,
+          },
+        })
+        .then(({ data }) => {
+          if (!data.status) {
+            this.checkLoader = false;
+            this.customer.contact_no = contact_no;
+            this.customer.whatsapp = contact_no;
+            alert("Customer not found");
+            return;
+          }
+
+          this.customer.contact_no = data.data.customer.contact_no;
+          this.customer.whatsapp = data.data.customer.whatsapp;
+          this.customer.title = data.data.customer.title;
+          this.customer.first_name = data.data.customer.first_name;
+          this.customer.last_name = data.data.customer.last_name;
+          this.customer.email = data.data.customer.email;
+          this.customer.company_id = data.data.customer.company_id;
+          this.customer.country = data.data.customer.country;
+          this.customer.state = data.data.customer.state;
+          this.customer.city = data.data.customer.city;
+          this.customer.zip_code = data.data.customer.zip_code;
+
+          this.customer = data.data;
+
+          this.searchDialog = false;
+          this.checkLoader = false;
+        });
+    },
+
     can(per) {
       return true;
       let u = this.$auth.user;
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
+    },
+
+    store() {
+      if (this.room.advance_price == "") {
+        this.room.advance_price = 0;
+      }
+
+      if (this.reservation.booking_status == 2) {
+        if (
+          this.customer.document == null ||
+          this.customer.document == undefined
+        ) {
+          this.alert("Missing!", "Select document", "error");
+          this.subLoad = false;
+          return;
+        }
+      }
+
+      this.subLoad = true;
+      if (this.selectedRooms.length == 0) {
+        this.alert("Missing!", "Atleast select one room", "error");
+        this.subLoad = false;
+        return;
+      }
+
+      if (this.reservation.booking_status == 2) {
+        this.room.booking_status = 2;
+      }
+
+      let rooms = this.selectedRooms.map((e) => e.room_no);
+      this.room.rooms = rooms.toString();
+      this.$axios
+        .post("/booking_validate1", {
+          ...this.room,
+          ...this.customer,
+        })
+        .then(({ data }) => {
+          this.loading = false;
+          if (!data.status) {
+            this.alert(
+              "No reservation created!",
+              "Some fields are missing or invalid",
+              "error"
+            );
+            this.errors = data.errors;
+            this.subLoad = false;
+          } else {
+            this.errors = [];
+            this.store_booking();
+          }
+        })
+        .catch((e) => console.log(e));
     },
 
     getQuotationItems() {
@@ -944,9 +1122,43 @@ export default {
           ...rest
         }) => ({
           ...rest,
-          room_price_with_tax: price,
+          rooms: this.selectedRooms,
         })
       );
+    },
+
+    store_booking() {
+      let quotaion = {
+        book_date: this.reservation.check_in,
+        arrival_date: this.room.check_in,
+        departure_date: this.room.check_out,
+        sub_total: this.subTotal(),
+        discount: this.room.discount,
+        tax: 0,
+        total: this.processCalculation(),
+        customer: this.customer,
+        items: this.getQuotationItems(),
+      };
+
+      this.subLoad = false;
+
+      this.$axios
+        .put(`${this.endpoint}/${this.item.id}`, quotaion)
+        .then(({ data }) => {
+          this.loading = false;
+          this.alert("Success!", "Quotation has been updated", "success");
+          this.$emit("response");
+          this.selectedRooms = [];
+          this.priceListTableView = [];
+          this.room_type_id = {};
+          this.dialog = false;
+        })
+        .catch((e) => {
+          console.log("🚀 ~ store_booking ~ e:", e.response.data);
+          this.alert("Error", e.response.data, "error");
+          this.errors = data.errors;
+          this.subLoad = false;
+        });
     },
 
     alert(title = "Success!", message = "Server Error", type = "error") {

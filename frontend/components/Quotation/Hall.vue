@@ -575,7 +575,7 @@ export default {
       this.selectRoomLoading = true;
 
       if (!this.temp.room_type) {
-        this.alert("Warning", "Hall must be selected");
+        alert("Hall must be selected");
         return;
       }
 
@@ -646,7 +646,7 @@ export default {
       let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
 
       if (!foodplan) {
-        this.alert("Warning!", `Food Plan must be selected`, "error");
+        alert(`Food Plan must be selected`);
         return;
       }
 
@@ -702,7 +702,7 @@ export default {
         this.selectedRooms.push(payload);
 
         this.runAllFunctions();
-        this.alert("Success!", "success selected room", "success");
+        alert("success selected room");
         this.isSelectRoom = false;
         this.RoomDrawer = false;
 
@@ -721,7 +721,7 @@ export default {
           generator,
           audio,
           projector,
-
+          room_price_with_tax:e.price,
           extra_booking_hours_charges,
 
           total_price: (e.price + extras) * selectedRoomsForTableView.length,
@@ -737,10 +737,8 @@ export default {
       this.temp.room_type = item.name;
 
       if (item.id == ``) {
-        this.alert(
-          "Warning!",
-          `"${this.temp.room_type}" must be selected`,
-          "error"
+        alert(
+        `"${this.temp.room_type}" must be selected`,
         );
         return;
       }

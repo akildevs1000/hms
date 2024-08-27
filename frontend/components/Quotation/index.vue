@@ -88,7 +88,7 @@
               <v-list-item-title>
                 <QuotationConvertToInvoice
                   :model="Model"
-                  :endpoint="`invoice`"
+                  :endpoint="`invoice-v1`"
                   :item="item"
                   @response="getDataFromApi"
                 />

@@ -595,14 +595,14 @@ export default {
       no_of_child,
     }) {
       if (!this.room_type_id || !this.multipleRoomId) {
-        this.alert("Error!", "Room type or Room not selected", "error");
+        alert("Room type or Room not selected");
         return;
       }
 
       let selected_food_plan = this.getFoodCalculation(this.temp);
 
       if (!selected_food_plan) {
-        this.alert("Error!", "Food plan not found!", "error");
+        alert("Food plan not found");
         return;
       }
 
@@ -649,7 +649,8 @@ export default {
       selectedRoomsForTableView.push(payload);
 
       this.runAllFunctions();
-      this.alert("Success!", "success selected room", "success");
+      // this.alert("Success!", "success selected room", "success");
+      // alert();
       this.isSelectRoom = false;
 
       let arrToMerge = priceList.map((e) => ({
@@ -662,6 +663,7 @@ export default {
         late_check_out,
         bed_amount,
         extras,
+        room_price_with_tax:e.price,
         total_price:
           e.price +
           early_check_in +

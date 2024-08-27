@@ -36,6 +36,7 @@ class ValidationRequest extends FormRequest
             'bank_details' => 'nullable|string',
             'terms_and_conditions' => 'nullable|string',
             'status' => 'nullable|string|max:255',
+            'items' => 'required|array',
         ];
     }
 }

@@ -141,21 +141,20 @@
             <v-container>
               <v-row>
                 <v-col md="12">
-                  <table style="width:100%;" class="styled-table py-0 my-0">
+                  <table style="width: 100%" class="styled-table py-0 my-0">
                     <thead>
                       <tr>
                         <td><small>Date</small></td>
                         <td><small>Day</small></td>
                         <td><small>Room Type</small></td>
                         <td><small>Type</small></td>
-                        
+                        <!-- <td><small>Rooms</small></td> -->
                         <td><small>Adult</small></td>
                         <td><small>Child</small></td>
                         <td><small>Meal</small></td>
                         <td><small>Tariff</small></td>
                         <td><small>Extras</small></td>
 
-                        
                         <!-- <td><small>Early Checkin</small></td>
                         <td><small>Late Checkout</small></td>
                         <td><small>Extra Bed</small></td> -->
@@ -180,13 +179,17 @@
                         <td>
                           {{ item.day_type }}
                         </td>
+                        <!-- <td>
+                          <small>{{ item.rooms }}</small>
+                        </td> -->
+
                         <td>{{ item.no_of_adult }}</td>
                         <td>{{ item.no_of_child }}</td>
                         <td>
                           {{ item.meal_name }} ({{ item.food_plan_price }})
                         </td>
                         <td>
-                          {{ convert_decimal(item.price) }}
+                          {{ convert_decimal(item.room_price_with_tax) }}
                         </td>
                         <!-- <td>
                           {{ convert_decimal(item.early_check_in) }}
@@ -204,7 +207,7 @@
                           {{ convert_decimal(item.total_price) }}
                         </td>
                         <td class="text-center">
-                          <v-icon color="red" @click="deleteItem(index)"
+                          <v-icon color="red" @click="deleteItem(index, item)"
                             >mdi-close</v-icon
                           >
                         </td>
@@ -551,9 +554,28 @@ export default {
         company_id: this.$auth.user.company.id,
         dob_menu: false,
         dob: null,
-        //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        //   .toISOString()
-        //   .substr(0, 10)
+      },
+
+      defaultCustomer: {
+        customer_type: "Walking",
+        title: "Mr",
+        whatsapp: "",
+        nationality: "India",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        id_card_type_id: "",
+        id_card_no: "",
+        car_no: "",
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: null,
       },
       id_card_type_id: 0,
       errors: [],
@@ -651,12 +673,11 @@ export default {
   },
   methods: {
     handleTableData({ arrToMerge, payload }) {
-      let isSelect = this.selectedRooms.find(
-        (sr) => sr.room_no == payload.room_no
-      );
+      let { room_id, room_no, room_tax, room_type } = payload;
+      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
 
       if (!isSelect) {
-        this.selectedRooms.push(payload);
+        this.selectedRooms.push({ room_id, room_no, room_tax, room_type });
         this.priceListTableView = this.mergeEntries(
           this.priceListTableView.concat(arrToMerge)
         );
@@ -671,7 +692,7 @@ export default {
       let { data } = await this.$axios.get("business-source-list", config);
       this.business_sources = data;
     },
-    
+
     async get_business_sources() {
       let config = {
         params: {
@@ -687,9 +708,12 @@ export default {
         ...e,
       };
     },
-    deleteItem(index) {
+    deleteItem(index, item) {
       this.priceListTableView.splice(index, 1);
-      this.selectedRooms.splice(index, 1);
+
+      this.selectedRooms = this.selectedRooms.filter(
+        (e) => e.room_type !== item.room_type
+      );
     },
 
     preview(file) {
@@ -775,7 +799,8 @@ export default {
         (total, num) => total + num.total_price,
         0
       ));
-    },Type(val) {
+    },
+    Type(val) {
       if (val == "Online") {
         this.isOnline = true;
         this.isCorporate = false;
@@ -884,11 +909,11 @@ export default {
 
       entries.forEach((entry) => {
         const existingEntry = result.find(
-          (e) => e.room_type === entry.room_type && e.date === entry.date
+          (e) => e.room_type === entry.room_type
         );
 
         if (existingEntry) {
-          existingEntry.no_of_rooms = entry.no_of_rooms;
+          existingEntry.total_price += entry.total_price;
         } else {
           result.push({ ...entry });
         }
@@ -1076,7 +1101,7 @@ export default {
           ...rest
         }) => ({
           ...rest,
-          room_price_with_tax: price,
+          rooms: this.selectedRooms,
         })
       );
     },
@@ -1088,10 +1113,7 @@ export default {
         departure_date: this.room.check_out,
         sub_total: this.subTotal(),
         discount: this.room.discount,
-        tax: this.selectedRooms.reduce(
-          (acc, { room_tax }) => acc + room_tax,
-          0
-        ),
+        tax: this.priceListTableView.reduce((acc, { tax }) => acc + tax, 0),
         total: this.processCalculation(),
         customer: this.customer,
         items: this.getQuotationItems(),
@@ -1112,10 +1134,11 @@ export default {
           this.selectedRooms = [];
           this.priceListTableView = [];
           this.room_type_id = {};
+          this.customer = this.defaultCustomer;
           this.dialog = false;
         })
         .catch((e) => {
-          console.log("🚀 ~ store_booking ~ e:", e.response.data)
+          console.log("🚀 ~ store_booking ~ e:", e.response.data);
           this.alert("Error", e.response.data, "error");
           this.errors = data.errors;
           this.subLoad = false;

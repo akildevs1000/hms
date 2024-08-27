@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Invoice\ValidationRequest;
+use App\Models\Customer;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
-use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -26,7 +25,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        return Invoice::with(["customer", "items","quotation"])->paginate(request("per_page", 50));
+        return Invoice::with(["customer", "quotation"])->paginate(request("per_page", 50));
     }
 
     /**
@@ -37,15 +36,16 @@ class InvoiceController extends Controller
      */
     public function store(ValidationRequest $request)
     {
-        // Invoice::truncate();
-        // InvoiceItem::truncate();
-
         try {
-            DB::beginTransaction();
             $data = $request->validated();
 
             $data["bank_details"] = "null";
             $data["terms_and_conditions"] = "null";
+
+            $customerData = $request->input('customer');
+            $filteredData = collect($customerData)->only($this->getCustomerFields())->toArray();
+
+            $data["customer_id"] = $this->customerStore($filteredData);
 
             $lastInvoiceId = Invoice::max("id") + 1;
 
@@ -55,24 +55,28 @@ class InvoiceController extends Controller
 
             $data["quotation_id"] = $request->id ?? 0;
 
-            $invoice =  Invoice::create($data);
+            Invoice::create($data);
 
-            $items = array_map(function ($item) use ($invoice) {
-                $item['invoice_id'] = $invoice->id;
-                unset($item['quotation_id']);
-                $item['created_at'] = now();
-                return $item;
-            }, $request->items);
+            // $quotation = Quotation::with("customer")->first();
 
-            InvoiceItem::insert($items);
+            // $fields = [
+            //     "title"     => $quotation->customer->title,
+            //     "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
+            //     "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
+            //     "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
+            //     "rooms_type" => $quotation->rooms_type,
+            //     "email" => $quotation->customer->email,
+            //     "whatsapp" => $quotation->customer->whatsapp,
+            // ];
 
-            DB::commit();
+            // $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
+            // $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
+
 
             return true;
         } catch (\Exception $e) {
-            DB::rollBack();
             // Log the exception or handle it as necessary
-            return $e->getMessage();
+            return response()->json($e->getMessage(), 500);
         }
     }
 
@@ -83,22 +87,13 @@ class InvoiceController extends Controller
      * @param  \App\Models\Invoice  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(ValidationRequest $request, Invoice $Invoice)
+    public function update(ValidationRequest $request, $id)
     {
-        $Invoice->update($request->validated());
-
-        InvoiceItem::where("invoice_id", $Invoice->id)->delete();
-
-        $items = array_map(function ($item) use ($Invoice) {
-            $item['invoice_id'] = $Invoice->id;
-
-           
-            return $item;
-        }, $request->items);
-
-        InvoiceItem::insert($items);
-
-        return $Invoice;
+        $data = $request->validated();
+        $customerData = $request->input('customer');
+        $filteredData = collect($customerData)->only($this->getCustomerFields())->toArray();
+        $data["customer_id"] = $this->customerStore($filteredData);
+        return Invoice::where("id", $id)->update($data);
     }
 
     /**
@@ -107,10 +102,50 @@ class InvoiceController extends Controller
      * @param  \App\Models\Invoice  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Invoice $Invoice)
+    public function destroy($id)
     {
-        $Invoice->delete();
+        Invoice::where("id", $id)->delete();
 
         return response()->noContent();
+    }
+
+    public function getCustomerFields()
+    {
+        return [
+            "title",
+            "whatsapp",
+            "first_name",
+            "last_name",
+            "contact_no",
+            "email",
+            "company_id",
+            "country",
+            "state",
+            "city",
+            "zip_code",
+        ];
+    }
+
+    public function customerStore($customer)
+    {
+        try {
+            $isExistCustomer = false;
+            if (!is_null($customer['contact_no'])) {
+                $isExistCustomer = Customer::whereContactNo($customer['contact_no'])->whereCompanyId($customer['company_id'])->first();
+            }
+            $id = "";
+            if ($isExistCustomer) {
+                $id = $isExistCustomer->id;
+                $isExistCustomer->update($customer);
+            } else {
+
+                $record = Customer::create($customer);
+                $id = $record->id ?? 0;
+            }
+            return $id;
+            return $this->response('Customer successfully added.', $id, true);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

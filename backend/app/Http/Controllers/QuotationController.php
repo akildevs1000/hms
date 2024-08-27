@@ -28,7 +28,7 @@ class QuotationController extends Controller
      */
     public function index()
     {
-        return Quotation::with(["customer", "items", "followups", "status"])->paginate(request("per_page", 50));
+        return Quotation::with(["customer", "followups", "status"])->paginate(request("per_page", 50));
     }
 
     /**
@@ -55,11 +55,8 @@ class QuotationController extends Controller
     }
     public function store(ValidationRequest $request)
     {
-        // Quotation::truncate();
-        // QuotationItem::truncate();
 
         try {
-            DB::beginTransaction();
             $data = $request->validated();
 
             $data["bank_details"] = "null";
@@ -68,9 +65,7 @@ class QuotationController extends Controller
             $customerData = $request->input('customer');
             $filteredData = collect($customerData)->only($this->getCustomerFields())->toArray();
 
-
             $data["customer_id"] = $this->customerStore($filteredData);
-
 
             $lastquotationId = Quotation::max("id") + 1;
 
@@ -78,32 +73,9 @@ class QuotationController extends Controller
 
             $data["ref_no"] = "QTN-$ref_no";
 
-            $quotation =  Quotation::create($data);
+            Quotation::create($data);
 
-            $items = array_map(function ($item) use ($quotation) {
-
-                unset($item["extras"]);
-                unset($item["audio"]);
-                unset($item["cleaning"]);
-                unset($item["electricity"]);
-                unset($item["extra_booking_hours_charges"]);
-                unset($item["generator"]);
-                unset($item["projector"]);
-                unset($item["price_with_meal"]);
-
-                $item["early_check_in"] = 0;
-                $item["late_check_out"] = 0;
-                $item["bed_amount"] = 0;
-
-
-                $item['quotation_id'] = $quotation->id;
-                $item['created_at'] = now();
-                return $item;
-            }, $request->items);
-
-            QuotationItem::insert($items);
-
-            // $quotation = Quotation::with(["customer", "items"])->first();
+            // $quotation = Quotation::with("customer")->first();
 
             // $fields = [
             //     "title"     => $quotation->customer->title,
@@ -118,11 +90,9 @@ class QuotationController extends Controller
             // $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
             // $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
 
-            DB::commit();
 
             return true;
         } catch (\Exception $e) {
-            DB::rollBack();
             // Log the exception or handle it as necessary
             return response()->json($e->getMessage(), 500);
         }
@@ -137,17 +107,11 @@ class QuotationController extends Controller
      */
     public function update(ValidationRequest $request, Quotation $Quotation)
     {
-        $Quotation->update($request->validated());
-
-
-        $items = array_map(function ($item) use ($Quotation) {
-            $item['quotation_id'] = $Quotation->id;
-            return $item;
-        }, $request->items);
-        QuotationItem::where("quotation_id", $Quotation->id)->delete();
-
-        QuotationItem::insert($items);
-
+        $data = $request->validated();
+        $customerData = $request->input('customer');
+        $filteredData = collect($customerData)->only($this->getCustomerFields())->toArray();
+        $data["customer_id"] = $this->customerStore($filteredData);
+        $Quotation->update($data);
         return $Quotation;
     }
 

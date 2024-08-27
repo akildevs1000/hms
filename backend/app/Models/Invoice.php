@@ -12,7 +12,8 @@ class Invoice extends Model
     protected $guarded = [];
 
     protected $casts = [
-        "created_at" => "datetime:d-M-y"
+        "created_at" => "datetime:d-M-y",
+        'items' => 'array',
     ];
 
     /**
@@ -33,15 +34,5 @@ class Invoice extends Model
     public function quotation()
     {
         return $this->belongsTo(Quotation::class);
-    }
-
-    /**
-     * Get all of the items for the Expense
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function items()
-    {
-        return $this->hasMany(InvoiceItem::class);
     }
 }
