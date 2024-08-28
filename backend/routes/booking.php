@@ -2,7 +2,8 @@
 
   use App\Http\Controllers\BookingController;
   use App\Http\Controllers\BookingSourceTypeController;
-  use App\Http\Controllers\FoodController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FoodController;
   use App\Http\Controllers\HolidayController;
   use App\Http\Controllers\TaxableController;
 use App\Http\Controllers\VerificationController;
@@ -101,3 +102,8 @@ use App\Http\Controllers\WeekdayController;
   Route::post('verify-customer/{id}', [VerificationController::class, 'verifyBooking']);
 
   Route::apiResource('booking-source-type', BookingSourceTypeController::class);
+
+
+
+  Route::post('customer-validate', [CustomerController::class, 'customer_validate']);
+

@@ -43,7 +43,6 @@ class StoreRequest extends FormRequest
             'customer_type'   => 'nullable',
             'dob'             => 'nullable',
             'gst_number'      => 'nullable',
-
             'title'      => 'required',
             'whatsapp'   => 'required',
             'nationality' => 'required',

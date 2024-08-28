@@ -411,7 +411,7 @@
       <!-- end cancel room -->
 
       <!-- New Booking room  -->
-      <v-dialog v-model="NewBooking" persistent width="90%">
+      <v-dialog v-model="NewBooking" persistent width="1000">
         <BookingDirectCheckIn
           v-if="NewBooking"
           @close-dialog="NewBooking = false"

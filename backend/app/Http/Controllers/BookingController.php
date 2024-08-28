@@ -393,6 +393,7 @@ class BookingController extends Controller
 
                 unset($room['priceList']);
                 unset($room['meal_name']);
+                unset($room['total_price']);
 
                 $bookedRoomId = BookedRoom::create($room);
 

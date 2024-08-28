@@ -209,4 +209,9 @@ class CustomerController extends Controller
         $customer = Customer::find($id);
         return response()->json(['data' => $customer, 'status' => true]);
     }
+
+    public function customer_validate(StoreRequest $request)
+    {
+        return $this->response('Customer validated.', null, true);
+    }
 }

@@ -1,162 +1,147 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-card>
-      <v-container fluid>
+    <v-dialog v-model="documentDialog" max-width="30%">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Add ID</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="documentDialog = false"
+            >mdi mdi-close-box</v-icon
+          >
+        </v-toolbar>
         <v-row>
-          <v-dialog v-model="documentDialog" max-width="30%">
-            <v-card>
-              <v-toolbar class="rounded-md" color="background" dense flat dark>
-                <span>Add ID</span>
-                <v-spacer></v-spacer>
-                <v-icon dark class="pa-0" @click="documentDialog = false"
-                  >mdi mdi-close-box</v-icon
-                >
-              </v-toolbar>
-              <v-container class="pa-5">
-                <v-row>
-                  <v-col md="12" sm="12" cols="12" dense>
-                    <v-select
-                      v-model="customer.id_card_type_id"
-                      :items="idCards"
-                      dense
-                      label="ID Card Type"
-                      outlined
-                      item-text="name"
-                      item-value="id"
-                      :hide-details="errors && !errors.id_card_type_id"
-                      :error-messages="
-                        errors && errors.id_card_type_id
-                          ? errors.id_card_type_id[0]
-                          : ''
-                      "
-                    ></v-select>
-                  </v-col>
-                  <v-col md="12" cols="12" sm="12">
-                    <v-text-field
-                      dense
-                      label="ID Card"
-                      outlined
-                      type="text"
-                      v-model="customer.id_card_no"
-                      :hide-details="errors && !errors.id_card_no"
-                      :error-messages="
-                        errors && errors.id_card_no ? errors.id_card_no[0] : ''
-                      "
-                    ></v-text-field>
-                  </v-col>
-                  <v-col md="12" cols="12" sm="12">
-                    <v-menu
-                      v-model="customer.passport_expiration_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="customer.passport_expiration"
-                          readonly
-                          label="Expired"
-                          v-on="on"
-                          v-bind="attrs"
-                          :hide-details="true"
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="customer.passport_expiration"
-                        @input="customer.passport_expiration_menu = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col md="12">
-                    <v-file-input
-                      v-model="customer.document"
-                      color="primary"
-                      counter
-                      placeholder="Select your files"
-                      outlined
-                      :show-size="1000"
-                    >
-                      <template v-slot:selection="{ index, text }">
-                        <v-chip
-                          v-if="index < 2"
-                          color="primary"
-                          dark
-                          label
-                          small
-                        >
-                          {{ text }}
-                        </v-chip>
-
-                        <span
-                          v-else-if="index === 2"
-                          class="text-overline grey--text text--darken-3 mx-2"
-                        >
-                          +{{ customer.document.length - 2 }} File(s)
-                        </span>
-                      </template>
-                    </v-file-input>
-                  </v-col>
-                  <v-divider></v-divider>
-                  <v-col md="12">
-                    <!-- @click="documentDialog = false" -->
-
-                    <v-btn
-                      small
-                      dark
-                      class="float-right primary pt-4 pb-4"
-                      @click="store_document_new()"
-                    >
-                      Submit
-                      <v-icon right dark>mdi-file</v-icon>
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>
-              <v-card-actions> </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <v-dialog v-model="imgView" max-width="80%">
-            <v-card>
-              <v-toolbar class="rounded-md" color="background" dense flat dark>
-                <span>Preview</span>
-                <v-spacer></v-spacer>
-                <v-icon dark class="pa-0" @click="imgView = false">
-                  mdi mdi-close-box
-                </v-icon>
-              </v-toolbar>
-              <v-container>
-                <ImagePreview :docObj="documentObj"></ImagePreview>
-              </v-container>
-              <v-card-actions> </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <v-col md="8">
-            <v-tabs
-              v-model="activeTab"
-              :vertical="vertical"
-              background-color="primary"
-              dark
-              show-arrows
+          <v-col md="12" sm="12" cols="12" dense>
+            <v-select
+              v-model="customer.id_card_type_id"
+              :items="idCards"
+              dense
+              label="ID Card Type"
+              outlined
+              item-text="name"
+              item-value="id"
+              :hide-details="errors && !errors.id_card_type_id"
+              :error-messages="
+                errors && errors.id_card_type_id
+                  ? errors.id_card_type_id[0]
+                  : ''
+              "
+            ></v-select>
+          </v-col>
+          <v-col md="12" cols="12" sm="12">
+            <v-text-field
+              dense
+              label="ID Card"
+              outlined
+              type="text"
+              v-model="customer.id_card_no"
+              :hide-details="errors && !errors.id_card_no"
+              :error-messages="
+                errors && errors.id_card_no ? errors.id_card_no[0] : ''
+              "
+            ></v-text-field>
+          </v-col>
+          <v-col md="12" cols="12" sm="12">
+            <v-menu
+              v-model="customer.passport_expiration_menu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
             >
-              <div class="py-3" style="background-color: #1259a7">
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="customer.passport_expiration"
+                  readonly
+                  label="Expired"
+                  v-on="on"
+                  v-bind="attrs"
+                  :hide-details="true"
+                  dense
+                  outlined
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="customer.passport_expiration"
+                @input="customer.passport_expiration_menu = false"
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col md="12">
+            <v-file-input
+              v-model="customer.document"
+              color="primary"
+              counter
+              placeholder="Select your files"
+              outlined
+              :show-size="1000"
+            >
+              <template v-slot:selection="{ index, text }">
+                <v-chip v-if="index < 2" color="primary" dark label small>
+                  {{ text }}
+                </v-chip>
+
+                <span
+                  v-else-if="index === 2"
+                  class="text-overline grey--text text--darken-3 mx-2"
+                >
+                  +{{ customer.document.length - 2 }} File(s)
+                </span>
+              </template>
+            </v-file-input>
+          </v-col>
+          <v-divider></v-divider>
+          <v-col md="12">
+            <!-- @click="documentDialog = false" -->
+
+            <v-btn
+              small
+              dark
+              class="float-right primary pt-4 pb-4"
+              @click="store_document_new()"
+            >
+              Submit
+              <v-icon right dark>mdi-file</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="imgView" max-width="80%">
+      <v-card>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Preview</span>
+          <v-spacer></v-spacer>
+          <v-icon dark class="pa-0" @click="imgView = false">
+            mdi mdi-close-box
+          </v-icon>
+        </v-toolbar>
+        <v-container>
+          <ImagePreview :docObj="documentObj"></ImagePreview>
+        </v-container>
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-card>
+      <v-container>
+        <v-row>
+          <v-col md="12">
+            <v-tabs v-model="activeTab" background-color="primary" dark>
+              <div class="py-3">
                 <span class="mx-2">New Reservation</span>
               </div>
               <v-spacer></v-spacer>
-              <v-tab active-class="active-link">
+              <v-tab>
                 <v-icon> mdi mdi-account-tie </v-icon>
               </v-tab>
-              <v-tab active-class="active-link">
+              <v-tab>
                 <v-icon> mdi mdi-bed </v-icon>
               </v-tab>
-              <v-tab active-class="active-link" v-if="customer.id > 0">
+              <v-tab v-if="customer.id > 0">
                 <v-icon> mdi mdi-clipboard-text-clock </v-icon>
               </v-tab>
-              <v-icon dark class="pa-2" @click="$emit(`close-dialog`)">
-                mdi mdi-close-box
+              <v-icon class="pa-2" @click="$emit(`close-dialog`)">
+                mdi-close
               </v-icon>
               <v-tabs-slider color="#1259a7"></v-tabs-slider>
               <v-tab-item>
@@ -165,60 +150,16 @@
                     <v-row>
                       <v-col md="2" cols="12">
                         <v-img
-                          @click="onpick_attachment"
                           style="
                             width: 150px;
                             height: 150px;
                             margin: 0 auto;
                             border-radius: 50%;
                           "
-                          :src="showImage"
-                        ></v-img>
-                        <input
-                          required
-                          type="file"
-                          @change="attachment"
-                          style="display: none"
-                          accept="image/*"
-                          ref="attachment_input"
-                        />
-                        <span
-                          v-if="errors && errors.image"
-                          class="red--text mt-2"
-                        >
-                          {{ errors.image[0] }}</span
-                        >
-                        <div
-                          class="mt-2 ml-4"
-                          v-if="
-                            customer.document &&
-                            this.reservation.booking_status == 1
+                          :src="
+                            customer.captured_photo || '/no-profile-image.jpg'
                           "
-                        >
-                          <v-btn
-                            small
-                            dark
-                            class="primary pt-4 pb-4"
-                            @click="preview(customer.document)"
-                          >
-                            ID
-                            <v-icon right dark>mdi-file</v-icon>
-                          </v-btn>
-                        </div>
-                        <div
-                          class="mt-2 ml-2"
-                          v-if="this.reservation.booking_status == 2"
-                        >
-                          <v-btn
-                            small
-                            dark
-                            class="primary pt-4 pb-4"
-                            @click="documentDialog = true"
-                          >
-                            <small>ID</small>
-                            <v-icon right dark>mdi-plus</v-icon>
-                          </v-btn>
-                        </div>
+                        ></v-img>
                       </v-col>
                       <v-col md="10" cols="12">
                         <v-row>
@@ -581,9 +522,7 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12" class="text-right">
-                        <v-btn small @click="nextTab" color="primary"
-                          >Next</v-btn
-                        >
+                        <v-btn small @click="store" color="primary">Next</v-btn>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -610,21 +549,19 @@
                                 >
                                   <thead>
                                     <tr>
-                                      <th><small>Date</small></th>
-                                      <th><small>Day</small></th>
-                                      <th><small>Room Type</small></th>
-                                      <th><small>Type</small></th>
-                                      <th><small>Tariff</small></th>
-                                      <th><small>Adult</small></th>
-                                      <th><small>Child</small></th>
-                                      <th><small>Meal</small></th>
-                                      <th><small>No of Rooms</small></th>
-                                      <th><small>Price</small></th>
-                                      <th><small>Early Checkin</small></th>
-                                      <th><small>Late Checkout</small></th>
-                                      <th><small>Extra Bed</small></th>
-                                      <th><small>Total</small></th>
-                                      <th></th>
+                                      <td><small>Date</small></td>
+                                      <td><small>Day</small></td>
+                                      <td><small>Room Type</small></td>
+                                      <td><small>Type</small></td>
+                                      <td><small>Adult</small></td>
+                                      <td><small>Child</small></td>
+                                      <td><small>Meal</small></td>
+                                      <td><small>Tariff</small></td>
+                                      <!-- <td><small>Early Checkin</small></td>
+                                      <td><small>Late Checkout</small></td>
+                                      <td><small>Extra Bed</small></td> -->
+                                      <td><small>Total</small></td>
+                                      <td><small>Action</small></td>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -646,17 +583,13 @@
                                       <td>
                                         {{ item.day_type }}
                                       </td>
-                                      <td>
-                                        {{ item.room_price }}
-                                      </td>
                                       <td>{{ item.no_of_adult }}</td>
                                       <td>{{ item.no_of_child }}</td>
                                       <td>{{ item.meal_name }}</td>
-                                      <td>{{ item.no_of_rooms }}</td>
                                       <td>
                                         {{ convert_decimal(item.price) }}
                                       </td>
-                                      <td>
+                                      <!-- <td>
                                         {{
                                           convert_decimal(item.early_check_in)
                                         }}
@@ -668,16 +601,34 @@
                                       </td>
                                       <td>
                                         {{ convert_decimal(item.bed_amount) }}
-                                      </td>
+                                      </td> -->
                                       <td>
                                         {{ convert_decimal(item.total_price) }}
                                       </td>
                                       <td class="text-center">
-                                        <v-icon
-                                          color="red"
-                                          @click="deleteItem(index)"
-                                          >mdi-close</v-icon
-                                        >
+                                        <v-row no-gutters>
+                                          <v-col>
+                                            <RoomDetails
+                                              :selectedRooms="selectedRooms"
+                                            />
+                                          </v-col>
+                                          <v-col>
+                                            <v-icon
+                                              small
+                                              color="orange"
+                                              @click="RoomDrawer = true"
+                                              >mdi-pencil</v-icon
+                                            >
+                                          </v-col>
+                                          <v-col>
+                                            <v-icon
+                                              small
+                                              color="red"
+                                              @click="deleteItem(index)"
+                                              >mdi-close</v-icon
+                                            >
+                                          </v-col>
+                                        </v-row>
                                       </td>
                                     </tr>
                                   </tbody>
@@ -808,13 +759,34 @@
                             <v-row>
                               <v-col md="12" class="text-right">
                                 <v-btn
+                                  small
+                                  class="primary"
+                                  @click="advanceDialog = true"
+                                >
+                                  <v-icon small>mdi-wallet</v-icon> Pay
+                                </v-btn>
+                                <IDPreviewForDirectCheckIn
+                                  @response="$emit(`close-dialog`)"
+                                  ref="id_preview"
+                                  :BookingId="BookingId"
+                                />
+                                <v-btn
+                                  small
+                                  style="background-color: #5fafa3"
+                                  @click="store_booking"
+                                  :loading="subLoad"
+                                  dark
+                                  ><v-icon small>mdi-floppy</v-icon>
+                                  Submit</v-btn
+                                >
+                                <!-- <v-btn
                                   color="primary"
                                   @click="RoomDrawer = true"
                                   small
                                 >
-                                  <v-icon color="white" small>mdi-plus</v-icon>
-                                  Add Room
-                                </v-btn>
+                                  <v-icon color="white" small>mdi-pencil</v-icon>
+                                  Edit Room
+                                </v-btn> -->
                               </v-col>
                             </v-row>
                           </div>
@@ -830,388 +802,6 @@
                   <v-card-text>
                     <History :customerId="customer.id"></History>
                   </v-card-text>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-col>
-
-          <v-col md="4">
-            <v-tabs
-              color="primary"
-              v-model="activeSummaryTab"
-              :vertical="vertical"
-              background-color="primary"
-              dark
-              show-arrows
-            >
-              <v-tab active-class="active-link">
-                <v-icon> mdi mdi-list-box-outline </v-icon>
-              </v-tab>
-
-              <v-tab
-                class="p-0 m-0"
-                active-class="active-link"
-                style="min-width: 10px !important"
-                v-for="(item, index) in selectedRooms"
-                :key="index"
-              >
-                <small>
-                  {{ item && item.room_no }}
-                </small>
-              </v-tab>
-              <v-tabs-slider color="#1259a7"></v-tabs-slider>
-              <v-tab-item>
-                <v-card flat>
-                  <v-divider class="px-5 py-0"></v-divider>
-                  <section>
-                    <div class="input-group input-group-sm px-5 py-0">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Name
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ customer.first_name || "---" }}
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Contact
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ customer.contact_no || "---" }}
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Check In
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ temp.check_in || "---" }} 12:00 PM
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Check Out
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ temp.check_out || "---" }} 11:00 AM
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Days
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ getDays() }}
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm mb-2 px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        No. Rooms
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ selectedRooms.length || 0 }}
-                      </div>
-                    </div>
-                  </section>
-                  <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
-                Payment
-              </p> -->
-                  <v-divider class="px-5 py-0"></v-divider>
-                  <section class="payment-section pt-0 mt-1">
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Total
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(room.total_price) }}
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Advance Payment
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ room.advance_price }}
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5 mb-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        <strong>Balance Amount</strong>
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control red--text"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        <strong>{{
-                          convert_decimal(room.remaining_price)
-                        }}</strong>
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-3 mb-5">
-                      <v-btn
-                        style="background-color: #4390fc; margin-right: 5px"
-                        width="50%"
-                        height="40"
-                        @click="advanceDialog = true"
-                        dark
-                      >
-                        Pay
-                      </v-btn>
-                      <v-btn
-                        style="background-color: #5fafa3"
-                        width="50%"
-                        height="40"
-                        @click="store"
-                        :loading="subLoad"
-                        dark
-                        >Book</v-btn
-                      >
-                    </div>
-                  </section>
-                </v-card>
-              </v-tab-item>
-              <!-- end room summary -->
-
-              <v-tab-item v-for="(item, index) in selectedRooms" :key="index">
-                <v-card flat>
-                  <div
-                    class="px-5 pt-2 d-flex justify-space-between"
-                    style="font-size: 16px; color: #aaaaaa"
-                  >
-                    <span> Room - {{ item.room_no }}</span>
-                    <span> {{ item.room_type }}</span>
-                  </div>
-                  <v-divider></v-divider>
-                  <section class="payment-section">
-                    <div class="input-group input-group-sm px-5 pt-2">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Amount
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.price) }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Meal
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.food_plan_price) }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Early Checkin
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.early_check_in) }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Late Checkout
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.late_check_out) }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Discount
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.room_discount) }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Extra Amount
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.room_extra_amount) }}
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        After Dis.
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.after_discount) }}
-                      </div>
-                    </div>
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Grand Total
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ convert_decimal(item.total) }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Discount Reason
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ item.discount_reason || "---" }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Amount Reason
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ item.extra_amount_reason || "---" }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Adult
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ item.no_of_adult }}
-                      </div>
-                    </div>
-
-                    <div class="input-group input-group-sm px-5">
-                      <span class="input-group-text" id="inputGroup-sizing-sm">
-                        Child
-                      </span>
-                      <div
-                        type="text"
-                        class="form-control"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                        disabled
-                      >
-                        {{ item.no_of_child }}
-                      </div>
-                    </div>
-                  </section>
                 </v-card>
               </v-tab-item>
             </v-tabs>
@@ -1350,7 +940,7 @@
     <v-dialog v-model="RoomDrawer" max-width="400">
       <v-card>
         <v-toolbar flat class="primary white--text" dense>
-          CheckIn <v-spacer></v-spacer
+          Individual Booking <v-spacer></v-spacer
           ><v-icon @click="RoomDrawer = false" color="white"
             >mdi-close</v-icon
           ></v-toolbar
@@ -1412,7 +1002,6 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                  :min="addOneDay(temp.check_in)"
                   v-model="temp.check_out"
                   no-title
                   @input="checkout_menu = false"
@@ -1429,12 +1018,6 @@
                 item-value="id"
                 item-text="name"
                 v-model="room_type_id"
-                @change="
-                  ($event) => {
-                    get_available_rooms($event);
-                    selectRoom($event);
-                  }
-                "
                 :items="roomTypes"
                 return-object
               ></v-autocomplete>
@@ -1581,6 +1164,8 @@ export default {
   },
   data() {
     return {
+      BookingId: 0,
+      customerDocs: null,
       additional_charges: {},
       is_early_check_in: false,
       is_late_check_out: false,
@@ -1708,6 +1293,7 @@ export default {
         cgst: 0,
         check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
         check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
+        // meal: [],
         bed_amount: 0,
         room_extra_amount: 0,
         extra_amount_reason: "",
@@ -1872,14 +1458,7 @@ export default {
     this.get_agents();
     this.get_online();
     this.get_Corporate();
-
     this.get_available_rooms({ id: this.room_type_id });
-
-    let { room_no, room_type: name } = this.temp;
-
-    this.selectRoom({ room_no, name });
-
-    // this.getImage();
     this.preloader = false;
 
     await this.get_additional_charges();
@@ -1962,6 +1541,12 @@ export default {
       this.foodplans = foodplans;
     },
     addOneDay(originalDate) {
+      this.get_available_rooms({ id: this.room_type_id });
+      this.selectRoom({
+        name: this.temp.room_type,
+        room_no: this.temp.room_no,
+      });
+
       if (!originalDate) {
         return new Date().toISOString().substr(0, 10);
       }
@@ -1973,26 +1558,7 @@ export default {
     },
 
     nextTab() {
-      // if (this.activeTab) {
-
-      if (this.reservation.booking_status == 2) {
-        if (
-          this.customer.document == null ||
-          this.customer.document == undefined
-        ) {
-          this.alert("Missing!", "Select document", "error");
-          this.subLoad = false;
-          return;
-        }
-      }
-
-      if (this.room.type == "") {
-        this.alert("oops", "Select Source Type", "error");
-
-        return false;
-      }
-      this.activeTab += 1;
-      // }
+      this.add_room(this.temp);
     },
     store_document_new() {
       this.documentDialog = false;
@@ -2060,16 +1626,16 @@ export default {
         room_no: this.reservation.room_no,
       };
       this.temp.room_id = this.reservation.id;
+
       this.temp.room_no = this.reservation.room_no;
       this.temp.room_type = this.reservation.room_type.name;
-      this.temp.price = this.reservation.price;
-
-      this.temp.room_tax = this.reservation.total_tax;
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
-
       this.temp.priceList = this.reservation.priceList;
-      this.get_cs_gst(this.temp.room_tax);
+    },
+
+    redirect() {
+      this.$router.push("/");
     },
 
     mergeContact() {
@@ -2266,6 +1832,7 @@ export default {
           this.temp.room_tax = data.total_tax;
 
           this.get_cs_gst(data.total_tax);
+          this.add_room(this.temp);
         });
     },
 
@@ -2293,7 +1860,7 @@ export default {
 
       return {
         meal: "------",
-        meal_name: `${title} (${food_plan_price})`,
+        meal_name: title,
         food_plan_price: food_plan_price,
         breakfast: selectedFP.breakfast ? total_members : 0,
         lunch: selectedFP.lunch ? total_members : 0,
@@ -2313,6 +1880,10 @@ export default {
       no_of_adult,
       no_of_child,
     }) {
+      if (this.room.type == "") {
+        this.alert("oops", "Select Source Type", "error");
+        return;
+      }
       if (!this.room_type_id || !this.multipleRoomId) {
         this.alert("Error!", "Room type or Room not selected", "error");
         return;
@@ -2341,83 +1912,63 @@ export default {
 
       let room_no = this.multipleRoomId.room_no;
 
-      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
+      this.room.check_in = this.temp.check_in;
+      this.room.check_out = this.temp.check_out;
 
-      if (!isSelect) {
-        let selectedRoomsForTableView = [];
+      this.runAllFunctions();
+      // this.alert("Success!", "success selected room", "success");
+      this.isSelectRoom = false;
+      this.RoomDrawer = false;
 
-        this.room.check_in = this.temp.check_in;
-        this.room.check_out = this.temp.check_out;
+      let arrToMerge = priceList.map((e) => ({
+        ...e,
+        ...selected_food_plan,
+        room_type,
+        no_of_adult,
+        no_of_child,
+        early_check_in,
+        late_check_out,
+        bed_amount,
+        total_price:
+          e.price +
+          early_check_in +
+          late_check_out +
+          bed_amount +
+          selected_food_plan.food_plan_price,
+      }));
 
-        // console.log(after_discount);return;
+      this.priceListTableView = arrToMerge;
 
-        let payload = {
-          ...this.temp,
-          ...selected_food_plan,
+      // console.log(after_discount);return;
+      let meal_price =
+        selected_food_plan.food_plan_price * this.priceListTableView.length;
 
-          days: this.getDays(),
-          room_discount: room_discount == "" ? 0 : room_discount,
-          after_discount: after_discount,
-          total: after_discount,
-          grand_total: after_discount,
-          room_no: this.multipleRoomId.room_no,
-          room_id: this.multipleRoomId.id,
-        };
+      let payload = {
+        ...this.temp,
+        ...selected_food_plan,
+        food_plan_price: meal_price,
+        days: this.getDays(),
+        room_discount: room_discount == "" ? 0 : room_discount,
+        after_discount:
+          price + early_check_in + late_check_out + bed_amount + meal_price,
+        total_price:
+          price + early_check_in + late_check_out + bed_amount + meal_price,
+        grand_total:
+          price + early_check_in + late_check_out + bed_amount + meal_price,
+        room_no: this.multipleRoomId.room_no,
+        room_id: this.multipleRoomId.id,
+      };
 
-        selectedRoomsForTableView.push(payload);
-        this.selectedRooms.push(payload);
-
-        this.runAllFunctions();
-        this.alert("Success!", "success selected room", "success");
-        this.isSelectRoom = false;
-        this.RoomDrawer = false;
-
-        let no_of_rooms = selectedRoomsForTableView.length || 0;
-
-        let arrToMerge = priceList.map((e) => ({
-          ...e,
-          ...selected_food_plan,
-          no_of_rooms,
-          room_type,
-          no_of_adult,
-          no_of_child,
-          early_check_in,
-          late_check_out,
-          bed_amount,
-          total_price: after_discount * no_of_rooms,
-        }));
-
-        this.priceListTableView = this.mergeEntries(
-          this.priceListTableView.concat(arrToMerge)
-        );
-      }
-    },
-
-    mergeEntries(entries) {
-      const result = [];
-
-      entries.forEach((entry) => {
-        const existingEntry = result.find(
-          (e) => e.room_type === entry.room_type && e.date === entry.date
-        );
-
-        if (existingEntry) {
-          existingEntry.no_of_rooms += entry.no_of_rooms;
-          existingEntry.total_price += entry.total_price;
-        } else {
-          result.push({ ...entry });
-        }
-      });
-
-      return result;
+      this.selectedRooms = [payload];
+      this.activeTab += 1;
     },
 
     get_available_rooms(item) {
-      if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
-        alert("Please select date");
-        this.RoomDrawer = false;
-        return;
-      }
+      // if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
+      //   alert("Please select date");
+      //   this.RoomDrawer = false;
+      //   return;
+      // }
 
       this.$axios
         .get(`get_available_rooms_by_date_and_room_type`, {
@@ -2483,6 +2034,30 @@ export default {
     },
 
     store() {
+      this.$axios
+        .post("/customer-validate", this.customer)
+        .then(({ data }) => {
+          this.loading = false;
+          if (!data.status) {
+            this.alert(
+              "No reservation created!",
+              "Some fields are missing or invalid",
+              "error"
+            );
+            this.errors = data.errors;
+            this.subLoad = false;
+          } else {
+            this.errors = [];
+            this.selectRoom({
+              name: this.temp.room_type,
+              room_no: this.temp.room_no,
+            });
+          }
+        })
+        .catch((e) => console.log(e));
+    },
+
+    store_booking() {
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
@@ -2513,31 +2088,6 @@ export default {
       this.room.rooms = rooms.toString();
       let payload = {
         ...this.room,
-        ...this.customer,
-      };
-      this.$axios
-        .post("/booking_validate1", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.alert(
-              "No reservation created!",
-              "Some fields are missing or invalid",
-              "error"
-            );
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.errors = [];
-            this.store_booking();
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    store_booking() {
-      let payload = {
-        ...this.room,
         customer_type: this.customer.customer_type,
         selectedRooms: this.selectedRooms,
         ...this.customer,
@@ -2554,14 +2104,9 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            // this.store_document(data.data);
-            this.alert("Success!", "Successfully room added", "success");
-
-            // if (this.reservation.booking_status == 2) {
-            //   this.$router.push("/reservation/in_house");
-            //   return "";
-            // }
-            this.$router.push("/");
+            this.BookingId = data.data;
+            this.$refs["id_preview"].idPreviewPopup = true;
+            return;
           }
         })
         .catch((e) => console.log(e));
