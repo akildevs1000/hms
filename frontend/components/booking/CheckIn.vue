@@ -992,7 +992,7 @@
                             aria-describedby="inputGroup-sizing-sm"
                             disabled
                           >
-                            {{ BookingData.advance_price }}
+                            {{ new_payment }}
                           </div>
                         </div>
                         <div class="input-group input-group-sm px-0 mb-0">
@@ -1009,7 +1009,7 @@
                             aria-describedby="inputGroup-sizing-sm"
                             disabled
                           >
-                            <strong>{{ BookingData.remaining_price }}</strong>
+                            <strong>{{ BookingData.total_price - new_payment }}</strong>
                           </div>
                         </div>
                         <v-card-actions class="pl-0 pr-2">
@@ -1019,7 +1019,6 @@
                           <v-row>
                             <v-col class="text-rights">
                               <v-btn
-                                :disabled="!customerDocs"
                                 @click="advanceDialog = true"
                                 color="primary"
                                 >Pay</v-btn
@@ -1469,6 +1468,7 @@ export default {
       // ---------booked data from parent-------------
       document: "",
       new_payment: 0,
+      remaining_price:0,
       reference_number: 0,
       imgView: 0,
       isImg: false,
@@ -1722,7 +1722,7 @@ export default {
       payload.append("new_payment", this.new_payment || 0);
       payload.append("booking_id", data.id);
       payload.append("room_id", data.room_id);
-      payload.append("remaining_price", data.remaining_price);
+      payload.append("remaining_price", data.total_price - this.new_payment);
       payload.append("payment_mode_id", this.room.payment_mode_id);
       payload.append("company_id", this.$auth.user.company.id);
       payload.append("id_card_type_id", this.checkIn.id_card_type_id);

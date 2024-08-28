@@ -1136,95 +1136,87 @@ export default {
         return;
       }
 
-      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
+      let extra_hours = total_booking_hours - hall_min_hours;
 
-      if (!isSelect) {
-        let extra_hours = total_booking_hours - hall_min_hours;
+      let extra_booking_hours_charges = extra_hours * extra_hours_charges;
 
-        let extra_booking_hours_charges = extra_hours * extra_hours_charges;
+      extra_booking_hours_charges =
+        extra_booking_hours_charges < 0 ? 0 : extra_booking_hours_charges;
 
-        extra_booking_hours_charges =
-          extra_booking_hours_charges < 0 ? 0 : extra_booking_hours_charges;
+      let selectedRoomsForTableView = [];
 
-        let selectedRoomsForTableView = [];
+      let adult_food_charges = foodplan.unit_price * no_of_adult;
+      let child_food_charges = (foodplan.unit_price * no_of_child) / 2;
+      let total_food_charges = adult_food_charges + child_food_charges;
 
-        let adult_food_charges = foodplan.unit_price * no_of_adult;
-        let child_food_charges = (foodplan.unit_price * no_of_child) / 2;
-        let total_food_charges = adult_food_charges + child_food_charges;
+      let extras =
+        parseFloat(cleaning) +
+        parseFloat(electricity) +
+        parseFloat(generator) +
+        parseFloat(audio) +
+        parseFloat(projector) +
+        parseFloat(extra_booking_hours_charges) +
+        parseFloat(total_food_charges);
 
-        let extras =
-          parseFloat(cleaning) +
-          parseFloat(electricity) +
-          parseFloat(generator) +
-          parseFloat(audio) +
-          parseFloat(projector) +
-          parseFloat(extra_booking_hours_charges) +
-          parseFloat(total_food_charges);
+      let sub_total =
+        price +
+        extras +
+        parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
 
-        let sub_total =
-          price +
-          extras +
-          parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
+      let after_discount =
+        sub_total - (room_discount == "" ? 0 : room_discount);
 
-        let after_discount =
-          sub_total - (room_discount == "" ? 0 : room_discount);
+      this.room.check_in = this.formattedCheckInDateTime;
+      this.room.check_out = this.formattedCheckOutDateTime;
 
-        this.room.check_in = this.formattedCheckInDateTime;
-        this.room.check_out = this.formattedCheckOutDateTime;
+      let payload = {
+        ...this.temp,
+        food_plan_price: total_food_charges,
+        meal: "------",
+        days: this.getDays(),
+        room_discount: room_discount == "" ? 0 : room_discount,
+        after_discount: after_discount,
+        total: after_discount,
+        grand_total: after_discount,
+        room_no,
+        room_id,
+        extra_hours,
+        extra_booking_hours_charges,
+      };
 
-        let payload = {
-          ...this.temp,
-          food_plan_price: total_food_charges,
-          meal: "------",
-          days: this.getDays(),
-          room_discount: room_discount == "" ? 0 : room_discount,
-          after_discount: after_discount,
-          total: after_discount,
-          grand_total: after_discount,
-          room_no,
-          room_id,
-          extra_hours,
-          extra_booking_hours_charges,
-        };
+      selectedRoomsForTableView.push(payload);
+      this.selectedRooms.push(payload);
 
-        selectedRoomsForTableView.push(payload);
-        this.selectedRooms.push(payload);
+      this.runAllFunctions();
+      this.alert("Success!", "success selected room", "success");
+      this.isSelectRoom = false;
+      this.RoomDrawer = false;
 
-        this.runAllFunctions();
-        this.alert("Success!", "success selected room", "success");
-        this.isSelectRoom = false;
-        this.RoomDrawer = false;
+      let arrToMerge = priceList.map((e) => ({
+        ...e,
+        price_with_meal: e.price + total_food_charges,
+        no_of_rooms: selectedRoomsForTableView.length,
+        room_type,
+        no_of_adult,
+        no_of_child,
+        meal_name: `${foodplan.title} (${total_food_charges})`,
+        extras,
 
-        let arrToMerge = priceList.map((e) => ({
-          ...e,
-          price_with_meal: e.price + total_food_charges,
-          no_of_rooms: selectedRoomsForTableView.length,
-          room_type,
-          no_of_adult,
-          no_of_child,
-          meal_name: `${foodplan.title} (${total_food_charges})`,
-          extras,
+        cleaning,
+        electricity,
+        generator,
+        audio,
+        projector,
 
-          cleaning,
-          electricity,
-          generator,
-          audio,
-          projector,
+        extra_booking_hours_charges,
 
-          extra_booking_hours_charges,
+        total_price: (e.price + extras) * selectedRoomsForTableView.length,
+      }));
 
-          total_price: (e.price + extras) * selectedRoomsForTableView.length,
-        }));
-
-        this.priceListTableView = this.mergeEntries(
-          this.priceListTableView.concat(arrToMerge)
-        );
-
-        this.$emit("tableData", {
-          arrToMerge,
-          payload,
-        });
-      }
+      this.$emit("tableData", {
+        arrToMerge,
+        payload,
+      });
     },
 
     mergeEntries(entries) {
