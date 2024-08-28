@@ -647,11 +647,9 @@
                                     <div>Add :</div>
                                     <div>Discount :</div>
                                     <v-divider color="#4390FC"></v-divider>
-                                    <div
-                                      style="font-size: 18px; font-weight: bold"
-                                    >
-                                      Total :
-                                    </div>
+                                    <div>Total :</div>
+                                    <div>Advance :</div>
+                                    <div>Balance :</div>
                                   </v-col>
                                   <v-col cols="2" class="text-right">
                                     <div>
@@ -666,14 +664,20 @@
                                     <div style="color: red">
                                       -{{ convert_decimal(temp.room_discount) }}
                                     </div>
+
                                     <v-divider color="#4390FC"></v-divider>
-                                    <div
-                                      style="font-size: 18px; font-weight: bold"
-                                    >
+                                    <div>
                                       {{
                                         convert_decimal(processCalculation())
                                       }}
                                     </div>
+                                    <div>
+                                      {{ convert_decimal(room.advance_price) }}
+                                    </div>
+                                    <div>
+                                      {{ convert_decimal(room.remaining_price) }}
+                                    </div>
+                                    
                                   </v-col>
                                 </div>
                                 <v-divider color="#4390FC"></v-divider>
@@ -1378,11 +1382,11 @@ export default {
       customer: {
         customer_type: "Walking",
         title: "Mr",
-        whatsapp: "1111111111",
+        whatsapp: "",
         nationality: "India",
-        first_name: "francis",
-        last_name: "gill",
-        contact_no: "1111111111",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
         email: "",
         id_card_type_id: "",
         id_card_no: "",

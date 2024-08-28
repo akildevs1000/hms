@@ -1,6 +1,5 @@
 <template>
-  <div class="text-center">
-    <v-dialog v-model="idPreviewPopup" width="1100">
+   <v-dialog v-model="idPreviewPopup" width="1100">
       <!-- <template v-slot:activator="{ on, attrs }">
         <v-btn block small color="primary" dark v-bind="attrs" v-on="on">
           ID <v-icon right>mdi-camera-outline</v-icon>
@@ -69,7 +68,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-  </div>
 </template>
 <script>
 export default {
