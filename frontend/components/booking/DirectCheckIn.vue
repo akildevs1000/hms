@@ -768,6 +768,7 @@
                                 <IDPreviewForDirectCheckIn
                                   @response="$emit(`close-dialog`)"
                                   ref="id_preview"
+                                  :RoomId="temp.room_id"
                                   :BookingId="BookingId"
                                 />
                                 <v-btn
@@ -1377,11 +1378,11 @@ export default {
       customer: {
         customer_type: "Walking",
         title: "Mr",
-        whatsapp: "",
+        whatsapp: "1111111111",
         nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
+        first_name: "francis",
+        last_name: "gill",
+        contact_no: "1111111111",
         email: "",
         id_card_type_id: "",
         id_card_no: "",
@@ -2062,17 +2063,6 @@ export default {
         this.room.advance_price = 0;
       }
 
-      if (this.reservation.booking_status == 2) {
-        if (
-          this.customer.document == null ||
-          this.customer.document == undefined
-        ) {
-          this.alert("Missing!", "Select document", "error");
-          this.subLoad = false;
-          return;
-        }
-      }
-
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
         this.alert("Missing!", "Atleast select one room", "error");
@@ -2103,11 +2093,11 @@ export default {
           if (!data.status) {
             this.errors = data.errors;
             this.subLoad = false;
-          } else {
-            this.BookingId = data.data;
-            this.$refs["id_preview"].idPreviewPopup = true;
             return;
           }
+
+          this.BookingId = data.data;
+          this.$refs["id_preview"].idPreviewPopup = true;
         })
         .catch((e) => console.log(e));
     },

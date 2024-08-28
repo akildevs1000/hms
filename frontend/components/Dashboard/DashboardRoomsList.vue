@@ -414,7 +414,7 @@
       <v-dialog v-model="NewBooking" persistent width="1000">
         <BookingDirectCheckIn
           v-if="NewBooking"
-          @close-dialog="NewBooking = false"
+          @close-dialog="closeCheckInAndOpenGRC"
           :reservation="newBookingRoom"
         />
       </v-dialog>
@@ -1679,6 +1679,7 @@ export default {
       this.$emit("call_room_list");
       this.room_list();
       this.checkInDialog = false;
+      this.NewBooking = false;
     },
   },
 };

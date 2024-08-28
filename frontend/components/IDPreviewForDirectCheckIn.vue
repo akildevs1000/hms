@@ -12,7 +12,6 @@
           <v-spacer></v-spacer>
           <v-icon @click="close"> mdi-close </v-icon>
         </v-toolbar>
-
         <v-card-text>
           <v-container v-if="isValid">
             <v-row>
@@ -56,6 +55,7 @@
               </v-col>
               <v-col cols="6">
                 <v-btn
+                  :disabled="!isValid"
                   :loading="confirmLoading"
                   class="primary"
                   block
@@ -73,14 +73,13 @@
 </template>
 <script>
 export default {
-  props: ["BookingId"],
+  props: ["BookingId", "RoomId"],
   data() {
     return {
       reloadLoading: false,
       confirmLoading: false,
       endpoint: "https://backend.myhotel2cloud.com/api",
       //   endpoint: "https://hms-backend.test/api",
-
       idPreviewPopup: false,
       customer: null,
       url: null,
@@ -125,26 +124,31 @@ export default {
     async confirm() {
       this.confirmLoading = true;
 
-      let payload = {
+      const payload = {
         ...this.customer,
         company_id: this.$auth.user.company_id,
       };
 
       try {
-        let url = `verify-customer/${this.BookingId}`;
-        await this.$axios.post(url, payload);
+        const verifyCustomerUrl = `verify-customer/${this.BookingId}`;
+        await this.$axios.post(verifyCustomerUrl, payload);
+
+        // Proceed with direct check-in only after customer verification
+        const checkInUrl = `direct_check_in_room`;
+        await this.$axios.post(checkInUrl, {
+          room_id: this.RoomId,
+          booking_id: this.BookingId,
+        });
         this.$emit(`response`);
         this.$swal("Success!", "Reservation created successfully", "success");
-        this.idPreviewPopup = false;
-        this.confirmLoading = false;
       } catch (error) {
-        console.log(error);
+        console.error(error);
+      } finally {
         this.confirmLoading = false;
-        this.$emit(`getCustomerDocs`, null);
+        this.idPreviewPopup = false;
       }
     },
     close() {
-      this.$emit(`getCustomerDocs`, null);
       this.idPreviewPopup = false;
     },
   },

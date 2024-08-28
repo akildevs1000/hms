@@ -781,39 +781,6 @@
                             "
                           ></v-text-field>
                         </v-col>
-
-                        <!-- <v-col md="3">
-                        <v-file-input
-                        hide-details
-                        dense
-                          prepend-icon=""
-                          v-model="checkIn.checkIn_document"
-                          color="primary"
-                          counter
-                          placeholder="Select your files"
-                          outlined
-                          :show-size="1000"
-                        >
-                          <template v-slot:selection="{ index, text }">
-                            <v-chip
-                              v-if="index < 2"
-                              color="primary"
-                              dark
-                              label
-                              small
-                            >
-                              {{ text }}
-                            </v-chip>
-
-                            <span
-                              v-else-if="index === 2"
-                              class="text-overline grey--text text--darken-3 mx-2"
-                            >
-                              +{{ checkIn.checkIn_document.length - 2 }} File(s)
-                            </span>
-                          </template>
-                        </v-file-input>
-                      </v-col> -->
                         <v-col md="12">
                           <v-textarea
                             rows="3"
@@ -1059,7 +1026,6 @@
                               >
 
                               <v-btn
-                                :disabled="!customerDocs"
                                 class="white--text"
                                 style="background-color: #5fafa3"
                                 @click="storeSubCustomer"
@@ -1765,11 +1731,18 @@ export default {
       if (this.reference_number) {
         payload.append("reference_number", this.reference_number);
       }
-      if (this.checkIn.checkIn_document) {
-        payload.append("document", this.checkIn.checkIn_document);
-      }
 
       payload.append("user_id", this.$auth.user.id);
+      payload.append("image", this.customer.image);
+      payload.append("title", this.customer.title);
+      payload.append("contact_no", this.customer.contact_no);
+      payload.append("whatsapp", this.customer.whatsapp);
+      payload.append("nationality", this.customer.nationality);
+      payload.append("dob", this.customer.dob);
+      payload.append("first_name", this.customer.first_name);
+      payload.append("last_name", this.customer.last_name);
+      payload.append("address", this.customer.address);
+      payload.append("email", this.customer.email);
 
       const fields = this.getCustomerFields();
 
@@ -1857,24 +1830,11 @@ export default {
       ];
     },
 
-    redirect_to_invoice(id) {
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}grc/${id}`);
-      document.body.appendChild(element);
-      element.click();
-    },
-
     get_customer() {
       this.errors = [];
       this.errorsForSubCustomer = [];
       this.checkLoader = true;
       let customer_id = this.BookingData.customer_id;
-      // if (contact_no == undefined || contact_no == "") {
-      //   // alert("Enter contact number");
-      //   this.checkLoader = false;
-      //   return;
-      // }
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
@@ -1965,111 +1925,6 @@ export default {
       this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
         this.idCards = data;
       });
-    },
-
-    capsTitle(val) {
-      if (!val) return "---";
-      let res = val;
-      let upper = res.toUpperCase();
-      // let title = upper.replace(/[^A-Z]/g, " ");
-      return upper;
-    },
-
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
-        u.is_master
-      );
-    },
-
-    store() {
-      if (this.room.advance_price == "") {
-        this.room.advance_price = 0;
-      }
-      this.subLoad = true;
-      if (this.selectedRooms.length == 0) {
-        this.alert("Missing!", "Atleast select one room", "error");
-        this.subLoad = false;
-        return;
-      }
-
-      let rooms = this.selectedRooms.map((e) => e.room_no);
-      this.room.rooms = rooms.toString();
-      let payload = {
-        ...this.room,
-        ...this.customer,
-      };
-      this.$axios
-        .post("/booking_validate1", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.alert(
-              "No reservation created!",
-              "Some fields are missing or invalid",
-              "error"
-            );
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.errors = [];
-            this.store_booking();
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    store_booking() {
-      let payload = {
-        ...this.room,
-        customer_type: this.customer.customer_type,
-        qty_breakfast: this.breakfast,
-        qty_lunch: this.lunch,
-        qty_dinner: this.dinner,
-        selectedRooms: this.selectedRooms,
-        ...this.customer,
-        user_id: this.$auth.user.id,
-      };
-      this.$axios
-        .post("/booking", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            // this.store_document(data.data);
-            this.alert("Success!", "Successfully room added", "success");
-            this.$router.push(`/`);
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    store_document(id) {
-      let payload = new FormData();
-      // payload.append("document", this.room.document);
-      payload.append("document", this.checkIn.checkIn_document);
-      payload.append("image", this.customer.image);
-      payload.append("booking_id", id);
-
-      this.$axios
-        .post("/store_document", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.documentDialog = false;
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    alert(title = "Success!", message = "hello", type = "error") {
-      this.$swal(title, message, type);
     },
   },
 };

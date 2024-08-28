@@ -2,12 +2,12 @@
 
   use App\Http\Controllers\BookingController;
   use App\Http\Controllers\BookingSourceTypeController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\FoodController;
+  use App\Http\Controllers\CustomerController;
+  use App\Http\Controllers\FoodController;
   use App\Http\Controllers\HolidayController;
   use App\Http\Controllers\TaxableController;
-use App\Http\Controllers\VerificationController;
-use App\Http\Controllers\WeekdayController;
+  use App\Http\Controllers\VerificationController;
+  use App\Http\Controllers\WeekdayController;
   use App\Http\Controllers\WeekendController;
   use Illuminate\Support\Facades\Route;
 
@@ -53,6 +53,7 @@ use App\Http\Controllers\WeekdayController;
 
   Route::post('check_in_room', [BookingController::class, 'check_in_room']);
   Route::post('quick_check_in_room', [BookingController::class, 'quick_check_in_room']);
+  Route::post('direct_check_in_room', [BookingController::class, 'direct_check_in_room']);
 
   Route::post('check_out_room', [BookingController::class, 'check_out_room']);
 
@@ -106,4 +107,3 @@ use App\Http\Controllers\WeekdayController;
 
 
   Route::post('customer-validate', [CustomerController::class, 'customer_validate']);
-
