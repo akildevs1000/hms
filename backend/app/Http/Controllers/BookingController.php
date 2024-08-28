@@ -759,6 +759,7 @@ class BookingController extends Controller
                 // }
                 $customerData = $request->only(Customer::customerAttributes());
                 $customerData['id'] = $request->customer_id;
+                $customerData['dob'] = date("Y-m-d");
                 $this->customerUpdateById($customerData);
 
                 $fields = [
