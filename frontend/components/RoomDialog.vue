@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="RoomDrawer" max-width="400">
+  <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         small
@@ -15,7 +15,7 @@
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
         Individual Booking <v-spacer></v-spacer
-        ><v-icon @click="RoomDrawer = false" color="white"
+        ><v-icon @click="close" color="white"
           >mdi-close</v-icon
         ></v-toolbar
       >
@@ -314,9 +314,9 @@ export default {
       priceListTableView: [],
 
       temp: {
-        food_plan_price: 1,
+        food_plan_price: 0,
         extra_bed_qty: 0,
-        food_plan_id: 1,
+        food_plan_id: 0,
         early_check_in: 0,
         late_check_out: 0,
         room_no: "",
@@ -470,8 +470,6 @@ export default {
       extraPayType: "",
       allFood: [],
 
-     
-
       documentObj: {
         fileExtension: null,
         file: null,
@@ -515,6 +513,52 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.temp = {
+        food_plan_price: 0,
+        extra_bed_qty: 0,
+        food_plan_id: 0,
+        early_check_in: 0,
+        late_check_out: 0,
+        room_no: "",
+        room_type: "",
+        room_id: "",
+        price: 0,
+        days: 0,
+        sgst: 0,
+        cgst: 0,
+        check_in: this.reservation.check_in,
+        check_out: this.reservation.check_out,
+        // meal: [],
+        bed_amount: 0,
+        room_extra_amount: 0,
+        extra_amount_reason: "",
+        room_discount: 0,
+        after_discount: 0, //(price - room_discount)
+        room_tax: 0,
+        total_with_tax: 0, //(after_discount * room_tax)
+        total: 0, //(total_with_tax * bed_amount)
+        grand_total: 0, //(total * days)
+        company_id: this.$auth.user.company.id,
+
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        tot_adult_food: 0,
+        tot_child_food: 0,
+        discount_reason: "",
+        priceList: [],
+      };
+
+      this.room_type_id = 0;
+      this.multipleRoomId = null,
+
+      this.is_early_check_in = false;
+      this.is_late_check_out = false;
+      this.extra_bed = 0;
+
+      this.RoomDrawer = false;
+    },
     handleFullAddress(e) {
       this.customer = {
         ...this.customer,
@@ -721,26 +765,26 @@ export default {
       this.room.check_in = this.temp.check_in;
       this.room.check_out = this.temp.check_out;
 
-       let meal_price =
-          selected_food_plan.food_plan_price * this.getDays();
+      let meal_price = selected_food_plan.food_plan_price * this.getDays();
 
-        let payload = {
-          ...this.temp,
-          ...selected_food_plan,
-          food_plan_price: meal_price,
-          days: this.getDays(),
-          room_discount: room_discount == "" ? 0 : room_discount,
-          after_discount:  price + early_check_in + late_check_out + bed_amount + meal_price,
-          total_price:
-            price + early_check_in + late_check_out + bed_amount + meal_price,
-          grand_total:  price + early_check_in + late_check_out + bed_amount + meal_price,
-          room_no: this.multipleRoomId.room_no,
-          room_id: this.multipleRoomId.id,
-        };
+      let payload = {
+        ...this.temp,
+        ...selected_food_plan,
+        food_plan_price: meal_price,
+        days: this.getDays(),
+        room_discount: room_discount == "" ? 0 : room_discount,
+        after_discount:
+          price + early_check_in + late_check_out + bed_amount + meal_price,
+        total_price:
+          price + early_check_in + late_check_out + bed_amount + meal_price,
+        grand_total:
+          price + early_check_in + late_check_out + bed_amount + meal_price,
+        room_no: this.multipleRoomId.room_no,
+        room_id: this.multipleRoomId.id,
+      };
 
-        selectedRoomsForTableView.push(payload);
-        this.selectedRooms.push(payload);
-
+      selectedRoomsForTableView.push(payload);
+      this.selectedRooms.push(payload);
 
       selectedRoomsForTableView.push(payload);
 
@@ -760,16 +804,18 @@ export default {
         early_check_in,
         late_check_out,
         bed_amount,
-        total_price: e.price + early_check_in + late_check_out + bed_amount + selected_food_plan.food_plan_price,
+        total_price:
+          e.price +
+          early_check_in +
+          late_check_out +
+          bed_amount +
+          selected_food_plan.food_plan_price,
       }));
       this.$emit("tableData", {
         arrToMerge,
-        payload
+        payload,
       });
-      this.RoomDrawer = false;
-
-
-     
+      this.close();
     },
 
     get_available_rooms(item) {

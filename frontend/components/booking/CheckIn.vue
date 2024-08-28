@@ -1013,18 +1013,17 @@
                           </div>
                         </div>
                         <v-card-actions class="pl-0 pr-2">
-                          <!-- <v-btn class="primary" small width="100%" height="60" @click="store_check_in(BookingData)"
-                    :loading="loading">Check In</v-btn> -->
-
                           <v-row>
                             <v-col class="text-rights">
                               <v-btn
+                              :disabled="!customerDocs"
                                 @click="advanceDialog = true"
                                 color="primary"
                                 >Pay</v-btn
                               >
 
                               <v-btn
+                              :disabled="!customerDocs"
                                 class="white--text"
                                 style="background-color: #5fafa3"
                                 @click="storeSubCustomer"

@@ -33,7 +33,7 @@
         >
           <span>Hall Booking Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="dialog = false">
+          <v-icon dark class="pa-0" @click="close">
             mdi mdi-close-box
           </v-icon>
         </v-toolbar>
@@ -1874,6 +1874,66 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.customer = {
+        customer_type: "Walking",
+        title: "Mr",
+        whatsapp: "",
+        nationality: "India",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        id_card_type_id: "",
+        id_card_no: "",
+        car_no: "",
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: null,
+      };
+
+      this.room = {
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
+        customer_type: "",
+        customer_status: "",
+        all_room_Total_amount: 0, // sum of temp.totals
+        total_extra: 0,
+        type: "Walking",
+        source: "walking",
+        agent_name: "",
+        booking_status: 1,
+        discount: 0,
+        reference_number: "",
+        advance_price: 0,
+        payment_mode_id: 1,
+        total_days: 0,
+        sub_total: 0,
+        after_discount: 0,
+        sales_tax: 0,
+        total_price: 0,
+        remaining_price: 0,
+        request: "",
+        company_id: this.$auth.user.company.id,
+        remark: "",
+        rooms: "",
+        reference_no: "",
+        paid_by: "",
+        purpose: "",
+      };
+
+      this.priceListTableView = [];
+      this.selectedRooms = [];
+
+      this.activeTab = 0;
+
+      this.dialog = false;
+    },
     handleTableData({ arrToMerge, payload }) {
       let isSelect = this.selectedRooms.find(
         (sr) => sr.room_no == payload.room_no

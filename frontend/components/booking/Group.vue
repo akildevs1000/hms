@@ -26,9 +26,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Group Booking Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="dialog = false">
-            mdi mdi-close-box
-          </v-icon>
+          <v-icon dark class="pa-0" @click="close"> mdi mdi-close-box </v-icon>
         </v-toolbar>
         <v-container fluid>
           <v-row>
@@ -212,7 +210,9 @@
                               margin: 0 auto;
                               border-radius: 50%;
                             "
-                            :src="customer.captured_photo || '/no-profile-image.jpg'"
+                            :src="
+                              customer.captured_photo || '/no-profile-image.jpg'
+                            "
                           ></v-img>
                         </v-col>
                         <v-col md="10" cols="12">
@@ -1762,9 +1762,9 @@ export default {
       priceListTableView: [],
 
       temp: {
-        food_plan_price: 1,
+        food_plan_price: 0,
         extra_bed_qty: 0,
-        food_plan_id: 1,
+        food_plan_id: 0,
         early_check_in: 0,
         late_check_out: 0,
         room_no: "",
@@ -1994,6 +1994,104 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.customer = {};
+      this.temp = {
+        food_plan_price: 0,
+        extra_bed_qty: 0,
+        food_plan_id: 0,
+        early_check_in: 0,
+        late_check_out: 0,
+        room_no: "",
+        room_type: "",
+        room_id: "",
+        price: 0,
+        days: 0,
+        sgst: 0,
+        cgst: 0,
+        check_in: "",
+        check_out: "",
+        // meal: [],
+        bed_amount: 0,
+        room_extra_amount: 0,
+        extra_amount_reason: "",
+        room_discount: 0,
+        after_discount: 0, //(price - room_discount)
+        room_tax: 0,
+        total_with_tax: 0, //(after_discount * room_tax)
+        total: 0, //(total_with_tax * bed_amount)
+        grand_total: 0, //(total * days)
+        company_id: this.$auth.user.company.id,
+
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        tot_adult_food: 0,
+        tot_child_food: 0,
+        discount_reason: "",
+        priceList: [],
+      };
+      this.customer = {
+        customer_type: "Walking",
+        title: "Mr",
+        whatsapp: "",
+        nationality: "India",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        id_card_type_id: "",
+        id_card_no: "",
+        car_no: "",
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: null,
+      };
+      this.room = {
+        customer_type: "",
+        group_name: "",
+        customer_status: "",
+        all_room_Total_amount: 0, // sum of temp.totals
+        total_extra: 0,
+        type: "Walking",
+        source: "",
+        agent_name: "",
+        booking_status: 1,
+        check_in: null,
+        check_out: null,
+        discount: 0,
+        reference_number: "",
+        advance_price: 0,
+        payment_mode_id: 1,
+        total_days: 0,
+        sub_total: 0,
+        after_discount: 0,
+        sales_tax: 0,
+        total_price: 0,
+        remaining_price: 0,
+        request: "",
+        company_id: this.$auth.user.company.id,
+        remark: "",
+        rooms: "",
+        reference_no: "",
+        paid_by: "",
+        purpose: "Tour",
+        // priceList: [],
+      };
+
+      this.get_reservation();
+      this.priceListTableView = [];
+      this.selectedRooms = [];
+      this.room_type_id = {};
+      this.is_early_check_in = false;
+      this.is_late_check_out = false;
+      this.dialog = false;
+    },
     async get_business_sources() {
       let config = {
         params: {

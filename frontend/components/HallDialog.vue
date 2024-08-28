@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="RoomDrawer" max-width="400">
+  <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         small
@@ -15,9 +15,7 @@
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
         Hall Booking <v-spacer></v-spacer
-        ><v-icon @click="RoomDrawer = false" color="white"
-          >mdi-close</v-icon
-        ></v-toolbar
+        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
       >
       <v-container>
         <v-row>
@@ -424,8 +422,8 @@ export default {
       temp: {
         total_booking_hours: 0,
         extra_hours_charges: 0,
-        food_plan_price: 1,
-        food_plan_id: 1,
+        food_plan_price: 0,
+        food_plan_id: 0,
         cleaning: 0,
         electricity: 0,
         generator: 0,
@@ -463,8 +461,10 @@ export default {
       },
 
       defaultTemp: {
-        food_plan_price: 1,
-        food_plan_id: 1,
+        total_booking_hours: 0,
+        extra_hours_charges: 0,
+        food_plan_price: 0,
+        food_plan_id: 0,
         cleaning: 0,
         electricity: 0,
         generator: 0,
@@ -651,22 +651,12 @@ export default {
     };
   },
   async created() {
-    this.get_reservation();
     this.get_room_types();
-    this.get_id_cards();
-    this.runAllFunctions();
-    this.get_countries();
-    this.get_agents();
-    this.get_online();
-    this.get_Corporate();
-    // this.getImage();
-    this.preloader = false;
-
     await this.get_food_plans();
-
+    this.get_reservation();
+    this.runAllFunctions();
+    this.preloader = false;
     this.calculateHoursQty();
-
-    this.get_business_sources();
   },
   computed: {
     formattedCheckInDateTime() {
@@ -686,6 +676,63 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.temp = {
+        total_booking_hours: 0,
+        extra_hours_charges: 0,
+        food_plan_price: 0,
+        food_plan_id: 0,
+        cleaning: 0,
+        electricity: 0,
+        generator: 0,
+        audio: 0,
+        room_no: "",
+        room_type: "",
+        room_id: "",
+        price: 0,
+        days: 0,
+        sgst: 0,
+        cgst: 0,
+        check_in: "",
+        check_out: "",
+        check_in_time: null,
+        check_out_time: null,
+        // meal: [],
+        bed_amount: 0,
+        room_extra_amount: 0,
+        extra_amount_reason: "",
+        room_discount: 0,
+        after_discount: 0, //(price - room_discount)
+        room_tax: 0,
+        total_with_tax: 0, //(after_discount * room_tax)
+        total: 0, //(total_with_tax * bed_amount)
+        grand_total: 0, //(total * days)
+        company_id: this.$auth.user.company.id,
+
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        tot_adult_food: 0,
+        tot_child_food: 0,
+        discount_reason: "",
+        priceList: [],
+      };
+
+      this.room_type_list = {
+        id: ``,
+        name: `Select Hall Type`,
+      };
+
+      this.is_cleaning_charges = false;
+      this.is_generator_charges = false;
+      this.is_audio_charges = false;
+      this.is_projector_charges = false;
+      this.is_electricity_charges = false;
+      this.get_reservation();
+      this.calculateHoursQty();
+      this.RoomDrawer = false;
+
+    },
     async get_business_sources() {
       let config = {
         params: {
@@ -1189,8 +1236,6 @@ export default {
 
       this.runAllFunctions();
       this.alert("Success!", "success selected room", "success");
-      this.isSelectRoom = false;
-      this.RoomDrawer = false;
 
       let arrToMerge = priceList.map((e) => ({
         ...e,
@@ -1217,6 +1262,9 @@ export default {
         arrToMerge,
         payload,
       });
+
+
+      this.close();
     },
 
     mergeEntries(entries) {

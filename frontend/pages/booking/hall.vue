@@ -1045,7 +1045,7 @@
                         aria-describedby="inputGroup-sizing-sm"
                         disabled
                       >
-                        {{ convert_decimal(item.food_plan_price) }}
+                        {{ convert_decimal(item.meal_name) }}
                       </div>
                     </div>
 
