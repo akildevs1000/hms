@@ -84,7 +84,7 @@
       </tr>
       <tr>
         <th>Remaining Balance</th>
-        <td>{{ BookingData.grand_remaining_price }}</td>
+        <td><pre>{{ BookingData.remaining_price }}</pre></td>
       </tr>
 
       <tr style="background-color: white">

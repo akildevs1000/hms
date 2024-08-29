@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog">
+    <v-dialog persistent v-model="dialog" max-width="1300">
       <template v-slot:activator="{ on, attrs }">
         <div style="text-align: center">
           <v-btn
@@ -18,27 +18,6 @@
           <div style="font-size: 10px; text-align: center">Quick</div>
         </div>
       </template>
-      <!-- <template v-slot:activator="{ on, attrs }">
-        <div style="text-align: center">
-          <v-btn
-            dense
-            x-small
-            v-bind="attrs"
-            v-on="on"
-            class="text-center"
-            title="Quick Checkin"
-            color="#34444c"
-            style="width: 37px; height: 26px"
-          >
-            <v-icon color="white">mdi-google-classroom</v-icon>
-            <span v-if="!onlyButton">Quick Checkin</span>
-          </v-btn>
-          <div v-if="onlyButton" style="font-size: 10px; text-align: center">
-            Quick Checkin
-          </div>
-        </div>
-      </template> -->
-
       <v-dialog v-model="imgView">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -168,6 +147,10 @@
       </v-dialog>
 
       <v-card>
+        <v-toolbar class="background" flat dense dark
+          >Quick Check In <v-spacer></v-spacer
+          ><v-icon @click="close">mdi-close</v-icon></v-toolbar
+        >
         <v-container fluid>
           <v-row class="m-0 p-0 mt-1">
             <v-col md="8">
@@ -251,6 +234,7 @@
                           <v-row>
                             <v-col md="6" cols="12" sm="12">
                               <v-autocomplete
+                                v-model="groupBookingId"
                                 :items="groupList"
                                 label="Group Name *"
                                 dense
@@ -299,7 +283,7 @@
                                 :hide-details="true"
                               ></v-text-field>
                             </v-col>
-                            <v-col md="3" cols="12" sm="12">
+                            <v-col md="4" cols="12" sm="12">
                               <v-select
                                 v-model="customer.title"
                                 :items="titleItems"
@@ -315,7 +299,7 @@
                                 outlined
                               ></v-select>
                             </v-col>
-                            <v-col md="5" cols="12" sm="12">
+                            <v-col md="4" cols="12" sm="12">
                               <v-text-field
                                 label="First Name *"
                                 dense
@@ -452,16 +436,7 @@
                       </v-row>
 
                       <v-row>
-                        <v-col md="6" cols="12" sm="12">
-                          <v-textarea
-                            rows="3"
-                            label="Address"
-                            v-model="customer.address"
-                            outlined
-                            :hide-details="true"
-                          ></v-textarea>
-                        </v-col>
-                        <v-col md="6">
+                        <v-col md="12">
                           <v-textarea
                             rows="3"
                             label="Customer Request"
@@ -471,13 +446,13 @@
                           ></v-textarea>
                         </v-col>
                       </v-row>
-                      <v-row>
+                      <!-- <v-row>
                         <v-col cols="12" class="text-right">
                           <v-btn small @click="nextTab" color="primary"
                             >Next</v-btn
                           >
                         </v-col>
-                      </v-row>
+                      </v-row> -->
                     </v-card-text>
                   </v-card>
                 </v-tab-item>
@@ -535,7 +510,7 @@
                           aria-describedby="inputGroup-sizing-sm"
                           disabled
                         >
-                          {{ BookingData.title || "---" }}
+                          {{ BookingData?.customer?.full_name || "---" }}
                         </div>
                       </div>
                       <div class="input-group input-group-sm px-0">
@@ -552,7 +527,7 @@
                           aria-describedby="inputGroup-sizing-sm"
                           disabled
                         >
-                          {{ BookingData.contact_no || "---" }}
+                          {{ BookingData?.customer?.contact_no || "---" }}
                         </div>
                       </div>
                       <div class="input-group input-group-sm px-0">
@@ -676,7 +651,7 @@
                           aria-describedby="inputGroup-sizing-sm"
                           disabled
                         >
-                          {{ BookingData.advance_price }}
+                          {{ new_payment }}
                         </div>
                       </div>
                       <div class="input-group input-group-sm px-0 mb-0">
@@ -693,7 +668,7 @@
                           aria-describedby="inputGroup-sizing-sm"
                           disabled
                         >
-                          <strong>{{ BookingData.remaining_price }}</strong>
+                          <strong>{{ BookingData.total_price - new_payment }}</strong>
                         </div>
                       </div>
                       <v-card-actions class="pl-0 pr-2">
@@ -1088,21 +1063,6 @@
 export default {
   data() {
     return {
-      BookingData: {
-        id: 1,
-        document: null,
-        reservation_no: 1,
-        customer_type: "Company",
-        title: 1,
-        contact_no: 1,
-        check_in_date: "",
-        check_out_date: "",
-        total_days: 1,
-        room_nos: [],
-        total_price: 0,
-        advance_price: 0,
-        remaining_price: 0,
-      },
       // ----------------------
       dialog: false,
       vertical: false,
@@ -1185,33 +1145,7 @@ export default {
       isAgent: false,
       isDiff: false,
       search_available_room: "",
-      room: {
-        customer_type: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: "",
-        source: "",
-        agent_name: "",
-        check_in: null,
-        check_out: null,
-        discount: 0,
-        advance_price: 0,
-        payment_mode_id: 1,
-        total_days: 0,
-        sub_total: 0,
-        after_discount: 0,
-        sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
-        company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "Visiting",
-      },
+
       reservation: {},
       countryList: [],
       foodPriceList: [],
@@ -1227,6 +1161,25 @@ export default {
 
       groupList: [],
       rooms: [],
+
+      BookingData: {
+        customer:{
+          full_name:null,
+          contact_no:null,
+        },
+        id: 1,
+        document: null,
+        reservation_no: 1,
+        customer_type: "Company",
+        check_in_date: "",
+        check_out_date: "",
+        total_days: 1,
+        room_nos: [],
+        total_price: 0,
+        advance_price: 0,
+        remaining_price: 0,
+      },
+
       guest: {
         title: "",
         whatsapp: "",
@@ -1272,6 +1225,35 @@ export default {
         exp_menu: false,
         exp: null,
       },
+
+      room: {
+        customer_type: "",
+        customer_status: "",
+        all_room_Total_amount: 0, // sum of temp.totals
+        total_extra: 0,
+        type: "",
+        source: "",
+        agent_name: "",
+        check_in: null,
+        check_out: null,
+        discount: 0,
+        advance_price: 0,
+        payment_mode_id: 1,
+        total_days: 0,
+        sub_total: 0,
+        after_discount: 0,
+        sales_tax: 0,
+        total_price: 0,
+        remaining_price: 0,
+        request: "",
+        company_id: this.$auth.user.company.id,
+        remark: "",
+        rooms: "",
+        reference_no: "",
+        paid_by: "",
+        purpose: "Visiting",
+      },
+
       id_card_type_id: 0,
       errors: [],
       errorsForSubCustomer: [],
@@ -1283,6 +1265,8 @@ export default {
       },
 
       previewImage: null,
+
+      groupBookingId: null,
     };
   },
 
@@ -1311,8 +1295,8 @@ export default {
           company_id: this.$auth.user.company_id,
         },
       };
-      this.$axios.get(`booking`, config).then(({ data }) => {
-        this.groupList = data.data;
+      this.$axios.get(`group-list`, config).then(({ data }) => {
+        this.groupList = data;
       });
     },
 
@@ -1369,7 +1353,7 @@ export default {
         payload.append(`room_nos[${index}]`, roomId);
       });
 
-      payload.append("remaining_price", this.BookingData.remaining_price);
+      payload.append("remaining_price", this.BookingData.total_price - this.new_payment);
 
       payload.append("new_payment", this.new_payment || 0);
       payload.append("payment_mode_id", this.room.payment_mode_id);
@@ -1414,6 +1398,102 @@ export default {
           this.loading = false;
           this.closeDialog(e.response.data);
         });
+    },
+
+    close() {
+      this.BookingData = {
+        id: 1,
+        document: null,
+        reservation_no: 1,
+        customer_type: "Company",
+        title: 1,
+        contact_no: 1,
+        check_in_date: "",
+        check_out_date: "",
+        total_days: 1,
+        room_nos: [],
+        total_price: 0,
+        advance_price: 0,
+        remaining_price: 0,
+      };
+
+      this.guest = {
+        title: "",
+        whatsapp: "",
+        nationality: "India",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        id_card_type_id: "",
+        id_card_no: "",
+        car_no: "",
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: null,
+        exp_menu: false,
+        exp: null,
+      };
+
+      this.customer = {
+        title: "",
+        whatsapp: "",
+        nationality: "India",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        id_card_type_id: "",
+        id_card_no: "",
+        car_no: "",
+        no_of_adult: 1,
+        no_of_child: 0,
+        no_of_baby: 0,
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob_menu: false,
+        dob: null,
+        exp_menu: false,
+        exp: null,
+      };
+
+      this.room = {
+        customer_type: "",
+        customer_status: "",
+        all_room_Total_amount: 0, // sum of temp.totals
+        total_extra: 0,
+        type: "",
+        source: "",
+        agent_name: "",
+        check_in: null,
+        check_out: null,
+        discount: 0,
+        advance_price: 0,
+        payment_mode_id: 1,
+        total_days: 0,
+        sub_total: 0,
+        after_discount: 0,
+        sales_tax: 0,
+        total_price: 0,
+        remaining_price: 0,
+        request: "",
+        company_id: this.$auth.user.company.id,
+        remark: "",
+        rooms: "",
+        reference_no: "",
+        paid_by: "",
+        purpose: "Visiting",
+      };
+
+      this.groupBookingId = null;
+
+      this.dialog = false;
     },
 
     getCustomerFields() {

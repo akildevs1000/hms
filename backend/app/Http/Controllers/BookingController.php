@@ -30,6 +30,16 @@ use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
+    public function groupList(Request $request)
+    {
+        return Booking::with(["customer", "room"])
+            ->whereNotNull("group_name")
+            ->where('company_id', $request->company_id)
+            ->where('booking_status', '!=', 0)
+            ->orderByDesc("group_name")
+            ->get();
+    }
+
     public function index(Request $request)
     {
         return Booking::with(["customer:id,first_name,last_name", "room"])
@@ -38,6 +48,8 @@ class BookingController extends Controller
             ->orderByDesc("id")
             ->paginate($request->per_page ?? 50);
     }
+
+
 
     public function getBookedRoomList()
     {
@@ -799,7 +811,7 @@ class BookingController extends Controller
             BookedRoom::where("booking_id", $id ?? 0)
                 ->where("room_id", $room_id)
                 ->update(['check_in' => date('Y-m-d H:i'), 'booking_status' => $status_id]);
-                
+
             return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
         } catch (\Exception $e) {
 

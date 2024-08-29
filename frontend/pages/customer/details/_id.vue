@@ -306,7 +306,7 @@
                   </v-row>
 
                   <v-row class="my-0 py-0">
-                    <v-col md="6">
+                    <v-col md="4">
                       <div class="text-box" style="float: left">
                         <h6>Guest Request</h6>
                         <p>
@@ -314,7 +314,7 @@
                         </p>
                       </div>
                     </v-col>
-                    <v-col md="6">
+                    <v-col md="4">
                       <div class="text-box" style="float: left">
                         <h6>Purpose</h6>
                         <p>
@@ -322,10 +322,7 @@
                         </p>
                       </div>
                     </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="6">
+                    <v-col md="4">
                       <div class="text-box" style="float: left">
                         <h6>GST</h6>
                         <p>
@@ -338,14 +335,56 @@
                         </p>
                       </div>
                     </v-col>
-                    <v-col md="6">
+                  </v-row>
+
+                  <v-row class="my-0 py-0">
+                    <v-col md="3">
                       <div class="text-box" style="float: left">
-                        <h6>Address</h6>
+                        <h6>Country</h6>
                         <p>
                           {{
                             (booking &&
                               booking.customer &&
-                              booking.customer.address) ||
+                              booking.customer.country) ||
+                            "---"
+                          }}
+                        </p>
+                      </div>
+                    </v-col>
+                    <v-col md="3">
+                      <div class="text-box" style="float: left">
+                        <h6>State</h6>
+                        <p>
+                          {{
+                            (booking &&
+                              booking.customer &&
+                              booking.customer.state) ||
+                            "---"
+                          }}
+                        </p>
+                      </div>
+                    </v-col>
+                    <v-col md="3">
+                      <div class="text-box" style="float: left">
+                        <h6>City</h6>
+                        <p>
+                          {{
+                            (booking &&
+                              booking.customer &&
+                              booking.customer.city) ||
+                            "---"
+                          }}
+                        </p>
+                      </div>
+                    </v-col>
+                    <v-col md="3">
+                      <div class="text-box" style="float: left">
+                        <h6>Zip Code</h6>
+                        <p>
+                          {{
+                            (booking &&
+                              booking.customer &&
+                              booking.customer.zip_code) ||
                             "---"
                           }}
                         </p>
@@ -942,17 +981,6 @@ export default {
       , { id: 21, name: "09 PM" }
       , { id: 22, name: "10 PM" }
       , { id: 23, name: "11 PM" }
-      // , { id: 0, name: "12 AM" }
-      // , { id: 1, name: "01 AM" }
-      // , { id: 2, name: "02 AM" }
-      // , { id: 3, name: "03 AM" }
-      // , { id: 4, name: "04 AM" }
-      // , { id: 5, name: "05 AM" }
-      // , { id: 6, name: "06 AM" }
-      // , { id: 7, name: "07 AM" }
-      // , { id: 8, name: "08 AM" }
-
-
     ],
 
     pagination: {
@@ -985,32 +1013,6 @@ export default {
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 
     tab: null,
-    headers: [
-      {
-        text: "#",
-      },
-      {
-        text: "Type",
-      },
-      {
-        text: "Source",
-      },
-      {
-        text: "Rooms",
-      },
-      {
-        text: "Booking Date",
-      },
-      {
-        text: "Check In",
-      },
-      {
-        text: "Check Out",
-      },
-      {
-        text: "Total Price",
-      },
-    ],
     payments: [],
     booking: [],
     bookedRooms: [],
@@ -1107,23 +1109,7 @@ export default {
 
     process_grc(id) {
       this.GRCDialog = true;
-
-      // let url = 'grc_report_download';
-      // let element = document.createElement("a");
-      // element.setAttribute("target", "_blank");
-      // element.setAttribute("href", `${process.env.BACKEND_URL}${url}/${id}`);
-      // document.body.appendChild(element);
-      // element.click();
     },
-
-    // preview(file) {
-    //   let element = document.createElement("a");
-    //   element.setAttribute("target", "_blank");
-    //   element.setAttribute("href", file);
-    //   document.body.appendChild(element);
-    //   element.click();
-    //   // document.body.removeChild(element);
-    // },
     getHours(time) {
       let arry = this.hours.find(hour => hour.id === time);
       if (arry) return arry.name;

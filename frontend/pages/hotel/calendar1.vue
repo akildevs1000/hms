@@ -369,7 +369,7 @@
                 <BookingModify
                   :isHall="isHall"
                   @close="get_events()"
-                  :key="evenIid"
+                  :key="modifyCompKey" 
                   :BookedRoomId="evenIid"
                 />
               </v-list-item-title>
@@ -736,6 +736,7 @@ export default {
       postings: [],
       checkData: {},
       evenIid: "",
+      modifyCompKey: 1,
       bookingStatus: "",
       checkInDate: "",
       reason: "",
@@ -988,6 +989,7 @@ export default {
     show(id, jsEvent) {
       this.LoadingDialog = true;
       this.evenIid = id;
+      this.modifyCompKey += 1;
       this.get_data(jsEvent);
     },
 

@@ -15,9 +15,7 @@
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
         Individual Booking <v-spacer></v-spacer
-        ><v-icon @click="close" color="white"
-          >mdi-close</v-icon
-        ></v-toolbar
+        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
       >
       <v-container>
         <v-row>
@@ -48,7 +46,7 @@
                 :min="new Date().toISOString().substr(0, 10)"
                 v-model="temp.check_in"
                 no-title
-                @input="checkin_menu = false"
+                @input="addOneDay(temp.check_in)"
               ></v-date-picker>
             </v-menu>
           </v-col>
@@ -76,7 +74,6 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                :min="addOneDay(temp.check_in)"
                 v-model="temp.check_out"
                 no-title
                 @input="checkout_menu = false"
@@ -201,118 +198,27 @@ export default {
   props: ["label"],
   data() {
     return {
+      Model: "Reservation",
       additional_charges: {},
       is_early_check_in: false,
       is_late_check_out: false,
       dialog: false,
       foodplans: [],
-      multipleRoomObjects: [],
       multipleRoomId: null,
       checkin_menu: false,
       checkout_menu: false,
       room_type_id: {},
-      documentDialog: false,
-      // -------customer history---------------
-      customer: "",
-      bookings: "",
-      revenue: "",
-      city_ledger: "",
-      payments: "",
-      bookedRooms: "",
       loading: false,
-      advanceDialog: false,
       selectRoomLoading: false,
-      roomTab: null,
-      headers: [
-        {
-          text: "#",
-        },
-        {
-          text: "Type",
-        },
-        {
-          text: "Source",
-        },
-        {
-          text: "Rooms",
-        },
-        {
-          text: "Booking Date",
-        },
-        {
-          text: "Check In",
-        },
-        {
-          text: "Check Out",
-        },
-        {
-          text: "Total Price",
-        },
-      ],
-      // ----------------------
-      vertical: false,
-      activeTab: 0,
-      activeSummaryTab: 0,
-      // ------------------
-
-      purposes: [
-        "Tour",
-        "Business",
-        "Hospital",
-        "Holiday",
-        "Party/Functions",
-        "Friend Visit",
-        "Marriage",
-      ],
-      selectMeal: [],
-      wantNewDoc: false,
-      row: null,
-      calIn: {},
-      calOut: {},
-      searchDialog: false,
       RoomDrawer: null,
-      items: [
-        { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" },
-      ],
-      val: 1,
-      Model: "Reservation",
       isSelectRoom: true,
-      isBed: false,
-      subLoad: false,
-      isDiscount: false,
-      isExtra: false,
-      snackbar: false,
-      checkLoader: false,
-      response: "",
       preloader: false,
       loading: false,
-      show_password: false,
-      show_password_confirm: false,
       roomTypes: [],
-      types: [
-        "Online",
-        "Walking",
-        "Travel Agency",
-        "Complimentary",
-        "Corporate",
-      ],
-
-      search: {
-        mobile: "",
-      },
       availableRooms: [],
       selectedRooms: [],
       rooms: [],
-      sources: [],
-
-      agentList: [],
-      CorporateList: [],
-      // room_extra_amount: 0,
-      idCards: [],
-      imgView: false,
       priceListTableView: [],
-
       temp: {
         food_plan_price: 0,
         extra_bed_qty: 0,
@@ -326,8 +232,8 @@ export default {
         days: 0,
         sgst: 0,
         cgst: 0,
-        check_in: "",
-        check_out: "",
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         // meal: [],
         bed_amount: 0,
         room_extra_amount: 0,
@@ -348,144 +254,10 @@ export default {
         discount_reason: "",
         priceList: [],
       },
-      merge_food_in_room_price: "",
-      gst_calculation: {
-        recal_basePrice: 0,
-        recal_gst_percentage: 0,
-        recal_gst_total: 0,
-        recal_final: 0,
-      },
-      check_in_menu: false,
-      check_out_menu: false,
-      upload: {
-        name: "",
-      },
-      member_numbers: [1, 2, 3, 4],
-      isOnline: false,
-      isCorporate: false,
-      isAgent: false,
-      isDiff: false,
-      search_available_room: "",
-      room: {
-        customer_type: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: "Walking",
-        source: "walking",
-        agent_name: "",
-        booking_status: 1,
-        check_in: null,
-        check_out: null,
-        discount: 0,
-        reference_number: "",
-        advance_price: 0,
-        payment_mode_id: 1,
-        total_days: 0,
-        sub_total: 0,
-        after_discount: 0,
-        sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
-        company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "Tour",
-        // priceList: [],
-      },
-      reservation: {
-        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
-        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        room_no: "",
-        room_id: 82,
-        room_type: "",
-        price: 0,
-        origin_price: "",
-        isCalculate: true,
-        priceList: [],
-        total_tax: 0,
-        total_price_after_discount: 0,
-        total_price: 0,
-        total_discount: 0,
-      },
-      countryList: [],
-      foodPriceList: [],
-      person_type_arr: [],
-
-      titleItems: [
-        { id: 1, name: "Mr" },
-        { id: 2, name: "Mrs" },
-        { id: 3, name: "Miss" },
-        { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" },
-      ],
-
-      customer: {
-        customer_type: "Walking",
-        title: "Mr",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-        //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        //   .toISOString()
-        //   .substr(0, 10)
-      },
-      id_card_type_id: 0,
-      errors: [],
-      tempAdult: {
-        tot_ab: 0,
-        tot_al: 0,
-        tot_ad: 0,
-      },
-      tempChild: {
-        tot_cb: 0,
-        tot_cl: 0,
-        tot_cd: 0,
-      },
-
-      imgPath: "",
-      image: "",
-
-      upload: {
-        name: "",
-      },
-
-      extraPayType: "",
-      allFood: [],
-
-      documentObj: {
-        fileExtension: null,
-        file: null,
-      },
-      business_sources: [],
-
-      isValid: false,
-
-      seletedFoodPlan: null,
     };
   },
   async created() {
-    this.get_reservation();
     this.get_room_types();
-    this.runAllFunctions();
-    // this.getImage();
     this.preloader = false;
 
     await this.get_food_plans();
@@ -527,8 +299,8 @@ export default {
         days: 0,
         sgst: 0,
         cgst: 0,
-        check_in: this.reservation.check_in,
-        check_out: this.reservation.check_out,
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         // meal: [],
         bed_amount: 0,
         room_extra_amount: 0,
@@ -551,20 +323,14 @@ export default {
       };
 
       this.room_type_id = 0;
-      this.multipleRoomId = null,
-
+      this.multipleRoomId = null;
       this.is_early_check_in = false;
       this.is_late_check_out = false;
       this.extra_bed = 0;
 
       this.RoomDrawer = false;
     },
-    handleFullAddress(e) {
-      this.customer = {
-        ...this.customer,
-        ...e,
-      };
-    },
+   
     set_additional_charges() {
       this.temp.early_check_in = this.is_early_check_in
         ? this.additional_charges.early_check_in
@@ -593,19 +359,15 @@ export default {
     },
     addOneDay(originalDate) {
       if (!originalDate) {
-        return new Date().toISOString().substr(0, 10);
+        this.temp.check_out = new Date().toISOString().substr(0, 10);
       }
       const date = new Date(originalDate);
 
       date.setDate(date.getDate() + 1);
 
-      return date.toISOString().split("T")[0];
-    },
+      this.temp.check_out = date.toISOString().split("T")[0];
 
-    runAllFunctions() {
-      this.getDays();
-      this.subTotal();
-      this.processCalculation();
+      this.checkin_menu = false;
     },
 
     getDays() {
@@ -613,45 +375,7 @@ export default {
       let co = new Date(this.temp.check_out);
       let Difference_In_Time = co.getTime() - ci.getTime();
       let days = Difference_In_Time / (1000 * 3600 * 24);
-      if (days > 0) {
-        return (this.room.total_days = days);
-      }
-    },
-
-    get_reservation() {
-      this.temp.room_id = this.reservation.room_id;
-      this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type;
-      this.temp.price = this.reservation.price;
-      this.temp.check_in = this.reservation.check_in;
-      this.temp.check_out = this.reservation.check_out;
-      this.temp.room_tax = this.reservation.total_tax;
-      this.room.check_in = this.reservation.check_in;
-      this.room.check_out = this.reservation.check_out;
-      this.temp.priceList = this.reservation.priceList;
-      this.get_cs_gst(this.temp.room_tax);
-    },
-
-    processCalculation() {
-      let discount = parseFloat(this.temp.room_discount) || 0;
-      let room_extra_amount = parseFloat(this.temp.room_extra_amount) || 0;
-      let sub_total = parseFloat(this.room.sub_total) || 0;
-
-      let advance_price = parseFloat(this.room.advance_price) || 0;
-
-      let afterExtraAmount = sub_total + room_extra_amount;
-      let afterDiscount = afterExtraAmount - discount;
-
-      this.room.remaining_price = afterDiscount - advance_price;
-
-      return (this.room.total_price = afterDiscount);
-    },
-
-    subTotal() {
-      return (this.room.sub_total = this.priceListTableView.reduce(
-        (total, num) => total + num.total_price,
-        0
-      ));
+      return days;
     },
 
     get_room_types() {
@@ -762,9 +486,6 @@ export default {
 
       let selectedRoomsForTableView = [];
 
-      this.room.check_in = this.temp.check_in;
-      this.room.check_out = this.temp.check_out;
-
       let meal_price = selected_food_plan.food_plan_price * this.getDays();
 
       let payload = {
@@ -788,7 +509,6 @@ export default {
 
       selectedRoomsForTableView.push(payload);
 
-      this.runAllFunctions();
       this.alert("Success!", "success selected room", "success");
       this.isSelectRoom = false;
 
@@ -837,8 +557,8 @@ export default {
         })
         .then(({ data }) => {
           this.availableRooms = data;
+          this.getDays();
         });
-      this.runAllFunctions();
     },
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);

@@ -700,7 +700,7 @@
                                         <td class="text-center">
                                           <v-icon
                                             color="red"
-                                            @click="deleteItem(index)"
+                                            @click="deleteItem(index, item)"
                                             >mdi-close</v-icon
                                           >
                                         </td>
@@ -1485,7 +1485,7 @@
                   :min="new Date().toISOString().substr(0, 10)"
                   v-model="temp.check_in"
                   no-title
-                  @input="checkin_menu = false"
+                  @input="addOneDay(temp.check_in)"
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -1514,7 +1514,6 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                  :min="addOneDay(temp.check_in)"
                   v-model="temp.check_out"
                   no-title
                   @input="checkout_menu = false"
@@ -1658,7 +1657,7 @@ export default {
       checkin_time_menu: false,
       checkin_menu: false,
       checkout_menu: false,
-      room_type_id: 1,
+      room_type_id: null,
       documentDialog: false,
       // -------customer history---------------
       customer: "",
@@ -1995,7 +1994,14 @@ export default {
   },
   methods: {
     close() {
+      this.room_type_id = null;
       this.customer = {};
+      this.priceListTableView = [];
+      this.selectedRooms = [];
+      this.multipleRoomIds = [];
+      this.is_early_check_in = false;
+      this.is_late_check_out = false;
+
       this.temp = {
         food_plan_price: 0,
         extra_bed_qty: 0,
@@ -2085,11 +2091,7 @@ export default {
       };
 
       this.get_reservation();
-      this.priceListTableView = [];
-      this.selectedRooms = [];
-      this.room_type_id = {};
-      this.is_early_check_in = false;
-      this.is_late_check_out = false;
+     
       this.dialog = false;
     },
     async get_business_sources() {
@@ -2107,9 +2109,11 @@ export default {
         ...e,
       };
     },
-    deleteItem(index) {
+    deleteItem(index, item) {
       this.priceListTableView.splice(index, 1);
-      this.selectedRooms.splice(index, 1);
+      this.selectedRooms = this.selectedRooms.filter(
+        (e) => e.room_type !== item.room_type
+      );
     },
     set_additional_charges() {
       this.temp.early_check_in = this.is_early_check_in
@@ -2139,13 +2143,15 @@ export default {
     },
     addOneDay(originalDate) {
       if (!originalDate) {
-        return new Date().toISOString().substr(0, 10);
+        this.temp.check_out = new Date().toISOString().substr(0, 10);
       }
       const date = new Date(originalDate);
 
       date.setDate(date.getDate() + 1);
 
-      return date.toISOString().split("T")[0];
+      this.temp.check_out = date.toISOString().split("T")[0];
+
+      this.checkin_menu = false;
     },
 
     nextTab() {
@@ -2495,8 +2501,18 @@ export default {
     },
 
     add_room() {
-      if (this.temp.room_no == "") {
-        this.alert("Missing!", "Select room", "error");
+      if (this.room_type_id == null) {
+        this.$swal("Missing!", "Select room type", "error");
+        return;
+      }
+
+      if (!this.multipleRoomIds.length) {
+        this.$swal("Missing!", "Select room", "error");
+        return;
+      }
+
+      if (!this.temp.food_plan_id) {
+        this.$swal("Warning!", "Select food plan", "error");
         return;
       }
 
@@ -2747,11 +2763,8 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.selectedRooms = [];
-            this.priceListTableView = [];
-            this.room_type_id = {};
+            this.close();
             this.$emit(`success`);
-            this.dialog = false;
           }
         })
         .catch((e) => console.log(e));

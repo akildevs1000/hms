@@ -107,3 +107,8 @@
 
 
   Route::post('customer-validate', [CustomerController::class, 'customer_validate']);
+
+
+  Route::get('group-list', [BookingController::class, 'groupList']);
+
+  

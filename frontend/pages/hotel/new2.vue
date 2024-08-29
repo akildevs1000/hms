@@ -1340,7 +1340,8 @@
                   :min="new Date().toISOString().substr(0, 10)"
                   v-model="temp.check_in"
                   no-title
-                  @input="checkin_menu = false"
+                  @input="addOneDay(temp.check_in)"
+
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -1368,7 +1369,6 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                  :min="addOneDay(temp.check_in)"
                   v-model="temp.check_out"
                   no-title
                   @input="checkout_menu = false"
@@ -1933,13 +1933,15 @@ export default {
       });
 
       if (!originalDate) {
-        return new Date().toISOString().substr(0, 10);
+        this.temp.check_out = new Date().toISOString().substr(0, 10);
       }
       const date = new Date(originalDate);
 
       date.setDate(date.getDate() + 1);
 
-      return date.toISOString().split("T")[0];
+      this.temp.check_out = date.toISOString().split("T")[0];
+
+       this.checkin_menu = false;
     },
 
     nextTab() {
