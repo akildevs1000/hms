@@ -1451,6 +1451,8 @@ export default {
     },
 
     store_booking() {
+      alert(`Hall Modify is Pending`);
+      return 
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
@@ -1472,7 +1474,7 @@ export default {
             this.selectedRooms = [];
             this.priceListTableView = [];
             this.room_type_list = {};
-            this.$emit(`success`);
+            this.$emit(`close-calender-hall`);
             this.dialog = false;
 
             // this.store_document(data.data);

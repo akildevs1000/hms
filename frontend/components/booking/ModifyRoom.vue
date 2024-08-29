@@ -653,7 +653,7 @@ export default {
             this.loading = false;
 
             this.alert("Sucess!", "Booking has been modified", "success");
-            this.$emit("close");
+            this.$emit("close-calender-room");
           }
         })
         .catch((e) => {

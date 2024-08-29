@@ -1759,6 +1759,25 @@ class BookingController extends Controller
 
         BookedRoom::where('id', $id)->update($arr[0]);
 
+        $transaction = Transaction::where("booking_id", $booking_id)->first();
+
+
+        $lastTransaction = Transaction::where("booking_id", $booking_id)->orderBy("id","desc")->first();
+
+
+        $DiffAmount = abs($transaction->debit - $booking_total_price);
+
+        $bal = $lastTransaction->balance + $DiffAmount;
+
+        Transaction::create([
+            "desc" => "room change price (difference)",
+            "balance" => $bal,
+            "debit" => $DiffAmount,
+            "booking_id" => $booking_id,
+            "user_id" => $user_id,
+            "customer_id" => $transaction->customer_id,
+            "company_id" => $company_id,
+        ]);
 
         Booking::where("id", $booking_id)
             ->where("company_id", $company_id)
@@ -1770,9 +1789,9 @@ class BookingController extends Controller
                 'sub_total' => $booking_total_price,
                 'total_price' => $booking_total_price,
                 'all_room_Total_amount' => $booking_total_price,
-                'balance' => $booking_remaining_price,
-                'remaining_price' => $booking_remaining_price,
-                'grand_remaining_price' => $booking_remaining_price,
+                'balance' => $bal,
+                'remaining_price' => $bal,
+                'grand_remaining_price' => $bal,
 
                 // 'discount' => $room_discount,    
                 // 'after_discount' => $booking_total_price - $room_discount,
@@ -1783,13 +1802,6 @@ class BookingController extends Controller
                 // "": "18760",
                 // "total_extra": 0,
             ]);
-
-
-        Transaction::where("booking_id", $booking_id)->update([
-            "balance" => $booking_total_price,
-            "debit" => $booking_total_price,
-            "user_id" => $user_id,
-        ]);
 
         return $this->response('Booking has been modified.', null, true);
     }
