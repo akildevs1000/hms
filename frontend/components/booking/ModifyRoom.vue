@@ -226,6 +226,12 @@
                 </td>
               </tr>
               <tr>
+                <th>Remaining Balance</th>
+                <td class="text-right">
+                  {{ payload.remaining_price }}
+                </td>
+              </tr>
+              <tr>
                 <th>Old Grand Total</th>
                 <td class="text-right">
                   {{ old.booking_total_price }}
@@ -636,6 +642,7 @@ export default {
         dinner: this.bookingResponse.dinner,
 
         room_orders: this.room_orders,
+        old : this.old
       };
 
       console.log(payload);

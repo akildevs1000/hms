@@ -1662,6 +1662,7 @@ class BookingController extends Controller
 
     public function modifyBooking(Request $request)
     {
+
         $room_orders = $request->room_orders;
 
         $id = $request->id;
@@ -1761,23 +1762,49 @@ class BookingController extends Controller
 
         $transaction = Transaction::where("booking_id", $booking_id)->first();
 
+        $lastTransaction = Transaction::where("booking_id", $booking_id)->orderBy("id", "desc")->first();
+        $bal = 0;
 
-        $lastTransaction = Transaction::where("booking_id", $booking_id)->orderBy("id","desc")->first();
 
 
-        $DiffAmount = abs($transaction->debit - $booking_total_price);
+        if ($request->booking_total_price < $request->old['booking_total_price']) {
 
-        $bal = $lastTransaction->balance + $DiffAmount;
 
-        Transaction::create([
-            "desc" => "room change price (difference)",
-            "balance" => $bal,
-            "debit" => $DiffAmount,
-            "booking_id" => $booking_id,
-            "user_id" => $user_id,
-            "customer_id" => $transaction->customer_id,
-            "company_id" => $company_id,
-        ]);
+            $arr = [
+                "desc" => "room change price (difference)",
+                "balance" => $lastTransaction->balance + ($request->booking_total_price -  $lastTransaction->balance),
+                "debit" => $request->booking_total_price -  $lastTransaction->balance,
+                "booking_id" => $booking_id,
+                "user_id" => $user_id,
+                "customer_id" => $transaction->customer_id,
+                "company_id" => $company_id,
+            ];
+
+            Transaction::create($arr);
+        } else {
+
+            if ($lastTransaction->balance < $booking_total_price) {
+                $bal = $lastTransaction->balance - $booking_total_price;
+            }
+
+            $DiffAmount = abs($transaction->debit - $booking_total_price);
+
+            $bal = $DiffAmount > 0 ? $lastTransaction->balance + $DiffAmount : $lastTransaction->balance - $DiffAmount;
+
+            Transaction::create([
+                "desc" => "room change price (difference)",
+                "balance" => $bal,
+                "debit" => $DiffAmount,
+                "booking_id" => $booking_id,
+                "user_id" => $user_id,
+                "customer_id" => $transaction->customer_id,
+                "company_id" => $company_id,
+            ]);
+        }
+
+
+
+
 
         Booking::where("id", $booking_id)
             ->where("company_id", $company_id)
