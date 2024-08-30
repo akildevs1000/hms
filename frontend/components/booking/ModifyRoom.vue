@@ -240,12 +240,13 @@
               <tr>
                 <th>Grand Total</th>
                 <td class="text-right">
-                  <!-- <pre>{{ payload }}</pre> -->
                   {{ payload.booking_total_price }}
                 </td>
               </tr>
             </table>
             <div class="text-right">
+              <!-- <pre>{{ old }}</pre> -->
+
               <v-btn class="grey white--text mt-2" small @click="dialog = false"
                 >Close</v-btn
               >
@@ -294,6 +295,8 @@ export default {
         booking_total_price: 0,
         room_id: 0,
         room_type_id: 0,
+        room_no: 0,
+        room_type: null,
       },
       payload: {
         booking_remaining_price: 0,
@@ -542,6 +545,11 @@ export default {
           booking_total_price: data.booking.total_price,
           room_id: data.room_id,
           room_type_id: data.room_type_id,
+          room_type: data?.room?.room_type?.name,
+          room_no: data.room_no,
+          days: data.days || 0,
+          check_in: data.check_in,
+          check_out: data.check_out,
         };
 
         // this.early_check_in = data.early_check_in;

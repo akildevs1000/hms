@@ -116,11 +116,12 @@
           <v-col cols="6">
             <v-autocomplete
               label="Adult Per Room"
-              :items="[0, 1, 2, 3]"
+              :items="[1, 2, 3]"
               dense
               outlined
               v-model="temp.no_of_adult"
               :hide-details="true"
+              required
             ></v-autocomplete>
           </v-col>
           <v-col cols="6">
@@ -131,6 +132,7 @@
               outlined
               v-model="temp.no_of_child"
               :hide-details="true"
+              required
             ></v-autocomplete>
           </v-col>
           <v-col cols="12">
@@ -246,7 +248,7 @@ export default {
         grand_total: 0, //(total * days)
         company_id: this.$auth.user.company.id,
 
-        no_of_adult: 1,
+        no_of_adult: null,
         no_of_child: 0,
         no_of_baby: 0,
         tot_adult_food: 0,
@@ -313,7 +315,7 @@ export default {
         grand_total: 0, //(total * days)
         company_id: this.$auth.user.company.id,
 
-        no_of_adult: 1,
+        no_of_adult: null,
         no_of_child: 0,
         no_of_baby: 0,
         tot_adult_food: 0,
@@ -458,8 +460,14 @@ export default {
       no_of_adult,
       no_of_child,
     }) {
+     
       if (!this.room_type_id || !this.multipleRoomId) {
         this.alert("Error!", "Room type or Room not selected", "error");
+        return;
+      }
+
+      if(!no_of_adult) {
+        this.alert("Error!", "Adult must be selected", "error");
         return;
       }
 

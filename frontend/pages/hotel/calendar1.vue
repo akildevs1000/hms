@@ -424,9 +424,9 @@
                 <div
                   style="display: flex; justify-content: flex-end; gap: 16px"
                 >
-                  <BookingHall :onlyButton="true" />
-                  <BookingIndividual :onlyButton="true" />
-                  <BookingGroup :onlyButton="true" />
+                  <BookingHall  @success="handleSuccess(`Hall has been Booked`)" :onlyButton="true" />
+                  <BookingIndividual  @success="handleSuccess(`Room has been Booked`)" :onlyButton="true" />
+                  <BookingGroup @success="handleSuccess(`Room(s) has been Booked`)" :onlyButton="true" />
                 </div>
               </v-col>
               <v-col cols="2" class="text-right">
@@ -897,6 +897,10 @@ export default {
     },
   },
   methods: {
+    handleSuccess(message) {
+      this.get_events();
+      this.$swal("Success!", message, "success");
+    },
     hilightTodayDateHeaderContent() {
       const today = new Date();
       const specificDate = today.toISOString().split("T")[0] + "T00:00:00";

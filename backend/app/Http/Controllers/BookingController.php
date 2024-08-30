@@ -1669,8 +1669,7 @@ class BookingController extends Controller
 
         $booking_id = $request->booking_id;
         $customer_id = $request->customer_id ?? 0;
-        $customer_id = Transaction::where("booking_id", $booking_id)->value("customer_id");
-        
+
         $check_in = $request->check_in;
         $check_out = $request->check_out;
         $room_id = $request->room_id;
@@ -1695,7 +1694,6 @@ class BookingController extends Controller
         $user_id = $request->user_id;
         $company_id = $request->company_id;
 
-        $booking_remaining_price = $request->booking_remaining_price;
         $booking_total_price = $request->booking_total_price;
 
         OrderRoom::where('booking_id', $booking_id)->where("booked_room_id", $id)->delete();
@@ -1741,8 +1739,6 @@ class BookingController extends Controller
                 "lunch" => $lunch,
                 "dinner" => $dinner,
 
-
-
                 // $early_check_in = $request->early_check_in;
                 // $late_check_out = $request->late_check_out;
                 // $remaining_price = $request->remaining_price;
@@ -1752,8 +1748,6 @@ class BookingController extends Controller
             ];
         }
 
-
-
         OrderRoom::insert($arr);
 
         unset($arr[0]["booked_room_id"]);
@@ -1762,16 +1756,26 @@ class BookingController extends Controller
 
         BookedRoom::where('id', $id)->update($arr[0]);
         $credit = Transaction::where("booking_id", $booking_id)->sum("credit");
-        $bal = $request->booking_total_price - $request->old['booking_total_price'];
+
+        $debit = $booking_total_price - $request->old['booking_total_price'];
+
+        $old_room_no = $request->old['room_no'];
+        $old_room_type = $request->old['room_type'];
+
+        // $old_check_in = $request->old['check_in'];
+        // $old_check_in = $request->old['check_out'];
+
+        $balance = $booking_total_price - $credit;
 
         $arr = [
-            "desc" => "room change price (difference)",
-            "balance" => $request->booking_total_price - $credit,
-            "debit" => $bal,
+            "desc" => "room change ($old_room_no $room_type to $room_no $old_room_type). new price ($booking_total_price)",
+            "balance" => $balance,
+            "debit" => $debit,
             "booking_id" => $booking_id,
             "user_id" => $user_id,
             "customer_id" => $customer_id,
             "company_id" => $company_id,
+            'date' => now(),
         ];
 
         Transaction::create($arr);
@@ -1786,12 +1790,12 @@ class BookingController extends Controller
                 'sub_total' => $booking_total_price,
                 'total_price' => $booking_total_price,
                 'all_room_Total_amount' => $booking_total_price,
-                'balance' => $bal,
-                'remaining_price' => $bal,
-                'grand_remaining_price' => $bal,
+                'balance' => $balance,
+                'remaining_price' => $balance,
+                'grand_remaining_price' => $balance,
 
                 // 'discount' => $room_discount,    
-                // 'after_discount' => $booking_total_price - $room_discount,
+                'after_discount' => $balance,
                 // 'inv_total_tax_collected' => $bookingPayload->total_tax,
                 // "rooms": "302,307",
                 // "payment_status": 1,
