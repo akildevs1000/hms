@@ -7,7 +7,7 @@
                 <v-toolbar class="rounded-md" color="background" dense flat dark>
                     <span>Customer History</span>
                     <v-spacer></v-spacer>
-                    <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi mdi-close-box</v-icon>
+                    <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi-close</v-icon>
                 </v-toolbar>
                 <v-container class="mt-0 pt-0">
                     <CustomerIndex :customer_id="customer_id" :edit_mode="false"

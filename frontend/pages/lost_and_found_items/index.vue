@@ -31,7 +31,7 @@
                                 <v-icon>mdi-emoticon-happy-outline</v-icon>
                             </v-tab>
                             <v-tab @click="newItem = false">
-                                <v-icon dark class="pa-0">mdi mdi-close-box</v-icon>
+                                <v-icon dark class="pa-0">mdi-close</v-icon>
                             </v-tab>
                         </v-tabs>
                         <v-tabs-items v-model="tab">

@@ -6,7 +6,7 @@
           <span>ID</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-container>
@@ -1323,7 +1323,7 @@
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">
-            mdi mdi-close-box
+            mdi-close
           </v-icon>
         </v-toolbar>
         <v-card-text>

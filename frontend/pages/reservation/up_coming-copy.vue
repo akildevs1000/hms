@@ -19,7 +19,7 @@
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="payingDialog = false">
-            mdi mdi-close-box
+            mdi-close
           </v-icon>
         </v-toolbar>
         <v-card-text>
@@ -39,7 +39,7 @@
           <span>Check In</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="checkInDialog = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-card-text>

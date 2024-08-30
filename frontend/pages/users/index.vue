@@ -12,7 +12,7 @@
             <span>{{ formTitle }} {{ Model }}</span>
           </v-toolbar>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="userDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="userDialog = false">mdi-close</v-icon>
         </v-toolbar>
         <v-container>
           <v-row>

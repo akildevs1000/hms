@@ -34,7 +34,7 @@
             <v-tabs-slider color="#1259a7"></v-tabs-slider>
           </v-tabs>
           <v-icon dark class="pa-0" @click="BookingDetialsDialog = false">
-            mdi mdi-close-box
+            mdi-close
           </v-icon>
         </v-toolbar>
         <v-tabs-items v-model="activeTab">
@@ -851,7 +851,7 @@
               <span>{{ "GRC" }}</span>
               <v-spacer></v-spacer>
               <v-icon dark class="pa-0" @click="GRCDialog = false"
-                >mdi mdi-close-box</v-icon
+                >mdi-close</v-icon
               >
             </v-toolbar>
             <v-card-text>
@@ -868,7 +868,7 @@
               <span>Preview</span>
               <v-spacer></v-spacer>
               <v-icon dark class="pa-0" @click="imgView = false"
-                >mdi mdi-close-box</v-icon
+                >mdi-close</v-icon
               >
             </v-toolbar>
             <v-container>
@@ -884,7 +884,7 @@
               <span>Payment</span>
               <v-spacer></v-spacer>
               <v-icon dark class="pa-0" @click="payingDialog = false"
-                >mdi mdi-close-box</v-icon
+                >mdi-close</v-icon
               >
             </v-toolbar>
             <v-card-text>

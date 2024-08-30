@@ -6,7 +6,7 @@
           <span>Preview</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-container>
@@ -21,7 +21,7 @@
           <span>Item Image</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView1 = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-container>
@@ -36,7 +36,7 @@
           <span>Courier Receipt</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView2 = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-container>
@@ -51,7 +51,7 @@
           <span>Preview</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView3 = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-container>

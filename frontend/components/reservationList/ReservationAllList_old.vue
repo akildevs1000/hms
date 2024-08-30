@@ -18,7 +18,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Payment</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="payingDialog = false">mdi-close</v-icon>
         </v-toolbar>
         <v-card-text>
           <Paying :BookingData="checkData" @close-dialog="closeDialogs"></Paying>

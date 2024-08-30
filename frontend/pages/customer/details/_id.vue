@@ -11,7 +11,7 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ "GRC" }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi-close</v-icon>
           </v-toolbar>
           <v-card-text>
             <Grc :bookingId="this.$route.params.id"> </Grc>
@@ -26,7 +26,7 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Preview</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="imgView = false">mdi-close</v-icon>
           </v-toolbar>
           <v-container>
             <ImagePreview :docObj="documentObj"></ImagePreview>
@@ -40,7 +40,7 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Payment</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="payingDialog = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="payingDialog = false">mdi-close</v-icon>
           </v-toolbar>
           <v-card-text>
             <Paying :BookingData="payData" @close-dialog="closeDialogs"></Paying>
@@ -63,7 +63,7 @@
               <v-tabs-slider color="#1259a7"></v-tabs-slider>
             </v-tabs>
             <v-icon dark class="pa-0" @click="redirect">
-              mdi mdi-close-box
+              mdi-close
             </v-icon>
           </v-toolbar>
           <v-tabs-items v-model="activeTab">

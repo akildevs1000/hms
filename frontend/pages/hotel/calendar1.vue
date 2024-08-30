@@ -56,7 +56,7 @@
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="checkOutDialog = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-card-text>
@@ -102,7 +102,7 @@
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="postingDialog = false">
-            mdi mdi-close-box
+            mdi-close
           </v-icon>
         </v-toolbar>
         <v-card-text>
@@ -169,7 +169,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="close">mdi-close</v-icon>
         </v-toolbar>
         <v-card-text>
           <!-- <check-in :BookingData="checkData"></check-in> -->
@@ -186,7 +186,7 @@
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="payingAdvance = false"
-            >mdi mdi-close-box</v-icon
+            >mdi-close</v-icon
           >
         </v-toolbar>
         <v-card-text>
@@ -209,7 +209,7 @@
             dark
             class="pa-0"
             @click="changeRoomDialog = closeChangeRoom()"
-            >mdi mdi-close-box
+            >mdi-close
           </v-icon>
         </v-toolbar>
         <!-- <v-card-text v-if="NewBooking"> -->

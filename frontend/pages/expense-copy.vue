@@ -35,7 +35,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Preview</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="imgView = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="imgView = false">mdi-close</v-icon>
         </v-toolbar>
         <v-container>
           <!-- <ImagePreview :docObj="documentObj"></ImagePreview> -->
@@ -53,7 +53,7 @@
           </v-toolbar>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="expenseDialog = false">
-            mdi mdi-close-box
+            mdi-close
           </v-icon>
         </v-toolbar>
         <v-container>

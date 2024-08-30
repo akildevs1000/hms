@@ -7,7 +7,7 @@
                         <span>Preview</span>
                         <v-spacer></v-spacer>
                         <v-icon dark class="pa-0" @click="imgView = false">
-                            mdi mdi-close-box
+                            mdi-close
                         </v-icon>
                     </v-toolbar>
                     <v-container>
@@ -32,7 +32,7 @@
                         <v-icon> mdi mdi-clipboard-text-clock </v-icon>
                     </v-tab> -->
                     <!-- <v-icon dark class="pa-2" @click="redirect">
-                        mdi mdi-close-box
+                        mdi-close
                     </v-icon> -->
                     <v-tabs-slider color="#1259a7"></v-tabs-slider>
                     <v-tab-item>
@@ -836,7 +836,7 @@
                     <span>Payment</span>
                     <v-spacer></v-spacer>
                     <v-icon dark class="pa-0" @click="advanceDialog = false">
-                        mdi mdi-close-box
+                        mdi-close
                     </v-icon>
                 </v-toolbar>
                 <v-card-text>

@@ -11,7 +11,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Create Customer</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="NewCustomerDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="NewCustomerDialog = false">mdi-close</v-icon>
         </v-toolbar>
         <v-container>
           <CreateCustomer @close-dialog="closeDialogs" />
@@ -25,7 +25,7 @@
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Edit Customer</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi mdi-close-box</v-icon>
+          <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi-close</v-icon>
         </v-toolbar>
         <v-container class="mt-0 pt-0">
           <customer-index :edit_mode="true" :customer_id="customer_id" @close-dialog="closeDialogs" />

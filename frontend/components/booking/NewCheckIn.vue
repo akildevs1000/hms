@@ -7,7 +7,7 @@
             <span>Preview</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="imgView = false">
-              mdi mdi-close-box
+              mdi-close
             </v-icon>
           </v-toolbar>
           <v-container>
@@ -22,7 +22,7 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Add ID</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="documentDialog = false">mdi mdi-close-box</v-icon>
+            <v-icon dark class="pa-0" @click="documentDialog = false">mdi-close</v-icon>
           </v-toolbar>
           <v-container class="pa-5">
             <v-row>
@@ -1061,7 +1061,7 @@
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">
-            mdi mdi-close-box
+            mdi-close
           </v-icon>
         </v-toolbar>
         <v-card-text>
