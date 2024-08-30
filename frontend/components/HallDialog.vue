@@ -731,7 +731,6 @@ export default {
       this.get_reservation();
       this.calculateHoursQty();
       this.RoomDrawer = false;
-
     },
     async get_business_sources() {
       let config = {
@@ -1213,9 +1212,6 @@ export default {
       let after_discount =
         sub_total - (room_discount == "" ? 0 : room_discount);
 
-      this.room.check_in = this.formattedCheckInDateTime;
-      this.room.check_out = this.formattedCheckOutDateTime;
-
       let payload = {
         ...this.temp,
         food_plan_price: total_food_charges,
@@ -1229,6 +1225,8 @@ export default {
         room_id,
         extra_hours,
         extra_booking_hours_charges,
+        check_in: this.formattedCheckInDateTime,
+        check_out: this.formattedCheckOutDateTime,
       };
 
       selectedRoomsForTableView.push(payload);
@@ -1262,7 +1260,6 @@ export default {
         arrToMerge,
         payload,
       });
-
 
       this.close();
     },

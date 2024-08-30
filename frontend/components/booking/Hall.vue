@@ -1228,16 +1228,10 @@ export default {
       this.dialog = false;
     },
     handleTableData({ arrToMerge, payload }) {
-      let isSelect = this.selectedRooms.find(
-        (sr) => sr.room_no == payload.room_no
-      );
-
-      if (!isSelect) {
-        this.selectedRooms.push(payload);
-        this.priceListTableView = this.mergeEntries(
-          this.priceListTableView.concat(arrToMerge)
-        );
-      }
+      this.room.check_in = payload.check_in;
+      this.room.check_out = payload.check_out;
+      this.selectedRooms = [payload];
+      this.priceListTableView = arrToMerge;
     },
     async get_business_sources() {
       let config = {

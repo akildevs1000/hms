@@ -6,12 +6,19 @@
       </v-snackbar>
     </div>
     <v-row>
-      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
+      <v-dialog
+        v-model="GRCDialog"
+        persistent
+        :width="900"
+        class="checkin-models"
+      >
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ "GRC" }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi-close</v-icon>
+            <v-icon dark class="pa-0" @click="GRCDialog = false"
+              >mdi-close</v-icon
+            >
           </v-toolbar>
           <v-card-text>
             <Grc :bookingId="this.$route.params.id"> </Grc>
@@ -26,7 +33,9 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Preview</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="imgView = false">mdi-close</v-icon>
+            <v-icon dark class="pa-0" @click="imgView = false"
+              >mdi-close</v-icon
+            >
           </v-toolbar>
           <v-container>
             <ImagePreview :docObj="documentObj"></ImagePreview>
@@ -40,10 +49,15 @@
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Payment</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="payingDialog = false">mdi-close</v-icon>
+            <v-icon dark class="pa-0" @click="payingDialog = false"
+              >mdi-close</v-icon
+            >
           </v-toolbar>
           <v-card-text>
-            <Paying :BookingData="payData" @close-dialog="closeDialogs"></Paying>
+            <Paying
+              :BookingData="payData"
+              @close-dialog="closeDialogs"
+            ></Paying>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -53,18 +67,22 @@
           <v-toolbar :color="roomTypeColor" dark flat dense>
             <v-tabs v-model="activeTab" align-with-title>
               <span class="py-3 ml-2">
-                {{ room_category_type }} {{
+                {{ room_category_type }}
+                {{
                   getRelaventStatus(booking && booking.booking_status)
-                }}Guest</span>
+                }}Guest</span
+              >
               <v-spacer></v-spacer>
-              <v-tab active-class="active-link" v-for="item in itemsCustomer" :key="item">
+              <v-tab
+                active-class="active-link"
+                v-for="item in itemsCustomer"
+                :key="item"
+              >
                 {{ item }}
               </v-tab>
               <v-tabs-slider color="#1259a7"></v-tabs-slider>
             </v-tabs>
-            <v-icon dark class="pa-0" @click="redirect">
-              mdi-close
-            </v-icon>
+            <v-icon dark class="pa-0" @click="redirect"> mdi-close </v-icon>
           </v-toolbar>
           <v-tabs-items v-model="activeTab">
             <v-tab-item class="px-3 py-4">
@@ -72,59 +90,79 @@
                 <v-col md="2" cols="12">
                   <v-row>
                     <v-col cols="12" class="text-center">
-                       <v-avatar size="200">
+                      <v-avatar size="200">
                         <v-img
-                            :src="booking?.customer?.captured_photo || '/no-profile-image.jpg'"
-                          ></v-img>
-                       </v-avatar>
-                      </v-col>
-                      <v-col cols="12" class="text-center">
-                        <v-btn small dark class="primary"
-                          @click="process_grc(booking.id)">
-                          GRC
-                          <v-icon right dark>mdi-file</v-icon>
-                        </v-btn>
-                        <v-btn small dark class="primary"
-                        @click="downloadCustomerAttachments">
+                          :src="
+                            booking?.customer?.captured_photo ||
+                            '/no-profile-image.jpg'
+                          "
+                        ></v-img>
+                      </v-avatar>
+                    </v-col>
+                    <v-col cols="12" class="text-center">
+                      <v-btn
+                        small
+                        dark
+                        class="primary"
+                        @click="process_grc(booking.id)"
+                      >
+                        GRC
+                        <v-icon right dark>mdi-file</v-icon>
+                      </v-btn>
+                      <v-btn
+                        small
+                        dark
+                        class="primary"
+                        @click="downloadCustomerAttachments"
+                      >
                         <v-icon>mdi-download-outline</v-icon>
                         <v-icon>mdi-account-tie</v-icon>
-                        </v-btn>
-                      </v-col>
+                      </v-btn>
+                    </v-col>
                     <v-col md="12" class="pr-0 mr-0">
                       <div class="text-box-amt">
                         <table>
                           <tr class="bg-white amt-border-full">
                             <td>Room:</td>
                             <td class="text-right">
-
-                              {{ $auth.user.company.currency }}{{
+                              {{ $auth.user.company.currency
+                              }}{{
                                 transactionSummary &&
-                                numFormat(transactionSummary.sumDebit - transactionSummary.tot_posting)
+                                numFormat(
+                                  transactionSummary.sumDebit -
+                                    transactionSummary.tot_posting
+                                )
                               }}
                             </td>
                           </tr>
                           <tr class="bg-white amt-border">
                             <td>Posting :</td>
                             <td class="text-right">
-                              {{ $auth.user.company.currency }}{{
+                              {{ $auth.user.company.currency
+                              }}{{
                                 transactionSummary &&
                                 transactionSummary.tot_posting
                               }}
                             </td>
                           </tr>
-                          <tr class="bg-white amt-border bold" style="font-weight:bold">
+                          <tr
+                            class="bg-white amt-border bold"
+                            style="font-weight: bold"
+                          >
                             <td>Total :</td>
                             <td class="text-right">
-                              {{ $auth.user.company.currency }}{{
+                              {{ $auth.user.company.currency
+                              }}{{
                                 transactionSummary &&
                                 transactionSummary.sumDebit
                               }}
                             </td>
                           </tr>
-                          <tr class="bg-white amt-border  ">
+                          <tr class="bg-white amt-border">
                             <td>Paid :</td>
                             <td class="text-right">
-                              - {{ $auth.user.company.currency }}{{
+                              - {{ $auth.user.company.currency
+                              }}{{
                                 transactionSummary &&
                                 transactionSummary.sumCredit
                               }}
@@ -133,7 +171,8 @@
                           <tr class="bg-white amt-border">
                             <td>Balance :</td>
                             <td class="red--text text-right">
-                              {{ $auth.user.company.currency }}{{ numFormat(transactionSummary.balance) }}
+                              {{ $auth.user.company.currency
+                              }}{{ numFormat(transactionSummary.balance) }}
                             </td>
                           </tr>
                         </table>
@@ -218,53 +257,57 @@
                   </v-row>
 
                   <v-row class="my-0 py-0">
-                    <v-col md="4" v-if="booking.room_category_type == 'Hall'">
-                      <div class="text-box" style="float: left">
-                        <h6>Event Date</h6>
-                        <p>{{ (booking &&
-                          booking.hall_booking.event_date) ||
-                          "---" }}</p>
-
-                      </div>
+                    <v-col
+                      md="8"
+                      v-if="booking && booking.booking_type == 'hall'"
+                    >
+                      <v-row>
+                        <v-col>
+                          <div class="text-box" style="float: left">
+                            <h6>Event Start</h6>
+                            <p>
+                              {{ booking.hall_check_in_date || "---" }}
+                            </p>
+                          </div>
+                        </v-col>
+                        <v-col>
+                          <div class="text-box" style="float: left">
+                            <h6>Event End</h6>
+                            <p>
+                              {{ booking.hall_check_out_date || "---" }}
+                            </p>
+                          </div>
+                        </v-col>
+                      </v-row>
                     </v-col>
-                    <v-col md="4" v-if="booking.room_category_type == 'Hall'">
-                      <div class="text-box" style="float: left">
-                        <h6>Time</h6>
-                        <p>
 
-                        <p>{{ (booking &&
-                          getHours(booking.hall_booking.event_start_time)) + ' - ' +
-                          getHours(booking.hall_booking.event_end_time) || "---" }}</p>
-
-
-                        </p>
-                      </div>
+                    <v-col
+                      md="8"
+                     v-else
+                    >
+                      <v-row>
+                        <v-col>
+                          <div class="text-box" style="float: left">
+                            <h6>Check In</h6>
+                            <p>
+                              {{ booking.check_in_date || "---" }}
+                            </p>
+                          </div>
+                        </v-col>
+                        <v-col>
+                          <div class="text-box" style="float: left">
+                            <h6>Check Out</h6>
+                            <p>
+                              {{ booking.check_out_date || "---" }}
+                            </p>
+                          </div>
+                        </v-col>
+                      </v-row>
                     </v-col>
-                    <v-col md="4" v-if="booking.room_category_type != 'Hall'">
-                      <div class="text-box" style="float: left">
-                        <h6>Check In</h6>
-                        <p>{{ (booking && booking.check_in_date) || "---" }}</p>
-                      </div>
-                    </v-col>
-                    <v-col md="4" v-if="booking.room_category_type != 'Hall'">
-                      <div class="text-box" style="float: left">
-                        <h6>Check Out</h6>
-                        <p>
 
-                        <p>{{ (booking && booking.check_out_date) || "---" }}</p>
+                   
 
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4" v-if="booking.room_category_type == 'Hall'">
-                      <div class="text-box" style="float: left">
-                        <h6>Pax</h6>
-                        <p>
-                          {{ (booking && booking.hall_booking.event_pax) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4" v-if="booking.room_category_type != 'Hall'">
+                    <v-col md="4">
                       <div class="text-box" style="float: left">
                         <h6>Days</h6>
                         <p>
@@ -417,8 +460,15 @@
                     <td>{{ item.room_no || "---" }}</td>
                     <td>{{ item.room_type || "---" }}</td>
                     <td>{{ item.no_of_adult }}</td>
-                    <td>{{ item.no_of_child}}</td>
-                    <td>{{item?.foodplan?.title + " ("+item?.foodplan?.unit_price+") " || "---"}}</td>
+                    <td>{{ item.no_of_child }}</td>
+                    <td>
+                      {{
+                        item?.foodplan?.title +
+                          " (" +
+                          item?.foodplan?.unit_price +
+                          ") " || "---"
+                      }}
+                    </td>
                     <td class="text-right">
                       {{ item.bed_amount || "---" }}
                     </td>
@@ -449,7 +499,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style="font-size: 13px" v-for="(item, postingIndex) in postings" :key="postingIndex">
+                  <tr
+                    style="font-size: 13px"
+                    v-for="(item, postingIndex) in postings"
+                    :key="postingIndex"
+                  >
                     <td>{{ ++postingIndex }}</td>
                     <td>{{ item.bill_no || "---" }}</td>
                     <td>{{ item.posting_date || "---" }}</td>
@@ -471,9 +525,9 @@
                       {{ item.amount_with_tax || "---" }}
                     </td>
                     <td class="text-center">
-                      <v-icon v-if="can('accounts_posting_delete')"> x-small color="accent" @click="cancelPosting(item)"
-                        class="mr-2">
-                        mdi-delete
+                      <v-icon v-if="can('accounts_posting_delete')">
+                        x-small color="accent" @click="cancelPosting(item)"
+                        class="mr-2"> mdi-delete
                       </v-icon>
                     </td>
                   </tr>
@@ -484,7 +538,12 @@
               <v-card flat>
                 <v-row>
                   <v-col md="12" class="mt-2 text-right">
-                    <v-btn small class="elevation-0" color="#ECF0F4" @click="get_payment()">
+                    <v-btn
+                      small
+                      class="elevation-0"
+                      color="#ECF0F4"
+                      @click="get_payment()"
+                    >
                       Transaction
                       <v-icon right>mdi mdi-cash-sync</v-icon>
                     </v-btn>
@@ -505,16 +564,29 @@
                           <th>Balance</th>
                         </tr>
                       </thead>
-                      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                        color="primary"></v-progress-linear>
+                      <v-progress-linear
+                        v-if="loading"
+                        :active="loading"
+                        :indeterminate="loading"
+                        absolute
+                        color="primary"
+                      ></v-progress-linear>
                       <tbody>
-                        <tr v-for="(item, index) in transactions" :key="index" style="font-size: 13px" class="no-bg">
+                        <tr
+                          v-for="(item, index) in transactions"
+                          :key="index"
+                          style="font-size: 13px"
+                          class="no-bg"
+                        >
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
                           <td>{{ item.date || "---" }}</td>
                           <td>{{ item.time || "---" }}</td>
-                          <td>{{ item.user?.name || "---" }} {{ item.user?.last_name }}</td>
+                          <td>
+                            {{ item.user?.name || "---" }}
+                            {{ item.user?.last_name }}
+                          </td>
                           <td>
                             {{
                               (item &&
@@ -556,8 +628,7 @@
             </v-tab-item>
             <v-tab-item class="px-3" v-if="room_category_type == 'Hall'">
               <v-col cols="12">
-
-                <table class="responsive-table mt-0  pt-5">
+                <table class="responsive-table mt-0 pt-5">
                   <thead>
                     <tr class="table-header-text">
                       <th>#</th>
@@ -565,15 +636,23 @@
                       <th>Qty</th>
                       <th>Price</th>
                       <th>Total</th>
-
                     </tr>
                   </thead>
-                  <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                    color="primary"></v-progress-linear>
-
+                  <v-progress-linear
+                    v-if="loading"
+                    :active="loading"
+                    :indeterminate="loading"
+                    absolute
+                    color="primary"
+                  ></v-progress-linear>
 
                   <tbody>
-                    <tr v-for="(item, index) in food" :key="index" style="font-size: 13px" class="no-bg">
+                    <tr
+                      v-for="(item, index) in food"
+                      :key="index"
+                      style="font-size: 13px"
+                      class="no-bg"
+                    >
                       <td>
                         <b>{{ ++index }}</b>
                       </td>
@@ -581,18 +660,11 @@
                       <td>{{ item.qty || "---" }}</td>
 
                       <td>
-                        {{
-
-                          item.price_per_item || "---"
-                        }}
+                        {{ item.price_per_item || "---" }}
                       </td>
                       <td>
-                        {{
-
-                          item.total || "---"
-                        }}
+                        {{ item.total || "---" }}
                       </td>
-
                     </tr>
                   </tbody>
                 </table>
@@ -602,164 +674,119 @@
               <v-card flat>
                 <v-row>
                   <v-col cols="6">
-                    <v-row style="background-color: #e3e3e3;">
-                      <v-col md="3" cols="12"><label class="text-h6">Name</label>
+                    <v-row style="background-color: #e3e3e3">
+                      <v-col md="3" cols="12"
+                        ><label class="text-h6">Name</label>
                       </v-col>
 
-                      <v-col md="2" cols="12" class="text-right">
-
-                        Total
-                      </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="2" cols="12" class="text-right"> Total </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
 
-
                     <v-row>
-                      <v-col md="3" cols="12"><label>Hall rent</label>
-                      </v-col>
+                      <v-col md="3" cols="12"><label>Hall rent</label> </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(hallRentTotalAmount) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Electricity (EB) Charges</label>
+                      <v-col md="3" cols="12"
+                        ><label>Electricity (EB) Charges</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(electricityTotalAmount) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
 
                     <v-row>
-                      <v-col md="3" cols="12"><label>Sound System </label>
+                      <v-col md="3" cols="12"
+                        ><label>Sound System </label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(audioTotalAmount) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label> Projector</label>
-                      </v-col>
+                      <v-col md="3" cols="12"><label> Projector</label> </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(projecterTotalAmount) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Setting arrangment & Cleaning charges</label>
+                      <v-col md="3" cols="12"
+                        ><label>Setting arrangment & Cleaning charges</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(cleaningTotalAmount) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Food Total</label>
-                      </v-col>
+                      <v-col md="3" cols="12"><label>Food Total</label> </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(foodTotalAmount) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Additional Events</label>
+                      <v-col md="3" cols="12"
+                        ><label>Additional Events</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(otherCharges) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12">
                         <hr />
                       </v-col>
                     </v-row>
-                    <v-row style="font-weight:bold">
-                      <v-col md="3" cols="12"><label>Total</label>
-                      </v-col>
+                    <v-row style="font-weight: bold">
+                      <v-col md="3" cols="12"><label>Total</label> </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(hallItemsTotal) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                   </v-col>
                   <v-col cols="6">
-
                     <v-row>
                       <v-col cols="12">
                         <hr />
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Adjusted Final Amount(After Discount)</label>
+                      <v-col md="3" cols="12"
+                        ><label>Adjusted Final Amount(After Discount)</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(inv_total_without_tax) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Tax Collected with Food tax</label>
+                      <v-col md="3" cols="12"
+                        ><label>Tax Collected with Food tax</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(inv_total_tax) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
 
                     <v-row>
@@ -768,26 +795,19 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col md="3" cols="12"><label>Grand Total</label>
+                      <v-col md="3" cols="12"
+                        ><label>Grand Total</label>
                       </v-col>
 
                       <v-col md="2" cols="12" class="text-right">
-
                         {{ getPriceFormat(inv_total) }}
                       </v-col>
-                      <v-col md="1" cols="12" class="text-right">
-
-
-                      </v-col>
+                      <v-col md="1" cols="12" class="text-right"> </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
 
-
-
                 <v-row>
-
-
                   <v-col cols="12" class="pt-5">
                     <h4>Additional Events/Charges</h4>
                     <table class="responsive-table mt-0">
@@ -798,15 +818,23 @@
                           <th>Qty</th>
                           <th>Price</th>
                           <th>Total</th>
-
                         </tr>
                       </thead>
-                      <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                        color="primary"></v-progress-linear>
-
+                      <v-progress-linear
+                        v-if="loading"
+                        :active="loading"
+                        :indeterminate="loading"
+                        absolute
+                        color="primary"
+                      ></v-progress-linear>
 
                       <tbody>
-                        <tr v-for="(item, index) in extra_amounts" :key="index" style="font-size: 13px" class="no-bg">
+                        <tr
+                          v-for="(item, index) in extra_amounts"
+                          :key="index"
+                          style="font-size: 13px"
+                          class="no-bg"
+                        >
                           <td>
                             <b>{{ ++index }}</b>
                           </td>
@@ -814,43 +842,39 @@
                           <td>{{ item.qty || "---" }}</td>
 
                           <td>
-                            {{
-
-                              item.price_per_item || "---"
-                            }}
+                            {{ item.price_per_item || "---" }}
                           </td>
                           <td>
-                            {{
-
-                              item.total || "---"
-                            }}
+                            {{ item.total || "---" }}
                           </td>
-
                         </tr>
                       </tbody>
-
                     </table>
-
                   </v-col>
                 </v-row>
               </v-card>
             </v-tab-item>
 
             <v-tab-item class="px-3 py-4">
-              <v-row>           
-
+              <v-row>
                 <v-col md="12" cols="12">
                   <v-row class="mt-4">
                     <v-col md="3">
                       <div class="text-box" style="float: left">
                         <h6>Online Payment Status</h6>
-                        <p style="color:green;;font-weight:bold" v-if="booking &&
-                              booking.online_payment_response &&
-                              booking.online_payment_response.razorpay_payment_link_status=='paid'">
-                           Success
+                        <p
+                          style="color: green; font-weight: bold"
+                          v-if="
+                            booking &&
+                            booking.online_payment_response &&
+                            booking.online_payment_response
+                              .razorpay_payment_link_status == 'paid'
+                          "
+                        >
+                          Success
                         </p>
-                        <p v-else style="color:red;font-weight:bold">
-Failed
+                        <p v-else style="color: red; font-weight: bold">
+                          Failed
                         </p>
                       </div>
                     </v-col>
@@ -859,23 +883,23 @@ Failed
                         <h6>Online Booking Reference Number</h6>
                         <p>
                           {{
-                             (booking && booking.widget_confirmation_number && 
-                              booking.widget_confirmation_number.split('_')[1]) || '---'
-                          }} 
+                            (booking &&
+                              booking.widget_confirmation_number &&
+                              booking.widget_confirmation_number.split(
+                                "_"
+                              )[1]) ||
+                            "---"
+                          }}
                         </p>
                       </div>
                     </v-col>
-                    
-                    
-                   
+
                     <v-col md="3">
                       <div class="text-box" style="float: left">
                         <h6>RazorPay - Reference Id</h6>
                         <p>
                           {{
-                            (booking &&
-                              booking.payment_reference_id) ||
-                            "---"
+                            (booking && booking.payment_reference_id) || "---"
                           }}
                         </p>
                       </div>
@@ -887,7 +911,8 @@ Failed
                           {{
                             (booking &&
                               booking.online_payment_response &&
-                              booking.online_payment_response.razorpay_payment_id) ||
+                              booking.online_payment_response
+                                .razorpay_payment_id) ||
                             "---"
                           }}
                         </p>
@@ -904,14 +929,9 @@ Failed
                         </p>
                       </div>
                     </v-col> -->
-                    
                   </v-row>
-
-                    
- 
                 </v-col>
               </v-row>
- 
             </v-tab-item>
           </v-tabs-items>
         </v-card>
@@ -919,16 +939,14 @@ Failed
     </v-row>
 
     <v-row>
-      <v-col md="7">
-
-      </v-col>
+      <v-col md="7"> </v-col>
     </v-row>
   </div>
 </template>
 <script>
 import Grc from "./../../../components/booking/GRC.vue";
 import ImagePreview from "../../../components/images/ImagePreview.vue";
-import Paying from '../../../components/booking/Paying.vue';
+import Paying from "../../../components/booking/Paying.vue";
 export default {
   components: {
     Paying,
@@ -936,9 +954,7 @@ export default {
     Grc,
   },
   data: () => ({
-
     roomTypeColor: "primary",
-
 
     discount: 0,
     hallRentPerHour: 0,
@@ -953,7 +969,6 @@ export default {
     durationInHours: 1,
     foodTotalAmount: 0,
 
-
     hallRentTotalAmount: 0,
     otherCharges: 0,
 
@@ -964,23 +979,22 @@ export default {
     inv_total_tax: 0,
     discount: 0,
 
-
     hours: [
-      { id: 9, name: "09 AM" }
-      , { id: 10, name: "10 AM" }
-      , { id: 11, name: "11 AM" }
-      , { id: 12, name: "12 PM" }
-      , { id: 13, name: "01 PM" }
-      , { id: 14, name: "02 PM" }
-      , { id: 15, name: "03 PM" }
-      , { id: 16, name: "04 PM" }
-      , { id: 17, name: "05 PM" }
-      , { id: 18, name: "06 PM" }
-      , { id: 19, name: "07 PM" }
-      , { id: 20, name: "08 PM" }
-      , { id: 21, name: "09 PM" }
-      , { id: 22, name: "10 PM" }
-      , { id: 23, name: "11 PM" }
+      { id: 9, name: "09 AM" },
+      { id: 10, name: "10 AM" },
+      { id: 11, name: "11 AM" },
+      { id: 12, name: "12 PM" },
+      { id: 13, name: "01 PM" },
+      { id: 14, name: "02 PM" },
+      { id: 15, name: "03 PM" },
+      { id: 16, name: "04 PM" },
+      { id: 17, name: "05 PM" },
+      { id: 18, name: "06 PM" },
+      { id: 19, name: "07 PM" },
+      { id: 20, name: "08 PM" },
+      { id: 21, name: "09 PM" },
+      { id: 22, name: "10 PM" },
+      { id: 23, name: "11 PM" },
     ],
 
     pagination: {
@@ -1006,7 +1020,13 @@ export default {
     loading: false,
     response: "",
     customer: [],
-    itemsCustomer: ["Reservation", "Room", "Postings", "Transaction","Online Booking"],
+    itemsCustomer: [
+      "Reservation",
+      "Room",
+      "Postings",
+      "Transaction",
+      "Online Booking",
+    ],
     tab1: null,
     activeTab: 0,
 
@@ -1024,7 +1044,7 @@ export default {
     totalAmount: 0,
     totalPostingAmount: 0,
     totalTransactionAmount: 0,
-    room_category_type: '',
+    room_category_type: "",
     food: [],
     extra_amounts: [],
   }),
@@ -1034,14 +1054,17 @@ export default {
     this.loading = true;
     this.getData();
   },
-  mounted() { },
+  mounted() {},
 
   methods: {
-    downloadCustomerAttachments(){
-      let id = this.$route.params.id;      
+    downloadCustomerAttachments() {
+      let id = this.$route.params.id;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}download_customer_attachments/${id}`);
+      element.setAttribute(
+        "href",
+        `${process.env.BACKEND_URL}download_customer_attachments/${id}`
+      );
       document.body.appendChild(element);
       element.click();
     },
@@ -1052,7 +1075,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
 
@@ -1111,9 +1134,9 @@ export default {
       this.GRCDialog = true;
     },
     getHours(time) {
-      let arry = this.hours.find(hour => hour.id === time);
+      let arry = this.hours.find((hour) => hour.id === time);
       if (arry) return arry.name;
-      else return '';
+      else return "";
     },
     preview(file) {
       const fileExtension = file.split(".").pop().toLowerCase();
@@ -1146,7 +1169,7 @@ export default {
     },
 
     get_payment() {
-      this.payData = this.booking
+      this.payData = this.booking;
 
       // {
       //   id: this.$route.params.id,
@@ -1166,7 +1189,9 @@ export default {
         this.customer = booking.customer;
         this.booking = booking;
 
-        this.booking.online_payment_response =JSON.parse(booking.payment_response);
+        this.booking.online_payment_response = JSON.parse(
+          booking.payment_response
+        );
         this.payments = booking.payments;
         this.bookedRooms = booking.booked_rooms;
         this.orderRooms = booking.order_rooms;
@@ -1177,59 +1202,70 @@ export default {
         this.calTotalAmount(this.payments);
         this.room_category_type = data.booking.room_category_type;
 
-        if (this.room_category_type == 'Hall') {
+        if (this.room_category_type == "Hall") {
           this.roomTypeColor = "green";
-          this.itemsCustomer = ["Reservation", "Room", "Postings", "Transaction", "Food", "Price List"];
+          this.itemsCustomer = [
+            "Reservation",
+            "Room",
+            "Postings",
+            "Transaction",
+            "Food",
+            "Price List",
+          ];
           if (data.booking.hall_booking)
             this.food = data.booking.hall_booking.food;
           this.extra_amounts = data.booking.hall_booking.extra_amounts;
 
           this.hallRentTotalAmount = data.booking.hall_booking.hall_rent_amount;
-          this.electricityTotalAmount = data.booking.hall_booking.hall_electricity_amount;
+          this.electricityTotalAmount =
+            data.booking.hall_booking.hall_electricity_amount;
 
           this.audioTotalAmount = data.booking.hall_booking.hall_audio_system;
-          this.projecterTotalAmount = data.booking.hall_booking.hall_projector_amount;
-          this.cleaningTotalAmount = data.booking.hall_booking.hall_cleaning_charges;
+          this.projecterTotalAmount =
+            data.booking.hall_booking.hall_projector_amount;
+          this.cleaningTotalAmount =
+            data.booking.hall_booking.hall_cleaning_charges;
           this.foodTotalAmount = data.booking.hall_booking.food_total_amount;
-          this.otherCharges = data.booking.hall_booking.hall_extra_amounts_total;
+          this.otherCharges =
+            data.booking.hall_booking.hall_extra_amounts_total;
           this.inv_total_tax = data.booking.hall_booking.inv_total_tax;
-          this.inv_total_without_tax = data.booking.hall_booking.inv_total_without_tax;
+          this.inv_total_without_tax =
+            data.booking.hall_booking.inv_total_without_tax;
           this.inv_total = data.booking.hall_booking.inv_total;
           this.discount = data.booking.hall_booking.discount;
 
-
-          this.hallItemsTotal = parseFloat(this.hallRentTotalAmount)
-            + parseFloat(this.electricityTotalAmount)
-            + parseFloat(this.audioTotalAmount)
-            + parseFloat(this.projecterTotalAmount)
-            + parseFloat(this.cleaningTotalAmount)
-            + parseFloat(this.foodTotalAmount)
-            + parseFloat(this.otherCharges)
-            ;
-
-        }
-        else {
+          this.hallItemsTotal =
+            parseFloat(this.hallRentTotalAmount) +
+            parseFloat(this.electricityTotalAmount) +
+            parseFloat(this.audioTotalAmount) +
+            parseFloat(this.projecterTotalAmount) +
+            parseFloat(this.cleaningTotalAmount) +
+            parseFloat(this.foodTotalAmount) +
+            parseFloat(this.otherCharges);
+        } else {
           this.roomTypeColor = "primary";
 
-          if( data.bookingwidget_confirmation_number!='')
-          {
-            this.itemsCustomer = ["Reservation", "Room", "Postings", "Transaction","Online Booking"];
+          if (data.bookingwidget_confirmation_number != "") {
+            this.itemsCustomer = [
+              "Reservation",
+              "Room",
+              "Postings",
+              "Transaction",
+              "Online Booking",
+            ];
+          } else {
+            this.itemsCustomer = [
+              "Reservation",
+              "Room",
+              "Postings",
+              "Transaction",
+            ];
           }
-          else
-
-          {
-            this.itemsCustomer = ["Reservation", "Room", "Postings", "Transaction" ];
-          }
-         
         }
-
-
-
       });
     },
     getPriceFormat(price) {
-
-      return parseFloat(price).toLocaleString('en-IN', {
+      return parseFloat(price).toLocaleString("en-IN", {
         maximumFractionDigits: 2,
         minimumFractionDigits: 2,
       });

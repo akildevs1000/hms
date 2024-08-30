@@ -2312,6 +2312,7 @@ class BookingController extends Controller
         $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
         $data['reservation_no'] = $this->getReservationNumber($data);
         $data['verified'] = Booking::VERIFICATION_REQUIRED;
+        $data['booking_type'] = Booking::HALL;
 
         if ($request->filled('api_json_reference_number')) {
             $data['widget_confirmation_number'] = $request->api_json_reference_number;

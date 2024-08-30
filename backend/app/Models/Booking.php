@@ -20,6 +20,10 @@ class Booking extends Model
     const VERIFICATION_REQUIRED = 1;
     const VERIFICATION_COMPLETED = 2;
 
+    const ROOM = "room";
+    const HALL = "hall";
+
+
 
     protected $guarded = [];
     protected $appends = [
@@ -30,6 +34,10 @@ class Booking extends Model
         'status',
         'check_in_date',
         'check_out_date',
+
+        'hall_check_in_date',
+        'hall_check_out_date',
+
     ];
     protected $casts = [
         'booking_date' => 'datetime:Y-m-d',
@@ -69,6 +77,16 @@ class Booking extends Model
     public function getCheckOutDateAttribute()
     {
         return date('Y-m-d 11:00', strtotime($this->check_out));
+    }
+
+    public function getHallCheckInDateAttribute()
+    {
+        return $this->check_in;
+    }
+
+    public function getHallCheckOutDateAttribute()
+    {
+        return $this->check_out;
     }
 
     public function GetTitleAttribute()
