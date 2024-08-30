@@ -1668,8 +1668,9 @@ class BookingController extends Controller
         $id = $request->id;
 
         $booking_id = $request->booking_id;
+        $customer_id = $request->customer_id ?? 0;
         $customer_id = Transaction::where("booking_id", $booking_id)->value("customer_id");
-
+        
         $check_in = $request->check_in;
         $check_out = $request->check_out;
         $room_id = $request->room_id;
@@ -1760,12 +1761,12 @@ class BookingController extends Controller
         unset($arr[0]["price_adjusted_after_dsicount"]);
 
         BookedRoom::where('id', $id)->update($arr[0]);
-
+        $credit = Transaction::where("booking_id", $booking_id)->sum("credit");
         $bal = $request->booking_total_price - $request->old['booking_total_price'];
 
         $arr = [
             "desc" => "room change price (difference)",
-            "balance" => $request->booking_total_price,
+            "balance" => $request->booking_total_price - $credit,
             "debit" => $bal,
             "booking_id" => $booking_id,
             "user_id" => $user_id,
