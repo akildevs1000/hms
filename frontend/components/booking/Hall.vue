@@ -1,6 +1,6 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-dialog v-model="dialog">
+    <v-dialog v-model="dialog" width="1100">
       <template v-slot:activator="{ on, attrs }">
         <div style="text-align: center">
           <v-btn
@@ -33,30 +33,235 @@
         >
           <span>Hall Booking Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close">
-            mdi mdi-close-box
-          </v-icon>
+          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
         </v-toolbar>
-        <v-container fluid>
-          <v-row>
-            <v-dialog v-model="documentDialog" max-width="30%">
-              <v-card>
-                <v-toolbar
-                  class="rounded-md"
-                  color="background"
-                  dense
-                  flat
-                  dark
-                >
-                  <span>Add ID</span>
-                  <v-spacer></v-spacer>
-                  <v-icon dark class="pa-0" @click="documentDialog = false"
-                    >mdi mdi-close-box</v-icon
-                  >
-                </v-toolbar>
-                <v-container class="pa-5">
+        <v-card-text>
+          <v-tabs v-model="activeTab" right>
+            <v-tab>
+              <v-icon> mdi mdi-account-tie </v-icon>
+            </v-tab>
+            <v-tab>
+              <v-icon> mdi mdi-bed </v-icon>
+            </v-tab>
+            <v-tab v-if="customer.id > 0">
+              <v-icon> mdi mdi-clipboard-text-clock </v-icon>
+            </v-tab>
+            <v-tabs-slider color="#1259a7"></v-tabs-slider>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
                   <v-row>
-                    <v-col md="12" sm="12" cols="12" dense>
+                    <v-col md="2" cols="12">
+                      <v-img
+                        style="
+                          width: 150px;
+                          height: 150px;
+                          margin: 0 auto;
+                          border-radius: 50%;
+                        "
+                        :src="
+                          customer.captured_photo || '/no-profile-image.jpg'
+                        "
+                      ></v-img>
+                    </v-col>
+                    <v-col md="10" cols="12">
+                      <v-row>
+                        <v-col md="2" class="mt-0">
+                          <v-btn color="primary" @click="searchDialog = true">
+                            Search
+                            <v-icon right dark>mdi-magnify</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col md="3" cols="12" sm="12">
+                          <v-select
+                            v-model="customer.title"
+                            :items="titleItems"
+                            label="Title *"
+                            dense
+                            item-text="name"
+                            item-value="name"
+                            :hide-details="errors && !errors.title"
+                            :error-messages="
+                              errors && errors.title ? errors.title[0] : ''
+                            "
+                            outlined
+                          ></v-select>
+                        </v-col>
+
+                        <v-col md="3" dense>
+                          <v-autocomplete
+                            label="Business Source"
+                            v-model="customer.customer_type"
+                            :items="business_sources"
+                            dense
+                            item-text="name"
+                            item-value="name"
+                            outlined
+                            :hide-details="true"
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col md="2"></v-col>
+
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            label="First Name *"
+                            dense
+                            outlined
+                            type="text"
+                            v-model="customer.first_name"
+                            :hide-details="errors && !errors.first_name"
+                            :error-messages="
+                              errors && errors.first_name
+                                ? errors.first_name[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            label="Last Name"
+                            dense
+                            :hide-details="true"
+                            outlined
+                            type="text"
+                            v-model="customer.last_name"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="Email *"
+                            outlined
+                            type="email"
+                            v-model="customer.email"
+                            :hide-details="errors && !errors.email"
+                            :error-messages="
+                              errors && errors.email ? errors.email[0] : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="Contact No *"
+                            outlined
+                            max="1111111111111"
+                            type="number"
+                            v-model="customer.contact_no"
+                            :hide-details="errors && !errors.contact_no"
+                            :error-messages="
+                              errors && errors.contact_no
+                                ? errors.contact_no[0]
+                                : ''
+                            "
+                            @keyup="mergeContact"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-text-field
+                            dense
+                            label="Whatsapp No"
+                            outlined
+                            max="1111111111111"
+                            type="number"
+                            v-model="customer.whatsapp"
+                            :hide-details="errors && !errors.whatsapp"
+                            :error-messages="
+                              errors && errors.whatsapp
+                                ? errors.whatsapp[0]
+                                : ''
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="4" cols="12" sm="12">
+                          <v-menu
+                            v-model="customer.dob_menu"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="customer.dob"
+                                readonly
+                                label="DOB"
+                                v-on="on"
+                                v-bind="attrs"
+                                :hide-details="true"
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              no-title
+                              v-model="customer.dob"
+                              @input="customer.dob_menu = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" cols="12" sm="12">
+                      <v-select
+                        v-model="customer.nationality"
+                        :items="countryList"
+                        label="Nationality"
+                        item-text="name"
+                        item-value="name"
+                        :hide-details="errors && !errors.nationality"
+                        :error-messages="
+                          errors && errors.nationality
+                            ? errors.nationality[0]
+                            : ''
+                        "
+                        dense
+                        outlined
+                      ></v-select>
+                    </v-col>
+
+                    <v-col md="3">
+                      <v-select
+                        label="Purpose"
+                        v-model="room.purpose"
+                        :items="purposes"
+                        dense
+                        :hide-details="true"
+                        outlined
+                      ></v-select>
+                    </v-col>
+                    <v-col md="3" cols="12" sm="12">
+                      <v-text-field
+                        dense
+                        label="Car Number"
+                        outlined
+                        :hide-details="true"
+                        type="text"
+                        v-model="customer.car_no"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col md="3" cols="12" sm="12">
+                      <v-text-field
+                        dense
+                        outlined
+                        label="GST"
+                        type="text"
+                        v-model="customer.gst_number"
+                        :hide-details="errors && !errors.gst_number"
+                        :error-messages="
+                          errors && errors.gst_number
+                            ? errors.gst_number[0]
+                            : ''
+                        "
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col md="3" sm="12" cols="12" dense>
                       <v-select
                         v-model="customer.id_card_type_id"
                         :items="idCards"
@@ -73,7 +278,7 @@
                         "
                       ></v-select>
                     </v-col>
-                    <v-col md="12" cols="12" sm="12">
+                    <v-col md="3" cols="12" sm="12">
                       <v-text-field
                         dense
                         label="ID Card"
@@ -88,376 +293,10 @@
                         "
                       ></v-text-field>
                     </v-col>
-                    <v-col md="12" cols="12" sm="12">
-                      <v-menu
-                        v-model="customer.passport_expiration_menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="customer.passport_expiration"
-                            readonly
-                            label="Expired"
-                            v-on="on"
-                            v-bind="attrs"
-                            :hide-details="true"
-                            dense
-                            outlined
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="customer.passport_expiration"
-                          @input="customer.passport_expiration_menu = false"
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col md="12">
-                      <v-file-input
-                        v-model="customer.document"
-                        color="primary"
-                        counter
-                        placeholder="Select your files"
-                        outlined
-                        :show-size="1000"
-                      >
-                        <template v-slot:selection="{ index, text }">
-                          <v-chip
-                            v-if="index < 2"
-                            color="primary"
-                            dark
-                            label
-                            small
-                          >
-                            {{ text }}
-                          </v-chip>
-
-                          <span
-                            v-else-if="index === 2"
-                            class="text-overline grey--text text--darken-3 mx-2"
-                          >
-                            +{{ customer.document.length - 2 }} File(s)
-                          </span>
-                        </template>
-                      </v-file-input>
-                    </v-col>
-                    <v-divider></v-divider>
-                    <v-col md="12">
-                      <!-- @click="documentDialog = false" -->
-
-                      <v-btn
-                        small
-                        dark
-                        class="float-right primary pt-4 pb-4"
-                        @click="store_document_new()"
-                      >
-                        Submit
-                        <v-icon right dark>mdi-file</v-icon>
-                      </v-btn>
-                    </v-col>
                   </v-row>
-                </v-container>
-                <v-card-actions> </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="imgView" max-width="80%">
-              <v-card>
-                <v-toolbar
-                  class="rounded-md"
-                  color="background"
-                  dense
-                  flat
-                  dark
-                >
-                  <span>Preview</span>
-                  <v-spacer></v-spacer>
-                  <v-icon dark class="pa-0" @click="imgView = false">
-                    mdi mdi-close-box
-                  </v-icon>
-                </v-toolbar>
-                <v-container>
-                  <ImagePreview :docObj="documentObj"></ImagePreview>
-                </v-container>
-                <v-card-actions> </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-col md="8">
-              <v-tabs
-                v-model="activeTab"
-                :vertical="vertical"
-                background-color="primary"
-                dark
-                show-arrows
-              >
-                <div class="py-3" style="background-color: #1259a7">
-                  <span class="mx-2">New Reservation</span>
-                </div>
-                <v-spacer></v-spacer>
-                <v-tab active-class="active-link">
-                  <v-icon> mdi mdi-account-tie </v-icon>
-                </v-tab>
-                <v-tab active-class="active-link">
-                  <v-icon> mdi mdi-bed </v-icon>
-                </v-tab>
-                <v-tab active-class="active-link" v-if="customer.id > 0">
-                  <v-icon> mdi mdi-clipboard-text-clock </v-icon>
-                </v-tab>
-                <v-tabs-slider color="#1259a7"></v-tabs-slider>
-                <v-tab-item>
-                  <v-card flat>
-                    <v-card-text>
-                      <v-row>
-                        <v-col md="2" cols="12">
-                          <v-img
-                            style="
-                              width: 150px;
-                              height: 150px;
-                              margin: 0 auto;
-                              border-radius: 50%;
-                            "
-                            :src="
-                              customer.captured_photo || '/no-profile-image.jpg'
-                            "
-                          ></v-img>
-                        </v-col>
-                        <v-col md="10" cols="12">
-                          <v-row>
-                            <v-col md="2" class="mt-0">
-                              <v-btn
-                                color="primary"
-                                @click="searchDialog = true"
-                              >
-                                Search
-                                <v-icon right dark>mdi-magnify</v-icon>
-                              </v-btn>
-                            </v-col>
-                            <v-col md="3" cols="12" sm="12">
-                              <v-select
-                                v-model="customer.title"
-                                :items="titleItems"
-                                label="Title *"
-                                dense
-                                item-text="name"
-                                item-value="name"
-                                :hide-details="errors && !errors.title"
-                                :error-messages="
-                                  errors && errors.title ? errors.title[0] : ''
-                                "
-                                outlined
-                              ></v-select>
-                            </v-col>
-
-                            <v-col md="3" dense>
-                              <v-autocomplete
-                                label="Business Source"
-                                v-model="customer.customer_type"
-                                :items="business_sources"
-                                dense
-                                item-text="name"
-                                item-value="name"
-                                outlined
-                                :hide-details="true"
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col md="2"></v-col>
-
-                            <v-col md="4" cols="12" sm="12">
-                              <v-text-field
-                                label="First Name *"
-                                dense
-                                outlined
-                                type="text"
-                                v-model="customer.first_name"
-                                :hide-details="errors && !errors.first_name"
-                                :error-messages="
-                                  errors && errors.first_name
-                                    ? errors.first_name[0]
-                                    : ''
-                                "
-                              ></v-text-field>
-                            </v-col>
-                            <v-col md="4" cols="12" sm="12">
-                              <v-text-field
-                                label="Last Name"
-                                dense
-                                :hide-details="true"
-                                outlined
-                                type="text"
-                                v-model="customer.last_name"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col md="4" cols="12" sm="12">
-                              <v-text-field
-                                dense
-                                label="Email *"
-                                outlined
-                                type="email"
-                                v-model="customer.email"
-                                :hide-details="errors && !errors.email"
-                                :error-messages="
-                                  errors && errors.email ? errors.email[0] : ''
-                                "
-                              ></v-text-field>
-                            </v-col>
-                            <v-col md="4" cols="12" sm="12">
-                              <v-text-field
-                                dense
-                                label="Contact No *"
-                                outlined
-                                max="1111111111111"
-                                type="number"
-                                v-model="customer.contact_no"
-                                :hide-details="errors && !errors.contact_no"
-                                :error-messages="
-                                  errors && errors.contact_no
-                                    ? errors.contact_no[0]
-                                    : ''
-                                "
-                                @keyup="mergeContact"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col md="4" cols="12" sm="12">
-                              <v-text-field
-                                dense
-                                label="Whatsapp No"
-                                outlined
-                                max="1111111111111"
-                                type="number"
-                                v-model="customer.whatsapp"
-                                :hide-details="errors && !errors.whatsapp"
-                                :error-messages="
-                                  errors && errors.whatsapp
-                                    ? errors.whatsapp[0]
-                                    : ''
-                                "
-                              ></v-text-field>
-                            </v-col>
-                            <v-col md="4" cols="12" sm="12">
-                              <v-menu
-                                v-model="customer.dob_menu"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    v-model="customer.dob"
-                                    readonly
-                                    label="DOB"
-                                    v-on="on"
-                                    v-bind="attrs"
-                                    :hide-details="true"
-                                    dense
-                                    outlined
-                                  ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                  v-model="customer.dob"
-                                  @input="customer.dob_menu = false"
-                                ></v-date-picker>
-                              </v-menu>
-                            </v-col>
-                          </v-row>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-select
-                            v-model="customer.nationality"
-                            :items="countryList"
-                            label="Nationality"
-                            item-text="name"
-                            item-value="name"
-                            :hide-details="errors && !errors.nationality"
-                            :error-messages="
-                              errors && errors.nationality
-                                ? errors.nationality[0]
-                                : ''
-                            "
-                            dense
-                            outlined
-                          ></v-select>
-                        </v-col>
-
-                        <v-col md="3">
-                          <v-select
-                            label="Purpose"
-                            v-model="room.purpose"
-                            :items="purposes"
-                            dense
-                            :hide-details="true"
-                            outlined
-                          ></v-select>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Car Number"
-                            outlined
-                            :hide-details="true"
-                            type="text"
-                            v-model="customer.car_no"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            outlined
-                            label="GST"
-                            type="text"
-                            v-model="customer.gst_number"
-                            :hide-details="errors && !errors.gst_number"
-                            :error-messages="
-                              errors && errors.gst_number
-                                ? errors.gst_number[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row>
-                        <v-col md="3" sm="12" cols="12" dense>
-                          <v-select
-                            v-model="customer.id_card_type_id"
-                            :items="idCards"
-                            dense
-                            label="ID Card Type"
-                            outlined
-                            item-text="name"
-                            item-value="id"
-                            :hide-details="errors && !errors.id_card_type_id"
-                            :error-messages="
-                              errors && errors.id_card_type_id
-                                ? errors.id_card_type_id[0]
-                                : ''
-                            "
-                          ></v-select>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="ID Card"
-                            outlined
-                            type="text"
-                            v-model="customer.id_card_no"
-                            :hide-details="errors && !errors.id_card_no"
-                            :error-messages="
-                              errors && errors.id_card_no
-                                ? errors.id_card_no[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                      <FullAddress @location="handleFullAddress" />
-                      <v-row>
-                        <!-- <v-col md="6" cols="12" sm="12">
+                  <FullAddress @location="handleFullAddress" />
+                  <v-row>
+                    <!-- <v-col md="6" cols="12" sm="12">
                           <v-textarea
                             rows="3"
                             label="Address"
@@ -466,878 +305,356 @@
                             :hide-details="true"
                           ></v-textarea>
                         </v-col> -->
-                        <v-col md="12">
-                          <v-textarea
-                            rows="3"
-                            label="Customer Request"
-                            v-model="room.request"
-                            :hide-details="true"
-                            outlined
-                          ></v-textarea>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col md="3" sm="12" cols="12" dense>
-                          <v-select
-                            v-model="room.type"
-                            label="Source Type *"
-                            :items="types"
-                            dense
-                            outlined
-                            @change="getType(room.type)"
-                            :hide-details="errors && !errors.type"
-                            :error-messages="
-                              errors && errors.type ? errors.type[0] : ''
-                            "
-                          ></v-select>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12" v-if="isAgent">
-                          <v-select
-                            dense
-                            label="Agent Name"
-                            outlined
-                            :items="agentList"
-                            type="text"
-                            @change="get_gst(room.source, 'agent')"
-                            item-value="name"
-                            item-text="name"
-                            v-model="room.source"
-                            :hide-details="errors && !errors.source"
-                            :error-messages="
-                              errors && errors.source ? errors.source[0] : ''
-                            "
-                          ></v-select>
-                        </v-col>
-                        <v-col md="3" sm="12" cols="12" dense v-if="isOnline">
-                          <v-select
-                            v-model="room.source"
-                            label="Source"
-                            :items="sources"
-                            dense
-                            @change="get_gst(room.source, 'online')"
-                            outlined
-                            item-value="name"
-                            item-text="name"
-                            :hide-details="errors && !errors.source"
-                            :error-messages="
-                              errors && errors.source ? errors.source[0] : ''
-                            "
-                          ></v-select>
-                        </v-col>
-                        <v-col
-                          md="3"
-                          sm="12"
-                          cols="12"
-                          dense
-                          v-if="isCorporate"
-                        >
-                          <v-select
-                            v-model="room.source"
-                            label="Corporate"
-                            :items="CorporateList"
-                            dense
-                            outlined
-                            @change="get_gst(room.source, 'corporate')"
-                            item-value="name"
-                            item-text="name"
-                            :hide-details="errors && !errors.source"
-                            :error-messages="
-                              errors && errors.source ? errors.source[0] : ''
-                            "
-                          ></v-select>
-                        </v-col>
-                        <v-col
-                          md="3"
-                          cols="12"
-                          sm="12"
-                          v-if="isAgent || isOnline || isCorporate"
-                        >
-                          <v-text-field
-                            label="Reference Number"
-                            dense
-                            outlined
-                            type="text"
-                            v-model="room.reference_no"
-                            :hide-details="errors && !errors.reference_no"
-                            :error-messages="
-                              errors && errors.reference_no
-                                ? errors.reference_no[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          md="3"
-                          sm="12"
-                          cols="12"
-                          dense
-                          v-if="isAgent || isOnline || isCorporate"
-                        >
-                          <v-select
-                            v-model="room.paid_by"
-                            label="Paid Type"
-                            :items="[
-                              { name: 'Paid at Hotel', value: '1' },
-                              { name: 'Paid by Agents', value: '2' },
-                            ]"
-                            dense
-                            outlined
-                            item-value="value"
-                            item-text="name"
-                            :hide-details="errors && !errors.paid_by"
-                            :error-messages="
-                              errors && errors.paid_by ? errors.paid_by[0] : ''
-                            "
-                          ></v-select>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" class="text-right">
-                          <v-btn small @click="nextTab" color="primary"
-                            >Next</v-btn
-                          >
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-
-                <v-tab-item class="pt-5">
-                  <v-row>
-                    <v-col
-                      md="12"
-                      cols="12"
-                      class="d-flex py-0 my-0 justify-center"
-                    >
-                      <table class="styled-table py-0 my-0" style="width: 100%">
-                        <thead>
-                          <tr>
-                            <td><small>Date</small></td>
-                            <td><small>Day</small></td>
-                            <td><small>Hall</small></td>
-                            <td><small>Type</small></td>
-                            <td><small>Tariff</small></td>
-                            <td><small>Adult</small></td>
-                            <td><small>Child</small></td>
-                            <td><small>Meal</small></td>
-                            <td><small>Price</small></td>
-                            <td><small>Cleaning</small></td>
-                            <td><small>Electricity</small></td>
-                            <td><small>Generator</small></td>
-                            <td><small>Audio</small></td>
-                            <td>
-                              <small>Extra Hour</small>
-                            </td>
-                            <td>
-                              <small>Projector</small>
-                            </td>
-
-                            <td><small>Total</small></td>
-                            <td></td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(item, index) in priceListTableView"
-                            :key="index"
-                          >
-                            <td>
-                              {{ item.date }}
-                            </td>
-                            <td>
-                              {{ item.day }}
-                            </td>
-                            <td>
-                              {{ item.room_type }}
-                            </td>
-                            <td>
-                              {{ item.day_type }}
-                            </td>
-                            <td>
-                              {{ item.room_price }}
-                            </td>
-                            <td>{{ item.no_of_adult }}</td>
-                            <td>{{ item.no_of_child }}</td>
-                            <td>{{ item.meal_name }}</td>
-                            <td>
-                              {{ convert_decimal(item.price) }}
-                            </td>
-                            <td>
-                              {{ convert_decimal(item.cleaning) }}
-                            </td>
-                            <td>
-                              {{ convert_decimal(item.electricity) }}
-                            </td>
-                            <td>
-                              {{ convert_decimal(item.generator) }}
-                            </td>
-                            <td>
-                              {{ convert_decimal(item.audio) }}
-                            </td>
-                            <td>
-                              {{
-                                convert_decimal(
-                                  item.extra_booking_hours_charges
-                                )
-                              }}
-                            </td>
-                            <td>
-                              {{ convert_decimal(item.projector) }}
-                            </td>
-                            <td>
-                              {{ convert_decimal(item.total_price) }}
-                            </td>
-                            <td class="text-center">
-                              <v-icon color="red" @click="deleteItem(index)"
-                                >mdi-close</v-icon
-                              >
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </v-col>
-                    <v-col md="12" style="padding-top: 0px; font-weight: bold">
-                      <div
-                        class="d-flex justify-space-around py-3 styled-table"
-                        style="margin-top: 5px"
-                      >
-                        <v-col cols="10" class="text-right">
-                          <div>Sub Total:</div>
-                          <div>Add :</div>
-                          <div>Discount :</div>
-                          <v-divider color="#4390FC"></v-divider>
-                          <div style="font-size: 18px; font-weight: bold">
-                            Total :
-                          </div>
-                        </v-col>
-                        <v-col cols="2" class="text-right">
-                          <div>
-                            {{ convert_decimal(subTotal()) }}
-                          </div>
-
-                          <div>
-                            {{ convert_decimal(temp.room_extra_amount) }}
-                          </div>
-                          <div style="color: red">
-                            -{{ convert_decimal(temp.room_discount) }}
-                          </div>
-                          <v-divider color="#4390FC"></v-divider>
-                          <div style="font-size: 18px; font-weight: bold">
-                            {{ convert_decimal(processCalculation()) }}
-                          </div>
-                        </v-col>
-                      </div>
-                      <v-divider color="#4390FC"></v-divider>
-                    </v-col>
-                    <v-col md="3" sm="12" cols="12" dense>
-                      <v-select
-                        label="Discount/Extra"
-                        v-model="extraPayType"
-                        :items="['Discount', 'ExtraAmount']"
-                        dense
+                    <v-col md="12">
+                      <v-textarea
+                        rows="3"
+                        label="Customer Request"
+                        v-model="room.request"
                         :hide-details="true"
                         outlined
+                      ></v-textarea>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col md="3" sm="12" cols="12" dense>
+                      <v-select
+                        v-model="room.type"
+                        label="Source Type *"
+                        :items="types"
+                        dense
+                        outlined
+                        @change="getType(room.type)"
+                        :hide-details="errors && !errors.type"
+                        :error-messages="
+                          errors && errors.type ? errors.type[0] : ''
+                        "
+                      ></v-select>
+                    </v-col>
+                    <v-col md="3" cols="12" sm="12" v-if="isAgent">
+                      <v-select
+                        dense
+                        label="Agent Name"
+                        outlined
+                        :items="agentList"
+                        type="text"
+                        @change="get_gst(room.source, 'agent')"
+                        item-value="name"
+                        item-text="name"
+                        v-model="room.source"
+                        :hide-details="errors && !errors.source"
+                        :error-messages="
+                          errors && errors.source ? errors.source[0] : ''
+                        "
+                      ></v-select>
+                    </v-col>
+                    <v-col md="3" sm="12" cols="12" dense v-if="isOnline">
+                      <v-select
+                        v-model="room.source"
+                        label="Source"
+                        :items="sources"
+                        dense
+                        @change="get_gst(room.source, 'online')"
+                        outlined
+                        item-value="name"
+                        item-text="name"
+                        :hide-details="errors && !errors.source"
+                        :error-messages="
+                          errors && errors.source ? errors.source[0] : ''
+                        "
+                      ></v-select>
+                    </v-col>
+                    <v-col md="3" sm="12" cols="12" dense v-if="isCorporate">
+                      <v-select
+                        v-model="room.source"
+                        label="Corporate"
+                        :items="CorporateList"
+                        dense
+                        outlined
+                        @change="get_gst(room.source, 'corporate')"
+                        item-value="name"
+                        item-text="name"
+                        :hide-details="errors && !errors.source"
+                        :error-messages="
+                          errors && errors.source ? errors.source[0] : ''
+                        "
                       ></v-select>
                     </v-col>
                     <v-col
-                      md="4"
-                      sm="12"
+                      md="3"
                       cols="12"
-                      dense
-                      v-if="extraPayType == 'Discount'"
+                      sm="12"
+                      v-if="isAgent || isOnline || isCorporate"
                     >
                       <v-text-field
-                        label="Discount Amount"
-                        dense
-                        outlined
-                        type="number"
-                        v-model="temp.room_discount"
-                        :hide-details="true"
-                        @keyup="processCalculation"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      md="4"
-                      sm="12"
-                      cols="12"
-                      dense
-                      v-if="extraPayType == 'Discount'"
-                    >
-                      <v-text-field
-                        label="Reason"
+                        label="Reference Number"
                         dense
                         outlined
                         type="text"
-                        v-model="temp.discount_reason"
-                        :hide-details="true"
+                        v-model="room.reference_no"
+                        :hide-details="errors && !errors.reference_no"
+                        :error-messages="
+                          errors && errors.reference_no
+                            ? errors.reference_no[0]
+                            : ''
+                        "
                       ></v-text-field>
                     </v-col>
                     <v-col
-                      md="4"
+                      md="3"
                       sm="12"
                       cols="12"
                       dense
-                      v-if="extraPayType == 'ExtraAmount'"
+                      v-if="isAgent || isOnline || isCorporate"
                     >
-                      <v-text-field
-                        label="Extra Amount"
+                      <v-select
+                        v-model="room.paid_by"
+                        label="Paid Type"
+                        :items="[
+                          { name: 'Paid at Hotel', value: '1' },
+                          { name: 'Paid by Agents', value: '2' },
+                        ]"
                         dense
                         outlined
-                        type="number"
-                        v-model="temp.room_extra_amount"
-                        @keyup="processCalculation"
-                        :hide-details="true"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      md="4"
-                      sm="12"
-                      cols="12"
-                      dense
-                      v-if="extraPayType == 'ExtraAmount'"
-                    >
-                      <v-text-field
-                        label="Reason"
-                        dense
-                        outlined
-                        type="text"
-                        v-model="temp.extra_amount_reason"
-                        :hide-details="true"
-                      ></v-text-field>
+                        item-value="value"
+                        item-text="name"
+                        :hide-details="errors && !errors.paid_by"
+                        :error-messages="
+                          errors && errors.paid_by ? errors.paid_by[0] : ''
+                        "
+                      ></v-select>
                     </v-col>
                   </v-row>
-
                   <v-row>
-                    <v-col md="12" class="text-right">
-                      <HallDialog
-                        label="Add Hall"
-                        @tableData="handleTableData"
-                      />
-
-                      <!-- <v-btn
-                                    color="primary"
-                                    @click="RoomDrawer = true"
-                                    small
-                                  >
-                                    <v-icon color="white" small
-                                      >mdi-plus</v-icon
-                                    >
-                                    Add Hall
-                                  </v-btn> -->
+                    <v-col cols="12" class="text-right">
+                      <v-btn small @click="nextTab" color="primary">Next</v-btn>
                     </v-col>
                   </v-row>
-                </v-tab-item>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
 
-                <v-tab-item>
-                  <v-card flat>
-                    <v-card-text>
-                      <History :customerId="customer.id"></History>
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-              </v-tabs>
-            </v-col>
-
-            <v-col md="4">
-              <v-tabs
-                color="primary"
-                v-model="activeSummaryTab"
-                :vertical="vertical"
-                background-color="primary"
-                dark
-                show-arrows
-              >
-                <v-tab active-class="active-link">
-                  <v-icon> mdi mdi-list-box-outline </v-icon>
-                </v-tab>
-
-                <v-tab
-                  class="p-0 m-0"
-                  active-class="active-link"
-                  style="min-width: 10px !important"
-                  v-for="(item, index) in selectedRooms"
-                  :key="index"
+            <v-tab-item class="pt-5">
+              <v-row>
+                <v-col
+                  md="12"
+                  cols="12"
+                  class="d-flex py-0 my-0 justify-center"
                 >
-                  <small>
-                    {{ item && item.room_no }}
-                  </small>
-                </v-tab>
-                <v-tabs-slider color="#1259a7"></v-tabs-slider>
-                <v-tab-item>
-                  <v-card flat>
-                    <v-divider class="px-5 py-0"></v-divider>
-                    <section>
-                      <div class="input-group input-group-sm px-5 py-0">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Name
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ customer.first_name || "---" }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Contact
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ customer.contact_no || "---" }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Check In
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ formattedCheckInDateTime || "---" }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Check Out
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ formattedCheckOutDateTime || "---" }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Days
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ getDays() }}
-                        </div>
-                      </div>
-                      <!-- <div class="input-group input-group-sm mb-2 px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          No. Halls
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ selectedRooms.length || 0 }}
-                        </div>
-                      </div> -->
-                    </section>
-                    <!-- <p class="px-5 py-0" style="font-size: 16px; color: #aaaaaa">
-                Payment
-              </p> -->
-                    <v-divider class="px-5 py-0"></v-divider>
-                    <section class="payment-section pt-0 mt-1">
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Total
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(room.total_price) }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Advance Payment
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(room.advance_price) }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5 mb-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          <strong>Balance Amount</strong>
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control red--text"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          <strong>{{
-                            convert_decimal(room.remaining_price)
-                          }}</strong>
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-3 mb-5">
-                        <v-btn
-                          style="background-color: #4390fc; margin-right: 5px"
-                          width="50%"
-                          height="40"
-                          @click="advanceDialog = true"
-                          dark
-                        >
-                          Pay
-                        </v-btn>
-                        <v-btn
-                          style="background-color: #5fafa3"
-                          width="50%"
-                          height="40"
-                          @click="store"
-                          :loading="subLoad"
-                          dark
-                          >Book</v-btn
-                        >
-                      </div>
-                    </section>
-                  </v-card>
-                </v-tab-item>
-                <!-- end room summary -->
-
-                <v-tab-item v-for="(item, index) in selectedRooms" :key="index">
-                  <v-card flat>
-                    <div
-                      class="px-5 pt-2 d-flex justify-space-between"
-                      style="font-size: 16px; color: #aaaaaa"
-                    >
-                      <span> Room - {{ item.room_no }}</span>
-                      <span> {{ item.room_type }}</span>
-                    </div>
-                    <v-divider></v-divider>
-                    <section class="payment-section">
-                      <div class="input-group input-group-sm px-5 pt-2">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Amount
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
+                  <table class="styled-table py-0 my-0" style="width: 100%">
+                    <thead>
+                      <tr>
+                        <td><small>Date</small></td>
+                        <td><small>Day</small></td>
+                        <td><small>Hall</small></td>
+                        <td><small>Type</small></td>
+                        <td><small>Tariff</small></td>
+                        <td><small>Adult</small></td>
+                        <td><small>Child</small></td>
+                        <td><small>Meal</small></td>
+                        <td><small>Price</small></td>
+                        <td><small>Extras</small></td>
+                        <td><small>Total</small></td>
+                        <td></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(item, index) in priceListTableView"
+                        :key="index"
+                      >
+                        <td>
+                          {{ item.date }}
+                        </td>
+                        <td>
+                          {{ item.day }}
+                        </td>
+                        <td>
+                          {{ item.room_type }}
+                        </td>
+                        <td>
+                          {{ item.day_type }}
+                        </td>
+                        <td>
+                          {{ item.room_price }}
+                        </td>
+                        <td>{{ item.no_of_adult }}</td>
+                        <td>{{ item.no_of_child }}</td>
+                        <td>{{ item.meal_name }}</td>
+                        <td>
                           {{ convert_decimal(item.price) }}
-                        </div>
-                      </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Meal
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.food_plan_price) }}
-                        </div>
-                      </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Cleaning
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.cleaning) }}
-                        </div>
-                      </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Electricity
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.electricity) }}
-                        </div>
-                      </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Generator
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.generator) }}
-                        </div>
-                      </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Audio
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.audio) }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Extra Hour
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
+                        </td>
+                        <td>
                           {{
-                            convert_decimal(item.extra_booking_hours_charges)
+                            convert_decimal(
+                              item.cleaning +
+                                item.electricity +
+                                item.generator +
+                                item.audio +
+                                item.extra_booking_hours_charges +
+                                item.projector
+                            )
                           }}
-                        </div>
+                        </td>
+                        <td>
+                          {{ convert_decimal(item.total_price) }}
+                        </td>
+                        <td class="text-center">
+                          <HallDetails :selectedRooms="selectedRooms" />
+                          <v-icon small color="red" @click="deleteItem(index)"
+                            >mdi-close</v-icon
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </v-col>
+                <v-col md="12" style="padding-top: 0px; font-weight: bold">
+                  <div
+                    class="d-flex justify-space-around py-3 styled-table"
+                    style="margin-top: 5px"
+                  >
+                    <v-col cols="10" class="text-right">
+                      <div>Sub Total:</div>
+                      <div>Add :</div>
+                      <div>Discount :</div>
+                      <v-divider color="#4390FC"></v-divider>
+                      <div style="font-size: 18px; font-weight: bold">
+                        Total :
                       </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Discount
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.room_discount) }}
-                        </div>
-                      </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Extra Amount
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.room_extra_amount) }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          After Dis.
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.after_discount) }}
-                        </div>
-                      </div>
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Grand Total
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ convert_decimal(item.total) }}
-                        </div>
+                    </v-col>
+                    <v-col cols="2" class="text-right">
+                      <div>
+                        {{ convert_decimal(subTotal()) }}
                       </div>
 
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Discount Reason
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ item.discount_reason || "---" }}
-                        </div>
+                      <div>
+                        {{ convert_decimal(temp.room_extra_amount) }}
                       </div>
+                      <div style="color: red">
+                        -{{ convert_decimal(temp.room_discount) }}
+                      </div>
+                      <v-divider color="#4390FC"></v-divider>
+                      <div style="font-size: 18px; font-weight: bold">
+                        {{ convert_decimal(processCalculation()) }}
+                      </div>
+                    </v-col>
+                  </div>
+                  <v-divider color="#4390FC"></v-divider>
+                </v-col>
+                <v-col md="12" class="text-right">
+                  <HallDialog label="Add Hall" @tableData="handleTableData"
+                /></v-col>
+                <v-col md="3" sm="12" cols="12" dense>
+                  <v-select
+                    label="Discount/Extra"
+                    v-model="extraPayType"
+                    :items="['Discount', 'ExtraAmount']"
+                    dense
+                    :hide-details="true"
+                    outlined
+                  ></v-select>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
+                  dense
+                  v-if="extraPayType == 'Discount'"
+                >
+                  <v-text-field
+                    label="Discount Amount"
+                    dense
+                    outlined
+                    type="number"
+                    v-model="temp.room_discount"
+                    :hide-details="true"
+                    @keyup="processCalculation"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
+                  dense
+                  v-if="extraPayType == 'Discount'"
+                >
+                  <v-text-field
+                    label="Reason"
+                    dense
+                    outlined
+                    type="text"
+                    v-model="temp.discount_reason"
+                    :hide-details="true"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
+                  dense
+                  v-if="extraPayType == 'ExtraAmount'"
+                >
+                  <v-text-field
+                    label="Extra Amount"
+                    dense
+                    outlined
+                    type="number"
+                    v-model="temp.room_extra_amount"
+                    @keyup="processCalculation"
+                    :hide-details="true"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
+                  dense
+                  v-if="extraPayType == 'ExtraAmount'"
+                >
+                  <v-text-field
+                    label="Reason"
+                    dense
+                    outlined
+                    type="text"
+                    v-model="temp.extra_amount_reason"
+                    :hide-details="true"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row class="text-right mb-3">
+                <v-col>
+                  <v-btn
+                    small
+                    style="background-color: #4390fc; margin-right: 5px"
+                    @click="advanceDialog = true"
+                    dark
+                  >
+                    <v-icon small>mdi-wallet</v-icon> Pay
+                  </v-btn>
+                  <v-btn
+                    small
+                    style="background-color: #5fafa3"
+                    @click="store"
+                    :loading="subLoad"
+                    dark
+                  >
+                    <v-icon small>mdi-floppy</v-icon>
 
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Amount Reason
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ item.extra_amount_reason || "---" }}
-                        </div>
-                      </div>
+                    Book</v-btn
+                  >
+                </v-col>
+              </v-row>
+            </v-tab-item>
 
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Adult
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ item.no_of_adult }}
-                        </div>
-                      </div>
-
-                      <div class="input-group input-group-sm px-5">
-                        <span
-                          class="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          Child
-                        </span>
-                        <div
-                          type="text"
-                          class="form-control"
-                          aria-label="Sizing example input"
-                          aria-describedby="inputGroup-sizing-sm"
-                          disabled
-                        >
-                          {{ item.no_of_child }}
-                        </div>
-                      </div>
-                    </section>
-                  </v-card>
-                </v-tab-item>
-              </v-tabs>
-            </v-col>
-          </v-row>
-        </v-container>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <History :customerId="customer.id"></History>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
@@ -1585,7 +902,6 @@ export default {
       loading: false,
       show_password: false,
       show_password_confirm: false,
-      roomTypes: [],
       types: [
         "Online",
         "Walking",
@@ -1705,14 +1021,13 @@ export default {
       isCorporate: false,
       isAgent: false,
       isDiff: false,
-      search_available_room: "",
       room: {
-        customer_type: `Walking`,
+        customer_type: null,
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
-        type: "Walking",
-        source: "walking",
+        type: null,
+        source: null,
         agent_name: "",
         booking_status: 1,
         check_in: null,
@@ -1766,13 +1081,13 @@ export default {
       ],
 
       customer: {
-        customer_type: "Walking",
+        customer_type: "",
         title: "Mr",
         whatsapp: "",
         nationality: "India",
         first_name: "",
         last_name: "",
-        contact_no: "",
+        contact_no: null,
         email: "",
         id_card_type_id: "",
         id_card_no: "",
@@ -1840,7 +1155,6 @@ export default {
   },
   async created() {
     this.get_reservation();
-    this.get_room_types();
     this.get_id_cards();
     this.runAllFunctions();
     this.get_countries();
@@ -1850,39 +1164,18 @@ export default {
     // this.getImage();
     this.preloader = false;
 
-    await this.get_food_plans();
-
-    this.calculateHoursQty();
-
     this.get_business_sources();
-  },
-  computed: {
-    formattedCheckInDateTime() {
-      return this.temp.check_in + " " + this.temp.check_in_time;
-    },
-    formattedCheckOutDateTime() {
-      return this.temp.check_out + " " + this.temp.check_out_time;
-    },
-    showImage() {
-      if (!this.customer.image && !this.previewImage) {
-        return "/no-profile-image.jpg";
-      } else if (this.previewImage) {
-        return this.previewImage;
-      }
-
-      return this.customer.image;
-    },
   },
   methods: {
     close() {
       this.customer = {
-        customer_type: "Walking",
+        customer_type: null,
         title: "Mr",
         whatsapp: "",
         nationality: "India",
         first_name: "",
         last_name: "",
-        contact_no: "",
+        contact_no: null,
         email: "",
         id_card_type_id: "",
         id_card_no: "",
@@ -1904,8 +1197,8 @@ export default {
         customer_status: "",
         all_room_Total_amount: 0, // sum of temp.totals
         total_extra: 0,
-        type: "Walking",
-        source: "walking",
+        type: null,
+        source: null,
         agent_name: "",
         booking_status: 1,
         discount: 0,
@@ -1961,137 +1254,38 @@ export default {
         ...e,
       };
     },
-    calculateHoursQty() {
-      // Define the two time strings
-      const startTime = this.temp.check_in_time;
-      const endTime = this.temp.check_out_time;
-      // Define the two time strings
-      // Split the time strings into hours and minutes
-      const [startHours, startMinutes] = startTime.split(":").map(Number);
-      const [endHours, endMinutes] = endTime.split(":").map(Number);
-
-      // Create Date objects for both times (use a common date)
-      const date = new Date(); // Use today's date
-
-      const start = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        startHours,
-        startMinutes
-      );
-      let end = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        endHours,
-        endMinutes
-      );
-
-      // Check if the end time is earlier than the start time, indicating it falls on the next day
-      if (end < start) {
-        // Add 24 hours (in milliseconds) to the end time
-        end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
-      }
-
-      const differenceInMs = end - start;
-
-      this.temp.total_booking_hours = Math.ceil(
-        differenceInMs / (1000 * 60 * 60)
-      );
-
-      this.checkout_time_menu = false;
-    },
     deleteItem(index) {
       this.priceListTableView.splice(index, 1);
       this.selectedRooms.splice(index, 1);
     },
 
-    async get_food_plans() {
-      let { data: foodplans } = await this.$axios.get(`foodplan-list`, {
-        params: {
-          company_id: this.$auth.user.company_id,
-          is_for_hall: 1,
-        },
-      });
-
-      this.foodplans = foodplans;
-    },
-    addOneDay(originalDate) {
-      if (!originalDate) {
-        return new Date().toISOString().substr(0, 10);
-      }
-      const date = new Date(originalDate);
-
-      this.temp.check_out = date.toISOString().split("T")[0];
-
-      date.setDate(date.getDate() + 1);
-
-      return date.toISOString().split("T")[0];
-    },
-
     nextTab() {
-      // if (this.activeTab) {
-
-      if (this.reservation.booking_status == 2) {
-        if (
-          this.customer.document == null ||
-          this.customer.document == undefined
-        ) {
-          this.alert("Missing!", "Select document", "error");
-          this.subLoad = false;
-          return;
-        }
+      if (!this.customer.customer_type) {
+        this.$swal("Warning", "Select Business Source", "error");
+        return;
       }
 
-      if (this.room.type == "") {
-        this.alert("oops", "Select Source Type", "error");
-
-        return false;
+      if (!this.customer.first_name) {
+        this.$swal("Warning", "Customer first name is required", "error");
+        return;
       }
+
+      if (!this.customer.last_name) {
+        this.$swal("Warning", "Customer last name is required", "error");
+        return;
+      }
+
+      if (!this.customer.contact_no) {
+        this.$swal("Warning", "Customer contact no is required", "error");
+        return;
+      }
+
+      if (!this.room.type) {
+        this.$swal("Warning", "Select Source Type", "error");
+        return;
+      }
+
       this.activeTab += 1;
-      // }
-    },
-    store_document_new() {
-      this.documentDialog = false;
-      return;
-    },
-    prevTab() {
-      if (this.activeTab > 0) {
-        this.activeTab -= 1;
-      }
-    },
-
-    onpick_attachment() {
-      this.$refs.attachment_input.click();
-    },
-
-    attachment(e) {
-      this.customer.image = e.target.files[0] || "";
-
-      let input = this.$refs.attachment_input;
-      let file = input.files;
-      if (file && file[0]) {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          this.previewImage = e.target.result;
-        };
-        reader.readAsDataURL(file[0]);
-        this.$emit("input", file[0]);
-      }
-    },
-
-    preview(file) {
-      if (file.name) {
-        file = file.name;
-      }
-      const fileExtension = file.split(".").pop().toLowerCase();
-      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
-      this.documentObj = {
-        fileExtension: fileExtension,
-        file: file,
-      };
-      this.imgView = true;
     },
 
     runAllFunctions() {
@@ -2125,11 +1319,6 @@ export default {
       this.room.check_in = this.reservation.check_in;
       this.room.check_out = this.reservation.check_out;
       this.temp.priceList = this.reservation.priceList;
-      this.get_cs_gst(this.temp.room_tax);
-    },
-
-    redirect() {
-      this.$router.push("/");
     },
 
     mergeContact() {
@@ -2206,18 +1395,6 @@ export default {
       this.isAgent = false;
     },
 
-    get_room_types() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          type: "hall",
-        },
-      };
-      this.$axios.get(`room_type_for_hall`, payload).then(({ data }) => {
-        this.roomTypes = data;
-      });
-    },
-
     get_gst(item, type) {
       // agent
       // online
@@ -2287,201 +1464,6 @@ export default {
       });
     },
 
-    get_cs_gst(amount) {
-      let gst = parseFloat(amount) / 2;
-      this.temp.cgst = gst;
-      this.temp.sgst = gst;
-    },
-
-    selectRoom() {
-      this.selectRoomLoading = true;
-
-      if (!this.temp.room_type) {
-        this.alert("Warning", "Hall must be selected");
-        return;
-      }
-
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: this.temp.room_type,
-          room_no: this.temp.room_no,
-          checkin: this.temp.check_in,
-          checkout: this.temp.check_out,
-        },
-      };
-
-      this.$axios.get(`get_hall_pricing_list`, payload).then(({ data }) => {
-        this.temp.hall_min_hours = data.room_type_data.hall_min_hours;
-        this.temp.extra_hours_charges = data.room_type_data.extra_hours_charges;
-
-        this.temp.cleaning = this.is_cleaning_charges
-          ? data.room_type_data.cleaning_charges
-          : 0;
-
-        this.temp.generator = this.is_generator_charges
-          ? data.room_type_data.generator_charges
-          : 0;
-
-        this.temp.audio = this.is_audio_charges
-          ? data.room_type_data.audio_charges
-          : 0;
-
-        this.temp.projector = this.is_projector_charges
-          ? data.room_type_data.projector_charges
-          : 0;
-
-        this.temp.electricity = this.is_electricity_charges
-          ? data.room_type_data.electricity_charges
-          : 0;
-
-        this.selectRoomLoading = false;
-        this.temp.company_id = this.$auth.user.company.id;
-        this.temp.price = data.total_price;
-        this.temp.priceList = data.data;
-        this.temp.room_tax = data.total_tax;
-        this.get_cs_gst(data.total_tax);
-
-        this.confirm_hall(this.temp);
-      });
-    },
-
-    capsTitle(val) {
-      if (!val) return "---";
-      let res = val;
-      let upper = res.toUpperCase();
-      // let title = upper.replace(/[^A-Z]/g, " ");
-      return upper;
-    },
-
-    checkRoomAvailability(room_type) {
-      if (!this.availableRooms.length) {
-        this.room_type_list = {
-          id: ``,
-          name: `Select Hall Type`,
-        };
-        this.alert("Warning!", `"${room_type}" is already booked`, "error");
-        return false;
-      }
-      return true;
-    },
-
-    confirm_hall({
-      price,
-      room_discount,
-      room_extra_amount,
-      priceList,
-      no_of_adult,
-      no_of_child,
-      room_type,
-      room_id,
-      room_no,
-      hall_min_hours,
-      cleaning,
-      generator,
-      audio,
-      projector,
-      electricity,
-      total_booking_hours,
-      extra_hours_charges,
-    }) {
-      if (!this.checkRoomAvailability(room_type)) {
-        return;
-      }
-
-      let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
-
-      if (!foodplan) {
-        this.alert("Warning!", `Food Plan must be selected`, "error");
-        return;
-      }
-
-      let isSelect = this.selectedRooms.find((e) => e.room_no == room_no);
-
-      if (!isSelect) {
-        let extra_hours = total_booking_hours - hall_min_hours;
-
-        let extra_booking_hours_charges = extra_hours * extra_hours_charges;
-
-        extra_booking_hours_charges =
-          extra_booking_hours_charges < 0 ? 0 : extra_booking_hours_charges;
-
-        let selectedRoomsForTableView = [];
-
-        let adult_food_charges = foodplan.unit_price * no_of_adult;
-        let child_food_charges = (foodplan.unit_price * no_of_child) / 2;
-        let total_food_charges = adult_food_charges + child_food_charges;
-
-        let extras =
-          parseFloat(cleaning) +
-          parseFloat(electricity) +
-          parseFloat(generator) +
-          parseFloat(audio) +
-          parseFloat(projector) +
-          parseFloat(extra_booking_hours_charges) +
-          parseFloat(total_food_charges);
-
-        let sub_total =
-          price +
-          extras +
-          parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
-
-        let after_discount =
-          sub_total - (room_discount == "" ? 0 : room_discount);
-
-        this.room.check_in = this.formattedCheckInDateTime;
-        this.room.check_out = this.formattedCheckOutDateTime;
-
-        let payload = {
-          ...this.temp,
-          total_food_charges,
-          meal: "------",
-          days: this.getDays(),
-          room_discount: room_discount == "" ? 0 : room_discount,
-          after_discount: after_discount,
-          total: after_discount,
-          grand_total: after_discount,
-          room_no,
-          room_id,
-          extra_hours,
-          extra_booking_hours_charges,
-        };
-
-        selectedRoomsForTableView.push(payload);
-        this.selectedRooms.push(payload);
-
-        this.runAllFunctions();
-        this.alert("Success!", "success selected room", "success");
-        this.isSelectRoom = false;
-        this.RoomDrawer = false;
-
-        let arrToMerge = priceList.map((e) => ({
-          ...e,
-          price_with_meal: e.price + total_food_charges,
-          no_of_rooms: selectedRoomsForTableView.length,
-          room_type,
-          no_of_adult,
-          no_of_child,
-          meal_name: `${foodplan.title} (${total_food_charges})`,
-          extras,
-
-          cleaning,
-          electricity,
-          generator,
-          audio,
-          projector,
-
-          extra_booking_hours_charges,
-
-          total_price: (e.price + extras) * selectedRoomsForTableView.length,
-        }));
-
-        this.priceListTableView = this.mergeEntries(
-          this.priceListTableView.concat(arrToMerge)
-        );
-      }
-    },
-
     mergeEntries(entries) {
       const result = [];
 
@@ -2499,41 +1481,6 @@ export default {
       });
 
       return result;
-    },
-
-    get_available_rooms(item) {
-      this.temp.room_type = item.name;
-
-      if (item.id == ``) {
-        this.alert(
-          "Warning!",
-          `"${this.temp.room_type}" must be selected`,
-          "error"
-        );
-        return;
-      }
-
-      this.$axios
-        .get(`get_available_rooms_by_date_and_room_type`, {
-          params: {
-            check_in: this.temp.check_in,
-            check_out: this.temp.check_out,
-            room_type_id: item.id,
-            type: "hall",
-            company_id: this.$auth.user.company.id,
-          },
-        })
-        .then(({ data }) => {
-          this.availableRooms = data;
-
-          if (!this.checkRoomAvailability(this.temp.room_type)) {
-            return;
-          }
-
-          this.temp.room_id = data[0].id || "";
-          this.temp.room_no = data[0].room_no || "";
-        });
-      this.runAllFunctions();
     },
 
     get_customer() {
@@ -2585,24 +1532,38 @@ export default {
     },
 
     store() {
+      if (!this.customer.customer_type) {
+        this.$swal("Warning", "Select Business Source", "error");
+        return;
+      }
+
+      if (!this.customer.first_name) {
+        this.$swal("Warning", "Customer first name is required", "error");
+        return;
+      }
+
+      if (!this.customer.last_name) {
+        this.$swal("Warning", "Customer last name is required", "error");
+        return;
+      }
+
+      if (!this.customer.contact_no) {
+        this.$swal("Warning", "Customer contact no is required", "error");
+        return;
+      }
+
+      if (!this.room.type) {
+        this.$swal("Warning", "Select Source Type", "error");
+        return;
+      }
+
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
 
-      if (this.reservation.booking_status == 2) {
-        if (
-          this.customer.document == null ||
-          this.customer.document == undefined
-        ) {
-          this.alert("Missing!", "Select document", "error");
-          this.subLoad = false;
-          return;
-        }
-      }
-
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
-        this.alert("Missing!", "Atleast select one room", "error");
+        this.$swal("Missing!", "Atleast select one room", "error");
         this.subLoad = false;
         return;
       }
@@ -2622,7 +1583,7 @@ export default {
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
-            this.alert(
+            this.$swal(
               "No reservation created!",
               "Some fields are missing or invalid",
               "error"
@@ -2661,39 +1622,9 @@ export default {
             this.room_type_list = {};
             this.$emit(`success`);
             this.dialog = false;
-
-            // this.store_document(data.data);
-            // this.alert("Success!", "Successfully room added", "success");
-
-            // if (this.reservation.booking_status == 2) {
-            //   this.$router.push("/reservation/in_house");
-            //   return "";
-            // }
-            // this.$router.push("/");
           }
         })
         .catch((e) => console.log(e));
-    },
-
-    store_document(id) {
-      let payload = new FormData();
-      payload.append("document", this.room.document);
-      payload.append("image", this.customer.image);
-      payload.append("booking_id", id);
-      this.$axios
-        .post("/store_document", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.errors = data.errors;
-            this.subLoad = false;
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    alert(title = "Success!", message = "hello", type = "error") {
-      this.$swal(title, message, type);
     },
   },
 };

@@ -608,7 +608,7 @@
                 </v-col>
               </v-row>
 
-              <v-row class="text-right mb-5">
+              <v-row class="text-right mb-3">
                 <v-col>
                   <v-btn
                     small
@@ -1462,10 +1462,7 @@ export default {
         this.$swal("Warning", "Select Business Source", "error");
         return;
       }
-      if (!this.room.type) {
-        this.$swal("Warning", "Select Source Type", "error");
-        return;
-      }
+     
 
       if (!this.customer.first_name) {
         this.$swal("Warning", "Customer first name is required", "error");
@@ -1479,6 +1476,11 @@ export default {
 
       if (!this.customer.contact_no) {
         this.$swal("Warning", "Customer contact no is required", "error");
+        return;
+      }
+
+      if (!this.room.type) {
+        this.$swal("Warning", "Select Source Type", "error");
         return;
       }
 
