@@ -509,8 +509,9 @@ export default {
             ) {
               let roomPrice = this.old.food_plan_price + this.old.room_price;
               let restOfPrices = this.old.booking_total_price - roomPrice;
-              this.payload.booking_total_price =
-                this.convert_decimal(this.payload.booking_total_price + restOfPrices);
+              this.payload.booking_total_price = this.convert_decimal(
+                this.payload.booking_total_price + restOfPrices
+              );
             }
           }
         });
@@ -641,8 +642,11 @@ export default {
         lunch: this.bookingResponse.lunch,
         dinner: this.bookingResponse.dinner,
 
+        dinner: this.bookingResponse.dinner,
+        customer_id: this.bookingResponse?.customer_id,
+
         room_orders: this.room_orders,
-        old : this.old
+        old: this.old,
       };
 
       console.log(payload);
