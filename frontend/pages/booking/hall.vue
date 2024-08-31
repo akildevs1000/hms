@@ -1522,7 +1522,7 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-              readonly
+                readonly
                 append-icon=""
                 label="Hall"
                 outlined
@@ -2717,6 +2717,7 @@ export default {
         selectedRooms: this.selectedRooms,
         ...this.customer,
         user_id: this.$auth.user.id,
+        booking_type: "hall",
       };
 
       this.subLoad = false;

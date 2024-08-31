@@ -60,7 +60,8 @@
   Route::post('change_room_by_drag', [BookingController::class, 'changeRoomByDrag']);
   Route::post('change_date_by_drag', [BookingController::class, 'changeDateByDrag']);
 
-  Route::post('modify_booking ', [BookingController::class, 'modifyBooking']);
+  Route::post('modify_hall', [BookingController::class, 'modifyHall']);
+
 
   Route::post('cancel_room/{id}', [BookingController::class, 'cancelRoom']);
   Route::post('change_checkin_to_booking_admin/{id}', [BookingController::class, 'changeCheckIntoBookingAdmin']);

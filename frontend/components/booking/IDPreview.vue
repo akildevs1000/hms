@@ -57,7 +57,6 @@
               </v-col>
               <v-col cols="6">
                 <v-btn
-                  :disabled="!isValid"
                   :loading="confirmLoading"
                   class="primary"
                   block
@@ -128,7 +127,11 @@ export default {
       this.confirmLoading = true;
 
       let payload = {
-        ...this.customer,
+        // ...this.customer,
+        captured_photo: "1",
+        sign: "1",
+        id_frontend_side: "1",
+        id_backend_side: "1",
         company_id: this.$auth.user.company_id,
       };
 
