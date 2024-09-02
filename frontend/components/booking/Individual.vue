@@ -54,226 +54,10 @@
             <v-tab-item>
               <v-card flat>
                 <v-card-text>
-                  <v-row>
-                    <v-col md="2" cols="12">
-                      <v-row no-gutters class="pa-2">
-                        <v-col cols="12" class="text-right">
-                          <v-icon color="primary" small>mdi-eye</v-icon>
-                        </v-col>
-                        <v-col cols="12" class="mt-2">
-                          <v-img
-                            :src="
-                              customer.captured_photo || '/no-profile-image.png'
-                            "
-                          ></v-img>
-                        </v-col>
-                        <v-col cols="6">
-                          <v-img
-                            :src="customer.captured_photo || '/idf.png'"
-                            style="margin: 0 auto; width: 50px; height: 50px"
-                            contain
-                          ></v-img>
-                        </v-col>
-                        <v-col cols="6">
-                          <v-img
-                            :src="customer.captured_photo || '/idb.png'"
-                            style="margin: 0 auto; width: 50px; height: 50px"
-                            contain
-                          ></v-img>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col md="10" cols="12">
-                      <v-row>
-                        <v-col md="4" dense>
-                          <v-autocomplete
-                            label="Business Source"
-                            v-model="customer.customer_type"
-                            :items="business_sources"
-                            dense
-                            item-text="name"
-                            item-value="name"
-                            outlined
-                            :hide-details="true"
-                          ></v-autocomplete>
-                        </v-col>
-                        <v-col md="8">
-                          <SourceType
-                            :key="sourceCompKey"
-                            @sourceType="handleSource"
-                          />
-                        </v-col>
-                        <v-col md="2" cols="12" sm="12">
-                          <v-select
-                            v-model="customer.title"
-                            :items="titleItems"
-                            label="Title *"
-                            dense
-                            item-text="name"
-                            item-value="name"
-                            :hide-details="errors && !errors.title"
-                            :error-messages="
-                              errors && errors.title ? errors.title[0] : ''
-                            "
-                            outlined
-                          ></v-select>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            label="First Name *"
-                            dense
-                            outlined
-                            type="text"
-                            v-model="customer.first_name"
-                            :hide-details="errors && !errors.first_name"
-                            :error-messages="
-                              errors && errors.first_name
-                                ? errors.first_name[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            label="Last Name"
-                            dense
-                            :hide-details="true"
-                            outlined
-                            type="text"
-                            v-model="customer.last_name"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Email *"
-                            outlined
-                            type="email"
-                            v-model="customer.email"
-                            :hide-details="errors && !errors.email"
-                            :error-messages="
-                              errors && errors.email ? errors.email[0] : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Contact No *"
-                            outlined
-                            max="1111111111111"
-                            type="number"
-                            v-model="customer.contact_no"
-                            :hide-details="errors && !errors.contact_no"
-                            :error-messages="
-                              errors && errors.contact_no
-                                ? errors.contact_no[0]
-                                : ''
-                            "
-                            @keyup="mergeContact"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Whatsapp No"
-                            outlined
-                            max="1111111111111"
-                            type="number"
-                            v-model="customer.whatsapp"
-                            :hide-details="errors && !errors.whatsapp"
-                            :error-messages="
-                              errors && errors.whatsapp
-                                ? errors.whatsapp[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-menu
-                            v-model="customer.dob_menu"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
-                                v-model="customer.dob"
-                                readonly
-                                label="DOB"
-                                v-on="on"
-                                v-bind="attrs"
-                                :hide-details="true"
-                                dense
-                                outlined
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              no-title
-                              v-model="customer.dob"
-                              @input="customer.dob_menu = false"
-                            ></v-date-picker>
-                          </v-menu>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-select
-                            v-model="customer.nationality"
-                            :items="countryList"
-                            label="Nationality"
-                            item-text="name"
-                            item-value="name"
-                            :hide-details="errors && !errors.nationality"
-                            :error-messages="
-                              errors && errors.nationality
-                                ? errors.nationality[0]
-                                : ''
-                            "
-                            dense
-                            outlined
-                          ></v-select>
-                        </v-col>
-                        <v-col md="4">
-                          <v-select
-                            label="Purpose"
-                            v-model="room.purpose"
-                            :items="purposes"
-                            dense
-                            :hide-details="true"
-                            outlined
-                          ></v-select>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Car Number"
-                            outlined
-                            :hide-details="true"
-                            type="text"
-                            v-model="customer.car_no"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                  <FullAddress @location="handleFullAddress" />
-                  <v-row>
-                    <v-col md="12">
-                      <v-textarea
-                        rows="3"
-                        label="Customer Request"
-                        v-model="room.request"
-                        :hide-details="true"
-                        outlined
-                      ></v-textarea>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="12" class="text-right">
-                      <v-btn small @click="nextTab" color="primary">Next</v-btn>
-                    </v-col>
-                  </v-row>
+                  <BookingCustomerInfo
+                    :key="customerCompKey"
+                    @selectedCustomer="handleSelectedCustomer"
+                  />
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -520,7 +304,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red" small @click="get_customer" :loading="checkLoader">
+          <v-btn color="primary" @click="get_customer" :loading="checkLoader">
             Search
             <v-icon right dark>mdi mdi-magnify</v-icon>
           </v-btn>
@@ -612,7 +396,7 @@
               (e) => {
                 selectedRooms.length > 0
                   ? (advanceDialog = false)
-                  : $swal('Warning', 'Select room-----------------', 'error');
+                  : $swal('Warning', 'Select room', 'error');
               }
             "
           >
@@ -638,39 +422,9 @@ export default {
   data() {
     return {
       dialog: false,
-      foodplans: [],
-      documentDialog: false,
-      // -------customer history---------------
-      customer: "",
-      bookings: "",
-      revenue: "",
-      city_ledger: "",
-      payments: "",
-      bookedRooms: "",
       loading: false,
       advanceDialog: false,
-      selectRoomLoading: false,
-      roomTab: null,
-      // ----------------------
-      vertical: false,
       activeTab: 0,
-      activeSummaryTab: 0,
-      // ------------------
-
-      purposes: [
-        "Tour",
-        "Business",
-        "Hospital",
-        "Holiday",
-        "Party/Functions",
-        "Friend Visit",
-        "Marriage",
-      ],
-      selectMeal: [],
-      wantNewDoc: false,
-      row: null,
-      calIn: {},
-      calOut: {},
       searchDialog: false,
       RoomDrawer: null,
       items: [
@@ -687,31 +441,22 @@ export default {
       snackbar: false,
       checkLoader: false,
       response: "",
-      preloader: false,
       loading: false,
-      show_password: false,
-      show_password_confirm: false,
-
-      search: {
-        mobile: "",
-      },
+      search: { mobile: "" },
       availableRooms: [],
       selectedRooms: [],
       rooms: [],
-      sources: [],
-
-      agentList: [],
-      CorporateList: [],
-      // room_extra_amount: 0,
-      imgView: false,
       priceListTableView: [],
 
       temp: {
+        total_booking_hours: 0,
+        extra_hours_charges: 0,
         food_plan_price: 1,
-        extra_bed_qty: 0,
         food_plan_id: 1,
-        early_check_in: 0,
-        late_check_out: 0,
+        cleaning: 0,
+        electricity: 0,
+        generator: 0,
+        audio: 0,
         room_no: "",
         room_type: "",
         room_id: "",
@@ -721,6 +466,8 @@ export default {
         cgst: 0,
         check_in: "",
         check_out: "",
+        check_in_time: null,
+        check_out_time: null,
         // meal: [],
         bed_amount: 0,
         room_extra_amount: 0,
@@ -733,7 +480,7 @@ export default {
         grand_total: 0, //(total * days)
         company_id: this.$auth.user.company.id,
 
-        no_of_adult: 0,
+        no_of_adult: 1,
         no_of_child: 0,
         no_of_baby: 0,
         tot_adult_food: 0,
@@ -741,37 +488,19 @@ export default {
         discount_reason: "",
         priceList: [],
       },
-
       isDiff: false,
-      sourceCompKey: 1,
+      customerCompKey: 1,
       room: {
-        customer_type: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: null,
-        source: null,
-        agent_name: "",
         booking_status: 1,
-        check_in: null,
-        check_out: null,
         discount: 0,
-        reference_number: "",
         advance_price: 0,
         payment_mode_id: 1,
         total_days: 0,
-        sub_total: 0,
         after_discount: 0,
         sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "",
       },
       reservation: {
         check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
@@ -788,144 +517,35 @@ export default {
         total_price: 0,
         total_discount: 0,
       },
-      countryList: [],
-      titleItems: [
-        { id: 1, name: "Mr" },
-        { id: 2, name: "Mrs" },
-        { id: 3, name: "Miss" },
-        { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" },
-      ],
-      customer: {
-        customer_type: null,
-        title: "Mr",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        car_no: "",
-        no_of_adult: 0,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-        //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        //   .toISOString()
-        //   .substr(0, 10)
-      },
+      customer: {},
       errors: [],
-
-      image: "",
-
-      previewImage: null,
       extraPayType: "",
-      business_sources: [],
-
-      isValid: false,
-
-      seletedFoodPlan: null,
     };
   },
   async created() {
     this.get_reservation();
     this.runAllFunctions();
-    this.get_countries();
-    // this.getImage();
-    this.preloader = false;
-
-    await this.get_food_plans();
-
-    await this.get_business_sources();
-  },
-  computed: {
-    formattedCheckinDate() {
-      if (!this.temp.check_in) return "";
-
-      const date = new Date(this.temp.check_in);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day} 12:00`;
-    },
-    formattedCheckOutDate() {
-      if (!this.temp.check_out) return "";
-
-      const date = new Date(this.temp.check_out);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day} 11:00`;
-    },
-    showImage() {
-      if (!this.customer.image && !this.previewImage) {
-        return "/no-profile-image.jpg";
-      } else if (this.previewImage) {
-        return this.previewImage;
-      }
-
-      return this.customer.image;
-    },
   },
   methods: {
-    handleSource(e) {
-      this.room.type = e;
+    handleSelectedCustomer({ customer, room_type }) {
+      this.customer = customer;
+      this.room.type = room_type;
+      this.activeTab += 1;
     },
     close() {
-      this.sourceCompKey += 1;
-
-      this.customer = {
-        customer_type: "",
-        title: "Mr",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        car_no: "",
-        no_of_adult: 0,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-      };
+      this.customerCompKey += 1;
 
       this.room = {
-        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
-        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        customer_type: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: "",
-        source: "",
-        agent_name: "",
         booking_status: 1,
         discount: 0,
-        reference_number: "",
         advance_price: 0,
         payment_mode_id: 1,
         total_days: 0,
-        sub_total: 0,
         after_discount: 0,
         sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "",
       };
 
       this.priceListTableView = [];
@@ -941,38 +561,14 @@ export default {
       this.selectedRooms = [payload];
       this.priceListTableView = arrToMerge;
     },
-    async get_business_sources() {
-      let config = {
-        params: {
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      let { data } = await this.$axios.get("business-source-list", config);
-      this.business_sources = data;
-    },
-    handleFullAddress(e) {
-      this.customer = {
-        ...this.customer,
-        ...e,
-      };
-    },
     deleteItem(index) {
       this.priceListTableView.splice(index, 1);
       this.selectedRooms.splice(index, 1);
-    },
-    async get_food_plans() {
-      let { data: foodplans } = await this.$axios.get(`foodplan-list`);
-
-      this.foodplans = foodplans;
     },
 
     nextTab() {
       if (!this.customer.customer_type) {
         this.$swal("Warning", "Select Business Source", "error");
-        return;
-      }
-      if (!this.room.type) {
-        this.$swal("Warning", "Select Source Type", "error");
         return;
       }
 
@@ -986,45 +582,17 @@ export default {
         return;
       }
 
+      if (!this.customer.contact_no) {
+        this.$swal("Warning", "Customer contact no is required", "error");
+        return;
+      }
+
+      if (!this.room.type) {
+        this.$swal("Warning", "Select Source Type", "error");
+        return;
+      }
+
       this.activeTab += 1;
-    },
-    store_document_new() {
-      this.documentDialog = false;
-      return;
-    },
-    prevTab() {
-      if (this.activeTab > 0) {
-        this.activeTab -= 1;
-      }
-    },
-
-    onpick_attachment() {
-      this.$refs.attachment_input.click();
-    },
-
-    attachment(e) {
-      this.customer.image = e.target.files[0] || "";
-
-      let input = this.$refs.attachment_input;
-      let file = input.files;
-      if (file && file[0]) {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          this.previewImage = e.target.result;
-        };
-        reader.readAsDataURL(file[0]);
-        this.$emit("input", file[0]);
-      }
-    },
-
-    preview(file) {
-      if (file.name) {
-        file = file.name;
-      }
-      const fileExtension = file.split(".").pop().toLowerCase();
-      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
-
-      this.imgView = true;
     },
 
     runAllFunctions() {
@@ -1050,14 +618,14 @@ export default {
       this.temp.price = this.reservation.price;
       this.temp.check_in = this.reservation.check_in;
       this.temp.check_out = this.reservation.check_out;
+
+      this.temp.check_in_time = this.reservation.check_in_time;
+      this.temp.check_out_time = this.reservation.check_out_time;
+
       this.temp.room_tax = this.reservation.total_tax;
       this.room.check_in = this.reservation.check_in;
       this.room.check_out = this.reservation.check_out;
       this.temp.priceList = this.reservation.priceList;
-    },
-
-    redirect() {
-      this.$router.push("/");
     },
 
     mergeContact() {
@@ -1072,12 +640,6 @@ export default {
       } else {
         return n + ".00";
       }
-    },
-
-    get_countries() {
-      this.$axios.get(`get_countries`).then(({ data }) => {
-        this.countryList = data;
-      });
     },
 
     processCalculation() {
@@ -1101,29 +663,24 @@ export default {
         0
       ));
     },
-    selectRoom(item) {
-      this.selectRoomLoading = true;
 
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: item.name,
-          room_no: item.room_no,
-          checkin: this.temp.check_in,
-          checkout: this.temp.check_out,
-        },
-      };
+    mergeEntries(entries) {
+      const result = [];
 
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          this.selectRoomLoading = false;
-          this.temp.room_type = item.name;
-          this.temp.company_id = this.$auth.user.company.id;
-          this.temp.price = data.total_price;
-          this.temp.priceList = data.data;
-          this.temp.room_tax = data.total_tax;
-        });
+      entries.forEach((entry) => {
+        const existingEntry = result.find(
+          (e) => e.room_type === entry.room_type && e.date === entry.date
+        );
+
+        if (existingEntry) {
+          existingEntry.no_of_rooms += entry.no_of_rooms;
+          existingEntry.total_price += entry.total_price;
+        } else {
+          result.push({ ...entry });
+        }
+      });
+
+      return result;
     },
 
     get_customer() {
@@ -1172,31 +729,6 @@ export default {
     },
 
     store() {
-      if (!this.customer.customer_type) {
-        this.$swal("Warning", "Select Business Source", "error");
-        return;
-      }
-
-      if (!this.customer.first_name) {
-        this.$swal("Warning", "Customer first name is required", "error");
-        return;
-      }
-
-      if (!this.customer.last_name) {
-        this.$swal("Warning", "Customer last name is required", "error");
-        return;
-      }
-
-      if (!this.customer.contact_no) {
-        this.$swal("Warning", "Customer contact no is required", "error");
-        return;
-      }
-
-      if (!this.room.type) {
-        this.$swal("Warning", "Select Source Type", "error");
-        return;
-      }
-
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
@@ -1206,10 +738,6 @@ export default {
         this.$swal("Missing!", "Atleast select one room", "error");
         this.subLoad = false;
         return;
-      }
-
-      if (this.reservation.booking_status == 2) {
-        this.room.booking_status = 2;
       }
 
       let rooms = this.selectedRooms.map((e) => e.room_no);
