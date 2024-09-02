@@ -62,227 +62,10 @@
             <v-tab-item>
               <v-card flat>
                 <v-card-text>
-                  <v-row>
-                    <v-col md="2" cols="12" class="mt-2">
-                      <v-row no-gutters class="pa-2">
-                        <v-col cols="12" class="text-right">
-                          <v-icon color="primary" small>mdi-eye</v-icon>
-                        </v-col>
-                        <v-col cols="12" class="mt-2">
-                          <v-img
-                            :src="
-                              customer.captured_photo || '/no-profile-image.png'
-                            "
-                          ></v-img>
-                        </v-col>
-                        <v-col cols="6">
-                          <v-img
-                            :src="customer.captured_photo || '/idf.png'"
-                            style="margin: 0 auto; width: 50px; height: 50px"
-                            contain
-                          ></v-img>
-                        </v-col>
-                        <v-col cols="6">
-                          <v-img
-                            :src="customer.captured_photo || '/idb.png'"
-                            style="margin: 0 auto; width: 50px; height: 50px"
-                            contain
-                          ></v-img>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col md="10" cols="12">
-                      <v-row>
-                        <v-col md="4" dense>
-                          <v-autocomplete
-                            label="Business Source"
-                            v-model="customer.customer_type"
-                            :items="business_sources"
-                            dense
-                            item-text="name"
-                            item-value="name"
-                            outlined
-                            :hide-details="true"
-                          ></v-autocomplete>
-                        </v-col>
-                        <v-col md="8">
-                          <SourceType
-                            :key="sourceCompKey"
-                            @sourceType="handleSource"
-                          />
-                        </v-col>
-
-                        <v-col md="2" cols="12" sm="12">
-                          <v-select
-                            v-model="customer.title"
-                            :items="titleItems"
-                            label="Title *"
-                            dense
-                            item-text="name"
-                            item-value="name"
-                            :hide-details="errors && !errors.title"
-                            :error-messages="
-                              errors && errors.title ? errors.title[0] : ''
-                            "
-                            outlined
-                          ></v-select>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            label="First Name *"
-                            dense
-                            outlined
-                            type="text"
-                            v-model="customer.first_name"
-                            :hide-details="errors && !errors.first_name"
-                            :error-messages="
-                              errors && errors.first_name
-                                ? errors.first_name[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="3" cols="12" sm="12">
-                          <v-text-field
-                            label="Last Name"
-                            dense
-                            :hide-details="true"
-                            outlined
-                            type="text"
-                            v-model="customer.last_name"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Email *"
-                            outlined
-                            type="email"
-                            v-model="customer.email"
-                            :hide-details="errors && !errors.email"
-                            :error-messages="
-                              errors && errors.email ? errors.email[0] : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Contact No *"
-                            outlined
-                            max="1111111111111"
-                            type="number"
-                            v-model="customer.contact_no"
-                            :hide-details="errors && !errors.contact_no"
-                            :error-messages="
-                              errors && errors.contact_no
-                                ? errors.contact_no[0]
-                                : ''
-                            "
-                            @keyup="mergeContact"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Whatsapp No"
-                            outlined
-                            max="1111111111111"
-                            type="number"
-                            v-model="customer.whatsapp"
-                            :hide-details="errors && !errors.whatsapp"
-                            :error-messages="
-                              errors && errors.whatsapp
-                                ? errors.whatsapp[0]
-                                : ''
-                            "
-                          ></v-text-field>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-menu
-                            v-model="customer.dob_menu"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
-                                v-model="customer.dob"
-                                readonly
-                                label="DOB"
-                                v-on="on"
-                                v-bind="attrs"
-                                :hide-details="true"
-                                dense
-                                outlined
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              no-title
-                              v-model="customer.dob"
-                              @input="customer.dob_menu = false"
-                            ></v-date-picker>
-                          </v-menu>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-select
-                            v-model="customer.nationality"
-                            :items="countryList"
-                            label="Nationality"
-                            item-text="name"
-                            item-value="name"
-                            :hide-details="errors && !errors.nationality"
-                            :error-messages="
-                              errors && errors.nationality
-                                ? errors.nationality[0]
-                                : ''
-                            "
-                            dense
-                            outlined
-                          ></v-select>
-                        </v-col>
-
-                        <v-col md="4">
-                          <v-select
-                            label="Purpose"
-                            v-model="room.purpose"
-                            :items="purposes"
-                            dense
-                            :hide-details="true"
-                            outlined
-                          ></v-select>
-                        </v-col>
-                        <v-col md="4" cols="12" sm="12">
-                          <v-text-field
-                            dense
-                            label="Car Number"
-                            outlined
-                            :hide-details="true"
-                            type="text"
-                            v-model="customer.car_no"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                  <FullAddress @location="handleFullAddress" />
-
-                  <v-row>
-                    <v-col>
-                      <v-textarea
-                        rows="3"
-                        label="Customer Request"
-                        v-model="room.request"
-                        :hide-details="true"
-                        outlined
-                      ></v-textarea>
-                    </v-col>
-                    <v-col cols="12" class="text-right">
-                      <v-btn small @click="nextTab" color="primary">Next</v-btn>
-                    </v-col>
-                  </v-row>
+                  <BookingCustomerInfo
+                    :key="customerCompKey"
+                    @selectedCustomer="handleSelectedCustomer"
+                  />
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -308,7 +91,7 @@
                         <td><small>Price</small></td>
                         <td><small>Extras</small></td>
                         <td><small>Total</small></td>
-                        <td></td>
+                        <td><small>Action</small></td>
                       </tr>
                     </thead>
                     <tbody>
@@ -665,77 +448,10 @@ export default {
   },
   data() {
     return {
-      additional_charges: {},
-      is_cleaning_charges: false,
-      is_electricity_charges: false,
-      is_generator_charges: false,
-      is_audio_charges: false,
-      is_projector_charges: false,
       dialog: false,
-      foodplans: [],
-      checkin_date_menu: false,
-      checkout_date_menu: false,
-      checkin_time_menu: false,
-      checkout_time_menu: false,
-      room_type_list: ``,
-      documentDialog: false,
-      // -------customer history---------------
-      customer: "",
-      bookings: "",
-      revenue: "",
-      city_ledger: "",
-      payments: "",
-      bookedRooms: "",
       loading: false,
       advanceDialog: false,
-      selectRoomLoading: false,
-      roomTab: null,
-      headers: [
-        {
-          text: "#",
-        },
-        {
-          text: "Type",
-        },
-        {
-          text: "Source",
-        },
-        {
-          text: "Rooms",
-        },
-        {
-          text: "Booking Date",
-        },
-        {
-          text: "Check In",
-        },
-        {
-          text: "Check Out",
-        },
-        {
-          text: "Total Price",
-        },
-      ],
-      // ----------------------
-      vertical: false,
       activeTab: 0,
-      activeSummaryTab: 0,
-      // ------------------
-
-      purposes: [
-        "Tour",
-        "Business",
-        "Hospital",
-        "Holiday",
-        "Party/Functions",
-        "Friend Visit",
-        "Marriage",
-      ],
-      selectMeal: [],
-      wantNewDoc: false,
-      row: null,
-      calIn: {},
-      calOut: {},
       searchDialog: false,
       RoomDrawer: null,
       items: [
@@ -752,31 +468,11 @@ export default {
       snackbar: false,
       checkLoader: false,
       response: "",
-      preloader: false,
       loading: false,
-      show_password: false,
-      show_password_confirm: false,
-      types: [
-        "Online",
-        "Walking",
-        "Travel Agency",
-        "Complimentary",
-        "Corporate",
-      ],
-
-      search: {
-        mobile: "",
-      },
+      search: { mobile: "" },
       availableRooms: [],
       selectedRooms: [],
       rooms: [],
-      sources: [],
-
-      agentList: [],
-      CorporateList: [],
-      // room_extra_amount: 0,
-      idCards: [],
-      imgView: false,
       priceListTableView: [],
 
       temp: {
@@ -819,92 +515,19 @@ export default {
         discount_reason: "",
         priceList: [],
       },
-
-      defaultTemp: {
-        food_plan_price: 1,
-        food_plan_id: 1,
-        cleaning: 0,
-        electricity: 0,
-        generator: 0,
-        audio: 0,
-        room_no: "",
-        room_type: "",
-        room_id: "",
-        price: 0,
-        days: 0,
-        sgst: 0,
-        cgst: 0,
-        check_in: "",
-        check_out: "",
-        check_in_time: null,
-        check_out_time: null,
-        // meal: [],
-        bed_amount: 0,
-        room_extra_amount: 0,
-        extra_amount_reason: "",
-        room_discount: 0,
-        after_discount: 0, //(price - room_discount)
-        room_tax: 0,
-        total_with_tax: 0, //(after_discount * room_tax)
-        total: 0, //(total_with_tax * bed_amount)
-        grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
-
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        tot_adult_food: 0,
-        tot_child_food: 0,
-        discount_reason: "",
-        priceList: [],
-      },
-      merge_food_in_room_price: "",
-      gst_calculation: {
-        recal_basePrice: 0,
-        recal_gst_percentage: 0,
-        recal_gst_total: 0,
-        recal_final: 0,
-      },
-      check_in_menu: false,
-      check_out_menu: false,
-      upload: {
-        name: "",
-      },
-      member_numbers: [1, 2, 3, 4],
-      isOnline: false,
-      isCorporate: false,
-      isAgent: false,
       isDiff: false,
-      sourceCompKey: 1,
+      customerCompKey: 1,
       room: {
-        customer_type: null,
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: null,
-        source: null,
-        agent_name: "",
         booking_status: 1,
-        check_in: null,
-        check_out: null,
         discount: 0,
-        reference_number: "",
         advance_price: 0,
         payment_mode_id: 1,
         total_days: 0,
-        sub_total: 0,
         after_discount: 0,
         sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "Tour",
-        // priceList: [],
       },
       reservation: {
         check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
@@ -923,161 +546,35 @@ export default {
         total_price: 0,
         total_discount: 0,
       },
-      countryList: [],
-      foodPriceList: [],
-      person_type_arr: [],
-
-      titleItems: [
-        { id: 1, name: "Mr" },
-        { id: 2, name: "Mrs" },
-        { id: 3, name: "Miss" },
-        { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" },
-      ],
-
-      customer: {
-        customer_type: "",
-        title: "Mr",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: null,
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-        //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        //   .toISOString()
-        //   .substr(0, 10)
-      },
-      id_card_type_id: 0,
+      customer: {},
       errors: [],
-      tempAdult: {
-        tot_ab: 0,
-        tot_al: 0,
-        tot_ad: 0,
-      },
-      tempChild: {
-        tot_cb: 0,
-        tot_cl: 0,
-        tot_cd: 0,
-      },
-
-      imgPath: "",
-      image: "",
-
-      upload: {
-        name: "",
-      },
-
-      previewImage: null,
       extraPayType: "",
-      allFood: [],
-
-      breakfast: {
-        adult: 0,
-        child: 0,
-        baby: 0,
-      },
-
-      lunch: {
-        adult: 0,
-        child: 0,
-        baby: 0,
-      },
-
-      dinner: {
-        adult: 0,
-        child: 0,
-        baby: 0,
-      },
-
-      documentObj: {
-        fileExtension: null,
-        file: null,
-      },
-      business_sources: [],
     };
   },
   async created() {
     this.get_reservation();
-    this.get_id_cards();
     this.runAllFunctions();
-    this.get_countries();
-    this.get_agents();
-    this.get_online();
-    this.get_Corporate();
-    // this.getImage();
-    this.preloader = false;
-
-    this.get_business_sources();
   },
   methods: {
-    handleSource(e) {
-      this.room.type = e;
+    handleSelectedCustomer({ customer, room_type }) {
+      this.customer = customer;
+      this.room.type = room_type;
+      this.activeTab += 1;
     },
     close() {
-      this.sourceCompKey += 1;
-
-      this.customer = {
-        customer_type: null,
-        title: "Mr",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: null,
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-      };
+      this.customerCompKey += 1;
 
       this.room = {
-        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
-        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        customer_type: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: null,
-        source: null,
-        agent_name: "",
         booking_status: 1,
         discount: 0,
-        reference_number: "",
         advance_price: 0,
         payment_mode_id: 1,
         total_days: 0,
-        sub_total: 0,
         after_discount: 0,
         sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "",
       };
 
       this.priceListTableView = [];
@@ -1092,21 +589,6 @@ export default {
       this.room.check_out = payload.check_out;
       this.selectedRooms = [payload];
       this.priceListTableView = arrToMerge;
-    },
-    async get_business_sources() {
-      let config = {
-        params: {
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      let { data } = await this.$axios.get("business-source-list", config);
-      this.business_sources = data;
-    },
-    handleFullAddress(e) {
-      this.customer = {
-        ...this.customer,
-        ...e,
-      };
     },
     deleteItem(index) {
       this.priceListTableView.splice(index, 1);
@@ -1189,12 +671,6 @@ export default {
       }
     },
 
-    get_countries() {
-      this.$axios.get(`get_countries`).then(({ data }) => {
-        this.countryList = data;
-      });
-    },
-
     processCalculation() {
       let discount = parseFloat(this.temp.room_discount) || 0;
       let room_extra_amount = parseFloat(this.temp.room_extra_amount) || 0;
@@ -1215,107 +691,6 @@ export default {
         (total, num) => total + num.total_price,
         0
       ));
-    },
-
-    getType(val) {
-      if (val == "Online") {
-        this.isOnline = true;
-        this.isCorporate = false;
-        this.isAgent = false;
-        return;
-      }
-      if (val == "Travel Agency") {
-        this.isCorporate = false;
-        this.isOnline = false;
-        this.isAgent = true;
-        return;
-      }
-      if (val == "Corporate") {
-        this.isOnline = false;
-        this.isAgent = false;
-        this.isCorporate = true;
-        return;
-      }
-
-      if (val == "Walking") {
-        this.room.source = "walking";
-      }
-
-      if (val == "Complimentary") {
-        this.room.source = "complimentary";
-      }
-
-      this.isOnline = false;
-      this.isAgent = false;
-    },
-
-    get_gst(item, type) {
-      // agent
-      // online
-      // corporate
-
-      switch (type) {
-        case "agent":
-          this.customer.gst_number = this.agentList.find(
-            (e) => e.name == item
-          ).gst;
-          break;
-        case "online":
-          this.customer.gst_number = this.sources.find(
-            (e) => e.name == item
-          ).gst;
-          break;
-        case "corporate":
-          this.customer.gst_number = this.CorporateList.find(
-            (e) => e.name == item
-          ).gst;
-          break;
-        default:
-          break;
-      }
-    },
-
-    get_agents() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_agent`, payload).then(({ data }) => {
-        this.agentList = data;
-      });
-    },
-    get_Corporate() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_corporate`, payload).then(({ data }) => {
-        this.CorporateList = data;
-      });
-    },
-
-    get_online() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_online`, payload).then(({ data }) => {
-        this.sources = data;
-      });
-    },
-
-    get_id_cards() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
-        this.idCards = data;
-      });
     },
 
     mergeEntries(entries) {
@@ -1368,10 +743,6 @@ export default {
             ...data.data,
             customer_id: data.data.id,
           };
-          this.customer.id_card_type_id = parseInt(
-            this.customer.id_card_type_id
-          );
-
           this.searchDialog = false;
           this.checkLoader = false;
         });
@@ -1386,31 +757,6 @@ export default {
     },
 
     store() {
-      if (!this.customer.customer_type) {
-        this.$swal("Warning", "Select Business Source", "error");
-        return;
-      }
-
-      if (!this.customer.first_name) {
-        this.$swal("Warning", "Customer first name is required", "error");
-        return;
-      }
-
-      if (!this.customer.last_name) {
-        this.$swal("Warning", "Customer last name is required", "error");
-        return;
-      }
-
-      if (!this.customer.contact_no) {
-        this.$swal("Warning", "Customer contact no is required", "error");
-        return;
-      }
-
-      if (!this.room.type) {
-        this.$swal("Warning", "Select Source Type", "error");
-        return;
-      }
-
       if (this.room.advance_price == "") {
         this.room.advance_price = 0;
       }
@@ -1420,10 +766,6 @@ export default {
         this.$swal("Missing!", "Atleast select one room", "error");
         this.subLoad = false;
         return;
-      }
-
-      if (this.reservation.booking_status == 2) {
-        this.room.booking_status = 2;
       }
 
       let rooms = this.selectedRooms.map((e) => e.room_no);
@@ -1474,7 +816,6 @@ export default {
           } else {
             this.selectedRooms = [];
             this.priceListTableView = [];
-            this.room_type_list = {};
             this.$emit(`success`);
             this.dialog = false;
           }
