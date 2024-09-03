@@ -339,7 +339,7 @@
 
               <v-row class="text-right mb-3">
                 <v-col>
-                  <RoomDialog label="Room" @tableData="handleTableData" />
+                  <RoomDialogForGroup label="Room" @tableData="handleTableData" />
                   <v-btn
                     small
                     class="blue"
