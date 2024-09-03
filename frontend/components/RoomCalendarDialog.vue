@@ -82,6 +82,7 @@
           </v-col>
           <v-col cols="12">
             <v-autocomplete
+              readonly
               label="Room Type"
               outlined
               dense
@@ -101,6 +102,7 @@
           </v-col>
           <v-col cols="12">
             <v-autocomplete
+              readonly
               v-model="multipleRoomId"
               hide-details
               :items="availableRooms"
@@ -198,7 +200,7 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["label"],
+  props: ["label", "reservation"],
   data() {
     return {
       Model: "Reservation",
@@ -260,6 +262,26 @@ export default {
     };
   },
   async created() {
+    this.room_type_object = {
+      id: this.reservation.room_type_id,
+      name: this.reservation.room_type,
+    };
+
+    this.multipleRoomId = {
+      id: this.reservation.room_id,
+      room_no: this.reservation.room_no,
+    };
+    this.temp = {
+      ...this.temp,
+      room_no: this.reservation.room_no,
+      room_id: this.reservation.room_id,
+      room_type: this.reservation.room_type,
+      price: this.reservation.price,
+      total_price: this.reservation.total_price,
+    };
+
+    this.get_available_rooms({ id: this.reservation.room_type_id });
+
     this.get_room_types();
     this.preloader = false;
 
@@ -563,6 +585,10 @@ export default {
         })
         .then(({ data }) => {
           this.availableRooms = data;
+          this.selectRoom({
+            name: this.reservation.room_type,
+            room_no: this.reservation.room_no,
+          });
           this.getDays();
         });
     },

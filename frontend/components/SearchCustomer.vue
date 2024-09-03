@@ -1,37 +1,51 @@
 <template>
-  <v-dialog v-model="searchDialog" width="400">
+  <v-dialog v-model="searchDialog" width="450">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn small color="primary" v-bind="attrs" v-on="on">
-        Search
-        <v-icon right dark>mdi-magnify</v-icon>
-      </v-btn>
+      <div style="width: 130px" class="ma-2">
+        <v-text-field
+          v-bind="attrs"
+          v-on="on"
+          readonly
+          placeholder="Search..."
+          outlined
+          dense
+          color="primary"
+          small
+        >
+          <template v-slot:append>
+            <v-icon right>mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+      </div>
     </template>
     <v-card>
-      <v-toolbar flat dense class="blue white--text">
-        Customer <v-spacer></v-spacer
-        ><v-icon @click="searchDialog = false" color="white"
-          >mdi-close</v-icon
-        ></v-toolbar
-      >
+      <v-card-title>
+        Customer <v-spacer></v-spacer>
+        <v-icon @click="searchDialog = false" color="primary">mdi-close</v-icon>
+      </v-card-title>
+
       <v-card-text>
-        <v-text-field
-          class="mt-4"
-          label="Search By Mobile Number"
-          dense
-          outlined
-          type="text"
-          v-model="contact_no"
-          hide-details
-        ></v-text-field>
+        <v-row class="mt-2">
+          <v-col cols="9">
+            <v-text-field
+              label="Search By Mobile Number"
+              dense
+              outlined
+              type="text"
+              v-model="contact_no"
+              :hide-details="true"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="3">
+            <v-btn color="primary" @click="get_customer" :loading="checkLoader">
+              Search
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card-text>
-      <v-divider></v-divider>
       <v-card-actions>
-       <v-container class="text-right">
-        <v-btn color="primary" @click="get_customer" :loading="checkLoader">
-          Search
-          <v-icon right dark>mdi-magnify</v-icon>
-        </v-btn>
-       </v-container>
+        <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -67,7 +81,10 @@ export default {
             return;
           }
 
-          this.$emit(`foundCustomer`, data.data);
+          this.$emit(`foundCustomer`, {
+            ...data.data,
+            customer_id: data.data.id,
+          });
 
           this.searchDialog = false;
           this.checkLoader = false;

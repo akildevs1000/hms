@@ -1,20 +1,16 @@
 <template>
-  <v-dialog persistent v-model="RoomDrawer" max-width="400">
+  <v-dialog persistent v-model="editRoomDialog" max-width="400">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        small
-        color="primary"
-        class="white--text"
-        dark
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-icon color="white" small> mdi-plus </v-icon> {{ label }}
-      </v-btn>
+      <div>
+        <span v-bind="attrs" v-on="on">
+        <v-icon color="orange" small> mdi-pencil </v-icon
+        ><small class="ml-2">{{ label }}</small>
+      </span>
+      </div>
     </template>
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
-        Individual Booking <v-spacer></v-spacer
+        Edit Individual Booking <v-spacer></v-spacer
         ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
       >
       <v-container>
@@ -82,13 +78,14 @@
           </v-col>
           <v-col cols="12">
             <v-autocomplete
+              v-if="room_type_id"
               label="Room Type"
               outlined
               dense
               hide-details
               item-value="id"
               item-text="name"
-              v-model="room_type_object"
+              v-model="room_type_id"
               @change="
                 ($event) => {
                   get_available_rooms($event);
@@ -198,7 +195,7 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["label"],
+  props: ["label", "options"],
   data() {
     return {
       Model: "Reservation",
@@ -210,10 +207,10 @@ export default {
       multipleRoomId: null,
       checkin_menu: false,
       checkout_menu: false,
-      room_type_object: null,
+      room_type_id: null,
       loading: false,
       selectRoomLoading: false,
-      RoomDrawer: null,
+      editRoomDialog: false,
       isSelectRoom: true,
       preloader: false,
       loading: false,
@@ -221,7 +218,6 @@ export default {
       availableRooms: [],
       selectedRooms: [],
       rooms: [],
-      priceListTableView: [],
       temp: {
         food_plan_price: 0,
         extra_bed_qty: 0,
@@ -241,8 +237,6 @@ export default {
         bed_amount: 0,
         room_extra_amount: 0,
         extra_amount_reason: "",
-        room_discount: 0,
-        after_discount: 0, //(price - room_discount)
         room_tax: 0,
         total_with_tax: 0, //(after_discount * room_tax)
         total: 0, //(total_with_tax * bed_amount)
@@ -252,14 +246,39 @@ export default {
         no_of_adult: null,
         no_of_child: 0,
         no_of_baby: 0,
-        tot_adult_food: 0,
-        tot_child_food: 0,
-        discount_reason: "",
         priceList: [],
       },
     };
   },
   async created() {
+    this.room_type_id = {
+      id: this.options.room_type_object.id,
+      name: this.options.room_type_object.name,
+    };
+
+    await this.get_available_rooms(this.room_type_id);
+    await this.selectRoom(this.room_type_id);
+
+    this.multipleRoomId = {
+      id: this.options.room_id,
+      room_no: this.options.room_no,
+    };
+
+    this.temp = {
+      food_plan_id: this.options.food_plan_id,
+      check_in: this.options.check_in,
+      check_out: this.options.check_out,
+      no_of_adult: this.options.no_of_adult,
+      no_of_child: this.options.no_of_child,
+      extra_bed_qty: this.options.extra_bed_qty,
+      bed_amount: this.options.bed_amount,
+      early_check_in: this.options.early_check_in,
+      late_check_out: this.options.late_check_out,
+    };
+
+    this.is_early_check_in = this.options.early_check_in > 0 ? true : false;
+    this.is_late_check_out = this.options.late_check_out > 0 ? true : false;
+
     this.get_room_types();
     this.preloader = false;
 
@@ -289,49 +308,49 @@ export default {
   },
   methods: {
     close() {
-      this.temp = {
-        food_plan_price: 0,
-        extra_bed_qty: 0,
-        food_plan_id: 0,
-        early_check_in: 0,
-        late_check_out: 0,
-        room_no: "",
-        room_type: "",
-        room_id: "",
-        price: 0,
-        days: 0,
-        sgst: 0,
-        cgst: 0,
-        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
-        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        // meal: [],
-        bed_amount: 0,
-        room_extra_amount: 0,
-        extra_amount_reason: "",
-        room_discount: 0,
-        after_discount: 0, //(price - room_discount)
-        room_tax: 0,
-        total_with_tax: 0, //(after_discount * room_tax)
-        total: 0, //(total_with_tax * bed_amount)
-        grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
+      //   this.temp = {
+      //     food_plan_price: 0,
+      //     extra_bed_qty: 0,
+      //     food_plan_id: 0,
+      //     early_check_in: 0,
+      //     late_check_out: 0,
+      //     room_no: "",
+      //     room_type: "",
+      //     room_id: "",
+      //     price: 0,
+      //     days: 0,
+      //     sgst: 0,
+      //     cgst: 0,
+      //     check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+      //     check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
+      //     // meal: [],
+      //     bed_amount: 0,
+      //     room_extra_amount: 0,
+      //     extra_amount_reason: "",
+      //     room_discount: 0,
+      //     after_discount: 0, //(price - room_discount)
+      //     room_tax: 0,
+      //     total_with_tax: 0, //(after_discount * room_tax)
+      //     total: 0, //(total_with_tax * bed_amount)
+      //     grand_total: 0, //(total * days)
+      //     company_id: this.$auth.user.company.id,
 
-        no_of_adult: null,
-        no_of_child: 0,
-        no_of_baby: 0,
-        tot_adult_food: 0,
-        tot_child_food: 0,
-        discount_reason: "",
-        priceList: [],
-      };
+      //     no_of_adult: null,
+      //     no_of_child: 0,
+      //     no_of_baby: 0,
+      //     tot_adult_food: 0,
+      //     tot_child_food: 0,
+      //     discount_reason: "",
+      //     priceList: [],
+      //   };
 
-      this.room_type_object = null;
-      this.multipleRoomId = null;
-      this.is_early_check_in = false;
-      this.is_late_check_out = false;
-      this.extra_bed = 0;
+      //   this.room_type_id = 0;
+      //   this.multipleRoomId = null;
+      //   this.is_early_check_in = false;
+      //   this.is_late_check_out = false;
+      //   this.extra_bed = 0;
 
-      this.RoomDrawer = false;
+      this.editRoomDialog = false;
     },
 
     set_additional_charges() {
@@ -454,13 +473,14 @@ export default {
       price,
       early_check_in,
       late_check_out,
-      extra_bed_qty,
+      room_discount,
+      room_extra_amount,
       bed_amount,
       priceList,
       no_of_adult,
       no_of_child,
     }) {
-      if (!this.room_type_object || !this.multipleRoomId) {
+      if (!this.room_type_id || !this.multipleRoomId) {
         this.alert("Error!", "Room type or Room not selected", "error");
         return;
       }
@@ -481,40 +501,19 @@ export default {
 
       let meal_price = selected_food_plan.food_plan_price * this.getDays();
 
-      let arrToMerge = priceList.map((e) => ({
-        room_no: this.multipleRoomId.room_no,
-        room_id: this.multipleRoomId.id,
-        ...e,
-        day: this.getFullDay(e.day),
-        ...selected_food_plan,
-        room_type,
-        no_of_adult,
-        no_of_child,
-        early_check_in,
-        late_check_out,
-        bed_amount,
-        extra_bed_qty,
-        total_price:
-          e.price +
-          early_check_in +
-          late_check_out +
-          bed_amount +
-          selected_food_plan.food_plan_price,
-      }));
-
       let payload = {
         ...this.temp,
         ...selected_food_plan,
         food_plan_price: meal_price,
         days: this.getDays(),
+        after_discount:
+          price + early_check_in + late_check_out + bed_amount + meal_price,
         total_price:
           price + early_check_in + late_check_out + bed_amount + meal_price,
         grand_total:
           price + early_check_in + late_check_out + bed_amount + meal_price,
         room_no: this.multipleRoomId.room_no,
         room_id: this.multipleRoomId.id,
-        room_type_object: this.room_type_object,
-        priceList: arrToMerge,
       };
 
       selectedRoomsForTableView.push(payload);
@@ -525,33 +524,39 @@ export default {
       this.alert("Success!", "success selected room", "success");
       this.isSelectRoom = false;
 
+      let no_of_rooms = selectedRoomsForTableView.length || 0;
+
+      let arrToMerge = priceList.map((e) => ({
+        ...e,
+        ...selected_food_plan,
+        no_of_rooms,
+        room_type,
+        no_of_adult,
+        no_of_child,
+        early_check_in,
+        late_check_out,
+        bed_amount,
+        total_price:
+          e.price +
+          early_check_in +
+          late_check_out +
+          bed_amount +
+          selected_food_plan.food_plan_price,
+      }));
       this.$emit("tableData", {
         arrToMerge,
         payload,
       });
       this.close();
     },
-    getFullDay(day) {
-      let json = {
-        Mon: "Monday",
-        Tue: "Tuesday",
-        Wed: "Wednesday",
-        Thu: "Thursday",
-        Fri: "Friday",
-        Sat: "Saturday",
-        Sun: "Sunday",
-      };
 
-      return json[day] ?? "unknown";
-    },
     get_available_rooms(item) {
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
         alert("Please select date");
-        this.RoomDrawer = false;
+        this.editRoomDialog = false;
         return;
       }
 
-      this.RoomDrawer = true;
       this.$axios
         .get(`get_available_rooms_by_date_and_room_type`, {
           params: {

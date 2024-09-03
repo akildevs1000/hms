@@ -127,11 +127,11 @@ export default {
       this.confirmLoading = true;
 
       let payload = {
-        // ...this.customer,
-        captured_photo: "1",
-        sign: "1",
-        id_frontend_side: "1",
-        id_backend_side: "1",
+        ...this.customer,
+        // captured_photo: "1",
+        // sign: "1",
+        // id_frontend_side: "1",
+        // id_backend_side: "1",
         company_id: this.$auth.user.company_id,
       };
 

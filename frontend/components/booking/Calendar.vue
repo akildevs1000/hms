@@ -1,37 +1,9 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-dialog v-model="dialog" width="1000">
-      <template v-slot:activator="{ on, attrs }">
-        <div style="text-align: center">
-          <v-btn
-            dense
-            x-small
-            v-bind="attrs"
-            v-on="on"
-            class="text-center"
-            title="Hall"
-            color="#34444c"
-            style="width: 37px; height: 26px"
-          >
-            <v-icon color="white">mdi-google-classroom</v-icon>
-            <span v-if="!onlyButton"> Hall</span>
-          </v-btn>
-          <div v-if="onlyButton" style="font-size: 10px; text-align: center">
-            Hall
-          </div>
-        </div>
-      </template>
+    <v-dialog persistent v-model="dialog" width="1000">
       <v-card>
-        <v-toolbar
-          small
-          style="height: 40px !important"
-          class="rounded-md"
-          color="background"
-          dense
-          flat
-          dark
-        >
-          <span>Hall Booking Information</span>
+        <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <span>Individual Booking Information</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
         </v-toolbar>
@@ -53,7 +25,7 @@
             </v-tab>
             <v-tabs-slider color="#1259a7"></v-tabs-slider>
             <v-tab-item>
-              <v-card flat>
+              <v-card flat class="mt-5">
                 <v-card-text>
                   <BookingCustomerInfo
                     :defaultCustomer="customer"
@@ -64,118 +36,209 @@
               </v-card>
             </v-tab-item>
 
-            <v-tab-item class="pt-5">
-              <v-row>
-                <v-col
-                  md="12"
-                  cols="12"
-                  class="d-flex py-0 my-0 justify-center"
-                >
-                  <table class="styled-table py-0 my-0" style="width: 100%">
-                    <thead>
-                      <tr>
-                        <td><small>Date</small></td>
-                        <td><small>Day</small></td>
-                        <td><small>Hall</small></td>
-                        <td><small>Type</small></td>
-                        <td><small>Tariff</small></td>
-                        <td><small>Adult</small></td>
-                        <td><small>Child</small></td>
-                        <td><small>Meal</small></td>
-                        <td><small>Price</small></td>
-                        <td><small>Extras</small></td>
-                        <td><small>Total</small></td>
-                        <td><small>Action</small></td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(item, index) in priceListTableView"
-                        :key="index"
+            <v-tab-item class="mt-5">
+              <table cellspacing="0" style="width: 100%">
+                <thead style="background-color: #f2f2f2; width: 100%">
+                  <tr style="background-color: #f2f2f2; width: 100%">
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Date</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Room</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Tariff</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Adult</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Child</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Meal</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>E. Bed</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>E. C/in</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>L. C/out</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Total</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                    ></td>
+                  </tr>
+                </thead>
+                <tbody v-if="priceListTableView.length > 0">
+                  <tr v-for="(item, index) in priceListTableView" :key="index">
+                    <td class="text-center py-2">
+                      {{ formatDate(item.date) }} <br />
+                      {{ item.day }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.room_no }} <br />
+                      {{ item.room_type }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.day_type }}
+                    </td>
+                    <td class="text-center py-2">{{ item.no_of_adult }}</td>
+                    <td class="text-center py-2">{{ item.no_of_child }}</td>
+                    <td class="text-center py-2">{{ item.meal_name }}</td>
+                    <td class="text-center py-2">
+                      {{ item.extra_bed_qty || "-" }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.early_check_in > 0 ? "Yes" : "-" }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.late_check_out > 0 ? "Yes" : "-" }}
+                    </td>
+                    <td class="text-right py-2">
+                      {{ convert_decimal(item.total_price) }}
+                    </td>
+                    <td class="text-center">
+                      <v-menu
+                        nudge-bottom="50"
+                        nudge-left="20"
+                        transition="scale-transition"
+                        origin="center center"
+                        bottom
+                        left
+                        min-width="90"
                       >
-                        <td>
-                          {{ item.date }}
-                        </td>
-                        <td>
-                          {{ item.day }}
-                        </td>
-                        <td>
-                          {{ item.room_type }}
-                        </td>
-                        <td>
-                          {{ item.day_type }}
-                        </td>
-                        <td>
-                          {{ item.room_price }}
-                        </td>
-                        <td>{{ item.no_of_adult }}</td>
-                        <td>{{ item.no_of_child }}</td>
-                        <td>{{ item.meal_name }}</td>
-                        <td>
-                          {{ convert_decimal(item.price) }}
-                        </td>
-                        <td>
-                          {{
-                            convert_decimal(
-                              item.cleaning +
-                                item.electricity +
-                                item.generator +
-                                item.audio +
-                                item.extra_booking_hours_charges +
-                                item.projector
-                            )
-                          }}
-                        </td>
-                        <td>
-                          {{ convert_decimal(item.total_price) }}
-                        </td>
-                        <td class="text-center">
-                          <HallDetails :selectedRooms="selectedRooms" />
-                          <v-icon small color="red" @click="deleteItem(index)"
-                            >mdi-close</v-icon
-                          >
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </v-col>
-                <v-col md="12" style="padding-top: 0px; font-weight: bold">
-                  <div
-                    class="d-flex justify-space-around py-3 styled-table"
-                    style="margin-top: 5px"
-                  >
-                    <v-col cols="10" class="text-right">
-                      <div>Sub Total:</div>
-                      <div>Add :</div>
-                      <div>Discount :</div>
-                      <v-divider color="#4390FC"></v-divider>
-                      <div style="font-size: 18px; font-weight: bold">
-                        Total :
-                      </div>
-                    </v-col>
-                    <v-col cols="2" class="text-right">
-                      <div>
-                        {{ convert_decimal(subTotal()) }}
-                      </div>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn icon v-bind="attrs" v-on="on">
+                            <v-icon small>mdi-dots-vertical</v-icon>
+                          </v-btn>
+                        </template>
 
-                      <div>
-                        {{ convert_decimal(temp.room_extra_amount) }}
-                      </div>
-                      <div style="color: red">
-                        -{{ convert_decimal(temp.room_discount) }}
-                      </div>
-                      <v-divider color="#4390FC"></v-divider>
-                      <div style="font-size: 18px; font-weight: bold">
-                        {{ convert_decimal(processCalculation()) }}
-                      </div>
-                    </v-col>
-                  </div>
-                  <v-divider color="#4390FC"></v-divider>
+                        <v-card>
+                          <v-list>
+                            <v-list-item>
+                              <RoomDetails
+                                :key="roomDetailsCompKey"
+                                :room_type="item.room_type"
+                                :selectedRooms="selectedRooms"
+                              />
+                            </v-list-item>
+                            <v-list-item>
+                              <RoomEditDialog
+                                label="Edit"
+                                :options="room"
+                                @tableData="handleTableData"
+                              />
+                            </v-list-item>
+                            <v-list-item @click="deleteItem(index, item)">
+                              <v-icon small color="red">mdi-close</v-icon
+                              ><small class="ml-2">Delete</small>
+                            </v-list-item>
+                          </v-list>
+                        </v-card>
+                      </v-menu>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div
+                class="d-flex justify-space-around py-3"
+                style="margin-top: 5px"
+              >
+                <v-col cols="10" class="text-right">
+                  <div>Sub Total:</div>
+                  <div>Add :</div>
+                  <div>Discount :</div>
+                  <div style="font-size: 18px; font-weight: bold">Total :</div>
                 </v-col>
-                <v-col md="12" class="text-right">
-                  <HallDialog label="Add Hall" @tableData="handleTableData"
-                /></v-col>
-                <v-col md="3" sm="12" cols="12" dense>
+                <v-col cols="2" class="text-right">
+                  <div>
+                    {{ convert_decimal(subTotal()) }}
+                  </div>
+
+                  <div>
+                    {{ convert_decimal(room.room_extra_amount || 0) }}
+                  </div>
+                  <div style="color: red">
+                    -{{ convert_decimal(room.room_discount || 0) }}
+                  </div>
+                  <div style="font-size: 18px; font-weight: bold">
+                    {{ convert_decimal(processCalculation()) }}
+                  </div>
+                </v-col>
+              </div>
+
+              <v-row class="mt-3">
+                <v-col md="2" sm="12" cols="12" dense>
                   <v-select
                     label="Discount/Extra"
                     v-model="extraPayType"
@@ -197,7 +260,7 @@
                     dense
                     outlined
                     type="number"
-                    v-model="temp.room_discount"
+                    v-model="room.room_discount"
                     :hide-details="true"
                     @keyup="processCalculation"
                   ></v-text-field>
@@ -214,7 +277,7 @@
                     dense
                     outlined
                     type="text"
-                    v-model="temp.discount_reason"
+                    v-model="room.discount_reason"
                     :hide-details="true"
                   ></v-text-field>
                 </v-col>
@@ -230,7 +293,7 @@
                     dense
                     outlined
                     type="number"
-                    v-model="temp.room_extra_amount"
+                    v-model="room.room_extra_amount"
                     @keyup="processCalculation"
                     :hide-details="true"
                   ></v-text-field>
@@ -247,30 +310,22 @@
                     dense
                     outlined
                     type="text"
-                    v-model="temp.extra_amount_reason"
+                    v-model="room.extra_amount_reason"
                     :hide-details="true"
                   ></v-text-field>
                 </v-col>
               </v-row>
+
               <v-row class="text-right mb-3">
                 <v-col>
+                  <RoomCalendarDialog :reservation="reservation" label="Room" @tableData="handleTableData" />
                   <v-btn
                     small
-                    style="background-color: #4390fc; margin-right: 5px"
-                    @click="advanceDialog = true"
-                    dark
-                  >
-                    <v-icon small>mdi-wallet</v-icon> Pay
-                  </v-btn>
-                  <v-btn
-                    small
-                    style="background-color: #5fafa3"
+                    class="blue"
                     @click="store"
                     :loading="subLoad"
                     dark
-                  >
-                    <v-icon small>mdi-floppy</v-icon>
-
+                    ><v-icon small class="mt-1">mdi-floppy</v-icon> Confirm
                     Book</v-btn
                   >
                 </v-col>
@@ -289,45 +344,6 @@
       </v-card>
     </v-dialog>
 
-    <!---------------------------------------------------------------->
-    <v-dialog v-model="searchDialog" width="450">
-      <v-card>
-        <v-card-title>
-          Customer <v-spacer></v-spacer>
-          <v-icon @click="searchDialog = false" color="primary"
-            >mdi-close</v-icon
-          >
-        </v-card-title>
-
-        <v-card-text>
-          <v-row class="mt-2">
-            <v-col cols="9">
-              <v-text-field
-                label="Search By Mobile Number"
-                dense
-                outlined
-                type="text"
-                v-model="search.mobile"
-                :hide-details="true"
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="3">
-              <v-btn
-                color="primary"
-                @click="get_customer"
-                :loading="checkLoader"
-              >
-                Search
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -413,7 +429,7 @@
               (e) => {
                 selectedRooms.length > 0
                   ? (advanceDialog = false)
-                  : alert('oops', 'Select Hall');
+                  : $swal('Warning', 'Select room', 'error');
               }
             "
           >
@@ -428,24 +444,14 @@
 </template>
 <script>
 import History from "../../components/customer/History.vue";
-import ImagePreview from "../../components/images/ImagePreview.vue";
+import RoomDetails from "../RoomDetails.vue";
 const today = new Date();
 const tomorrow = new Date(today);
-const checkoutTime = new Date(today); // Copy check-in time
-
 tomorrow.setDate(tomorrow.getDate() + 1);
-function formatTime(date) {
-  let hours = date.getHours().toString().padStart(2, "0");
-  let minutes = date.getMinutes().toString().padStart(2, "0");
-  return `${hours}:${minutes}`;
-}
-checkoutTime.setHours(today.getHours() + 4);
-
 export default {
-  props: ["onlyButton"],
+  props: ["onlyButton", "reservation"],
   components: {
     History,
-    ImagePreview,
   },
   data() {
     return {
@@ -475,50 +481,12 @@ export default {
       selectedRooms: [],
       rooms: [],
       priceListTableView: [],
-
-      temp: {
-        total_booking_hours: 0,
-        extra_hours_charges: 0,
-        food_plan_price: 1,
-        food_plan_id: 1,
-        cleaning: 0,
-        electricity: 0,
-        generator: 0,
-        audio: 0,
-        room_no: "",
-        room_type: "",
-        room_id: "",
-        price: 0,
-        days: 0,
-        sgst: 0,
-        cgst: 0,
-        check_in: "",
-        check_out: "",
-        check_in_time: null,
-        check_out_time: null,
-        // meal: [],
-        bed_amount: 0,
-        room_extra_amount: 0,
-        extra_amount_reason: "",
-        room_discount: 0,
-        after_discount: 0, //(price - room_discount)
-        room_tax: 0,
-        total_with_tax: 0, //(after_discount * room_tax)
-        total: 0, //(total_with_tax * bed_amount)
-        grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
-
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        tot_adult_food: 0,
-        tot_child_food: 0,
-        discount_reason: "",
-        priceList: [],
-      },
       isDiff: false,
+      roomDetailsCompKey: 1,
       customerCompKey: 1,
       room: {
+        room_extra_amount: 0,
+        room_discount: 0,
         booking_status: 1,
         discount: 0,
         advance_price: 0,
@@ -530,30 +498,12 @@ export default {
         check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
         company_id: this.$auth.user.company.id,
       },
-      reservation: {
-        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
-        check_out: today.toISOString().split("T")[0], // format as YYYY-MM-DD
-        check_in_time: formatTime(today), // show time like mm:ss
-        check_out_time: formatTime(checkoutTime), // show time like mm:ss
-        room_no: "",
-        room_id: 82,
-        room_type: "",
-        price: 0,
-        origin_price: "",
-        isCalculate: true,
-        priceList: [],
-        total_tax: 0,
-        total_price_after_discount: 0,
-        total_price: 0,
-        total_discount: 0,
-      },
       customer: {},
       errors: [],
       extraPayType: "",
     };
   },
   async created() {
-    this.get_reservation();
     this.runAllFunctions();
   },
   methods: {
@@ -562,14 +512,30 @@ export default {
         ...this.customer,
         ...e,
       };
-
-      console.log("🚀 ~ handleFoundCustomer ~ this.customer:", this.customer)
-
       this.customerCompKey += 1;
     },
-    handleSelectedCustomer({ customer, room_type }) {
+    formatDate(date) {
+      let dateObj = new Date(date);
+
+      let day = dateObj.getDate().toString().padStart(2, "0");
+      let month = dateObj
+        .toLocaleString("en-GB", { month: "short" })
+        .slice(0, 3);
+      let year = dateObj.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    },
+    handleSelectedCustomer({ customer, booking }) {
+      console.log(
+        "🚀 ~ handleSelectedCustomer ~ customer, booking:",
+        customer,
+        booking
+      );
       this.customer = customer;
-      this.room.type = room_type;
+      this.room = {
+        ...this.room,
+        ...booking,
+      };
       this.activeTab += 1;
     },
     close() {
@@ -596,14 +562,26 @@ export default {
       this.dialog = false;
     },
     handleTableData({ arrToMerge, payload }) {
-      this.room.check_in = payload.check_in;
-      this.room.check_out = payload.check_out;
-      this.selectedRooms = [payload];
-      this.priceListTableView = arrToMerge;
+      this.room = {
+        ...this.room,
+        ...payload,
+      };
+      // room_type
+      let isSelect = this.selectedRooms.find(
+        (e) => e.room_id == payload.room_id
+      );
+
+      if (!isSelect) {
+        this.selectedRooms.push(payload);
+        this.priceListTableView = this.priceListTableView.concat(arrToMerge);
+        this.roomDetailsCompKey += 1;
+      }
     },
-    deleteItem(index) {
+    deleteItem(index, item) {
       this.priceListTableView.splice(index, 1);
-      this.selectedRooms.splice(index, 1);
+      this.selectedRooms = this.selectedRooms.filter(
+        (e) => e.room_type !== item.room_type
+      );
     },
 
     nextTab() {
@@ -642,32 +620,14 @@ export default {
     },
 
     getDays() {
-      let ci = new Date(this.temp.check_in);
-      let co = new Date(this.temp.check_out);
+      let ci = new Date(this.room.check_in);
+      let co = new Date(this.room.check_out);
       let Difference_In_Time = co.getTime() - ci.getTime();
       let days = Difference_In_Time / (1000 * 3600 * 24);
       if (days > 0) {
         return (this.room.total_days = days);
       }
     },
-
-    get_reservation() {
-      this.temp.room_id = this.reservation.room_id;
-      this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type;
-      this.temp.price = this.reservation.price;
-      this.temp.check_in = this.reservation.check_in;
-      this.temp.check_out = this.reservation.check_out;
-
-      this.temp.check_in_time = this.reservation.check_in_time;
-      this.temp.check_out_time = this.reservation.check_out_time;
-
-      this.temp.room_tax = this.reservation.total_tax;
-      this.room.check_in = this.reservation.check_in;
-      this.room.check_out = this.reservation.check_out;
-      this.temp.priceList = this.reservation.priceList;
-    },
-
     mergeContact() {
       if (!this.isDiff) {
         this.customer.whatsapp = this.customer.contact_no;
@@ -683,8 +643,8 @@ export default {
     },
 
     processCalculation() {
-      let discount = parseFloat(this.temp.room_discount) || 0;
-      let room_extra_amount = parseFloat(this.temp.room_extra_amount) || 0;
+      let discount = parseFloat(this.room.room_discount) || 0;
+      let room_extra_amount = parseFloat(this.room.room_extra_amount) || 0;
       let sub_total = parseFloat(this.room.sub_total) || 0;
 
       let advance_price = parseFloat(this.room.advance_price) || 0;
@@ -742,11 +702,11 @@ export default {
         .get(`get_customer/${contact_no}`, payload)
         .then(({ data }) => {
           if (!data.status) {
-            this.checkLoader = false;
-            // this.customer = {};
             this.customer.contact_no = contact_no;
             this.customer.whatsapp = contact_no;
             alert("Customer not found");
+            this.searchDialog = false;
+            this.checkLoader = false;
             return;
           }
 
@@ -754,6 +714,7 @@ export default {
             ...data.data,
             customer_id: data.data.id,
           };
+
           this.searchDialog = false;
           this.checkLoader = false;
         });
@@ -812,13 +773,12 @@ export default {
         selectedRooms: this.selectedRooms,
         ...this.customer,
         user_id: this.$auth.user.id,
-        booking_type: "hall",
       };
 
       this.subLoad = false;
 
       this.$axios
-        .post("/hall-booking", payload)
+        .post("/group-booking", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {

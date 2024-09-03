@@ -1,6 +1,6 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-dialog v-model="dialog" width="1000">
+    <v-dialog persistent v-model="dialog" width="1000">
       <template v-slot:activator="{ on, attrs }">
         <div style="text-align: center">
           <v-btn
@@ -21,680 +21,350 @@
           </div>
         </div>
       </template>
-
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
           <span>Group Booking Information</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
         </v-toolbar>
-        <v-container fluid>
-          <v-row>
-            <v-dialog v-model="documentDialog" max-width="30%">
-              <v-card>
-                <v-toolbar
-                  class="rounded-md"
-                  color="background"
-                  dense
-                  flat
-                  dark
-                >
-                  <span>Add ID</span>
-                  <v-spacer></v-spacer>
-                  <v-icon dark class="pa-0" @click="documentDialog = false"
-                    >mdi-close</v-icon
-                  >
-                </v-toolbar>
-                <v-container class="pa-5">
-                  <v-row>
-                    <v-col md="12" sm="12" cols="12" dense>
-                      <v-select
-                        v-model="customer.id_card_type_id"
-                        :items="idCards"
-                        dense
-                        label="ID Card Type"
-                        outlined
-                        item-text="name"
-                        item-value="id"
-                        :hide-details="errors && !errors.id_card_type_id"
-                        :error-messages="
-                          errors && errors.id_card_type_id
-                            ? errors.id_card_type_id[0]
-                            : ''
-                        "
-                      ></v-select>
-                    </v-col>
-                    <v-col md="12" cols="12" sm="12">
-                      <v-text-field
-                        dense
-                        label="ID Card"
-                        outlined
-                        type="text"
-                        v-model="customer.id_card_no"
-                        :hide-details="errors && !errors.id_card_no"
-                        :error-messages="
-                          errors && errors.id_card_no
-                            ? errors.id_card_no[0]
-                            : ''
-                        "
-                      ></v-text-field>
-                    </v-col>
-                    <v-col md="12" cols="12" sm="12">
+        <v-card-text>
+          <v-tabs v-model="activeTab">
+            <SearchCustomer
+              @foundCustomer="handleFoundCustomer"
+              v-if="activeTab == 0"
+            />
+            <v-spacer></v-spacer>
+            <v-tab>
+              <v-icon> mdi mdi-account-tie </v-icon>
+            </v-tab>
+            <v-tab>
+              <v-icon> mdi mdi-bed </v-icon>
+            </v-tab>
+            <v-tab v-if="customer.id > 0">
+              <v-icon> mdi mdi-clipboard-text-clock </v-icon>
+            </v-tab>
+            <v-tabs-slider color="#1259a7"></v-tabs-slider>
+            <v-tab-item>
+              <v-card flat class="mt-5">
+                <v-card-text>
+                  <BookingCustomerInfo
+                    :isGroupBooking="true"
+                    :defaultCustomer="customer"
+                    :key="customerCompKey"
+                    @selectedCustomer="handleSelectedCustomer"
+                  />
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+
+            <v-tab-item class="mt-5">
+              <table cellspacing="0" style="width: 100%">
+                <thead style="background-color: #f2f2f2; width: 100%">
+                  <tr style="background-color: #f2f2f2; width: 100%">
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Date</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Room</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Tariff</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Adult</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Child</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Meal</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>E. Bed</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>E. C/in</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>L. C/out</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Total</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                    ></td>
+                  </tr>
+                </thead>
+                <tbody v-if="priceListTableView.length > 0">
+                  <tr v-for="(item, index) in priceListTableView" :key="index">
+                    <td class="text-center py-2">
+                      {{ formatDate(item.date) }} <br />
+                      {{ item.day }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.room_no }} <br />
+                      {{ item.room_type }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.day_type }}
+                    </td>
+                    <td class="text-center py-2">{{ item.no_of_adult }}</td>
+                    <td class="text-center py-2">{{ item.no_of_child }}</td>
+                    <td class="text-center py-2">{{ item.meal_name }}</td>
+                    <td class="text-center py-2">
+                      {{ item.extra_bed_qty || "-" }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.early_check_in > 0 ? "Yes" : "-" }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.late_check_out > 0 ? "Yes" : "-" }}
+                    </td>
+                    <td class="text-right py-2">
+                      {{ convert_decimal(item.total_price) }}
+                    </td>
+                    <td class="text-center">
                       <v-menu
-                        v-model="customer.passport_expiration_menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
+                        nudge-bottom="50"
+                        nudge-left="20"
                         transition="scale-transition"
-                        offset-y
-                        min-width="auto"
+                        origin="center center"
+                        bottom
+                        left
+                        min-width="90"
                       >
                         <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="customer.passport_expiration"
-                            readonly
-                            label="Expired"
-                            v-on="on"
-                            v-bind="attrs"
-                            :hide-details="true"
-                            dense
-                            outlined
-                          ></v-text-field>
+                          <v-btn icon v-bind="attrs" v-on="on">
+                            <v-icon small>mdi-dots-vertical</v-icon>
+                          </v-btn>
                         </template>
-                        <v-date-picker
-                          no-title
-                          v-model="customer.passport_expiration"
-                          @input="customer.passport_expiration_menu = false"
-                        ></v-date-picker>
+
+                        <v-card>
+                          <v-list>
+                            <v-list-item>
+                              <RoomDetails
+                                :key="roomDetailsCompKey"
+                                :room_type="item.room_type"
+                                :selectedRooms="selectedRooms"
+                              />
+                            </v-list-item>
+                            <v-list-item>
+                              <RoomEditDialog
+                                label="Edit"
+                                :options="room"
+                                @tableData="handleTableData"
+                              />
+                            </v-list-item>
+                            <v-list-item @click="deleteItem(index, item)">
+                              <v-icon small color="red">mdi-close</v-icon
+                              ><small class="ml-2">Delete</small>
+                            </v-list-item>
+                          </v-list>
+                        </v-card>
                       </v-menu>
-                    </v-col>
-                    <v-col md="12">
-                      <v-file-input
-                        v-model="customer.document"
-                        color="primary"
-                        counter
-                        placeholder="Select your files"
-                        outlined
-                        :show-size="1000"
-                      >
-                        <template v-slot:selection="{ index, text }">
-                          <v-chip
-                            v-if="index < 2"
-                            color="primary"
-                            dark
-                            label
-                            small
-                          >
-                            {{ text }}
-                          </v-chip>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-                          <span
-                            v-else-if="index === 2"
-                            class="text-overline grey--text text--darken-3 mx-2"
-                          >
-                            +{{ customer.document.length - 2 }} File(s)
-                          </span>
-                        </template>
-                      </v-file-input>
-                    </v-col>
-                    <v-divider></v-divider>
-                    <v-col md="12">
-                      <!-- @click="documentDialog = false" -->
+              <div
+                class="d-flex justify-space-around py-3"
+                style="margin-top: 5px"
+              >
+                <v-col cols="10" class="text-right">
+                  <div>Sub Total:</div>
+                  <div>Add :</div>
+                  <div>Discount :</div>
+                  <div style="font-size: 18px; font-weight: bold">Total :</div>
+                </v-col>
+                <v-col cols="2" class="text-right">
+                  <div>
+                    {{ convert_decimal(subTotal()) }}
+                  </div>
 
-                      <v-btn
-                        small
-                        dark
-                        class="float-right primary pt-4 pb-4"
-                        @click="store_document_new()"
-                      >
-                        Submit
-                        <v-icon right dark>mdi-file</v-icon>
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-card-actions> </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="imgView" max-width="80%">
-              <v-card>
-                <v-toolbar
-                  class="rounded-md"
-                  color="background"
+                  <div>
+                    {{ convert_decimal(room.room_extra_amount || 0) }}
+                  </div>
+                  <div style="color: red">
+                    -{{ convert_decimal(room.room_discount || 0) }}
+                  </div>
+                  <div style="font-size: 18px; font-weight: bold">
+                    {{ convert_decimal(processCalculation()) }}
+                  </div>
+                </v-col>
+              </div>
+
+              <v-row class="mt-3">
+                <v-col md="2" sm="12" cols="12" dense>
+                  <v-select
+                    label="Discount/Extra"
+                    v-model="extraPayType"
+                    :items="['Discount', 'ExtraAmount']"
+                    dense
+                    :hide-details="true"
+                    outlined
+                  ></v-select>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
                   dense
-                  flat
-                  dark
+                  v-if="extraPayType == 'Discount'"
                 >
-                  <span>Preview</span>
-                  <v-spacer></v-spacer>
-                  <v-icon dark class="pa-0" @click="imgView = false">
-                    mdi-close
-                  </v-icon>
-                </v-toolbar>
-                <v-container>
-                  <ImagePreview :docObj="documentObj"></ImagePreview>
-                </v-container>
-                <v-card-actions> </v-card-actions>
+                  <v-text-field
+                    label="Discount Amount"
+                    dense
+                    outlined
+                    type="number"
+                    v-model="room.room_discount"
+                    :hide-details="true"
+                    @keyup="processCalculation"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
+                  dense
+                  v-if="extraPayType == 'Discount'"
+                >
+                  <v-text-field
+                    label="Reason"
+                    dense
+                    outlined
+                    type="text"
+                    v-model="room.discount_reason"
+                    :hide-details="true"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
+                  dense
+                  v-if="extraPayType == 'ExtraAmount'"
+                >
+                  <v-text-field
+                    label="Extra Amount"
+                    dense
+                    outlined
+                    type="number"
+                    v-model="room.room_extra_amount"
+                    @keyup="processCalculation"
+                    :hide-details="true"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  md="4"
+                  sm="12"
+                  cols="12"
+                  dense
+                  v-if="extraPayType == 'ExtraAmount'"
+                >
+                  <v-text-field
+                    label="Reason"
+                    dense
+                    outlined
+                    type="text"
+                    v-model="room.extra_amount_reason"
+                    :hide-details="true"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-row class="text-right mb-3">
+                <v-col>
+                  <RoomDialog label="Room" @tableData="handleTableData" />
+                  <v-btn
+                    small
+                    class="blue"
+                    @click="store"
+                    :loading="subLoad"
+                    dark
+                    ><v-icon small class="mt-1">mdi-floppy</v-icon> Confirm
+                    Book</v-btn
+                  >
+                </v-col>
+              </v-row>
+            </v-tab-item>
+
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <History :customerId="customer.id"></History>
+                </v-card-text>
               </v-card>
-            </v-dialog>
-            <v-tabs v-model="activeTab">
-              <v-container>
-                <v-btn
-                  class="ml-4 mb-2"
-                  color="primary"
-                  small
-                  @click="searchDialog = true"
-                >
-                  Search
-                  <v-icon right dark>mdi-magnify</v-icon>
-                </v-btn>
-              </v-container>
-              <v-spacer></v-spacer>
-              <v-tab>
-                <v-icon> mdi mdi-account-tie </v-icon>
-              </v-tab>
-              <v-tab>
-                <v-icon> mdi mdi-bed </v-icon>
-              </v-tab>
-              <v-tab v-if="customer.id > 0">
-                <v-icon> mdi mdi-clipboard-text-clock </v-icon>
-              </v-tab>
-              <v-tabs-slider color="#1259a7"></v-tabs-slider>
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <v-row>
-                      <v-col md="2" cols="12">
-                        <v-row no-gutters class="pa-2">
-                          <v-col cols="12" class="text-right">
-                            <v-icon color="primary" small>mdi-eye</v-icon>
-                          </v-col>
-                          <v-col cols="12" class="mt-2">
-                            <v-img
-                              :src="
-                                customer.captured_photo ||
-                                '/no-profile-image.png'
-                              "
-                            ></v-img>
-                          </v-col>
-                          <v-col cols="6">
-                            <v-img
-                              :src="customer.captured_photo || '/idf.png'"
-                              style="margin: 0 auto; width: 50px; height: 50px"
-                              contain
-                            ></v-img>
-                          </v-col>
-                          <v-col cols="6">
-                            <v-img
-                              :src="customer.captured_photo || '/idb.png'"
-                              style="margin: 0 auto; width: 50px; height: 50px"
-                              contain
-                            ></v-img>
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col md="10" cols="12">
-                        <v-row>
-                          <v-col md="3" cols="12" sm="12">
-                            <v-text-field
-                              label="Group Name *"
-                              dense
-                              outlined
-                              type="text"
-                              v-model="room.group_name"
-                              :hide-details="errors && !errors.group_name"
-                              :error-messages="
-                                errors && errors.group_name
-                                  ? errors.group_name[0]
-                                  : ''
-                              "
-                            ></v-text-field>
-                          </v-col>
-
-                          <v-col md="3" dense>
-                            <v-autocomplete
-                              label="Business Source"
-                              v-model="customer.customer_type"
-                              :items="business_sources"
-                              dense
-                              item-text="name"
-                              item-value="name"
-                              outlined
-                              :hide-details="true"
-                            ></v-autocomplete>
-                          </v-col>
-
-                          <v-col md="6">
-                            <SourceType
-                              :key="sourceCompKey"
-                              @sourceType="handleSource"
-                            />
-                          </v-col>
-
-                          <v-col md="2" cols="12" sm="12">
-                            <v-select
-                              v-model="customer.title"
-                              :items="titleItems"
-                              label="Title *"
-                              dense
-                              item-text="name"
-                              item-value="name"
-                              :hide-details="errors && !errors.title"
-                              :error-messages="
-                                errors && errors.title ? errors.title[0] : ''
-                              "
-                              outlined
-                            ></v-select>
-                          </v-col>
-
-                          <v-col md="3" cols="12" sm="12">
-                            <v-text-field
-                              label="First Name *"
-                              dense
-                              outlined
-                              type="text"
-                              v-model="customer.first_name"
-                              :hide-details="errors && !errors.first_name"
-                              :error-messages="
-                                errors && errors.first_name
-                                  ? errors.first_name[0]
-                                  : ''
-                              "
-                            ></v-text-field>
-                          </v-col>
-                          <v-col md="3" cols="12" sm="12">
-                            <v-text-field
-                              label="Last Name"
-                              dense
-                              :hide-details="true"
-                              outlined
-                              type="text"
-                              v-model="customer.last_name"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col md="4" cols="12" sm="12">
-                            <v-text-field
-                              dense
-                              label="Email *"
-                              outlined
-                              type="email"
-                              v-model="customer.email"
-                              :hide-details="errors && !errors.email"
-                              :error-messages="
-                                errors && errors.email ? errors.email[0] : ''
-                              "
-                            ></v-text-field>
-                          </v-col>
-                          <v-col md="4" cols="12" sm="12">
-                            <v-text-field
-                              dense
-                              label="Contact No *"
-                              outlined
-                              max="1111111111111"
-                              type="number"
-                              v-model="customer.contact_no"
-                              :hide-details="errors && !errors.contact_no"
-                              :error-messages="
-                                errors && errors.contact_no
-                                  ? errors.contact_no[0]
-                                  : ''
-                              "
-                              @keyup="mergeContact"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col md="4" cols="12" sm="12">
-                            <v-text-field
-                              dense
-                              label="Whatsapp No"
-                              outlined
-                              max="1111111111111"
-                              type="number"
-                              v-model="customer.whatsapp"
-                              :hide-details="errors && !errors.whatsapp"
-                              :error-messages="
-                                errors && errors.whatsapp
-                                  ? errors.whatsapp[0]
-                                  : ''
-                              "
-                            ></v-text-field>
-                          </v-col>
-                          <v-col md="4" cols="12" sm="12">
-                            <v-menu
-                              v-model="customer.dob_menu"
-                              :close-on-content-click="false"
-                              :nudge-right="40"
-                              transition="scale-transition"
-                              offset-y
-                              min-width="auto"
-                            >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                  v-model="customer.dob"
-                                  readonly
-                                  label="DOB"
-                                  v-on="on"
-                                  v-bind="attrs"
-                                  dense
-                                  outlined
-                                  :hide-details="errors && !errors.dob"
-                                  :error-messages="
-                                    errors && errors.dob ? errors.dob[0] : ''
-                                  "
-                                ></v-text-field>
-                              </template>
-                              <v-date-picker
-                                no-title
-                                v-model="customer.dob"
-                                @input="customer.dob_menu = false"
-                              ></v-date-picker>
-                            </v-menu>
-                          </v-col>
-                          <v-col md="4" cols="12" sm="12">
-                            <v-select
-                              v-model="customer.nationality"
-                              :items="countryList"
-                              label="Nationality"
-                              item-text="name"
-                              item-value="name"
-                              :hide-details="errors && !errors.nationality"
-                              :error-messages="
-                                errors && errors.nationality
-                                  ? errors.nationality[0]
-                                  : ''
-                              "
-                              dense
-                              outlined
-                            ></v-select>
-                          </v-col>
-                          <v-col md="4">
-                            <v-select
-                              label="Purpose"
-                              v-model="room.purpose"
-                              :items="purposes"
-                              dense
-                              :hide-details="true"
-                              outlined
-                            ></v-select>
-                          </v-col>
-                          <v-col md="4" cols="12" sm="12">
-                            <v-text-field
-                              dense
-                              label="Car Number"
-                              outlined
-                              :hide-details="true"
-                              type="text"
-                              v-model="customer.car_no"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-
-                    <FullAddress @location="handleFullAddress" />
-                    <v-row>
-                      <!-- <v-col md="6" cols="12" sm="12">
-                          <v-textarea
-                            rows="3"
-                            label="Address"
-                            v-model="customer.address"
-                            outlined
-                            :hide-details="true"
-                          ></v-textarea>
-                        </v-col> -->
-                      <v-col md="12">
-                        <v-textarea
-                          rows="3"
-                          label="Customer Request"
-                          v-model="room.request"
-                          :hide-details="true"
-                          outlined
-                        ></v-textarea>
-                      </v-col>
-                      <v-col cols="12" class="text-right">
-                        <v-btn small @click="nextTab" color="primary"
-                          >Next</v-btn
-                        >
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-
-              <v-tab-item>
-                <v-container>
-                  <table class="styled-table" style="width: 100%">
-                    <thead>
-                      <tr>
-                        <td><small>Date</small></td>
-                        <td><small>Day</small></td>
-                        <td><small>Room Type</small></td>
-                        <td><small>Type</small></td>
-                        <td><small>Tariff</small></td>
-                        <td><small>Adult</small></td>
-                        <td><small>Child</small></td>
-                        <td><small>Meal</small></td>
-                        <td><small>No of Rooms</small></td>
-                        <td><small>Price</small></td>
-                        <td><small>Early Checkin</small></td>
-                        <td><small>Late Checkout</small></td>
-                        <td><small>Extra Bed</small></td>
-                        <td><small>Total</small></td>
-                        <td></td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(item, index) in priceListTableView"
-                        :key="index"
-                      >
-                        <td>
-                          {{ item.date }}
-                        </td>
-                        <td>
-                          {{ item.day }}
-                        </td>
-                        <td>
-                          {{ item.room_type }}
-                        </td>
-                        <td>
-                          {{ item.day_type }}
-                        </td>
-                        <td>
-                          {{ item.room_price }}
-                        </td>
-                        <td>{{ item.no_of_adult }}</td>
-                        <td>{{ item.no_of_child }}</td>
-                        <td>{{ item.meal_name }}</td>
-                        <td>{{ item.no_of_rooms }}</td>
-                        <td>
-                          {{ convert_decimal(item.price) }}
-                        </td>
-                        <td>
-                          {{ convert_decimal(item.early_check_in) }}
-                        </td>
-                        <td>
-                          {{ convert_decimal(item.late_check_out) }}
-                        </td>
-                        <td>
-                          {{ convert_decimal(item.bed_amount) }}
-                        </td>
-                        <td>
-                          {{ convert_decimal(item.total_price) }}
-                        </td>
-                        <td class="text-center">
-                          <v-icon color="red" @click="deleteItem(index, item)"
-                            >mdi-close</v-icon
-                          >
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <v-row>
-                    <v-col md="12" class="text-right">
-                      <v-btn color="primary" @click="get_available_rooms" small>
-                        <v-icon color="white" small>mdi-plus</v-icon>
-                        Add Room
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col md="12" style="padding-top: 0px; font-weight: bold">
-                      <div
-                        class="d-flex justify-space-around py-3 styled-table"
-                        style="margin-top: 5px"
-                      >
-                        <v-col cols="10" class="text-right">
-                          <div>Sub Total:</div>
-                          <div>Add :</div>
-                          <div>Discount :</div>
-                          <v-divider color="#4390FC"></v-divider>
-                          <div style="font-size: 18px; font-weight: bold">
-                            Total :
-                          </div>
-                        </v-col>
-                        <v-col cols="2" class="text-right">
-                          <div>
-                            {{ convert_decimal(subTotal()) }}
-                          </div>
-
-                          <div>
-                            {{ convert_decimal(temp.room_extra_amount) }}
-                          </div>
-                          <div style="color: red">
-                            -{{ convert_decimal(temp.room_discount) }}
-                          </div>
-                          <v-divider color="#4390FC"></v-divider>
-                          <div style="font-size: 18px; font-weight: bold">
-                            {{ convert_decimal(processCalculation()) }}
-                          </div>
-                        </v-col>
-                      </div>
-                      <v-divider color="#4390FC"></v-divider>
-                    </v-col>
-                    <v-col md="3" sm="12" cols="12" dense>
-                      <v-select
-                        label="Discount/Extra"
-                        v-model="extraPayType"
-                        :items="['Discount', 'ExtraAmount']"
-                        dense
-                        :hide-details="true"
-                        outlined
-                      ></v-select>
-                    </v-col>
-                    <v-col
-                      md="4"
-                      sm="12"
-                      cols="12"
-                      dense
-                      v-if="extraPayType == 'Discount'"
-                    >
-                      <v-text-field
-                        label="Discount Amount"
-                        dense
-                        outlined
-                        type="number"
-                        v-model="temp.room_discount"
-                        :hide-details="true"
-                        @keyup="processCalculation"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      md="4"
-                      sm="12"
-                      cols="12"
-                      dense
-                      v-if="extraPayType == 'Discount'"
-                    >
-                      <v-text-field
-                        label="Reason"
-                        dense
-                        outlined
-                        type="text"
-                        v-model="temp.discount_reason"
-                        :hide-details="true"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      md="4"
-                      sm="12"
-                      cols="12"
-                      dense
-                      v-if="extraPayType == 'ExtraAmount'"
-                    >
-                      <v-text-field
-                        label="Extra Amount"
-                        dense
-                        outlined
-                        type="number"
-                        v-model="temp.room_extra_amount"
-                        @keyup="processCalculation"
-                        :hide-details="true"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      md="4"
-                      sm="12"
-                      cols="12"
-                      dense
-                      v-if="extraPayType == 'ExtraAmount'"
-                    >
-                      <v-text-field
-                        label="Reason"
-                        dense
-                        outlined
-                        type="text"
-                        v-model="temp.extra_amount_reason"
-                        :hide-details="true"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-tab-item>
-
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <History :customerId="customer.id"></History>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-row>
-        </v-container>
-      </v-card>
-    </v-dialog>
-
-    <!---------------------------------------------------------------->
-
-    <v-dialog v-model="searchDialog" width="500">
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col md="12" cols="12" sm="12">
-              <label class="col-form-label"
-                >Search By Mobile Number
-                <span class="error--text">*</span>
-              </label>
-              <v-text-field
-                dense
-                outlined
-                type="text"
-                v-model="search.mobile"
-                :hide-details="true"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+            </v-tab-item>
+          </v-tabs>
         </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="get_customer" :loading="checkLoader">
-            Search
-            <v-icon right dark>mdi mdi-magnify</v-icon>
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -705,7 +375,7 @@
           </v-icon>
         </v-toolbar>
         <v-card-text>
-          <v-row class="mt-2">
+          <v-row class="px-5 mt-2">
             <div class="input-group input-group-sm px-3">
               <span
                 class="input-group-text"
@@ -780,7 +450,7 @@
               (e) => {
                 selectedRooms.length > 0
                   ? (advanceDialog = false)
-                  : alert('oops', 'Select room');
+                  : $swal('Warning', 'Select room', 'error');
               }
             "
           >
@@ -790,194 +460,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="RoomDrawer" max-width="400">
-      <v-card>
-        <v-toolbar flat class="primary white--text" dense>
-          Group Booking <v-spacer></v-spacer
-          ><v-icon @click="RoomDrawer = false" color="white"
-            >mdi-close</v-icon
-          ></v-toolbar
-        >
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-menu
-                v-model="checkin_menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    label="Check In"
-                    append-icon="mdi-calendar"
-                    outlined
-                    dense
-                    hide-details
-                    v-model="formattedCheckinDate"
-                    persistent-hint
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  :min="new Date().toISOString().substr(0, 10)"
-                  v-model="temp.check_in"
-                  no-title
-                  @input="addOneDay(temp.check_in)"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-
-            <v-col cols="12">
-              <v-menu
-                v-model="checkout_menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    label="Check Out"
-                    append-icon="mdi-calendar"
-                    outlined
-                    dense
-                    hide-details
-                    v-model="formattedCheckOutDate"
-                    persistent-hint
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="temp.check_out"
-                  no-title
-                  @input="checkout_menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                label="Room Type"
-                outlined
-                dense
-                hide-details
-                item-value="id"
-                item-text="name"
-                v-model="room_type_id"
-                @change="
-                  ($event) => {
-                    get_available_rooms($event);
-                    selectRoom($event);
-                  }
-                "
-                :items="roomTypes"
-                return-object
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                v-model="multipleRoomIds"
-                hide-details
-                multiple
-                :items="availableRooms"
-                item-value="id"
-                item-text="room_no"
-                label="Select Room"
-                dense
-                outlined
-                @change="getMultipleRoomObjects(multipleRoomIds)"
-              >
-              </v-autocomplete>
-            </v-col>
-            <v-col cols="6">
-              <v-autocomplete
-                label="Adult Per Room"
-                :items="[0, 1, 2, 3]"
-                dense
-                outlined
-                v-model="temp.no_of_adult"
-                :hide-details="true"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="6">
-              <v-autocomplete
-                label="Child Per Room"
-                :items="[0, 1, 2, 3]"
-                dense
-                outlined
-                v-model="temp.no_of_child"
-                :hide-details="true"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                label="Food Plan"
-                outlined
-                dense
-                hide-details
-                item-value="id"
-                item-text="title"
-                v-model="temp.food_plan_id"
-                :items="foodplans"
-                @change="
-                  selectRoom({ name: temp.room_type, room_no: temp.room_no })
-                "
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="6">
-              <v-checkbox
-                v-model="is_early_check_in"
-                label="Early Check In"
-                :hide-details="true"
-                dense
-                @change="set_additional_charges"
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col cols="6"
-              ><v-checkbox
-                v-model="is_late_check_out"
-                label="Late Check Out"
-                :hide-details="true"
-                dense
-                @change="set_additional_charges"
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                label="Extra Bed"
-                min="0"
-                dense
-                outlined
-                type="number"
-                v-model="temp.extra_bed_qty"
-                :hide-details="true"
-                @keyup="set_additional_charges"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-btn block @click="add_room" color="primary" small>
-                Confirm Room
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
-    </v-dialog>
   </div>
   <NoAccess v-else />
 </template>
 <script>
 import History from "../../components/customer/History.vue";
-import ImagePreview from "../../components/images/ImagePreview.vue";
+import RoomDetails from "../RoomDetails.vue";
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
@@ -985,79 +473,13 @@ export default {
   props: ["onlyButton"],
   components: {
     History,
-    ImagePreview,
   },
   data() {
     return {
-      additional_charges: {},
-      is_early_check_in: false,
-      is_late_check_out: false,
       dialog: false,
-      foodplans: [],
-      multipleRoomObjects: [],
-      multipleRoomIds: [],
-      checkin_time_menu: false,
-      checkin_menu: false,
-      checkout_menu: false,
-      room_type_id: null,
-      documentDialog: false,
-      // -------customer history---------------
-      customer: "",
-      bookings: "",
-      revenue: "",
-      city_ledger: "",
-      payments: "",
-      bookedRooms: "",
       loading: false,
       advanceDialog: false,
-      selectRoomLoading: false,
-      roomTab: null,
-      headers: [
-        {
-          text: "#",
-        },
-        {
-          text: "Type",
-        },
-        {
-          text: "Source",
-        },
-        {
-          text: "Rooms",
-        },
-        {
-          text: "Booking Date",
-        },
-        {
-          text: "Check In",
-        },
-        {
-          text: "Check Out",
-        },
-        {
-          text: "Total Price",
-        },
-      ],
-      // ----------------------
-      vertical: false,
       activeTab: 0,
-      activeSummaryTab: 0,
-      // ------------------
-
-      purposes: [
-        "Tour",
-        "Business",
-        "Hospital",
-        "Holiday",
-        "Party/Functions",
-        "Friend Visit",
-        "Marriage",
-      ],
-      selectMeal: [],
-      wantNewDoc: false,
-      row: null,
-      calIn: {},
-      calOut: {},
       searchDialog: false,
       RoomDrawer: null,
       items: [
@@ -1074,387 +496,103 @@ export default {
       snackbar: false,
       checkLoader: false,
       response: "",
-      preloader: false,
       loading: false,
-      show_password: false,
-      show_password_confirm: false,
-      roomTypes: [],
-      types: [
-        "Online",
-        "Walking",
-        "Travel Agency",
-        "Complimentary",
-        "Corporate",
-      ],
-
-      search: {
-        mobile: "",
-      },
+      search: { mobile: "" },
       availableRooms: [],
       selectedRooms: [],
       rooms: [],
-      sources: [],
-
-      agentList: [],
-      CorporateList: [],
-      // room_extra_amount: 0,
-      idCards: [],
-      imgView: false,
       priceListTableView: [],
-
-      temp: {
-        food_plan_price: 0,
-        extra_bed_qty: 0,
-        food_plan_id: 0,
-        early_check_in: 0,
-        late_check_out: 0,
-        room_no: "",
-        room_type: "",
-        room_id: "",
-        price: 0,
-        days: 0,
-        sgst: 0,
-        cgst: 0,
-        check_in: "",
-        check_out: "",
-        // meal: [],
-        bed_amount: 0,
-        room_extra_amount: 0,
-        extra_amount_reason: "",
-        room_discount: 0,
-        after_discount: 0, //(price - room_discount)
-        room_tax: 0,
-        total_with_tax: 0, //(after_discount * room_tax)
-        total: 0, //(total_with_tax * bed_amount)
-        grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
-
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        tot_adult_food: 0,
-        tot_child_food: 0,
-        discount_reason: "",
-        priceList: [],
-      },
-      merge_food_in_room_price: "",
-      gst_calculation: {
-        recal_basePrice: 0,
-        recal_gst_percentage: 0,
-        recal_gst_total: 0,
-        recal_final: 0,
-      },
-      check_in_menu: false,
-      check_out_menu: false,
-      upload: {
-        name: "",
-      },
-      member_numbers: [1, 2, 3, 4],
-      isOnline: false,
-      isCorporate: false,
-      isAgent: false,
       isDiff: false,
-      sourceCompKey: 1,
-      search_available_room: "",
+      roomDetailsCompKey: 1,
+      customerCompKey: 1,
       room: {
-        customer_type: "",
-        group_name: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: "Walking",
-        source: "",
-        agent_name: "",
+        room_extra_amount: 0,
+        room_discount: 0,
         booking_status: 1,
-        check_in: null,
-        check_out: null,
         discount: 0,
-        reference_number: "",
         advance_price: 0,
         payment_mode_id: 1,
         total_days: 0,
-        sub_total: 0,
         after_discount: 0,
         sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
-        company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "Tour",
-        // priceList: [],
-      },
-      reservation: {
         check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
         check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
-        room_no: "101",
-        room_id: 82,
-        room_type: "castle",
-        price: 0,
-        origin_price: "",
-        isCalculate: true,
-        priceList: [],
-        total_tax: 0,
-        total_price_after_discount: 0,
-        total_price: 0,
-        total_discount: 0,
-      },
-      countryList: [],
-      foodPriceList: [],
-      person_type_arr: [],
-
-      titleItems: [
-        { id: 1, name: "Mr" },
-        { id: 2, name: "Mrs" },
-        { id: 3, name: "Miss" },
-        { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" },
-      ],
-
-      customer: {
-        customer_type: "Walking",
-        title: "Mr",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
         company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-        //  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        //   .toISOString()
-        //   .substr(0, 10)
       },
-      id_card_type_id: 0,
+      customer: {},
       errors: [],
-      tempAdult: {
-        tot_ab: 0,
-        tot_al: 0,
-        tot_ad: 0,
-      },
-      tempChild: {
-        tot_cb: 0,
-        tot_cl: 0,
-        tot_cd: 0,
-      },
-
-      imgPath: "",
-      image: "",
-
-      upload: {
-        name: "",
-      },
-
-      previewImage: null,
       extraPayType: "",
-      allFood: [],
-
-      breakfast: {
-        adult: 0,
-        child: 0,
-        baby: 0,
-      },
-
-      lunch: {
-        adult: 0,
-        child: 0,
-        baby: 0,
-      },
-
-      dinner: {
-        adult: 0,
-        child: 0,
-        baby: 0,
-      },
-
-      documentObj: {
-        fileExtension: null,
-        file: null,
-      },
-      business_sources: [],
     };
   },
   async created() {
-    this.get_food_price();
-    this.get_reservation();
-    this.get_room_types();
-    this.get_id_cards();
     this.runAllFunctions();
-    this.get_countries();
-    this.get_agents();
-    this.get_online();
-    this.get_Corporate();
-    // this.getImage();
-    this.preloader = false;
-
-    await this.get_food_plans();
-
-    await this.get_additional_charges();
-
-    await this.get_business_sources();
-  },
-  computed: {
-    formattedCheckinDate() {
-      if (!this.temp.check_in) return "";
-
-      const date = new Date(this.temp.check_in);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day} 12:00`;
-    },
-    formattedCheckOutDate() {
-      if (!this.temp.check_out) return "";
-
-      const date = new Date(this.temp.check_out);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day} 11:00`;
-    },
-    showImage() {
-      if (!this.customer.image && !this.previewImage) {
-        return "/no-profile-image.jpg";
-      } else if (this.previewImage) {
-        return this.previewImage;
-      }
-
-      return this.customer.image;
-    },
   },
   methods: {
-    handleSource(e) {
-      this.room.type = e;
-    },
-    close() {
-      this.sourceCompKey += 1;
-      this.room_type_id = null;
-      this.customer = {};
-      this.priceListTableView = [];
-      this.selectedRooms = [];
-      this.multipleRoomIds = [];
-      this.is_early_check_in = false;
-      this.is_late_check_out = false;
-
-      this.temp = {
-        food_plan_price: 0,
-        extra_bed_qty: 0,
-        food_plan_id: 0,
-        early_check_in: 0,
-        late_check_out: 0,
-        room_no: "",
-        room_type: "",
-        room_id: "",
-        price: 0,
-        days: 0,
-        sgst: 0,
-        cgst: 0,
-        check_in: "",
-        check_out: "",
-        // meal: [],
-        bed_amount: 0,
-        room_extra_amount: 0,
-        extra_amount_reason: "",
-        room_discount: 0,
-        after_discount: 0, //(price - room_discount)
-        room_tax: 0,
-        total_with_tax: 0, //(after_discount * room_tax)
-        total: 0, //(total_with_tax * bed_amount)
-        grand_total: 0, //(total * days)
-        company_id: this.$auth.user.company.id,
-
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        tot_adult_food: 0,
-        tot_child_food: 0,
-        discount_reason: "",
-        priceList: [],
-      };
-      this.customer = {
-        customer_type: "Walking",
-        title: "Mr",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-      };
-      this.room = {
-        customer_type: "",
-        group_name: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: "Walking",
-        source: "",
-        agent_name: "",
-        booking_status: 1,
-        check_in: null,
-        check_out: null,
-        discount: 0,
-        reference_number: "",
-        advance_price: 0,
-        payment_mode_id: 1,
-        total_days: 0,
-        sub_total: 0,
-        after_discount: 0,
-        sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
-        company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "Tour",
-        // priceList: [],
-      };
-
-      this.get_reservation();
-
-      this.dialog = false;
-    },
-    async get_business_sources() {
-      let config = {
-        params: {
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      let { data } = await this.$axios.get("business-source-list", config);
-      this.business_sources = data;
-    },
-    handleFullAddress(e) {
+    handleFoundCustomer(e) {
       this.customer = {
         ...this.customer,
         ...e,
       };
+      this.customerCompKey += 1;
+    },
+    formatDate(date) {
+      let dateObj = new Date(date);
+
+      let day = dateObj.getDate().toString().padStart(2, "0");
+      let month = dateObj
+        .toLocaleString("en-GB", { month: "short" })
+        .slice(0, 3);
+      let year = dateObj.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    },
+    handleSelectedCustomer({ customer, booking }) {
+      console.log("🚀 ~ handleSelectedCustomer ~ customer, booking:", customer, booking)
+      this.customer = customer;
+      this.room = {
+        ...this.room,
+        ...booking,
+      };
+      this.activeTab += 1;
+    },
+    close() {
+      this.customerCompKey += 1;
+      this.customer = {};
+      this.room = {
+        booking_status: 1,
+        discount: 0,
+        advance_price: 0,
+        payment_mode_id: 1,
+        total_days: 0,
+        after_discount: 0,
+        sales_tax: 0,
+        check_in: today.toISOString().split("T")[0], // format as YYYY-MM-DD
+        check_out: tomorrow.toISOString().split("T")[0], // format as YYYY-MM-DD
+        company_id: this.$auth.user.company.id,
+      };
+
+      this.priceListTableView = [];
+      this.selectedRooms = [];
+
+      this.activeTab = 0;
+
+      this.dialog = false;
+    },
+    handleTableData({ arrToMerge, payload }) {
+      this.room = {
+        ...this.room,
+        ...payload,
+      };
+      // room_type
+      let isSelect = this.selectedRooms.find(
+        (e) => e.room_id == payload.room_id
+      );
+
+      if (!isSelect) {
+        this.selectedRooms.push(payload);
+        this.priceListTableView = this.priceListTableView.concat(arrToMerge);
+        this.roomDetailsCompKey += 1;
+      }
     },
     deleteItem(index, item) {
       this.priceListTableView.splice(index, 1);
@@ -1462,107 +600,34 @@ export default {
         (e) => e.room_type !== item.room_type
       );
     },
-    set_additional_charges() {
-      this.temp.early_check_in = this.is_early_check_in
-        ? this.additional_charges.early_check_in
-        : 0;
-      this.temp.late_check_out = this.is_late_check_out
-        ? this.additional_charges.late_check_out
-        : 0;
-
-      this.temp.bed_amount = this.temp.extra_bed_qty
-        ? this.temp.extra_bed_qty * this.additional_charges.extra_bed
-        : 0;
-    },
-    async get_additional_charges() {
-      let { data } = await this.$axios.get(`additional_charges`, {
-        params: {
-          company_id: this.$auth.user.company_id,
-        },
-      });
-
-      this.additional_charges = data;
-    },
-    async get_food_plans() {
-      let { data: foodplans } = await this.$axios.get(`foodplan-list`);
-
-      this.foodplans = foodplans;
-    },
-    addOneDay(originalDate) {
-      if (!originalDate) {
-        this.temp.check_out = new Date().toISOString().substr(0, 10);
-      }
-      const date = new Date(originalDate);
-
-      date.setDate(date.getDate() + 1);
-
-      this.temp.check_out = date.toISOString().split("T")[0];
-
-      this.checkin_menu = false;
-    },
 
     nextTab() {
-      // if (this.activeTab) {
-
-      if (this.reservation.booking_status == 2) {
-        if (
-          this.customer.document == null ||
-          this.customer.document == undefined
-        ) {
-          this.alert("Missing!", "Select document", "error");
-          this.subLoad = false;
-          return;
-        }
+      if (!this.customer.customer_type) {
+        this.$swal("Warning", "Select Business Source", "error");
+        return;
       }
 
-      if (this.room.type == "") {
-        this.alert("oops", "Select Source Type", "error");
-
-        return false;
+      if (!this.customer.first_name) {
+        this.$swal("Warning", "Customer first name is required", "error");
+        return;
       }
+
+      if (!this.customer.last_name) {
+        this.$swal("Warning", "Customer last name is required", "error");
+        return;
+      }
+
+      if (!this.customer.contact_no) {
+        this.$swal("Warning", "Customer contact no is required", "error");
+        return;
+      }
+
+      if (!this.room.type) {
+        this.$swal("Warning", "Select Source Type", "error");
+        return;
+      }
+
       this.activeTab += 1;
-      // }
-    },
-    store_document_new() {
-      this.documentDialog = false;
-      return;
-    },
-    prevTab() {
-      if (this.activeTab > 0) {
-        this.activeTab -= 1;
-      }
-    },
-
-    onpick_attachment() {
-      this.$refs.attachment_input.click();
-    },
-
-    attachment(e) {
-      this.customer.image = e.target.files[0] || "";
-
-      let input = this.$refs.attachment_input;
-      let file = input.files;
-      if (file && file[0]) {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          this.previewImage = e.target.result;
-        };
-        reader.readAsDataURL(file[0]);
-        this.$emit("input", file[0]);
-      }
-    },
-
-    preview(file) {
-      if (file.name) {
-        file = file.name;
-      }
-      const fileExtension = file.split(".").pop().toLowerCase();
-      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
-      this.documentObj = {
-        fileExtension: fileExtension,
-        file: file,
-      };
-      this.imgView = true;
     },
 
     runAllFunctions() {
@@ -1572,62 +637,14 @@ export default {
     },
 
     getDays() {
-      let ci = new Date(this.temp.check_in);
-      let co = new Date(this.temp.check_out);
+      let ci = new Date(this.room.check_in);
+      let co = new Date(this.room.check_out);
       let Difference_In_Time = co.getTime() - ci.getTime();
       let days = Difference_In_Time / (1000 * 3600 * 24);
       if (days > 0) {
         return (this.room.total_days = days);
       }
     },
-
-    get_reservation() {
-      this.temp.room_id = this.reservation.room_id;
-      this.temp.room_no = this.reservation.room_no;
-      this.temp.room_type = this.reservation.room_type;
-      this.temp.price = this.reservation.price;
-      this.temp.check_in = this.reservation.check_in;
-      this.temp.check_out = this.reservation.check_out;
-      this.temp.room_tax = this.reservation.total_tax;
-      this.room.check_in = this.reservation.check_in;
-      this.room.check_out = this.reservation.check_out;
-      this.temp.priceList = this.reservation.priceList;
-      this.get_cs_gst(this.temp.room_tax);
-    },
-
-    get_food_price() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_food_prices`, payload).then(({ data }) => {
-        this.foodPriceList = data;
-        this.get_food_price_cal("adult", 1);
-      });
-    },
-
-    redirect() {
-      this.$router.push("/");
-    },
-
-    get_food_price_cal(person_type, person_qty) {
-      if (this.foodPriceList.length == 0) {
-        return;
-      }
-      let person = this.foodPriceList.find((e) => e.type == person_type);
-
-      person.qty = person_qty;
-
-      let index = this.person_type_arr.findIndex((e) => e.type == person_type);
-
-      if (index == -1) {
-        this.person_type_arr.push(person);
-      } else {
-        this.person_type_arr.splice(index, 1, person);
-      }
-    },
-
     mergeContact() {
       if (!this.isDiff) {
         this.customer.whatsapp = this.customer.contact_no;
@@ -1642,15 +659,9 @@ export default {
       }
     },
 
-    get_countries() {
-      this.$axios.get(`get_countries`).then(({ data }) => {
-        this.countryList = data;
-      });
-    },
-
     processCalculation() {
-      let discount = parseFloat(this.temp.room_discount) || 0;
-      let room_extra_amount = parseFloat(this.temp.room_extra_amount) || 0;
+      let discount = parseFloat(this.room.room_discount) || 0;
+      let room_extra_amount = parseFloat(this.room.room_extra_amount) || 0;
       let sub_total = parseFloat(this.room.sub_total) || 0;
 
       let advance_price = parseFloat(this.room.advance_price) || 0;
@@ -1668,284 +679,6 @@ export default {
         (total, num) => total + num.total_price,
         0
       ));
-    },
-
-    getType(val) {
-      if (val == "Online") {
-        this.isOnline = true;
-        this.isCorporate = false;
-        this.isAgent = false;
-        return;
-      }
-      if (val == "Travel Agency") {
-        this.isCorporate = false;
-        this.isOnline = false;
-        this.isAgent = true;
-        return;
-      }
-      if (val == "Corporate") {
-        this.isOnline = false;
-        this.isAgent = false;
-        this.isCorporate = true;
-        return;
-      }
-
-      if (val == "Walking") {
-        this.room.source = "walking";
-      }
-
-      if (val == "Complimentary") {
-        this.room.source = "complimentary";
-      }
-
-      this.isOnline = false;
-      this.isAgent = false;
-    },
-
-    get_room_types() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`room_type`, payload).then(({ data }) => {
-        this.roomTypes = data;
-      });
-    },
-
-    get_gst(item, type) {
-      // agent
-      // online
-      // corporate
-
-      switch (type) {
-        case "agent":
-          this.customer.gst_number = this.agentList.find(
-            (e) => e.name == item
-          ).gst;
-          break;
-        case "online":
-          this.customer.gst_number = this.sources.find(
-            (e) => e.name == item
-          ).gst;
-          break;
-        case "corporate":
-          this.customer.gst_number = this.CorporateList.find(
-            (e) => e.name == item
-          ).gst;
-          break;
-        default:
-          break;
-      }
-    },
-
-    get_agents() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_agent`, payload).then(({ data }) => {
-        this.agentList = data;
-      });
-    },
-    get_Corporate() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_corporate`, payload).then(({ data }) => {
-        this.CorporateList = data;
-      });
-    },
-
-    get_online() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_online`, payload).then(({ data }) => {
-        this.sources = data;
-      });
-    },
-
-    get_id_cards() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
-        this.idCards = data;
-      });
-    },
-    searchAvailableRoom(val) {
-      let arr = this.availableRooms;
-      let res = arr.filter((e) => e.room_no == val);
-      if (val.length == 0) {
-        this.get_available_rooms();
-        return;
-      }
-      if (res.length > 0) {
-        this.availableRooms = res;
-      }
-    },
-
-    get_cs_gst(amount) {
-      let gst = parseFloat(amount) / 2;
-      this.temp.cgst = gst;
-      this.temp.sgst = gst;
-    },
-
-    getMultipleRoomObjects(idsToFilter) {
-      this.multipleRoomObjects = this.availableRooms.filter((item) =>
-        idsToFilter.includes(item.id)
-      );
-    },
-    selectRoom(item) {
-      let foodplan = this.foodplans.find((e) => e.id == this.temp.food_plan_id);
-
-      this.selectRoomLoading = true;
-
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          roomType: item.name,
-          room_no: item.room_no,
-          checkin: this.temp.check_in,
-          checkout: this.temp.check_out,
-        },
-      };
-
-      this.$axios
-        .get(`get_data_by_select_with_tax`, payload)
-        .then(({ data }) => {
-          let fPrice = foodplan.unit_price;
-          let adult_food_plan_price = fPrice * this.temp.no_of_adult;
-          let child_food_plan_price = (fPrice * this.temp.no_of_child) / 2;
-
-          this.selectRoomLoading = false;
-          this.temp.room_type = item.name;
-          this.temp.meal_name = foodplan.title;
-          this.temp.food_plan_price =
-            adult_food_plan_price + child_food_plan_price;
-          this.temp.company_id = this.$auth.user.company.id;
-          this.temp.price = data.total_price;
-          this.temp.priceList = data.data;
-          this.temp.room_tax = data.total_tax;
-          this.get_cs_gst(data.total_tax);
-        });
-    },
-
-    capsTitle(val) {
-      if (!val) return "---";
-      let res = val;
-      let upper = res.toUpperCase();
-      // let title = upper.replace(/[^A-Z]/g, " ");
-      return upper;
-    },
-
-    add_room() {
-      if (this.room_type_id == null) {
-        this.$swal("Missing!", "Select room type", "error");
-        return;
-      }
-
-      if (!this.multipleRoomIds.length) {
-        this.$swal("Missing!", "Select room", "error");
-        return;
-      }
-
-      if (!this.temp.food_plan_id) {
-        this.$swal("Warning!", "Select food plan", "error");
-        return;
-      }
-
-      let selectedRoomsForTableView = [];
-
-      let {
-        price,
-        early_check_in,
-        late_check_out,
-        room_discount,
-        room_extra_amount,
-        meal_name,
-        food_plan_price,
-        bed_amount,
-        priceList,
-        room_type,
-        no_of_adult,
-        no_of_child,
-      } = this.temp;
-
-      let sub_total =
-        price +
-        food_plan_price +
-        early_check_in +
-        late_check_out +
-        parseFloat(room_extra_amount == "" ? 0 : room_extra_amount);
-
-      let after_discount =
-        sub_total - (room_discount == "" ? 0 : room_discount);
-
-      this.room.check_in = this.temp.check_in;
-      this.room.check_out = this.temp.check_out;
-
-      this.multipleRoomObjects.forEach((item) => {
-        let isSelect = this.selectedRooms.find(
-          (e) => e.room_no == item.room_no
-        );
-
-        if (!isSelect) {
-          let payload = {
-            ...this.temp,
-            meal: "------",
-            days: this.getDays(),
-            room_discount: room_discount == "" ? 0 : room_discount,
-            after_discount: after_discount,
-            total: after_discount,
-            grand_total: after_discount,
-            room_no: item.room_no,
-            room_id: item.id,
-          };
-
-          selectedRoomsForTableView.push(payload);
-          this.selectedRooms.push(payload);
-
-          this.runAllFunctions();
-          this.alert("Success!", "success selected room", "success");
-          this.isSelectRoom = false;
-          this.RoomDrawer = false;
-        }
-      });
-
-      let adult_food_charges = food_plan_price * no_of_adult;
-      let child_food_charges = (food_plan_price * no_of_child) / 2;
-      let total_food_charges = adult_food_charges + child_food_charges;
-
-      let extras =
-        early_check_in + late_check_out + bed_amount + total_food_charges;
-
-      let arrToMerge = priceList.map((e) => ({
-        ...e,
-        price_with_meal: e.price + total_food_charges,
-        no_of_rooms: selectedRoomsForTableView.length,
-        room_type,
-        no_of_adult,
-        no_of_child,
-        meal_name: `${meal_name} (${total_food_charges})`,
-        extras,
-        early_check_in,
-        late_check_out,
-        bed_amount,
-        total_price: (e.price + extras) * selectedRoomsForTableView.length,
-      }));
-
-      this.priceListTableView = this.mergeEntries(
-        this.priceListTableView.concat(arrToMerge)
-      );
     },
 
     mergeEntries(entries) {
@@ -1967,29 +700,6 @@ export default {
       return result;
     },
 
-    get_available_rooms(item) {
-      if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
-        alert("Please select date");
-        this.RoomDrawer = false;
-        return;
-      }
-
-      this.RoomDrawer = true;
-      this.$axios
-        .get(`get_available_rooms_by_date_and_room_type`, {
-          params: {
-            check_in: this.temp.check_in,
-            check_out: this.temp.check_out,
-            room_type_id: item.id,
-            company_id: this.$auth.user.company.id,
-          },
-        })
-        .then(({ data }) => {
-          this.availableRooms = data;
-        });
-      this.runAllFunctions();
-    },
-
     get_customer() {
       this.errors = [];
       this.checkLoader = true;
@@ -2009,11 +719,11 @@ export default {
         .get(`get_customer/${contact_no}`, payload)
         .then(({ data }) => {
           if (!data.status) {
-            this.checkLoader = false;
-            // this.customer = {};
             this.customer.contact_no = contact_no;
             this.customer.whatsapp = contact_no;
             alert("Customer not found");
+            this.searchDialog = false;
+            this.checkLoader = false;
             return;
           }
 
@@ -2021,9 +731,6 @@ export default {
             ...data.data,
             customer_id: data.data.id,
           };
-          this.customer.id_card_type_id = parseInt(
-            this.customer.id_card_type_id
-          );
 
           this.searchDialog = false;
           this.checkLoader = false;
@@ -2043,26 +750,11 @@ export default {
         this.room.advance_price = 0;
       }
 
-      if (this.reservation.booking_status == 2) {
-        if (
-          this.customer.document == null ||
-          this.customer.document == undefined
-        ) {
-          this.alert("Missing!", "Select document", "error");
-          this.subLoad = false;
-          return;
-        }
-      }
-
       this.subLoad = true;
       if (this.selectedRooms.length == 0) {
-        this.alert("Missing!", "Atleast select one room", "error");
+        this.$swal("Missing!", "Atleast select one room", "error");
         this.subLoad = false;
         return;
-      }
-
-      if (this.reservation.booking_status == 2) {
-        this.room.booking_status = 2;
       }
 
       let rooms = this.selectedRooms.map((e) => e.room_no);
@@ -2076,7 +768,7 @@ export default {
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
-            this.alert(
+            this.$swal(
               "No reservation created!",
               "Some fields are missing or invalid",
               "error"
@@ -2110,32 +802,13 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.close();
+            this.selectedRooms = [];
+            this.priceListTableView = [];
             this.$emit(`success`);
+            this.dialog = false;
           }
         })
         .catch((e) => console.log(e));
-    },
-
-    store_document(id) {
-      let payload = new FormData();
-      payload.append("document", this.room.document);
-      payload.append("image", this.customer.image);
-      payload.append("booking_id", id);
-      this.$axios
-        .post("/store_document", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.errors = data.errors;
-            this.subLoad = false;
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    alert(title = "Success!", message = "hello", type = "error") {
-      this.$swal(title, message, type);
     },
   },
 };

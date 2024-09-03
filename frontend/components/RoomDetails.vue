@@ -1,21 +1,23 @@
 <template>
   <v-dialog v-model="RoomDetailDialog" max-width="460">
     <template v-slot:activator="{ on, attrs }">
-      <v-icon v-bind="attrs" v-on="on" color="primary" small> mdi-eye </v-icon>
+      <span v-bind="attrs" v-on="on">
+        <v-icon color="primary" small> mdi-eye </v-icon><small class="ml-2">View</small>
+      </span>
     </template>
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
-        Rooms <v-spacer></v-spacer
+        Rooms {{room_type}} <v-spacer></v-spacer
         ><v-icon @click="RoomDetailDialog = false" color="white"
           >mdi-close</v-icon
         ></v-toolbar
       >
       <v-container>
         <v-tabs show-arrows>
-          <v-tab v-for="(item, index) in selectedRooms" :key="index">{{
+          <v-tab v-for="(item, index) in filteredSelectedRooms" :key="index">{{
             item.room_no
           }}</v-tab>
-          <v-tab-item v-for="(item, index) in selectedRooms" :key="index">
+          <v-tab-item v-for="(item, index) in filteredSelectedRooms" :key="index">
            <v-container>
             <div
               class="px-5 pt-2 d-flex justify-space-between"
@@ -216,10 +218,14 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["label", "selectedRooms"],
+  props: ["label", "selectedRooms","room_type"],
   data: () => ({
     RoomDetailDialog: false,
+    filteredSelectedRooms:[],
   }),
+  created(){
+    this.filteredSelectedRooms = this.selectedRooms.filter(e => e.room_type == this.room_type);
+  },
   methods: {
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {

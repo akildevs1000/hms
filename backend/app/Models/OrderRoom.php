@@ -79,6 +79,11 @@ class OrderRoom extends Model
         "breakfast",
         "lunch",
         "dinner",
+
+
+        "tarrif",
+        "day",
+
     ];
 
     /**

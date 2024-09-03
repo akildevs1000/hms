@@ -162,7 +162,7 @@
     <v-dialog
       v-model="checkInDialog"
       persistent
-      :width="1366"
+      width="1000"
       class="checkin-models"
     >
       <v-card>
@@ -369,7 +369,7 @@
                 <BookingModify
                   :isHall="isHall"
                   @close="get_events()"
-                  :key="modifyCompKey" 
+                  :key="modifyCompKey"
                   :BookedRoomId="evenIid"
                 />
               </v-list-item-title>
@@ -424,9 +424,26 @@
                 <div
                   style="display: flex; justify-content: flex-end; gap: 16px"
                 >
-                  <BookingHall  @success="handleSuccess(`Hall has been Booked`)" :onlyButton="true" />
-                  <BookingIndividual  @success="handleSuccess(`Room has been Booked`)" :onlyButton="true" />
-                  <BookingGroup @success="handleSuccess(`Room(s) has been Booked`)" :onlyButton="true" />
+                  <BookingCalendar
+                    ref="BookingCalendarComp"
+                    :key="BookingCalendarCompKey"
+                    :reservation="reservation"
+                    @success="handleSuccess(`Room has been Booked`)"
+                    :onlyButton="true"
+                  />
+
+                  <BookingHall
+                    @success="handleSuccess(`Hall has been Booked`)"
+                    :onlyButton="true"
+                  />
+                  <BookingIndividual
+                    @success="handleSuccess(`Room has been Booked`)"
+                    :onlyButton="true"
+                  />
+                  <BookingGroup
+                    @success="handleSuccess(`Room(s) has been Booked`)"
+                    :onlyButton="true"
+                  />
                 </div>
               </v-col>
               <v-col cols="2" class="text-right">
@@ -768,6 +785,7 @@ export default {
       defaultDaysCount: 31,
 
       search: "",
+      BookingCalendarCompKey:1,
     };
   },
 
@@ -1275,7 +1293,8 @@ export default {
             this.$router.push(`/booking/hall`);
             return;
           }
-          this.$router.push(`/hotel/new2`);
+
+          this.$refs["BookingCalendarComp"].dialog = true
         });
     },
 

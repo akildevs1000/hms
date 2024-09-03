@@ -182,6 +182,21 @@
 </template>
 <script>
 export default {
+  props: {
+    defaultSource: {
+      type: Object,
+      default: () => ({
+        type: "default",
+        source: "default",
+        reference_no: "default",
+        paid_by: "default",
+      }),
+    },
+    isOverride: {
+      type: Boolean,
+      default: () => false,
+    },
+  },
   data: () => ({
     types: ["Online", "Walking", "Travel Agency", "Complimentary", "Corporate"],
     filteredSearch: [],
@@ -196,31 +211,43 @@ export default {
       gst: null,
       address: null,
     },
-    sourceType: {
-      type: null,
-      source: null,
-      reference_no: null,
-      paid_by: null,
-    },
-    defaultSourceType: {
-      type: null,
-      source: null,
-      reference_no: null,
-      paid_by: null,
-    },
+    sourceType: {},
     isOnline: false,
     isCorporate: false,
     isAgent: false,
     gst_number: null,
   }),
   async created() {
+    if (this.isOverride) {
+      //     "type": "Online",
+      // "source": "Calderon and chaney trading",
+      // "purpose": "Business",
+      // "request": "sdfsdfsdfdsfsdfsfs",
+      // "reference_no": "1111",
+      // "paid_by": "1"
+
+      this.sourceType.type = this.defaultSource.type;
+      this.displayObject.name = this.defaultSource.source;
+      this.$emit("sourceObject", this.defaultSource);
+      return;
+    }
+    this.defaultSource.type = this.defaultSource.type;
+    this.displayObject.name = this.defaultSource.source;
+    this.$emit("sourceObject", this.defaultSource);
     this.get_agents();
     this.get_online();
     this.get_Corporate();
   },
   methods: {
     submit() {
-      this.$emit("sourceType", this.sourceType.source);
+      let payload = {
+        type: this.sourceType.type,
+        source: this.response.name,
+        reference_no: this.sourceType.reference_no,
+        paid_by: this.sourceType.paid_by,
+      };
+
+      this.$emit("sourceObject", payload);
       this.displayObject = this.response;
       this.sourceDialog = false;
     },
@@ -279,14 +306,19 @@ export default {
     },
     getType(val) {
       if (val == "Walking" || val == "Complimentary") {
-        this.sourceType.source = val && val.toLocaleLowerCase();
-        this.$emit("source", this.sourceType);
+        let payload = {
+          type: this.sourceType.type,
+          source: "---",
+          reference_no: "---",
+          paid_by: "---",
+        };
+
+        this.$emit("sourceObject", payload);
         return;
       }
 
-      //    v-model="sourceType.reference_no"  v-model="sourceType.source" paid_by
-
       this.sourceDialog = true;
+
       if (val == "Online") {
         this.isOnline = true;
         this.isCorporate = false;
@@ -322,9 +354,7 @@ export default {
         return;
       }
 
-      let result = items.find(
-        ({ name }) => name && name.toLowerCase().includes(search.toLowerCase())
-      );
+      let result = items.find(({ name }) => name && name.includes(search));
 
       this.response = {
         name: result.name,

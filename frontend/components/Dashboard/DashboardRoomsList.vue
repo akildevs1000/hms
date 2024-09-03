@@ -22,7 +22,7 @@
       <v-dialog
         v-model="checkInDialog"
         persistent
-        :width="1366"
+        width="1000"
         class="checkin-models"
       >
         <v-card>

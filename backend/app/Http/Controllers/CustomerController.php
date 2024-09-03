@@ -152,7 +152,7 @@ class CustomerController extends Controller
 
     public function getCustomerById($id, Request $request)
     {
-        $data = Customer::where('id', $id)
+        $data = Customer::with("latest_booking")->where('id', $id)
             ->where('company_id', $request->company_id)
             ->first();
 

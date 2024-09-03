@@ -458,6 +458,11 @@ class BookingController extends Controller
                     $orderRooms['lunch'] = $bookedRoomId->lunch ?? 0;
                     $orderRooms['dinner'] = $bookedRoomId->dinner ?? 0;
 
+
+                    $orderRooms['tariff'] = $list['weekday'] ?? "";
+                    $orderRooms['day'] = $list['day']  ?? null;
+
+
                     OrderRoom::create($orderRooms);
                 }
             }
@@ -733,7 +738,7 @@ class BookingController extends Controller
             $booking = Booking::find($booking_id);
             $customer = Customer::find($request->customer_id);
             $booking->check_in_price = $request->new_payment;
-            $booking->booking_status = 2;
+            // $booking->booking_status = 2;
             $booking->id_card_no = $request->id_card_no;
             $booking->expired = $request->expired;
             $booking->id_card_type = IdCardType::find($request->id_card_type_id)->name ?? "";
@@ -742,23 +747,6 @@ class BookingController extends Controller
 
             $customer->dob = date("Y-m-d");
 
-            if ($request->hasFile('document')) {
-                $file = $request->file('document');
-                $ext = $file->getClientOriginalExtension();
-                $fileName = time() . '.' . $ext;
-                $path = $file->storeAs('public/documents/booking', $fileName);
-                Storage::copy($path, 'public/documents/customer/' . $fileName);
-                $booking->document = $fileName;
-                $customer->document = $fileName;
-            }
-
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $ext = $file->getClientOriginalExtension();
-                $fileName = time() . '.' . $ext;
-                $path = $file->storeAs('public/documents/customer/photo', $fileName);
-                $customer->image = $fileName;
-            }
             $checkedIn = $booking->save();
             if ($checkedIn) {
                 $customer->save();
@@ -901,7 +889,7 @@ class BookingController extends Controller
         try {
             // session(['isCheckoutSes' => true]);
 
-            $booking_id = $request->booking_id; 
+            $booking_id = $request->booking_id;
             $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
             $customer = Customer::find($booking->customer_id);
             if ($request->discount > 0) {
@@ -2591,6 +2579,9 @@ class BookingController extends Controller
         $data['reservation_no'] = $this->getReservationNumber($data);
         $data['verified'] = Booking::VERIFICATION_REQUIRED;
         $data['booking_type'] = $request->booking_type ?? "room";
+
+        $data['discount'] = $request->room_discount ?? 0;
+        $data['total_extra'] = $request->room_extra_amount ?? 0;
 
         if ($request->filled('api_json_reference_number')) {
             $data['widget_confirmation_number'] = $request->api_json_reference_number;

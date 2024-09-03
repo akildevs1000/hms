@@ -449,6 +449,8 @@
                     <th>Child</th>
                     <th>Meal</th>
                     <th>Extra Bed</th>
+                    <th>Early Checkin</th>
+                    <th>Late Checkout</th>
                     <th class="text-right">Price</th>
                     <th class="text-right">Total</th>
                   </tr>
@@ -471,6 +473,12 @@
                     </td>
                     <td class="text-right">
                       {{ item.bed_amount || "---" }}
+                    </td>
+                    <td class="text-right">
+                      {{ item.early_check_in || "---" }}
+                    </td>
+                    <td class="text-right">
+                      {{ item.late_check_out || "---" }}
                     </td>
                     <td class="text-right">
                       {{ item.price || "---" }}
