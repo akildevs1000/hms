@@ -33,6 +33,11 @@ class Customer extends Model
         return $this->hasOne(Booking::class);
     }
 
+    public function latest_booking()
+    {
+        return $this->hasOne(Booking::class)->latest();
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);

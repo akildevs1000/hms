@@ -139,6 +139,7 @@ class CustomerController extends Controller
     public function getCustomer($id, Request $request)
     {
         $data = Customer::where('contact_no', $id)
+            ->with("latest_booking")
             ->where('company_id', $request->company_id)
             ->first();
 

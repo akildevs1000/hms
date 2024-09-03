@@ -53,6 +53,10 @@
 
   Route::post('check_in_room', [BookingController::class, 'check_in_room']);
   Route::post('quick_check_in_room', [BookingController::class, 'quick_check_in_room']);
+  Route::post('quick_check_out_room', [BookingController::class, 'quick_check_out_room']);
+
+
+  
   Route::post('direct_check_in_room', [BookingController::class, 'direct_check_in_room']);
 
   Route::post('check_out_room', [BookingController::class, 'check_out_room']);
