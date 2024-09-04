@@ -19,8 +19,6 @@
 
     <!-- dialogs -->
     <div>
-   
-
       <v-dialog
         v-model="GRCDialog"
         persistent
@@ -727,7 +725,14 @@
               </v-col>
               <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingQuickCheckIn
+                  :key="BookingQuickCheckInCompKey"
                   @success="handleSuccess(`Room(s) has been Checked In`)"
+                />
+              </v-col>
+              <v-col cols="1" class="mt-0" style="max-width: 60px">
+                <BookingQuickCheckOut
+                  :key="keyTabAll"
+                  @success="handleSuccess(`Room(s) has been Checked Out`)"
                 />
               </v-col>
               <v-col cols="3">
@@ -1034,6 +1039,7 @@ export default {
   },
   data() {
     return {
+      BookingQuickCheckInCompKey: 1,
       calenderColorCodes: [],
       tab: 0,
       filterDate: "2024-08-15",

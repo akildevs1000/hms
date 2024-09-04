@@ -15,7 +15,7 @@
             <v-avatar size="125" class="">
               <v-img
                 :src="
-                  (customer && customer.captured_photo) ||
+                  (roomData?.customer?.captured_photo) ||
                   '/no-profile-image.jpg'
                 "
               ></v-img>
@@ -120,41 +120,43 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <table style="width: 100%">
-              <tr style="font-size: 13px">
-                <td class="text-center">Date</td>
-                <td class="text-center">Debit</td>
-                <td class="text-center">Credit</td>
-                <td class="text-center">Balance</td>
-                <td class="text-center">Receipt</td>
-              </tr>
+            <div style="overflow: auto; min-height: 370px; max-height: 300px">
+              <table style="width: 100%">
+                <tr style="font-size: 13px">
+                  <td class="text-center">Date</td>
+                  <td class="text-center">Debit</td>
+                  <td class="text-center">Credit</td>
+                  <td class="text-center">Balance</td>
+                  <td class="text-center">Receipt</td>
+                </tr>
 
-              <tr
-                v-for="(item, index) in transactions"
-                :key="index"
-                style="font-size: 13px"
-              >
-                <td class="text-center">{{ item.created_at || "---" }}</td>
-                <td class="text-center">
-                  {{ item && item.debit == 0 ? "---" : item.debit }}
-                </td>
-                <td class="text-center">
-                  {{ item && item.credit == 0 ? "---" : item.credit }}
-                </td>
-                <td class="text-center">{{ item.balance || "---" }}</td>
-                <td class="text-center">
-                  {{ item.id }}
-                </td>
-              </tr>
-              <!-- <tr style="font-size: 13px; background-color: white; color: black">
+                <tr
+                  v-for="(item, index) in transactions"
+                  :key="index"
+                  style="font-size: 13px"
+                >
+                  <td class="text-center">{{ item.created_at || "---" }}</td>
+                  <td class="text-center">
+                    {{ item && item.debit == 0 ? "---" : item.debit }}
+                  </td>
+                  <td class="text-center">
+                    {{ item && item.credit == 0 ? "---" : item.credit }}
+                  </td>
+                  <td class="text-center">{{ item.balance || "---" }}</td>
+                  <td class="text-center">
+                    {{ item.id }}
+                  </td>
+                </tr>
+                <!-- <tr style="font-size: 13px; background-color: white; color: black">
             <th colspan="4" class="text-center">Balance</th>
             <td class="text-right" style="background-color: white">
               {{ totalTransactionAmount + exceedHoursCharges }}
             </td>
           </tr> -->
-            </table>
+              </table>
+            </div>
           </v-col>
-          <v-col cols="12">
+          <v-col cols="12" class="align-self-end">
             <v-autocomplete
               label="Payment Mode"
               v-model="payment_mode_id"
@@ -192,48 +194,14 @@
               hide-details
             ></v-text-field>
           </v-col>
-         
-          <!-- <v-col cols="6">
-            <v-btn outlined left color="primary" small @click="redirect_to_invoice(BookingData.id)"
-              ><v-icon small>mdi-printer</v-icon>Invoice</v-btn
-            >
-          </v-col>
-          <v-col cols="6" class="text-right">
-            <v-btn outlined left color="primary" small @click="store_check_out"
-              ><v-icon small>mdi-file</v-icon>Receipt</v-btn
-            >
-          </v-col> -->
-
-<!-- 
           <v-col cols="6">
-            <v-btn color="primary" small @click="store_check_out"
-              ><v-icon small>mdi-printer</v-icon>Invoice</v-btn
-            >
+            <v-checkbox
+              dense
+              label="Print Invoice"
+              v-model="isPrintInvoice"
+              hide-details
+            ></v-checkbox>
           </v-col>
-          <v-col cols="6" class="text-right">
-            <v-btn color="primary" small @click="store_check_out"
-              ><v-icon small>mdi-file</v-icon>Receipt</v-btn
-            >
-          </v-col> -->
-
-          <v-col cols="6">
-            <v-icon color="primary" left @click="redirect_to_invoice(BookingData.id)">mdi-printer</v-icon>Invoice
-          </v-col>
-          <v-col cols="6" class="text-right">
-            <v-icon color="primary" left>mdi-file</v-icon>Invoice
-          </v-col>
-
-
-          <!-- <v-col cols="6">
-            <v-btn block color="primary" small @click="store_check_out"
-              ><v-icon small>mdi-printer</v-icon>Invoice</v-btn
-            >
-          </v-col>
-          <v-col cols="6" class="text-right">
-            <v-btn block color="primary" small @click="store_check_out"
-              ><v-icon small>mdi-file</v-icon>Receipt</v-btn
-            >
-          </v-col> -->
           <v-col cols="12">
             <v-btn color="primary" block @click="store_check_out">Pay</v-btn>
           </v-col>
@@ -255,7 +223,7 @@ export default {
 
   data() {
     return {
-      payment_mode_id:1,
+      payment_mode_id: 1,
       change_checkout_time: false,
 
       grand_remaining_price: 0,
@@ -368,6 +336,7 @@ export default {
         user_id: this.$auth.user.id,
         isHall: this.isHall,
         exceedHoursCharges: this.exceedHoursCharges,
+        room_id: this.roomData.room_id,
       };
 
       // this.loading = true;
@@ -380,12 +349,13 @@ export default {
           } else {
             this.loading = false;
             this.$emit("close-dialog");
-
-            // this.closeDialog(payload);
-            // this.alert("Success", "Successfully Checkout", "success");
-            // if (this.isPrintInvoice) {
-            //   this.redirect_to_invoice(data.bookingId);
-            // }
+            this.$swal("Success!", "Room has been checked out", "success").then(
+              () => {
+                if (this.isPrintInvoice) {
+                  this.redirect_to_invoice(data.bookingId);
+                }
+              }
+            );
           }
         })
         .catch((e) => console.log(e));

@@ -38,6 +38,8 @@
   Route::get('get_booking', [BookingController::class, 'get_booking']);
 
   Route::get('get-booked-room-list', [BookingController::class, 'getBookedRoomList']);
+  Route::get('get-checked-in-room-list', [BookingController::class, 'getCheckedInRoomList']);
+
 
   Route::get('get_booked_room', [BookingController::class, 'get_booked_room']);
 

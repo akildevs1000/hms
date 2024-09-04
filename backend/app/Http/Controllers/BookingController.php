@@ -58,6 +58,13 @@ class BookingController extends Controller
             ->orderByDesc("room_no")
             ->get();
     }
+    public function getCheckedInRoomList()
+    {
+        return BookedRoom::where('booking_id', request('booking_id'))
+            ->where('booking_status', BookedRoom::CHECKED_IN)
+            ->orderByDesc("room_no")
+            ->get();
+    }
 
     public function booking_validate(BookingRequest $request)
     {
@@ -887,9 +894,11 @@ class BookingController extends Controller
     public function quick_check_out_room(Request $request)
     {
         try {
+
             // session(['isCheckoutSes' => true]);
 
             $booking_id = $request->booking_id;
+            $selectedRooms = $request->selectedRooms ?? [];
             $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
             $customer = Customer::find($booking->customer_id);
             if ($request->discount > 0) {
@@ -897,6 +906,7 @@ class BookingController extends Controller
                 $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();
                 $bookedRoom->increment('room_discount', $request->discount);
             }
+
 
             $transactionData = [
                 'booking_id' => $booking->id,
@@ -981,12 +991,14 @@ class BookingController extends Controller
                 $booking->check_out = date('Y-m-d H:i');
                 $booking->save();
 
-                BookedRoom::whereBookingId($booking_id)->update(
-                    [
-                        "booking_status" => 3,
-                        "check_out" => date('Y-m-d H:i')
-                    ]
-                );
+                BookedRoom::where("booking_id", $booking_id)
+                    ->whereIn("room_id", $selectedRooms)
+                    ->update(
+                        [
+                            "booking_status" => 3,
+                            "check_out" => date('Y-m-d H:i')
+                        ]
+                    );
 
                 // if (app()->isProduction()) {
                 //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
@@ -1022,6 +1034,7 @@ class BookingController extends Controller
             // session(['isCheckoutSes' => true]);
 
             $booking_id = $request->booking_id;
+            $room_id = $request->room_id;
             $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
             $customer = Customer::find($booking->customer_id);
             if ($request->discount > 0) {
@@ -1114,7 +1127,7 @@ class BookingController extends Controller
                 $booking->check_out = date('Y-m-d H:i');
                 $booking->save();
 
-                BookedRoom::whereBookingId($booking_id)->update(
+                BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
                     [
                         "booking_status" => 3,
                         "check_out" => date('Y-m-d H:i')

@@ -32,7 +32,8 @@
       <v-col md="10" cols="12">
         <v-row>
           <v-col md="4" cols="12" sm="12">
-            <v-text-field v-if="isGroupBooking"
+            <v-text-field
+              v-if="isGroupBooking"
               label="Group Name *"
               dense
               outlined
@@ -419,6 +420,7 @@ export default {
       this.business_sources = data;
     },
     nextTab() {
+      
       if (!this.customer.customer_type) {
         this.$swal("Warning", "Select Business Source", "error");
         return;
@@ -453,10 +455,12 @@ export default {
         return;
       }
 
-      this.$emit(`selectedCustomer`, {
+      let payload = {
         customer: this.customer,
-        booking: { ...this.booking, ...this.group_name },
-      });
+        booking: { ...this.booking, group_name: this.group_name },
+      };
+
+      this.$emit(`selectedCustomer`, payload);
     },
 
     mergeContact() {
