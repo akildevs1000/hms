@@ -101,7 +101,7 @@
           </v-col>
           <v-col cols="12">
             <v-autocomplete
-            multiple
+              multiple
               v-model="myArray"
               hide-details
               :items="availableRooms"
@@ -456,6 +456,8 @@ export default {
         this.multipleRoomId = e;
         this.add_room(this.temp);
       });
+
+      this.close();
     },
     add_room({
       room_type,
@@ -537,7 +539,6 @@ export default {
         arrToMerge,
         payload,
       });
-      this.close();
     },
     getFullDay(day) {
       let json = {

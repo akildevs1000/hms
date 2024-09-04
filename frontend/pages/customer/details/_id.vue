@@ -481,9 +481,9 @@
                       {{ item.late_check_out || "---" }}
                     </td>
                     <td class="text-right">
-                      {{ item.price || "---" }}
+                      {{ convert_decimal(item.price) || "---" }}
                     </td>
-                    <td class="text-right">{{ item.total || "---" }}</td>
+                    <td class="text-right">{{ convert_decimal(item.total) || "---" }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -1065,6 +1065,13 @@ export default {
   mounted() {},
 
   methods: {
+    convert_decimal(n) {
+      if (n === +n && n !== (n | 0)) {
+        return n.toFixed(2);
+      } else {
+        return n + ".00";
+      }
+    },
     downloadCustomerAttachments() {
       let id = this.$route.params.id;
       let element = document.createElement("a");

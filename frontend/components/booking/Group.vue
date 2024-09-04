@@ -339,7 +339,10 @@
 
               <v-row class="text-right mb-3">
                 <v-col>
-                  <RoomDialogForGroup label="Room" @tableData="handleTableData" />
+                  <RoomDialogForGroup
+                    label="Room"
+                    @tableData="handleTableData"
+                  />
                   <v-btn
                     small
                     class="blue"
@@ -547,7 +550,6 @@ export default {
       return `${day} ${month} ${year}`;
     },
     handleSelectedCustomer({ customer, booking }) {
-      console.log("🚀 ~ handleSelectedCustomer ~ customer, booking:", customer, booking)
       this.customer = customer;
       this.room = {
         ...this.room,
@@ -582,6 +584,7 @@ export default {
       this.room = {
         ...this.room,
         ...payload,
+        total_days: payload.days,
       };
       // room_type
       let isSelect = this.selectedRooms.find(

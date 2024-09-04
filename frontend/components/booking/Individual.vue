@@ -547,7 +547,6 @@ export default {
       return `${day} ${month} ${year}`;
     },
     handleSelectedCustomer({ customer, booking }) {
-      console.log("🚀 ~ handleSelectedCustomer ~ customer, booking:", customer, booking)
       this.customer = customer;
       this.room = {
         ...this.room,
@@ -582,6 +581,7 @@ export default {
       this.room = {
         ...this.room,
         ...payload,
+        total_days: payload.days,
       };
       // room_type
       let isSelect = this.selectedRooms.find(

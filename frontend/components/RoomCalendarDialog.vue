@@ -14,7 +14,7 @@
     </template>
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
-        Individual Booking <v-spacer></v-spacer
+        Calendar Booking <v-spacer></v-spacer
         ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
       >
       <v-container>
@@ -273,6 +273,9 @@ export default {
     };
     this.temp = {
       ...this.temp,
+      check_in: this.reservation.check_in,
+      check_out: this.reservation.check_out,
+      priceList: this.reservation.priceList,
       room_no: this.reservation.room_no,
       room_id: this.reservation.room_id,
       room_type: this.reservation.room_type,

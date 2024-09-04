@@ -712,7 +712,7 @@ export default {
   methods: {
     handleCheckedInSuccess() {
       this.$swal("Success", "Checked In successful", "success");
-      setTimeout(() => this.$emit(`close-dialog`),3000)
+      setTimeout(() => this.$emit(`close-dialog`),1000)
     },
     handleSelectedCustomer({ customer }) {
       this.customer = customer;

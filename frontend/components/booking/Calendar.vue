@@ -318,7 +318,11 @@
 
               <v-row class="text-right mb-3">
                 <v-col>
-                  <RoomCalendarDialog :reservation="reservation" label="Room" @tableData="handleTableData" />
+                  <RoomCalendarDialog
+                    :reservation="reservation"
+                    label="Room"
+                    @tableData="handleTableData"
+                  />
                   <v-btn
                     small
                     class="blue"
@@ -565,6 +569,7 @@ export default {
       this.room = {
         ...this.room,
         ...payload,
+        total_days: payload.days,
       };
       // room_type
       let isSelect = this.selectedRooms.find(
