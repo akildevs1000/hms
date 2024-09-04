@@ -1,256 +1,246 @@
 <template>
-  <div>
-    <v-row v-if="BookingData && BookingData.id">
-      <v-col md="7">
-        <v-container>
-          <table>
-            <tr>
-              <th>Customer Name</th>
-              <td style="width: 300px">
-                {{ BookingData && BookingData.title }}
-              </td>
-            </tr>
-            <tr>
-              <th>Room No</th>
-              <td>
-                {{ BookingData.room_no }}
-              </td>
-            </tr>
-            <tr>
-              <th>Room Type</th>
-              <td>
-                {{ BookingData.room_type }}
-              </td>
-            </tr>
-            <tr>
-              <th>Check In</th>
-              <td>
-                {{ roomData && roomData.check_in }}
-              </td>
-            </tr>
-            <tr>
-              <th>Check Out</th>
-              <td>
-                {{ roomData && roomData.check_out }}
-              </td>
-            </tr>
-            <tr>
-              <th>
-                Payment Mode
-                <span class="error--text">*</span>
-              </th>
-              <td>
-                <v-select
-                  v-model="BookingData.payment_mode_id"
-                  :items="[
-                    { id: 1, name: 'Cash' },
-                    { id: 2, name: 'Card' },
-                    { id: 3, name: 'Online' },
-                    { id: 4, name: 'Bank' },
-                    { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                  ]"
-                  item-text="name"
-                  item-value="id"
-                  dense
-                  outlined
-                  :hide-details="true"
-                  :height="1"
-                ></v-select>
-              </td>
-            </tr>
-            <tr v-if="BookingData.payment_mode_id != 1">
-              <th>
-                Reference Number
-                <span class="error--text">*</span>
-              </th>
-              <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="text"
-                  v-model="reference"
-                  :hide-details="true"
-                ></v-text-field>
-              </td>
-            </tr>
-            <tr>
-              <th>Total Amount</th>
-              <td>{{ BookingData && BookingData.total_price }}</td>
-            </tr>
-            <tr>
-              <th>Total Posting Amount</th>
-              <td>
-                {{ BookingData && BookingData.total_posting_amount }}
-              </td>
-            </tr>
-            <tr>
-              <th>Remaining Balance</th>
-              <td>{{ remaining_price }}</td>
-            </tr>
-            <tr>
-              <th>Remaining Balance With Posting</th>
-              <td>{{ grand_remaining_price }}</td>
-            </tr>
-            <tr style="background-color: white" v-if="BookingData.paid_by != 2">
-              <th>Discount</th>
-              <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="number"
-                  v-model="discount"
-                  :hide-details="true"
-                  @keyup="get_after_discount_balance(discount)"
-                ></v-text-field>
-              </td>
-            </tr>
-            <tr style="background-color: white" v-if="BookingData.paid_by != 2">
-              <th>After Discount Balance</th>
-              <td>
-                {{ after_discount_balance }}
-              </td>
-            </tr>
-            <tr style="background-color: white" v-if="BookingData.paid_by != 2">
-              <th>
-                Full Payment
-                <span class="error--text">*</span>
-              </th>
-              <td>
-                <v-text-field
-                  dense
-                  outlined
-                  type="number"
-                  v-model="full_payment"
-                  :hide-details="true"
-                ></v-text-field>
-              </td>
-            </tr>
-            <tr>
-              <th>Print Invoice</th>
-              <td>
-                <v-checkbox
-                  v-model="isPrintInvoice"
-                  :hide-details="true"
-                  class="pt-0 py-1 chk-align"
-                >
-                </v-checkbox>
-              </td>
-            </tr>
-            <tr v-if="roomData?.room?.room_type?.type == 'hall'">
-              <th>Change CheckOut Time</th>
-              <td>
-                <v-menu
-                  ref="menu"
-                  v-model="change_checkout_time"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  :return-value.sync="actualCheckoutTime"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      outlined
-                      dense
-                      v-model="actualCheckoutTime"
-                      label=""
-                      append-icon="mdi-clock-time-four-outline"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                      hide-details
-                    ></v-text-field>
-                  </template>
-                  <v-time-picker
-                    v-if="change_checkout_time"
-                    v-model="actualCheckoutTime"
-                    no-title
-                    @click:minute="
-                      () => {
-                        $refs.menu.save(actualCheckoutTime);
-                        calculateHoursQty(actualCheckoutTime);
-                      }
-                    "
-                    format="24hr"
-                  ></v-time-picker>
-                </v-menu>
-              </td>
-            </tr>
-            <tr v-if="roomData?.room?.room_type?.type == 'hall'">
-              <th>Total Booking Hours</th>
-              <td>
-                {{ roomData && roomData.total_booking_hours }}
-              </td>
-            </tr>
-            <tr v-if="roomData?.room?.room_type?.type == 'hall'">
-              <th>Additional Hours</th>
-              <td>
-                {{ exceedHoursCharges }}
-              </td>
-            </tr>
-          </table>
-          <!-- <v-text-field
-            readonly
-            class="my-2"
-            v-if="Testing"
-            label="Assumed Time"
-            dense
-            outlined
-            hide-details
-            v-model="actualCheckoutTime"
-          ></v-text-field> -->
-          <v-btn
-            class="primary mt-3"
-            height="40"
-            width="25%"
-            small
-            :loading="loading"
-            @click="store_check_out"
-          >
-            Check Out
-          </v-btn>
-        </v-container>
-      </v-col>
-      <v-col md="5" class="mt-3">
-        <table>
-          <tr style="font-size: 13px; background-color: white; color: black">
-            <th>#</th>
-            <th>Date</th>
-            <th>Debit</th>
-            <th>Credit</th>
-            <th>Balance</th>
-          </tr>
+  <v-row no-gutter v-if="BookingData && BookingData.id">
+    <v-col cols="6" class="text-center">
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <div class="text-right">
+              <v-icon
+                color="primary"
+                @click="$router.push(`customer/details/${BookingData.id}`)"
+                >mdi-eye</v-icon
+              >
+            </div>
+            <!-- <pre>{{ roomData }}</pre> -->
+            <v-avatar size="125" class="">
+              <v-img
+                :src="
+                  (customer && customer.captured_photo) ||
+                  '/no-profile-image.jpg'
+                "
+              ></v-img>
+            </v-avatar>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              v-model="roomData.customer.full_name"
+              readonly
+              label="Full Name"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              v-model="roomData.customer.contact_no"
+              readonly
+              label="Phone Number"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-textarea
+              rows="2"
+              v-model="customer_full_address"
+              readonly
+              label="Address"
+              outlined
+              dense
+              hide-details
+            ></v-textarea>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="roomData.checkin_datetime_only"
+              readonly
+              label="Check IN"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="roomData.checkout_datetime_only"
+              readonly
+              label="Check Out"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              v-model="BookingData.room_no"
+              readonly
+              label="Room Number"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="BookingData.total_price"
+              readonly
+              label="Total Amount"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="BookingData.paid_amounts"
+              readonly
+              label="Paid"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              v-model="remaining_price"
+              readonly
+              label="Balance To Pay"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-col>
+    <!-- Data table on the right -->
+    <v-col cols="6">
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <table style="width: 100%">
+              <tr style="font-size: 13px">
+                <td class="text-center">Date</td>
+                <td class="text-center">Debit</td>
+                <td class="text-center">Credit</td>
+                <td class="text-center">Balance</td>
+                <td class="text-center">Receipt</td>
+              </tr>
 
-          <tr
-            v-for="(item, index) in transactions"
-            :key="index"
-            style="font-size: 13px; background-color: white; color: black"
-          >
-            <td>
-              <b>{{ ++index }}</b>
-            </td>
-            <td>{{ item.created_at || "---" }}</td>
-            <td class="text-right">
-              {{ item && item.debit == 0 ? "---" : item.debit }}
-            </td>
-            <td class="text-right">
-              {{ item && item.credit == 0 ? "---" : item.credit }}
-            </td>
-            <td class="text-right">{{ item.balance || "---" }}</td>
-          </tr>
-          <tr style="font-size: 13px; background-color: white; color: black">
-            <th colspan="4" class="text-right">Balance</th>
+              <tr
+                v-for="(item, index) in transactions"
+                :key="index"
+                style="font-size: 13px"
+              >
+                <td class="text-center">{{ item.created_at || "---" }}</td>
+                <td class="text-center">
+                  {{ item && item.debit == 0 ? "---" : item.debit }}
+                </td>
+                <td class="text-center">
+                  {{ item && item.credit == 0 ? "---" : item.credit }}
+                </td>
+                <td class="text-center">{{ item.balance || "---" }}</td>
+                <td class="text-center">
+                  {{ item.id }}
+                </td>
+              </tr>
+              <!-- <tr style="font-size: 13px; background-color: white; color: black">
+            <th colspan="4" class="text-center">Balance</th>
             <td class="text-right" style="background-color: white">
               {{ totalTransactionAmount + exceedHoursCharges }}
             </td>
-          </tr>
-        </table>
-      </v-col>
-    </v-row>
-  </div>
+          </tr> -->
+            </table>
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Payment Mode"
+              v-model="payment_mode_id"
+              :items="[
+                { id: 1, name: 'Cash' },
+                { id: 2, name: 'Card' },
+                { id: 3, name: 'Online' },
+                { id: 4, name: 'Bank' },
+                { id: 5, name: 'UPI' },
+                { id: 6, name: 'Cheque' },
+              ]"
+              item-text="name"
+              item-value="id"
+              dense
+              outlined
+              hide-details
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="12" v-if="payment_mode_id != 1">
+            <v-text-field
+              label="Reference"
+              dense
+              outlined
+              type="text"
+              v-model="reference"
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              v-model="full_payment"
+              label="Amount"
+              outlined
+              dense
+              hide-details
+            ></v-text-field>
+          </v-col>
+         
+          <!-- <v-col cols="6">
+            <v-btn outlined left color="primary" small @click="redirect_to_invoice(BookingData.id)"
+              ><v-icon small>mdi-printer</v-icon>Invoice</v-btn
+            >
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-btn outlined left color="primary" small @click="store_check_out"
+              ><v-icon small>mdi-file</v-icon>Receipt</v-btn
+            >
+          </v-col> -->
+
+<!-- 
+          <v-col cols="6">
+            <v-btn color="primary" small @click="store_check_out"
+              ><v-icon small>mdi-printer</v-icon>Invoice</v-btn
+            >
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-btn color="primary" small @click="store_check_out"
+              ><v-icon small>mdi-file</v-icon>Receipt</v-btn
+            >
+          </v-col> -->
+
+          <v-col cols="6">
+            <v-icon color="primary" left @click="redirect_to_invoice(BookingData.id)">mdi-printer</v-icon>Invoice
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-icon color="primary" left>mdi-file</v-icon>Invoice
+          </v-col>
+
+
+          <!-- <v-col cols="6">
+            <v-btn block color="primary" small @click="store_check_out"
+              ><v-icon small>mdi-printer</v-icon>Invoice</v-btn
+            >
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-btn block color="primary" small @click="store_check_out"
+              ><v-icon small>mdi-file</v-icon>Receipt</v-btn
+            >
+          </v-col> -->
+          <v-col cols="12">
+            <v-btn color="primary" block @click="store_check_out">Pay</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-col>
+  </v-row>
 </template>
 <script>
 const today = new Date();
@@ -265,6 +255,7 @@ export default {
 
   data() {
     return {
+      payment_mode_id:1,
       change_checkout_time: false,
 
       grand_remaining_price: 0,
@@ -340,7 +331,17 @@ export default {
       this.get_transaction();
     }
   },
-  computed: {},
+  computed: {
+    customer_full_address() {
+      let { customer } = this.roomData;
+
+      if (!customer.state) {
+        return "---";
+      }
+
+      return `${customer.state}, ${customer.city}, ${customer.zip_code}, ${customer.country}`;
+    },
+  },
   methods: {
     get_after_discount_balance(amt = 0) {
       let discount = amt || 0;
@@ -359,7 +360,7 @@ export default {
         grand_remaining_price: this.grand_remaining_price,
         remaining_price: this.remaining_price,
         full_payment: parseFloat(this.full_payment),
-        payment_mode_id: this.BookingData.payment_mode_id,
+        payment_mode_id: this.payment_mode_id,
         company_id: this.$auth.user.company.id,
         isPrintInvoice: this.isPrintInvoice,
         reference_number: this.reference,

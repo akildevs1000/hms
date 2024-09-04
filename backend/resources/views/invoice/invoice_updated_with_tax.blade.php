@@ -77,20 +77,20 @@
                                         <span>Check In:</span> <br>
                                         <b class="tm_primary_color">
                                             {{ date('d M Y', strtotime($booking->check_in)) }}
-                                            <div>{{ date('H:i', strtotime($booking->check_in)) }}</div>
+                                            <div>{{ $first_check_in_time }}</div>
                                         </b>
 
                                         <br />
                                         <div>
                                             <span>Nights:</span> <br>
-                                            <b class="tm_primary_color">{{ $booking->total_days }}</b>
+                                            <b class="tm_primary_color">{{ $booking->total_days == 0 ? 1 : $booking->total_days }}</b>
                                         </div>
                                     </div>
                                     <div>
                                         <span>Check Out:</span> <br>
                                         <b class="tm_primary_color">
                                             {{ date('d M Y', strtotime($booking->check_out)) }}
-                                            <div>{{ date('H:i', strtotime($booking->check_out)) }}</div>
+                                            <div>{{ $first_check_out_time }}</div>
                                         </b>
 
                                         <br />

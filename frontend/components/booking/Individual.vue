@@ -213,8 +213,9 @@
                             </v-list-item>
                             <v-list-item>
                               <RoomEditDialog
+                              :key="roomDetailsCompKey"
                                 label="Edit"
-                                :options="room"
+                                :options="item"
                                 @tableData="handleTableData"
                               />
                             </v-list-item>

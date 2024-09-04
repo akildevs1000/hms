@@ -22,6 +22,10 @@ class GRCController extends Controller
         $transactions = $booking->transactions;
         $bookedRooms = $booking->bookedRooms;
 
+        $first_check_in_time = $bookedRooms[0]["check_in_time"] ?? "00:00";
+        $first_check_out_time = $bookedRooms[0]["check_out_time"] ?? "00:00";
+
+
         $roomTypes = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
         $paymentMode = $transactions->toArray();
         $paymentMode = end($paymentMode);
@@ -46,7 +50,7 @@ class GRCController extends Controller
             $bladeName = 'invoice.invoice_old_bills';
         }
 
-        return view($bladeName, compact("invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+        return view($bladeName, compact("first_check_in_time", "first_check_out_time", "invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
 
         return Pdf::loadView($bladeName, compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
             // ->setPaper('a4', 'landscape')

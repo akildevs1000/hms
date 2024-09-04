@@ -328,7 +328,7 @@
       <!-- end pay advance  -->
 
       <!-- check out  -->
-      <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
+      <v-dialog v-model="checkOutDialog" persistent max-width="800px">
         <v-card>
           <v-toolbar class="rounded-md" color="primary" dense flat dark>
             <span>{{ formTitle }}</span>
@@ -344,7 +344,6 @@
               @close-dialog="closeCheckInAndOpenGRC"
             />
           </v-card-text>
-          <v-card-actions> </v-card-actions>
         </v-card>
       </v-dialog>
       <!-- end check out  -->
@@ -765,6 +764,7 @@
         <v-card
           :class="` darken-2 `"
           dark
+          @dblclick="checkedOutDoubleClick(checkedOutRoom)"
           @contextmenu="makeNewBooking($event, checkedOutRoom)"
           @mouseover="mouseOverForAvailable(checkedOutRoom)"
           @touchstart="makeNewBookingForTouch($event, checkedOutRoom)"
@@ -1495,7 +1495,11 @@ export default {
         });
       }
     },
-
+    checkedOutDoubleClick({booked_room}) {
+      this.evenIid = booked_room.id;
+      this.isDbCLick = true;
+      this.get_data();
+    },
     dblclick() {
       this.isDbCLick = true;
       this.get_data();
