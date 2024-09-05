@@ -30,10 +30,9 @@
         </v-row>
       </v-col>
       <v-col md="10" cols="12">
-        <v-row>
+        <v-row v-if="isGroupBooking">
           <v-col md="4" cols="12" sm="12">
             <v-text-field
-              v-if="isGroupBooking"
               label="Group Name *"
               dense
               outlined
@@ -420,7 +419,6 @@ export default {
       this.business_sources = data;
     },
     nextTab() {
-      
       if (!this.customer.customer_type) {
         this.$swal("Warning", "Select Business Source", "error");
         return;

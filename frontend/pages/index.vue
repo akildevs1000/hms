@@ -726,7 +726,7 @@
               <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingQuickCheckIn
                   :key="BookingQuickCheckInCompKey"
-                  @success="handleSuccess(`Room(s) has been Checked In`)"
+                  @success="handleNewSuccess"
                 />
               </v-col>
               <v-col cols="1" class="mt-0" style="max-width: 60px">
@@ -1296,6 +1296,12 @@ export default {
       this.room_list();
       this.alert("Success!", message, "success");
       this.checkInDialog = false;
+      this.keyTabAll++;
+    },
+
+    handleNewSuccess() {
+      this.room_list();
+      this.BookingQuickCheckInCompKey += 1;
       this.keyTabAll++;
     },
     refreshRoomList() {

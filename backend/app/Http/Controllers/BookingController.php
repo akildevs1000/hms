@@ -817,6 +817,27 @@ class BookingController extends Controller
 
     public function quick_check_in_room(Request $request)
     {
+
+        try {
+            $id = $request->booking_id ?? 0;
+            $room_ids = $request->room_ids ?? [];
+            $status_id = BookedRoom::CHECKED_IN;
+
+            Booking::where("id", $id)->update(['booking_status' => $status_id]);
+
+            BookedRoom::where("booking_id", $id ?? 0)
+                ->whereIn("room_id", $room_ids)
+                ->update(['check_in' => date('Y-m-d H:i'), 'booking_status' => $status_id]);
+
+            return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
+        } catch (\Exception $e) {
+
+            return response()->json(['data' => '', 'message' => $e->getMessage(), 'status' => false]);
+            // throw $th;
+        }
+
+        // old code below down
+
         try {
 
             // session(['isCheckInSes' => true]);

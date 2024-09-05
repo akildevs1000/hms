@@ -12,9 +12,9 @@
           color="#34444c"
           style="width: 37px; height: 26px"
         >
-          <v-icon color="white">mdi-account</v-icon>
-        </v-btn>
-        <div style="font-size: 10px; text-align: center">Quick</div>
+        <v-icon color="white">mdi-clock-fast</v-icon>
+      </v-btn>
+        <div style="font-size: 10px; text-align: center">Q.CO</div>
       </div>
     </template>
     <v-card>
