@@ -512,7 +512,8 @@
               v-if="newBookingRoom.status == 0"
               @click="NewBooking = true"
             >
-              <v-list-item-title>Check In</v-list-item-title>
+            <!-- direct check in dialog -->
+              <v-list-item-title>Check In</v-list-item-title> 
             </v-list-item>
             <v-list-item
               link

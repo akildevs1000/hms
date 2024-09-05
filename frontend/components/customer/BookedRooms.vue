@@ -372,9 +372,6 @@ export default {
             this.$emit("checkedin-success");
 
             this.loading = false;
-            // if ($nuxt.$route.name == "hotel-calendar1") {
-            //   this.$router.push(`/`);
-            // }
           }
         })
         .catch((e) => {

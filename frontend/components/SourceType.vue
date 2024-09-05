@@ -186,10 +186,10 @@ export default {
     defaultSource: {
       type: Object,
       default: () => ({
-        type: "default",
-        source: "default",
-        reference_no: "default",
-        paid_by: "default",
+        type: null,
+        source: null,
+        reference_no: null,
+        paid_by: null,
       }),
     },
     isOverride: {
@@ -219,13 +219,6 @@ export default {
   }),
   async created() {
     if (this.isOverride) {
-      //     "type": "Online",
-      // "source": "Calderon and chaney trading",
-      // "purpose": "Business",
-      // "request": "sdfsdfsdfdsfsdfsfs",
-      // "reference_no": "1111",
-      // "paid_by": "1"
-
       this.sourceType.type = this.defaultSource.type;
       this.displayObject.name = this.defaultSource.source;
       this.$emit("sourceObject", this.defaultSource);
