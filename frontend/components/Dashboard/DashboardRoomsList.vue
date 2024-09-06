@@ -713,6 +713,51 @@
       </div>
 
       <div
+        v-if="
+          filteredRooms(availableRooms).length == 0 && tabFilter == 'available'
+        "
+      >
+        Not Available
+      </div>
+      <div
+        class="roombox1"
+        v-if="tabFilter == 'All'"
+        v-for="(room, index) in filteredRooms(expectCheckOut)"
+      >
+        <v-card
+          :class="` darken-2 `"
+          dark
+          @contextmenu="makeNewBooking($event, room)"
+          @mouseover="mouseOverForAvailable(room)"
+          @touchstart="makeNewBookingForTouch($event, room)"
+        >
+          <v-card-text
+            class="green111 p-3 roombox"
+            :style="'padding: 0px;' + getColorCode('expected_checkout')"
+            :title="
+              room.device && room.device.latest_status == 1
+                ? 'Expected Checkout and Light On'
+                : 'Expected Checkout Available'
+            "
+          >
+            <div class="text-center white--text boxheight">
+              <v-icon
+                :color="
+                  room.device && room.device.latest_status == 1 ? 'red' : ''
+                "
+              >
+                mdi mdi-bed
+              </v-icon>
+              <div>{{ room?.room_no || "---" }}</div>
+              <div>
+                {{ room ? caps(room.room_type.name) : "---" }}
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </div>
+
+      <div
         v-if="filteredRooms(blockedRooms).length == 0 && tabFilter == 'blocked'"
       >
         Blocked rooms are Not Available
