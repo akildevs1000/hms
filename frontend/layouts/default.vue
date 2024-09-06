@@ -319,6 +319,10 @@ export default {
           name: "account",
         },
         {
+          label: "Sales",
+          name: "sales",
+        },
+        {
           label: "Reports",
           name: "reports",
         },
@@ -452,6 +456,13 @@ export default {
           icon: "mdi-bank-transfer",
           title: "Income",
           to: "/account",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "sales",
+          icon: "mdi-cash",
+          title: "Quotation",
+          to: "/sales",
           menu: "accounts_posting_access",
         },
         {

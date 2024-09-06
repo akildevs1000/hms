@@ -1,12 +1,67 @@
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+.header,
+.footer {
+  text-align: center;
 }
 
-td,
-th {
-  border: 1px solid #dddddd;
+.quotation-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.company-info {
+  text-align: right;
+}
+
+.guest-info,
+.table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.guest-info td,
+.table th,
+.table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.table .table-heading {
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.table .right-align {
+  text-align: right;
+}
+
+.notes,
+.terms {
+  margin-bottom: 20px;
+}
+
+.acknowledgement {
+  margin-top: 40px;
+  font-weight: bold;
+}
+
+.signature {
+  display: flex;
+  justify-content: space-between;
+}
+
+.signature div {
+  width: 40%;
+  text-align: center;
+}
+
+.logo {
   text-align: left;
-  padding: 5px;
+}
+
+.discount {
+  color: red;
 }

@@ -28,7 +28,10 @@ class QuotationController extends Controller
      */
     public function index()
     {
-        return Quotation::with(["customer", "followups", "status"])->paginate(request("per_page", 50));
+        return Quotation::with(["customer", "followups", "status"])
+            ->where("type", request("type", "room"))
+            ->where("company_id", request("company_id", 0))
+            ->paginate(request("per_page", 50));
     }
 
     /**

@@ -37,6 +37,12 @@ class ValidationRequest extends FormRequest
             'terms_and_conditions' => 'nullable|string',
             'status' => 'nullable|string|max:255',
             'items' => 'required|array',
+
+            'type' => 'nullable',
+            'extra' => 'nullable',
+            'discount_reason' => 'nullable',
+            'extra_reason' => 'nullable',
+            'company_id' => 'nullable',
         ];
     }
 }
