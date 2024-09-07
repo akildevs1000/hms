@@ -17,6 +17,7 @@
         >
         <v-spacer></v-spacer>
         <QuotationHallCreate
+          :key="QuotationHallCreateCompKey"
           :model="Model"
           :endpoint="endpoint"
           @response="getDataFromApi"
@@ -126,6 +127,7 @@ export default {
   data: () => ({
     Model: "Quotation",
     endpoint: "quotation",
+    QuotationHallCreateCompKey:1,
     currentDate,
     filters: {},
     options: {},
@@ -202,6 +204,7 @@ export default {
       return Math.random();
     },
     async getDataFromApi() {
+      this.QuotationHallCreateCompKey += 1;
       this.loading = true;
       let config = {
         params: { type: "hall", company_id: this.$auth.user.company_id },

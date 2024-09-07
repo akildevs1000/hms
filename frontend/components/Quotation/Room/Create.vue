@@ -70,7 +70,7 @@
                           outlined
                           dense
                           hide-details
-                          v-model="item.description"
+                          v-model="item.room_type"
                         ></v-text-field>
                       </td>
                       <td style="width: 120px">
@@ -550,7 +550,7 @@ export default {
       return result;
     },
     calculateItemTotal(item) {
-      item.total_price = item.qty * item.unit_price;
+      item.total_price = item.no_of_rooms * item.no_of_nights * item.price;
     },
     addItem() {
       this.priceListTableView.push({
@@ -560,6 +560,7 @@ export default {
         no_of_adult: 0,
         no_of_rooms: 0,
         no_of_nights: 0,
+        total_price: 0,
         is_custom_line: true,
       });
     },

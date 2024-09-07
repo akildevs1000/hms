@@ -17,6 +17,7 @@
         >
         <v-spacer></v-spacer>
         <QuotationRoomCreate
+          :key="QuotationRoomCreateCompKey"
           :model="Model"
           :endpoint="endpoint"
           @response="getDataFromApi"
@@ -126,6 +127,7 @@ export default {
   data: () => ({
     Model: "Quotation",
     endpoint: "quotation",
+    QuotationRoomCreateCompKey:1,
     currentDate,
     filters: {},
     options: {},
@@ -202,6 +204,7 @@ export default {
       return Math.random();
     },
     async getDataFromApi() {
+      this.QuotationRoomCreateCompKey +=1;
       this.loading = true;
       let config = {
         params: { type: "room", company_id: this.$auth.user.company_id },
