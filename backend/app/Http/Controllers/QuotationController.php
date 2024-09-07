@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
 use App\Models\Template;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
 class QuotationController extends Controller
@@ -16,10 +17,49 @@ class QuotationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function roomQuotaionPrint($id)
+    {
+        $quotation = Quotation::with("company", "customer")->where("type", "room")->find($id);
+        $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
+        $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
+        $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
+
+        return Pdf::loadView('quotation.room', compact("quotation"))
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function hallQuotaionPrint($id)
+    {
+        $quotation = Quotation::where("type", "hall")->find($id);
+        $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "unit_price"));
+        $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "qty"));
+        $quotation->total_booking_hours = array_sum(array_column($quotation->items, "total_booking_hours"));
+        $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
+        $function_names = join(",", array_column($quotation->items, "function_name"));
+        $quotation->function_names =  $function_names == "" ?  "---" : $function_names;
+        return Pdf::loadView('quotation.hall', compact("quotation"))
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function dropDown()
     {
         return Quotation::get();
     }
+
 
     /**
      * Display a listing of the resource.
@@ -31,6 +71,7 @@ class QuotationController extends Controller
         return Quotation::with(["customer", "followups", "status"])
             ->where("type", request("type", "room"))
             ->where("company_id", request("company_id", 0))
+            ->orderBy("id","desc")
             ->paginate(request("per_page", 50));
     }
 

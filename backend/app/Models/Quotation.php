@@ -21,6 +21,16 @@ class Quotation extends Model
         return number_format($value, 2);
     }
 
+    public function getSubTotalAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+    public function getDiscountAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
     /**
      * Get the customer that owns the Quotation
      *
@@ -49,5 +59,15 @@ class Quotation extends Model
     public function status()
     {
         return $this->hasOne(Followup::class)->latest();
+    }
+
+    /**
+     * Get the customer that owns the Quotation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class)->with("user:id,company_id,email");
     }
 }

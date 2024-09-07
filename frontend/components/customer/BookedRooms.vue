@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span v-if="bookingData && bookingData.id">
     <table cellspacing="0" style="width: 100%">
       <thead style="background-color: #f2f2f2; width: 100%">
         <tr style="background-color: #f2f2f2; width: 100%">
@@ -404,6 +404,7 @@ export default {
       }
     },
     subTotal() {
+      return 0;
       return this.bookingData.sub_total;
       // return (this.BookingData.sub_total = this.priceListTableView.reduce(
       //   (total, num) => total + num.total_price,
@@ -411,9 +412,11 @@ export default {
       // ));
     },
     extraAmount() {
+      return 0
       return this.bookingData.total_extra;
     },
     bookingDiscount() {
+      return 0;
       return this.bookingData.discount;
     },
     closeDialogs() {

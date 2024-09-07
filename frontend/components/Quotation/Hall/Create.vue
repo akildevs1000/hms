@@ -57,50 +57,79 @@
                 </thead>
                 <tbody>
                   <tr v-for="(item, index) in priceListTableView" :key="index">
-                    <td style="width: 50px" class="text-center">
-                      {{ index + 1 }}
-                    </td>
-                    <td style="width: 320px">
-                      <v-text-field
-                        outlined
-                        dense
-                        hide-details
-                        v-model="item.description"
-                      ></v-text-field>
-                    </td>
-                    <td style="width: 120px">
-                      <v-text-field
-                        outlined
-                        dense
-                        hide-details
-                        v-model.number="item.qty"
-                        @input="calculateItemTotal(item)"
-                        type="number"
-                      ></v-text-field>
-                    </td>
-                    <td style="width: 120px">
-                      <v-text-field
-                        outlined
-                        dense
-                        hide-details
-                        v-model.number="item.unit_price"
-                        @input="calculateItemTotal(item)"
-                        type="number"
-                      ></v-text-field>
-                    </td>
+                    <template v-if="item.is_custom_line">
+                      <td style="width: 50px" class="text-center">
+                        {{ index + 1 }}
+                      </td>
+                      <td style="width: 320px">
+                        <!-- <pre>{{ item.room_type }}</pre>  -->
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="item.description"
+                        ></v-text-field>
+                      </td>
+                      <td style="width: 120px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model.number="item.qty"
+                          @input="calculateItemTotal(item)"
+                          type="number"
+                        ></v-text-field>
+                      </td>
+                      <td style="width: 120px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model.number="item.unit_price"
+                          @input="calculateItemTotal(item)"
+                          type="number"
+                        ></v-text-field>
+                      </td>
 
-                    <td class="text-center">
-                      {{ convert_decimal(item.total_price) }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        v-if="index"
-                        @click="deleteItem(index, item)"
-                        small
-                        color="red"
-                        >mdi-close</v-icon
-                      >
-                    </td>
+                      <td class="text-right">
+                        {{ convert_decimal(item.total_price) }}
+                      </td>
+                      <td class="text-center">
+                        <v-icon
+                          @click="deleteItem(index, item)"
+                          small
+                          color="red"
+                          >mdi-close</v-icon
+                        >
+                      </td>
+                    </template>
+                    <template v-else>
+                      <td style="width: 50px" class="text-center">
+                        {{ index + 1 }}
+                      </td>
+                      <td style="width: 320px">
+                        <!-- <pre>{{ item.room_type }}</pre>  -->
+                        {{ item.description }}
+                      </td>
+                      <td class="text-center" style="width: 120px">
+                        {{ item.qty }}
+                      </td>
+                      <td class="text-right" style="width: 120px">
+                        {{ item.unit_price }}
+                      </td>
+
+                      <td class="text-right">
+                        {{ convert_decimal(item.total_price) }}
+                      </td>
+                      <td class="text-center">
+                        <v-icon
+                          @click="deleteItem(index, item)"
+                          small
+                          color="red"
+                          >mdi-close</v-icon
+                        >
+                      </td>
+                    </template>
                   </tr>
                 </tbody>
               </table>
@@ -213,6 +242,10 @@
 
               <v-row class="text-right mb-3">
                 <v-col>
+                  <HallDialogForQuotation
+                    label="Hall"
+                    @tableData="handleTableData"
+                  />
                   <v-btn small class="blue" @click="addItem" dark
                     ><v-icon small class="mt-1">mdi-plus</v-icon> Add Row</v-btn
                   >
@@ -376,14 +409,7 @@ export default {
       availableRooms: [],
       selectedRooms: [],
       rooms: [],
-      priceListTableView: [
-        {
-          description: "Enter item description",
-          qty: 1,
-          unit_price: 0,
-          total_price: 0,
-        },
-      ],
+      priceListTableView: [],
       isDiff: false,
       roomDetailsCompKey: 1,
       customerCompKey: 1,
@@ -410,6 +436,25 @@ export default {
     this.runAllFunctions();
   },
   methods: {
+    handleTableData(payload) {
+      let isSelect = this.selectedRooms.find(
+        (e) => e.room_id == payload.room_id
+      );
+
+      if (!isSelect) {
+        this.selectedRooms.push(payload);
+
+        this.priceListTableView.push({
+          description: `${payload.room_type} (${payload.total_booking_hours} Hours)`,
+          room_type: `${payload.room_type}`,
+          total_booking_hours: payload.total_booking_hours,
+          qty: 1,
+          unit_price: payload.price,
+          total_price: 1 * payload.price,
+          function_name: payload.function_name,
+        });
+      }
+    },
     calculateItemTotal(item) {
       item.total_price = item.qty * item.unit_price;
     },
@@ -420,6 +465,7 @@ export default {
         qty: 1,
         unit_price: 0,
         total_price: 0,
+        is_custom_line: true,
       });
     },
     handleFoundCustomer(e) {
@@ -470,6 +516,7 @@ export default {
     },
     deleteItem(index, item) {
       this.priceListTableView.splice(index, 1);
+      this.selectedRooms.splice(index, 1);
     },
 
     nextTab() {

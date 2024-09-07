@@ -61,57 +61,174 @@
                 </thead>
                 <tbody>
                   <tr v-for="(item, index) in priceListTableView" :key="index">
-                    <td style="width: 50px" class="text-center">
-                      {{ index + 1 }}
-                    </td>
-                    <td style="width: 320px">
-                      {{ item.room_type }}
-                    </td>
-                    <td style="width: 120px">
-                      {{ item.meal_name }}
-                    </td>
+                    <template v-if="item.is_custom_line">
+                      <td style="width: 50px" class="text-center">
+                        {{ index + 1 }}
+                      </td>
+                      <td style="width: 320px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="item.description"
+                        ></v-text-field>
+                      </td>
+                      <td style="width: 120px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="item.meal_name"
+                        ></v-text-field>
+                      </td>
 
-                    <td style="width: 120px">
-                      {{ item.price }}
-                    </td>
+                      <td style="width: 120px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="item.price"
+                          @input="calculateItemTotal(item)"
+                        ></v-text-field>
+                      </td>
 
-                    <td style="width: 120px">
-                      {{ item.no_of_adult }}
-                    </td>
-                    <td style="width: 120px">{{ item.no_of_rooms }}</td>
-                    <td style="width: 120px">
-                      {{ item.no_of_nights }}
-                    </td>
+                      <td style="width: 120px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="item.no_of_adult"
+                        ></v-text-field>
+                      </td>
+                      <td style="width: 120px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="item.no_of_rooms"
+                          @input="calculateItemTotal(item)"
+                        ></v-text-field>
+                      </td>
+                      <td style="width: 120px">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="item.no_of_nights"
+                          @input="calculateItemTotal(item)"
+                        ></v-text-field>
+                      </td>
 
-                    <td class="text-center">
-                      {{ convert_decimal(item.price * item.no_of_rooms * item.no_of_nights) }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon @click="deleteItem(index, item)" small color="red"
-                        >mdi-close</v-icon
-                      >
-                    </td>
+                      <td class="text-center">
+                        {{
+                          convert_decimal(
+                            item.price * item.no_of_rooms * item.no_of_nights
+                          )
+                        }}
+                      </td>
+                      <td class="text-center">
+                        <v-icon
+                          @click="deleteItem(index, item)"
+                          small
+                          color="red"
+                          >mdi-close</v-icon
+                        >
+                      </td>
+                    </template>
+
+                    <template v-else>
+                      <td style="width: 50px" class="text-center">
+                        {{ index + 1 }}
+                      </td>
+                      <td style="width: 320px">
+                        {{ item.room_type }}
+                      </td>
+                      <td style="width: 120px">
+                        {{ item.meal_name }}
+                      </td>
+
+                      <td style="width: 120px">
+                        {{ item.price }}
+                      </td>
+
+                      <td style="width: 120px">
+                        {{ item.no_of_adult }}
+                      </td>
+                      <td style="width: 120px">{{ item.no_of_rooms }}</td>
+                      <td style="width: 120px">
+                        {{ item.no_of_nights }}
+                      </td>
+
+                      <td class="text-center">
+                        {{
+                          convert_decimal(
+                            item.price * item.no_of_rooms * item.no_of_nights
+                          )
+                        }}
+                      </td>
+                      <td class="text-center">
+                        <v-icon
+                          @click="deleteItem(index, item)"
+                          small
+                          color="red"
+                          >mdi-close</v-icon
+                        >
+                      </td>
+                    </template>
                   </tr>
                 </tbody>
               </table>
+              <v-dialog v-model="discountDialog" max-width="400" persistent>
+                <v-card>
+                  <v-card-title>
+                    Apply Discount <v-spacer></v-spacer>
+                    <v-icon color="primary" @click="discountDialog = false">
+                      mdi-close
+                    </v-icon>
+                  </v-card-title>
 
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="8" dense>
+                          <v-text-field
+                            label="Discount Amount"
+                            dense
+                            outlined
+                            type="number"
+                            v-model="room.room_discount"
+                            :hide-details="true"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col dense>
+                          <v-icon
+                            color="primary"
+                            @click="
+                              () => {
+                                processCalculation();
+                                discountDialog = false;
+                              }
+                            "
+                            >mdi-floppy</v-icon
+                          >
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
               <div
                 class="d-flex justify-space-around py-3"
                 style="margin-top: 5px"
               >
                 <v-col cols="10" class="text-right">
                   <div>Sub Total:</div>
-                  <div>Add :</div>
-                  <div>Discount :</div>
-                  <div style="font-size: 18px; font-weight: bold">Total :</div>
+                  <div>Discount:</div>
+                  <div style="font-size: 18px; font-weight: bold">Total:</div>
                 </v-col>
                 <v-col cols="2" class="text-right">
                   <div>
                     {{ convert_decimal(subTotal()) }}
-                  </div>
-
-                  <div>
-                    {{ convert_decimal(room.room_extra_amount || 0) }}
                   </div>
                   <div style="color: red">
                     -{{ convert_decimal(room.room_discount || 0) }}
@@ -121,7 +238,6 @@
                   </div>
                 </v-col>
               </div>
-
               <v-row class="mt-3">
                 <v-col md="2" sm="12" cols="12" dense>
                   <v-select
@@ -200,17 +316,16 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
-
               <v-row class="text-right mb-3">
                 <v-col>
                   <RoomDialogForQuotation
                     label="Room"
                     @tableData="handleTableData"
                   />
-                  <!-- 
+
                   <v-btn small class="blue" @click="addItem" dark
                     ><v-icon small class="mt-1">mdi-plus</v-icon> Add Row</v-btn
-                  > -->
+                  >
 
                   <v-btn
                     small
@@ -346,6 +461,7 @@ export default {
   },
   data() {
     return {
+      discountDialog: false,
       dialog: false,
       loading: false,
       advanceDialog: false,
@@ -422,7 +538,7 @@ export default {
         );
 
         if (existingEntry) {
-          existingEntry.total_price += (entry.total_price);
+          existingEntry.total_price += entry.total_price;
         } else {
           result.push({
             ...entry,
@@ -438,11 +554,13 @@ export default {
     },
     addItem() {
       this.priceListTableView.push({
-        // date: this.formatDate(new Date()),
-        description: "Enter item description",
-        qty: 1,
-        unit_price: 0,
-        total_price: 0,
+        room_type: "",
+        meal_name: "",
+        price: 0,
+        no_of_adult: 0,
+        no_of_rooms: 0,
+        no_of_nights: 0,
+        is_custom_line: true,
       });
     },
     handleFoundCustomer(e) {
@@ -573,7 +691,7 @@ export default {
 
     subTotal() {
       return (this.room.sub_total = this.priceListTableView.reduce(
-        (total, num) => total + (num.price * num.no_of_rooms * num.no_of_nights),
+        (total, num) => total + num.price * num.no_of_rooms * num.no_of_nights,
         0
       ));
     },

@@ -49,12 +49,14 @@
         <v-list width="120" dense>
           <v-list-item>
             <v-list-item-title>
-              <QuotationHallView
+              <v-icon small color="blue" @click="openExternalWinodw(item.id)">mdi-eye</v-icon>
+                View
+              <!-- <QuotationHallView
                 :model="Model"
                 :endpoint="endpoint"
                 :item="item"
                 @response="getDataFromApi"
-              />
+              /> -->
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
@@ -188,6 +190,14 @@ export default {
     },
   },
   methods: {
+    openExternalWinodw(id) {
+      let url = `${process.env.BACKEND_URL}quotation-hall/${id}`;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", url);
+      document.body.appendChild(element);
+      element.click();
+    },
     getRandomeId() {
       return Math.random();
     },
