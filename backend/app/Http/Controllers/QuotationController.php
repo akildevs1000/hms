@@ -85,24 +85,44 @@ class QuotationController extends Controller
             ->paginate(request("per_page", 50));
     }
 
-    public function quotationRoomSearch($key)
+    public function quotationRoomSearch($search)
     {
-        return Quotation::with(["customer", "followups", "status"])
-            ->filter($key)
-            ->where("type", request("type", "room"))
-            ->where("company_id", request("company_id", 0))
+        $query = Quotation::query();
+
+        $query->with(["customer", "followups", "status"]);
+        // $query->where("type", request("type", "room"));
+        $query->where(function ($q) use ($search) {
+            $q->where("ref_no", env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+            $q->orWhereHas('customer', function ($query) use ($search) {
+                $query->where('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+                $query->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%'); // Wildcard search for 'first_name'
+            });
+        });
+
+        // ->filter($key)
+        return $query->where("company_id", request("company_id", 0))
             ->orderBy("id", "desc")
             ->paginate(request("per_page", 50));
     }
 
-    public function quotationHallSearch($key)
+    public function quotationHallSearch($search)
     {
-        return Quotation::with(["customer", "followups", "status"])
-            ->filter($key)
-            ->where("type", request("type", "hall"))
-            ->where("company_id", request("company_id", 0))
+        $query = Quotation::query();
+
+        $query->with(["customer", "followups", "status"]);
+        $query->where("type", request("type", "hall"));
+        $query->where(function ($q) use ($search) {
+            $q->where("ref_no", env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+            $q->orWhereHas('customer', function ($query) use ($search) {
+                $query->where('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+                $query->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%'); // Wildcard search for 'first_name'
+            });
+        });
+
+        // ->filter($key)
+        return $query->where("company_id", request("company_id", 0))
             ->orderBy("id", "desc")
-            ->paginate(request("per_page", 50));
+        ->paginate(request("per_page", 50));
     }
 
     /**
