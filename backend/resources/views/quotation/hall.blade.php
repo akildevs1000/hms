@@ -355,8 +355,8 @@
                 <th class="text-center">#</th>
                 <th>Description</th>
                 <th class="text-center">Qty</th>
-                <th>Unit Price</th>
-                <th>Total</th>
+                <th class="text-center">Unit Price</th>
+                <th class="text-center">Total</th>
             </tr>
         </thead>
         <tbody>

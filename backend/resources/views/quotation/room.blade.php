@@ -352,14 +352,14 @@
     <table>
         <thead>
             <tr style="background:#408dfb; color:white;">
-                <th>#</th>
+                <th class="text-center">#</th>
                 <th>Room Type</th>
-                <th class="text-center">Food</th>
-                <th>Tariff</th>
+                <th>Food</th>
+                <th class="text-center">Tariff</th>
                 <th class="text-center">Pax</th>
                 <th class="text-center">Rooms</th>
                 <th class="text-center">Nights</th>
-                <th>Total</th>
+                <th class="text-center">Total</th>
             </tr>
         </thead>
         <tbody>
