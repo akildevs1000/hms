@@ -10,7 +10,7 @@
           v-bind="attrs"
           v-on="on"
         >
-          <v-icon color="white" small> mdi-plus </v-icon> Quotation
+          <v-icon color="white" small> mdi-plus </v-icon> New
         </v-btn>
       </template>
       <v-card>
@@ -223,7 +223,8 @@
               >
                 <v-col cols="10" class="text-right">
                   <div>Sub Total:</div>
-                  <div>Discount:</div>
+                  <!-- <div>Discount:</div> -->
+                   <div><Discount /></div>
                   <div style="font-size: 18px; font-weight: bold">Total:</div>
                 </v-col>
                 <v-col cols="2" class="text-right">

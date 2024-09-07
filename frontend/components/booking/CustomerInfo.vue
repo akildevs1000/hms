@@ -3,9 +3,11 @@
     <v-row>
       <v-col md="2" cols="12">
         <v-row no-gutters class="pa-2">
-          <v-col cols="12" class="text-right">
+          <v-col class="text-right">
             <v-icon color="primary" small>mdi-eye</v-icon>
+            <!-- <BookingIDPreview v-if="initialImage" :BookingId="1" /> -->
           </v-col>
+
           <v-col cols="12" class="mt-2">
             <v-img
               :src="
@@ -270,6 +272,10 @@ export default {
       type: Boolean,
       default: () => false,
     },
+    initialImage: {
+      type: Boolean,
+      default: () => true,
+    },
   },
   data() {
     return {
@@ -346,32 +352,23 @@ export default {
 
     if (this.defaultCustomer && this.defaultCustomer.id) {
       this.canOverride = true;
+      this.customer = this.defaultCustomer;
+      this.getStates(this.customer.country);
+      this.getCities(this.customer.state);
 
-      let {
-        latest_booking: {
-          type,
-          source,
-          purpose,
-          request,
-          reference_no,
-          paid_by,
-        },
-        ...customer
-      } = this.defaultCustomer;
-      this.getStates(customer.country);
-      this.getCities(customer.state);
+      if (this.customer.latest_booking) {
+        
+        let latest_booking = this.customer.latest_booking;
 
-      this.customer = customer;
-
-      this.booking = {
-        type,
-        source,
-        purpose,
-        request,
-        reference_no,
-        paid_by,
-      };
-
+        this.booking = {
+          type: latest_booking.type,
+          source: latest_booking.source,
+          purpose: latest_booking.purpose,
+          request: latest_booking.request,
+          reference_no: latest_booking.reference_no,
+          paid_by: latest_booking.paid_by,
+        };
+      }
       this.sourceCompKey += 1;
     }
     await this.get_business_sources();

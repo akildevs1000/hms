@@ -8,6 +8,7 @@ use App\Models\Quotation;
 use App\Models\QuotationItem;
 use App\Models\Template;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class QuotationController extends Controller
@@ -66,12 +67,41 @@ class QuotationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
+    {
+        $model = Quotation::query();
+        $model->with(["customer", "followups", "status"]);
+        $model->where("type", request("type", "room"));
+
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $from = $request->from_date;
+            $to = $request->to_date;
+            $model->whereDate('created_at', ">=", $from);
+            $model->whereDate('created_at', "<=", $to);
+        }
+
+        return $model->where("company_id", request("company_id", 0))
+            ->orderBy("id", "desc")
+            ->paginate(request("per_page", 50));
+    }
+
+    public function quotationRoomSearch($key)
     {
         return Quotation::with(["customer", "followups", "status"])
+            ->filter($key)
             ->where("type", request("type", "room"))
             ->where("company_id", request("company_id", 0))
-            ->orderBy("id","desc")
+            ->orderBy("id", "desc")
+            ->paginate(request("per_page", 50));
+    }
+
+    public function quotationHallSearch($key)
+    {
+        return Quotation::with(["customer", "followups", "status"])
+            ->filter($key)
+            ->where("type", request("type", "hall"))
+            ->where("company_id", request("company_id", 0))
+            ->orderBy("id", "desc")
             ->paginate(request("per_page", 50));
     }
 

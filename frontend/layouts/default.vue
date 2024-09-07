@@ -404,39 +404,7 @@ export default {
             },
           ],
         },
-        {
-          topMenu: "dashboard",
-          icon: "mdi-bed",
-          title: `Party Hall`,
-          open_menu: false,
-          menu: "party_hall",
-          hasChildren: [
-            // {
-            //   icon: "mdi mdi-home-import-outline",
-            //   title: "New",
-            //   to: "/hall/party-hall-booking",
-            //   menu: "reservation_access",
-            // },
-            {
-              icon: "mdi mdi-home-import-outline",
-              title: "Reservation",
-              to: "/hall/upcoming",
-              menu: "party_hall",
-            },
-            {
-              icon: "mdi mdi-home-account",
-              title: "In House",
-              to: "/hall/ongoing",
-              menu: "party_hall",
-            },
-            {
-              icon: "mdi mdi-home-export-outline",
-              title: "Check Out",
-              to: "/hall/completed",
-              menu: "party_hall",
-            },
-          ],
-        },
+
         {
           topMenu: "customer",
           icon: "mdi mdi-account-tie",
@@ -549,47 +517,47 @@ export default {
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
         },
-        {
-          topMenu: "dashboard",
-          icon: "mdi mdi-account-tie",
-          title: `Management`,
-          open_menu: false,
-          menu: "management_access",
-          hasChildren: [
-            {
-              icon: "mdi mdi-bank-transfer-out",
-              title: "Expense",
-              to: "/management/expense",
-              menu: "management_expenses_access",
-            },
-            {
-              icon: "mdi mdi-bank-transfer-in",
-              title: "Income",
-              to: "/account",
-              menu: "management_income_access",
-            },
-            {
-              icon: "mdi mdi-text-account",
-              title: "Payment By User Report",
-              to: "/management/report/user",
-              menu: "management_payments_access",
-            },
+        // {
+        //   topMenu: "dashboard",
+        //   icon: "mdi mdi-account-tie",
+        //   title: `Management`,
+        //   open_menu: false,
+        //   menu: "management_access",
+        //   hasChildren: [
+        //     {
+        //       icon: "mdi mdi-bank-transfer-out",
+        //       title: "Expense",
+        //       to: "/management/expense",
+        //       menu: "management_expenses_access",
+        //     },
+        //     {
+        //       icon: "mdi mdi-bank-transfer-in",
+        //       title: "Income",
+        //       to: "/account",
+        //       menu: "management_income_access",
+        //     },
+        //     {
+        //       icon: "mdi mdi-text-account",
+        //       title: "Payment By User Report",
+        //       to: "/management/report/user",
+        //       menu: "management_payments_access",
+        //     },
 
-            {
-              icon: "mdi mdi-calendar-month",
-              title: "All Reports",
-              to: "/management/report/monthly",
-              menu: "management_soldout_access",
-            },
-          ],
-        },
-        {
-          topMenu: "dashboard",
-          icon: "mdi-home-search-outline",
-          title: "Invenotry ",
-          to: "/inventory",
-          menu: "lost_and_found_access",
-        },
+        //     {
+        //       icon: "mdi mdi-calendar-month",
+        //       title: "All Reports",
+        //       to: "/management/report/monthly",
+        //       menu: "management_soldout_access",
+        //     },
+        //   ],
+        // },
+        // {
+        //   topMenu: "dashboard",
+        //   icon: "mdi-home-search-outline",
+        //   title: "Invenotry ",
+        //   to: "/inventory",
+        //   menu: "lost_and_found_access",
+        // },
         {
           topMenu: "setting",
           icon: "mdi-tools",
@@ -823,6 +791,11 @@ export default {
       this.todayDate =
         this.$dateFormat.format_date_with_dayname(formattedDateTime);
     }, 1000);
+
+    this.setActive({
+      label: "Dashboard",
+      name: "dashboard",
+    });
   },
 
   mounted() {
@@ -886,6 +859,8 @@ export default {
       return this.activeMenu === menu;
     },
     setActive(menu) {
+      console.log(menu);
+      // return;
       this.activeMenu = menu;
       this.filteredMenu = this.items.filter((e) => e.topMenu == menu.name);
       this.$router.push(

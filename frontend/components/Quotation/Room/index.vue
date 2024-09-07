@@ -16,6 +16,25 @@
           >mdi-reload</v-icon
         >
         <v-spacer></v-spacer>
+
+        <div style="width: 150px">
+          <v-text-field
+            class="global-search-textbox"
+            append-icon="mdi-magnify"
+            label="Search..."
+            clearable
+            dense
+            outlined
+            hide-details
+            v-model="search"
+            @input="getBySearch"
+          ></v-text-field>
+        </div>
+        &nbsp;
+        <div style="width: 150px">
+          <DateRange class="mt-5" height="30" @filter-attr="filterAttr" />
+        </div>
+        &nbsp;
         <QuotationRoomCreate
           :key="QuotationRoomCreateCompKey"
           :model="Model"
@@ -50,7 +69,9 @@
         <v-list width="120" dense>
           <v-list-item>
             <v-list-item-title>
-              <v-icon small color="blue" @click="openExternalWinodw(item.id)">mdi-eye</v-icon>
+              <v-icon small color="blue" @click="openExternalWinodw(item.id)"
+                >mdi-eye</v-icon
+              >
               View
               <!-- <QuotationRoomView
                 :model="Model"
@@ -125,9 +146,10 @@ let currentDate = y + "-" + m + "-" + d;
 
 export default {
   data: () => ({
+    search: null,
     Model: "Quotation",
     endpoint: "quotation",
-    QuotationRoomCreateCompKey:1,
+    QuotationRoomCreateCompKey: 1,
     currentDate,
     filters: {},
     options: {},
@@ -192,6 +214,42 @@ export default {
     },
   },
   methods: {
+    async getBySearch() {
+      if (this.search == "" || this.search == null) {
+        this.getDataFromApi();
+        return;
+      }
+
+      this.loading = true;
+      let config = {
+        params: { company_id: this.$auth.user.company_id },
+      };
+      let { data } = await this.$axios.get(
+        `quotation-room-search/${this.search}`,
+        config
+      );
+      this.loading = false;
+      this.expenses = data.data;
+    },
+    async filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      //this.search = data.search;
+      if (this.from_date && this.to_date) {
+        this.loading = true;
+        let config = {
+          params: {
+            from_date: this.from_date,
+            to_date: this.to_date,
+            type: "room",
+            company_id: this.$auth.user.company_id,
+          },
+        };
+        let { data } = await this.$axios.get(this.endpoint, config);
+        this.loading = false;
+        this.expenses = data.data;
+      }
+    },
     openExternalWinodw(id) {
       let url = `${process.env.BACKEND_URL}quotation-room/${id}`;
       let element = document.createElement("a");
@@ -204,7 +262,7 @@ export default {
       return Math.random();
     },
     async getDataFromApi() {
-      this.QuotationRoomCreateCompKey +=1;
+      this.QuotationRoomCreateCompKey += 1;
       this.loading = true;
       let config = {
         params: { type: "room", company_id: this.$auth.user.company_id },

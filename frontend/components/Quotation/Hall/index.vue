@@ -16,6 +16,24 @@
           >mdi-reload</v-icon
         >
         <v-spacer></v-spacer>
+        <div style="width: 150px">
+          <v-text-field
+            class="global-search-textbox"
+            append-icon="mdi-magnify"
+            label="Search..."
+            clearable
+            dense
+            outlined
+            hide-details
+            v-model="search"
+            @input="getBySearch"
+          ></v-text-field>
+        </div>
+        &nbsp;
+        <div style="width: 150px">
+          <DateRange class="mt-5" height="30" @filter-attr="filterAttr" />
+        </div>
+        &nbsp;
         <QuotationHallCreate
           :key="QuotationHallCreateCompKey"
           :model="Model"
@@ -192,6 +210,42 @@ export default {
     },
   },
   methods: {
+    async getBySearch() {
+      if (this.search == "" || this.search == null) {
+        this.getDataFromApi();
+        return;
+      }
+
+      this.loading = true;
+      let config = {
+        params: { company_id: this.$auth.user.company_id },
+      };
+      let { data } = await this.$axios.get(
+        `quotation-hall-search/${this.search}`,
+        config
+      );
+      this.loading = false;
+      this.expenses = data.data;
+    },
+    async filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      //this.search = data.search;
+      if (this.from_date && this.to_date) {
+        this.loading = true;
+        let config = {
+          params: {
+            from_date: this.from_date,
+            to_date: this.to_date,
+            type: "hall",
+            company_id: this.$auth.user.company_id,
+          },
+        };
+        let { data } = await this.$axios.get(this.endpoint, config);
+        this.loading = false;
+        this.expenses = data.data;
+      }
+    },
     openExternalWinodw(id) {
       let url = `${process.env.BACKEND_URL}quotation-hall/${id}`;
       let element = document.createElement("a");
