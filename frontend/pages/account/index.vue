@@ -235,11 +235,11 @@
       </v-col> -->
     </v-row>
     <v-card class="my-2 text-right">
-      <v-btn text @click="currentTabId = 1"
-        >Income List</v-btn
+      <v-btn :color="currentTabId === 1 ? `primary` : ''" text @click="currentTabId = 1"
+        >Income</v-btn
       >
-      <v-btn text @click="currentTabId = 2">Expense List</v-btn>
-      <v-btn text @click="currentTabId = 3">ManagementExpense List</v-btn>
+      <v-btn :color="currentTabId === 2 ? `primary` : ''" text @click="currentTabId = 2">Expense</v-btn>
+      <v-btn :color="currentTabId === 3 ? `primary` : ''" text @click="currentTabId = 3">ManagementExpense</v-btn>
       <Income v-show="currentTabId == 1" @stats="(e) => (income = e)" />
       <IncomeExpenseNonManagement v-show="currentTabId == 2" @stats="(e) => (expense = e)" />
       <IncomeExpenseManagement v-show="currentTabId == 3" @stats="(e) => (managementExpense = e)" />
