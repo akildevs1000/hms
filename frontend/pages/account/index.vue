@@ -234,43 +234,16 @@
         </v-card>
       </v-col> -->
     </v-row>
-
-    <v-row>
-      <v-col cols="12" class="pt-0">
-        <v-card
-          class="mb-5 rounded-md mt-0"
-          elevation="3"
-          style="min-height: 400px"
-        >
-          <v-tabs hide-slider right v-model="activeTab" color="#0d652d">
-            <v-tab style="font-weight: bold"> Income List </v-tab>
-            <v-tab style="font-weight: bold"> Expense List </v-tab>
-            <v-tab
-              style="font-weight: bold"
-              v-if="can('management_income_view')"
-            >
-              Management Expenses
-            </v-tab>
-
-            <!-- <v-tabs-slider color="#1259a7"></v-tabs-slider> -->
-
-            <v-tab-item>
-              <Income @stats="(e) => (income = e)" />
-            </v-tab-item>
-
-            <v-tab-item>
-              <IncomeExpenseNonManagement @stats="(e) => (expense = e)" />
-            </v-tab-item>
-
-            <v-tab-item>
-              <IncomeExpenseManagement
-                @stats="(e) => (managementExpense = e)"
-              />
-            </v-tab-item>
-          </v-tabs>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-card class="my-2 text-right">
+      <v-btn text @click="currentTabId = 1"
+        >Income List</v-btn
+      >
+      <v-btn text @click="currentTabId = 2">Expense List</v-btn>
+      <v-btn text @click="currentTabId = 3">ManagementExpense List</v-btn>
+      <Income v-show="currentTabId == 1" @stats="(e) => (income = e)" />
+      <IncomeExpenseNonManagement v-show="currentTabId == 2" @stats="(e) => (expense = e)" />
+      <IncomeExpenseManagement v-show="currentTabId == 3" @stats="(e) => (managementExpense = e)" />
+    </v-card>
   </div>
   <NoAccess v-else />
 </template>
@@ -278,6 +251,7 @@
 <script>
 export default {
   data: () => ({
+    currentTabId: 1,
     key: 1,
     colors: [
       "#92d050",
