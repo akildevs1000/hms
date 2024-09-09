@@ -37,12 +37,12 @@ class ExpenseController extends Controller
 
         // $model->where(function ($q) use ($request) {
         //     $q->where('voucher', 0);
-        //     $q->orWhere('item', 'ILIKE', "%$request->search%");
+        //     $q->orWhere('item', env("WILD_CARD") ?? 'ILIKE', "$request->name%");
         // });
         if ($request->filled('search')) {
             $model->Where(function ($q) use ($request) {
-                $q->Where('item', 'ILIKE', "%$request->search%");
-                $q->orWhere('voucher', 'ILIKE', "%$request->search%");
+                $q->Where('item', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
+                $q->orWhere('voucher', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
             });
         }
 
@@ -176,8 +176,8 @@ class ExpenseController extends Controller
 
         if ($request->filled('search')) {
             $categoriesWithExpenses->Where(function ($q) use ($request) {
-                $q->Where('item', 'ILIKE', "%$request->search%");
-                $q->orWhere('voucher', 'ILIKE', "%$request->search%");
+                $q->where('item',  env("WILD_CARD") ?? 'ILIKE', "$request->search%");
+                $q->orWhere('voucher',  env("WILD_CARD") ?? 'ILIKE', "$request->search%");
             });
         }
 

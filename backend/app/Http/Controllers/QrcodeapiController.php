@@ -77,7 +77,7 @@ class QrcodeapiController extends Controller
                     $q->Where('category_id',  $value['id']);
                 })
                 ->when($request->filled('item_name_search'), function ($q) use ($request) {
-                    $q->where('name', "ILIKE",   '%' . $request->item_name_search . '%');
+                    $q->where('name', env("WILD_CARD") ?? "ILIKE",   '%' . $request->item_name_search . '%');
                 })
 
                 ->orderBY("display_order", "asc")->get();;

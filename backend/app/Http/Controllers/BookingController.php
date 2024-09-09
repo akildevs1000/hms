@@ -2211,7 +2211,7 @@ class BookingController extends Controller
         $model->where('room_category_type', null);
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
-            $model->where('source', "ILIKE", "%" . $request->source . "%");
+            $model->where('source', env("WILD_CARD") ?? 'ILIKE', '%' . $request->source . '%');
         }
 
         if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
