@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="searchDialog" width="450">
+  <v-dialog v-model="searchDialog" width="350">
     <template v-slot:activator="{ on, attrs }">
       <div style="width: 130px" class="ma-2">
         <v-text-field
@@ -19,34 +19,39 @@
       </div>
     </template>
     <v-card>
-      <v-card-title>
-        Customer <v-spacer></v-spacer>
-        <v-icon @click="searchDialog = false" color="primary">mdi-close</v-icon>
-      </v-card-title>
+      <v-alert class="primary" dense dark>
+        <v-row>
+          <v-col>
+            Customer
+          </v-col>
+          <v-col>
+            <div class="text-right">
+              <v-icon @click="searchDialog = false">mdi-close</v-icon>
+            </div>
+          </v-col>
+        </v-row>
+      </v-alert>
 
       <v-card-text>
-        <v-row class="mt-2">
-          <v-col cols="9">
-            <v-text-field
+        <v-text-field
               label="Search By Mobile Number"
               dense
               outlined
               type="text"
               v-model="contact_no"
               :hide-details="true"
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="3">
-            <v-btn color="primary" @click="get_customer" :loading="checkLoader">
-              Search
-            </v-btn>
-          </v-col>
-        </v-row>
+            >
+              <template v-slot:append>
+                <v-icon
+                  :loading="checkLoader"
+                  color="primary"
+                  right
+                  @click="get_customer"
+                  >mdi-magnify</v-icon
+                >
+              </template>
+            </v-text-field>
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
