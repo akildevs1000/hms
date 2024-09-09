@@ -323,23 +323,23 @@ export default {
       }, 1000);
     // }, 3000);
   },
-  watch: {
-    income() {
-      if (this.income) this.activeTab = 1;
-    },
-    expense() {
-      if (this.expense) this.activeTab = 2;
-    },
-    managementExpense() {
-      if (this.managementExpense) this.activeTab = 0;
-    },
-    loss() {
-      this.key += 1;
-    },
-    profit() {
-      this.key += 1;
-    },
-  },
+  // watch: {
+  //   income() {
+  //     if (this.income) this.activeTab = 1;
+  //   },
+  //   expense() {
+  //     if (this.expense) this.activeTab = 2;
+  //   },
+  //   managementExpense() {
+  //     if (this.managementExpense) this.activeTab = 0;
+  //   },
+  //   loss() {
+  //     this.key += 1;
+  //   },
+  //   profit() {
+  //     this.key += 1;
+  //   },
+  // },
   computed: {
     loss() {
       if (this.income && this.expense && this.managementExpense) {

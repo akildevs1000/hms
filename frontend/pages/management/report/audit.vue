@@ -1,136 +1,142 @@
 <template>
   <div v-if="can(`night_audit_access`)">
-    <v-row class="mt-5 mb-5">
+    <v-row>
       <v-col cols="6">
         <h3>{{ Model }}</h3>
-
       </v-col>
     </v-row>
     <v-row>
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
-        <div class="card px-2" style="background-color: #800000">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-ddoor-open"></i>
+      <v-col cols="3">
+        <v-card style="background-color: #800000" dark>
+          <v-card-text>
+            <strong class="white--text">Cash</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency }}{{ GrandTotalCash || 0 }}
             </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Cash</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalCash || 0 }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
-        <div class="card px-2" style="background-color: #ffbe00">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
+      <v-col cols="3">
+        <v-card style="background-color: #ffbe00" dark>
+          <v-card-text>
+            <strong class="white--text">Card</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency }}{{ GrandTotalCard || 0 }}
             </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Card</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalCard || 0 }} <br /> </span>
-            </div>
-          </div>
-        </div>
-      </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
-        <div class="card px-2" style="background-color: #74166d">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
+      <v-col cols="3">
+        <v-card style="background-color: #74166d" dark>
+          <v-card-text>
+            <strong class="white--text">Bank</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency }}{{ GrandTotalBank || 0 }}
             </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Bank</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalBank || 0 }} </span>
-            </div>
-          </div>
-        </div>
-      </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
-        <div class="card px-2" style="background-color: #00b300">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
+      <v-col cols="3">
+        <v-card style="background-color: #00b300" dark>
+          <v-card-text>
+            <strong class="white--text">Online</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency
+                }}{{ GrandTotalTodayOnline || 0 }}
             </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Online</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalTodayOnline || 0 }} </span>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="3">
+        <v-card style="background-color: #18069e" dark>
+          <v-card-text>
+            <strong class="white--text">UPI</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency }}{{ GrandTotalTodayUPI || 0 }}
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
-        <div class="card px-2" style="background-color: #18069e">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="3">
+        <v-card style="background-color: #4390fc" dark>
+          <v-card-text>
+            <strong class="white--text">City Ledger</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency }}{{ GrandTotalBalance || 0 }}
             </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">UPI</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalTodayUPI || 0 }} </span>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="3">
+        <v-card style="background-color: #02ada4" dark>
+          <v-card-text>
+            <strong class="white--text">Expenses</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency }}{{ totExpense || 0 }}
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-4 text-uppercase">
-        <div class="card px-2" style="background-color: #4390fc">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="3">
+        <v-card style="background-color: #ce008e" dark>
+          <v-card-text>
+            <strong class="white--text">Income</strong>
+            <div class="white--text">
+              {{ $auth.user.company.currency }}{{ GrandTotal || 0 }}
             </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">City Ledger</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotalBalance || 0 }} </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-6 text-uppercase">
-        <div class="card px-2" style="background-color: #02ada4">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
-            </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Expenses</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ totExpense || 0 }} </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 my-0 py-0 col-lg-3 col-md-6 text-uppercase">
-        <div class="card px-2" style="background-color: #ce008e">
-          <div class="card-statistic-3">
-            <div class="card-icon card-icon-large">
-              <i class="fas fa-dosor-open"></i>
-            </div>
-            <div class="card-content">
-              <h6 class="card-title text-capitalize">Income</h6>
-              <span class="data-1">{{ $auth.user.company.currency }}{{ GrandTotal || 0 }} </span>
-            </div>
-          </div>
-        </div>
-      </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
     </v-row>
     <v-row>
       <v-col md="2">
-        <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-          offset-y min-width="auto">
+        <v-menu
+          v-model="from_menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true" outlined
-              label="Date"></v-text-field>
+            <v-text-field
+              v-model="from_date"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              dense
+              :hide-details="true"
+              outlined
+              label="Date"
+            ></v-text-field>
           </template>
-          <v-date-picker v-model="from_date" @input="from_menu = false" @change="commonMethod"></v-date-picker>
+          <v-date-picker
+           no-title
+            v-model="from_date"
+            @input="from_menu = false"
+            @change="commonMethod"
+          ></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
 
     <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-tabs v-model="activeTab" :vertical="vertical" background-color="primary" dark show-arrows>
+        <v-tabs
+          v-model="activeTab"
+          :vertical="vertical"
+          background-color="primary"
+          dark
+          show-arrows
+        >
           <v-spacer></v-spacer>
           <v-tab active-class="active-link"> Today Checkin Report </v-tab>
           <v-tab active-class="active-link"> Continue Report </v-tab>
@@ -147,22 +153,33 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr class="">
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in incomeHeaders" :key="index">
                       <span v-html="item.text"></span>
-                    </th>
+                    </td>
                   </tr>
-                  <tr v-for="(item, index) in todayCheckIn" :key="index" style="background-color: yellow">
+                  <tr
+                    v-for="(item, index) in todayCheckIn"
+                    :key="index"
+                  >
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -197,13 +214,15 @@
                     </td>
                   </tr>
                   <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ totalCash }}</th>
-                    <th class="text-right">{{ totalCard }}</th>
-                    <th class="text-right">{{ totalOnline }}</th>
-                    <th class="text-right">{{ totalBank }}</th>
-                    <th class="text-right">{{ totalUPI }}</th>
-                    <th class="text-right">{{ totalBalance }}</th>
+                    <td class="text-right" colspan="9">Total</td>
+                    <td class="text-right">{{ totalCash }}</td>
+                    <td class="text-right">{{ totalCard }}</td>
+                    <td class="text-right">{{ totalOnline }}</td>
+                    <td class="text-right">{{ totalBank }}</td>
+                    <td class="text-right">{{ totalUPI }}</td>
+                    <td class="text-right">{{ totalBalance }}</td>
+                    <td class="text-right"></td>
+
                   </tr>
                 </table>
               </v-card>
@@ -216,22 +235,33 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in incomeHeaders" :key="index">
                       <span v-html="item.text"></span>
-                    </th>
+                    </td>
                   </tr>
-                  <tr v-for="(item, index) in continueRooms" :key="index" style="background-color: #9bc1e6">
+                  <tr
+                    v-for="(item, index) in continueRooms"
+                    :key="index"
+                  >
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -254,13 +284,15 @@
                     </td>
                   </tr>
                   <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ continueTotalCash }}</th>
-                    <th class="text-right">{{ continueTotalCard }}</th>
-                    <th class="text-right">{{ continueTotalOnline }}</th>
-                    <th class="text-right">{{ continueTotalBank }}</th>
-                    <th class="text-right">{{ continueTotalUPI }}</th>
-                    <th class="text-right">{{ continueTotalBalance }}</th>
+                    <td class="text-right" colspan="9">Total</td>
+                    <td class="text-right">{{ continueTotalCash }}</td>
+                    <td class="text-right">{{ continueTotalCard }}</td>
+                    <td class="text-right">{{ continueTotalOnline }}</td>
+                    <td class="text-right">{{ continueTotalBank }}</td>
+                    <td class="text-right">{{ continueTotalUPI }}</td>
+                    <td class="text-right">{{ continueTotalBalance }}</td>
+                    <td class="text-right"></td>
+
                   </tr>
                 </table>
               </v-card>
@@ -273,22 +305,33 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in incomeHeaders" :key="index">
                       <span v-html="item.text"></span>
-                    </th>
+                    </td>
                   </tr>
-                  <tr v-for="(item, index) in todayCheckOut" :key="index" style="background-color: #90d24d">
+                  <tr
+                    v-for="(item, index) in todayCheckOut"
+                    :key="index"
+                  >
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -314,13 +357,14 @@
                     </td>
                   </tr>
                   <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ checkoutTotalCash }}</th>
-                    <th class="text-right">{{ checkoutTotalCard }}</th>
-                    <th class="text-right">{{ checkoutTotalOnline }}</th>
-                    <th class="text-right">{{ checkoutTotalBank }}</th>
-                    <th class="text-right">{{ checkoutTotalUPI }}</th>
-                    <th class="text-right">{{ checkoutTotalBalance }}</th>
+                    <td class="text-right" colspan="9">Total</td>
+                    <td class="text-right">{{ checkoutTotalCash }}</td>
+                    <td class="text-right">{{ checkoutTotalCard }}</td>
+                    <td class="text-right">{{ checkoutTotalOnline }}</td>
+                    <td class="text-right">{{ checkoutTotalBank }}</td>
+                    <td class="text-right">{{ checkoutTotalUPI }}</td>
+                    <td class="text-right">{{ checkoutTotalBalance }}</td>
+                    <td class="text-right"></td>
                   </tr>
                 </table>
               </v-card>
@@ -333,22 +377,33 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in incomeHeaders" :key="index">
                       <span v-html="item.text"></span>
-                    </th>
+                    </td>
                   </tr>
-                  <tr v-for="(item, index) in todayPayments" :key="index" style="background-color: #29b9ca">
+                  <tr
+                    v-for="(item, index) in todayPayments"
+                    :key="index"
+                  >
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -374,13 +429,14 @@
                     </td>
                   </tr>
                   <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ todayPaymentTotalCash }}</th>
-                    <th class="text-right">{{ todayPaymentTotalCard }}</th>
-                    <th class="text-right">{{ todayPaymentTotalOnline }}</th>
-                    <th class="text-right">{{ todayPaymentTotalBank }}</th>
-                    <th class="text-right">{{ todayPaymentTotalUPI }}</th>
-                    <th class="text-right">{{ todayPaymentTotalBalance }}</th>
+                    <td class="text-right" colspan="9">Total</td>
+                    <td class="text-right">{{ todayPaymentTotalCash }}</td>
+                    <td class="text-right">{{ todayPaymentTotalCard }}</td>
+                    <td class="text-right">{{ todayPaymentTotalOnline }}</td>
+                    <td class="text-right">{{ todayPaymentTotalBank }}</td>
+                    <td class="text-right">{{ todayPaymentTotalUPI }}</td>
+                    <td class="text-right">{{ todayPaymentTotalBalance }}</td>
+                    <td></td>
                   </tr>
                 </table>
               </v-card>
@@ -393,22 +449,33 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <th v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in incomeHeaders" :key="index">
                       <span v-html="item.text"></span>
-                    </th>
+                    </td>
                   </tr>
-                  <tr v-for="(item, index) in cityLedgerPaymentsAudit" :key="index" style="background-color: #e4dc94">
+                  <tr
+                    v-for="(item, index) in cityLedgerPaymentsAudit"
+                    :key="index"
+                  >
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
                     </td>
                     <td>
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.reservation_no }}
                       </span>
                     </td>
                     <td class="room-width">
-                      <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
+                      <span
+                        class="blue--text"
+                        @click="goToRevView(item)"
+                        style="cursor: pointer"
+                      >
                         {{ item.rooms }}
                       </span>
                     </td>
@@ -434,13 +501,14 @@
                     </td>
                   </tr>
                   <tr class="text-right">
-                    <th class="text-right" colspan="9">Total</th>
-                    <th class="text-right">{{ cityLedgerTotalCash }}</th>
-                    <th class="text-right">{{ cityLedgerTotalCard }}</th>
-                    <th class="text-right">{{ cityLedgerTotalOnline }}</th>
-                    <th class="text-right">{{ cityLedgerTotalBank }}</th>
-                    <th class="text-right">{{ cityLedgerTotalUPI }}</th>
-                    <th class="text-right">{{ cityLedgerTotalBalance }}</th>
+                    <td class="text-right" colspan="9">Total</td>
+                    <td class="text-right">{{ cityLedgerTotalCash }}</td>
+                    <td class="text-right">{{ cityLedgerTotalCard }}</td>
+                    <td class="text-right">{{ cityLedgerTotalOnline }}</td>
+                    <td class="text-right">{{ cityLedgerTotalBank }}</td>
+                    <td class="text-right">{{ cityLedgerTotalUPI }}</td>
+                    <td class="text-right">{{ cityLedgerTotalBalance }}</td>
+                    <td></td>
                   </tr>
                 </table>
               </v-card>
@@ -452,30 +520,41 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <th>Rev. No</th>
-                    <th>Room No</th>
-                    <th>Room Type</th>
-                    <th>Booking</th>
-                    <th>C/In Time</th>
-                    <th>Cancel Time</th>
-                    <th>Amount</th>
-                    <th>Reason</th>
-                    <th>Action</th>
-                    <th>Cancel By</th>
-                    <th>Status</th>
+                    <td>Rev. No</td>
+                    <td>Room No</td>
+                    <td>Room Type</td>
+                    <td>Booking</td>
+                    <td>C/In Time</td>
+                    <td>Cancel Time</td>
+                    <td>Amount</td>
+                    <td>Reason</td>
+                    <td>Action</td>
+                    <td>Cancel By</td>
+                    <td>Status</td>
                   </tr>
                   <tr v-for="(item, index) in cancelRooms" :key="index">
                     <td class="room-width">
-                      <span class="blue--text" @click="goToRevViewFromCancel(item)" style="cursor: pointer">
-                        {{ item && item.booking && item.booking.reservation_no }}
+                      <span
+                        class="blue--text"
+                        @click="goToRevViewFromCancel(item)"
+                        style="cursor: pointer"
+                      >
+                        {{
+                          item && item.booking && item.booking.reservation_no
+                        }}
                       </span>
                     </td>
                     <td>{{ item && item.room_no }}</td>
                     <td>{{ item && item.room_type }}</td>
                     <td>{{ item && item.booking.created_at }}</td>
-                    <td> {{ item.status_before_cancelation == 2 ? item.check_in : '---'
-                    }}</td>
-                    <td> {{ item && item.time }}</td>
+                    <td>
+                      {{
+                        item.status_before_cancelation == 2
+                          ? item.check_in
+                          : "---"
+                      }}
+                    </td>
+                    <td>{{ item && item.time }}</td>
                     <td class="text-right">{{ item && item.grand_total }}</td>
                     <td>{{ item && item.reason }}</td>
                     <td>{{ item && item.action }}</td>
@@ -490,8 +569,15 @@
           <v-tab-item>
             <v-card flat>
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table v-for="(item, index) in FoodData" :key="index" class="mt-4">
-                  <tr style="background-color: #ecf0f4; color: black" class="my-0 py-0">
+                <table
+                  v-for="(item, index) in FoodData"
+                  :key="index"
+                  class="mt-4"
+                >
+                  <tr
+                    style="background-color: #ecf0f4; color: black"
+                    class="my-0 py-0"
+                  >
                     <th class="my-0 py-0">
                       Room No - {{ item.room_no || "---" }}
                     </th>
@@ -580,687 +666,6 @@
         </v-tabs>
       </v-card>
     </div>
-
-    <!-- <v-row>
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">Today Checkin Report</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table>
-            <tr>
-              <th v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </th>
-            </tr>
-            <tr
-              v-for="(item, index) in todayCheckIn"
-              :key="index"
-              style="background-color: yellow"
-            >
-              <td>{{ ++index }}</td>
-              <td>{{ item && item.customer && item.customer.first_name }}</td>
-              <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.reservation_no }}
-                </span>
-              </td>
-              <td class="room-width">
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.rooms }}
-                </span>
-              </td>
-              <td>{{ item && item.source }}</td>
-              <td>{{ item && item.check_in }}</td>
-              <td>{{ item && item.check_out }}</td>
-              <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">
-                {{ setAdvancePayment(item.advance_price) }}
-              </td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-              <td class="text-right">
-                {{ item.balance }}
-              </td>
-              <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
-              </td>
-            </tr>
-            <tr class="text-right">
-              <th class="text-right" colspan="9">Total</th>
-              <th class="text-right">{{ totalCash }}</th>
-              <th class="text-right">{{ totalCard }}</th>
-              <th class="text-right">{{ totalOnline }}</th>
-              <th class="text-right">{{ totalBank }}</th>
-              <th class="text-right">{{ totalUPI }}</th>
-              <th class="text-right">{{ totalBalance }}</th>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
-
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">Continue Report</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table>
-            <tr>
-              <th v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </th>
-            </tr>
-            <tr
-              v-for="(item, index) in continueRooms"
-              :key="index"
-              style="background-color: #9bc1e6"
-            >
-              <td>{{ ++index }}</td>
-              <td>{{ item && item.customer && item.customer.first_name }}</td>
-              <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.reservation_no }}
-                </span>
-              </td>
-              <td class="room-width">
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.rooms }}
-                </span>
-              </td>
-
-              <td>{{ item && item.source }}</td>
-              <td>{{ item && item.check_in }}</td>
-              <td>{{ item && item.check_out }}</td>
-              <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">{{ item.advance_price }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-              <td class="text-right">
-                {{ item.balance }}
-              </td>
-              <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
-              </td>
-            </tr>
-            <tr class="text-right">
-              <th class="text-right" colspan="9">Total</th>
-              <th class="text-right">{{ continueTotalCash }}</th>
-              <th class="text-right">{{ continueTotalCard }}</th>
-              <th class="text-right">{{ continueTotalOnline }}</th>
-              <th class="text-right">{{ continueTotalBank }}</th>
-              <th class="text-right">{{ continueTotalUPI }}</th>
-              <th class="text-right">{{ continueTotalBalance }}</th>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
-
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">CheckOut Report</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table>
-            <tr>
-              <th v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </th>
-            </tr>
-            <tr
-              v-for="(item, index) in todayCheckOut"
-              :key="index"
-              style="background-color: #90d24d"
-            >
-              <td>{{ ++index }}</td>
-              <td>{{ item && item.customer && item.customer.first_name }}</td>
-              <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.reservation_no }}
-                </span>
-              </td>
-              <td class="room-width">
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.rooms }}
-                </span>
-              </td>
-
-              <td>{{ item && item.source }}</td>
-              <td>{{ item && item.check_in }}</td>
-              <td>{{ item && item.check_out }}</td>
-              <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">
-                {{ setAdvancePayment(item.advance_price) }}
-              </td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-              <td class="text-right">
-                {{ item.balance }}
-              </td>
-              <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
-              </td>
-            </tr>
-            <tr class="text-right">
-              <th class="text-right" colspan="9">Total</th>
-              <th class="text-right">{{ checkoutTotalCash }}</th>
-              <th class="text-right">{{ checkoutTotalCard }}</th>
-              <th class="text-right">{{ checkoutTotalOnline }}</th>
-              <th class="text-right">{{ checkoutTotalBank }}</th>
-              <th class="text-right">{{ checkoutTotalUPI }}</th>
-              <th class="text-right">{{ checkoutTotalBalance }}</th>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
-
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">Today Booking Report</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table>
-            <tr>
-              <th v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </th>
-            </tr>
-            <tr
-              v-for="(item, index) in todayPayments"
-              :key="index"
-              style="background-color: #29b9ca"
-            >
-              <td>{{ ++index }}</td>
-              <td>{{ item && item.customer && item.customer.first_name }}</td>
-              <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.reservation_no }}
-                </span>
-              </td>
-              <td class="room-width">
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.rooms }}
-                </span>
-              </td>
-
-              <td>{{ item && item.source }}</td>
-              <td>{{ item && item.check_in }}</td>
-              <td>{{ item && item.check_out }}</td>
-              <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">
-                {{ setAdvancePayment(item.advance_price) }}
-              </td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-              <td class="text-right">
-                {{ item.balance }}
-              </td>
-              <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
-              </td>
-            </tr>
-            <tr class="text-right">
-              <th class="text-right" colspan="9">Total</th>
-              <th class="text-right">{{ todayPaymentTotalCash }}</th>
-              <th class="text-right">{{ todayPaymentTotalCard }}</th>
-              <th class="text-right">{{ todayPaymentTotalOnline }}</th>
-              <th class="text-right">{{ todayPaymentTotalBank }}</th>
-              <th class="text-right">{{ todayPaymentTotalUPI }}</th>
-              <th class="text-right">{{ todayPaymentTotalBalance }}</th>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
-
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">City Ledger Report</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table>
-            <tr>
-              <th v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </th>
-            </tr>
-            <tr
-              v-for="(item, index) in cityLedgerPaymentsAudit"
-              :key="index"
-              style="background-color: #e4dc94"
-            >
-              <td>{{ ++index }}</td>
-              <td>{{ item && item.customer && item.customer.first_name }}</td>
-              <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.reservation_no }}
-                </span>
-              </td>
-              <td class="room-width">
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.rooms }}
-                </span>
-              </td>
-
-              <td>{{ item && item.source }}</td>
-              <td>{{ item && item.check_in }}</td>
-              <td>{{ item && item.check_out }}</td>
-              <td class="text-right">{{ item.total_price }}</td>
-              <td class="text-right">
-                {{ setAdvancePayment(item.advance_price) }}
-              </td>
-              <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-              <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-              <td class="text-right">
-                {{ item.balance }}
-              </td>
-              <td>
-                {{ item.balance > 0 ? "Due" : "Paid" }}
-              </td>
-            </tr>
-            <tr class="text-right">
-              <th class="text-right" colspan="9">Total</th>
-              <th class="text-right">{{ cityLedgerTotalCash }}</th>
-              <th class="text-right">{{ cityLedgerTotalCard }}</th>
-              <th class="text-right">{{ cityLedgerTotalOnline }}</th>
-              <th class="text-right">{{ cityLedgerTotalBank }}</th>
-              <th class="text-right">{{ cityLedgerTotalUPI }}</th>
-              <th class="text-right">{{ cityLedgerTotalBalance }}</th>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
-
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">Cancel Rooms</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table>
-            <tr>
-              <th>Room No</th>
-              <th>Room Type</th>
-              <th>C/In Time</th>
-              <th>Cancel Time</th>
-              <th>Amount</th>
-              <th>Reason</th>
-              <th>Action</th>
-              <th>Cancel By</th>
-            </tr>
-            <tr v-for="(item, index) in cancelRooms" :key="index">
-              <td>{{ item && item.room_no }}</td>
-              <td>{{ item && item.room_type }}</td>
-              <td>{{ getTimeFromCheckIn(item.check_in) }}</td>
-              <td>{{ item && item.time }}</td>
-              <td class="text-right">{{ item && item.grand_total }}</td>
-              <td>{{ item && item.reason }}</td>
-              <td>{{ item && item.action }}</td>
-              <td>{{ item && item.user && item.user.name }}</td>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
-
-      <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <label class="white--text">Food Order List</label>
-            <v-spacer></v-spacer>
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_print')"
-                >
-                  <v-icon class="">mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('income_report_download')"
-                >
-                  <v-icon class="">mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-toolbar>
-          <table v-for="(item, index) in FoodData" :key="index" class="mt-4">
-            <tr
-              style="background-color: #ecf0f4; color: black"
-              class="my-0 py-0"
-            >
-              <th class="my-0 py-0">Room No - {{ item.room_no || "---" }}</th>
-              <th class="my-0 py-0">Adult</th>
-              <th class="my-0 py-0">Child</th>
-              <th class="my-0 py-0">Baby</th>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-              <td class="my-0 py-0">
-                {{
-                  (item && item.breakfast && item.breakfast.title) ||
-                  "Breakfast"
-                }}
-              </td>
-              <td class="my-0 py-0">
-                {{
-                  (item && item.breakfast && item.breakfast.no_of_adult) ||
-                  "---"
-                }}
-              </td>
-              <td class="my-0 py-0">
-                {{
-                  (item && item.breakfast && item.breakfast.no_of_child) ||
-                  "---"
-                }}
-              </td>
-              <td class="my-0 py-0">
-                {{
-                  (item && item.breakfast && item.breakfast.no_of_baby) || "---"
-                }}
-              </td>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-              <td class="my-0 py-0">
-                {{ (item && item.lunch && item.lunch.title) || "Lunch" }}
-              </td>
-              <td class="my-0 py-0">
-                {{ (item && item.lunch && item.lunch.no_of_adult) || "---" }}
-              </td>
-              <td class="my-0 py-0">
-                {{ (item && item.lunch && item.lunch.no_of_child) || "---" }}
-              </td>
-              <td class="my-0 py-0">
-                {{ (item && item.lunch && item.lunch.no_of_baby) || "---" }}
-              </td>
-            </tr>
-            <tr style="background-color: white" class="my-0 py-0">
-              <td class="my-0 py-0">
-                {{ (item && item.dinner && item.dinner.title) || "Dinner" }}
-              </td>
-              <td class="my-0 py-0">
-                {{ (item && item.dinner && item.dinner.no_of_adult) || "---" }}
-              </td>
-              <td class="my-0 py-0">
-                {{ (item && item.dinner && item.dinner.no_of_child) || "---" }}
-              </td>
-              <td class="my-0 py-0">
-                {{ (item && item.dinner && item.dinner.no_of_baby) || "---" }}
-              </td>
-            </tr>
-          </table>
-        </v-card>
-      </v-col>
-    </v-row> -->
   </div>
   <NoAccess v-else />
 </template>
@@ -1333,7 +738,6 @@ export default {
     if (filters.date) {
       this.from_date = filters.date;
     }
-
 
     this.loading = true;
     this.getdata();
@@ -1525,7 +929,7 @@ export default {
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
     caps(str) {
@@ -1552,7 +956,6 @@ export default {
     goToRevViewFromCancel(item) {
       this.$router.push(`/customer/details/${item.booking_id}`);
     },
-
 
     getTimeFromCheckIn(date) {
       const dateObj = new Date(date);
@@ -1657,3 +1060,18 @@ export default {
   },
 };
 </script>
+<style scoped>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+
+</style>

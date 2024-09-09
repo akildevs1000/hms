@@ -370,41 +370,41 @@ export default {
           to: "/reports",
           menu: "dashboard",
         },
+        
         // {
-        //   topMenu: "reports",
-        //   icon: "mdi-chart-areaspline",
-        //   title: "Old",
-        //   to: "/management/report/monthly",
-        //   menu: "dashboard",
+        //   topMenu: "dashboard",
+        //   icon: "mdi-bed",
+        //   title: `History`,
+        //   open_menu: false,
+        //   menu: "history_menu",
+        //   hasChildren: [
+        //     {
+        //       icon: "mdi mdi-home-import-outline",
+        //       title: "Reservation",
+        //       to: "/reservation/up_coming",
+        //       menu: "reservation_access",
+        //     },
+        //     {
+        //       icon: "mdi mdi-home-account",
+        //       title: "In House",
+        //       to: "/reservation/in_house",
+        //       menu: "guest_access",
+        //     },
+        //     {
+        //       icon: "mdi mdi-home-export-outline",
+        //       title: "Checkout",
+        //       to: "/reservation/check_out",
+        //       menu: "reservation_access",
+        //     },
+        //   ],
         // },
         {
           topMenu: "dashboard",
           icon: "mdi-bed",
-          title: `History`,
-          open_menu: false,
-          menu: "history_menu",
-          hasChildren: [
-            {
-              icon: "mdi mdi-home-import-outline",
-              title: "Reservation",
-              to: "/reservation/up_coming",
-              menu: "reservation_access",
-            },
-            {
-              icon: "mdi mdi-home-account",
-              title: "In House",
-              to: "/reservation/in_house",
-              menu: "guest_access",
-            },
-            {
-              icon: "mdi mdi-home-export-outline",
-              title: "Checkout",
-              to: "/reservation/check_out",
-              menu: "reservation_access",
-            },
-          ],
+          title: "History",
+          to: "/reservation/in_house",
+          menu: "guest_access",
         },
-
         {
           topMenu: "customer",
           icon: "mdi mdi-account-tie",
@@ -461,13 +461,13 @@ export default {
         //   to: "/inquiry",
         //   menu: "inquiry_access",
         // },
-        {
-          topMenu: "account",
-          icon: "mdi mdi-cash",
-          title: "Quotation",
-          to: "/quotations",
-          menu: "accounts_posting_access",
-        },
+        //{
+        // topMenu: "account",
+        //  icon: "mdi mdi-cash",
+        //title: "Quotation",
+        // to: "/quotations",
+        // menu: "accounts_posting_access",
+        //},
         {
           topMenu: "account",
           icon: "mdi mdi-cash",
