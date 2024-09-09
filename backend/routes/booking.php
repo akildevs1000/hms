@@ -117,7 +117,7 @@
 
 
   Route::get('group-list', [BookingController::class, 'groupList']);
-  Route::get('modify_booking', [BookingController::class, 'modifyBooking']);
+  Route::post('modify_booking', [BookingController::class, 'modifyBooking']);
 
 
   
