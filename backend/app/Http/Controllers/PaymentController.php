@@ -36,7 +36,7 @@ class PaymentController extends Controller
 
             $payment_type =  $item->payment_type;
 
-            $paymentTypeName = str_replace(' ', '', $payment_type->name) ?? "";
+            $paymentTypeName = str_replace(' ', '', $payment_type->name ?? "") ?? "";
 
             foreach ($modes as $mode) {
                 $item[$mode] = 0;
