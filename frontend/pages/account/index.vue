@@ -1,5 +1,149 @@
 <template>
   <div v-if="can('management_income_access') && can('management_income_view')">
+    <v-dialog v-model="IncomeCardDialog" persistent max-width="700px">
+      <v-card>
+        <v-alert class="primary" dense dark>
+          <v-row>
+            <v-col> Income </v-col>
+            <v-col>
+              <div class="text-right">
+                <v-icon @click="IncomeCardDialog = false">mdi-close</v-icon>
+              </div>
+            </v-col>
+          </v-row>
+        </v-alert>
+        <v-card-text>
+          <v-container>
+            <table v-if="income">
+              <tr>
+                <td>Cash</td>
+                <td>Card</td>
+                <td>Online</td>
+                <td>Bank</td>
+                <td>UPI</td>
+                <td>Cheque</td>
+                <td>CityLedger</td>
+              </tr>
+              <tr>
+                <td>{{ convert_decimal(income.Cash) }}</td>
+                <td>{{ convert_decimal(income.Card) }}</td>
+                <td>{{ convert_decimal(income.Online) }}</td>
+                <td>{{ convert_decimal(income.Bank) }}</td>
+                <td>{{ convert_decimal(income.UPI) }}</td>
+                <td>{{ convert_decimal(income.Cheque) }}</td>
+                <td>{{ convert_decimal(income.CityLedger) }}</td>
+              </tr>
+            </table>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="ExpenseCardDialog" persistent max-width="700px">
+      <v-card>
+        <v-alert class="primary" dense dark>
+          <v-row>
+            <v-col> Expense </v-col>
+            <v-col>
+              <div class="text-right">
+                <v-icon @click="ExpenseCardDialog = false">mdi-close</v-icon>
+              </div>
+            </v-col>
+          </v-row>
+        </v-alert>
+        <v-card-text>
+          <v-container>
+            <table v-if="expense">
+              <tr>
+                <td>Cash</td>
+                <td>Card</td>
+                <td>Online</td>
+                <td>Bank</td>
+                <td>UPI</td>
+                <td>Cheque</td>
+                <td>CityLedger</td>
+              </tr>
+              <tr>
+                <td>{{ convert_decimal(expense.Cash) }}</td>
+                <td>{{ convert_decimal(expense.Card) }}</td>
+                <td>{{ convert_decimal(expense.Online) }}</td>
+                <td>{{ convert_decimal(expense.Bank) }}</td>
+                <td>{{ convert_decimal(expense.UPI) }}</td>
+                <td>{{ convert_decimal(expense.Cheque) }}</td>
+                <td>{{ convert_decimal(expense.CityLedger) }}</td>
+              </tr>
+            </table>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="ManagementCardDialog" persistent max-width="700px">
+      <v-card>
+        <v-alert class="primary" dense dark>
+          <v-row>
+            <v-col> Management Expenses </v-col>
+            <v-col>
+              <div class="text-right">
+                <v-icon @click="ManagementCardDialog = false">mdi-close</v-icon>
+              </div>
+            </v-col>
+          </v-row>
+        </v-alert>
+        <v-card-text>
+          <v-container>
+            <table v-if="managementExpense">
+              <tr>
+                <td>Cash</td>
+                <td>Card</td>
+                <td>Online</td>
+                <td>Bank</td>
+                <td>UPI</td>
+                <td>Cheque</td>
+              </tr>
+              <tr>
+                <td>{{ convert_decimal(managementExpense.Cash) }}</td>
+                <td>{{ convert_decimal(managementExpense.Card) }}</td>
+                <td>{{ convert_decimal(managementExpense.Online) }}</td>
+                <td>{{ convert_decimal(managementExpense.Bank) }}</td>
+                <td>{{ convert_decimal(managementExpense.UPI) }}</td>
+                <td>{{ convert_decimal(managementExpense.Cheque) }}</td>
+              </tr>
+            </table>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="ProfitLossCardDialog" persistent max-width="700px">
+      <v-card>
+        <v-alert class="primary" dense dark>
+          <v-row>
+            <v-col> Profit & Loss </v-col>
+            <v-col>
+              <div class="text-right">
+                <v-icon @click="ProfitLossCardDialog = false">mdi-close</v-icon>
+              </div>
+            </v-col>
+          </v-row>
+        </v-alert>
+        <v-card-text>
+          <v-container>
+            <table>
+              <tr>
+                <td>Profit</td>
+                <td>Loss</td>
+              </tr>
+              <tr>
+                <td>{{ convert_decimal(profit) }}</td>
+                <td>{{ convert_decimal(loss) }}</td>
+              </tr>
+            </table>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <v-row dense>
       <v-col cols="3">
         <v-card class="elevation-2" style="height: 230px">
@@ -11,7 +155,7 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="CheckOutReportDialog = true"
+                  @click="IncomeCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -54,7 +198,7 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="CheckOutReportDialog = true"
+                  @click="ExpenseCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -92,7 +236,7 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="CheckOutReportDialog = true"
+                  @click="ManagementCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -145,12 +289,12 @@
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
-                >Proffit and Loss
+                >Profit and Loss
               </v-col>
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="CheckOutReportDialog = true"
+                  @click="ProfitLossCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -179,70 +323,35 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <!-- <v-col cols="12" md="4">
-        <v-card style="border-radius: 12px" class="green" dark>
-          <v-card-title class="white-text"
-            >Income <br />
-
-            {{ getPriceFormat(income?.total || 0) }}
-          </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="4">
-        <v-card style="border-radius: 12px" class="orange" dark>
-          <v-card-title
-            >Expense <br />
-            {{ getPriceFormat(expense?.total || 0) }}
-          </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="4">
-        <v-card style="border-radius: 12px" class="pink" dark>
-          <v-card-title
-            >Management Expense <br />
-            {{ getPriceFormat(managementExpense?.total || 0) }}</v-card-title
-          >
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="4">
-        <v-card style="border-radius: 12px" class="indigo" dark>
-          <v-card-title
-            >Profit <br />
-            {{ getPriceFormat(profit) }}</v-card-title
-          >
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="4">
-        <v-card style="border-radius: 12px" class="brown" dark>
-          <v-card-title
-            >Loss <br />
-            {{ getPriceFormat(loss) }}</v-card-title
-          >
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="4">
-        <v-card style="border-radius: 12px" class="primary" dark>
-          <v-card-title
-            >City Ledger <br />
-            {{ getPriceFormat(income?.CityLedger || 0) }}</v-card-title
-          >
-        </v-card>
-      </v-col> -->
     </v-row>
     <v-card class="my-2 text-right">
-      <v-btn :color="currentTabId === 1 ? `primary` : ''" text @click="currentTabId = 1"
+      <v-btn
+        :color="currentTabId === 1 ? `primary` : ''"
+        text
+        @click="currentTabId = 1"
         >Income</v-btn
       >
-      <v-btn :color="currentTabId === 2 ? `primary` : ''" text @click="currentTabId = 2">Expense</v-btn>
-      <v-btn :color="currentTabId === 3 ? `primary` : ''" text @click="currentTabId = 3">ManagementExpense</v-btn>
+      <v-btn
+        :color="currentTabId === 2 ? `primary` : ''"
+        text
+        @click="currentTabId = 2"
+        >Expense</v-btn
+      >
+      <v-btn
+        :color="currentTabId === 3 ? `primary` : ''"
+        text
+        @click="currentTabId = 3"
+        >ManagementExpense</v-btn
+      >
       <Income v-show="currentTabId == 1" @stats="(e) => (income = e)" />
-      <IncomeExpenseNonManagement v-show="currentTabId == 2" @stats="(e) => (expense = e)" />
-      <IncomeExpenseManagement v-show="currentTabId == 3" @stats="(e) => (managementExpense = e)" />
+      <IncomeExpenseNonManagement
+        v-show="currentTabId == 2"
+        @stats="(e) => (expense = e)"
+      />
+      <IncomeExpenseManagement
+        v-show="currentTabId == 3"
+        @stats="(e) => (managementExpense = e)"
+      />
     </v-card>
   </div>
   <NoAccess v-else />
@@ -251,6 +360,11 @@
 <script>
 export default {
   data: () => ({
+    IncomeCardDialog: false,
+    ExpenseCardDialog: false,
+    ManagementCardDialog: false,
+    ProfitLossCardDialog: false,
+
     currentTabId: 1,
     key: 1,
     colors: [
@@ -336,6 +450,13 @@ export default {
     },
   },
   methods: {
+    convert_decimal(n) {
+      if (n === +n && n !== (n | 0)) {
+        return n.toFixed(2);
+      } else {
+        return n + ".00".replace(".00.00", ".00");
+      }
+    },
     getPriceFormat(price) {
       return (
         this.$auth.user.company.currency +
@@ -354,3 +475,17 @@ export default {
   },
 };
 </script>
+<style scoped>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+</style>
