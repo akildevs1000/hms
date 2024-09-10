@@ -178,53 +178,13 @@
                   </tr>
                 </tbody>
               </table>
-              <v-dialog v-model="discountDialog" max-width="400" persistent>
-                <v-card>
-                  <v-card-title>
-                    Apply Discount <v-spacer></v-spacer>
-                    <v-icon color="primary" @click="discountDialog = false">
-                      mdi-close
-                    </v-icon>
-                  </v-card-title>
-
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="8" dense>
-                          <v-text-field
-                            label="Discount Amount"
-                            dense
-                            outlined
-                            type="number"
-                            v-model="room.room_discount"
-                            :hide-details="true"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col dense>
-                          <v-icon
-                            color="primary"
-                            @click="
-                              () => {
-                                processCalculation();
-                                discountDialog = false;
-                              }
-                            "
-                            >mdi-floppy</v-icon
-                          >
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
               <div
                 class="d-flex justify-space-around py-3"
                 style="margin-top: 5px"
               >
                 <v-col cols="10" class="text-right">
                   <div>Sub Total:</div>
-                  <!-- <div>Discount:</div> -->
-                   <div><Discount /></div>
+                  <div>Discount:</div>
                   <div style="font-size: 18px; font-weight: bold">Total:</div>
                 </v-col>
                 <v-col cols="2" class="text-right">
@@ -232,91 +192,32 @@
                     {{ convert_decimal(subTotal()) }}
                   </div>
                   <div style="color: red">
-                    -{{ convert_decimal(room.room_discount || 0) }}
+                    <v-hover v-slot:default="{ hover, props }">
+                      <div v-bind="props">
+                        -{{ convert_decimal(room.room_discount || 0) }}
+                        <v-icon
+                          v-if="hover"
+                          small
+                          color="primary"
+                          @click="$refs[`DiscountComp`][`discountPopUp`] = true"
+                          >mdi-pencil</v-icon
+                        >
+                        <Discount
+                          ref="DiscountComp"
+                          :sub_total="room.sub_total"
+                          @discountAbleAmount="(e) => {
+                            room.room_discount = e
+                          }"
+                        />
+                      </div>
+                    </v-hover>
                   </div>
                   <div style="font-size: 18px; font-weight: bold">
                     {{ convert_decimal(processCalculation()) }}
                   </div>
                 </v-col>
               </div>
-              <v-row class="mt-3">
-                <v-col md="2" sm="12" cols="12" dense>
-                  <v-select
-                    label="Discount/Extra"
-                    v-model="extraPayType"
-                    :items="['Discount', 'ExtraAmount']"
-                    dense
-                    :hide-details="true"
-                    outlined
-                  ></v-select>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'Discount'"
-                >
-                  <v-text-field
-                    label="Discount Amount"
-                    dense
-                    outlined
-                    type="number"
-                    v-model="room.room_discount"
-                    :hide-details="true"
-                    @keyup="processCalculation"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'Discount'"
-                >
-                  <v-text-field
-                    label="Reason"
-                    dense
-                    outlined
-                    type="text"
-                    v-model="room.discount_reason"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'ExtraAmount'"
-                >
-                  <v-text-field
-                    label="Extra Amount"
-                    dense
-                    outlined
-                    type="number"
-                    v-model="room.room_extra_amount"
-                    @keyup="processCalculation"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'ExtraAmount'"
-                >
-                  <v-text-field
-                    label="Reason"
-                    dense
-                    outlined
-                    type="text"
-                    v-model="room.extra_amount_reason"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
+
               <v-row class="text-right mb-3">
                 <v-col>
                   <RoomDialogForQuotation
@@ -462,7 +363,6 @@ export default {
   },
   data() {
     return {
-      discountDialog: false,
       dialog: false,
       loading: false,
       advanceDialog: false,
@@ -768,7 +668,7 @@ export default {
         arrival_date: this.formatDate(new Date()),
         departure_date: this.formatDate(new Date()),
         sub_total: this.subTotal(),
-        discount: this.room.discount,
+        discount: this.room.room_discount,
         tax: 0,
         total: this.processCalculation(),
         customer: this.customer,
