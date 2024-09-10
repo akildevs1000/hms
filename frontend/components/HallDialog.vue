@@ -227,7 +227,8 @@
               item-value="id"
               item-text="title"
               v-model="temp.food_plan_id"
-              :items="[{ id: ``, title: `Select Food Plan` }, ...foodplans]"
+              :items="[{ id: 0, title: `---` }, ...foodplans]"
+
             ></v-autocomplete>
           </v-col>
           <v-col>

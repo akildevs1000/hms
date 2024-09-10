@@ -14,7 +14,7 @@
     </template>
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
-        Group Booking <v-spacer></v-spacer
+        Room Information <v-spacer></v-spacer
         ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
       >
       <v-container>
@@ -134,13 +134,13 @@
               item-value="id"
               item-text="title"
               v-model="temp.food_plan_id"
-              :items="foodplans"
+              :items="[{ id: 0, title: `---` }, ...foodplans]"
               @change="
                 selectRoom({ name: temp.room_type, room_no: temp.room_no })
               "
             ></v-autocomplete>
           </v-col>
-          <v-col cols="6">
+          <!-- <v-col cols="6">
             <v-checkbox
               v-model="is_early_check_in"
               label="Early Check In"
@@ -159,7 +159,7 @@
               @change="set_additional_charges"
             >
             </v-checkbox>
-          </v-col>
+          </v-col> -->
 
           <v-col cols="12">
             <v-btn block @click="add_multiple_rooms" color="primary" small>
@@ -463,11 +463,10 @@ export default {
         return;
       }
 
-
       let meal_price = selected_food_plan.food_plan_price * this.getDays();
 
       let arrToMerge = priceList.map((e) => ({
-        no_of_rooms:this.myArray.length,
+        no_of_rooms: this.myArray.length,
         room_no: this.multipleRoomId.room_no,
         room_id: this.multipleRoomId.id,
         ...e,
@@ -503,7 +502,7 @@ export default {
         priceList: arrToMerge,
       };
 
-      this.alert("Success!", "success selected room", "success");
+      // this.alert("Success!", "success selected room", "success");
       this.isSelectRoom = false;
 
       this.$emit("tableData", {

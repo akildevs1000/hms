@@ -16,20 +16,20 @@ class Quotation extends Model
         'items' => 'array',
     ];
 
-    public function getTotalAttribute($value)
-    {
-        return number_format($value, 2);
-    }
+    // public function getTotalAttribute($value)
+    // {
+    //     return number_format($value, 2);
+    // }
 
-    public function getSubTotalAttribute($value)
-    {
-        return number_format($value, 2);
-    }
+    // public function getSubTotalAttribute($value)
+    // {
+    //     return number_format($value, 2);
+    // }
 
-    public function getDiscountAttribute($value)
-    {
-        return number_format($value, 2);
-    }
+    // public function getDiscountAttribute($value)
+    // {
+    //     return number_format($value, 2);
+    // }
 
 
 

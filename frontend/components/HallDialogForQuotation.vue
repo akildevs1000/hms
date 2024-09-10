@@ -204,7 +204,7 @@
               type="number"
             ></v-text-field>
           </v-col>
-          <v-col>
+          <!-- <v-col>
             <v-checkbox
               v-model="is_cleaning_charges"
               :label="`Cleaning`"
@@ -250,7 +250,7 @@
               dense
             >
             </v-checkbox>
-          </v-col>
+          </v-col> -->
           <v-col cols="12">
             <v-btn block @click="selectRoom" color="primary" small>
               Confirm Hall
@@ -943,13 +943,7 @@ export default {
       };
 
       this.runAllFunctions();
-      this.alert("Success!", "success selected room", "success");
-
-    
-      console.log("🚀 ~ payload.function_name:", payload.function_name)
-
       this.$emit("tableData", payload);
-
       this.close();
     },
 

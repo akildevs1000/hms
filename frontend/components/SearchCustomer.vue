@@ -21,9 +21,7 @@
     <v-card>
       <v-alert class="primary" dense dark>
         <v-row>
-          <v-col>
-            Customer
-          </v-col>
+          <v-col> Customer </v-col>
           <v-col>
             <div class="text-right">
               <v-icon @click="searchDialog = false">mdi-close</v-icon>
@@ -34,23 +32,21 @@
 
       <v-card-text>
         <v-text-field
-              label="Search By Mobile Number"
-              dense
-              outlined
-              type="text"
-              v-model="contact_no"
-              :hide-details="true"
+          label="Search By Mobile Number"
+          dense
+          outlined
+          v-model="contact_no"
+          :hide-details="true"
+        >
+          <template v-slot:append>
+            <v-icon
+              :loading="checkLoader"
+              right
+              @click="get_customer"
+              >mdi-magnify</v-icon
             >
-              <template v-slot:append>
-                <v-icon
-                  :loading="checkLoader"
-                  color="primary"
-                  right
-                  @click="get_customer"
-                  >mdi-magnify</v-icon
-                >
-              </template>
-            </v-text-field>
+          </template>
+        </v-text-field>
       </v-card-text>
     </v-card>
   </v-dialog>
