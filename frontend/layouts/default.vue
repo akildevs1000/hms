@@ -370,39 +370,11 @@ export default {
           to: "/reports",
           menu: "dashboard",
         },
-        
-        // {
-        //   topMenu: "dashboard",
-        //   icon: "mdi-bed",
-        //   title: `History`,
-        //   open_menu: false,
-        //   menu: "history_menu",
-        //   hasChildren: [
-        //     {
-        //       icon: "mdi mdi-home-import-outline",
-        //       title: "Reservation",
-        //       to: "/reservation/up_coming",
-        //       menu: "reservation_access",
-        //     },
-        //     {
-        //       icon: "mdi mdi-home-account",
-        //       title: "In House",
-        //       to: "/reservation/in_house",
-        //       menu: "guest_access",
-        //     },
-        //     {
-        //       icon: "mdi mdi-home-export-outline",
-        //       title: "Checkout",
-        //       to: "/reservation/check_out",
-        //       menu: "reservation_access",
-        //     },
-        //   ],
-        // },
         {
           topMenu: "dashboard",
           icon: "mdi-bed",
           title: "History",
-          to: "/reservation/in_house",
+          to: "/history",
           menu: "guest_access",
         },
         {
@@ -429,8 +401,22 @@ export default {
         {
           topMenu: "sales",
           icon: "mdi-cash",
+          title: "Inquiry",
+          to: "/inquiry",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "sales",
+          icon: "mdi-cash",
           title: "Quotation",
           to: "/sales",
+          menu: "accounts_posting_access",
+        },
+        {
+          topMenu: "sales",
+          icon: "mdi-cash",
+          title: "Invoice",
+          to: "/invoices",
           menu: "accounts_posting_access",
         },
         {
@@ -468,13 +454,7 @@ export default {
         // to: "/quotations",
         // menu: "accounts_posting_access",
         //},
-        {
-          topMenu: "account",
-          icon: "mdi mdi-cash",
-          title: "Invoice",
-          to: "/invoices",
-          menu: "accounts_posting_access",
-        },
+        
         {
           topMenu: "account",
           icon: "mdi-account",
@@ -482,27 +462,27 @@ export default {
           to: "/vendors",
           menu: "accounts_posting_access",
         },
-        {
-          topMenu: "account",
-          icon: "mdi-account-cash",
-          title: `Ledger`,
-          open_menu: false,
-          menu: "ledger_access",
-          hasChildren: [
-            {
-              icon: "mdi mdi-human-male-board-poll",
-              title: "Agents",
-              to: "/agents",
-              menu: "ledger_agents_access",
-            },
-            {
-              icon: "mdi-account-cash",
-              title: "Guest",
-              to: "/city_ledger",
-              menu: "ledger_guests_access",
-            },
-          ],
-        },
+        // {
+        //   topMenu: "account",
+        //   icon: "mdi-account-cash",
+        //   title: `Ledger`,
+        //   open_menu: false,
+        //   menu: "ledger_access",
+        //   hasChildren: [
+        //     {
+        //       icon: "mdi mdi-human-male-board-poll",
+        //       title: "Agents",
+        //       to: "/agents",
+        //       menu: "ledger_agents_access",
+        //     },
+        //     {
+        //       icon: "mdi-account-cash",
+        //       title: "Guest",
+        //       to: "/city_ledger",
+        //       menu: "ledger_guests_access",
+        //     },
+        //   ],
+        // },
         {
           topMenu: "dashboard",
           icon: "mdi mdi-file-chart-outline",

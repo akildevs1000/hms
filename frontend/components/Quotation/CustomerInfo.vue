@@ -3,11 +3,6 @@
     <v-row>
       <v-col md="2" cols="12">
         <v-row no-gutters class="pa-2">
-          <v-col class="text-right">
-            <v-icon color="primary" small>mdi-eye</v-icon>
-            <!-- <BookingIDPreview v-if="initialImage" :BookingId="1" /> -->
-          </v-col>
-
           <v-col cols="12" class="mt-2">
             <v-img
               :src="

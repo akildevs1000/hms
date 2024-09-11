@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="RoomDetailDialog" max-width="460">
     <template v-slot:activator="{ on, attrs }">
-      <v-icon v-bind="attrs" v-on="on" color="primary" small> mdi-eye </v-icon>
+      <span v-bind="attrs" v-on="on">
+        <v-icon color="primary" small> mdi-eye </v-icon> <small class="ml-1">View</small>
+      </span>
     </template>
     <v-card>
       <v-toolbar flat class="primary white--text" dense>

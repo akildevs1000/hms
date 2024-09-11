@@ -1,5 +1,5 @@
 <template>
-  <span v-if="bookingData && bookingData.id">
+  <span v-if="orderRoomData && orderRoomData.id">
     <table cellspacing="0" style="width: 100%">
       <thead style="background-color: #f2f2f2; width: 100%">
         <tr style="background-color: #f2f2f2; width: 100%">
@@ -10,7 +10,16 @@
             "
             class="text-center py-2"
           >
-            <small>Date</small>
+            <small>Check In</small>
+          </td>
+          <td
+            style="
+              border-top: 1px solid #bdbdbd;
+              border-bottom: 1px solid #bdbdbd;
+            "
+            class="text-center py-2"
+          >
+            <small>Check Out</small>
           </td>
           <td
             style="
@@ -101,41 +110,47 @@
           ></td>
         </tr>
       </thead>
-      <tbody v-for="(item, index) in orderRooms" :key="index">
+      <tbody>
         <tr style="font-size: 13px">
-          <td class="text-center py-2">{{ item.date || "---" }}</td>
           <td class="text-center py-2">
-            {{ item.room_no || "---" }} {{ item.room_type || "---" }}
-          </td>
-          <td class="text-center py-2">{{ item.tariff }}</td>
-          <td class="text-center py-2">{{ item.no_of_adult }}</td>
-          <td class="text-center py-2">{{ item.no_of_child }}</td>
-          <td class="text-center py-2">
-            {{
-              item?.foodplan?.title +
-                " (" +
-                item?.foodplan?.unit_price +
-                ") " || "---"
-            }}
+            {{ orderRoomData.check_in + " 12:00" || "---" }}
           </td>
           <td class="text-center py-2">
-            {{ item.bed_amount || "---" }}
+            {{ orderRoomData.check_out + " 11:00" || "---" }}
           </td>
           <td class="text-center py-2">
-            {{ item.early_check_in || "---" }}
+            {{ orderRoomData.room_no || "---" }}
           </td>
           <td class="text-center py-2">
-            {{ item.late_check_out || "---" }}
+            {{ orderRoomData.room_type || "---" }}
           </td>
-          <td class="text-center py-2">{{ item.total || "---" }}</td>
+          <td class="text-center py-2">{{ orderRoomData.no_of_adult }}</td>
+          <td class="text-center py-2">{{ orderRoomData.no_of_child }}</td>
+
+          <td class="text-center py-2">
+            {{ orderRoomData?.foodplan?.title || "---" }}
+          </td>
+          <td class="text-center py-2">
+            {{ orderRoomData.extra_bed_qty || "---" }}
+          </td>
+          <td class="text-center py-2">
+            {{ orderRoomData.early_check_in || "---" }}
+          </td>
+
+          <td class="text-center py-2">
+            {{ orderRoomData.late_check_out || "---" }}
+          </td>
+
+          <td class="text-center py-2">
+            {{ orderRoomData.total }}
+          </td>
         </tr>
       </tbody>
     </table>
 
-    <div class="d-flex justify-space-around py-3" style="margin-top: 5px">
+    <!-- <div class="d-flex justify-space-around py-3" style="margin-top: 5px">
       <v-col cols="10" class="text-right">
         <div>Sub Total:</div>
-        <div>Add :</div>
         <div>Discount :</div>
         <div style="font-size: 18px; font-weight: bold">Total :</div>
       </v-col>
@@ -143,93 +158,37 @@
         <div>
           {{ convert_decimal(subTotal()) }}
         </div>
-
-        <div>
-          {{ convert_decimal(extraAmount()) }}
+        <div style="color: red">
+          <v-hover v-slot:default="{ hover, props }">
+            <div v-bind="props">
+              -{{ convert_decimal(customer?.latest_booking?.discount || 0) }}
+              <v-icon
+                v-if="hover"
+                small
+                color="primary"
+                @click="$refs[`DiscountComp`][`discountPopUp`] = true"
+                >mdi-pencil</v-icon
+              >
+              <Discount
+                ref="DiscountComp"
+                :sub_total="customer?.latest_booking?.sub_total"
+                @discountAbleAmount="
+                  (e) => {
+                    discount = e;
+                  }
+                "
+              />
+            </div>
+          </v-hover>
         </div>
-        <div style="color: red">-{{ bookingDiscount() }}</div>
         <div style="font-size: 18px; font-weight: bold">
           {{ convert_decimal(processCalculation()) }}
         </div>
       </v-col>
-    </div>
+    </div> -->
 
-    <!-- <v-row class="mt-3">
-      <v-col md="2" sm="12" cols="12" dense>
-        <v-select
-          label="Discount/Extra"
-          v-model="extraPayType"
-          :items="['Discount', 'ExtraAmount']"
-          dense
-          :hide-details="true"
-          outlined
-        ></v-select>
-      </v-col>
-      <v-col md="4" sm="12" cols="12" dense v-if="extraPayType == 'Discount'">
-        <v-text-field
-          label="Discount Amount"
-          dense
-          outlined
-          type="number"
-          v-model="room_discount"
-          :hide-details="true"
-          @keyup="processCalculation"
-        ></v-text-field>
-      </v-col>
-      <v-col md="4" sm="12" cols="12" dense v-if="extraPayType == 'Discount'">
-        <v-text-field
-          label="Reason"
-          dense
-          outlined
-          type="text"
-          v-model="discount_reason"
-          :hide-details="true"
-        ></v-text-field>
-      </v-col>
-      <v-col
-        md="4"
-        sm="12"
-        cols="12"
-        dense
-        v-if="extraPayType == 'ExtraAmount'"
-      >
-        <v-text-field
-          label="Extra Amount"
-          dense
-          outlined
-          type="number"
-          v-model="room_extra_amount"
-          @keyup="processCalculation"
-          :hide-details="true"
-        ></v-text-field>
-      </v-col>
-      <v-col
-        md="4"
-        sm="12"
-        cols="12"
-        dense
-        v-if="extraPayType == 'ExtraAmount'"
-      >
-        <v-text-field
-          label="Reason"
-          dense
-          outlined
-          type="text"
-          v-model="extra_amount_reason"
-          :hide-details="true"
-        ></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row> -->
     <v-row class="mt-3">
       <v-col class="text-right">
-        <!-- <v-btn
-                              :disabled="!customerDocs"
-                                @click="advanceDialog = true"
-                                color="primary"
-                                >Pay</v-btn
-                              > -->
-
         <v-btn
           small
           class="blue"
@@ -339,19 +298,27 @@ export default {
     room_category_type: "",
     food: [],
     extra_amounts: [],
-    bookingData: 0,
     room_discount: 0,
     room_extra_amount: 0,
+    orderRoomData: {},
+    discount:0,
   }),
 
   computed: {},
-  created() {
-    this.loading = true;
-    this.getData();
+  async created() {
+    this.BookedRoomData = this.BookingData;
+
+    await this.getOrderRoomData(this.BookedRoomData.id);
   },
   mounted() {},
 
   methods: {
+    async getOrderRoomData(id = 0) {
+      let { data } = await this.$axios.get(`get-order-room-data/${id}`);
+
+      this.orderRoomData = data;
+    },
+
     storeSubCustomer() {
       let payload = {
         booking_id: this.BookingData.id,
@@ -379,7 +346,7 @@ export default {
         });
     },
     processCalculation() {
-      return this.bookingData.total_price;
+      return this.BookingData.total_price;
       // let discount = parseFloat(this.room_discount) || 0;
       // let room_extra_amount = parseFloat(this.room_extra_amount) || 0;
       // let sub_total = parseFloat(this.sub_total) || 0;
@@ -404,23 +371,15 @@ export default {
       }
     },
     subTotal() {
-      return 0;
-      return this.bookingData.sub_total;
-      // return (this.BookingData.sub_total = this.priceListTableView.reduce(
-      //   (total, num) => total + num.total_price,
-      //   0
-      // ));
+      return this.customer.latest_booking.sub_total;
     },
     extraAmount() {
-      return 0
-      return this.bookingData.total_extra;
+      return 0;
     },
     bookingDiscount() {
       return 0;
-      return this.bookingData.discount;
     },
     closeDialogs() {
-      this.getData();
       this.payingDialog = false;
     },
 
@@ -464,31 +423,6 @@ export default {
       //   id: this.$route.params.id,
       // };
       this.payingDialog = true;
-    },
-
-    getData() {
-      let id = this.customer.id;
-      this.$axios.get(`booking_customer/${id}`).then(({ data }) => {
-        //assign booking
-        this.totalPostingAmount = data.totalPostingAmount;
-        this.totalTransactionAmount = data.totalTransactionAmount;
-        this.transactions = data.transaction;
-        this.transactionSummary = data.transactionSummary;
-        this.bookingData = data.booking;
-        const booking = data.booking;
-
-        this.booking = booking;
-
-        this.payments = booking.payments;
-        this.bookedRooms = booking.booked_rooms;
-        this.orderRooms = booking.order_rooms;
-        this.postings = data.postings;
-        //end booking
-        this.loading = false;
-        this.showImage = data.booking.customer.image;
-        this.calTotalAmount(this.payments);
-        this.room_category_type = data.booking.room_category_type;
-      });
     },
     getPriceFormat(price) {
       return parseFloat(price).toLocaleString("en-IN", {

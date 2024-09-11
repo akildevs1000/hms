@@ -42,6 +42,16 @@
         />
       </v-toolbar>
     </template>
+    <template v-slot:item.invoice="{ item }">
+      <span
+        style="cursor: pointer"
+        v-if="item && item.invoice"
+        @click="openExternalWinodwForInvoice(item?.invoice?.id)"
+        class="blue--text"
+        >{{ item?.invoice?.ref_no }}</span
+      >
+      <span v-else>---</span>
+    </template>
     <template v-slot:item.customer="{ item }">
       {{ item?.customer?.first_name }} {{ item?.customer?.last_name }}
     </template>
@@ -68,8 +78,10 @@
         <v-list width="120" dense>
           <v-list-item>
             <v-list-item-title>
-              <v-icon small color="blue" @click="openExternalWinodw(item.id)">mdi-eye</v-icon>
-                View
+              <v-icon small color="blue" @click="openExternalWinodw(item.id)"
+                >mdi-eye</v-icon
+              >
+              View
               <!-- <QuotationHallView
                 :model="Model"
                 :endpoint="endpoint"
@@ -108,16 +120,16 @@
               />
             </v-list-item-title>
           </v-list-item>
-          <!-- <v-list-item>
+          <v-list-item>
             <v-list-item-title>
-              <QuotationConvertToInvoice
+              <QuotationHallConvertToInvoice
                 :model="Model"
                 :endpoint="`invoice-v1`"
                 :item="item"
                 @response="getDataFromApi"
               />
             </v-list-item-title>
-          </v-list-item> -->
+          </v-list-item>
           <v-list-item>
             <v-list-item-title>
               <QuotationDelete
@@ -145,7 +157,7 @@ export default {
   data: () => ({
     Model: "Quotation",
     endpoint: "quotation",
-    QuotationHallCreateCompKey:1,
+    QuotationHallCreateCompKey: 1,
     currentDate,
     filters: {},
     options: {},
@@ -186,7 +198,10 @@ export default {
         text: "Follow Up",
         value: "followups",
       },
-
+      {
+        text: "Invoice",
+        value: "invoice",
+      },
       {
         text: "Action",
         align: "center",
@@ -248,6 +263,14 @@ export default {
     },
     openExternalWinodw(id) {
       let url = `${process.env.BACKEND_URL}quotation-hall/${id}`;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", url);
+      document.body.appendChild(element);
+      element.click();
+    },
+    openExternalWinodwForInvoice(id) {
+      let url = `${process.env.BACKEND_URL}invoice-hall/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

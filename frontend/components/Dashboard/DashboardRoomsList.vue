@@ -457,7 +457,9 @@
               <v-list-item link @click="postingDialog = true">
                 <v-list-item-title>Posting</v-list-item-title>
               </v-list-item>
-
+              <v-list-item link @click="payingAdvance = true">
+                <v-list-item-title>Pay Advance </v-list-item-title>
+              </v-list-item>
               <v-list-item link @click="viewPostingDialog = true">
                 <v-list-item-title>View Posting</v-list-item-title>
               </v-list-item>
@@ -512,8 +514,8 @@
               v-if="newBookingRoom.status == 0"
               @click="NewBooking = true"
             >
-            <!-- direct check in dialog -->
-              <v-list-item-title>Check In</v-list-item-title> 
+              <!-- direct check in dialog -->
+              <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
             <v-list-item
               link
@@ -714,7 +716,7 @@
 
       <div
         v-if="
-          filteredRooms(availableRooms).length == 0 && tabFilter == 'available'
+          filteredRooms(expectCheckOut).length == 0 && tabFilter == 'available'
         "
       >
         Not Available
@@ -722,14 +724,27 @@
       <div
         class="roombox1"
         v-if="tabFilter == 'All'"
-        v-for="(room, index) in filteredRooms(expectCheckOut)"
+        v-for="(occupied, index) in filteredRooms(expectCheckOut)"
       >
         <v-card
-          :class="` darken-2 `"
+          @mouseenter="showMenu = false"
+          @mousedown="showMenu = false"
+          @mouseup="showMenu = false"
+          @contextmenu="showExpectCheckOut($event, occupied)"
+          @touchstart="
+            touchstart(
+              $event,
+              occupied && occupied.booked_room && occupied.booked_room.id,
+              occupied &&
+                occupied.booked_room &&
+                occupied.booked_room.booking &&
+                occupied.booked_room.booking.booking_status
+            )
+          "
+          :elevation="0"
+          @dblclick="dblclick"
+          :class="` darken-2`"
           dark
-          @contextmenu="makeNewBooking($event, room)"
-          @mouseover="mouseOverForAvailable(room)"
-          @touchstart="makeNewBookingForTouch($event, room)"
         >
           <v-card-text
             class="green111 p-3 roombox"
@@ -740,17 +755,16 @@
                 : 'Expected Checkout Available'
             "
           >
-            <div class="text-center white--text boxheight">
+            <div class="text-center white--text boxheight boxheight">
               <v-icon
                 :color="
-                  room.device && room.device.latest_status == 1 ? 'red' : ''
+                  occupied.device && occupied.latest_status == 1 ? 'red' : ''
                 "
+                >mdi-bed</v-icon
               >
-                mdi mdi-bed
-              </v-icon>
-              <div>{{ room?.room_no || "---" }}</div>
+              <div>{{ occupied?.room_no || "---" }}</div>
               <div>
-                {{ room ? caps(room.room_type.name) : "---" }}
+                {{ occupied ? caps(occupied.room_type.name) : "---" }}
               </div>
             </div>
           </v-card-text>
@@ -1341,7 +1355,6 @@ export default {
     },
 
     get_data(jsEvent = null) {
-      console.log("this.evenIid", this.evenIid);
       if (this.evenIid == false) return false;
       this.selected_booked_room_id = this.evenIid;
 
@@ -1369,6 +1382,33 @@ export default {
     },
 
     show(e, isTouch = false) {
+      this.showMenuForNewBooking = false;
+      e.preventDefault();
+      this.get_data();
+      if (isTouch) {
+        const currentTime = new Date().getTime();
+        const tapThreshold = 300; // milliseconds
+        if (this.lastTapTime && currentTime - this.lastTapTime < tapThreshold) {
+          this.$router.push(`/customer/details/${this.bookingId}`);
+          return;
+        }
+        this.lastTapTime = currentTime;
+      }
+
+      if (isTouch) {
+        const touch = e.touches[0];
+        this.x = touch.clientX;
+        this.y = touch.clientY;
+      } else {
+        this.x = e.clientX;
+        this.y = e.clientY;
+      }
+      this.$nextTick(() => {
+        this.showMenu = true;
+      });
+    },
+    showExpectCheckOut(e, expectCheckOut, isTouch = false) {
+      this.evenIid = expectCheckOut.booked_room.id
       this.showMenuForNewBooking = false;
       e.preventDefault();
       this.get_data();
@@ -1541,7 +1581,7 @@ export default {
         });
       }
     },
-    checkedOutDoubleClick({booked_room}) {
+    checkedOutDoubleClick({ booked_room }) {
       this.evenIid = booked_room.id;
       this.isDbCLick = true;
       this.get_data();

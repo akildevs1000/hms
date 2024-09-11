@@ -213,7 +213,7 @@
                             </v-list-item>
                             <v-list-item>
                               <RoomEditDialog
-                              :key="roomDetailsCompKey"
+                                :key="roomDetailsCompKey"
                                 label="Edit"
                                 :options="item"
                                 @tableData="handleTableData"
@@ -237,7 +237,6 @@
               >
                 <v-col cols="10" class="text-right">
                   <div>Sub Total:</div>
-                  <div>Add :</div>
                   <div>Discount :</div>
                   <div style="font-size: 18px; font-weight: bold">Total :</div>
                 </v-col>
@@ -246,96 +245,34 @@
                     {{ convert_decimal(subTotal()) }}
                   </div>
 
-                  <div>
-                    {{ convert_decimal(room.room_extra_amount || 0) }}
-                  </div>
                   <div style="color: red">
-                    -{{ convert_decimal(room.room_discount || 0) }}
+                    <v-hover v-slot:default="{ hover, props }">
+                      <div v-bind="props">
+                        -{{ convert_decimal(room.room_discount || 0) }}
+                        <v-icon
+                          v-if="hover"
+                          small
+                          color="primary"
+                          @click="$refs[`DiscountComp`][`discountPopUp`] = true"
+                          >mdi-pencil</v-icon
+                        >
+                        <Discount
+                          ref="DiscountComp"
+                          :sub_total="room.sub_total"
+                          @discountAbleAmount="
+                            (e) => {
+                              room.room_discount = e;
+                            }
+                          "
+                        />
+                      </div>
+                    </v-hover>
                   </div>
                   <div style="font-size: 18px; font-weight: bold">
                     {{ convert_decimal(processCalculation()) }}
                   </div>
                 </v-col>
               </div>
-
-              <v-row class="mt-3">
-                <v-col md="2" sm="12" cols="12" dense>
-                  <v-select
-                    label="Discount/Extra"
-                    v-model="extraPayType"
-                    :items="['Discount', 'ExtraAmount']"
-                    dense
-                    :hide-details="true"
-                    outlined
-                  ></v-select>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'Discount'"
-                >
-                  <v-text-field
-                    label="Discount Amount"
-                    dense
-                    outlined
-                    type="number"
-                    v-model="room.room_discount"
-                    :hide-details="true"
-                    @keyup="processCalculation"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'Discount'"
-                >
-                  <v-text-field
-                    label="Reason"
-                    dense
-                    outlined
-                    type="text"
-                    v-model="room.discount_reason"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'ExtraAmount'"
-                >
-                  <v-text-field
-                    label="Extra Amount"
-                    dense
-                    outlined
-                    type="number"
-                    v-model="room.room_extra_amount"
-                    @keyup="processCalculation"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'ExtraAmount'"
-                >
-                  <v-text-field
-                    label="Reason"
-                    dense
-                    outlined
-                    type="text"
-                    v-model="room.extra_amount_reason"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
 
               <v-row class="text-right mb-3">
                 <v-col>

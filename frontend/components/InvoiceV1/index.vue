@@ -1,83 +1,61 @@
 <template>
- <v-data-table
-      dense
-      :headers="headers"
-      :items="expenses"
-      :loading="loading"
-      :options.sync="options"
-      :footer-props="{
-        itemsPerPageOptions: [100, 500, 1000],
-      }"
-    >
-      <template v-slot:top>
-        <v-toolbar flat dense class="mb-5">
-          {{ Model }}
-          <v-icon color="primary" right @click="getDataFromApi()"
-            >mdi-reload</v-icon
-          >
-          <v-spacer></v-spacer>
-          <InvoiceV1Create
+  <v-data-table
+    dense
+    :headers="headers"
+    :items="expenses"
+    :loading="loading"
+    :options.sync="options"
+    :footer-props="{
+      itemsPerPageOptions: [100, 500, 1000],
+    }"
+  >
+    <template v-slot:top>
+      <v-toolbar flat dense class="mb-5">
+        {{ Model }}
+        <v-icon color="primary" right @click="getDataFromApi()"
+          >mdi-reload</v-icon
+        >
+        <v-spacer></v-spacer>
+        <!-- <InvoiceV1Create
             :model="Model"
             :endpoint="endpoint"
             @response="getDataFromApi"
-          />
-        </v-toolbar>
-      </template>
-      <template v-slot:item.customer="{ item }">
-        {{ item.customer.first_name }} {{ item.customer.last_name }}
-      </template>
-      <template v-slot:item.options="{ item }">
-        <v-menu bottom left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
+          /> -->
+      </v-toolbar>
+    </template>
+    <template v-slot:item.customer="{ item }">
+      {{ item?.customer?.first_name || "---" }}
+      {{ item?.customer?.last_name || "---" }}
+    </template>
+    <template v-slot:item.options="{ item }">
+      <v-menu bottom left>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
 
-          <v-list width="120" dense>
-            <v-list-item>
-              <v-list-item-title>
-                <InvoiceV1View
-                  :model="Model"
-                  :endpoint="endpoint"
-                  :item="item"
-                  @response="getDataFromApi"
-                />
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>
-                <InvoiceV1Edit
-                  :model="Model"
-                  :endpoint="endpoint"
-                  :item="item"
-                  @response="getDataFromApi"
-                />
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>
-                <InvoiceV1Clone
-                  :model="Model"
-                  :endpoint="endpoint"
-                  :item="item"
-                  @response="getDataFromApi"
-                />
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>
-                <InvoiceV1Delete
-                  :id="item.id"
-                  :endpoint="endpoint"
-                  @response="getDataFromApi"
-                />
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
-    </v-data-table>
+        <v-list width="120" dense>
+          <v-list-item 
+            @click="openExternalWinodwForInvoice(item.id, item.invoice_type)"
+          >
+            <v-list-item-title>
+              <v-icon small color="primary">mdi-eye</v-icon> View
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <InvoiceV1Delete
+                :id="item.id"
+                :endpoint="endpoint"
+                @response="getDataFromApi"
+              />
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -104,10 +82,10 @@ export default {
         text: "Ref #",
         value: "ref_no",
       },
-      {
-        text: "LPO Number #",
-        value: "lpo_number",
-      },
+      // {
+      //   text: "LPO Number #",
+      //   value: "lpo_number",
+      // },
       {
         text: "Customer",
         value: "customer",
@@ -117,13 +95,13 @@ export default {
         value: "book_date",
       },
       {
-        text: "Arrival Date",
-        value: "arrival_date",
+        text: "Invoice Type",
+        value: "invoice_type",
       },
-      {
-        text: "Departure Date",
-        value: "departure_date",
-      },
+      // {
+      //   text: "Departure Date",
+      //   value: "departure_date",
+      // },
       {
         text: "Total",
         value: "total",
@@ -151,6 +129,14 @@ export default {
     },
   },
   methods: {
+    openExternalWinodwForInvoice(id, type) {
+      let url = `${process.env.BACKEND_URL}invoice-${type}/${id}`;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", url);
+      document.body.appendChild(element);
+      element.click();
+    },
     getRandomeId() {
       return Math.random();
     },

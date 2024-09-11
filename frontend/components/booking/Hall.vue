@@ -65,46 +65,189 @@
             </v-tab-item>
 
             <v-tab-item class="pt-5">
-              <v-row>
-                <v-col
-                  md="12"
-                  cols="12"
-                  class="d-flex py-0 my-0 justify-center"
-                >
-                  <table class="styled-table py-0 my-0" style="width: 100%">
-                    <thead>
-                      <tr>
-                        <td><small>Date</small></td>
-                        <td><small>Day</small></td>
-                        <td><small>Hall</small></td>
-                        <td><small>Type</small></td>
-                        <td><small>Tariff</small></td>
-                        <td><small>Adult</small></td>
-                        <td><small>Child</small></td>
-                        <td><small>Meal</small></td>
-                        <td><small>Price</small></td>
-                        <td><small>Extras</small></td>
-                        <td><small>Total</small></td>
-                        <td><small>Action</small></td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
+              <table cellspacing="0" style="width: 100%">
+                <thead style="background-color: #f2f2f2; width: 100%">
+                  <tr style="background-color: #f2f2f2; width: 100%">
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Date</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Hall</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Type</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Tariff</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Adult</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Child</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Meal</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Price</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Extras</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Total</small>
+                    </td>
+                    <td
+                      style="
+                        border-top: 1px solid #bdbdbd;
+                        border-bottom: 1px solid #bdbdbd;
+                      "
+                      class="text-center py-2"
+                    >
+                      <small>Action</small>
+                    </td>
+                  </tr>
+                </thead>
+                <tbody v-if="priceListTableView.length > 0">
+                  <tr v-for="(item, index) in priceListTableView" :key="index">
+                    <td class="text-center py-2">
+                      {{ formatDate(item.date) }} <br />
+                      {{ item.day }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.room_type }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{ item.day_type }}
+                    </td>
+
+                    <td class="text-center py-2">
+                      {{ item.room_price }}
+                    </td>
+                    <td class="text-center py-2">{{ item.no_of_adult }}</td>
+                    <td class="text-center py-2">{{ item.no_of_child }}</td>
+                    <td class="text-center py-2">{{ item.meal_name }}</td>
+                    <td class="text-center py-2">
+                      {{ convert_decimal(item.price) }}
+                    </td>
+                    <td class="text-center py-2">
+                      {{
+                        convert_decimal(
+                          item.cleaning +
+                            item.electricity +
+                            item.generator +
+                            item.audio +
+                            item.extra_booking_hours_charges +
+                            item.projector
+                        )
+                      }}
+                    </td>
+
+                    <td class="text-right py-2">
+                      {{ convert_decimal(item.total_price) }}
+                    </td>
+                    <td class="text-center">
+                      <v-menu
+                        nudge-bottom="50"
+                        nudge-left="20"
+                        transition="scale-transition"
+                        origin="center center"
+                        bottom
+                        left
+                        min-width="90"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn icon v-bind="attrs" v-on="on">
+                            <v-icon small>mdi-dots-vertical</v-icon>
+                          </v-btn>
+                        </template>
+
+                        <v-card>
+                          <v-list>
+                            <v-list-item>
+                              <HallDetails :selectedRooms="selectedRooms" />
+                            </v-list-item>
+                            <v-list-item @click="deleteItem(index, item)">
+                              <v-icon
+                                small
+                                color="red"
+                                @click="deleteItem(index)"
+                                >mdi-close</v-icon
+                              ><small class="ml-2">Delete</small>
+                            </v-list-item>
+                          </v-list>
+                        </v-card>
+                      </v-menu>
+                    </td>
+                  </tr>
+
+                  <!-- <tr
                         v-for="(item, index) in priceListTableView"
                         :key="index"
                       >
-                        <td>
-                          {{ item.date }}
-                        </td>
-                        <td>
-                          {{ item.day }}
-                        </td>
-                        <td>
-                          {{ item.room_type }}
-                        </td>
-                        <td>
-                          {{ item.day_type }}
-                        </td>
+                      
+                  
                         <td>
                           {{ item.room_price }}
                         </td>
@@ -135,123 +278,63 @@
                             >mdi-close</v-icon
                           >
                         </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </v-col>
+                      </tr> -->
+                </tbody>
+              </table>
+
+              <v-row>
                 <v-col md="12" style="padding-top: 0px; font-weight: bold">
                   <div
-                    class="d-flex justify-space-around py-3 styled-table"
+                    class="d-flex justify-space-around py-3"
                     style="margin-top: 5px"
                   >
                     <v-col cols="10" class="text-right">
                       <div>Sub Total:</div>
-                      <div>Add :</div>
-                      <div>Discount :</div>
-                      <v-divider color="#4390FC"></v-divider>
+                      <div>Discount:</div>
                       <div style="font-size: 18px; font-weight: bold">
-                        Total :
+                        Total:
                       </div>
                     </v-col>
                     <v-col cols="2" class="text-right">
                       <div>
                         {{ convert_decimal(subTotal()) }}
                       </div>
-
-                      <div>
-                        {{ convert_decimal(temp.room_extra_amount) }}
-                      </div>
                       <div style="color: red">
-                        -{{ convert_decimal(temp.room_discount) }}
+                        <v-hover v-slot:default="{ hover, props }">
+                          <div v-bind="props">
+                            -{{ convert_decimal(room.room_discount || 0) }}
+                            <v-icon
+                              v-if="hover"
+                              small
+                              color="primary"
+                              @click="
+                                $refs[`DiscountComp`][`discountPopUp`] = true
+                              "
+                              >mdi-pencil</v-icon
+                            >
+                            <Discount
+                              ref="DiscountComp"
+                              :sub_total="room.sub_total"
+                              @discountAbleAmount="
+                                (e) => {
+                                  room.room_discount = e;
+                                }
+                              "
+                            />
+                          </div>
+                        </v-hover>
                       </div>
-                      <v-divider color="#4390FC"></v-divider>
                       <div style="font-size: 18px; font-weight: bold">
                         {{ convert_decimal(processCalculation()) }}
                       </div>
                     </v-col>
                   </div>
-                  <v-divider color="#4390FC"></v-divider>
                 </v-col>
                 <v-col md="12" class="text-right">
                   <HallDialog label="Add Hall" @tableData="handleTableData"
                 /></v-col>
-                <v-col md="3" sm="12" cols="12" dense>
-                  <v-select
-                    label="Discount/Extra"
-                    v-model="extraPayType"
-                    :items="['Discount', 'ExtraAmount']"
-                    dense
-                    :hide-details="true"
-                    outlined
-                  ></v-select>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'Discount'"
-                >
-                  <v-text-field
-                    label="Discount Amount"
-                    dense
-                    outlined
-                    type="number"
-                    v-model="temp.room_discount"
-                    :hide-details="true"
-                    @keyup="processCalculation"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'Discount'"
-                >
-                  <v-text-field
-                    label="Reason"
-                    dense
-                    outlined
-                    type="text"
-                    v-model="temp.discount_reason"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'ExtraAmount'"
-                >
-                  <v-text-field
-                    label="Extra Amount"
-                    dense
-                    outlined
-                    type="number"
-                    v-model="temp.room_extra_amount"
-                    @keyup="processCalculation"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  md="4"
-                  sm="12"
-                  cols="12"
-                  dense
-                  v-if="extraPayType == 'ExtraAmount'"
-                >
-                  <v-text-field
-                    label="Reason"
-                    dense
-                    outlined
-                    type="text"
-                    v-model="temp.extra_amount_reason"
-                    :hide-details="true"
-                  ></v-text-field>
-                </v-col>
               </v-row>
+
               <v-row class="text-right mb-3">
                 <v-col>
                   <v-btn
@@ -557,13 +640,24 @@ export default {
     this.runAllFunctions();
   },
   methods: {
+    formatDate(date) {
+      let dateObj = new Date(date);
+
+      let day = dateObj.getDate().toString().padStart(2, "0");
+      let month = dateObj
+        .toLocaleString("en-GB", { month: "short" })
+        .slice(0, 3);
+      let year = dateObj.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    },
     handleFoundCustomer(e) {
       this.customer = {
         ...this.customer,
         ...e,
       };
 
-      console.log("🚀 ~ handleFoundCustomer ~ this.customer:", this.customer)
+      console.log("🚀 ~ handleFoundCustomer ~ this.customer:", this.customer);
 
       this.customerCompKey += 1;
     },

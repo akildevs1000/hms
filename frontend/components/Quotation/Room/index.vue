@@ -43,6 +43,16 @@
         />
       </v-toolbar>
     </template>
+    <template v-slot:item.invoice="{ item }">
+      <span
+        style="cursor: pointer"
+        v-if="item && item.invoice"
+        @click="openExternalWinodwForInvoice(item?.invoice?.id)"
+        class="blue--text"
+        >{{ item?.invoice?.ref_no }}</span
+      >
+      <span v-else>---</span>
+    </template>
     <template v-slot:item.customer="{ item }">
       {{ item?.customer?.first_name }} {{ item?.customer?.last_name }}
     </template>
@@ -111,16 +121,16 @@
               />
             </v-list-item-title>
           </v-list-item>
-          <!-- <v-list-item>
+          <v-list-item>
             <v-list-item-title>
-              <QuotationConvertToInvoice
+              <QuotationRoomConvertToInvoice
                 :model="Model"
                 :endpoint="`invoice-v1`"
                 :item="item"
                 @response="getDataFromApi"
               />
             </v-list-item-title>
-          </v-list-item> -->
+          </v-list-item>
           <v-list-item>
             <v-list-item-title>
               <QuotationDelete
@@ -170,14 +180,6 @@ export default {
         text: "Quotation Date",
         value: "book_date",
       },
-      // {
-      //   text: "Arrival Date",
-      //   value: "arrival_date",
-      // },
-      // {
-      //   text: "Departure Date",
-      //   value: "departure_date",
-      // },
       {
         text: "Total",
         value: "total",
@@ -190,7 +192,10 @@ export default {
         text: "Follow Up",
         value: "followups",
       },
-
+      {
+        text: "Invoice",
+        value: "invoice",
+      },
       {
         text: "Action",
         align: "center",
@@ -252,6 +257,14 @@ export default {
     },
     openExternalWinodw(id) {
       let url = `${process.env.BACKEND_URL}quotation-room/${id}`;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", url);
+      document.body.appendChild(element);
+      element.click();
+    },
+    openExternalWinodwForInvoice(id) {
+      let url = `${process.env.BACKEND_URL}invoice-room/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

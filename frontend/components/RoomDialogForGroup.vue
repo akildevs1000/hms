@@ -157,7 +157,7 @@
               item-value="id"
               item-text="title"
               v-model="temp.food_plan_id"
-              :items="foodplans"
+              :items="[{ id: 0, title: `---` }, ...foodplans]"
               @change="
                 selectRoom({ name: temp.room_type, room_no: temp.room_no })
               "

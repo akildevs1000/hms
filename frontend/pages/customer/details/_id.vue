@@ -1180,7 +1180,7 @@ export default {
     },
 
     redirect() {
-      this.$router.push("/hotel/calendar1");
+      this.$router.push("/");
     },
 
     get_payment() {
