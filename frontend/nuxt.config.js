@@ -119,14 +119,23 @@ export default {
             method: "post",
             propertyName: "token",
           },
-          logout: false,
           user: {
             url: "me",
             method: "get",
             propertyName: "user",
           },
+          logout: false,
         },
-        maxAge: 86400, // 24 hours
+
+        refreshToken: true,
+
+        token: {
+          //property: "tokens.access.token",
+          global: true,
+          type: "Bearer",
+          maxAge: 60 * 60 * 24 * 365, // 8 Hours
+        },
+        autoLogout: false,
       },
     },
 
