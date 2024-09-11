@@ -24,7 +24,7 @@
                                     <img src="{{urldecode($booking->company->logo)}}" height="100px" width="100" style="margin-left: 50px;margin-top: 0px">
                                     @elseif ($booking->company_id == 1)
                                     <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo" style="max-height:70px!important;margin-top:10px">
-                                    @elseif ($booking->company_id == 2)
+                                    @elseif ($booking->company_id == 2 || $booking->company_id == 3)
                                     <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo" style="max-height:100px!important">
                                     @endif
                                 </div>

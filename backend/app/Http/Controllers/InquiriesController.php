@@ -19,17 +19,7 @@ class InquiriesController extends Controller
     {
         $model = Inquiry::query()->filter($request->search);
         $model->where('company_id', $request->company_id);
-        return   $model->paginate($request->per_page);;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return   $model->with("quotation")->paginate($request->per_page);;
     }
 
     /**
@@ -41,16 +31,7 @@ class InquiriesController extends Controller
     public function store(StoreRequest $request)
     {
         try {
-            $inquiry = Inquiry::whereContactNo($request->contact_no)->first();
-            $id = "";
-
-            if ($inquiry) {
-                $id = $inquiry->id;
-                $inquiry->update($request->validated());
-            } else {
-                $inquiry = Inquiry::create($request->validated());
-                $id = $inquiry->id;
-            }
+            $inquiry = Inquiry::create($request->validated());
 
             $fields = [
                 "title"     => $inquiry->title,
@@ -67,10 +48,16 @@ class InquiriesController extends Controller
 
             $this->sendWhatsappIfRequired(Template::INQUERY_CREATE, $fields);
 
-            return $this->response('Inquiry successfully added.', $id, true);
+            return $this->response('Inquiry successfully added.', $inquiry->id, true);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
+    }
+
+
+    public function get_inquiry($id)
+    {
+        return Inquiry::where("contact_no", $id)->first();
     }
 
     /**

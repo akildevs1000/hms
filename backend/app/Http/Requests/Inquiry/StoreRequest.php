@@ -48,6 +48,8 @@ class StoreRequest extends FormRequest
             'city' => 'nullable',
             'image' => 'nullable',
 
+            'inquiry_type' => 'required',
+
         ];
 
         return $arr;

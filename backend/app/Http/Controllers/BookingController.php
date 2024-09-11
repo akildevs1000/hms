@@ -2953,4 +2953,9 @@ class BookingController extends Controller
 
         ];
     }
+
+    public function getOrderRoomData($id)
+    {
+        return OrderRoom::with("foodplan")->where("booking_id", $id)->first();
+    }
 }

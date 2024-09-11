@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Invoice\ValidationRequest;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\Template;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -53,27 +55,27 @@ class InvoiceController extends Controller
 
             $data["ref_no"] = "INV-$ref_no";
 
-            $data["quotation_id"] = $request->id ?? 0;
+            $data["quotation_id"] = $request->quotation_id ?? 0;
 
-            Invoice::create($data);
+            $invoice = Invoice::create($data);
 
-            // $quotation = Quotation::with("customer")->first();
+            $invoice->load('customer');
 
             // $fields = [
-            //     "title"     => $quotation->customer->title,
-            //     "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
-            //     "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
-            //     "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
-            //     "rooms_type" => $quotation->rooms_type,
-            //     "email" => $quotation->customer->email,
-            //     "whatsapp" => $quotation->customer->whatsapp,
+            //     "title"     => $invoice->customer->title,
+            //     "full_name" => $invoice->customer->first_name . " " . $invoice->customer->last_name,
+            //     "check_in"  => date('d-M-y', strtotime($invoice->arrival_date)),
+            //     "check_out" => date('d-M-y', strtotime($invoice->departure_date)),
+            //     "rooms_type" => $invoice->rooms_type,
+            //     "email" => $invoice->customer->email,
+            //     "whatsapp" => $invoice->customer->whatsapp,
             // ];
 
             // $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
             // $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
 
 
-            return true;
+            return $invoice;
         } catch (\Exception $e) {
             // Log the exception or handle it as necessary
             return response()->json($e->getMessage(), 500);
@@ -147,5 +149,41 @@ class InvoiceController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function roomInvoicePrint($id)
+    {
+        $quotation = Invoice::with("company", "customer")->where("invoice_type", "room")->find($id);
+        $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
+        $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
+        $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
+
+        return Pdf::loadView('invoice.room', compact("quotation"))
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function hallInvoicePrint($id)
+    {
+        $quotation = Invoice::with("company", "customer")->where("invoice_type", "hall")->find($id);
+        $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
+        $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
+        $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
+
+        return Pdf::loadView('invoice.hall', compact("quotation"))
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
     }
 }

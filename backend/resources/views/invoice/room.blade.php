@@ -301,7 +301,7 @@
             </td>
 
             <td class="text-center border-none col-4">
-                <div class="quotation-header">Quotation</div>
+                <div class="quotation-header">Invoice</div>
             </td>
 
             <td class="text-right border-none col-4">

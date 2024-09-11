@@ -34,6 +34,6 @@
     Route::post('inquiry', [InquiriesController::class, 'store']);
     Route::get('inquiry', [InquiriesController::class, 'index']);
     Route::post('inquiry/{id}', [InquiriesController::class, 'update']);
-
+    Route::get('get_inquiry/{contact_no}', [InquiriesController::class, 'get_inquiry']);
 
     Route::resource('sub_customer', SubCustomerController::class);

@@ -31,6 +31,16 @@ class Quotation extends Model
     //     return number_format($value, 2);
     // }
 
+    /**
+     * Get the Invoice associated with the Inquiry
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class)->latest();
+    }
+
 
 
     /**

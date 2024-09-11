@@ -32,6 +32,7 @@ class Inquiry extends Model
         'remark',
         'city',
         'image',
+        'inquiry_type',
     ];
 
     protected $casts = [
@@ -47,6 +48,16 @@ class Inquiry extends Model
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    /**
+     * Get the Quotation associated with the Inquiry
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function quotation()
+    {
+        return $this->hasOne(Quotation::class)->latest();
     }
 
     /**
@@ -119,9 +130,9 @@ class Inquiry extends Model
 
     public function scopeFilter($query, $search)
     {
-        $query->when($search ?? false, fn ($query, $search) =>
+        $query->when($search ?? false, fn($query, $search) =>
         $query->where(
-            fn ($query) => $query
+            fn($query) => $query
                 ->orWhere('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')

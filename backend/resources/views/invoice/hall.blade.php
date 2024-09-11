@@ -301,7 +301,7 @@
             </td>
 
             <td class="text-center border-none col-4">
-                <div class="quotation-header">Quotation</div>
+                <div class="quotation-header">Invoice</div>
             </td>
 
             <td class="text-right border-none col-4">
@@ -341,16 +341,16 @@
                 <td class="text-left border-none col-3">
                 </td>
                 <td class="text-left border-none col-3">
-                    <h4>Nights</h4>
-                    <p>{{ $quotation->total_no_of_nights }}</p>
+                    <h4>Hours</h4>
+                    <p>{{ $quotation->total_booking_hours }}</p>
                 </td>
                 <td class="text-left border-none col-3">
-                    <h4>Rooms</h4>
-                    <p>{{ $quotation->total_no_of_rooms }}</p>
-                </td>
-                <td class="text-left border-none col-3">
-                    <h4>Room Type</h4>
+                    <h4>Hall</h4>
                     <p>{{ $quotation->room_types }}</p>
+                </td>
+                <td class="text-left border-none col-3">
+                    <h4>Function</h4>
+                    <p>{{ $quotation->function_names }}</p>
                 </td>
             </tr>
         </table>
@@ -359,44 +359,37 @@
         <thead>
             <tr style="background:#408dfb; color:white;">
                 <th class="text-center">#</th>
-                <th>Room Type</th>
-                <th>Food</th>
-                <th class="text-center">Tariff</th>
-                <th class="text-center">Pax</th>
-                <th class="text-center">Rooms</th>
-                <th class="text-center">Nights</th>
+                <th>Description</th>
+                <th class="text-center">Qty</th>
+                <th class="text-center">Unit Price</th>
                 <th class="text-center">Total</th>
             </tr>
         </thead>
         <tbody>
-
             @foreach ($quotation->items as $key => $item)
                 <tr>
                     <td style="width:50px;" class="text-center">{{ $key + 1 }}</td>
-                    <td>{{ $item['room_type'] }}</td>
-                    <td>{{ $item['meal_name'] }}</td>
-                    <td class="text-right">{{ number_format($item['price'], 2) }}</td>
-                    <td class="text-center">{{ $item['no_of_adult'] }}</td>
-                    <td class="text-center">{{ $item['no_of_rooms'] }}</td>
-                    <td class="text-center">{{ $item['no_of_nights'] }}</td>
+                    <td style="width:350px;">{{ $item['description'] }}</td>
+                    <td style="width:100px;" class="text-center">{{ $item['qty'] }}</td>
+                    <td class="text-right">{{ number_format($item['unit_price'], 2) }}</td>
                     <td class="text-right">{{ number_format($item['total_price'], 2) }}</td>
                 </tr>
             @endforeach
 
             <tr>
-                <td colspan="6" class="border-none"></td>
+                <td colspan="3" class="border-none"></td>
                 <td class=" border-none" style="border-bottom: 1px solid #dddddd">Sub Total</td>
                 <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">{{ $quotation->sub_total }}
                 </td>
             </tr>
             <tr>
-                <td colspan="6" class="border-none"></td>
+                <td colspan="3" class="border-none"></td>
                 <td class=" border-none border-bottom" style="border-bottom: 1px solid #dddddd">Discount</td>
                 <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">{{ $quotation->discount }}
                 </td>
             </tr>
             <tr class="total-row">
-                <td colspan="6" class="border-none"></td>
+                <td colspan="3" class="border-none"></td>
 
                 <td class=" border-none" style="border-bottom: 1px solid #dddddd">Total Rs.</td>
                 <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">{{ $quotation->total }}
@@ -407,22 +400,23 @@
     <br>
     <br>
     <div>
-        <p style="color:#0762e2;">Note:</p>
-        <p><b>Early Check-In and Late Check-Out Policy</b></p>
-        <p><b>Early Check-In: ₹</b>1200.00 <b>*</b></p>
-        <p>Guests are allowed to check in up to 2 hours before the standard check-in time of 11:00 AM.</p>
-        <p><b>Late Check-Out: ₹1200</b>1200.00 <b>*</b></p>
-        <p> <b>*</b>Note: Early check-in and late check-out are subject to room availability</p>
+        <p style="color:#0762e2;">Additional Charges:</p>
+        <p>Extra Hall Usage Hours : RS 4000/- per Hrs</p>
+        <p>Generator : Rs 1500/- Per Hrs</p>
+        <p>Projector : 500 /-</p>
+        <p>Audio system : 1500/-</p>
+        <p>Cleaning Charges : 15000/-</p>
     </div>
     <br>
     <br>
     <div>
         <p style="color:#0762e2;">Terms and Condition:</p>
-        <p>Booking Confirmation: 25% advance payment is required to confirm the Room booking.</p>
+        <p>Booking Confirmation: 25% advance payment is required to confirm the hall booking.</p>
+
         <p>Cancellation Policy: In case of cancellation, the advance payment is non</p>
         <p>Payment Methods: Payments can be made via cash, UPI, or bank transfer. Please note that cheques are not
             accepted.</p>
-        <p>Full Payment Requirement: The full payment must be completed at least one day before the check in date.</p>
+        <p>Full Payment Requirement: The full payment must be completed at least one day before the event date.</p>
         <p>Additional Charges: Any additional charges will be applied as per the notes provided above</p>
         <p>GST : The above price are included GST .</p>
     </div>

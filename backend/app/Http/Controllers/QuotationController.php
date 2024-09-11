@@ -70,7 +70,7 @@ class QuotationController extends Controller
     public function index(Request $request)
     {
         $model = Quotation::query();
-        $model->with(["customer", "followups", "status"]);
+        $model->with(["customer", "followups", "status","invoice"]);
         $model->where("type", request("type", "room"));
 
         if ($request->filled('from_date') && $request->filled('to_date')) {
@@ -89,7 +89,7 @@ class QuotationController extends Controller
     {
         $query = Quotation::query();
 
-        $query->with(["customer", "followups", "status"]);
+        $query->with(["customer", "followups", "status","invoice"]);
         // $query->where("type", request("type", "room"));
         $query->where(function ($q) use ($search) {
             $q->where("ref_no", env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
@@ -109,7 +109,7 @@ class QuotationController extends Controller
     {
         $query = Quotation::query();
 
-        $query->with(["customer", "followups", "status"]);
+        $query->with(["customer", "followups", "status","invoice"]);
         $query->where("type", request("type", "hall"));
         $query->where(function ($q) use ($search) {
             $q->where("ref_no", env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
@@ -122,7 +122,7 @@ class QuotationController extends Controller
         // ->filter($key)
         return $query->where("company_id", request("company_id", 0))
             ->orderBy("id", "desc")
-        ->paginate(request("per_page", 50));
+            ->paginate(request("per_page", 50));
     }
 
     /**
@@ -167,25 +167,24 @@ class QuotationController extends Controller
 
             $data["ref_no"] = "QTN-$ref_no";
 
-            Quotation::create($data);
+            $quotation = Quotation::create($data);
 
-            // $quotation = Quotation::with("customer")->first();
+            $quotation->load('customer');
 
-            // $fields = [
-            //     "title"     => $quotation->customer->title,
-            //     "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
-            //     "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
-            //     "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
-            //     "rooms_type" => $quotation->rooms_type,
-            //     "email" => $quotation->customer->email,
-            //     "whatsapp" => $quotation->customer->whatsapp,
-            // ];
+            $fields = [
+                "title"     => $quotation->customer->title,
+                "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
+                "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
+                "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
+                "rooms_type" => $quotation->rooms_type,
+                "email" => $quotation->customer->email,
+                "whatsapp" => $quotation->customer->whatsapp,
+            ];
 
-            // $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
-            // $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
+            $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
+            $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
 
-
-            return true;
+            return $quotation;
         } catch (\Exception $e) {
             // Log the exception or handle it as necessary
             return response()->json($e->getMessage(), 500);

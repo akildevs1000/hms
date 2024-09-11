@@ -43,6 +43,7 @@ class ValidationRequest extends FormRequest
             'discount_reason' => 'nullable',
             'extra_reason' => 'nullable',
             'company_id' => 'nullable',
+            'inquiry_id' => 'nullable',
         ];
     }
 }

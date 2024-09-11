@@ -35,4 +35,14 @@ class Invoice extends Model
     {
         return $this->belongsTo(Quotation::class);
     }
+
+    /**
+     * Get the company that owns the Invoice
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }
