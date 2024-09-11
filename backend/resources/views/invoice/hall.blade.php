@@ -282,7 +282,7 @@
         </tr>
     </table>
 
-    
+
 
 
 
@@ -353,20 +353,23 @@
             <tr>
                 <td colspan="3" class="border-none"></td>
                 <td class=" border-none" style="border-bottom: 1px solid #dddddd">Sub Total</td>
-                <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">{{ $quotation->sub_total }}
+                <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">
+                    {{ number_format($quotation->sub_total, 2) }}
                 </td>
             </tr>
             <tr>
                 <td colspan="3" class="border-none"></td>
                 <td class=" border-none border-bottom" style="border-bottom: 1px solid #dddddd">Discount</td>
-                <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">{{ $quotation->discount }}
+                <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">
+                    {{ number_format($quotation->discount, 2) }}
                 </td>
             </tr>
             <tr class="total-row">
                 <td colspan="3" class="border-none"></td>
 
                 <td class=" border-none" style="border-bottom: 1px solid #dddddd">Total Rs.</td>
-                <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">{{ $quotation->total }}
+                <td class="text-right border-none" style="border-bottom: 1px solid #dddddd">
+                    {{ number_format($quotation->total, 2) }}
                 </td>
             </tr>
         </tbody>
