@@ -43,6 +43,6 @@ class Invoice extends Model
      */
     public function company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class)->with("user:id,company_id,email");
     }
 }
