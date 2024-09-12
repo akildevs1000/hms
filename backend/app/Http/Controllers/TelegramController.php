@@ -61,9 +61,7 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
-        $update = $request->all();
-        Log::info('Non-message update received:', json_encode($update, JSON_PRETTY_PRINT));
-        return $update;
+        return $request->all();
     }
 
 
