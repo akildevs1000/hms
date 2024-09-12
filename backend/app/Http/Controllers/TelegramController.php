@@ -62,18 +62,18 @@ class TelegramController extends Controller
     public function webhook(Request $request)
     {
         Log::info("Francis " . date("d M y H:s:i"));
-        // Retrieve the incoming message from Telegram
-        $message = $request->input('message');
+        // // Retrieve the incoming message from Telegram
+        // $message = $request->input('message');
 
-        if ($message) {
-            $chatId = $message['chat']['id'];
-            $text = strtolower($message['text']);
+        // if ($message) {
+        //     $chatId = $message['chat']['id'];
+        //     $text = strtolower($message['text']);
 
-            if ($text === 'hi') {
-                // Send a response back to the user using Telegram API
-                $this->sendMessage($chatId, 'Hello! How can I help you?');
-            }
-        }
+        //     if ($text === '1111') {
+        //         // Send a response back to the user using Telegram API
+        //         $this->sendMessage($chatId, 'Hello! How can I help you?');
+        //     }
+        // }
 
         return response()->json(['status' => 'success'], 200);
     }
