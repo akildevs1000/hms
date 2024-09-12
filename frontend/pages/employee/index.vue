@@ -166,7 +166,7 @@
                   </v-col>
                   <v-col md="6" cols="12">
                     <v-select
-                      label="Whatsapp OTP"
+                      label="OTP"
                       v-model="editedItem.enable_whatsapp_otp"
                       :items="[
                         { name: 'Enable', value: 1 },
@@ -407,7 +407,7 @@
                       </v-col>
                       <v-col md="6" cols="12">
                         <v-select
-                          label="Whatsapp OTP"
+                          label="OTP"
                           v-model="editedItem.enable_whatsapp_otp"
                           :items="[
                             { name: 'Enable', value: 1 },
@@ -716,7 +716,7 @@ export default {
           filterSpecial: true,
         },
         {
-          text: "Whatsapp OTP",
+          text: "OTP",
           value: "enable_whatsapp_otp",
           key: "enable_whatsapp_otp",
           key: "status",

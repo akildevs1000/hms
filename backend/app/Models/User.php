@@ -40,6 +40,10 @@ class User extends Authenticatable
         'is_active',
         'last_name',
         'enable_whatsapp_otp',
+
+        'telegram_chat_id',
+        'telegram_otp',
+        'telegram_otp_expires_at',
     ];
 
     protected $appends = [
@@ -106,7 +110,6 @@ class User extends Authenticatable
             return null;
         }
         return asset('storage/user/images/' . $value);
-
     }
 
     protected static function boot()

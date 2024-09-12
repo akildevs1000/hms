@@ -14,6 +14,8 @@ class AuthController extends Controller
     {
         $user = User::with(['role'])->where('email', $request->email)->where('is_active', 1)->first();
 
+        unset($user["assigned_permissions"]);
+
         //check user status
         if (!$user) {
             throw ValidationException::withMessages([

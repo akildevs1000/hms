@@ -20,17 +20,28 @@
                 </div>
                 <br />
                 <div class="text-center">
-                  <v-otp-input v-model="otp" length="6"></v-otp-input>
+                  <a
+                    small
+                    link
+                    color="primary"
+                    href="https://t.me/akil_dev_user_bot"
+                    target="_blank"
+                  >
+                    https://t.me/akil_dev_user_bot
+                  </a>
                 </div>
                 <br />
-                <div class="text-center">
-                  <v-btn block small link color="primary" @click="validateOTP">
-                    Submit
-                  </v-btn>
-                </div>
+                <div class="text-center">OR</div>
+                <br />
+                <v-card outlined class="mx-auto" max-width="200">
+                  <v-img
+                    style="width: 100%"
+                    src="/telegram-channel-link.png"
+                  ></v-img>
+                </v-card>
                 <br />
                 <div class="text-right">
-                  <a small link color="primary" @click="backToLogin">
+                  <a small link color="primary" @click="getUpdates">
                     Back to login
                   </a>
                 </div>
@@ -55,7 +66,6 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <!-- <v-col><pre>{{ $auth.user.telegram_chat_id }}</pre></v-col> -->
       </v-row>
     </v-card>
   </v-container>
@@ -66,56 +76,33 @@ export default {
   layout: "login",
   data: () => ({
     logo: "/logo1.png",
-    otp: null,
   }),
-  async created() {
-    await this.generateOTP();
-  },
+  created() {},
   methods: {
-    async generateOTP() {
-      let botToken = `7356807670:AAGtb_m3juvOpUGZCBaMXK73oO7A0-iUPOg`;
-      let chatId = this.$auth.user.telegram_chat_id;
-      let otp = Math.floor(100000 + Math.random() * 900000);
-      const message = `Your OTP code is: ${otp}`;
-      let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}`;
+    async getUpdates() {
+      const botToken = "7356807670:AAGtb_m3juvOpUGZCBaMXK73oO7A0-iUPOg";
+      let url = `https://api.telegram.org/bot${botToken}/getUpdates`;
       try {
-        await this.$axios.get(url);
-        this.storeOTP(otp)
+        const { data } = await this.$axios.get(url);
+        let result = data.result.filter((e) => e.message);
+        let lastItem = result[result.length - 1]; // Get the last item from the filtered array
+        this.updateChatIdForUser(lastItem?.message?.chat?.id || 0);
       } catch (error) {
         console.error("Error sending message:", error);
       }
     },
-    async storeOTP(otp) {
+    async updateChatIdForUser(telegram_chat_id) {
       let user_id = this.$auth.user.id;
-      let url = `/generate-telegram-otp/${user_id}`;
-      let config = {
-        params: { otp, expire_in_min: 1 },
-      };
+      let url = `/update-telegram-chat-id/${user_id}`;
       try {
-        const { data } = await this.$axios.get(url, config);
-        console.log(data);
-      } catch (error) {
-        console.error("Error sending message:", error);
-      }
-    },
-
-    async validateOTP() {
-      let user_id = this.$auth.user.id;
-      let url = `/validate-telegram-otp/${user_id}`;
-      let config = {
-        params: { otp:this.otp },
-      };
-      try {
-        await this.$axios.get(url, config);
+        await this.$axios.post(url, {
+          telegram_chat_id,
+        });
+        this.$auth.logout();
         this.$router.push(`/login`);
       } catch (error) {
-        alert(error?.response?.data?.message);
+        console.error("Error sending message:", error);
       }
-    },
-
-    async backToLogin() {
-      this.$auth.logout();
-      this.$router.push(`/login`);
     },
   },
 };

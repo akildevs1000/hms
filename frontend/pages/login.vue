@@ -303,7 +303,12 @@ export default {
               LoginUser.employee_role_id != 0 &&
               LoginUser.enable_whatsapp_otp == 1
             ) {
-              this.set_otp_new(this.$auth.user.id);
+              // this.set_otp_new(this.$auth.user.id);
+
+              if (!this.$auth.user.telegram_chat_id) {
+                this.$router.push(`/initial-subsribe`);
+                return;
+              }
               this.$router.push(`/otp`);
               return;
             } else if (data.user.user_type != "master") {
@@ -322,12 +327,6 @@ export default {
               this.$router.push(`/master/companies`);
               id = data.user?.id;
               name = data.user?.name;
-            }
-
-            if (LoginUser.employee_role_id > 0) {
-              this.set_otp(this.$auth.user.id);
-              this.$router.push(`/otp`);
-              return;
             }
           })
           .catch(({ response }) => {
