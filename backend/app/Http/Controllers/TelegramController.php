@@ -64,25 +64,7 @@ class TelegramController extends Controller
         // Log the incoming request
         Log::info("Webhook received at: " . date("d M y H:i:s"));
 
-        // Retrieve the incoming data
-        $data = $request->all();
-
-        // Log the entire data payload for debugging
-        Log::info("Received data: " . json_encode($data));
-
-        // Example of checking if the message is from the bot
-        if (isset($data['sender']) && $data['sender'] == 'bot') {
-            // Handle bot's message
-            Log::info("Bot sent a message: " . $data['message']);
-
-            // Add your logic here to process the bot's message
-        } else {
-            // Handle other types of messages or events
-            Log::info("Received message from user: " . $data['message']);
-        }
-
-        // Respond with a success status
-        return response()->json(['status' => 'success'], 200);
+        return  $request->all();
     }
 
 
