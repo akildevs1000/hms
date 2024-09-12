@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 
 class TelegramController extends Controller
 {
+    private $botToken = '7356807670:AAGtb_m3juvOpUGZCBaMXK73oO7A0-iUPOg';
+
     public function generateOtp(Request $request, $id)
     {
         try {
@@ -53,6 +56,38 @@ class TelegramController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message' => 'OTP is invalid or expired'], 400);
         }
+    }
+
+    public function webhook(Request $request)
+    {
+        return "Francis";
+        // Retrieve the incoming message from Telegram
+        $message = $request->input('message');
+
+        if ($message) {
+            $chatId = $message['chat']['id'];
+            $text = strtolower($message['text']);
+
+            if ($text === 'hi') {
+                // Send a response back to the user using Telegram API
+                $this->sendMessage($chatId, 'Hello! How can I help you?');
+            }
+        }
+
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    public function sendMessage($chatId, $message)
+    {
+        // Use Guzzle to send a message via the Telegram API
+        $url = "https://api.telegram.org/bot{$this->botToken}/sendMessage";
+
+        $response = Http::post($url, [
+            'chat_id' => $chatId,
+            'text' => $message,
+        ]);
+
+        return $response->json();
     }
 
 
