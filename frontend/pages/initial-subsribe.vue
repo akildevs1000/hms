@@ -86,7 +86,7 @@ export default {
         const { data } = await this.$axios.get(url);
         let result = data.result.filter((e) => e.message);
         let lastItem = result[result.length - 1]; // Get the last item from the filtered array
-        this.updateChatIdForUser(lastItem?.message?.chat?.id || 0);
+        this.updateChatIdForUser(lastItem?.message?.chat?.id);
       } catch (error) {
         console.error("Error sending message:", error);
       }
