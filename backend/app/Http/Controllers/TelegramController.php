@@ -61,37 +61,9 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
-        // Get the incoming update
         $update = $request->all();
-
-        // Check if the update contains a message
-        if (isset($update['message'])) {
-            $message = $update['message'];
-            
-            // Log the received message
-            Log::info('Received message:', $message);
-
-            // Example: handle text messages
-            if (isset($message['text'])) {
-                $text = $message['text'];
-                // Process the text message as needed
-                Log::info('Text message:', $text);
-            }
-
-            // Handle other types of messages if needed
-            // Example: Handle photo messages
-            if (isset($message['photo'])) {
-                Log::info('Received photo message:', $message['photo']);
-            }
-
-            // Add more handlers for other message types if needed
-        } else {
-            // Optionally log or ignore non-message updates
-            Log::info('Non-message update received:', $update);
-        }
-
-        // Respond to Telegram with 200 OK
-        return response()->json(['status' => 'ok']);
+        Log::info('Non-message update received:', json_encode($update, JSON_PRETTY_PRINT));
+        return $update;
     }
 
 
