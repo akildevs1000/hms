@@ -61,7 +61,8 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
-        return $request->all();
+        Log::info("telegram webbook triggered");
+        return "success";
     }
 
 
