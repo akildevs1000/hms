@@ -1,10 +1,7 @@
 <template>
   <v-app>
     <v-app-bar :clipped-left="clipped" fixed app dense>
-      <!-- :style="$nuxt.$route.name == 'index' ? 'z-index: 100000' : ''" -->
-
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <!-- {{ title }} -->
       <img src="/logo1.png" style="width: 130px" />
       <v-spacer></v-spacer>
       <v-btn
@@ -19,9 +16,6 @@
 
       <v-spacer>
         <div>
-          <!-- <v-icon style="margin-top: -10px" color="black" size="35"
-            >mdi-clock-outline</v-icon
-          > -->
           <span style="font-size: 30px; color: black"> {{ currentTime }}</span>
           <span style="font-size: 16px; color: black; font-weight: 200">{{
             todayDate
@@ -112,46 +106,9 @@
           <div class="text-center p-2">
             {{ i.title }}
           </div>
-          <!-- <v-list-item-icon class="ma-2">
-            <v-icon>{{ i.icon }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-title class="text-center p-2">
-            <br />
-            {{ i.title }}
-          </v-list-item-title> -->
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <!-- <v-navigation-drawer
-      v-model="drawer"
-      dark
-      :clipped="clipped"
-      fixed
-      app
-      :color="sideBarcolor"
-      :width="150"
-    >
-      <v-row no-gutters>
-        <v-col
-          v-for="(i, idx) in filteredMenu"
-          :key="idx"
-          cols="12"
-          class="text-center white--text"
-        >
-          <v-card
-            v-if="i.to"
-            outlined
-            class="background pa-5"
-            @click="$router.push(i.to)"
-          >
-            <v-icon @mouseover="showTooltipMenu(i.title)">{{ i.icon }} </v-icon>
-            <br />
-            <small>{{ i.title }}</small>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-navigation-drawer> -->
     <v-main class="main_bg" style="padding-left: 75px">
       <v-container fluid>
         <nuxt />
@@ -440,21 +397,6 @@ export default {
           to: "/taxable",
           menu: "accounts_gst_access",
         },
-        // {
-        //   topMenu: "account",
-        //   icon: "mdi mdi-file-document-edit-outline",
-        //   title: "Inquiries",
-        //   to: "/inquiry",
-        //   menu: "inquiry_access",
-        // },
-        //{
-        // topMenu: "account",
-        //  icon: "mdi mdi-cash",
-        //title: "Quotation",
-        // to: "/quotations",
-        // menu: "accounts_posting_access",
-        //},
-        
         {
           topMenu: "account",
           icon: "mdi-account",
@@ -462,27 +404,6 @@ export default {
           to: "/vendors",
           menu: "accounts_posting_access",
         },
-        // {
-        //   topMenu: "account",
-        //   icon: "mdi-account-cash",
-        //   title: `Ledger`,
-        //   open_menu: false,
-        //   menu: "ledger_access",
-        //   hasChildren: [
-        //     {
-        //       icon: "mdi mdi-human-male-board-poll",
-        //       title: "Agents",
-        //       to: "/agents",
-        //       menu: "ledger_agents_access",
-        //     },
-        //     {
-        //       icon: "mdi-account-cash",
-        //       title: "Guest",
-        //       to: "/city_ledger",
-        //       menu: "ledger_guests_access",
-        //     },
-        //   ],
-        // },
         {
           topMenu: "dashboard",
           icon: "mdi mdi-file-chart-outline",
@@ -496,137 +417,6 @@ export default {
           title: "Lost & Found  ",
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
-        },
-        // {
-        //   topMenu: "dashboard",
-        //   icon: "mdi mdi-account-tie",
-        //   title: `Management`,
-        //   open_menu: false,
-        //   menu: "management_access",
-        //   hasChildren: [
-        //     {
-        //       icon: "mdi mdi-bank-transfer-out",
-        //       title: "Expense",
-        //       to: "/management/expense",
-        //       menu: "management_expenses_access",
-        //     },
-        //     {
-        //       icon: "mdi mdi-bank-transfer-in",
-        //       title: "Income",
-        //       to: "/account",
-        //       menu: "management_income_access",
-        //     },
-        //     {
-        //       icon: "mdi mdi-text-account",
-        //       title: "Payment By User Report",
-        //       to: "/management/report/user",
-        //       menu: "management_payments_access",
-        //     },
-
-        //     {
-        //       icon: "mdi mdi-calendar-month",
-        //       title: "All Reports",
-        //       to: "/management/report/monthly",
-        //       menu: "management_soldout_access",
-        //     },
-        //   ],
-        // },
-        // {
-        //   topMenu: "dashboard",
-        //   icon: "mdi-home-search-outline",
-        //   title: "Invenotry ",
-        //   to: "/inventory",
-        //   menu: "lost_and_found_access",
-        // },
-        {
-          topMenu: "setting",
-          icon: "mdi-tools",
-          title: `Hotel Settings`,
-          open_menu: false,
-          menu: "setting_access",
-          hasChildren: [
-            {
-              icon: "mdi mdi-bed",
-              title: "Menu Items",
-              to: "/hotel_checkin/settings/menu",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Laundry",
-              to: "/hotel_checkin/settings/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "House Keeping",
-              to: "/hotel_checkin/settings/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Room Supplies",
-              to: "/hotel_checkin/settings/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Room Problems",
-              to: "/hotel_checkin/settings/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Phonebook",
-              to: "/hotel_checkin/settings/room_category",
-              menu: "settings_rooms_category_access",
-            },
-          ],
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi-tools",
-          title: `Hotel Orders`,
-          open_menu: false,
-          menu: "setting_access",
-          hasChildren: [
-            {
-              icon: "mdi mdi-bed",
-              title: "Food Items",
-              to: "/hotel_checkin/orders/food",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Laundry",
-              to: "/hotel_checkin/orders/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "House Keeping",
-              to: "/hotel_checkin/orders/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Room Supplies",
-              to: "/hotel_checkin/orders/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Room Problems",
-              to: "/hotel_checkin/orders/room_category",
-              menu: "settings_rooms_category_access",
-            },
-            {
-              icon: "mdi mdi-bed",
-              title: "Phonebook",
-              to: "/hotel_checkin/orders/room_category",
-              menu: "settings_rooms_category_access",
-            },
-          ],
         },
         {
           topMenu: "setting",
@@ -691,28 +481,6 @@ export default {
           to: "/role",
           menu: "settings_roles_access",
         },
-        // {
-        //   topMenu: "setting",
-        //   icon: "mdi mdi-account-check-outline",
-        //   title: "Report Emails",
-        //   to: "/emails",
-        //   menu: "settings_roles_access",
-        // },
-        // {
-        //   topMenu: "setting",
-        //   icon: "mdi mdi-account-details",
-        //   title: "Settings",
-        //   to: "/setting",
-        //   menu: "settings_permissions_access",
-        // },
-
-        // {
-        //   topMenu: "setting",
-        //   icon: "mdi mdi-account-details",
-        //   title: "Devices Logs",
-        //   to: "/devices/devices_logs",
-        //   menu: "devices_permissions_access",
-        // },
       ],
       items: [],
       filteredMenu: [],
