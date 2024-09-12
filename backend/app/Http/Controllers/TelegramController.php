@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TelegramController extends Controller
 {
@@ -60,7 +61,7 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
-        return "Francis";
+        Log::info("Francis " . date("d M y H:s:i"));
         // Retrieve the incoming message from Telegram
         $message = $request->input('message');
 
