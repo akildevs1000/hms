@@ -65,13 +65,12 @@
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar :color="roomTypeColor" dark flat dense>
-            <v-tabs v-model="activeTab" align-with-title>
-              <span class="py-3 ml-2">
-                {{ room_category_type }}
-                {{
-                  getRelaventStatus(booking && booking.booking_status)
-                }}Guest</span
-              >
+            <v-tabs
+              v-model="activeTab"
+              background-color="primary"
+              align-with-title
+            >
+              <span class="py-3 ml-2"> On-premises Guest</span>
               <v-spacer></v-spacer>
               <v-tab
                 active-class="active-link"
@@ -88,18 +87,43 @@
             <v-tab-item class="px-3 py-4">
               <v-row>
                 <v-col md="2" cols="12">
-                  <v-row>
+                  <v-row no-gutters>
                     <v-col cols="12" class="text-center">
-                      <v-avatar size="200">
+                      <v-avatar size="200" tile>
                         <v-img
                           :src="
                             booking?.customer?.captured_photo ||
-                            '/no-profile-image.jpg'
+                            '/no-profile-image.png'
                           "
                         ></v-img>
                       </v-avatar>
                     </v-col>
-                    <v-col cols="12" class="text-center">
+                    <v-col cols="3"></v-col>
+                    <v-col cols="6" class="text-center">
+                      <v-row>
+                        <v-col>
+                          <v-img
+                            :src="
+                              booking?.customer?.captured_photo || '/idf.png'
+                            "
+                            style="margin: 0 auto; width: 50px; height: 50px"
+                            contain
+                          ></v-img>
+                        </v-col>
+                        <v-col>
+                          <v-img
+                            :src="
+                              booking?.customer?.captured_photo || '/idb.png'
+                            "
+                            style="margin: 0 auto; width: 50px; height: 50px"
+                            contain
+                          ></v-img>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+
+                    <v-col cols="3"></v-col>
+                    <!-- <v-col cols="12" class="text-center">
                       <v-btn
                         small
                         dark
@@ -118,17 +142,17 @@
                         <v-icon>mdi-download-outline</v-icon>
                         <v-icon>mdi-account-tie</v-icon>
                       </v-btn>
-                    </v-col>
+                    </v-col> -->
                     <v-col md="12" class="pr-0 mr-0">
-                      <div class="text-box-amt">
-                        <table>
+                      <div class="text-box-amt mt-5">
+                        <table style="width: 100%">
                           <tr class="bg-white amt-border-full">
                             <td>Room:</td>
+                            <!-- $auth.user.company.currency -->
                             <td class="text-right">
-                              {{ $auth.user.company.currency
-                              }}{{
+                              {{
                                 transactionSummary &&
-                                numFormat(
+                                $utils.currency_format(
                                   transactionSummary.sumDebit -
                                     transactionSummary.tot_posting
                                 )
@@ -138,10 +162,10 @@
                           <tr class="bg-white amt-border">
                             <td>Posting :</td>
                             <td class="text-right">
-                              {{ $auth.user.company.currency
-                              }}{{
-                                transactionSummary &&
-                                transactionSummary.tot_posting
+                              {{
+                                $utils.currency_format(
+                                  transactionSummary.tot_posting
+                                )
                               }}
                             </td>
                           </tr>
@@ -151,28 +175,31 @@
                           >
                             <td>Total :</td>
                             <td class="text-right">
-                              {{ $auth.user.company.currency
-                              }}{{
-                                transactionSummary &&
-                                transactionSummary.sumDebit
+                              {{
+                                $utils.currency_format(
+                                  transactionSummary.sumDebit
+                                )
                               }}
                             </td>
                           </tr>
                           <tr class="bg-white amt-border">
                             <td>Paid :</td>
                             <td class="text-right">
-                              - {{ $auth.user.company.currency
-                              }}{{
-                                transactionSummary &&
-                                transactionSummary.sumCredit
+                              -{{
+                                $utils.currency_format(
+                                  transactionSummary.sumCredit
+                                )
                               }}
                             </td>
                           </tr>
                           <tr class="bg-white amt-border">
                             <td>Balance :</td>
                             <td class="red--text text-right">
-                              {{ $auth.user.company.currency
-                              }}{{ numFormat(transactionSummary.balance) }}
+                              {{
+                                $utils.currency_format(
+                                  transactionSummary.balance
+                                )
+                              }}
                             </td>
                           </tr>
                         </table>
@@ -181,78 +208,212 @@
                   </v-row>
                 </v-col>
 
-                <v-col md="9" cols="12">
+                <v-col
+                  md="10"
+                  cols="12"
+                  v-if="booking && booking.customer && booking.customer.id"
+                >
                   <v-row class="mt-4">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Guest Name</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.title) ||
-                            ""
-                          }}.
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.full_name) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Group Name"
+                        v-model="booking.group_name"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
                     </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Mobile</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.contact_no) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Full Name"
+                        v-model="booking.title"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
                     </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Whatsapp</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.whatsapp) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Mobile"
+                        v-model="booking.customer.contact_no"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
                     </v-col>
-                  </v-row>
-                  <v-row class="my-0 py-0">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Reservation No</h6>
-                        <p>
-                          {{ (booking && booking.reservation_no) || "---" }}
-                        </p>
-                      </div>
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Whatsapp"
+                        v-model="booking.customer.whatsapp"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
                     </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Number of Rooms</h6>
-                        <p>
-                          {{ (bookedRooms && bookedRooms.length) || "---" }}
-                        </p>
-                      </div>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Reservation No"
+                        v-model="booking.reservation_no"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
                     </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Booking Date</h6>
-                        <p>
-                          {{ (booking && booking.booking_date) || "---" }}
-                        </p>
-                      </div>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Number of Rooms"
+                        v-model="bookedRooms.length"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Booking Date"
+                        v-model="booking.booking_date"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Nights"
+                        v-model="booking.total_days"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Check In"
+                        v-model="booking.check_in_date"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Check Out"
+                        v-model="booking.check_out_date"
+                        dense
+                        outlined
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+
+                
+                 
+
+                
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Pay Type"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="getRelatedPaidBy"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Reach By"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.customer.type"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="4">
+                      <v-text-field
+                        label="Source"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.source"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="4">
+                      <v-text-field
+                        label="Reference Number"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.reference_no"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="4">
+                      <v-text-field
+                        label="Purpose"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.purpose"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="Country"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.customer.country"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="State"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.customer.state"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="City"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.customer.city"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-text-field
+                        label="City"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.customer.zip_code"
+                      ></v-text-field>
+                    </v-col>
+
+                  
+                    <v-col cols="12">
+                      <v-text-field
+                        label="Guest Request"
+                        dense
+                        outlined
+                        hide-details
+                        v-model="booking.request"
+                      ></v-text-field>
                     </v-col>
                   </v-row>
 
@@ -280,359 +441,24 @@
                         </v-col>
                       </v-row>
                     </v-col>
-
-                    <v-col
-                      md="8"
-                     v-else
-                    >
-                      <v-row>
-                        <v-col>
-                          <div class="text-box" style="float: left">
-                            <h6>Check In</h6>
-                            <p>
-                              {{ booking.check_in_date || "---" }}
-                            </p>
-                          </div>
-                        </v-col>
-                        <v-col>
-                          <div class="text-box" style="float: left">
-                            <h6>Check Out</h6>
-                            <p>
-                              {{ booking.check_out_date || "---" }}
-                            </p>
-                          </div>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-
-                   
-
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Days</h6>
-                        <p>
-                          {{ (booking && booking.total_days) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Pay Type</h6>
-                        <p>
-                          {{
-                            (booking && booking.paid_by == 2
-                              ? "Paid By Agent"
-                              : "Paid By Guest") || "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Source</h6>
-                        <p>
-                          {{ (booking && booking.source) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Reference Number</h6>
-                        <p>
-                          {{ (booking && booking.reference_no) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Guest Request</h6>
-                        <p>
-                          {{ (booking && booking.request) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>Purpose</h6>
-                        <p>
-                          {{ (booking && booking.purpose) || "---" }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="4">
-                      <div class="text-box" style="float: left">
-                        <h6>GST</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.gst_number) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col md="3">
-                      <div class="text-box" style="float: left">
-                        <h6>Country</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.country) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="3">
-                      <div class="text-box" style="float: left">
-                        <h6>State</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.state) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="3">
-                      <div class="text-box" style="float: left">
-                        <h6>City</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.city) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
-                    <v-col md="3">
-                      <div class="text-box" style="float: left">
-                        <h6>Zip Code</h6>
-                        <p>
-                          {{
-                            (booking &&
-                              booking.customer &&
-                              booking.customer.zip_code) ||
-                            "---"
-                          }}
-                        </p>
-                      </div>
-                    </v-col>
                   </v-row>
                 </v-col>
               </v-row>
             </v-tab-item>
             <v-tab-item class="px-3 py-4">
-              <table class="responsive-table">
-                <thead>
-                  <tr class="table-header-text">
-                    <th>No</th>
-                    <th>Date</th>
-                    <th>Room</th>
-                    <th>Description</th>
-                    <th>Adults</th>
-                    <th>Child</th>
-                    <th>Meal</th>
-                    <th>Extra Bed</th>
-                    <th>Early Checkin</th>
-                    <th>Late Checkout</th>
-                    <th class="text-right">Price</th>
-                    <th class="text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody v-for="(item, index) in orderRooms" :key="index">
-                  <tr style="font-size: 13px">
-                    <td>{{ ++index || "---" }}</td>
-                    <td>{{ item.date || "---" }}</td>
-                    <td>{{ item.room_no || "---" }}</td>
-                    <td>{{ item.room_type || "---" }}</td>
-                    <td>{{ item.no_of_adult }}</td>
-                    <td>{{ item.no_of_child }}</td>
-                    <td>
-                      {{
-                        item?.foodplan?.title +
-                          " (" +
-                          item?.foodplan?.unit_price +
-                          ") " || "---"
-                      }}
-                    </td>
-                    <td class="text-right">
-                      {{ item.bed_amount || "---" }}
-                    </td>
-                    <td class="text-right">
-                      {{ item.early_check_in || "---" }}
-                    </td>
-                    <td class="text-right">
-                      {{ item.late_check_out || "---" }}
-                    </td>
-                    <td class="text-right">
-                      {{ convert_decimal(item.price) || "---" }}
-                    </td>
-                    <td class="text-right">{{ convert_decimal(item.total) || "---" }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <CustomerRooms :booking="booking" :orderRooms="orderRooms" />
             </v-tab-item>
             <v-tab-item class="px-3 py-4">
-              <table class="responsive-table">
-                <thead>
-                  <tr class="table-header-text">
-                    <th>No</th>
-                    <th>Bill</th>
-                    <th>Date</th>
-                    <th>Room Type</th>
-                    <th>Room</th>
-                    <th>Item</th>
-                    <th class="text-right">Amount</th>
-                    <th class="text-right">QTY</th>
-                    <th class="text-right">Sgst</th>
-                    <th class="text-right">Cgst</th>
-                    <th class="text-right">Total</th>
-                    <th class="text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    style="font-size: 13px"
-                    v-for="(item, postingIndex) in postings"
-                    :key="postingIndex"
-                  >
-                    <td>{{ ++postingIndex }}</td>
-                    <td>{{ item.bill_no || "---" }}</td>
-                    <td>{{ item.posting_date || "---" }}</td>
-                    <td>
-                      {{
-                        (item.room &&
-                          item.room.room_type &&
-                          item.room.room_type.name) ||
-                        "---"
-                      }}
-                    </td>
-                    <td>{{ (item.room && item.room.room_no) || "---" }}</td>
-                    <td>{{ item.item || "---" }}</td>
-                    <td class="text-right">{{ item.single_amt || "---" }}</td>
-                    <td>{{ item.qty || "---" }}</td>
-                    <td class="text-right">{{ item.sgst || "---" }}</td>
-                    <td class="text-right">{{ item.cgst || "---" }}</td>
-                    <td class="text-right">
-                      {{ item.amount_with_tax || "---" }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon v-if="can('accounts_posting_delete')">
-                        x-small color="accent" @click="cancelPosting(item)"
-                        class="mr-2"> mdi-delete
-                      </v-icon>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <CustomerPostings
+                :full_name="booking.title"
+                :postings="postings"
+              />
             </v-tab-item>
-            <v-tab-item class="px-3">
-              <v-card flat>
-                <v-row>
-                  <v-col md="12" class="mt-2 text-right">
-                    <v-btn
-                      small
-                      class="elevation-0"
-                      color="#ECF0F4"
-                      @click="get_payment()"
-                    >
-                      Transaction
-                      <v-icon right>mdi mdi-cash-sync</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12">
-                    <table class="responsive-table mt-0">
-                      <thead>
-                        <tr class="table-header-text">
-                          <th>#</th>
-                          <th>Date</th>
-                          <th>Time</th>
-                          <th>Staff</th>
-                          <th>payment Mode</th>
-                          <th>Reference</th>
-                          <th>Description</th>
-                          <th>Debit</th>
-                          <th>Credit</th>
-                          <th>Balance</th>
-                        </tr>
-                      </thead>
-                      <v-progress-linear
-                        v-if="loading"
-                        :active="loading"
-                        :indeterminate="loading"
-                        absolute
-                        color="primary"
-                      ></v-progress-linear>
-                      <tbody>
-                        <tr
-                          v-for="(item, index) in transactions"
-                          :key="index"
-                          style="font-size: 13px"
-                          class="no-bg"
-                        >
-                          <td>
-                            <b>{{ ++index }}</b>
-                          </td>
-                          <td>{{ item.date || "---" }}</td>
-                          <td>{{ item.time || "---" }}</td>
-                          <td>
-                            {{ item.user?.name || "---" }}
-                            {{ item.user?.last_name }}
-                          </td>
-                          <td>
-                            {{
-                              (item &&
-                                item.payment_mode &&
-                                item.payment_mode.name) ||
-                              "---"
-                            }}
-                          </td>
-                          <td>{{ item.reference_number || "---" }}</td>
-                          <td>{{ item.desc || "---" }}</td>
-                          <td class="text-right">
-                            {{ item && item.debit == 0 ? "---" : item.debit }}
-                          </td>
-                          <td class="text-right">
-                            {{ item && item.credit == 0 ? "---" : item.credit }}
-                          </td>
-                          <td class="text-right">
-                            {{ item.balance || "---" }}
-                          </td>
-                        </tr>
-                      </tbody>
-                      <tr style="font-size: 13px">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <th class="text-right">Balance</th>
-                        <td class="text-right">
-                          {{ totalTransactionAmount }}
-                        </td>
-                      </tr>
-                    </table>
-                  </v-col>
-                </v-row>
-              </v-card>
+            <v-tab-item class="px-3 pt-5">
+              <CustomerTransactions
+                :transactions="transactions"
+                :totalTransactionAmount="totalTransactionAmount"
+              />
             </v-tab-item>
             <v-tab-item class="px-3" v-if="room_category_type == 'Hall'">
               <v-col cols="12">
@@ -962,7 +788,7 @@ export default {
     Grc,
   },
   data: () => ({
-    roomTypeColor: "primary",
+    roomTypeColor: "grey lighten-3",
 
     discount: 0,
     hallRentPerHour: 0,
@@ -1057,7 +883,13 @@ export default {
     extra_amounts: [],
   }),
 
-  computed: {},
+  computed: {
+    getRelatedPaidBy() {
+      return this.booking && this.booking.paid_by == 2
+        ? "Paid By Agent"
+        : "Paid By Guest";
+    },
+  },
   created() {
     this.loading = true;
     this.getData();
@@ -1288,8 +1120,8 @@ export default {
   },
 };
 </script>
-<style scoped src="@/assets/css/custom.css"></style>
-
+<!-- <style scoped src="@/assets/css/custom.css"></style> -->
+<!-- 
 <style scoped>
 .no-bg {
   background-color: white !important;
@@ -1384,4 +1216,4 @@ select:focus {
 .table-header-text {
   font-size: 12px;
 }
-</style>
+</style> -->

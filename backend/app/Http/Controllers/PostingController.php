@@ -224,4 +224,10 @@ class PostingController extends Controller
             throw $th;
         }
     }
+
+    public function getLastPostingBillNumber()
+    {
+        // Get the last posting based on bill_no
+        return Posting::orderBy('bill_no', 'desc')->value("bill_no") + 1 ?? 1000;
+    }
 }

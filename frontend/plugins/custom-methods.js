@@ -20,6 +20,21 @@ export default ({ app }, inject) => {
   });
 
   inject("dateFormat", {
+    dmyhm() {
+      const date = new Date(); // Current date and time
+      const day = String(date.getDate()).padStart(2, '0');
+
+      // Get month abbreviation
+      const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      const month = monthNames[date.getMonth()];
+
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${day} ${month} ${year} ${hours}:${minutes}`;
+    },
+
+
     dmy(date) {
       let dateObj = new Date(date);
 

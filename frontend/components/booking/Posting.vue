@@ -36,7 +36,7 @@
           </v-col>
           <v-col cols="4" class="text-left">
             <v-container>
-              Rep No: 14275
+              Rep No: <span v-if="bill_no > 0">{{bill_no}}</span>
               <br />
               Date: {{ $dateFormat.dmyhm() }}
             </v-container>
@@ -198,7 +198,7 @@ export default {
       response: "",
       preloader: false,
       loading: false,
-
+      bill_no: 0,
       posting: {
         item: "",
         qty: "",
@@ -215,7 +215,8 @@ export default {
     };
   },
 
-  created() {
+  async created() {
+    await this.getLastBillNumber();
     this.preloader = false;
   },
 
@@ -268,7 +269,19 @@ export default {
 
       // Optionally, you can limit decimal precision
     },
+    async getLastBillNumber() {
+      let config = {
+        params: {
+          company_id: this.$auth.user.company_id,
+        },
+      };
+      let { data } = await this.$axios.get(
+        "/getlast-posting-bill-number",
+        config
+      );
 
+      this.bill_no = data || 1000;
+    },
     store_posting() {
       this.loading = true;
       let completedRequests = 0; // To track completed requests
@@ -277,7 +290,7 @@ export default {
       this.postings.forEach((posting, index) => {
         let payload = {
           ...posting,
-          tax_type: posting.tax_type == "Food" ? 5 : 12,
+          bill_no: this.bill_no,
           booked_room_id: this.evenIid,
           company_id: this.$auth.user.company.id,
           booking_id: this.BookingData.id,
