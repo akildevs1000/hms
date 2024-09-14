@@ -237,31 +237,6 @@
         </v-card>
       </v-dialog>
 
-      <!-- posting dialog -->
-      <v-dialog v-model="postingDialog" persistent max-width="700px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="postingDialog = false">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <Posting
-                :BookingData="checkData"
-                :evenIid="evenIid"
-                @close-dialog="closeDialogs"
-              >
-              </Posting>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
-      <!-- end posting dialog -->
-
       <!--  viewPosting dialog -->
       <v-dialog v-model="viewPostingDialog" persistent max-width="900px">
         <v-card>
@@ -431,13 +406,13 @@
               <v-list-item link>
                 <v-list-item-title
                   ><BookingModifyRoom
-                    v-if="!isHall"
+                    v-if="true"
                     :key="evenIid"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                   <BookingModifyRoom
-                    v-if="isHall"
+                    v-if="false"
                     :key="evenIid"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
@@ -458,7 +433,13 @@
                 </v-list-item-title>
               </v-list-item>
               <v-list-item link @click="postingDialog = true">
-                <v-list-item-title>Posting</v-list-item-title>
+                <v-list-item-title>
+                  <BookingPosting
+                    :BookingData="checkData"
+                    :evenIid="evenIid"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  />
+                </v-list-item-title>
               </v-list-item>
               <v-list-item link @click="payingAdvance = true">
                 <v-list-item-title>Pay Advance </v-list-item-title>
@@ -863,7 +844,6 @@
   <Preloader v-else />
 </template>
 <script>
-import Posting from "../booking/Posting.vue";
 import PayAdvance from "../booking/PayAdvance.vue";
 import CheckIn from "../booking/CheckIn.vue";
 import CheckOut from "../booking/CheckOut.vue";
@@ -914,7 +894,6 @@ export default {
     CheckOutSvg,
     Booked,
     Available,
-    Posting,
     PayAdvance,
     ReservationList,
     CheckIn,

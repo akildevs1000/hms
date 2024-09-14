@@ -1,150 +1,199 @@
 <template>
-  <div>
-    <table>
-      <v-progress-linear
-        v-if="false"
-        :active="loading"
-        :indeterminate="loading"
-        absolute
-        color="primary"
-      ></v-progress-linear>
-      <tr>
-        <th>Bill No</th>
-        <td style="width: 300px">
-          <v-text-field
-            dense
-            outlined
-            type="number"
-            v-model="posting.bill_no"
-            :hide-details="true"
-          ></v-text-field>
-        </td>
-      </tr>
-      <tr>
-        <th>Customer Name</th>
-        <td style="width: 300px">
-          {{ BookingData && BookingData.title }}
-        </td>
-      </tr>
-      <tr>
-        <th>Room No</th>
-        <td>
-          {{ BookingData.room_no }}
-        </td>
-      </tr>
-      <tr>
-        <th>Room Type</th>
-        <td>
-          {{ BookingData.room_type }}
-        </td>
-      </tr>
-      <tr style="background-color: white">
-        <th>
-          Item
-          <span class="error--text">*</span>
-        </th>
-        <td>
-          <v-text-field
-            dense
-            outlined
-            type="text"
-            v-model="posting.item"
-            :hide-details="true"
-          ></v-text-field>
-        </td>
-      </tr>
-      <tr style="background-color: white">
-        <th>
-          QTY
-          <span class="error--text">*</span>
-        </th>
-        <td>
-          <v-text-field
-            dense
-            outlined
-            type="number"
-            v-model="posting.qty"
-            :hide-details="true"
-          ></v-text-field>
-        </td>
-      </tr>
-      <tr style="background-color: white">
-        <th>
-          Amount
-          <span class="error--text">*</span>
-        </th>
-        <td>
-          <v-text-field
-            dense
-            outlined
-            type="number"
-            v-model="posting.single_amt"
-            @keyup="get_multiple_amount(posting.single_amt)"
-            :hide-details="true"
-          ></v-text-field>
-        </td>
-      </tr>
-      <tr style="background-color: white">
-        <th>Total Amount</th>
-        <td>
-          <v-text-field
-            dense
-            outlined
-            type="number"
-            readonly
-            v-model="posting.amount"
-            :hide-details="true"
-            @keyup="get_amount_with_tax(posting.tax_type)"
-          ></v-text-field>
-        </td>
-      </tr>
-      <tr style="background-color: white">
-        <th>
-          Type
-          <span class="error--text">*</span>
-        </th>
-        <td>
-          <v-select
-            v-model="posting.tax_type"
-            :items="[
-              { id: -1, name: 'select..' },
-              { name: 'Food' },
-              { name: 'Misc' },
-              { name: 'ExtraBed' },
-              { name: 'Others' },
-            ]"
-            item-text="name"
-            item-value="id"
-            dense
-            outlined
-            :hide-details="true"
-            :height="1"
-            @change="get_amount_with_tax(posting.tax_type)"
-          ></v-select>
-        </td>
-      </tr>
-      <tr style="background-color: white">
-        <th>
-          Amount With Tax
-          <span class="error--text">*</span>
-        </th>
-        <td>
-          {{ posting.amount_with_tax }}
-        </td>
-      </tr>
-      <tr></tr>
-    </table>
+  <v-dialog v-model="PostingDialog" width="850">
+    <style scoped>
+      .simple-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .simple-table td {
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        padding: 5px;
+        text-align: center;
+      }
+    </style>
+    <template v-slot:activator="{ on, attrs }">
+      <span v-bind="attrs" v-on="on"> Posting </span>
+    </template>
 
-    <v-btn class="primary mt-3" :loading="loading" small @click="store_posting"
-      >Post</v-btn
-    >
-  </div>
+    <v-card>
+      <v-card-text class="pa-3">
+        <v-row class="grey lighten-3">
+          <!-- <v-col cols="12" class="text-right">
+            <v-icon color="primary">mdi-close-circle</v-icon>
+          </v-col> -->
+          <v-col cols="4">
+            <v-container>
+              Name: <b> {{ BookingData && BookingData.title }}</b>
+              <br />
+              Room No: {{ BookingData.room_no }}
+            </v-container>
+          </v-col>
+          <v-col cols="4" class="text-center">
+            <v-container>
+              <b>ROOM POSTING</b>
+            </v-container>
+          </v-col>
+          <v-col cols="4" class="text-left">
+            <v-container>
+              Rep No: 14275
+              <br />
+              Date: {{ $dateFormat.dmyhm() }}
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-text>
+        <v-container class="pa-3">
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <td class="blue--text">#</td>
+                <td class="blue--text text-left">Category</td>
+                <td class="blue--text text-left">Item Description</td>
+                <td class="blue--text">Qty</td>
+                <td class="blue--text">Unit</td>
+                <td class="blue--text">Sub Total</td>
+                <td class="blue--text">Tax</td>
+                <td class="blue--text">Total</td>
+                <td class="blue--text"></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(posting, index) in postings" :key="index">
+                <td>{{ index + 1 }}</td>
+                <td style="width: 200px">
+                  <v-autocomplete
+                    v-model="posting.tax_type"
+                    :items="[
+                      { id: -1, name: 'select...' },
+                      { name: 'Food' },
+                      { name: 'Misc' },
+                      { name: 'ExtraBed' },
+                      { name: 'Others' },
+                    ]"
+                    item-text="name"
+                    item-value="id"
+                    dense
+                    outlined
+                    hide-details
+                    @change="calc(posting)"
+                  ></v-autocomplete>
+                </td>
+                <td style="width: 150px">
+                  <v-text-field
+                    dense
+                    outlined
+                    v-model="posting.item"
+                    hide-details
+                  ></v-text-field>
+                </td>
+                <td style="width: 80px">
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="posting.qty"
+                    hide-details
+                    @keyup="calc(posting)"
+                  ></v-text-field>
+                </td>
+                <td style="width: 80px" class="text-center">
+                  <v-text-field
+                    dense
+                    outlined
+                    type="number"
+                    v-model="posting.single_amt"
+                    @keyup="calc(posting)"
+                    hide-details
+                  ></v-text-field>
+                </td>
+                <td class="text-center">
+                  {{ $utils.currency_format(posting.amount) }}
+                </td>
+                <td class="text-center">
+                  {{ $utils.currency_format(posting.tax) }}
+                </td>
+                <td class="text-center">
+                  {{ $utils.currency_format(posting.amount_with_tax) }}
+                </td>
+                <td class="blue--text">
+                  <v-icon small color="red" @click="deleteItem(index)"
+                    >mdi-close</v-icon
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td
+                  style="border: none; padding: 0"
+                  class="text-left pt-5"
+                  colspan="5"
+                >
+                  <v-btn
+                    color="grey lighten-3"
+                    small
+                    @click="addRow"
+                    elevation="0"
+                  >
+                    <v-icon small color="primary"
+                      >mdi-plus-circle-outline</v-icon
+                    >&nbsp;New Row
+                  </v-btn>
+                </td>
+                <td colspan="2" class="text-right blue--text">Total Rs,</td>
+                <td class="blue--text">
+                  {{ $utils.currency_format(totalAmount) }}
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </v-container>
+        <v-row>
+          <v-col cols="12" class="text-center">
+            <v-hover v-slot:default="{ hover, props }">
+              <span v-bind="props">
+                <v-btn
+                  small
+                  :outlined="!hover"
+                  rounded
+                  color="red"
+                  class="white--text"
+                  @click="PostingDialog = false"
+                  >Cancel</v-btn
+                >
+              </span>
+            </v-hover>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <v-hover v-slot:default="{ hover, props }">
+              <span v-bind="props">
+                <v-btn
+                  small
+                  :outlined="!hover"
+                  rounded
+                  color="green"
+                  class="white--text"
+                  :loading="loading"
+                  @click="store_posting"
+                  >Submit</v-btn
+                >
+              </span>
+            </v-hover>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
 export default {
   props: ["BookingData", "evenIid"],
   data() {
     return {
+      PostingDialog: false,
+      postings: [],
+      totalAmount: 0,
+
       snackbar: false,
       response: "",
       preloader: false,
@@ -174,73 +223,100 @@ export default {
 
   computed: {},
   methods: {
-    get_multiple_amount(val) {
-      this.posting.amount = val * this.posting.qty;
+    deleteItem(index) {
+      this.postings.splice(index, 1);
     },
-
-    getPercentage(amount, clause) {
-      let res = (amount / 100) * clause;
-      return res;
+    addRow() {
+      this.postings.push({
+        tax_type: "",
+        item: "",
+        qty: 0,
+        single_amt: 0.0,
+        amount: 0.0,
+        tax: 0.0,
+        amount_with_tax: 0.0,
+      });
     },
+    calc(posting) {
+      // Determine tax rate based on the tax_type
+      const taxRate = posting.tax_type === "Food" ? 5 : 12;
 
-    get_amount_with_tax(clause) {
-      let per = 0;
-      if (clause == "Food") {
-        per = 5;
-      } else if (clause == "Misc" || clause == "ExtraBed") {
-        per = 12;
-      }
-      let res = this.getPercentage(this.posting.amount || 0, per);
-      let gst = parseFloat(res) / 2;
-      this.posting.sgst = gst;
-      this.posting.cgst = gst;
-      this.posting.tax = res;
-      let a = parseFloat(res) + parseFloat(this.posting.amount || 0);
-      this.posting.amount_with_tax = a.toFixed(2);
+      // Ensure qty and single_amt are valid numbers, default to 0 if not
+      const qty = parseFloat(posting.qty) || 0;
+      const singleAmt = parseFloat(posting.single_amt) || 0;
+
+      // Calculate amount without tax
+      posting.amount = qty * singleAmt;
+
+      // Calculate tax amount based on the tax rate
+      const taxAbleAmount = (taxRate / 100) * posting.amount;
+
+      // Calculate SGST and CGST as half of the total tax
+      posting.sgst = parseFloat(taxAbleAmount) / 2 || 0;
+      posting.cgst = parseFloat(taxAbleAmount) / 2 || 0;
+
+      // Total tax
+      posting.tax = taxAbleAmount || 0;
+
+      // Calculate total amount including tax
+      posting.amount_with_tax = parseFloat(posting.amount) + taxAbleAmount || 0;
+
+      this.totalAmount = this.postings.reduce(
+        (total, num) => total + num.amount_with_tax,
+        0
+      );
+
+      // Optionally, you can limit decimal precision
     },
 
     store_posting() {
-      if (
-        this.posting.amount_with_tax == 0 ||
-        this.posting.item == "" ||
-        this.posting.bill_no == "" ||
-        this.posting.tax_type == -1
-      ) {
-        alert("Please enter required fields");
-        return;
-      }
       this.loading = true;
-      let per = this.posting.tax_type == "Food" ? 5 : 12;
-      let payload = {
-        ...this.posting,
-        booked_room_id: this.evenIid,
-        company_id: this.$auth.user.company.id,
-        booking_id: this.BookingData.id,
-        room_id: this.BookingData.room_id,
-        room: this.BookingData.room_no,
-        user_id: this.$auth.user.id,
-        tax_type: per,
-      };
-      this.$axios
-        .post("/posting", payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.errors = data.errors;
-            this.loading = false;
-          } else {
-            this.reset_posting();
-            this.closeDialog(data);
-            this.postingDialog = false;
-            this.loading = false;
-            this.snackbar = data.status;
-            this.response = data.message;
-          }
-        })
-        .catch((e) => console.log(e));
-    },
+      let completedRequests = 0; // To track completed requests
+      let totalRequests = this.postings.length; // Total number of postings
 
-    closeDialog(data) {
-      this.$emit("close-dialog", data);
+      this.postings.forEach((posting, index) => {
+        let payload = {
+          ...posting,
+          tax_type: posting.tax_type == "Food" ? 5 : 12,
+          booked_room_id: this.evenIid,
+          company_id: this.$auth.user.company.id,
+          booking_id: this.BookingData.id,
+          room_id: this.BookingData.room_id,
+          room: this.BookingData.room_no,
+          user_id: this.$auth.user.id,
+        };
+
+        this.$axios
+          .post("/posting", payload)
+          .then(({ data }) => {
+            completedRequests++;
+            if (!data.status) {
+              this.errors = data.errors;
+              this.loading = false;
+            } else {
+              if (completedRequests == totalRequests) {
+                this.loading = false;
+                this.postingDialog = false;
+                this.snackbar = data.status;
+                this.response = data.message;
+                this.$swal("Sucees", "Postings has beed added", "success").then(
+                  (e) => {
+                    this.$emit("close-dialog", data);
+                  }
+                );
+              }
+            }
+          })
+          .catch((e) => {
+            completedRequests++;
+            console.log(e);
+            console.log(completedRequests, `catch`);
+
+            if (completedRequests == totalRequests) {
+              this.loading = false;
+            }
+          });
+      });
     },
 
     can(per) {
@@ -265,11 +341,6 @@ export default {
         tax_type: -1,
       };
     },
-    alert(title = "Success!", message = "hello", type = "error") {
-      this.$swal(title, message, type);
-    },
   },
 };
 </script>
-
-<style scoped src="@/assets/css/checkout.css"></style>
