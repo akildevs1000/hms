@@ -327,27 +327,6 @@
       </v-dialog>
       <!-- end pay advance  -->
 
-      <!-- check out  -->
-      <v-dialog v-model="checkOutDialog" persistent max-width="800px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="primary" dense flat dark>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="closeCheckOut">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <check-out
-              :BookingData="checkData"
-              :roomData="roomData"
-              @close-dialog="closeCheckInAndOpenGRC"
-            />
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-      <!-- end check out  -->
-
       <!-- cancel room  -->
       <v-dialog v-model="cancelDialog" persistent max-width="500">
         <v-card>
@@ -451,8 +430,15 @@
             </template>
 
             <template v-else-if="bookingStatus == 2">
-              <v-list-item link @click="get_check_out">
-                <v-list-item-title>Check Out</v-list-item-title>
+              <v-list-item>
+                <v-list-item-title>
+                  <check-out
+                    :key="evenIid"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  />
+                </v-list-item-title>
               </v-list-item>
               <v-list-item link @click="postingDialog = true">
                 <v-list-item-title>Posting</v-list-item-title>
@@ -1109,10 +1095,10 @@ export default {
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
 
-    setInterval(() => {
-      this.room_list();
-      this.key = this.key + 1;
-    }, 1000 * 60 * 2);
+    // setInterval(() => {
+    //   this.room_list();
+    //   this.key = this.key + 1;
+    // }, 1000 * 60 * 2);
 
     this.get_food_plan();
   },
@@ -1311,27 +1297,6 @@ export default {
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
-
-    get_check_out() {
-      this.checkOutDialog = true;
-      this.get_transaction();
-    },
-
-    get_transaction() {
-      let id = this.bookingId;
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios
-        .get(`get_transaction_by_booking_id/${id}`, payload)
-        .then(({ data }) => {
-          this.transactions = data.transactions;
-          this.totalTransactionAmount = data.totalTransactionAmount;
-        });
-    },
-
     mouseOver(bookedRoomId, bookingStatus) {
       console.log(bookingStatus);
       this.evenIid = bookedRoomId;
@@ -1408,7 +1373,7 @@ export default {
       });
     },
     showExpectCheckOut(e, expectCheckOut, isTouch = false) {
-      this.evenIid = expectCheckOut.booked_room.id
+      this.evenIid = expectCheckOut.booked_room.id;
       this.showMenuForNewBooking = false;
       e.preventDefault();
       this.get_data();

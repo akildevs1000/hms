@@ -1,47 +1,77 @@
 <template>
-  <v-row no-gutter v-if="BookingData && BookingData.id">
-    <v-col cols="6" class="text-center">
-      <v-container>
+  <v-dialog v-model="checkOutDialog" persistent max-width="850px">
+    <template v-slot:activator="{ on, attrs }">
+      <span v-bind="attrs" v-on="on"> Check Out </span>
+    </template>
+    <v-card>
+      <v-alert dense class="grey lighten-3 primary--text">
         <v-row>
-          <v-col cols="12">
+          <v-col> <div style="font-size: 18px">Check Out</div> </v-col>
+          <v-col>
             <div class="text-right">
+              <v-icon @click="checkOutDialog = false" color="primary">mdi-close-circle</v-icon>
+            </div>
+          </v-col>
+        </v-row>
+      </v-alert>
+      <v-card-text>
+        <v-row no-gutter v-if="BookingData && BookingData.id">
+          <v-col cols="6" class="text-center">
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <!-- <div class="text-right">
               <v-icon
                 color="primary"
                 @click="$router.push(`customer/details/${BookingData.id}`)"
                 >mdi-eye</v-icon
               >
-            </div>
-            <!-- <pre>{{ roomData }}</pre> -->
-            <v-avatar size="125" class="">
-              <v-img
-                :src="
-                  (roomData?.customer?.captured_photo) ||
-                  '/no-profile-image.jpg'
-                "
-              ></v-img>
-            </v-avatar>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="roomData.customer.full_name"
-              readonly
-              label="Full Name"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="roomData.customer.contact_no"
-              readonly
-              label="Phone Number"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
+            </div> -->
+                  <!-- <pre>{{ roomData }}</pre> -->
+                  <v-avatar size="150" class="mb-3">
+                    <img
+                      class="pa-2"
+                      style="border: 1px solid grey"
+                      :src="
+                        roomData?.customer?.captured_photo ||
+                        'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
+                      "
+                      alt="Profile Image"
+                    />
+                  </v-avatar>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="BookingData.group_name"
+                    readonly
+                    label="Group Name"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="roomData.customer.full_name"
+                    readonly
+                    label="Full Name"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="roomData.customer.contact_no"
+                    readonly
+                    label="Phone Number"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <!-- <v-col cols="12">
             <v-textarea
               rows="2"
               v-model="customer_full_address"
@@ -51,164 +81,347 @@
               dense
               hide-details
             ></v-textarea>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="roomData.checkin_datetime_only"
-              readonly
-              label="Check IN"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="roomData.checkout_datetime_only"
-              readonly
-              label="Check Out"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="BookingData.room_no"
-              readonly
-              label="Room Number"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="BookingData.total_price"
-              readonly
-              label="Total Amount"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="BookingData.paid_amounts"
-              readonly
-              label="Paid"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="remaining_price"
-              readonly
-              label="Balance To Pay"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-col>
-    <!-- Data table on the right -->
-    <v-col cols="6">
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <div style="overflow: auto; min-height: 370px; max-height: 300px">
-              <table style="width: 100%">
-                <tr style="font-size: 13px">
-                  <td class="text-center">Date</td>
-                  <td class="text-center">Debit</td>
-                  <td class="text-center">Credit</td>
-                  <td class="text-center">Balance</td>
-                  <td class="text-center">Receipt</td>
-                </tr>
+          </v-col> -->
+                <v-col cols="12">
+                  <v-text-field
+                    rows="2"
+                    v-model="roomData.booking.source"
+                    readonly
+                    label="Source"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="roomData.checkin_datetime_only"
+                    readonly
+                    label="Check IN"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="roomData.checkout_datetime_only"
+                    readonly
+                    label="Check Out"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="BookingData.room_no"
+                    readonly
+                    label="Room Number"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="pt-10">
+                  <!-- <pre>{{ roomData }}</pre> -->
 
-                <tr
-                  v-for="(item, index) in transactions"
-                  :key="index"
-                  style="font-size: 13px"
-                >
-                  <td class="text-center">{{ item.created_at || "---" }}</td>
-                  <td class="text-center">
-                    {{ item && item.debit == 0 ? "---" : item.debit }}
-                  </td>
-                  <td class="text-center">
-                    {{ item && item.credit == 0 ? "---" : item.credit }}
-                  </td>
-                  <td class="text-center">{{ item.balance || "---" }}</td>
-                  <td class="text-center">
-                    {{ item.id }}
-                  </td>
-                </tr>
-                <!-- <tr style="font-size: 13px; background-color: white; color: black">
-            <th colspan="4" class="text-center">Balance</th>
-            <td class="text-right" style="background-color: white">
-              {{ totalTransactionAmount + exceedHoursCharges }}
-            </td>
-          </tr> -->
-              </table>
-            </div>
+                  <table style="width: 100%">
+                    <tr>
+                      <td
+                        class="text-left"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Room
+                      </td>
+                      <td
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(roomData.price) }}
+                      </td>
+                      <td colspan="2" class="text-center">Total Rs.</td>
+                    </tr>
+                    <tr>
+                      <td class="text-left">Posting</td>
+                      <td>
+                        {{
+                          $utils.currency_format(
+                            BookingData.total_posting_amount
+                          )
+                        }}
+                      </td>
+                      <td colspan="2" class="text-center">
+                        <span style="font-size: 18px" class="blue--text">{{
+                          $utils.currency_format(
+                            parseFloat(roomData.price) +
+                              parseFloat(BookingData.total_posting_amount)
+                          )
+                        }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                  <v-divider></v-divider>
+                  <table style="width: 100%">
+                    <tr>
+                      <td
+                        class="text-left"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Paid
+                      </td>
+                      <td
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(BookingData.paid_amounts) }}
+                      </td>
+                      <td colspan="2" class="text-center">Balance Rs.</td>
+                    </tr>
+                    <tr>
+                      <td class="text-left">Others</td>
+                      <td>
+                        {{ $utils.currency_format(0) }}
+                      </td>
+                      <td colspan="2" class="text-center">
+                        <span style="font-size: 18px" class="red--text">{{
+                          $utils.currency_format(remaining_price)
+                        }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-col>
-          <v-col cols="12" class="align-self-end">
-            <v-autocomplete
-              label="Payment Mode"
-              v-model="payment_mode_id"
-              :items="[
-                { id: 1, name: 'Cash' },
-                { id: 2, name: 'Card' },
-                { id: 3, name: 'Online' },
-                { id: 4, name: 'Bank' },
-                { id: 5, name: 'UPI' },
-                { id: 6, name: 'Cheque' },
-              ]"
-              item-text="name"
-              item-value="id"
-              dense
-              outlined
-              hide-details
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="12" v-if="payment_mode_id != 1">
-            <v-text-field
-              label="Reference"
-              dense
-              outlined
-              type="text"
-              v-model="reference"
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="full_payment"
-              label="Amount"
-              outlined
-              dense
-              hide-details
-            ></v-text-field>
-          </v-col>
+          <v-divider vertical></v-divider>
           <v-col cols="6">
-            <v-checkbox
-              dense
-              label="Print Invoice"
-              v-model="isPrintInvoice"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-          <v-col cols="12">
-            <v-btn color="primary" block @click="store_check_out">Pay</v-btn>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <Heading class="mb-3" label="Transactions" />
+                  <table style="width: 100%">
+                    <tr style="font-size: 13px">
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Date
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Debit
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Credit
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Balance
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Receipt
+                      </td>
+                    </tr>
+
+                    <tr
+                      style="font-size: 13px"
+                      v-for="(item, index) in transactions"
+                      :key="index"
+                    >
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ item.created_at || "---" }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{
+                          item && item.debit == 0
+                            ? "---"
+                            : $utils.currency_format(item.debit)
+                        }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{
+                          item && item.credit == 0
+                            ? "---"
+                            : $utils.currency_format(item.credit)
+                        }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(item.balance) || "---" }}
+                      </td>
+                      <td
+                        class="text-center blue--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ item.id }}
+                      </td>
+                    </tr>
+
+                    <tr style="font-size: 13px">
+                      <td
+                        colspan="3"
+                        class="text-right primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Total Balance
+                      </td>
+                      <td
+                        colspan="2"
+                        class="text-left pl-3 primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{
+                          $utils.currency_format(
+                            totalTransactionAmount + exceedHoursCharges
+                          )
+                        }}
+                      </td>
+                    </tr>
+                  </table>
+                </v-col>
+                <v-col cols="12">
+                  <v-divider></v-divider>
+                </v-col>
+                <v-col cols="12">
+                  <v-card outlined>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="6">
+                          <Heading label="Payment" />
+                        </v-col>
+                        <v-col cols="6" class="text-right">
+                          <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-printer</v-icon
+                          >
+                          &nbsp;
+                          <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-download</v-icon
+                          >
+                        </v-col>
+                        <v-col cols="4">
+                          <v-autocomplete
+                            label="Mode"
+                            v-model="payment_mode_id"
+                            :items="[
+                              { id: 1, name: 'Cash' },
+                              { id: 2, name: 'Card' },
+                              { id: 3, name: 'Online' },
+                              { id: 4, name: 'Bank' },
+                              { id: 5, name: 'UPI' },
+                              { id: 6, name: 'Cheque' },
+                            ]"
+                            item-text="name"
+                            item-value="id"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="8">
+                          <v-text-field
+                            label="Reference"
+                            dense
+                            outlined
+                            type="text"
+                            v-model="reference"
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="tempBalance"
+                            label="Balance"
+                            outlined
+                            dense
+                            hide-details
+                            @keyup="setNewBalance(tempBalance, discount)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="discount"
+                            label="Discount"
+                            outlined
+                            dense
+                            hide-details
+                            @keyup="setNewBalance(tempBalance, discount)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="full_payment"
+                            label="New Balance"
+                            outlined
+                            dense
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="text-center mt-5">
+                          <v-hover v-slot:default="{ hover, props }">
+                            <span v-bind="props">
+                              <v-btn
+                                small
+                                :outlined="!hover"
+                                rounded
+                                color="red"
+                                class="white--text"
+                                @click="$emit(`close-dialog`)"
+                                >Cancel</v-btn
+                              >
+                            </span>
+                          </v-hover>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <v-hover v-slot:default="{ hover, props }">
+                            <span v-bind="props">
+                              <v-btn
+                                small
+                                :outlined="!hover"
+                                rounded
+                                color="green"
+                                class="white--text"
+                                @click="store_check_out"
+                                >Submit</v-btn
+                              >
+                            </span>
+                          </v-hover>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-col>
         </v-row>
-      </v-container>
-    </v-col>
-  </v-row>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
 const today = new Date();
@@ -246,6 +459,7 @@ export default {
       full_payment: 0,
       isPrintInvoice: false,
       discount: 0,
+      tempBalance: 0,
       reference: "",
       customer: {
         title: "",
@@ -282,17 +496,18 @@ export default {
       this.full_payment = 0;
     },
   },
-  mounted() {
-    this.checkOutDialog = true;
-  },
   created() {
     this.preloader = false;
     if (this.roomData && this.roomData.id) {
       let { grand_remaining_price, remaining_price } = this.BookingData;
       this.grand_remaining_price = grand_remaining_price;
       this.remaining_price = remaining_price;
+      this.full_payment = remaining_price - this.discount;
       this.after_discount_balance = grand_remaining_price;
 
+      this.tempBalance = remaining_price;
+
+      
       this.actualCheckoutTime = this.roomData.check_out_time;
 
       this.calculateHoursQty(this.actualCheckoutTime);
@@ -311,6 +526,9 @@ export default {
     },
   },
   methods: {
+    setNewBalance(tempBalance, discount) {
+      this.full_payment = parseFloat(tempBalance) - parseFloat(discount);
+    },
     get_after_discount_balance(amt = 0) {
       let discount = amt || 0;
       let blc = parseFloat(this.grand_remaining_price) - parseFloat(discount);
@@ -455,4 +673,4 @@ export default {
 };
 </script>
 
-<style scoped src="@/assets/css/checkout.css"></style>
+<!-- <style scoped src="@/assets/css/checkout.css"></style> -->

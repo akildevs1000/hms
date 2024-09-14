@@ -1,106 +1,21 @@
 <template>
   <span>
     <table cellspacing="0" style="width: 100%">
-      <thead style="background-color: #f2f2f2; width: 100%">
-        <tr style="background-color: #f2f2f2; width: 100%">
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>Date</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>Room</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>Tariff</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>Adult</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>Child</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>Meal</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>E. Bed</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>E. C/in</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>L. C/out</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="text-center py-2"
-          >
-            <small>Total</small>
-          </td>
-          <td
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-          ></td>
-        </tr>
-      </thead>
+      <TableHeader
+        :cols="[
+          `Date`,
+          `Room`,
+          `Tariff`,
+          `Adult`,
+          `Child`,
+          `Meal`,
+          `E. Bed`,
+          `E. C/in`,
+          `L. C/out`,
+          `Total`,
+          ``,
+        ]"
+      />
       <tbody v-for="(item, index) in orderRooms" :key="index">
         <tr style="font-size: 13px">
           <td class="text-center py-2">{{ item.date || "---" }}</td>
@@ -243,7 +158,6 @@ export default {
   mounted() {},
 
   methods: {
-
     can(per) {
       let u = this.$auth.user;
       return (

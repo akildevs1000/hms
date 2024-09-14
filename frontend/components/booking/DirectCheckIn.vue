@@ -189,13 +189,13 @@
                             :selectedRooms="selectedRooms"
                           />
                         </v-list-item>
-                        <v-list-item>
+                        <!-- <v-list-item>
                           <RoomEditDialog
                             label="Edit"
                             :options="room"
                             @tableData="handleTableData"
                           />
-                        </v-list-item>
+                        </v-list-item> -->
                         <v-list-item @click="deleteItem(index, item)">
                           <v-icon small color="red">mdi-close</v-icon
                           ><small class="ml-2">Delete</small>
