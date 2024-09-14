@@ -1,5 +1,36 @@
 export default ({ app }, inject) => {
+
+  inject("utils", {
+    convert_decimal(n) {
+      if (n === +n && n !== (n | 0)) {
+        return n.toFixed(2) + ".00".replace(".00.00", ".00");
+      } else {
+        return n + ".00".replace(".00.00", ".00");
+
+      }
+    },
+
+    currency_format(n, type = "₹") {
+      if (type == "₹") {
+        return parseFloat(n).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+      }
+
+      return parseFloat(n).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    },
+  });
+
   inject("dateFormat", {
+    dmy(date) {
+      let dateObj = new Date(date);
+
+      let day = dateObj.getDate().toString().padStart(2, "0");
+      let month = dateObj
+        .toLocaleString("en-GB", { month: "short" })
+        .slice(0, 3);
+      let year = dateObj.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    },
     format1: (inputdate) => {
       // Create a Date object with the date "2023-09-13"  Output Sun, Jan 01, 2023
       const inputDate = new Date(inputdate);

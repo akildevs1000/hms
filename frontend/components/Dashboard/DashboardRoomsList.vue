@@ -427,6 +427,23 @@
               <v-list-item link @click="payingAdvance = true">
                 <v-list-item-title>Pay Advance </v-list-item-title>
               </v-list-item>
+
+              <v-list-item link>
+                <v-list-item-title
+                  ><BookingModifyRoom
+                    v-if="!isHall"
+                    :key="evenIid"
+                    :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC"
+                  />
+                  <BookingModifyRoom
+                    v-if="isHall"
+                    :key="evenIid"
+                    :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC"
+                  />
+                </v-list-item-title>
+              </v-list-item>
             </template>
 
             <template v-else-if="bookingStatus == 2">
