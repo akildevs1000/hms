@@ -31,166 +31,182 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col md="10" cols="12">
-        <v-row v-if="isGroupBooking">
-          <v-col md="4" cols="12" sm="12">
-            <v-text-field
-              label="Group Name *"
-              dense
-              outlined
-              type="text"
-              v-model="group_name"
-              hide-details
-            ></v-text-field>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col md="4" dense>
-            <v-autocomplete
-              label="Business Source"
-              v-model="customer.customer_type"
-              :items="business_sources"
-              dense
-              item-text="name"
-              item-value="name"
-              outlined
-              hide-details
-            ></v-autocomplete>
-          </v-col>
-          <v-col md="8">
-            <SourceType
-              :isOverride="canOverride"
-              :defaultSource="booking"
-              :key="sourceCompKey"
-              @sourceObject="handleSource"
-            />
-          </v-col>
-          <v-col md="2" cols="12" sm="12">
-            <v-select
-              v-model="customer.title"
-              :items="titleItems"
-              label="Title *"
-              dense
-              item-text="name"
-              item-value="name"
-              hide-details
-              outlined
-            ></v-select>
-          </v-col>
-          <v-col md="3" cols="12" sm="12">
-            <v-text-field
-              label="First Name *"
-              dense
-              outlined
-              type="text"
-              v-model="customer.first_name"
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col md="3" cols="12" sm="12">
-            <v-text-field
-              label="Last Name"
-              dense
-              hide-details
-              outlined
-              type="text"
-              v-model="customer.last_name"
-            ></v-text-field>
-          </v-col>
-          <v-col md="4" cols="12" sm="12">
-            <v-text-field
-              dense
-              label="Email *"
-              outlined
-              type="email"
-              v-model="customer.email"
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col md="4" cols="12" sm="12">
-            <v-text-field
-              dense
-              label="Contact No *"
-              outlined
-              max="1111111111111"
-              type="number"
-              v-model="customer.contact_no"
-              hide-details
-              @keyup="mergeContact"
-            ></v-text-field>
-          </v-col>
-          <v-col md="4" cols="12" sm="12">
-            <v-text-field
-              dense
-              label="Whatsapp No"
-              outlined
-              max="1111111111111"
-              type="number"
-              v-model="customer.whatsapp"
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col md="4" cols="12" sm="12">
-            <v-menu
-              v-model="customer.dob_menu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
+      <v-col md="10" cols="12" class="pt-5">
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-row>
+            <v-col md="4" dense>
+              <v-autocomplete
+                label="Business Source"
+                v-model="customer.customer_type"
+                :items="business_sources"
+                dense
+                item-text="name"
+                item-value="name"
+                outlined
+                hide-details
+                :rules="[
+                  (v) => !!v || 'Name is required',
+                  (v) =>
+                    (v && v.length <= 10) ||
+                    'Name must be less than 10 characters',
+                ]"
+              ></v-autocomplete>
+            </v-col>
+            <v-col md="8">
+              <SourceType
+                :isOverride="canOverride"
+                :defaultSource="booking"
+                :key="sourceCompKey"
+                @sourceObject="handleSource"
+              />
+            </v-col>
+            <v-col md="2" cols="12" sm="12">
+              <v-select
+                v-model="customer.title"
+                :items="titleItems"
+                label="Title *"
+                dense
+                item-text="name"
+                item-value="name"
+                hide-details
+                outlined
+              ></v-select>
+            </v-col>
+            <v-col md="3" cols="12" sm="12">
+              <v-text-field
+                label="First Name *"
+                dense
+                outlined
+                type="text"
+                v-model="customer.first_name"
+                hide-details
+                :rules="[
+                  (v) => !!v || 'First name is required',
+                  (v) =>
+                    (v && v.length <= 20) ||
+                    'Name must be less than 20 characters',
+                ]"
+              ></v-text-field>
+            </v-col>
+            <v-col md="3" cols="12" sm="12">
+              <v-text-field
+                label="Last Name"
+                dense
+                hide-details
+                outlined
+                type="text"
+                v-model="customer.last_name"
+                :rules="[
+                  (v) => !!v || 'Last name is required',
+                  (v) =>
+                    (v && v.length <= 20) ||
+                    'Name must be less than 20 characters',
+                ]"
+              ></v-text-field>
+            </v-col>
+            <v-col md="4" cols="12" sm="12">
+              <v-text-field
+                dense
+                label="Email *"
+                outlined
+                type="email"
+                v-model="customer.email"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col md="4" cols="12" sm="12">
+              <v-text-field
+                dense
+                label="Contact No *"
+                outlined
+                max="1111111111111"
+                type="number"
+                v-model="customer.contact_no"
+                hide-details
+                @keyup="mergeContact"
+                :rules="[
+                  (v) => !!v || 'Contact is required',
+                  (v) =>
+                    (v && v.length <= 13) ||
+                    'Contact must be less than 13 characters',
+                ]"
+              ></v-text-field>
+            </v-col>
+            <v-col md="4" cols="12" sm="12">
+              <v-text-field
+                dense
+                label="Whatsapp No"
+                outlined
+                max="1111111111111"
+                type="number"
+                v-model="customer.whatsapp"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col md="4" cols="12" sm="12">
+              <v-menu
+                v-model="customer.dob_menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="customer.dob"
+                    readonly
+                    label="DOB"
+                    v-on="on"
+                    v-bind="attrs"
+                    hide-details
+                    dense
+                    outlined
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  no-title
                   v-model="customer.dob"
-                  readonly
-                  label="DOB"
-                  v-on="on"
-                  v-bind="attrs"
-                  hide-details
-                  dense
-                  outlined
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                no-title
-                v-model="customer.dob"
-                @input="customer.dob_menu = false"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col md="4" cols="12" sm="12">
-            <v-autocomplete
-              v-model="customer.nationality"
-              :items="countries"
-              label="Nationality"
-              item-text="name"
-              item-value="name"
-              dense
-              outlined
-              hide-details
-            ></v-autocomplete>
-          </v-col>
-          <v-col md="4">
-            <v-select
-              label="Purpose"
-              v-model="booking.purpose"
-              :items="purposes"
-              dense
-              hide-details
-              outlined
-            ></v-select>
-          </v-col>
-          <v-col md="4" cols="12" sm="12">
-            <v-text-field
-              dense
-              label="Car Number"
-              outlined
-              hide-details
-              type="text"
-              v-model="customer.car_no"
-            ></v-text-field>
-          </v-col>
-        </v-row>
+                  @input="customer.dob_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col md="4" cols="12" sm="12">
+              <v-autocomplete
+                v-model="customer.nationality"
+                :items="countries"
+                label="Nationality"
+                item-text="name"
+                item-value="name"
+                dense
+                outlined
+                hide-details
+                :rules="[(v) => !!v || 'Nationality is required']"
+              ></v-autocomplete>
+            </v-col>
+            <v-col md="4">
+              <v-autocomplete
+                label="Purpose"
+                v-model="booking.purpose"
+                :items="purposes"
+                dense
+                hide-details
+                outlined
+                :rules="[(v) => !!v || 'Purpose is required']"
+              ></v-autocomplete>
+            </v-col>
+            <v-col md="4" cols="12" sm="12">
+              <v-text-field
+                dense
+                label="Car Number"
+                outlined
+                hide-details
+                type="text"
+                v-model="customer.car_no"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-col>
     </v-row>
     <v-row>
@@ -253,7 +269,20 @@
     </v-row>
     <v-row>
       <v-col cols="12" class="text-right">
-        <v-btn small @click="nextTab" color="primary">Next</v-btn>
+        <v-hover v-slot:default="{ hover, props }">
+          <span v-bind="props">
+            <v-btn
+              x-small
+              :outlined="!hover"
+              :class="hover ? `white--text` : `primary--text`"
+              rounded
+              color="primary"
+              @click="nextTab"
+              :loading="subLoad"
+              >Next <v-icon small>mdi-chevron-right</v-icon></v-btn
+            >
+          </span>
+        </v-hover>
       </v-col>
     </v-row>
   </span>
@@ -279,6 +308,7 @@ export default {
   },
   data() {
     return {
+      valid: true,
       countries: require("@/json/countries.json"),
       states: [],
       cities: [],
@@ -308,7 +338,7 @@ export default {
       booking: {
         purpose: null,
         request: null,
-        type: null,
+        type: "Walking",
         reference_no: null,
         paid_by: null,
       },
@@ -357,7 +387,6 @@ export default {
       this.getCities(this.customer.state);
 
       if (this.customer.latest_booking) {
-        
         let latest_booking = this.customer.latest_booking;
 
         this.booking = {
@@ -416,46 +445,15 @@ export default {
       this.business_sources = data;
     },
     nextTab() {
-      if (!this.customer.customer_type) {
-        this.$swal("Warning", "Select Business Source", "error");
-        return;
-      }
-      if (!this.booking.type) {
-        this.$swal("Warning", "Select Source Type", "error");
-        return;
-      }
+      let validResponse = this.$refs.form.validate();
 
-      if (!this.customer.title) {
-        this.$swal("Warning", "Customer title is required", "error");
-        return;
+      if (validResponse) {
+        let payload = {
+          customer: this.customer,
+          booking: { ...this.booking, group_name: this.group_name },
+        };
+        this.$emit(`selectedCustomer`, payload);
       }
-
-      if (!this.customer.first_name) {
-        this.$swal("Warning", "Customer first name is required", "error");
-        return;
-      }
-
-      if (!this.customer.last_name) {
-        this.$swal("Warning", "Customer last name is required", "error");
-        return;
-      }
-
-      if (!this.customer.contact_no) {
-        this.$swal("Warning", "Customer Contact no is required", "error");
-        return;
-      }
-
-      if (!this.customer.nationality) {
-        this.$swal("Warning", "Customer Nationality is required", "error");
-        return;
-      }
-
-      let payload = {
-        customer: this.customer,
-        booking: { ...this.booking, group_name: this.group_name },
-      };
-
-      this.$emit(`selectedCustomer`, payload);
     },
 
     mergeContact() {

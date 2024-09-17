@@ -882,4 +882,22 @@ input[type="number"] {
 .small-text {
   font-size: 12px;
 }
+.zoom-on-hover {
+  transition: transform 0.3s ease-in-out;
+}
+
+.zoom-on-hover:hover {
+  transform: scale(1.5); /* Zoom in by 10% */
+}
+
+.search-box .v-input__append-inner {
+  background: #4390fc !important;
+  padding: 6px !important;
+  margin-top: 0px !important;
+  margin-right: -11px !important;
+  color: #fff !important;
+}
+.search-box .v-icon {
+  color: #fff !important;
+}
 </style>

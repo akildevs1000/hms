@@ -1,16 +1,21 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        small
-        color="primary"
-        class="white--text"
-        dark
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-icon color="white" small> mdi-plus </v-icon> {{ label }}
-      </v-btn>
+      <v-hover v-slot:default="{ hover, props }">
+        <span v-bind="props">
+          <v-btn
+            v-bind="attrs"
+            v-on="on"
+            x-small
+            :outlined="!hover"
+            :class="hover ? `white--text` : `primary--text`"
+            rounded
+            color="primary"
+            ><v-icon :color="hover ? `white` : `primary`" small>mdi-plus</v-icon
+            >{{ label }}</v-btn
+          >
+        </span>
+      </v-hover>
     </template>
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
@@ -99,7 +104,7 @@
               return-object
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12">
+          <v-col cols="9">
             <v-autocomplete
               multiple
               v-model="myArray"
@@ -113,6 +118,9 @@
               return-object
             >
             </v-autocomplete>
+          </v-col>
+          <v-col cols="3">
+            <v-btn block color="primary">OK</v-btn>
           </v-col>
           <v-col cols="4">
             <v-autocomplete
@@ -184,10 +192,34 @@
             </v-checkbox>
           </v-col>
 
-          <v-col cols="12">
-            <v-btn block @click="add_multiple_rooms" color="primary" small>
-              Confirm Room
-            </v-btn>
+          <v-col cols="12" class="text-center">
+            <v-hover v-slot:default="{ hover, props }">
+              <span v-bind="props">
+                <v-btn
+                  small
+                  :outlined="!hover"
+                  rounded
+                  color="red"
+                  class="white--text"
+                  @click="RoomDrawer = false"
+                  >Cancel</v-btn
+                >
+              </span>
+            </v-hover>
+            &nbsp; &nbsp;
+            <v-hover v-slot:default="{ hover, props }">
+              <span v-bind="props">
+                <v-btn
+                  small
+                  :outlined="!hover"
+                  rounded
+                  color="green"
+                  class="white--text"
+                  @click="add_multiple_rooms"
+                  >Submit</v-btn
+                >
+              </span>
+            </v-hover>
           </v-col>
         </v-row>
       </v-container>

@@ -6,27 +6,6 @@
       </v-snackbar>
     </div>
     <v-row>
-
-   
-
-      <v-dialog v-model="payingDialog" persistent max-width="1000px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Payment</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="payingDialog = false"
-              >mdi-close</v-icon
-            >
-          </v-toolbar>
-          <v-card-text>
-            <Paying
-              :BookingData="payData"
-              @close-dialog="closeDialogs"
-            ></Paying>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
       <v-col md="12">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
           <v-toolbar :color="roomTypeColor" dark flat dense>
@@ -51,126 +30,114 @@
           <v-tabs-items v-model="activeTab">
             <v-tab-item class="px-3 py-4">
               <v-row>
-                <v-col md="2" cols="12">
-                  <v-row no-gutters>
-                    <v-col cols="12" class="text-center">
-                      <v-hover v-slot:default="{ hover, props }">
-                        <div v-bind="props" style="position: relative">
-                          <v-icon
-                            v-if="hover"
-                            style="
-                              position: absolute;
-                              right: 60px;
-                              z-index: 1;
-                              top: 25px;
-                            "
-                            small
-                            color="primary"
-                            @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
-                            >mdi-eye</v-icon
-                          >
-                          <v-avatar size="200" tile>
-                            <v-img
-                              :src="
-                                booking?.customer?.captured_photo ||
-                                '/no-profile-image.png'
-                              "
-                            ></v-img>
-                          </v-avatar>
-                          <ViewBox
-                            ref="ViewBox"
-                            :id="$route.params.id"
-                            :customer="booking.customer"
-                          />
-                        </div>
-                      </v-hover>
+                <v-col md="2" cols="12" class="text-center">
+                  <v-row>
+                    <v-col cols="12">
+                      <v-card>
+                        <v-img
+                          :src="
+                            booking?.customer?.captured_photo ||
+                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
+                          "
+                          height="225px"
+                        >
+                          <div class="text-right pa-2">
+                            <v-icon
+                              color="white"
+                              @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
+                              >mdi-eye</v-icon
+                            >
+                          </div>
+                        </v-img>
+                        <ViewBox
+                          ref="ViewBox"
+                          :id="$route.params.id"
+                          :customer="booking.customer"
+                        />
+                      </v-card>
                     </v-col>
-                    <v-col cols="3"></v-col>
-                    <v-col cols="6" class="text-center">
-                      <v-row>
-                        <v-col>
-                          <v-img
-                            :src="
-                              booking?.customer?.id_frontend_side || '/idf.png'
-                            "
-                            style="margin: 0 auto; width: 50px; height: 50px"
-                            contain
-                          ></v-img>
-                        </v-col>
-                        <v-col>
-                          <v-img
-                            :src="
-                              booking?.customer?.id_backend_side || '/idb.png'
-                            "
-                            style="margin: 0 auto; width: 50px; height: 50px"
-                            contain
-                          ></v-img>
-                        </v-col>
-                      </v-row>
+                    <v-col cols="12">
+                      <div style="display: flex">
+                        <v-img
+                          class="zoom-on-hover"
+                          @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
+                          :src="
+                            booking?.customer?.id_frontend_side || '/idf.png'
+                          "
+                          style="margin: 0 auto; width: 35px; height: 35px"
+                          contain
+                        ></v-img>
+                        <v-img
+                          class="zoom-on-hover"
+                          @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
+                          :src="
+                            booking?.customer?.id_backend_side || '/idb.png'
+                          "
+                          style="margin: 0 auto; width: 35px; height: 35px"
+                          contain
+                        ></v-img>
+                      </div>
                     </v-col>
-
-                    <v-col cols="3"></v-col>
-                    <v-col md="12" class="pr-0 mr-0">
-                      <div class="text-box-amt mt-5">
-                        <table style="width: 100%">
-                          <tr class="bg-white amt-border-full">
-                            <td>Room:</td>
-                            <!-- $auth.user.company.currency -->
-                            <td class="text-right">
+                    <v-col>
+                      <table style="width: 100%">
+                        <tr>
+                          <td class="text-left">Room:</td>
+                          <td class="text-right">
+                            {{
+                              transactionSummary &&
+                              $utils.currency_format(
+                                transactionSummary.sumDebit -
+                                  transactionSummary.tot_posting
+                              )
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="text-left">Posting:</td>
+                          <td class="text-right">
+                            {{
+                              transactionSummary &&
+                              $utils.currency_format(
+                                transactionSummary.tot_posting
+                              )
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="text-left"><b>Total:</b></td>
+                          <td class="text-right">
+                            <b>
                               {{
                                 transactionSummary &&
                                 $utils.currency_format(
-                                  transactionSummary.sumDebit -
-                                    transactionSummary.tot_posting
-                                )
-                              }}
-                            </td>
-                          </tr>
-                          <tr class="bg-white amt-border">
-                            <td>Posting :</td>
-                            <td class="text-right">
-                              {{
-                                $utils.currency_format(
-                                  transactionSummary.tot_posting
-                                )
-                              }}
-                            </td>
-                          </tr>
-                          <tr
-                            class="bg-white amt-border bold"
-                            style="font-weight: bold"
-                          >
-                            <td>Total :</td>
-                            <td class="text-right">
-                              {{
-                                $utils.currency_format(
                                   transactionSummary.sumDebit
                                 )
-                              }}
-                            </td>
-                          </tr>
-                          <tr class="bg-white amt-border">
-                            <td>Paid :</td>
-                            <td class="text-right">
-                              -{{
-                                $utils.currency_format(
-                                  transactionSummary.sumCredit
-                                )
-                              }}
-                            </td>
-                          </tr>
-                          <tr class="bg-white amt-border">
-                            <td>Balance :</td>
-                            <td class="red--text text-right">
-                              {{
-                                $utils.currency_format(
-                                  transactionSummary.balance
-                                )
-                              }}
-                            </td>
-                          </tr>
-                        </table>
-                      </div>
+                              }}</b
+                            >
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="text-left">Paid:</td>
+                          <td class="text-right red--text">
+                            -{{
+                              transactionSummary &&
+                              $utils.currency_format(
+                                transactionSummary.sumCredit
+                              )
+                            }}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td class="text-left">Balance:</td>
+                          <td class="text-right">
+                            {{
+                              transactionSummary &&
+                              $utils.currency_format(transactionSummary.balance)
+                            }}
+                          </td>
+                        </tr>
+                      </table>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -180,11 +147,12 @@
                   cols="12"
                   v-if="booking && booking.customer && booking.customer.id"
                 >
-                  <v-row class="mt-4">
+                  <v-row>
                     <v-col cols="3">
                       <v-text-field
                         label="Group Name"
                         v-model="formattedGroupName"
+                        readonly
                         dense
                         outlined
                         hide-details
@@ -194,6 +162,7 @@
                       <v-text-field
                         label="Full Name"
                         v-model="booking.title"
+                        readonly
                         dense
                         outlined
                         hide-details
@@ -203,6 +172,7 @@
                       <v-text-field
                         label="Mobile"
                         v-model="booking.customer.contact_no"
+                        readonly
                         dense
                         outlined
                         hide-details
@@ -212,25 +182,28 @@
                       <v-text-field
                         label="Whatsapp"
                         v-model="booking.customer.whatsapp"
+                        readonly
                         dense
                         outlined
                         hide-details
                       ></v-text-field>
                     </v-col>
 
-                    <v-col cols="3">
+                    <v-col cols="4">
                       <v-text-field
                         label="Reservation No"
                         v-model="booking.reservation_no"
+                        readonly
                         dense
                         outlined
                         hide-details
                       ></v-text-field>
                     </v-col>
 
-                    <v-col cols="3">
+                    <v-col cols="4">
                       <v-text-field
                         label="Number of Rooms"
+                        readonly
                         v-model="bookedRooms.length"
                         dense
                         outlined
@@ -238,9 +211,10 @@
                       ></v-text-field>
                     </v-col>
 
-                    <v-col cols="3">
+                    <v-col cols="4">
                       <v-text-field
                         label="Booking Date"
+                        readonly
                         v-model="booking.booking_date"
                         dense
                         outlined
@@ -250,32 +224,85 @@
 
                     <v-col cols="3">
                       <v-text-field
-                        label="Nights"
-                        v-model="booking.total_days"
+                        label="Purpose"
                         dense
                         outlined
                         hide-details
+                        readonly
+                        v-model="booking.purpose"
                       ></v-text-field>
                     </v-col>
-
-                    <v-col cols="3">
-                      <v-text-field
-                        label="Check In"
-                        v-model="booking.check_in_date"
-                        dense
-                        outlined
-                        hide-details
-                      ></v-text-field>
+                    <v-col
+                      cols="9"
+                      v-if="booking && booking.booking_type == 'room'"
+                    >
+                      <v-row>
+                        <v-col>
+                          <v-text-field
+                            label="Check In"
+                            readonly
+                            v-model="booking.check_in_date"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field
+                            label="Check Out"
+                            readonly
+                            v-model="booking.check_out_date"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field
+                            label="Nights"
+                            readonly
+                            v-model="booking.total_days"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-col>
 
-                    <v-col cols="3">
-                      <v-text-field
-                        label="Check Out"
-                        v-model="booking.check_out_date"
-                        dense
-                        outlined
-                        hide-details
-                      ></v-text-field>
+                    <v-col cols="9" v-else>
+                      <v-row>
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Event Start"
+                            readonly
+                            v-model="booking.hall_check_in_date"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Event End"
+                            readonly
+                            v-model="booking.hall_check_out_date"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Total Hours"
+                            readonly
+                            v-model="bookedRooms[0].total_booking_hours"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-col>
 
                     <v-col cols="3">
@@ -284,6 +311,7 @@
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="getRelatedPaidBy"
                       ></v-text-field>
                     </v-col>
@@ -294,36 +322,30 @@
                         dense
                         outlined
                         hide-details
-                        v-model="booking.customer.type"
+                        readonly
+                        v-model="booking.customer.customer_type"
                       ></v-text-field>
                     </v-col>
 
-                    <v-col cols="4">
+                    <v-col cols="3">
                       <v-text-field
                         label="Source"
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="booking.source"
                       ></v-text-field>
                     </v-col>
 
-                    <v-col cols="4">
+                    <v-col cols="3">
                       <v-text-field
                         label="Reference Number"
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="booking.reference_no"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="4">
-                      <v-text-field
-                        label="Purpose"
-                        dense
-                        outlined
-                        hide-details
-                        v-model="booking.purpose"
                       ></v-text-field>
                     </v-col>
 
@@ -333,6 +355,7 @@
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="booking.customer.country"
                       ></v-text-field>
                     </v-col>
@@ -343,6 +366,7 @@
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="booking.customer.state"
                       ></v-text-field>
                     </v-col>
@@ -353,6 +377,7 @@
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="booking.customer.city"
                       ></v-text-field>
                     </v-col>
@@ -363,6 +388,7 @@
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="booking.customer.zip_code"
                       ></v-text-field>
                     </v-col>
@@ -373,34 +399,9 @@
                         dense
                         outlined
                         hide-details
+                        readonly
                         v-model="booking.request"
                       ></v-text-field>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="my-0 py-0">
-                    <v-col
-                      md="8"
-                      v-if="booking && booking.booking_type == 'hall'"
-                    >
-                      <v-row>
-                        <v-col>
-                          <div class="text-box" style="float: left">
-                            <h6>Event Start</h6>
-                            <p>
-                              {{ booking.hall_check_in_date || "---" }}
-                            </p>
-                          </div>
-                        </v-col>
-                        <v-col>
-                          <div class="text-box" style="float: left">
-                            <h6>Event End</h6>
-                            <p>
-                              {{ booking.hall_check_out_date || "---" }}
-                            </p>
-                          </div>
-                        </v-col>
-                      </v-row>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -558,7 +559,6 @@ export default {
     search: "",
     snackbar: false,
     dialog: false,
-    payingDialog: false,
     ids: [],
     payData: {},
     loading: false,
@@ -610,7 +610,6 @@ export default {
   methods: {
     closeDialogs() {
       this.getData();
-      this.payingDialog = false;
     },
 
     calTotalAmount(payments) {
@@ -623,15 +622,6 @@ export default {
 
     redirect() {
       this.$router.push("/");
-    },
-
-    get_payment() {
-      this.payData = this.booking;
-
-      // {
-      //   id: this.$route.params.id,
-      // };
-      this.payingDialog = true;
     },
 
     getData() {

@@ -72,7 +72,10 @@
             {{ $utils.currency_format(item.total) || "---" }}
           </td>
           <td class="blue--text text-right">
-            <CustomerViewBooking :booking="booking" :item="item" />
+            <CustomerViewBookingHall v-if="booking.booking_type == 'hall'" :booking="booking" :item="item" />
+
+            <CustomerViewBookingRoom v-else :booking="booking" :item="item" />
+
           </td>
         </tr>
       </tbody>

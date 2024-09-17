@@ -282,26 +282,6 @@
       </v-dialog>
       <!--   viewPosting dialog -->
 
-      <!-- pay advance  -->
-      <v-dialog v-model="payingAdvance" persistent max-width="700px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="payingAdvance = false"
-              >mdi-close</v-icon
-            >
-          </v-toolbar>
-          <v-card-text>
-            <PayAdvance
-              :BookingData="checkData"
-              @close-dialog="closeCheckInAndOpenGRC"
-            ></PayAdvance>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-      <!-- end pay advance  -->
-
       <!-- cancel room  -->
       <v-dialog v-model="cancelDialog" persistent max-width="500">
         <v-card>
@@ -399,8 +379,15 @@
               <v-list-item link @click="cancelDialog = true">
                 <v-list-item-title>Cancel Room</v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="payingAdvance = true">
-                <v-list-item-title>Pay Advance </v-list-item-title>
+              <v-list-item link>
+                <v-list-item-title>
+                  <BookingPayAdvance
+                    :key="evenIid"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingPayAdvance>
+                </v-list-item-title>
               </v-list-item>
 
               <v-list-item link>
@@ -441,13 +428,35 @@
                   />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="payingAdvance = true">
-                <v-list-item-title>Pay Advance </v-list-item-title>
+              <v-list-item link>
+                <v-list-item-title>
+                  <BookingPayAdvance
+                    :key="evenIid"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingPayAdvance>
+                </v-list-item-title>
               </v-list-item>
               <v-list-item link @click="viewPostingDialog = true">
                 <v-list-item-title>View Posting</v-list-item-title>
               </v-list-item>
-
+              <v-list-item link>
+                <v-list-item-title
+                  ><BookingModifyRoom
+                    v-if="true"
+                    :key="evenIid"
+                    :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC"
+                  />
+                  <BookingModifyRoom
+                    v-if="false"
+                    :key="evenIid"
+                    :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC"
+                  />
+                </v-list-item-title>
+              </v-list-item>
               <v-list-item link @click="viewBillingDialog">
                 <v-list-item-title>View Billing</v-list-item-title>
               </v-list-item>
@@ -844,7 +853,6 @@
   <Preloader v-else />
 </template>
 <script>
-import PayAdvance from "../booking/PayAdvance.vue";
 import CheckIn from "../booking/CheckIn.vue";
 import CheckOut from "../booking/CheckOut.vue";
 import NewCheckIn from "../booking/NewCheckIn.vue";
@@ -894,7 +902,6 @@ export default {
     CheckOutSvg,
     Booked,
     Available,
-    PayAdvance,
     ReservationList,
     CheckIn,
     CheckOut,
@@ -932,7 +939,6 @@ export default {
       snackbar: false,
       response: "",
       isDirty: true,
-      payingAdvance: false,
 
       DirtyRoomsReportDialog: false,
       PaidRoomReportDialog: false,
@@ -1080,11 +1086,6 @@ export default {
     viewPostingDialog() {
       this.formTitle = "View Post";
       this.get_posting();
-    },
-
-    payingAdvance() {
-      this.formTitle = "Advance Payment";
-      this.get_data();
     },
   },
   created() {
@@ -1680,7 +1681,6 @@ export default {
       check_in = true,
       posting = true,
       check_out = true,
-      advance_payment = true
     ) {
       if (check_in) {
         this.checkData = {};
@@ -1696,12 +1696,6 @@ export default {
         this.postingDialog = false;
       }
 
-      if (advance_payment) {
-        this.checkData = {};
-        this.new_advance = 0;
-        this.payingAdvance = false;
-      }
-
       this.room_list();
       this.errors = [];
       this.loading = false;
@@ -1713,7 +1707,6 @@ export default {
       this.checkInDialog = false;
       this.new_payment = 0;
       this.new_advance = 0;
-      this.payingAdvance = false;
       this.checkOutDialog = false;
       this.document = null;
     },

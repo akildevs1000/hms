@@ -1358,6 +1358,7 @@ class BookingController extends Controller
     public function get_booking(Request $request)
     {
         $bookedRoom = BookedRoom::with(['booking', 'customer', "room"])->where('company_id', $request->company_id)->findOrFail($request->id);
+        $bookedRoom->booking->booking_status = $bookedRoom->booking_status;
         $bookedRoom->booking->room_id = $bookedRoom->room_id;
         $bookedRoom->booking->room_no = $bookedRoom->room_no;
         $bookedRoom->booking->room_type = $bookedRoom->room_type;

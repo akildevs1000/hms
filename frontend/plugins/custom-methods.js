@@ -34,6 +34,21 @@ export default ({ app }, inject) => {
       return `${day} ${month} ${year} ${hours}:${minutes}`;
     },
 
+    getMyDayOnly(originalData) {
+      const date = new Date(originalData);
+      const day = date.getDay(); // Returns the day of the week as a number (0 for Sunday, 1 for Monday, etc.)
+      const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      return daysOfWeek[day];
+    },
+
 
     dmy(date) {
       let dateObj = new Date(date);

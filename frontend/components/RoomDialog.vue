@@ -1,85 +1,125 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        small
-        color="primary"
-        class="white--text"
-        dark
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-icon color="white" small> mdi-plus </v-icon> {{ label }}
-      </v-btn>
+      <v-hover v-slot:default="{ hover, props }">
+        <span v-bind="props">
+          <v-btn
+            v-bind="attrs"
+            v-on="on"
+            x-small
+            :outlined="!hover"
+            :class="hover ? `white--text` : `primary--text`"
+            rounded
+            color="primary"
+            ><v-icon :color="hover ? `white` : `primary`" small>mdi-plus</v-icon
+            >{{ label }}</v-btn
+          >
+        </span>
+      </v-hover>
     </template>
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
-        Individual Booking <v-spacer></v-spacer
+        Room Booking <v-spacer></v-spacer
         ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
       >
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-menu
-              v-model="checkin_menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  label="Check In"
-                  append-icon="mdi-calendar"
-                  outlined
-                  dense
-                  hide-details
-                  v-model="formattedCheckinDate"
-                  persistent-hint
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                :min="new Date().toISOString().substr(0, 10)"
-                v-model="temp.check_in"
-                no-title
-                @input="addOneDay(temp.check_in)"
-              ></v-date-picker>
-            </v-menu>
+            <v-row>
+              <v-col cols="8">
+                <v-row>
+                  <v-col cols="12">
+                    <v-menu
+                      v-model="checkin_menu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          label="Check In"
+                          append-icon="mdi-calendar"
+                          outlined
+                          dense
+                          hide-details
+                          v-model="formattedCheckinDate"
+                          persistent-hint
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        :min="new Date().toISOString().substr(0, 10)"
+                        v-model="temp.check_in"
+                        no-title
+                        @input="addOneDay(temp.check_in)"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-menu
+                      v-model="checkout_menu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          label="Check Out"
+                          append-icon="mdi-calendar"
+                          outlined
+                          dense
+                          hide-details
+                          v-model="formattedCheckOutDate"
+                          persistent-hint
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="temp.check_out"
+                        no-title
+                        @input="checkout_menu = false"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="4">
+                <fieldset
+                  style="
+                    margin-top: -10px;
+                    overflow: hidden;
+                    height: 115px;
+                    border-radius: 14px;
+                    padding-top: 25px;
+                    padding-left: 8px;
+                    border: 1px solid grey;
+                    position: relative;
+                  "
+                >
+                  <legend>Nights</legend>
+                  <div
+                    style="
+                      position: absolute;
+                      left: 43%;
+                      width: 100%;
+                      margin: 0 auto;
+                    "
+                  >
+                    {{ getDays() }}
+                  </div>
+                </fieldset>
+              </v-col>
+            </v-row>
           </v-col>
-          <v-col cols="12">
-            <v-menu
-              v-model="checkout_menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  label="Check Out"
-                  append-icon="mdi-calendar"
-                  outlined
-                  dense
-                  hide-details
-                  v-model="formattedCheckOutDate"
-                  persistent-hint
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="temp.check_out"
-                no-title
-                @input="checkout_menu = false"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
+
           <v-col cols="12">
             <v-autocomplete
               label="Room Type"
@@ -120,7 +160,7 @@
               dense
               outlined
               v-model="temp.no_of_adult"
-              :hide-details="true"
+              hide-details
               required
             ></v-autocomplete>
           </v-col>
@@ -131,21 +171,43 @@
               dense
               outlined
               v-model="temp.no_of_child"
-              :hide-details="true"
+              hide-details
               required
             ></v-autocomplete>
           </v-col>
           <v-col cols="4">
-            <v-text-field
+            <v-autocomplete
               label="Extra Bed"
-              min="0"
+              :items="[0, 1, 2, 3]"
               dense
               outlined
-              type="number"
               v-model="temp.extra_bed_qty"
-              :hide-details="true"
-              @keyup="set_additional_charges"
-            ></v-text-field>
+              @change="set_additional_charges"
+              hide-details
+              required
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="12">
+            <v-row justify="center">
+              <v-col cols="6" class="d-flex justify-center">
+                <v-checkbox
+                  v-model="is_early_check_in"
+                  @change="set_additional_charges"
+                  label="Early Check In"
+                  hide-details
+                  dense
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="6" class="d-flex justify-center">
+                <v-checkbox
+                  v-model="is_late_check_out"
+                  @change="set_additional_charges"
+                  label="Late Check Out"
+                  hide-details
+                  dense
+                ></v-checkbox>
+              </v-col>
+            </v-row>
           </v-col>
           <v-col cols="12">
             <v-autocomplete
@@ -162,31 +224,39 @@
               "
             ></v-autocomplete>
           </v-col>
-          <v-col cols="6">
-            <v-checkbox
-              v-model="is_early_check_in"
-              label="Early Check In"
-              :hide-details="true"
-              dense
-              @change="set_additional_charges"
-            >
-            </v-checkbox>
-          </v-col>
-          <v-col cols="6"
-            ><v-checkbox
-              v-model="is_late_check_out"
-              label="Late Check Out"
-              :hide-details="true"
-              dense
-              @change="set_additional_charges"
-            >
-            </v-checkbox>
-          </v-col>
+          <!-- <v-col cols="12">
+         
+          </v-col> -->
+          <v-col cols="12" class="text-center">
+            <v-hover v-slot:default="{ hover, props }">
+              <span v-bind="props">
+                <v-btn
+                  small
+                  :outlined="!hover"
+                  rounded
+                  color="red"
+                  class="white--text"
+                  @click="RoomDrawer = false"
+                  >Cancel</v-btn
+                >
+              </span>
+            </v-hover>
+            &nbsp;
+            &nbsp;
+            <v-hover v-slot:default="{ hover, props }">
+              <span v-bind="props">
+                <v-btn
+                  small
+                  :outlined="!hover"
+                  rounded
+                  color="green"
+                  class="white--text"
+                  @click="add_room(temp)"
+                  >Submit</v-btn
+                >
+              </span>
+            </v-hover>
 
-          <v-col cols="12">
-            <v-btn block @click="add_room(temp)" color="primary" small>
-              Confirm Room
-            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -201,6 +271,7 @@ export default {
   props: ["label"],
   data() {
     return {
+      nights: 5,
       Model: "Reservation",
       additional_charges: {},
       is_early_check_in: false,

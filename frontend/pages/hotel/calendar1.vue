@@ -360,9 +360,9 @@
             <v-list-item
               link
               v-if="
-                bookingStatus <= 2 &&
+                bookingStatus <= 3 &&
                 bookingStatus != 0 &&
-                checkData.paid_by != 2
+                checkData.paid_by != 3
               "
             >
               <v-list-item-title>
