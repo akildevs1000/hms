@@ -39,7 +39,18 @@
           hide-details
         >
           <template v-slot:append>
-            <v-icon color="primary" :loading="checkLoader" @click="get_customer"
+            <v-icon
+              style="
+                border-radius: 5px;
+                padding: 7px;
+                top: 0px;
+                position: absolute;
+                right: 1px;
+                height: 40px;
+              "
+              class="primary white--text"
+              :loading="checkLoader"
+              @click="get_customer"
               >mdi-magnify</v-icon
             >
           </template>
