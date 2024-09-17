@@ -42,17 +42,6 @@
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
-                    v-model="BookingData.group_name"
-                    readonly
-                    label="Group Name"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12">
-                  <v-text-field
                     v-model="roomData.customer.full_name"
                     readonly
                     label="Full Name"

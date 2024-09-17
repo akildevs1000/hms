@@ -148,17 +148,7 @@
                   v-if="booking && booking.customer && booking.customer.id"
                 >
                   <v-row>
-                    <v-col cols="3">
-                      <v-text-field
-                        label="Group Name"
-                        v-model="formattedGroupName"
-                        readonly
-                        dense
-                        outlined
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="3">
+                    <v-col cols="4">
                       <v-text-field
                         label="Full Name"
                         v-model="booking.title"
@@ -168,7 +158,7 @@
                         hide-details
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="4">
                       <v-text-field
                         label="Mobile"
                         v-model="booking.customer.contact_no"
@@ -178,7 +168,7 @@
                         hide-details
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="4">
                       <v-text-field
                         label="Whatsapp"
                         v-model="booking.customer.whatsapp"
@@ -592,9 +582,6 @@ export default {
   }),
 
   computed: {
-    formattedGroupName() {
-      return this.booking.group_name || "---";
-    },
     getRelatedPaidBy() {
       return this.booking && this.booking.paid_by == 2
         ? "Paid By Agent"

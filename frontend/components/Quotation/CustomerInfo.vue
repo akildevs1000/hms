@@ -27,18 +27,6 @@
         </v-row>
       </v-col>
       <v-col md="10" cols="12">
-        <v-row v-if="isGroupBooking">
-          <v-col md="4" cols="12" sm="12">
-            <v-text-field
-              label="Group Name *"
-              dense
-              outlined
-              type="text"
-              v-model="group_name"
-              hide-details
-            ></v-text-field>
-          </v-col>
-        </v-row>
         <v-row>
           <v-col md="2" cols="12" sm="12">
             <v-select

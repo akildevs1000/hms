@@ -53,20 +53,6 @@
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
-                    v-model="groupBookingId"
-                    :items="groupList"
-                    label="Group Name *"
-                    dense
-                    item-text="group_name"
-                    item-value="id"
-                    outlined
-                    hide-details
-                    @change="getBookedRoomList"
-                    return-object
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="12">
-                  <v-autocomplete
                     multiple
                     v-model="selectedRooms"
                     :items="rooms"
