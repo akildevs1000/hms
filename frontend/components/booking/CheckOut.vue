@@ -9,7 +9,9 @@
           <v-col> <div style="font-size: 18px">Check Out</div> </v-col>
           <v-col>
             <div class="text-right">
-              <v-icon @click="checkOutDialog = false" color="primary">mdi-close-circle</v-icon>
+              <v-icon @click="checkOutDialog = false" color="primary"
+                >mdi-close-circle</v-icon
+              >
             </div>
           </v-col>
         </v-row>
@@ -172,7 +174,7 @@
                       </td>
                       <td colspan="2" class="text-center">
                         <span style="font-size: 18px" class="red--text">{{
-                          $utils.currency_format(remaining_price)
+                          $utils.currency_format(tempBalance)
                         }}</span>
                       </td>
                     </tr>
@@ -279,11 +281,7 @@
                         class="text-left pl-3 primary--text"
                         style="width: 110px; border-bottom: 1px solid #eeeeee"
                       >
-                        {{
-                          $utils.currency_format(
-                            totalTransactionAmount + exceedHoursCharges
-                          )
-                        }}
+                        {{ $utils.currency_format(totalTransactionAmount) }}
                       </td>
                     </tr>
                   </table>
@@ -494,9 +492,6 @@ export default {
       this.full_payment = remaining_price - this.discount;
       this.after_discount_balance = grand_remaining_price;
 
-      this.tempBalance = remaining_price;
-
-      
       this.actualCheckoutTime = this.roomData.check_out_time;
 
       this.calculateHoursQty(this.actualCheckoutTime);
@@ -644,6 +639,9 @@ export default {
         .then(({ data }) => {
           this.transactions = data.transactions;
           this.totalTransactionAmount = data.totalTransactionAmount;
+          this.tempBalance = data.totalTransactionAmount;
+          this.full_payment = data.totalTransactionAmount;
+
         });
     },
 
@@ -661,5 +659,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style scoped src="@/assets/css/checkout.css"></style> -->

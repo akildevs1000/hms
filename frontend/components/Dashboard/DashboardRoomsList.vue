@@ -419,19 +419,20 @@
                   />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="postingDialog = true">
+              <v-list-item>
                 <v-list-item-title>
                   <BookingPosting
+                   :key="evenIid"
                     :BookingData="checkData"
                     :evenIid="evenIid"
                     @close-dialog="closeCheckInAndOpenGRC"
                   />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item link>
+              <v-list-item>
                 <v-list-item-title>
                   <BookingPayAdvance
-                    :key="evenIid"
+                    :key="evenIid + 1"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"

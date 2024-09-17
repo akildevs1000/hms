@@ -22,7 +22,15 @@
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <v-avatar size="150" class="mb-1">
+                  <!-- <div class="text-right">
+              <v-icon
+                color="primary"
+                @click="$router.push(`customer/details/${BookingData.id}`)"
+                >mdi-eye</v-icon
+              >
+            </div> -->
+                  <!-- <pre>{{ roomData }}</pre> -->
+                  <v-avatar size="150" class="mb-3">
                     <img
                       class="pa-2"
                       style="border: 1px solid grey"
@@ -166,7 +174,7 @@
                       </td>
                       <td colspan="2" class="text-center">
                         <span style="font-size: 18px" class="red--text">{{
-                          $utils.currency_format(remaining_price)
+                          $utils.currency_format(tempBalance)
                         }}</span>
                       </td>
                     </tr>
@@ -180,159 +188,128 @@
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <v-card elevation="0">
+                  <Heading class="mb-3" label="Transactions" />
+                  <table style="width: 100%">
+                    <tr style="font-size: 13px">
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Date
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Debit
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Credit
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Balance
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Receipt
+                      </td>
+                    </tr>
+
+                    <tr
+                      style="font-size: 13px"
+                      v-for="(item, index) in transactions"
+                      :key="index"
+                    >
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ item.created_at || "---" }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{
+                          item && item.debit == 0
+                            ? "---"
+                            : $utils.currency_format(item.debit)
+                        }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{
+                          item && item.credit == 0
+                            ? "---"
+                            : $utils.currency_format(item.credit)
+                        }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(item.balance) || "---" }}
+                      </td>
+                      <td
+                        class="text-center blue--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ item.id }}
+                      </td>
+                    </tr>
+
+                    <tr style="font-size: 13px">
+                      <td
+                        colspan="3"
+                        class="text-right primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Total Balance
+                      </td>
+                      <td
+                        colspan="2"
+                        class="text-left pl-3 primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(totalTransactionAmount) }}
+                      </td>
+                    </tr>
+                  </table>
+                </v-col>
+                <v-col cols="12">
+                  <v-divider></v-divider>
+                </v-col>
+                <v-col cols="12">
+                  <v-card outlined>
                     <v-container>
                       <v-row>
-                        <v-col cols="12">
-                          <Heading class="mb-3" label="Transactions" />
-                          <table style="width: 100%">
-                            <tr style="font-size: 13px">
-                              <td
-                                class="text-center primary--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Date
-                              </td>
-                              <td
-                                class="text-center primary--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Debit
-                              </td>
-                              <td
-                                class="text-center primary--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Credit
-                              </td>
-                              <td
-                                class="text-center primary--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Balance
-                              </td>
-                              <td
-                                class="text-center primary--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Receipt
-                              </td>
-                            </tr>
-
-                            <tr
-                              style="font-size: 13px"
-                              v-for="(item, index) in transactions"
-                              :key="index"
-                            >
-                              <td
-                                class="text-center"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{ item.created_at || "---" }}
-                              </td>
-                              <td
-                                class="text-center"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{
-                                  item && item.debit == 0
-                                    ? "---"
-                                    : $utils.currency_format(item.debit)
-                                }}
-                              </td>
-                              <td
-                                class="text-center"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{
-                                  item && item.credit == 0
-                                    ? "---"
-                                    : $utils.currency_format(item.credit)
-                                }}
-                              </td>
-                              <td
-                                class="text-center"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{
-                                  $utils.currency_format(item.balance) || "---"
-                                }}
-                              </td>
-                              <td
-                                class="text-center blue--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{ item.id }}
-                              </td>
-                            </tr>
-
-                            <tr style="font-size: 13px">
-                              <td
-                                colspan="3"
-                                class="text-right primary--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Total Balance
-                              </td>
-                              <td
-                                colspan="2"
-                                class="text-left pl-3 primary--text"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{
-                                  $utils.currency_format(
-                                    totalTransactionAmount + exceedHoursCharges
-                                  )
-                                }}
-                              </td>
-                            </tr>
-                          </table>
+                        <v-col cols="6">
+                          <Heading label="Payment" />
                         </v-col>
-                        <v-col cols="12">
-                          <v-divider></v-divider>
-                        </v-col>
-                        <v-col cols="4">
-                          <b><Heading label="Payment" /></b>
-                        </v-col>
-                        <v-col cols="8" class="text-right">
-                          <Heading label="Receipt Number: 123456" />
-                          <!-- <div>Receipt Number: 123456</div> -->
+                        <v-col cols="6" class="text-right">
+                          <!-- <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-printer</v-icon
+                          >
+                          &nbsp;
+                          <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-download</v-icon
+                          > -->
                         </v-col>
                         <v-col cols="4">
                           <v-autocomplete
@@ -386,7 +363,7 @@
                         <v-col cols="12">
                           <v-text-field
                             v-model="full_payment"
-                            label="Pay Amount"
+                            label="New Balance"
                             outlined
                             dense
                             hide-details
@@ -415,7 +392,7 @@
                                 rounded
                                 color="green"
                                 class="white--text"
-                                @click="store_advance"
+                                @click="store_check_out"
                                 >Submit</v-btn
                               >
                             </span>
@@ -515,8 +492,6 @@ export default {
       this.full_payment = remaining_price - this.discount;
       this.after_discount_balance = grand_remaining_price;
 
-      this.tempBalance = remaining_price;
-
       this.actualCheckoutTime = this.roomData.check_out_time;
 
       this.calculateHoursQty(this.actualCheckoutTime);
@@ -544,13 +519,14 @@ export default {
       this.after_discount_balance = blc.toFixed(2) || 0;
     },
 
-    store_advance() {
+    store_check_out() {
       // let full_payment = parseFloat(this.full_payment);
       // if (full_payment <= 0) {
       //   this.alert("Warning", "Payment should be greater than zero","error");
       //   return;
       // }
       let payload = {
+        grand_remaining_price: this.grand_remaining_price,
         new_advance: parseFloat(this.full_payment),
         reference_number: this.reference,
         booking_id: this.BookingData.id,
@@ -570,7 +546,7 @@ export default {
           } else {
             this.loading = false;
             this.$emit("close-dialog");
-            this.$swal("Success!", "Room has been checked out", "success");
+            this.$swal("Success!", "Payment has been done", "success");
           }
         })
         .catch((e) => console.log(e));
@@ -580,6 +556,14 @@ export default {
       this.discount = 0;
       this.full_payment = 0;
       this.$emit("close-dialog", payload);
+    },
+
+    redirect_to_invoice(id) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${process.env.BACKEND_URL}invoice/${id}`);
+      document.body.appendChild(element);
+      element.click();
     },
 
     can(per) {
@@ -644,6 +628,9 @@ export default {
         .then(({ data }) => {
           this.transactions = data.transactions;
           this.totalTransactionAmount = data.totalTransactionAmount;
+          this.tempBalance = data.totalTransactionAmount;
+          this.full_payment = data.totalTransactionAmount;
+
         });
     },
 
@@ -661,5 +648,3 @@ export default {
   },
 };
 </script>
-
-<!-- <style scoped src="@/assets/css/checkout.css"></style> -->
