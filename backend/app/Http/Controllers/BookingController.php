@@ -735,39 +735,118 @@ class BookingController extends Controller
         }
     }
 
+    
     public function check_in_room(Request $request)
     {
         try {
 
-            // session(['isCheckInSes' => true]);
+            // session(['isCheckoutSes' => true]);
 
             $booking_id = $request->booking_id;
+            $room_id = $request->room_id;
+            $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
+            $customer = Customer::find($booking->customer_id);
+            if ($request->discount > 0) {
+                $this->updateTransaction($booking, $request, 'discount', 'debit', -abs($request->discount));
+                $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();
+                $bookedRoom->increment('room_discount', $request->discount);
+            }
+
+
+            $transactionData = [
+                'booking_id' => $booking->id,
+                'customer_id' => $booking->customer_id ?? '',
+                'date' => now(),
+                'company_id' => $booking->company_id ?? '',
+                'payment_method_id' => $request->payment_mode_id,
+                'desc' => 'check out payment',
+                'reference_number' => $request->reference_number,
+                'user_id' => $request->user_id,
+            ];
+
+
+
+            $trans = new TransactionController();
+
+            if ($request->isHall && $request->exceedHoursCharges > 0) {
+                $transactionData["desc"] = "additional hours charges";
+                $trans->store($transactionData, $request->exceedHoursCharges ?? 0, 'debit');
+            }
+            // if ($request->full_payment > 0) {
+            $trans->store($transactionData, $request->full_payment ?? 0, 'credit');
+            // }
+
             $booking = Booking::find($booking_id);
-            $customer = Customer::find($request->customer_id);
-            $booking->check_in_price = $request->new_payment;
-            // $booking->booking_status = 2;
-            $booking->id_card_no = $request->id_card_no;
-            $booking->expired = $request->expired;
-            $booking->id_card_type = IdCardType::find($request->id_card_type_id)->name ?? "";
-            // $booking->check_in = date('Y-m-d H:i');
-            $newBookingCheckIn = date('Y-m-d H:i');
+            if ($booking) {
+                $customer = Customer::find($booking->customer_id);
 
-            $customer->dob = date("Y-m-d");
+                if ($booking->balance > 0) {
+                    $booking->payment_status = 0;
+                    $booking->remaining_price = (int) $booking->remaining_price - (int) $request->full_payment;
+                    $booking->grand_remaining_price = (int) $booking->remaining_price + (int) $booking->total_posting_amount;
 
-            $checkedIn = $booking->save();
-            if ($checkedIn) {
-                $customer->save();
-                $this->updateTransaction($booking, $request, 'check in payment', 'credit', $request->new_payment);
-                $this->updatePayment($booking, $request, $request->new_payment, 'checkin payment');
-                BookedRoom::where("booking_id", $booking_id)->where("room_id", $request->room_id)->update(['check_in' => $newBookingCheckIn, 'booking_status' => 2]);
+                    $paymentsData = [
+                        'booking_id' => $booking_id,
+                        'payment_mode' => $request->payment_mode_id,
+                        'description' => 'checkout payment',
+                        'amount' => $request->full_payment,
+                        'type' => 'customer',
+                        'room' => $booking->rooms,
+                        'company_id' => $booking->company_id,
+                        'is_city_ledger' => 0,
+                        'created_at' => now(),
+                    ];
+                    $payment = Payment::whereBookingId($booking->id)
+                        ->where('company_id', $booking->company_id)->where('is_city_ledger', 1)
+                        ->first();
+                    if ($payment) {
+                        $payment->amount = (int) $booking->balance;
+                        $payment->save();
+                    }
+                    $payment = new PaymentController();
+                    $payment->store($paymentsData);
+                } else {
+                    $booking->payment_status = 1;
+                    $booking->full_payment = $booking->paid_amounts;
+                    $booking->remaining_price = 0;
+                    $booking->grand_remaining_price = 0;
+                    $booking->total_posting_amount = 0;
+
+                    $paymentsData = [
+                        'booking_id' => $booking_id,
+                        'payment_mode' => $request->payment_mode_id,
+                        'description' => 'checkout payment',
+                        'amount' => $request->full_payment,
+                        'type' => 'customer',
+                        'room' => $booking->rooms,
+                        'company_id' => $booking->company_id,
+                        'is_city_ledger' => 0,
+                        'created_at' => now(),
+                    ];
+                    $payment = Payment::whereBookingId($booking->id)
+                        ->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+                    if ($payment) {
+                        $payment->amount = (int) $booking->balance;
+                        $payment->save();
+                    }
+                    $payment = new PaymentController();
+                    $payment->store($paymentsData);
+                }
+                $booking->booking_status = 2;
+                $booking->check_out = date('Y-m-d H:i');
+                $booking->save();
+
+                BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
+                    [
+                        "booking_status" => 2,
+                        "check_out" => date('Y-m-d H:i')
+                    ]
+                );
+
                 // if (app()->isProduction()) {
-                //     $customer = Customer::find($booking->customer_id);
-                //     (new WhatsappNotificationController())->checkInNotification($booking, $customer);
+                //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
                 // }
-                $customerData = $request->only(Customer::customerAttributes());
-                $customerData['id'] = $request->customer_id;
-                $customerData['dob'] = date("Y-m-d");
-                $this->customerUpdateById($customerData);
+
 
                 $fields = [
                     "title"     => ucfirst($customer['title']) ?? 'Mr',
@@ -780,17 +859,14 @@ class BookingController extends Controller
 
                 ];
 
-                $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
-                $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+                $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
+                $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields);
 
-                return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
+                return response()
+                    ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
             }
-
-            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
-        } catch (\Exception $e) {
-
-            return response()->json(['data' => '', 'message' => $e->getMessage(), 'status' => false]);
-            // throw $th;
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
