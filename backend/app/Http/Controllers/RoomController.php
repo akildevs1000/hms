@@ -400,7 +400,7 @@ class RoomController extends Controller
                 $q->where('company_id', $company_id);
                 $q->whereDate("check_in", ">=", $todayDate);
                 $q->whereDate("check_out", "<=", date('Y-m-d', strtotime($todayDate . " +1 day")));
-                // $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', 0);
             })
             ->get();
 
