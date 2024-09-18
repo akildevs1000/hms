@@ -1,6 +1,6 @@
 <template>
   <div v-if="isPageLoad">
-    <!-- <link
+    <!-- <
           href="matrix/dist/css/style.min.css"
           rel="stylesheet"
           v-if="isIndex"
@@ -237,50 +237,7 @@
         </v-card>
       </v-dialog>
 
-      <!--  viewPosting dialog -->
-      <v-dialog v-model="viewPostingDialog" persistent max-width="900px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <table>
-                <tr>
-                  <th v-for="(item, index) in headers" :key="index + 30">
-                    <span v-html="item.text"></span>
-                  </th>
-                </tr>
-                <v-progress-linear
-                  v-if="false"
-                  :active="loading"
-                  :indeterminate="loading"
-                  absolute
-                  color="primary"
-                ></v-progress-linear>
-                <tr v-for="(item, index) in postings" :key="index + 40">
-                  <td>{{ ++index }}</td>
-                  <td>{{ caps(item.bill_no) }}</td>
-                  <td>{{ caps(item && item.booked_room.room_no) }}</td>
-                  <td>{{ caps(item && item.booked_room.room_type) }}</td>
-                  <td>{{ caps(item && item.booked_room.title) }}</td>
-                  <td>{{ caps(item.item) }}</td>
-                  <td>{{ caps(item.qty) }}</td>
-                  <td>{{ caps(item.amount) }}</td>
-                  <td>{{ caps(item.posting_date) }}</td>
-                </tr>
-              </table>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-btn class="error" small @click="viewPostingDialog = false">
-              Cancel
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <!--   viewPosting dialog -->
+      
 
       <!-- cancel room  -->
       <v-dialog v-model="cancelDialog" persistent max-width="500">
@@ -373,13 +330,13 @@
             </v-list-item>
 
             <template v-if="bookingStatus == 1">
-              <v-list-item link @click="checkInDialog = true">
+              <v-list-item  @click="checkInDialog = true">
                 <v-list-item-title>Check In</v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="cancelDialog = true">
+              <v-list-item  @click="cancelDialog = true">
                 <v-list-item-title>Cancel Room</v-list-item-title>
               </v-list-item>
-              <v-list-item link>
+              <v-list-item >
                 <v-list-item-title>
                   <BookingPayAdvance
                     :key="evenIid"
@@ -390,7 +347,7 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item link>
+              <v-list-item >
                 <v-list-item-title
                   ><BookingModifyRoom
                     v-if="true"
@@ -439,10 +396,16 @@
                   ></BookingPayAdvance>
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="viewPostingDialog = true">
-                <v-list-item-title>View Posting</v-list-item-title>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingViewPosting
+                    :key="evenIid + 2"
+                    :evenIid="evenIid"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingViewPosting>
+                </v-list-item-title>
               </v-list-item>
-              <v-list-item link>
+              <v-list-item>
                 <v-list-item-title
                   ><BookingModifyRoom
                     v-if="true"
@@ -458,11 +421,11 @@
                   />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item link @click="viewBillingDialog">
+              <v-list-item  @click="viewBillingDialog">
                 <v-list-item-title>View Billing</v-list-item-title>
               </v-list-item>
               <v-list-item
-                link
+                
                 @click="cancelCheckInDialog = true"
                 v-if="$auth?.user?.role?.name.toLowerCase() == 'admin'"
               >
@@ -473,10 +436,10 @@
             </template>
 
             <template v-else-if="bookingStatus == 3">
-              <v-list-item link @click="setAvailable">
+              <v-list-item  @click="setAvailable">
                 <v-list-item-title>Make Available</v-list-item-title>
               </v-list-item>
-              <!-- <v-list-item link @click="setMaintenance">
+              <!-- <v-list-item  @click="setMaintenance">
                   <v-list-item-title>Make Maintenance</v-list-item-title>
                 </v-list-item> -->
             </template>
@@ -495,7 +458,7 @@
             v-if="newBookingRoom && newBookingRoom.booked_room"
           >
             <v-list-item
-              link
+              
               v-if="newBookingRoom?.booked_room?.booking_status == 3"
               @click="setAvailable(newBookingRoom.booked_room)"
             >
@@ -504,7 +467,7 @@
           </v-list-item-group>
           <v-list-item-group v-else>
             <v-list-item
-              link
+              
               v-if="newBookingRoom.status == 0"
               @click="NewBooking = true"
             >
@@ -512,14 +475,14 @@
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
             <v-list-item
-              link
+              
               v-if="newBookingRoom.status == 0"
               @click="roomStatus('1')"
             >
               <v-list-item-title>Block</v-list-item-title>
             </v-list-item>
             <v-list-item
-              link
+              
               v-if="newBookingRoom.status == 1"
               @click="roomStatus('0')"
             >
@@ -955,7 +918,6 @@ export default {
       checkOutDialog: false,
       GRCDialog: false,
       postingDialog: false,
-      viewPostingDialog: false,
       cancelDialog: false,
       NewBooking: false,
 
@@ -1000,7 +962,6 @@ export default {
       evenIid: "",
       eventStatus: "",
       rooms: [],
-      postings: [],
       dirtyRoomsList: [],
       confirmedBookingList: [],
       notAvailableRooms: [],
@@ -1038,17 +999,7 @@ export default {
       dirtyRooms: 0,
       expectCheckIn: "",
       expectCheckOut: "",
-      headers: [
-        { text: "#" },
-        { text: "Bill Number" },
-        { text: "Room No" },
-        { text: "Room Type" },
-        { text: "Customer" },
-        { text: "Item" },
-        { text: "QTY" },
-        { text: "Amount" },
-        { text: "Date" },
-      ],
+      
       newBookingRoom: {},
       isIndex: true,
 
@@ -1082,11 +1033,6 @@ export default {
     checkOutDialog() {
       this.formTitle = "Check Out";
       this.get_data();
-    },
-
-    viewPostingDialog() {
-      this.formTitle = "View Post";
-      this.get_posting();
     },
   },
   created() {
@@ -1457,17 +1403,7 @@ export default {
       });
     },
 
-    get_posting() {
-      let id = this.evenIid;
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
-        this.postings = data;
-      });
-    },
+    
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
     },
