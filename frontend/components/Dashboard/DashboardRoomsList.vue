@@ -20,30 +20,6 @@
     <!-- dialogs -->
     <div>
       <v-dialog
-        v-model="checkInDialog"
-        persistent
-        width="1000"
-        class="checkin-models"
-      >
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>{{ formTitle }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="close">mdi-close</v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <check-in
-              :key="checkInKey"
-              :BookingData="checkData"
-              @close-dialog="closeCheckInAndOpenGRC"
-            ></check-in>
-          </v-card-text>
-          <v-container></v-container>
-          <v-card-actions> </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog
         v-model="GRCDialog"
         persistent
         :width="900"
@@ -237,8 +213,6 @@
         </v-card>
       </v-dialog>
 
-      
-
       <!-- cancel room  -->
       <v-dialog v-model="cancelDialog" persistent max-width="500">
         <v-card>
@@ -330,13 +304,22 @@
             </v-list-item>
 
             <template v-if="bookingStatus == 1">
-              <v-list-item  @click="checkInDialog = true">
-                <v-list-item-title>Check In</v-list-item-title>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingCheckIn
+                    :key="evenIid"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingCheckIn>
+                </v-list-item-title>
               </v-list-item>
-              <v-list-item  @click="cancelDialog = true">
+
+              <v-list-item @click="cancelDialog = true">
                 <v-list-item-title>Cancel Room</v-list-item-title>
               </v-list-item>
-              <v-list-item >
+
+              <v-list-item>
                 <v-list-item-title>
                   <BookingPayAdvance
                     :key="evenIid"
@@ -347,7 +330,7 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item >
+              <v-list-item>
                 <v-list-item-title
                   ><BookingModifyRoom
                     v-if="true"
@@ -368,7 +351,7 @@
             <template v-else-if="bookingStatus == 2">
               <v-list-item>
                 <v-list-item-title>
-                  <check-out
+                  <BookingCheckOut
                     :key="evenIid"
                     :BookingData="checkData"
                     :roomData="roomData"
@@ -379,7 +362,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingPosting
-                   :key="evenIid"
+                    :key="evenIid"
                     :BookingData="checkData"
                     :evenIid="evenIid"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -421,11 +404,10 @@
                   />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item  @click="viewBillingDialog">
+              <v-list-item @click="viewBillingDialog">
                 <v-list-item-title>View Billing</v-list-item-title>
               </v-list-item>
               <v-list-item
-                
                 @click="cancelCheckInDialog = true"
                 v-if="$auth?.user?.role?.name.toLowerCase() == 'admin'"
               >
@@ -436,7 +418,7 @@
             </template>
 
             <template v-else-if="bookingStatus == 3">
-              <v-list-item  @click="setAvailable">
+              <v-list-item @click="setAvailable">
                 <v-list-item-title>Make Available</v-list-item-title>
               </v-list-item>
               <!-- <v-list-item  @click="setMaintenance">
@@ -458,7 +440,6 @@
             v-if="newBookingRoom && newBookingRoom.booked_room"
           >
             <v-list-item
-              
               v-if="newBookingRoom?.booked_room?.booking_status == 3"
               @click="setAvailable(newBookingRoom.booked_room)"
             >
@@ -467,7 +448,6 @@
           </v-list-item-group>
           <v-list-item-group v-else>
             <v-list-item
-              
               v-if="newBookingRoom.status == 0"
               @click="NewBooking = true"
             >
@@ -475,14 +455,12 @@
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
             <v-list-item
-              
               v-if="newBookingRoom.status == 0"
               @click="roomStatus('1')"
             >
               <v-list-item-title>Block</v-list-item-title>
             </v-list-item>
             <v-list-item
-              
               v-if="newBookingRoom.status == 1"
               @click="roomStatus('0')"
             >
@@ -818,7 +796,6 @@
 </template>
 <script>
 import CheckIn from "../booking/CheckIn.vue";
-import CheckOut from "../booking/CheckOut.vue";
 import NewCheckIn from "../booking/NewCheckIn.vue";
 import ReservationList from "../reservation/ReservationList.vue";
 import Available from "../svg/Available.vue";
@@ -859,7 +836,6 @@ export default {
     CheckInRoomsReport,
     ExpectCheckOutReport,
     ExpectCheckInReport,
-    // FoodOrderRooms,
     CheckInSvg,
     ExpectCheckOutSvg,
     ExpectCheckInSvg,
@@ -868,7 +844,6 @@ export default {
     Available,
     ReservationList,
     CheckIn,
-    CheckOut,
     NewCheckIn,
     Dirty,
     PaidBookedSvg,
@@ -999,7 +974,7 @@ export default {
       dirtyRooms: 0,
       expectCheckIn: "",
       expectCheckOut: "",
-      
+
       newBookingRoom: {},
       isIndex: true,
 
@@ -1398,7 +1373,6 @@ export default {
       });
     },
 
-    
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
     },
@@ -1608,12 +1582,7 @@ export default {
         .catch((err) => console.log(err));
     },
 
-    succuss(
-      data,
-      check_in = true,
-      posting = true,
-      check_out = true,
-    ) {
+    succuss(data, check_in = true, posting = true, check_out = true) {
       if (check_in) {
         this.checkData = {};
         this.checkInDialog = false;

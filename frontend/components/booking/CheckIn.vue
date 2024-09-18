@@ -1,255 +1,438 @@
 <template>
-  <div>
-    <v-dialog v-model="imgView">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>ID</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="imgView = false">mdi-close</v-icon>
-        </v-toolbar>
-        <v-container>
-          <ImagePreview :docObj="documentObj"></ImagePreview>
-        </v-container>
-        <v-card-actions> </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-row class="m-0 p-0 mt-1">
-      <v-col md="12">
-        <v-tabs right v-model="activeTab">
-          <!-- <div class="py-3" style="background-color: #1259a7">
-            <span class="mx-2">Check In</span>
-          </div> -->
-          <!-- <v-spacer></v-spacer> -->
-          <v-tab>
-            <v-icon> mdi mdi-account-tie </v-icon>
-          </v-tab>
-          <v-tab v-if="customer.id > 0">
-            <v-icon> mdi-bed </v-icon>
-          </v-tab>
-          <v-tabs-slider color="#1259a7"></v-tabs-slider>
-          <v-tab-item>
-            <v-card flat class="mt-5" v-if="customer && customer.id">
-              <v-card-text>
-                <BookingCustomerInfo
-                  :defaultCustomer="customer"
-                  :key="customerCompKey"
-                  @selectedCustomer="handleSelectedCustomer"
-                />
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-          <v-tab-item>
-            <v-card flat>
-              <v-card-text>
-                <CustomerBookedRooms
-                  @checkedin-success="handleCheckedInSuccess"
-                  :key="customerCompKey"
-                  :BookingData="BookingData"
-                  :customer="customer"
-                ></CustomerBookedRooms>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-        </v-tabs>
-      </v-col>
-    </v-row>
-
-    <!---------------------------------------------------------------->
-
-    <v-dialog v-model="searchDialog" width="500">
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2"> Customer </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col md="12" cols="12" sm="12">
-              <label class="col-form-label"
-                >Search By Mobile Number
-                <span class="error--text">*</span></label
+  <v-dialog v-model="checkOutDialog" persistent max-width="850px">
+    <template v-slot:activator="{ on, attrs }">
+      <span v-bind="attrs" v-on="on"> Check In </span>
+    </template>
+    <v-card>
+      <v-alert dense class="grey lighten-3 primary--text">
+        <v-row>
+          <v-col> <div style="font-size: 18px">Check In</div> </v-col>
+          <v-col>
+            <div class="text-right">
+              <v-icon @click="checkOutDialog = false" color="primary"
+                >mdi-close-circle</v-icon
               >
-              <v-text-field
-                dense
-                outlined
-                type="text"
-                v-model="search.mobile"
-                :hide-details="true"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="get_customer" :loading="checkLoader">
-            Search
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="advanceDialog" width="600">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Payment</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="advanceDialog = false">
-            mdi-close
-          </v-icon>
-        </v-toolbar>
-        <v-card-text>
-          <v-row class="px-5 mt-2">
-            <div class="input-group input-group-sm px-1">
-              <span
-                class="input-group-text"
-                id="inputGroup-sizing-sm"
-                style="height: 44px; width: 215px"
-              >
-                <v-select
-                  v-model="room.payment_mode_id"
-                  :items="[
-                    { id: 1, name: 'Cash' },
-                    { id: 2, name: 'Card' },
-                    { id: 3, name: 'Online' },
-                    { id: 4, name: 'Bank' },
-                    { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                  ]"
-                  item-text="name"
-                  item-value="id"
-                  :outlined="false"
-                  cache-items
-                  dense
-                  flat
-                  hide-no-data
-                  solo
-                  elevation="0"
-                  background-color="#E9ECEF"
-                  :disabled="room.paid_by == '2' ? true : false"
-                  :hide-details="errors && !errors.payment_mode_id"
-                  :error="errors && errors.payment_mode_id"
-                  :error-messages="
-                    errors && errors.payment_mode_id
-                      ? errors.payment_mode_id[0]
-                      : ''
-                  "
-                  style="font-size: 13px"
-                ></v-select>
-              </span>
-              <input
-                type="number"
-                class="form-control"
-                aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm"
-                style="height: 44px"
-                v-model="new_payment"
-              />
             </div>
-            <div
-              class="input-group input-group-sm px-1"
-              v-if="room.payment_mode_id != 1"
-            >
-              <span
-                class="input-group-text"
-                id="inputGroup-sizing-sm"
-                style="height: 44px; width: 215px"
+          </v-col>
+        </v-row>
+      </v-alert>
+      <v-card-text>
+        <v-row no-gutter v-if="BookingData && BookingData.id">
+          <v-col cols="6" class="text-center">
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <!-- <div class="text-right">
+              <v-icon
+                color="primary"
+                @click="$router.push(`customer/details/${BookingData.id}`)"
+                >mdi-eye</v-icon
               >
-                Reference No
-              </span>
-              <input
-                v-model="reference_number"
-                type="text"
-                class="form-control"
-                aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm"
-                style="
-                  height: 44px;
-                  text-align: left !important;
-                  text-transform: lowercase !important ;
-                "
-              />
-            </div>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="advanceDialog = false">
-            Pay
-            <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+            </div> -->
+                  <!-- <pre>{{ roomData }}</pre> -->
+                  <v-avatar size="150" class="mb-3">
+                    <img
+                      class="pa-2"
+                      style="border: 1px solid grey"
+                      :src="
+                        roomData?.customer?.captured_photo ||
+                        'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
+                      "
+                      alt="Profile Image"
+                    />
+                  </v-avatar>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="roomData.customer.full_name"
+                    readonly
+                    label="Full Name"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="roomData.customer.contact_no"
+                    readonly
+                    label="Phone Number"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <!-- <v-col cols="12">
+            <v-textarea
+              rows="2"
+              v-model="customer_full_address"
+              readonly
+              label="Address"
+              outlined
+              dense
+              hide-details
+            ></v-textarea>
+          </v-col> -->
+                <v-col cols="12">
+                  <v-text-field
+                    rows="2"
+                    v-model="roomData.booking.source"
+                    readonly
+                    label="Source"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="roomData.checkin_datetime_only"
+                    readonly
+                    label="Check IN"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="roomData.checkout_datetime_only"
+                    readonly
+                    label="Check Out"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="BookingData.room_no"
+                    readonly
+                    label="Room Number"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="pt-10">
+                  <!-- <pre>{{ roomData }}</pre> -->
+
+                  <table style="width: 100%">
+                    <tr>
+                      <td
+                        class="text-left"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Room
+                      </td>
+                      <td
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(roomData.price) }}
+                      </td>
+                      <td colspan="2" class="text-center">Total Rs.</td>
+                    </tr>
+                    <tr>
+                      <td class="text-left">Posting</td>
+                      <td>
+                        {{
+                          $utils.currency_format(
+                            BookingData.total_posting_amount
+                          )
+                        }}
+                      </td>
+                      <td colspan="2" class="text-center">
+                        <span style="font-size: 18px" class="blue--text">{{
+                          $utils.currency_format(
+                            parseFloat(roomData.price) +
+                              parseFloat(BookingData.total_posting_amount)
+                          )
+                        }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                  <v-divider></v-divider>
+                  <table style="width: 100%">
+                    <tr>
+                      <td
+                        class="text-left"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Paid
+                      </td>
+                      <td
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(BookingData.paid_amounts) }}
+                      </td>
+                      <td colspan="2" class="text-center">Balance Rs.</td>
+                    </tr>
+                    <tr>
+                      <td class="text-left">Others</td>
+                      <td>
+                        {{ $utils.currency_format(0) }}
+                      </td>
+                      <td colspan="2" class="text-center">
+                        <span style="font-size: 18px" class="red--text">{{
+                          $utils.currency_format(tempBalance)
+                        }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-col>
+          <v-divider vertical></v-divider>
+          <v-col cols="6">
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <Heading class="mb-3" label="Transactions" />
+                  <table style="width: 100%">
+                    <tr style="font-size: 13px">
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Date
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Debit
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Credit
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Balance
+                      </td>
+                      <td
+                        class="text-center primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Receipt
+                      </td>
+                    </tr>
+
+                    <tr
+                      style="font-size: 13px"
+                      v-for="(item, index) in transactions"
+                      :key="index"
+                    >
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ item.created_at || "---" }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{
+                          item && item.debit == 0
+                            ? "---"
+                            : $utils.currency_format(item.debit)
+                        }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{
+                          item && item.credit == 0
+                            ? "---"
+                            : $utils.currency_format(item.credit)
+                        }}
+                      </td>
+                      <td
+                        class="text-center"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(item.balance) || "---" }}
+                      </td>
+                      <td
+                        class="text-center blue--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ item.id }}
+                      </td>
+                    </tr>
+
+                    <tr style="font-size: 13px">
+                      <td
+                        colspan="3"
+                        class="text-right primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        Total Balance
+                      </td>
+                      <td
+                        colspan="2"
+                        class="text-left pl-3 primary--text"
+                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                      >
+                        {{ $utils.currency_format(totalTransactionAmount) }}
+                      </td>
+                    </tr>
+                  </table>
+                </v-col>
+                <v-col cols="12">
+                  <v-divider></v-divider>
+                </v-col>
+                <v-col cols="12">
+                  <v-card outlined>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="6">
+                          <Heading label="Payment" />
+                        </v-col>
+                        <v-col cols="6" class="text-right">
+                          <!-- <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-printer</v-icon
+                          >
+                          &nbsp;
+                          <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-download</v-icon
+                          > -->
+                        </v-col>
+                        <v-col cols="4">
+                          <v-autocomplete
+                            label="Mode"
+                            v-model="payment_mode_id"
+                            :items="[
+                              { id: 1, name: 'Cash' },
+                              { id: 2, name: 'Card' },
+                              { id: 3, name: 'Online' },
+                              { id: 4, name: 'Bank' },
+                              { id: 5, name: 'UPI' },
+                              { id: 6, name: 'Cheque' },
+                            ]"
+                            item-text="name"
+                            item-value="id"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="8">
+                          <v-text-field
+                            label="Reference"
+                            dense
+                            outlined
+                            type="text"
+                            v-model="reference"
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="tempBalance"
+                            label="Balance"
+                            outlined
+                            dense
+                            hide-details
+                            @keyup="setNewBalance(tempBalance, discount)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="discount"
+                            label="Discount"
+                            outlined
+                            dense
+                            hide-details
+                            @keyup="setNewBalance(tempBalance, discount)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="full_payment"
+                            label="New Balance"
+                            outlined
+                            dense
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="text-center mt-5">
+                          <v-hover v-slot:default="{ hover, props }">
+                            <span v-bind="props">
+                              <v-btn
+                                small
+                                :outlined="!hover"
+                                rounded
+                                color="red"
+                                class="white--text"
+                                @click="$emit(`close-dialog`)"
+                                >Cancel</v-btn
+                              >
+                            </span>
+                          </v-hover>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <v-hover v-slot:default="{ hover, props }">
+                            <span v-bind="props">
+                              <v-btn
+                                small
+                                :outlined="!hover"
+                                rounded
+                                color="green"
+                                class="white--text"
+                                @click="store_check_out"
+                                >Submit</v-btn
+                              >
+                            </span>
+                          </v-hover>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
-import History from "../../components/customer/History.vue";
-import ImagePreview from "../../components/images/ImagePreview.vue";
+const today = new Date();
+
+function formatTime(date) {
+  let hours = date.getHours().toString().padStart(2, "0");
+  let minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
 export default {
-  props: ["BookingData"],
-  components: {
-    History,
-    ImagePreview,
-  },
+  props: ["BookingData", "roomData"],
+
   data() {
     return {
-      countries: require("@/json/countries.json"),
-      states: [],
-      cities: [],
-      customerDocs: null,
-      GRCDialog: false,
-      // ----------------------
-      vertical: false,
-      activeTab: 0,
-      activeSummaryTab: 0,
-      documentDialog: false,
-      // ------------------
+      payment_mode_id: 1,
+      change_checkout_time: false,
 
-      checkIn: {
-        id_card_type_id: "",
-        id_card_no: "",
-        exp: "",
-        checkIn_document: null,
-      },
-
-      purposes: [
-        "Tour",
-        "Business",
-        "Hospital",
-        "Holiday",
-        "Party/Functions",
-        "Friend Visit",
-      ],
-
-      selectMeal: [],
-      wantNewDoc: false,
-      row: null,
-      calIn: {},
-      calOut: {},
-      searchDialog: false,
-      RoomDrawer: null,
-      items: [
-        { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" },
-      ],
-      val: 1,
-      Model: "Reservation",
-      // ---------booked data from parent-------------
-      document: "",
-      new_payment: 0,
+      grand_remaining_price: 0,
       remaining_price: 0,
-      reference_number: 0,
-      imgView: 0,
-      isImg: false,
-      isPdf: false,
-      // ----------------------
-      documentObj: {
-        fileExtension: null,
-        file: null,
-      },
-      isSelectRoom: true,
-      isBed: false,
-      subLoad: false,
+      Testing: true,
+      isHall: false,
+
+      exceedHoursCharges: 0,
+      actualCheckoutTime: formatTime(today),
       isDiscount: false,
       snackbar: false,
       checkLoader: false,
@@ -258,92 +441,13 @@ export default {
       loading: false,
       show_password: false,
       show_password_confirm: false,
-      roomTypes: [],
-      types: ["Online", "Walking", "Travel Agency", "Complimentary"],
-      search: {
-        mobile: "0752388923",
-      },
-      availableRooms: [],
-      selectedRooms: [],
-      rooms: [],
-      sources: [],
-      agentList: [],
-      idCards: [],
-      check_in_menu: false,
-      check_out_menu: false,
-      upload: {
-        name: "",
-      },
-      member_numbers: [1, 2, 3, 4],
-      isOnline: false,
-      advanceDialog: false,
-      isAgent: false,
-      isDiff: false,
-      customerCompKey: 1,
-      search_available_room: "",
-      room: {
-        customer_type: "",
-        customer_status: "",
-        all_room_Total_amount: 0, // sum of temp.totals
-        total_extra: 0,
-        type: "",
-        source: "",
-        agent_name: "",
-        check_in: null,
-        check_out: null,
-        discount: 0,
-        advance_price: 0,
-        payment_mode_id: 1,
-        total_days: 0,
-        sub_total: 0,
-        after_discount: 0,
-        sales_tax: 0,
-        total_price: 0,
-        remaining_price: 0,
-        request: "",
-        company_id: this.$auth.user.company.id,
-        remark: "",
-        rooms: "",
-        reference_no: "",
-        paid_by: "",
-        purpose: "Visiting",
-      },
-      reservation: {},
-      countryList: [],
-      foodPriceList: [],
-      person_type_arr: [],
-
-      titleItems: [
-        { id: 1, name: "Mr" },
-        { id: 2, name: "Mrs" },
-        { id: 3, name: "Miss" },
-        { id: 4, name: "Ms" },
-        { id: 5, name: "Dr" },
-      ],
-
-      guest: {
-        title: "",
-        whatsapp: "",
-        nationality: "India",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        id_card_type_id: "",
-        id_card_no: "",
-        car_no: "",
-        no_of_adult: 1,
-        no_of_child: 0,
-        no_of_baby: 0,
-        address: "",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob_menu: false,
-        dob: null,
-        exp_menu: false,
-        exp: null,
-      },
-
+      transactions: [],
+      totalTransactionAmount: 0,
+      full_payment: 0,
+      isPrintInvoice: false,
+      discount: 0,
+      tempBalance: 0,
+      reference: "",
       customer: {
         title: "",
         whatsapp: "",
@@ -366,147 +470,190 @@ export default {
         exp_menu: false,
         exp: null,
       },
-      id_card_type_id: 0,
+      after_discount_balance: 0,
       errors: [],
-      errorsForSubCustomer: [],
-      imgPath: "",
-      image: "",
 
-      upload: {
-        name: "",
-      },
-
-      previewImage: null,
+      checkOutDialog: false,
     };
   },
 
+  watch: {
+    BookingData() {
+      this.discount = 0;
+      this.full_payment = 0;
+    },
+  },
   created() {
-    this.get_countries();
-    this.get_customer();
-    this.get_id_cards();
     this.preloader = false;
+    if (this.roomData && this.roomData.id) {
+      let { grand_remaining_price, remaining_price } = this.BookingData;
+      this.grand_remaining_price = grand_remaining_price;
+      this.remaining_price = remaining_price;
+      this.full_payment = remaining_price - this.discount;
+      this.after_discount_balance = grand_remaining_price;
+
+      this.actualCheckoutTime = this.roomData.check_out_time;
+
+      this.calculateHoursQty(this.actualCheckoutTime);
+      this.get_transaction();
+    }
   },
   computed: {
-    showImage() {
-      if (this.BookingData.group_name) {
-        if (!this.guest.image && !this.previewImage) {
-          // return "/no-image.PNG";
-          return "/no-profile-image.jpg";
-        } else if (this.previewImage) {
-          return this.previewImage;
-        }
-        return this.guest.image;
-      }
-      if (!this.customer.image && !this.previewImage) {
-        // return "/no-image.PNG";
-        return "/no-profile-image.jpg";
-      } else if (this.previewImage) {
-        return this.previewImage;
+    customer_full_address() {
+      let { customer } = this.roomData;
+
+      if (!customer.state) {
+        return "---";
       }
 
-      return this.customer.image;
+      return `${customer.state}, ${customer.city}, ${customer.zip_code}, ${customer.country}`;
     },
   },
   methods: {
-    handleCheckedInSuccess() {
-      this.$swal("Success", "Checked In successful", "success").then(() => {
-        this.$emit(`close-dialog`);
-      });
+    setNewBalance(tempBalance, discount) {
+      this.full_payment = parseFloat(tempBalance) - parseFloat(discount);
     },
-    handleSelectedCustomer({ customer }) {
-      this.customer = customer;
-      this.activeTab += 1;
+    get_after_discount_balance(amt = 0) {
+      let discount = amt || 0;
+      let blc = parseFloat(this.grand_remaining_price) - parseFloat(discount);
+      this.after_discount_balance = blc.toFixed(2) || 0;
     },
 
-    get_customer() {
-      this.errors = [];
-      this.errorsForSubCustomer = [];
-      this.checkLoader = true;
-      let customer_id = this.BookingData.customer_id;
+    store_check_out() {
+      // let full_payment = parseFloat(this.full_payment);
+      // if (full_payment <= 0) {
+      //   this.alert("Warning", "Payment should be greater than zero","error");
+      //   return;
+      // }
+      let payload = {
+        booking_id: this.BookingData.id,
+        grand_remaining_price: this.grand_remaining_price,
+        remaining_price: this.remaining_price,
+        full_payment: parseFloat(this.full_payment),
+        payment_mode_id: this.payment_mode_id,
+        company_id: this.$auth.user.company.id,
+        isPrintInvoice: this.isPrintInvoice,
+        reference_number: this.reference,
+        discount: this.discount,
+        user_id: this.$auth.user.id,
+        isHall: this.isHall,
+        exceedHoursCharges: this.exceedHoursCharges,
+        room_id: this.roomData.room_id,
+      };
+
+      // this.loading = true;
+      this.$axios
+        .post("/check_in_room", payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.errors = data.errors;
+            this.loading = false;
+          } else {
+            this.loading = false;
+            this.$emit("close-dialog");
+            this.$swal("Success!", "Room has been checked out", "success").then(
+              () => {
+                if (this.isPrintInvoice) {
+                  this.redirect_to_invoice(data.bookingId);
+                }
+              }
+            );
+          }
+        })
+        .catch((e) => console.log(e));
+    },
+
+    closeDialog(payload) {
+      this.discount = 0;
+      this.full_payment = 0;
+      this.$emit("close-dialog", payload);
+    },
+
+    redirect_to_invoice(id) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${process.env.BACKEND_URL}invoice/${id}`);
+      document.body.appendChild(element);
+      element.click();
+    },
+
+    can(per) {
+      let u = this.$auth.user;
+      return (
+        (u && u.permissions.some((e) => e.name == per || per == "/")) ||
+        u.is_master
+      );
+    },
+
+    calculateHoursQty(actualCheckoutTime) {
+      let { check_out, extra_hours, extra_booking_hours_charges, room } =
+        this.roomData;
+
+      if (room?.room_type?.type !== "hall") {
+        this.isHall = false;
+        return;
+      }
+
+      this.isHall = true;
+
+      const extra_per_hour_charges = extra_booking_hours_charges / extra_hours;
+
+      const start = new Date(check_out);
+      let end = new Date(this.getCurrentDate() + " " + actualCheckoutTime);
+
+      // Check if the end time is earlier than the start time, indicating it falls on the next day
+      if (end < start) {
+        // Add 24 hours (in milliseconds) to the end time
+        end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
+      }
+
+      const differenceInMs = end - start;
+
+      const totalHours = Math.ceil(differenceInMs / (1000 * 60 * 60));
+
+      this.exceedHoursCharges = Math.round(totalHours) * extra_per_hour_charges;
+
+      this.transactions.push({
+        created_at: this.getCurrentDate(),
+        debit: this.exceedHoursCharges,
+        credit: 0,
+        balance: this.exceedHoursCharges,
+      });
+    },
+
+    get_transaction() {
+      let id = this.BookingData.id;
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,
+          // isHall: this.isHall,
+          // exceedHoursCharges: this.exceedHoursCharges,
+          // customer_id: this.BookingData.customer_id,
+          // payment_mode_id: this.BookingData.payment_mode_id,
+          // reference: this.reference,
+          // user_id: this.$auth.user.id,
         },
       };
-
       this.$axios
-        .get(`get_customer_by_id/${customer_id}`, payload)
+        .get(`get_transaction_by_booking_id/${id}`, payload)
         .then(({ data }) => {
-          if (!data.status) {
-            this.checkLoader = false;
-            alert("Customer not found");
-            return;
-          }
-          this.room.purpose = this.BookingData.purpose;
-
-          this.customer = {
-            ...data.data,
-            customer_id: data.data.id,
-          };
-
-          this.searchDialog = false;
-          this.checkLoader = false;
+          this.transactions = data.transactions;
+          this.totalTransactionAmount = data.totalTransactionAmount;
+          this.tempBalance = data.totalTransactionAmount;
+          this.full_payment = data.totalTransactionAmount;
         });
     },
 
-    preview(file) {
-      const fileExtension = file.split(".").pop().toLowerCase();
-      fileExtension == "pdf" ? (this.isPdf = true) : (this.isImg = true);
-      this.documentObj = {
-        fileExtension: fileExtension,
-        file: file,
-      };
-      this.imgView = true;
+    getCurrentDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     },
 
-    mergeContact() {
-      if (!this.isDiff) {
-        this.customer.whatsapp = this.customer.contact_no;
-      }
-    },
-
-    newWhatsapp() {
-      if (!this.isDiff) {
-        this.customer.whatsapp = this.customer.contact_no;
-      } else {
-        this.customer.whatsapp = "";
-      }
-    },
-
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00";
-      }
-    },
-
-    get_countries() {
-      this.$axios.get(`get_countries`).then(({ data }) => {
-        this.countryList = data;
-      });
-    },
-
-    get_room_types() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`room_type`, payload).then(({ data }) => {
-        this.roomTypes = data;
-      });
-    },
-
-    get_id_cards() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
-        this.idCards = data;
-      });
+    alert(title = "Success!", message = "hello", type = "error") {
+      this.$swal(title, message, type);
     },
   },
 };

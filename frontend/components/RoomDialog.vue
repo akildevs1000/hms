@@ -18,10 +18,9 @@
       </v-hover>
     </template>
     <v-card>
-      <v-toolbar flat class="primary white--text" dense>
-        Room Booking <v-spacer></v-spacer
-        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
-      >
+      <v-toolbar flat class="grey lighten-3" dense>
+        Room Booking <v-spacer></v-spacer><AssetsButtonClose @close="close" />
+      </v-toolbar>
       <v-container>
         <v-row>
           <v-col cols="12">
@@ -228,35 +227,9 @@
          
           </v-col> -->
           <v-col cols="12" class="text-center">
-            <v-hover v-slot:default="{ hover, props }">
-              <span v-bind="props">
-                <v-btn
-                  small
-                  :outlined="!hover"
-                  rounded
-                  color="red"
-                  class="white--text"
-                  @click="RoomDrawer = false"
-                  >Cancel</v-btn
-                >
-              </span>
-            </v-hover>
-            &nbsp;
-            &nbsp;
-            <v-hover v-slot:default="{ hover, props }">
-              <span v-bind="props">
-                <v-btn
-                  small
-                  :outlined="!hover"
-                  rounded
-                  color="green"
-                  class="white--text"
-                  @click="add_room(temp)"
-                  >Submit</v-btn
-                >
-              </span>
-            </v-hover>
-
+            <AssetsButtonCancel @close="RoomDrawer = false" />
+            &nbsp; &nbsp;
+            <AssetsButtonSubmit @click="add_room(temp)" />
           </v-col>
         </v-row>
       </v-container>
