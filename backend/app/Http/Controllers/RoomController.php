@@ -398,9 +398,10 @@ class RoomController extends Controller
             ->where('status', '!=', Room::Blocked)
             ->whereDoesntHave('bookedRoom', function ($q) use ($company_id, $todayDate) {
                 $q->where('company_id', $company_id);
-                $q->whereDate("check_in", ">=", $todayDate);
-                $q->whereDate("check_out", "<=", date('Y-m-d', strtotime($todayDate . " +1 day")));
-                $q->where('booking_status', 0);
+                $q->whereDate('check_out', $todayDate);
+                // $q->whereDate("check_in", ">=", $todayDate);
+                // $q->whereDate("check_out", "<=", date('Y-m-d', strtotime($todayDate . " +1 day")));
+                // $q->where('booking_status', '!=', 0);
             })
             ->get();
 
