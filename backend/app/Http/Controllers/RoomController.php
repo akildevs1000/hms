@@ -407,7 +407,7 @@ class RoomController extends Controller
                 })
                     // Option 2: Exclude rooms based on booking status
                     ->orWhere(function ($query) {
-                        $query->whereIn('booking_status', [2]);
+                        $query->whereIn('booking_status', [3]);
                     });
             })
             ->get();
