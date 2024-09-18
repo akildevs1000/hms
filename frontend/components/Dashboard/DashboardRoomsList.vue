@@ -1133,7 +1133,6 @@ export default {
       return formattedDate;
     },
     goToBookingPage() {
-      console.log(" this.newBookingRoom", this.newBookingRoom);
       let currentDate = new Date(
         Date.now() - new Date().getTimezoneOffset() * 60000
       )
@@ -1181,7 +1180,6 @@ export default {
           let commitObj = {
             ...this.reservation,
           };
-          //console.log('reservation1', commitObj);
           this.$store.commit("reservation", commitObj);
           this.$router.push(`/hotel/new2`);
         });
@@ -1207,7 +1205,6 @@ export default {
     },
 
     handleTouchstart(event, room) {
-      console.log(room);
       this.touchstart(
         event,
         room?.booked_room?.id,
@@ -1242,7 +1239,6 @@ export default {
       }
     },
     mouseOver(bookedRoomId, bookingStatus) {
-      console.log(bookingStatus);
       this.evenIid = bookedRoomId;
       this.bookingStatus = bookingStatus;
     },
@@ -1255,7 +1251,6 @@ export default {
 
     mouseOverForAvailable(newBookingRoom) {
       // this.newBookingRoom = newBookingRoom;
-      // console.log(newBookingRoom);
     },
 
     closeNewCheckin() {

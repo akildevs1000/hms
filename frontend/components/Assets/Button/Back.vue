@@ -4,11 +4,11 @@
       <v-btn
         x-small
         :outlined="!hover"
+        :class="hover ? `white--text` : `primary--text`"
         rounded
-        color="red"
-        class="white--text"
+        color="primary"
         @click="submitClose"
-        >Cancel</v-btn
+        ><v-icon small>mdi-chevron-left</v-icon>Back</v-btn
       >
     </span>
   </v-hover>
@@ -23,4 +23,3 @@ export default {
   },
 };
 </script>
-

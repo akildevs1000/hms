@@ -278,7 +278,6 @@
               rounded
               color="primary"
               @click="nextTab"
-              :loading="subLoad"
               >Next <v-icon small>mdi-chevron-right</v-icon></v-btn
             >
           </span>

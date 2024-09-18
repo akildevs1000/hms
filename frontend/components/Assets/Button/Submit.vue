@@ -5,10 +5,10 @@
         x-small
         :outlined="!hover"
         rounded
-        color="red"
+        color="green"
         class="white--text"
         @click="submitClose"
-        >Cancel</v-btn
+        >Submit</v-btn
       >
     </span>
   </v-hover>
@@ -18,9 +18,8 @@
 export default {
   methods: {
     submitClose() {
-      this.$emit("close");
+      this.$emit("click");
     },
   },
 };
 </script>
-

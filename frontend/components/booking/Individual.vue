@@ -27,18 +27,7 @@
           <span>Individual Booking Information</span>
           <v-spacer></v-spacer>
           <SearchCustomer @foundCustomer="handleFoundCustomer" />
-
-          <v-hover v-slot:default="{ hover, props }">
-            <span v-bind="props">
-              <v-icon
-                @click="close"
-                :outlined="!hover"
-                color="primary"
-              >
-                {{ hover ? `mdi-close-circle` : `mdi-close-circle-outline` }}
-              </v-icon>
-            </span>
-          </v-hover>
+          <AssetsButtonClose @close="closeDialog" />
         </v-toolbar>
         <v-stepper v-model="e1">
           <v-stepper-header style="display: none">
@@ -64,7 +53,7 @@
 
             <v-stepper-content step="2">
               <div style="max-height: 350px; overflow-y: scroll" class="px-5">
-                <table cellspacing="0" style="width: 100%;">
+                <table cellspacing="0" style="width: 100%">
                   <TableHeader
                     :cols="[
                       `Date`,
@@ -152,7 +141,8 @@
                       </td>
                       <td
                         class="text-right py-2"
-                        style="border-bottom: 1px solid #e0e0e0;width: 90px"                      >
+                        style="border-bottom: 1px solid #e0e0e0; width: 90px"
+                      >
                         <small>
                           {{ $utils.convert_decimal(item.total_price) }}</small
                         >
@@ -199,10 +189,7 @@
                     </tr>
                     <tr>
                       <td colspan="10" class="pt-5">
-                        <RoomDialog
-                          label="Room"
-                          @tableData="handleTableData"
-                        />
+                        <RoomDialog label="Room" @tableData="handleTableData" />
                       </td>
                     </tr>
                   </tbody>
@@ -349,34 +336,9 @@
                   </v-hover>
                 </v-col>
                 <v-col cols="7">
-                  <v-hover v-slot:default="{ hover, props }">
-                    <span v-bind="props">
-                      <v-btn
-                        x-small
-                        :outlined="!hover"
-                        rounded
-                        color="red"
-                        class="white--text"
-                        @click="RoomDrawer = false"
-                        >Cancel</v-btn
-                      >
-                    </span>
-                  </v-hover>
-                  &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; 
-                  <v-hover v-slot:default="{ hover, props }">
-                    <span v-bind="props">
-                      <v-btn
-                        x-small
-                        :outlined="!hover"
-                        rounded
-                        color="green"
-                        class="white--text"
-                        @click="store"
-                        :loading="subLoad"
-                        >Submit</v-btn
-                      >
-                    </span>
-                  </v-hover>
+                  <AssetsButtonCancel @close="closeDialog" />
+                  &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+                  <AssetsButtonSubmit @click="store" />
                 </v-col>
               </v-row>
             </v-stepper-content>
@@ -407,7 +369,6 @@ export default {
       e1: 1,
       dialog: false,
       loading: false,
-      activeTab: 0,
       searchDialog: false,
       RoomDrawer: null,
       isSelectRoom: true,
@@ -463,7 +424,7 @@ export default {
 
       this.e1 = 2;
     },
-    close() {
+    closeDialog() {
       this.customerCompKey += 1;
       this.customer = {};
       this.room = {
@@ -481,9 +442,6 @@ export default {
 
       this.priceListTableView = [];
       this.selectedRooms = [];
-
-      this.activeTab = 0;
-
       this.dialog = false;
     },
     handleTableData({ arrToMerge, payload }) {
@@ -541,40 +499,6 @@ export default {
     },
 
     store() {
-      this.subLoad = true;
-      if (this.selectedRooms.length == 0) {
-        this.$swal("Missing!", "Atleast select one room", "error");
-        this.subLoad = false;
-        return;
-      }
-
-      let rooms = this.selectedRooms.map((e) => e.room_no);
-      this.room.rooms = rooms.toString();
-      let payload = {
-        ...this.room,
-        ...this.customer,
-      };
-      this.$axios
-        .post("/booking_validate1", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.$swal(
-              "No reservation created!",
-              "Some fields are missing or invalid",
-              "error"
-            );
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.errors = [];
-            this.store_booking();
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    store_booking() {
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
