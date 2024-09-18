@@ -408,7 +408,7 @@ class RoomController extends Controller
                     // Option 2: Exclude rooms based on booking status
                     ->orWhere(function ($query) use ($todayDate) {
                         $query->whereDate('check_out', $todayDate);
-                        $query->whereIn('booking_status', [2,3]);
+                        $query->whereIn('booking_status', [2, 0]);
                     });
             })
             ->get();
