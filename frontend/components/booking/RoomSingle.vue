@@ -1,15 +1,17 @@
 <template>
   <v-dialog v-model="checkOutDialog" persistent max-width="850px">
     <template v-slot:activator="{ on, attrs }">
-      <span v-bind="attrs" v-on="on"> Check Out </span>
+      <span v-bind="attrs" v-on="on"> Check In </span>
     </template>
     <v-card>
       <v-alert dense class="grey lighten-3 primary--text">
         <v-row>
-          <v-col> <div style="font-size: 18px">Check Out</div> </v-col>
+          <v-col> <div style="font-size: 18px">Check In</div> </v-col>
           <v-col>
             <div class="text-right">
-              <AssetsButtonClose @close="checkOutDialog = false" />
+              <v-icon @click="checkOutDialog = false" color="primary"
+                >mdi-close-circle</v-icon
+              >
             </div>
           </v-col>
         </v-row>
@@ -17,23 +19,29 @@
       <v-card-text>
         <v-row no-gutter v-if="BookingData && BookingData.id">
           <v-col cols="6" class="text-center">
-            <v-row no-gutter>
-              <v-col cols="12" class="text-center">
-                <v-avatar size="125">
-                  <img
-                    class="pa-2"
-                    style="border: 1px solid grey"
-                    :src="
-                      roomData?.customer?.captured_photo ||
-                      'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
-                    "
-                    alt="Profile Image"
-                  />
-                </v-avatar>
-              </v-col>
-            </v-row>
             <v-container>
               <v-row>
+                <v-col cols="12">
+                  <!-- <div class="text-right">
+              <v-icon
+                color="primary"
+                @click="$router.push(`customer/details/${BookingData.id}`)"
+                >mdi-eye</v-icon
+              >
+            </div> -->
+                  <!-- <pre>{{ roomData }}</pre> -->
+                  <v-avatar size="150" class="mb-3">
+                    <img
+                      class="pa-2"
+                      style="border: 1px solid grey"
+                      :src="
+                        roomData?.customer?.captured_photo ||
+                        'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
+                      "
+                      alt="Profile Image"
+                    />
+                  </v-avatar>
+                </v-col>
                 <v-col cols="12">
                   <v-text-field
                     v-model="roomData.customer.full_name"
@@ -289,7 +297,7 @@
                           <Heading label="Payment" />
                         </v-col>
                         <v-col cols="6" class="text-right">
-                          <v-icon
+                          <!-- <v-icon
                             small
                             color="primary"
                             @click="redirect_to_invoice(roomData.booking_id)"
@@ -301,7 +309,7 @@
                             color="primary"
                             @click="redirect_to_invoice(roomData.booking_id)"
                             >mdi-download</v-icon
-                          >
+                          > -->
                         </v-col>
                         <v-col cols="4">
                           <v-autocomplete
@@ -362,9 +370,33 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="text-center mt-5">
-                          <AssetsButtonCancel @click="$emit(`close-dialog`)" />
-                          &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-                          <AssetsButtonSubmit @click="store_check_out" />
+                          <v-hover v-slot:default="{ hover, props }">
+                            <span v-bind="props">
+                              <v-btn
+                                small
+                                :outlined="!hover"
+                                rounded
+                                color="red"
+                                class="white--text"
+                                @click="$emit(`close-dialog`)"
+                                >Cancel</v-btn
+                              >
+                            </span>
+                          </v-hover>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <v-hover v-slot:default="{ hover, props }">
+                            <span v-bind="props">
+                              <v-btn
+                                small
+                                :outlined="!hover"
+                                rounded
+                                color="green"
+                                class="white--text"
+                                @click="store_check_out"
+                                >Submit</v-btn
+                              >
+                            </span>
+                          </v-hover>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -511,7 +543,7 @@ export default {
 
       // this.loading = true;
       this.$axios
-        .post("/check_out_room", payload)
+        .post("/check_in_room", payload)
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;

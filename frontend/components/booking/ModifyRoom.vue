@@ -8,32 +8,31 @@
       <v-card>
         <v-toolbar class="grey lighten-3 primary--text" flat dense>
           <div style="font-size: 18px">Modify Booking</div>
-          <v-spacer></v-spacer
-          ><v-icon @click="dialog = false" color="primary"
-            >mdi-close-circle</v-icon
-          ></v-toolbar
-        >
+          <v-spacer></v-spacer><AssetsButtonClose @close="dialog = false" />
+        </v-toolbar>
 
         <v-card-text class="py-5">
           <v-container v-if="payload && payload.booking_id">
             <v-row v-if="bookingResponse">
               <!-- Left Column -->
               <v-col cols="12" md="6">
+                <v-row no-gutter>
+                  <v-col cols="12" class="text-center">
+                    <v-avatar size="125">
+                      <img
+                        class="pa-2"
+                        style="border: 1px solid grey"
+                        :src="
+                          bookingResponse?.customer?.captured_photo ||
+                          'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
+                        "
+                        alt="Profile Image"
+                      />
+                    </v-avatar>
+                  </v-col>
+                </v-row>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" class="text-center">
-                      <v-avatar size="170" class="mb-3">
-                        <img
-                          class="pa-2"
-                          style="border: 1px solid grey"
-                          :src="
-                            bookingResponse?.customer?.captured_photo ||
-                            'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
-                          "
-                          alt="Profile Image"
-                        />
-                      </v-avatar>
-                    </v-col>
                     <v-col cols="12">
                       <!-- Form Fields -->
                       <v-text-field
@@ -487,32 +486,9 @@
               </v-col>
               <v-divider vertical></v-divider>
               <v-col cols="6" class="text-center mt-5">
-                <v-hover v-slot:default="{ hover, props }">
-                  <span v-bind="props">
-                    <v-btn
-                      small
-                      :outlined="!hover"
-                      rounded
-                      color="red"
-                      class="white--text"
-                      @click="dialog = false"
-                      >Cancel</v-btn
-                    >
-                  </span>
-                </v-hover>
-                <v-hover v-slot:default="{ hover, props }">
-                  <span v-bind="props">
-                    <v-btn
-                      small
-                      :outlined="!hover"
-                      rounded
-                      color="green"
-                      class="white--text"
-                      @click="submit"
-                      >Submit</v-btn
-                    >
-                  </span>
-                </v-hover>
+                <AssetsButtonCancel @close="dialog = false" />
+                &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+                <AssetsButtonSubmit @click="submit" />
               </v-col>
             </v-row>
           </v-container>

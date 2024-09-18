@@ -15,7 +15,7 @@
               <img
                 style="height: 470px; width: 100%"
                 :src="
-                  booking?.customer?.captured_photo ||
+                  customer?.captured_photo ||
                   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
                 "
                 alt="Front Image"
@@ -33,7 +33,7 @@
                 padding: 1px;
               "
               :src="
-                booking?.customer?.id_frontend_side ||
+                customer?.id_frontend_side ||
                 'https://th.bing.com/th/id/OIP.4aA4OdutpLizseoj0B9M9wHaE9?w=265&h=180&c=7&r=0&o=5&pid=1.7'
               "
             />
@@ -45,7 +45,7 @@
                 padding: 1px;
               "
               :src="
-                booking?.customer?.id_backend_side ||
+                customer?.id_backend_side ||
                 'https://th.bing.com/th/id/OIP.4aA4OdutpLizseoj0B9M9wHaE9?w=265&h=180&c=7&r=0&o=5&pid=1.7'
               "
             />

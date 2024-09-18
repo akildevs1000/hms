@@ -18,99 +18,214 @@
           <div style="font-size: 10px; text-align: center">Q.CI</div>
         </div>
       </template>
+
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Quick Checkin Information</span>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
+          <span>Quick Check In</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
+          <SearchBooking @foundCustomer="handleFoundCustomer" />
+          <AssetsButtonClose @close="closeDialog" />
         </v-toolbar>
-        <v-card-text>
-          <v-tabs v-model="activeTab">
-            <v-spacer></v-spacer>
-            <v-tab>
-              <v-icon> mdi mdi-account-tie </v-icon>
-            </v-tab>
-            <v-tab>
-              <v-icon> mdi mdi-bed </v-icon>
-            </v-tab>
-            <v-tab v-if="customer.id > 0">
-              <v-icon> mdi mdi-clipboard-text-clock </v-icon>
-            </v-tab>
-            <v-tabs-slider color="#1259a7"></v-tabs-slider>
-            <v-tab-item>
-              <v-card flat class="mt-5">
-                <v-card-text>
-                  <v-row>
-                    <v-col cols="2"></v-col>
-                    <v-col cols="3">
-                      <v-autocomplete
-                        v-model="groupBooking"
-                        :items="groupList"
-                        label="Group Name *"
-                        dense
-                        item-text="group_name"
-                        item-value="id"
-                        outlined
-                        hide-details
-                        @change="getBookedRoomList"
-                        return-object
-                      ></v-autocomplete>
-                    </v-col>
-                    <v-col cols="3">
-                      <v-autocomplete
-                        multiple
-                        v-model="idOfRooms"
-                        :items="roomsList"
-                        label="Rooms *"
-                        dense
-                        item-text="room_no"
-                        item-value="room_id"
-                        outlined
-                        hide-details
-                      ></v-autocomplete>
-                    </v-col>
-                  </v-row>
-                  <BookingCustomerInfo
-                    :defaultCustomer="customer"
-                    :key="customerCompKey"
-                    @selectedCustomer="handleSelectedCustomer"
+        <v-stepper v-model="e1">
+          <v-stepper-header style="display: none">
+            <v-stepper-step :complete="e1 > 1" step="1">
+              Name of step 1
+            </v-stepper-step>
+
+            <v-divider></v-divider>
+
+            <v-stepper-step :complete="e1 > 2" step="2">
+              Name of step 2
+            </v-stepper-step>
+          </v-stepper-header>
+
+          <v-stepper-items>
+            <v-stepper-content step="1">
+              <BookingCustomerInfo
+                :defaultCustomer="customer"
+                :key="customerCompKey"
+                @selectedCustomer="handleSelectedCustomer"
+              />
+            </v-stepper-content>
+
+            <v-stepper-content step="2">
+              <div style="max-height: 350px; overflow-y: scroll" class="px-5">
+                <table cellspacing="0" style="width: 100%">
+                  <TableHeader
+                    :cols="[
+                      `Date`,
+                      `Room`,
+                      `Tariff`,
+                      `Adult`,
+                      `Child`,
+                      `Meal`,
+                      `E. Bed`,
+                      `E. C/in`,
+                      `L. C/out`,
+                      `Total`,
+                    ]"
                   />
-                </v-card-text>
-              </v-card>
-            </v-tab-item>
+                  <tbody>
+                    <tr
+                      v-for="(item, index) in priceListTableView"
+                      :key="index"
+                    >
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>
+                          {{ $dateFormat.dmy(item.date) }} <br />
+                          {{ item.day }}
+                        </small>
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>
+                          {{ item.room_no }} <br />
+                          {{ item.room_type }}
+                        </small>
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>
+                          {{ item.tariff }}
+                        </small>
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>{{ item.no_of_adult }}</small>
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>{{ item.no_of_child }}</small>
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>{{ item?.foodplan?.title || "---" }}</small>
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small> {{ item.extra_bed_qty || "-" }}</small>
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>
+                          {{ item.early_check_in > 0 ? "Yes" : "-" }}</small
+                        >
+                      </td>
+                      <td
+                        class="text-center py-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>{{
+                          item.late_check_out > 0 ? "Yes" : "-"
+                        }}</small>
+                      </td>
+                      <td
+                        class="text-right py-2"
+                        style="border-bottom: 1px solid #e0e0e0; width: 90px"
+                      >
+                        <small> {{ $utils.convert_decimal(item.price) }}</small>
 
-            <v-tab-item class="mt-5">
-              <v-card flat v-if="groupBooking && groupBooking.id">
-                <v-card-text>
-                  <CustomerBookedMultipleRooms
-                    @checkedin-success="handleCheckedInSuccess"
-                    :key="customerCompKey"
-                    :BookingData="groupBooking"
-                    :customer="customer"
-                  ></CustomerBookedMultipleRooms>
+                        <v-menu
+                          nudge-bottom="50"
+                          nudge-left="20"
+                          transition="scale-transition"
+                          origin="center center"
+                          bottom
+                          left
+                          min-width="90"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn icon v-bind="attrs" v-on="on">
+                              <v-icon small>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </template>
 
-                  <div
-                    class="d-flex justify-space-around py-3"
-                    style="margin-top: 5px"
-                  >
-                    <v-col cols="10" class="text-right">
-                      <div class="my-1">Sub Total:</div>
-                      <div class="my-1">Add:</div>
-                      <div class="my-1">Discount:</div>
-                      <div class="my-1"><b>Total:</b></div>
-                    </v-col>
-                    <v-col cols="2" class="text-right">
-                      <div class="my-1">
-                        {{ $utils.convert_decimal(subTotal()) }}
-                      </div>
-                      <div class="my-1">
+                          <v-card>
+                            <v-list>
+                              <!-- <v-list-item>
+                                <RoomDetails
+                                  :key="roomDetailsCompKey"
+                                  :item="item"
+                                />
+                              </v-list-item> -->
+                              <!-- <v-list-item>
+                              <RoomEditDialog
+                                label="Edit"
+                                :options="room"
+                                @tableData="handleTableData"
+                              />
+                            </v-list-item> -->
+                              <v-list-item @click="deleteItem(index, item)">
+                                <v-icon small color="red">mdi-close</v-icon
+                                ><small class="ml-2">Delete</small>
+                              </v-list-item>
+                            </v-list>
+                          </v-card>
+                        </v-menu>
+                      </td>
+                    </tr>
+                    <!-- <tr>
+                      <td colspan="10" class="pt-5">
+                        <RoomDialog label="Room" @tableData="handleTableData" />
+                      </td>
+                    </tr> -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- <v-row class="pr-10">
+                <v-col cols="9"></v-col>
+                <v-col>
+                  <table style="width: 100%">
+                    <tr>
+                      <td colspan="9"></td>
+                      <td style="border-bottom: 1px solid #e0e0e0">
+                        <small>Sub Total:</small>
+                      </td>
+                      <td
+                        colspan="10"
+                        class="text-right pb-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>{{ $utils.convert_decimal(subTotal()) }}</small>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="9"></td>
+                      <td style="border-bottom: 1px solid #e0e0e0">
+                        <small>Add:</small>
+                      </td>
+                      <td
+                        colspan="10"
+                        class="text-right pb-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
                         <v-hover v-slot:default="{ hover, props }">
                           <div v-bind="props">
-                            {{
-                              $utils.convert_decimal(
-                                room.room_extra_amount || 0
-                              )
-                            }}
+                            <small>
+                              {{
+                                $utils.convert_decimal(
+                                  room.room_extra_amount || 0
+                                )
+                              }}</small
+                            >
                             <v-icon
                               v-if="hover"
                               small
@@ -124,7 +239,7 @@
                             >
                             <ExtraAmount
                               ref="ExtraAmountComp"
-                              :sub_total="subTotal()"
+                              :sub_total="room.sub_total"
                               @extraAddedAmount="
                                 (e) => {
                                   room.room_extra_amount = e;
@@ -133,13 +248,25 @@
                             />
                           </div>
                         </v-hover>
-                      </div>
-                      <div class="my-1 red--text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="9"></td>
+                      <td style="border-bottom: 1px solid #e0e0e0">
+                        <small>Discount:</small>
+                      </td>
+                      <td
+                        colspan="10"
+                        class="text-right pb-2"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
                         <v-hover v-slot:default="{ hover, props }">
                           <div v-bind="props">
-                            -{{
-                              $utils.convert_decimal(room.room_discount || 0)
-                            }}
+                            <small>
+                              -{{
+                                $utils.convert_decimal(room.room_discount || 0)
+                              }}</small
+                            >
                             <v-icon
                               v-if="hover"
                               small
@@ -151,7 +278,7 @@
                             >
                             <Discount
                               ref="DiscountComp"
-                              :sub_total="subTotal()"
+                              :sub_total="room.sub_total"
                               @discountAbleAmount="
                                 (e) => {
                                   room.room_discount = e;
@@ -160,171 +287,78 @@
                             />
                           </div>
                         </v-hover>
-                      </div>
-                      <div class="my-1">
-                        <b>{{
-                          $utils.convert_decimal(processCalculation())
-                        }}</b>
-                      </div>
-                    </v-col>
-                  </div>
-
-                  <v-row class="text-right mb-3">
-                    <v-col>
-                      <v-btn
-                        small
-                        class="blue"
-                        @click="storeQuickCheckin"
-                        :loading="subLoad"
-                        dark
-                        ><v-icon small class="mt-1">mdi-floppy</v-icon>
-                        Checkin</v-btn
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="9"></td>
+                      <td
+                        style="border-bottom: 1px solid #e0e0e0"
+                        class="primary--text"
                       >
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-            </v-tab-item>
+                        <small>Total:</small>
+                      </td>
+                      <td
+                        colspan="10"
+                        class="text-right pb-2 primary--text"
+                        style="border-bottom: 1px solid #e0e0e0"
+                      >
+                        <small>
+                          {{
+                            $utils.currency_format(processCalculation())
+                          }}</small
+                        >
+                      </td>
+                    </tr>
+                  </table>
+                </v-col>
+              </v-row> -->
 
-            <v-tab-item>
-              <v-card flat>
-                <v-card-text>
-                  <History :customerId="customer.id"></History>
-                </v-card-text>
-              </v-card>
-            </v-tab-item>
-          </v-tabs>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="advanceDialog" width="600">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Payment</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="advanceDialog = false">
-            mdi-close
-          </v-icon>
-        </v-toolbar>
-        <v-card-text>
-          <v-row class="px-5 mt-2">
-            <div class="input-group input-group-sm px-3">
-              <span
-                class="input-group-text"
-                id="inputGroup-sizing-sm"
-                style="width: 220px !important; color: black !important"
-              >
-                <v-autocomplete
-                  v-model="room.payment_mode_id"
-                  :items="[
-                    { id: 1, name: 'Cash' },
-                    { id: 2, name: 'Card' },
-                    { id: 3, name: 'Online' },
-                    { id: 4, name: 'Bank' },
-                    { id: 5, name: 'UPI' },
-                    { id: 6, name: 'Cheque' },
-                  ]"
-                  cache-items
-                  item-text="name"
-                  item-value="id"
-                  class="ma-0 pa-0"
-                  dense
-                  flat
-                  hide-no-data
-                  hide-details
-                  solo
-                  elevation="0"
-                  background-color="#E9ECEF"
-                  style="color: black !important"
-                >
-                </v-autocomplete>
-              </span>
-              <input
-                type="number"
-                class="form-control"
-                aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm"
-                style="height: 48px"
-                @keyup="runAllFunctions"
-                :disabled="room.paid_by == '2' ? true : false"
-                v-model="room.advance_price"
-              />
-            </div>
-
-            <div
-              class="input-group input-group-sm px-3"
-              v-if="room.payment_mode_id != 1"
-            >
-              <span
-                class="input-group-text"
-                id="inputGroup-sizing-sm"
-                style="width: 220px !important"
-              >
-                Reference No
-              </span>
-              <input
-                v-model="room.reference_number"
-                type="text"
-                class="form-control"
-                aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm"
-                style="height: 39px"
-              />
-            </div>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            @click="
-              (e) => {
-                selectedRooms.length > 0
-                  ? (advanceDialog = false)
-                  : $swal('Warning', 'Select room', 'error');
-              }
-            "
-          >
-            Pay
-            <!-- <v-icon right dark>mdi mdi-magnify</v-icon> -->
-          </v-btn>
-        </v-card-actions>
+              <v-row class="mt-5">
+                <v-col cols="5">
+                  <v-hover v-slot:default="{ hover, props }">
+                    <span v-bind="props">
+                      <v-btn
+                        x-small
+                        :outlined="!hover"
+                        :class="hover ? `white--text` : `primary--text`"
+                        rounded
+                        color="primary"
+                        @click="e1 = 1"
+                        ><v-icon small>mdi-chevron-left</v-icon>Back</v-btn
+                      >
+                    </span>
+                  </v-hover>
+                </v-col>
+                <v-col cols="7">
+                  <AssetsButtonCancel @close="closeDialog" />
+                  &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+                  <AssetsButtonSubmit @click="store" />
+                </v-col>
+              </v-row>
+            </v-stepper-content>
+          </v-stepper-items>
+        </v-stepper>
       </v-card>
     </v-dialog>
   </div>
   <NoAccess v-else />
 </template>
 <script>
-import History from "../../components/customer/History.vue";
-import RoomDetails from "../RoomDetails.vue";
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
   props: ["onlyButton"],
   components: {
-    History,
+    // History,
   },
   data() {
     return {
-      groupBooking: 1,
-      groupList: [],
-      roomsList: [],
-      idOfRooms: [],
+      e1: 1,
       dialog: false,
       loading: false,
-      advanceDialog: false,
-      activeTab: 0,
       searchDialog: false,
       RoomDrawer: null,
-      items: [
-        { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" },
-      ],
-      val: 1,
-      Model: "Reservation",
       isSelectRoom: true,
       isBed: false,
       subLoad: false,
@@ -359,68 +393,18 @@ export default {
       customer: {},
       errors: [],
       extraPayType: "",
+      booking_id: 0,
     };
   },
-  async created() {
-    this.runAllFunctions();
-    this.getGroupList();
-  },
   methods: {
-    handleCheckedInSuccess() {
-      this.$swal("Success", "Checked In successful", "success").then(() => {
-        this.$emit(`close-dialog`);
-      });
-    },
-    getGroupList() {
-      let config = {
-        params: {
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      this.$axios.get(`group-list`, config).then(({ data }) => {
-        this.groupList = data;
-      });
-    },
-    async getBookedRoomList(booking) {
-      if (!booking) {
-        return;
-      }
-      let url = `get-booked-room-list?booking_id=${booking.id}`;
-      let { data } = await this.$axios.get(url);
-
-      this.roomsList = data;
-
-      this.idOfRooms = data.map((e) => e.room_id);
-
-      let { customer, ...rest } = booking;
-
-      this.customer = {
-        ...this.customer,
-        ...customer,
-        latest_booking: rest,
-      };
-
-      this.customerCompKey += 1;
-
-      this.BookingData = rest;
-    },
     handleFoundCustomer(e) {
+      this.priceListTableView = e.latest_booking.order_rooms;
+      this.booking_id = e.latest_booking.id;
       this.customer = {
         ...this.customer,
         ...e,
       };
       this.customerCompKey += 1;
-    },
-    formatDate(date) {
-      let dateObj = new Date(date);
-
-      let day = dateObj.getDate().toString().padStart(2, "0");
-      let month = dateObj
-        .toLocaleString("en-GB", { month: "short" })
-        .slice(0, 3);
-      let year = dateObj.getFullYear();
-
-      return `${day} ${month} ${year}`;
     },
     handleSelectedCustomer({ customer, booking }) {
       this.customer = customer;
@@ -428,9 +412,10 @@ export default {
         ...this.room,
         ...booking,
       };
-      this.activeTab += 1;
+
+      this.e1 = 2;
     },
-    close() {
+    closeDialog() {
       this.customerCompKey += 1;
       this.customer = {};
       this.room = {
@@ -448,9 +433,6 @@ export default {
 
       this.priceListTableView = [];
       this.selectedRooms = [];
-
-      this.activeTab = 0;
-
       this.dialog = false;
     },
     handleTableData({ arrToMerge, payload }) {
@@ -472,144 +454,28 @@ export default {
     },
     deleteItem(index, item) {
       this.priceListTableView.splice(index, 1);
-      this.selectedRooms = this.selectedRooms.filter(
-        (e) => e.room_type !== item.room_type
-      );
-    },
-
-    nextTab() {
-      if (!this.customer.customer_type) {
-        this.$swal("Warning", "Select Business Source", "error");
-        return;
-      }
-
-      if (!this.customer.first_name) {
-        this.$swal("Warning", "Customer first name is required", "error");
-        return;
-      }
-
-      if (!this.customer.last_name) {
-        this.$swal("Warning", "Customer last name is required", "error");
-        return;
-      }
-
-      if (!this.customer.contact_no) {
-        this.$swal("Warning", "Customer contact no is required", "error");
-        return;
-      }
-
-      if (!this.room.type) {
-        this.$swal("Warning", "Select Source Type", "error");
-        return;
-      }
-
-      this.activeTab += 1;
-    },
-
-    runAllFunctions() {
-      this.getDays();
-      this.subTotal();
-      this.processCalculation();
-    },
-
-    getDays() {
-      let ci = new Date(this.room.check_in);
-      let co = new Date(this.room.check_out);
-      let Difference_In_Time = co.getTime() - ci.getTime();
-      let days = Difference_In_Time / (1000 * 3600 * 24);
-      if (days > 0) {
-        return (this.room.total_days = days);
-      }
-    },
-    mergeContact() {
-      if (!this.isDiff) {
-        this.customer.whatsapp = this.customer.contact_no;
-      }
-    },
-
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00";
-      }
     },
 
     processCalculation() {
-      if (this.groupBooking && this.groupBooking.id) {
-        let discount = parseFloat(this.room.room_discount) || 0;
-        let room_extra_amount = parseFloat(this.room.room_extra_amount) || 0;
-        let sub_total = parseFloat(this.groupBooking.sub_total) || 0;
+      let discount = parseFloat(this.room.room_discount) || 0;
+      let room_extra_amount = parseFloat(this.room.room_extra_amount) || 0;
+      let sub_total = parseFloat(this.room.sub_total) || 0;
 
-        let advance_price = parseFloat(this.groupBooking.advance_price) || 0;
+      let advance_price = parseFloat(this.room.advance_price) || 0;
 
-        let afterExtraAmount = sub_total + room_extra_amount;
-        let afterDiscount = afterExtraAmount - discount;
+      let afterExtraAmount = sub_total + room_extra_amount;
+      let afterDiscount = afterExtraAmount - discount;
 
-        this.groupBooking.remaining_price = afterDiscount - advance_price;
+      this.room.remaining_price = afterDiscount - advance_price;
 
-        return (this.groupBooking.total_price = afterDiscount);
-      }
+      return (this.room.total_price = afterDiscount);
     },
 
     subTotal() {
-      return this.groupBooking.sub_total;
-    },
-
-    mergeEntries(entries) {
-      const result = [];
-
-      entries.forEach((entry) => {
-        const existingEntry = result.find(
-          (e) => e.room_type === entry.room_type && e.date === entry.date
-        );
-
-        if (existingEntry) {
-          existingEntry.no_of_rooms += entry.no_of_rooms;
-          existingEntry.total_price += entry.total_price;
-        } else {
-          result.push({ ...entry });
-        }
-      });
-
-      return result;
-    },
-
-    get_customer() {
-      this.errors = [];
-      this.checkLoader = true;
-      let contact_no = this.search.mobile;
-      if (contact_no == undefined || contact_no == "") {
-        alert("Enter contact number");
-        this.checkLoader = false;
-        return;
-      }
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-
-      this.$axios
-        .get(`get_customer/${contact_no}`, payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.customer.contact_no = contact_no;
-            this.customer.whatsapp = contact_no;
-            alert("Customer not found");
-            this.searchDialog = false;
-            this.checkLoader = false;
-            return;
-          }
-
-          this.customer = {
-            ...data.data,
-            customer_id: data.data.id,
-          };
-
-          this.searchDialog = false;
-          this.checkLoader = false;
-        });
+      return (this.room.sub_total = this.priceListTableView.reduce(
+        (total, num) => total + num.total_price,
+        0
+      ));
     },
 
     can(per) {
@@ -620,11 +486,13 @@ export default {
       );
     },
 
-    async storeQuickCheckin() {
-      await this.$axios.post(`quick_check_in_room`, {
-        room_ids: this.idOfRooms,
-        booking_id: this.groupBooking.id,
-      });
+    async store() {
+      let payload = {
+        room_ids: this.priceListTableView.map((e) => e.room_id),
+        booking_id: this.booking_id,
+      };
+
+      await this.$axios.post(`quick_check_in_room`, payload);
       this.dialog = false;
       this.$swal("Success!", "Checked In Successfull", "success").then(() => {
         this.$emit("success");

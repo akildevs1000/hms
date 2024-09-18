@@ -13,6 +13,7 @@
     </v-col>
     <v-col>
       <v-text-field
+        class="ma-0 pa-0"
         small
         readonly
         v-model="displayObject.name"
@@ -22,7 +23,17 @@
         hide-details
       >
         <template v-slot:append>
-          <v-icon small color="primary" right @click="sourceDialog = true"
+          <v-icon
+            class="primary white--text"
+            style="
+              border-radius: 5px;
+              padding: 6px;
+              top: 0px;
+              position: absolute;
+              right: 1px;
+              height: 40px;
+            "
+            @click="sourceDialog = true"
             >mdi-eye</v-icon
           >
         </template>

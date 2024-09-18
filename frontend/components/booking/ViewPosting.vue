@@ -12,9 +12,9 @@
       <v-card-text>
         <v-container>
           <AssetsTable :headers="headers" :items="postings" />
-          <div class="mt-5 text-center">
+          <!-- <div class="mt-5 text-center">
             <AssetsButtonCancel @close="viewPostingDialog = false" />
-          </div>
+          </div> -->
         </v-container>
       </v-card-text>
     </v-card>

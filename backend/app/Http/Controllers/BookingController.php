@@ -371,6 +371,10 @@ class BookingController extends Controller
     public function getReservationNumber($data)
     {
         $company_id = $data['company_id'];
+        return Booking::orderBy('id', 'desc')->where('company_id', $company_id)->value("reservation_no") + 1 ?? 1000;
+
+
+
         $starting_value = 00001;
         $model = Booking::query();
 
@@ -735,7 +739,7 @@ class BookingController extends Controller
         }
     }
 
-    
+
     public function check_in_room(Request $request)
     {
         try {

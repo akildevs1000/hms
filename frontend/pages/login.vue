@@ -1,226 +1,166 @@
 <template>
-  <v-app>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
-    />
-    <section class="h-100 gradient-form" style="background-color: #eee">
-      <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col-xl-10">
-            <div class="card rounded-3 text-black">
-              <div class="row g-0">
-                <div class="col-lg-6">
-                  <div class="card-body p-md-5 mx-md-4">
-                    <div class="text-center">
-                      <img style="width: 250px" :src="logo" alt="logo" />
-                    </div>
+  <v-app style="width: 100%">
+    <v-row style="">
+      <v-col
+        md="8"
+        style="
+          padding-top: 5%;
+          background-color: #e1fafd;
 
-                    <v-form
-                      ref="form"
-                      method="post"
-                      v-model="valid"
-                      lazy-validation
-                    >
-                      <label for="">Email</label>
-                      <div class="form-outline mb-4">
-                        <v-text-field
-                          v-model="email"
-                          :rules="emailRules"
-                          :hide-details="false"
-                          id="form2Example11"
-                          placeholder="master@erp.com"
-                          required
-                          dense
-                          outlined
-                          type="email"
-                        ></v-text-field>
-                      </div>
+          text-align: center;
+          padding-top: 10%;
+        "
+        ><img
+          src="/login/login-bg1.png"
+          style="width: 600px; height: auto; margin: auto"
+        />
+      </v-col>
+      <v-col md="4" style="padding-top: 10%; background-color: #fff">
+        <div
+          class="card-body111111"
+          style="
+            margin: auto;
 
-                      <label for="">Password</label>
+            width: 100%;
+            height: 100%;
+            max-width: 400px;
+          "
+        >
+          <div>
+            <img style="width: 210px" src="/login/login-logo.png" />
+          </div>
+          <div style="font-size: 19px; padding-top: 10px; color: #5a6374">
+            Hotel Management Software
+          </div>
+          <div
+            style="
+              font-size: 14px;
+              padding-top: 10px;
+              padding-bottom: 30px;
+              color: #979ca2;
+            "
+          >
+            AI Integrated Cloud Management Software
+          </div>
+          <v-form
+            style="max-width: 300px"
+            ref="form"
+            method="post"
+            v-model="valid"
+          >
+            <div style="padding-bottom: 2px">
+              <label for="" style="font-size: 14px; padding-bottom: 5px"
+                >EMAIL</label
+              >
+            </div>
+            <div class="form-outline mb-4">
+              <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                hide-details
+                id="form2Example11"
+                required
+                dense
+                outlined
+                type="email"
+              ></v-text-field>
+            </div>
+            <div style="padding-bottom: 2px">
+              <label for="" style="font-size: 14px">PASSWORD</label>
+            </div>
+            <div class="form-outline mb-4">
+              <v-text-field
+                hide-details
+                dense
+                outlined
+                :rules="passwordRules"
+                :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show_password ? 'text' : 'password'"
+                v-model="password"
+                class="input-group--focused"
+                @click:append="show_password = !show_password"
+              ></v-text-field>
+            </div>
 
-                      <div class="form-outline mb-4">
-                        <!-- <input
-                          v-model="password"
-                          style="border: 1px solid"
-                          type="password"
-                          id="form2Example22"
-                          class="form-control"
-                          placeholder="secret"
-                        /> -->
+            <div>
+              <span style="width: 30px; float: left; margin-top: -4px"
+                ><v-checkbox
+                  style="
+                    margin: 0px;
+                    color: #006a37 !important;
+                    caret-color: #006a37;
+                  "
+                  class="checkbox-label"
+              /></span>
+              <span style="font-size: 12px; margin: auto"
+                >I agree to
+                <a href="#" style="text-decoration: none"
+                  >privacy policy and terms</a
+                ></span
+              >
+            </div>
+            <div class="text-center pt-1 pb-1">
+              <span v-if="msg" class="error--text">
+                {{ msg }}
+              </span>
+              <v-btn
+                style="width: 100%; background-color: #006a37; color: #fff"
+                :loading="loading"
+                @click="login"
+                class="btn btn-primary btn-block text-white fa-lg mt-1 mb-3"
+              >
+                Log in
+              </v-btn>
+            </div>
+            <div
+              style="
+                margin: auto;
+                width: 100%;
+                text-align: center;
+                color: #979ca2;
+                font-size: 14px;
+              "
+            >
+              <span> Don't have an account? </span>
+              <span style="color: cornflowerblue">Sign in Instead of </span>
+            </div>
 
-                        <v-text-field
-                          dense
-                          outlined
-                          :rules="passwordRules"
-                          :append-icon="
-                            show_password ? 'mdi-eye' : 'mdi-eye-off'
-                          "
-                          :type="show_password ? 'text' : 'password'"
-                          v-model="password"
-                          class="input-group--focused"
-                          @click:append="show_password = !show_password"
-                        ></v-text-field>
-                      </div>
-                      <!-- <vue-recaptcha
-                        class="g-recaptcha"
-                        :sitekey="sitekey"
-                        @verify="mxVerify"
-                      >
-                      </vue-recaptcha>
-                        <span
-                        v-show="showGRC"
-                        style="color: #ff5252; font-size: 13px"
-                        >This field is required
-                      </span> -->
+            <hr class="hr-text gradient" data-content="or" />
 
-                      <div class="text-center pt-1 mb-5 pb-1">
-                        <span v-if="msg" class="error--text">
-                          {{ msg }}
-                        </span>
-                        <v-btn
-                          :loading="loading"
-                          @click="login"
-                          class="btn btn-primary btn-block text-white fa-lg primary mt-1 mb-3"
-                        >
-                          Log in
-                        </v-btn>
-                      </div>
-
-                      <div
-                        class="d-flex align-items-center justify-content-center pb-4"
-                      >
-                        <!-- <p class="mb-0 me-2">Don't have an account?</p> -->
-                        <!-- <button type="button" class="btn btn-outline-danger">Create new</button> -->
-                      </div>
-                    </v-form>
-                    <!-- <div class="text-right">
+            <div style="margin: auto; width: 100%; text-align: center">
+              <span class="pa-4">
+                <img
+                  src="/login/facebook.png"
+                  style="width: 30px; height: 30px"
+                />
+              </span>
+              <span class="pa-4">
+                <img
+                  src="/login/gmail.png"
+                  style="width: 30px; height: 30px"
+                /> </span
+              ><span class="pa-4">
+                <img
+                  src="/login/twitter.png"
+                  style="width: 30px; height: 30px"
+                />
+              </span>
+            </div>
+            <div class="d-flex align-items-center justify-content-center pb-4">
+              <!-- <p class="mb-0 me-2">Don't have an account?</p> -->
+              <!-- <button type="button" class="btn btn-outline-danger">Create new</button> -->
+            </div>
+          </v-form>
+          <!-- <div class="text-right">
                       <nuxt-link
                         class="text-muted text-right"
                         to="/reset-password"
                         >Forgot password?</nuxt-link
                       >
                     </div> -->
-                  </div>
-                </div>
-                <div class="col-lg-6 d-flex align-items-center primary">
-                  <div class="text-white px-3 py-4 p-md-5 mx-md-4">
-                    <h6>MyHotel2Cloud THE RIGHT SOLUTION FOR YOU</h6>
-                    <p class="small mb-0">
-                      Make it simple, easy and accessible anywhere, anytime.
-                      Save time, stay compliant and reduce labor costs by
-                      streamlining how you collect hours worked and time-off
-                      accruals.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- <v-row no-gutters max-width="500">
-      <v-col cols="2" style="background-color: #eeeeee"
-        ><v-card elevation="0"></v-card
-      ></v-col>
-      <v-col cols="4"
-        ><v-card tile elevation="0">
-          <v-container>
-            <div class="text-center">
-                      <img width="35%" :src="logo" alt="logo" />
-                    </div>
-            <v-form ref="form" method="post" v-model="valid" lazy-validation>
-              <label for="">Email</label>
-              <div class="form-outline mb-4">
-                <v-text-field
-                  v-model="email"
-                  :rules="emailRules"
-                  :hide-details="false"
-                  id="form2Example11"
-                  placeholder="master@erp.com"
-                  required
-                  dense
-                  outlined
-                  type="email"
-                ></v-text-field>
-              </div>
-
-              <label for="">Password</label>
-
-              <div class="form-outline mb-4">
-                 <input
-                          v-model="password"
-                          style="border: 1px solid"
-                          type="password"
-                          id="form2Example22"
-                          class="form-control"
-                          placeholder="secret"
-                        />
-
-                <v-text-field
-                  dense
-                  outlined
-                  :rules="passwordRules"
-                  :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="show_password ? 'text' : 'password'"
-                  v-model="password"
-                  class="input-group--focused"
-                  @click:append="show_password = !show_password"
-                ></v-text-field>
-              </div>
-            <vue-recaptcha
-                        class="g-recaptcha"
-                        :sitekey="sitekey"
-                        @verify="mxVerify"
-                      >
-                      </vue-recaptcha>
-                        <span
-                        v-show="showGRC"
-                        style="color: #ff5252; font-size: 13px"
-                        >This field is required
-                      </span>
-
-              <div class="text-center pt-1 mb-5 pb-1">
-                <span v-if="msg" class="error--text">
-                  {{ msg }}
-                </span>
-                <v-btn
-                  :loading="loading"
-                  @click="login"
-                  class="btn btn-primary btn-block text-white fa-lg primary mt-1 mb-3"
-                >
-                  Log in
-                </v-btn>
-              </div>
-
-              <div
-                class="d-flex align-items-center justify-content-center pb-4"
-              >
-            <p class="mb-0 me-2">Don't have an account?</p> 
-               <button type="button" class="btn btn-outline-danger">Create new</button> 
-              </div>
-            </v-form>
-          </v-container>
-        </v-card></v-col
-      >
-      <v-col cols="4" class="text-center">
-        <v-card class="primary white--text" tile elevation="0">
-            <v-container>
-              <h6>MyHotel2Cloud THE RIGHT SOLUTION FOR YOU</h6>
-              <p class="small mb-0">
-                Make it simple, easy and accessible anywhere, anytime. Save
-                time, stay compliant and reduce labor costs by streamlining how
-                you collect hours worked and time-off accruals.
-              </p>
-            </v-container></v-card
-          ></v-col
-      >
-      <v-col cols="2" style="background-color: #eeeeee"
-        ><v-card elevation="0"></v-card
-      ></v-col>
-    </v-row> -->
+      </v-col>
+    </v-row>
   </v-app>
 </template>
 
@@ -303,12 +243,7 @@ export default {
               LoginUser.employee_role_id != 0 &&
               LoginUser.enable_whatsapp_otp == 1
             ) {
-              // this.set_otp_new(this.$auth.user.id);
-
-              if (!this.$auth.user.telegram_chat_id) {
-                this.$router.push(`/initial-subsribe`);
-                return;
-              }
+              this.set_otp_new(this.$auth.user.id);
               this.$router.push(`/otp`);
               return;
             } else if (data.user.user_type != "master") {
@@ -327,6 +262,12 @@ export default {
               this.$router.push(`/master/companies`);
               id = data.user?.id;
               name = data.user?.name;
+            }
+
+            if (LoginUser.employee_role_id > 0) {
+              this.set_otp(this.$auth.user.id);
+              this.$router.push(`/otp`);
+              return;
             }
           })
           .catch(({ response }) => {

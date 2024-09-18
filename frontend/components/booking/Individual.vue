@@ -24,7 +24,7 @@
 
       <v-card>
         <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-          <span>Individual Booking Information</span>
+          <span>Individual Booking Information </span>
           <v-spacer></v-spacer>
           <SearchCustomer @foundCustomer="handleFoundCustomer" />
           <AssetsButtonClose @close="closeDialog" />

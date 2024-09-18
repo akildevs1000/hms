@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar :clipped-left="clipped" fixed app dense>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <img src="/logo1.png" style="width: 130px" />
+      <img src="/login/login-logo.png" style="width: 100px" />
       <v-spacer></v-spacer>
       <v-btn
         text

@@ -12,8 +12,10 @@
           color="#34444c"
           style="width: 37px; height: 26px"
         >
-        <v-icon color="white">mdi-clock-fast</v-icon>
-      </v-btn>
+          <v-icon color="white" style="transform: rotateY(180deg)"
+            >mdi-clock-fast</v-icon
+          >
+        </v-btn>
         <div style="font-size: 10px; text-align: center">Q.CO</div>
       </div>
     </template>
@@ -328,7 +330,7 @@ export default {
       customer: {
         full_name: null,
         contact_no: null,
-        captured_photo:null
+        captured_photo: null,
       },
       customer_full_address: null,
       errors: [],
@@ -376,12 +378,20 @@ export default {
 
       let { customer, ...rest } = booking;
 
-      let { state, city, zip_code, country, full_name, contact_no,captured_photo } = customer;
+      let {
+        state,
+        city,
+        zip_code,
+        country,
+        full_name,
+        contact_no,
+        captured_photo,
+      } = customer;
 
       this.customer = {
         full_name,
         contact_no,
-        captured_photo
+        captured_photo,
       };
 
       this.customer_full_address = `${state || "---"}, ${city || "---"}, ${

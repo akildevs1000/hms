@@ -35,7 +35,10 @@ class Customer extends Model
 
     public function latest_booking()
     {
-        return $this->hasOne(Booking::class)->latest();
+        return $this->hasOne(Booking::class)->latest()
+            ->with(["orderRooms" => function ($q) {
+                $q->with("foodplan");
+            }]);
     }
 
     public function bookings()
