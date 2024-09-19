@@ -60,115 +60,19 @@
               <div style="max-height: 350px; overflow-y: scroll" class="px-5">
                 <table cellspacing="0" style="width: 100%">
                   <TableHeader
-                  :cols="[
-                    `Date`,
-                    `Hall`,
-                    `Type`,
-                    `Tariff`,
-                    `Adult`,
-                    `Child`,
-                    `Meal`,
-                    `Price`,
-                    `Extras`,
-                    `Total`,
-                  ]"
-                />
-                  <!-- <thead>
-                    <tr>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Date</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Hall</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Type</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Tariff</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Adult</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Child</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Meal</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Price</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Extras</small>
-                      </td>
-                      <td
-                        style="
-                          border-top: 1px solid #bdbdbd;
-                          border-bottom: 1px solid #bdbdbd;
-                        "
-                        class="primary--text py-2 text-center"
-                      >
-                        <small>Total</small>
-                      </td>
-                      <td><small></small></td>
-                    </tr>
-                  </thead> -->
-
+                    :cols="[
+                      `Date`,
+                      `Hall`,
+                      `Tariff`,
+                      `Adult`,
+                      `Child`,
+                      `Meal`,
+                      `Price`,
+                      `Extras`,
+                      `Total`,
+                      ``,
+                    ]"
+                  />
                   <tbody style="max-height: 50px; height: 50px">
                     <tr
                       v-for="(item, index) in priceListTableView"
@@ -203,14 +107,6 @@
                         class="text-center py-2"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>
-                          {{ item.room_price }}
-                        </small>
-                      </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
                         <small>{{ item.no_of_adult }}</small>
                       </td>
                       <td
@@ -229,31 +125,32 @@
                         class="text-center py-2"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>{{ $utils.convert_decimal(item.price) }}</small>
+                        <small>{{ $utils.currency_format(item.price) }}</small>
                       </td>
                       <td
                         class="text-center py-2"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
                         <small>{{
-                          $utils.convert_decimal(
-                            item.cleaning +
-                              item.electricity +
-                              item.generator +
-                              item.audio +
-                              item.extra_booking_hours_charges +
-                              item.projector
+                          $utils.currency_format(
+                            parseFloat(item.cleaning) +
+                              parseFloat(item.electricity) +
+                              parseFloat(item.generator) +
+                              parseFloat(item.extra_booking_hours_charges) +
+                              parseFloat(item.projector)
                           )
                         }}</small>
                       </td>
 
-                      <td width
+                      <td
                         class="text-right py-2"
-                        style="border-bottom: 1px solid #e0e0e0;width: 90px"
+                        style="border-bottom: 1px solid #e0e0e0; width: 50px"
                       >
                         <small>
-                          {{ $utils.convert_decimal(item.total_price) }}</small
+                          {{ $utils.currency_format(item.total_price) }}</small
                         >
+                      </td>
+                      <td style="border-bottom: 1px solid #e0e0e0; width: 5px">
                         <v-menu
                           nudge-bottom="50"
                           nudge-left="20"
@@ -267,18 +164,35 @@
                               <v-icon small>mdi-dots-vertical</v-icon>
                             </v-btn>
                           </template>
-
-                          <v-card>
-                            <v-list>
+                          <v-list dense>
+                            <v-list-item-group>
                               <v-list-item>
-                                <HallDetails :selectedRooms="selectedRooms" />
+                                <v-list-item-content>
+                                  <v-list-item-title>
+                                    <HallDetails
+                                      :selectedRooms="selectedRooms"
+                                      :item="{
+                                        ...item,
+                                        purpose: `Walking`,
+                                      }"
+                                      :booking="room"
+                                  /></v-list-item-title>
+                                </v-list-item-content>
                               </v-list-item>
                               <v-list-item @click="deleteItem(index, item)">
-                                <v-icon small color="red">mdi-close</v-icon
-                                ><small class="ml-2">Delete</small>
+                                <v-list-item-content>
+                                  <v-list-item-title
+                                    ><v-icon x-small color="red"
+                                      >mdi-close</v-icon
+                                    >
+                                    <small style="font-size: 11px"
+                                      >Delete</small
+                                    ></v-list-item-title
+                                  >
+                                </v-list-item-content>
                               </v-list-item>
-                            </v-list>
-                          </v-card>
+                            </v-list-item-group>
+                          </v-list>
                         </v-menu>
                       </td>
                     </tr>
@@ -604,44 +518,6 @@ export default {
     },
 
     store() {
-      this.subLoad = true;
-      if (this.selectedRooms.length == 0) {
-        this.$swal("Missing!", "Atleast select one room", "error");
-        this.subLoad = false;
-        return;
-      }
-
-      let rooms = this.selectedRooms.map((e) => e.room_no);
-      this.room.rooms = rooms.toString();
-      let payload = {
-        ...this.room,
-        ...this.customer,
-      };
-
-      // console.log(this.room);
-
-      // return;
-      this.$axios
-        .post("/booking_validate1", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.$swal(
-              "No reservation created!",
-              "Some fields are missing or invalid",
-              "error"
-            );
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.errors = [];
-            this.store_booking();
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    store_booking() {
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
@@ -661,8 +537,7 @@ export default {
             this.errors = data.errors;
             this.subLoad = false;
           } else {
-            this.selectedRooms = [];
-            this.priceListTableView = [];
+            this.close();
             this.$emit(`success`);
             this.dialog = false;
           }

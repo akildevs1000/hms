@@ -22,152 +22,174 @@
       <v-toolbar class="grey lighten-3 primary--text" flat dense>
         <div style="font-size: 18px">View Booking</div>
         <v-spacer></v-spacer
-        ><v-icon @click="PostingDialog = false" color="primary"
-          >mdi-close-circle</v-icon
-        ></v-toolbar
-      >
+        ><AssetsButtonClose @close="PostingDialog = false" />
+      </v-toolbar>
 
       <v-card-text class="pa-3">
-       <v-container>
-        <v-row class="">
-          <v-col cols="4">
-            <v-text-field
-              v-model="item.room_type"
-              readonly
-              label="Room Type"
-              dense
-              outlined
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="item.room_no"
-              readonly
-              label="Room Number"
-              dense
-              outlined
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="2">
-            <v-text-field
-              v-model="item.no_of_adult"
-              readonly
-              label="Adult"
-              dense
-              outlined
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="2">
-            <v-text-field
-              v-model="item.no_of_child"
-              readonly
-              label="Child"
-              dense
-              outlined
-              hide-details
-            ></v-text-field>
-          </v-col>
+        <v-container>
+          <v-row class="">
+            <v-col cols="4">
+              <v-text-field
+                v-model="item.room_type"
+                readonly
+                label="Room Type"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="item.room_no"
+                readonly
+                label="Room Number"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="2">
+              <v-text-field
+                v-model="item.no_of_adult"
+                readonly
+                label="Adult"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="2">
+              <v-text-field
+                v-model="item.no_of_child"
+                readonly
+                label="Child"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
 
-          <v-col cols="4">
-            <v-text-field
-              v-model="item.check_in"
-              readonly
-              label="Check In"
-              dense
-              outlined
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="item.check_out"
-              label="Check Out"
-              dense
-              outlined
-              hide-details
-            ></v-text-field>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="booking.total_days"
-              label="Nights"
-              dense
-              outlined
-              hide-details
-            ></v-text-field>
-          </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="item.check_in"
+                readonly
+                label="Check In"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="item.check_out"
+                readonly
+                label="Check Out"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="booking.total_days"
+                readonly
+                label="Nights"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
 
-          <v-col cols="7">
-            <table class="simple-table">
-              <tbody>
-                <tr>
-                  <td class="text-left">Room</td>
-                  <td class="text-right">{{ item.total }}</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Meal</td>
-                  <td class="text-right">
+            <v-col cols="7">
+              <table class="simple-table">
+                <tbody>
+                  <tr>
+                    <td class="text-left"><small>Room</small></td>
+                    <td class="text-right">
+                      <small>{{ $utils.currency_format(item.price) }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Meal</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.food_plan_price)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Extra Bed</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.bed_amount)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Early Check In</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.early_check_in)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Late Check Out</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.late_check_out)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <!-- <tr>
+                    <td class="text-left"><small>Discount</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.room_discount)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Add</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.room_extra_amount || 0)
+                      }}</small>
+                    </td>
+                  </tr> -->
+                </tbody>
+              </table>
+            </v-col>
+            <v-col cols="5" class="text-center">
+              <v-card outlined>
+                <v-card-text>
+                  <div class="blue--text" style="font-size: 18px">
+                    {{ $dateFormat.dmy(item.date) || "---" }}
+                  </div>
+                  <div class="" style="font-size: 14px">
+                    {{ item.day || "---" }}
+                  </div>
+
+                  <div class="py-4" style="font-size: 14px">
+                    {{ item.tariff || "---" }}
+                  </div>
+                  <div style="font-size: 14px">Total Rs</div>
+                  <div class="blue--text" style="font-size: 18px">
                     {{
-                      item?.foodplan?.title +
-                        " (" +
-                        item?.foodplan?.unit_price +
-                        ") " || "---"
+                      $utils.currency_format(
+                        parseFloat(item.price) +
+                          parseFloat(item.food_plan_price) +
+                          parseFloat(item.bed_amount) +
+                          parseFloat(item.early_check_in) +
+                          parseFloat(item.late_check_out)
+                      ) || "---"
                     }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">Extra Bed</td>
-                  <td class="text-right">{{ item.bed_amount || "---" }}</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Early Check In</td>
-                  <td class="text-right"> {{ item.early_check_in || "---" }}</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Late Check Out</td>
-                  <td class="text-right"> {{ item.late_check_out || "---" }}</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Discount</td>
-                  <td class="text-right">{{ item.room_discount || "---" }}</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Add</td>
-                  <td class="text-right">{{ item.room_extra_amount || "---" }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </v-col>
-          <v-col cols="5" class="text-center">
-            <v-card outlined>
-              <v-container>
-                <div class="blue--text mt-5" style="font-size: 18px">
-                  {{ $dateFormat.dmy(item.date) || "---" }}
-                </div>
-                <div class="" style="font-size: 14px">
-                  {{ item.day || "---" }}
-                </div>
-
-                <div class="mt-7" style="font-size: 14px">
-                  {{ item.tariff || "---" }}
-                </div>
-              </v-container>
-
-              <v-container class="pb-8">
-                <div class="mt-2 " style="font-size: 14px">
-                 Total Rs
-                </div>
-                <div class="blue--text" style="font-size: 18px">
-                  {{ $utils.currency_format(booking.total_price) || "---" }}
-                </div>
-              </v-container>
-            </v-card>
-          </v-col>
-        </v-row>
-       </v-container>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-text>
     </v-card>
   </v-dialog>

@@ -18,9 +18,9 @@
       </v-hover>
     </template>
     <v-card>
-      <v-toolbar flat class="primary white--text" dense>
+      <v-toolbar flat class="grey lighten-3" dense>
         Hall Booking <v-spacer></v-spacer
-        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
+        ><AssetsButtonClose @close="close" /></v-toolbar
       >
       <v-container>
         <v-row>
@@ -301,33 +301,9 @@
             </v-checkbox>
           </v-col>
           <v-col cols="12" class="text-center">
-            <v-hover v-slot:default="{ hover, props }">
-              <span v-bind="props">
-                <v-btn
-                  small
-                  :outlined="!hover"
-                  rounded
-                  color="red"
-                  class="white--text"
-                  @click="RoomDrawer = false"
-                  >Cancel</v-btn
-                >
-              </span>
-            </v-hover>
+            <AssetsButtonCancel @close="close"/>
             &nbsp; &nbsp;
-            <v-hover v-slot:default="{ hover, props }">
-              <span v-bind="props">
-                <v-btn
-                  small
-                  :outlined="!hover"
-                  rounded
-                  color="green"
-                  class="white--text"
-                  @click="selectRoom"
-                  >Submit</v-btn
-                >
-              </span>
-            </v-hover>
+            <AssetsButtonSubmit @click="selectRoom"/>
           </v-col>
         </v-row>
       </v-container>
@@ -1289,7 +1265,7 @@ export default {
         room_type,
         no_of_adult,
         no_of_child,
-        meal_name: `${foodplan.title} (${total_food_charges})`,
+        meal_name: foodplan.title,
         extras,
 
         cleaning,

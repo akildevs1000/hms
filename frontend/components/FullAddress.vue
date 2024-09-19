@@ -15,6 +15,7 @@
     </v-col>
     <v-col md="3" cols="12" sm="12">
       <v-autocomplete
+        :readonly="location.country == 'International'"
         :items="states"
         item-text="name"
         item-value="name"
@@ -28,6 +29,7 @@
     </v-col>
     <v-col md="3" cols="12" sm="12">
       <v-autocomplete
+        :readonly="location.country == 'International'"
         :items="cities"
         label="City"
         v-model="location.city"
@@ -39,6 +41,7 @@
     </v-col>
     <v-col md="3" cols="12" sm="12">
       <v-text-field
+        :readonly="location.country == 'International'"
         label="Zip Code"
         v-model="location.zip_code"
         outlined
@@ -72,6 +75,10 @@ export default {
       if (countryObj) {
         // Set the states array from the found country object
         this.states = countryObj.states || [];
+        this.location.state = null;
+        this.location.city = null;
+        this.location.zip_code = null;
+
       } else {
         // If country not found, clear the states array and handle error
         this.states = [];

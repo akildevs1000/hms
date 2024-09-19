@@ -37,7 +37,7 @@
                 <div style="display: flex">
                   <v-radio
                     dense
-                    label="Direct Price Reduction"
+                    label="Direct Price"
                     value="direct"
                   ></v-radio>
                   <div style="width: 70px" class="ml-5 pa-1">

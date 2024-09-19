@@ -13,7 +13,8 @@
       }
     </style>
     <table class="simple-table mt-0">
-      <thead>
+      <TableHeader :cols="headers" />
+      <!-- <thead>
         <tr>
           <td class="blue--text">No</td>
           <td class="blue--text">Date</td>
@@ -25,11 +26,10 @@
           <td class="blue--text">Extra Bed</td>
           <td class="blue--text">Early Checkin</td>
           <td class="blue--text">Late Checkout</td>
-          <!-- <td class="blue--text text-right">Price</td> -->
           <td class="blue--text text-right">Total</td>
           <td class="blue--text text-right"></td>
         </tr>
-      </thead>
+      </thead> -->
 
       <tbody>
         <tr
@@ -37,45 +37,68 @@
           v-for="(item, index) in orderRooms"
           :key="index"
         >
-          <td>{{ ++index || "---" }}</td>
           <td>
-            {{ $dateFormat.dmy(item.date) || "---" }} <br />
-            {{ item.day || "---" }}
+            <small>{{ ++index || "---" }}</small>
           </td>
           <td>
-            {{ item.room_no || "---" }} <br />{{ item.room_type || "---" }}
+            <small>{{ $dateFormat.dmy(item.date) || "---" }}</small> <br />
+            <small>{{ item.day || "---" }}</small>
           </td>
-          <td>{{ item.tariff }}</td>
-          <td>{{ item.no_of_adult }}</td>
-          <td>{{ item.no_of_child }}</td>
           <td>
-            {{
-              item?.foodplan?.title +
-                " (" +
-                item?.foodplan?.unit_price +
-                ") " || "---"
-            }}
+            <small>{{ item.room_no || "---" }}</small> <br /><small>{{
+              item.room_type || "---"
+            }}</small>
           </td>
-          <td class="text-right">
-            {{ item.bed_amount || "---" }}
+          <td>
+            <small>{{ item.tariff }}</small>
           </td>
-          <td class="text-right">
-            {{ item.early_check_in || "---" }}
+          <td>
+            <small>{{ item.no_of_adult }}</small>
           </td>
-          <td class="text-right">
-            {{ item.late_check_out || "---" }}
+          <td>
+            <small>{{ item.no_of_child }}</small>
           </td>
-          <!-- <td class="text-right">
-            {{ $utils.currency_format(item.price) || "---" }}
-          </td> -->
+          <td>
+            <small>{{ item?.foodplan?.title || "---" }}</small>
+          </td>
+          <template v-if="booking.booking_type == 'hall'">
+            <td>
+              <small>{{
+                $utils.currency_format(
+                  parseFloat(item.extra_booking_hours_charges) +
+                    parseFloat(item.cleaning) +
+                    parseFloat(item.electricity) +
+                    parseFloat(item.generator) +
+                    parseFloat(item.audio) +
+                    parseFloat(item.projector)
+                )
+              }}</small>
+            </td>
+          </template>
+          <template v-else>
+            <td>
+              <small>{{ item.extra_bed_qty || "---" }}</small>
+            </td>
+            <td>
+              <small>{{ item.early_check_in ? "Yes" : "No" }}</small>
+            </td>
+            <td>
+              <small>{{ item.late_check_out ? "Yes" : "No" }}</small>
+            </td>
+          </template>
+
           <td class="text-right">
-            {{ $utils.currency_format(item.total) || "---" }}
+            <small>{{ $utils.currency_format(item.total) || "---" }}</small>
           </td>
           <td class="blue--text text-right">
-            <CustomerViewBookingHall v-if="booking.booking_type == 'hall'" :booking="booking" :item="item" />
+            <small>
+              <CustomerViewBookingHall
+                v-if="booking.booking_type == 'hall'"
+                :booking="booking"
+                :item="item" />
 
-            <CustomerViewBookingRoom v-else :booking="booking" :item="item" />
-
+              <CustomerViewBookingRoom v-else :booking="booking" :item="item"
+            /></small>
           </td>
         </tr>
       </tbody>
@@ -85,5 +108,39 @@
 <script>
 export default {
   props: ["orderRooms", "booking"],
+  data: () => ({
+    headers: [],
+  }),
+  created() {
+    if (this.booking.booking_type == "hall") {
+      this.headers = [
+        `No`,
+        `Date`,
+        `Room`,
+        `Tariff`,
+        `Adults`,
+        `Child`,
+        `Meal`,
+        `Extras `,
+        `Total`,
+        ``,
+      ];
+    } else {
+      this.headers = [
+        `No`,
+        `Date`,
+        `Room`,
+        `Tariff`,
+        `Adults`,
+        `Child`,
+        `Meal`,
+        `Extra Bed`,
+        `Early Checkin`,
+        `Late Checkout`,
+        `Total`,
+        ``,
+      ];
+    }
+  },
 };
 </script>

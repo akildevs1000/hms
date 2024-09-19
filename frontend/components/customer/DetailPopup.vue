@@ -21,9 +21,7 @@
     <v-card>
       <v-row no-gutter class="pa-0 grey lighten-3">
         <v-col cols="12" class="text-right">
-          <v-icon color="primary" @click="PostingDialog = false"
-            >mdi-close-circle</v-icon
-          >
+          <AssetsButtonClose @close="PostingDialog = false" />
         </v-col>
       </v-row>
       <v-card-text class="pa-3">
@@ -55,7 +53,19 @@
       <v-card-text>
         <v-container class="pa-3">
           <table class="simple-table">
-            <thead>
+            <TableHeader
+              :cols="[
+                `#`,
+                `Category`,
+                `Item Description`,
+                `Qty`,
+                `Unit`,
+                `Sub Total`,
+                `Tax`,
+                `Total`,
+              ]"
+            />
+            <!-- <thead>
               <tr>
                 <td class="blue--text">#</td>
                 <td class="blue--text text-left">Category</td>
@@ -66,7 +76,7 @@
                 <td class="blue--text">Tax</td>
                 <td class="blue--text">Total</td>
               </tr>
-            </thead>
+            </thead> -->
             <tbody>
               <tr v-for="(posting, index) in fitleredItems" :key="index">
                 <td>{{ index + 1 }}</td>

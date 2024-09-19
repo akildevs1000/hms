@@ -13,7 +13,21 @@
       }
     </style>
     <table class="simple-table mt-0">
-      <thead>
+      <TableHeader :cols="[
+        `No`,
+        `Bill`,
+        `Date`,
+        `Room Type`,
+        `Room`,
+        `Item`,
+        `QTY`,
+        `Amount`,
+        `Sgst`,
+        `Cgst`,
+        `Total`,
+        ``,
+      ]" />
+      <!-- <thead>
         <tr class="table-header-text">
           <td class="blue--text">No</td>
           <td class="blue--text">Bill</td>
@@ -27,37 +41,37 @@
           <td class="blue--text text-right">Cgst</td>
           <td class="blue--text text-right">Total</td>
           <td class="blue--text text-right"></td>
-        </tr>
-      </thead>
+        </tr> 
+      </thead>-->
       <tbody>
         <tr
           style="font-size: 13px"
           v-for="(item, postingIndex) in postings"
           :key="postingIndex"
         >
-          <td>{{ ++postingIndex }}</td>
-          <td>{{ item.bill_no || "---" }}</td>
-          <td>{{ item.posting_date || "---" }}</td>
+          <td><small>{{ ++postingIndex }}</small></td>
+          <td><small>{{ item.bill_no || "---" }}</small></td>
+          <td><small>{{ item.posting_date || "---" }}</small></td>
           <td>
-            {{
+           <small> {{
               (item.room && item.room.room_type && item.room.room_type.name) ||
               "---"
-            }}
+            }}</small>
           </td>
-          <td>{{ (item.room && item.room.room_no) || "---" }}</td>
-          <td>{{ item.item || "---" }}</td>
-          <td>{{ item.qty || "---" }}</td>
+          <td><small>{{ (item.room && item.room.room_no) || "---" }}</small></td>
+          <td><small>{{ item.item || "---" }}</small></td>
+          <td><small>{{ item.qty || "---" }}</small></td>
           <td class="text-right">
-            {{ $utils.currency_format(item.single_amt) || "---" }}
-          </td>
-          <td class="text-right">
-            {{ $utils.currency_format(item.sgst) || "---" }}
+            <small>{{ $utils.currency_format(item.single_amt) || "---" }}</small>
           </td>
           <td class="text-right">
-            {{ $utils.currency_format(item.cgst) || "---" }}
+           <small> {{ $utils.currency_format(item.sgst) || "---" }}</small>
           </td>
           <td class="text-right">
-            {{ $utils.currency_format(item.amount_with_tax) || "---" }}
+            <small>{{ $utils.currency_format(item.cgst) || "---" }}</small>
+          </td>
+          <td class="text-right">
+            <small>{{ $utils.currency_format(item.amount_with_tax) || "---" }}</small>
           </td>
           <td class="text-center">
             <CustomerDetailPopup

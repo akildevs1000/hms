@@ -162,28 +162,29 @@
                             </v-btn>
                           </template>
 
-                          <v-card>
-                            <v-list>
+                          <v-list dense>
+                            <v-list-item-group>
                               <v-list-item>
-                                <RoomDetails
-                                  :key="roomDetailsCompKey"
-                                  :room_type="item.room_type"
-                                  :selectedRooms="selectedRooms"
-                                />
+                                <v-list-item-content>
+                                  <v-list-item-title>
+                                    <RoomDetails :item="item" :booking="room" />
+                                  </v-list-item-title>
+                                </v-list-item-content>
                               </v-list-item>
-                              <!-- <v-list-item>
-                              <RoomEditDialog
-                                label="Edit"
-                                :options="room"
-                                @tableData="handleTableData"
-                              />
-                            </v-list-item> -->
                               <v-list-item @click="deleteItem(index, item)">
-                                <v-icon small color="red">mdi-close</v-icon
-                                ><small class="ml-2">Delete</small>
+                                <v-list-item-content>
+                                  <v-list-item-title
+                                    ><v-icon x-small color="red"
+                                      >mdi-close</v-icon
+                                    >
+                                    <small style="font-size: 11px"
+                                      >Delete</small
+                                    ></v-list-item-title
+                                  >
+                                </v-list-item-content>
                               </v-list-item>
-                            </v-list>
-                          </v-card>
+                            </v-list-item-group>
+                          </v-list>
                         </v-menu>
                       </td>
                     </tr>
@@ -520,46 +521,13 @@ export default {
     },
 
     store() {
-      this.subLoad = true;
-      if (this.selectedRooms.length == 0) {
-        this.$swal("Missing!", "Atleast select one room", "error");
-        this.subLoad = false;
-        return;
-      }
-
-      let rooms = this.selectedRooms.map((e) => e.room_no);
-      this.room.rooms = rooms.toString();
-      let payload = {
-        ...this.room,
-        ...this.customer,
-      };
-      this.$axios
-        .post("/booking_validate1", payload)
-        .then(({ data }) => {
-          this.loading = false;
-          if (!data.status) {
-            this.$swal(
-              "No reservation created!",
-              "Some fields are missing or invalid",
-              "error"
-            );
-            this.errors = data.errors;
-            this.subLoad = false;
-          } else {
-            this.errors = [];
-            this.store_booking();
-          }
-        })
-        .catch((e) => console.log(e));
-    },
-
-    store_booking() {
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
         selectedRooms: this.selectedRooms,
         ...this.customer,
         user_id: this.$auth.user.id,
+        group_name: "yes",
       };
 
       this.subLoad = false;

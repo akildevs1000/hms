@@ -104,85 +104,96 @@
               <table class="simple-table">
                 <tbody>
                   <tr>
-                    <td class="text-left">Hall Rent</td>
+                    <td class="text-left"><small>Hall Rent</small></td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.total) }}
+                      <small>{{ $utils.currency_format(item.total) }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Meal</td>
+                    <td class="text-left"><small>Meal</small></td>
                     <td class="text-right">
-                      {{
-                        item?.foodplan?.title +
-                          " (" +
-                          $utils.currency_format(item?.foodplan?.unit_price) +
-                          ") " || "---"
-                      }}
+                      <small>{{
+                        $utils.currency_format(item.food_plan_price)
+                      }}</small>
                     </td>
                   </tr>
 
                   <tr>
-                    <td class="text-left">Extra hours</td>
+                    <td class="text-left"><small>Extra hours</small></td>
                     <td class="text-right">
-                      {{
+                      <small>{{
                         $utils.currency_format(
                           item.extra_booking_hours_charges
                         ) || "---"
-                      }}
+                      }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Cleaning</td>
+                    <td class="text-left"><small>Cleaning</small></td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.cleaning) || "---" }}
+                      <small>{{
+                        $utils.currency_format(item.cleaning) || "---"
+                      }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Electricity</td>
+                    <td class="text-left"><small>Electricity</small></td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.electricity) || "---" }}
+                      <small>{{
+                        $utils.currency_format(item.electricity) || "---"
+                      }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Generator</td>
+                    <td class="text-left"><small>Generator</small></td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.generator) || "---" }}
+                      <small>{{
+                        $utils.currency_format(item.generator) || "---"
+                      }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Projector</td>
+                    <td class="text-left"><small>Projector</small></td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.projector) || "---" }}
+                      <small>{{
+                        $utils.currency_format(item.projector) || "---"
+                      }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Audio</td>
+                    <td class="text-left"><small>Audio</small></td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.audio) || "---" }}
+                      <small>{{
+                        $utils.currency_format(item.audio) || "---"
+                      }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Discount</td>
+                    <td class="text-left"><small>Discount</small></td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.room_discount) || "---" }}
+                      <small>{{
+                        $utils.currency_format(item.room_discount) || "---"
+                      }}</small>
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Add</td>
+                    <td class="text-left"><small>Add</small></td>
                     <td class="text-right">
-                      {{
-                        $utils.currency_format(item.room_extra_amount || 0) ||
-                        "---"
-                      }}
+                      <small>
+                        {{
+                          $utils.currency_format(item.room_extra_amount || 0) ||
+                          "---"
+                        }}</small
+                      >
                     </td>
                   </tr>
                 </tbody>
               </table>
             </v-col>
             <v-col cols="5" class="text-center">
-              <v-card outlined style="height: 320px">
-                <v-container>
-                  <div class="blue--text mt-5" style="font-size: 18px">
+              <v-card outlined style="height: 340px">
+                <v-card-text>
+                  <div class="blue--text mt-12" style="font-size: 18px">
                     {{ $dateFormat.dmy(item.date) || "---" }}
                   </div>
                   <div class="" style="font-size: 14px">
@@ -192,14 +203,14 @@
                   <div class="mt-7" style="font-size: 14px">
                     {{ item.tariff || "---" }}
                   </div>
-                </v-container>
+                </v-card-text>
 
-                <v-container class="pb-8" style="padding-top: 70px">
+                <v-card-text class="pb-8" style="padding-top: 70px">
                   <div class="mt-2" style="font-size: 14px">Total Rs</div>
                   <div class="blue--text" style="font-size: 18px">
                     {{ $utils.currency_format(booking.total_price) || "---" }}
                   </div>
-                </v-container>
+                </v-card-text>
               </v-card>
             </v-col>
           </v-row>
@@ -218,8 +229,6 @@ export default {
     };
   },
   computed: {},
-  methods: {
-    
-  },
+  methods: {},
 };
 </script>

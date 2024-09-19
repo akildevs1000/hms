@@ -172,17 +172,14 @@
               </v-menu>
             </v-col>
             <v-col md="4" cols="12" sm="12">
-              <v-autocomplete
+              <v-text-field
                 v-model="customer.nationality"
-                :items="countries"
                 label="Nationality"
-                item-text="name"
-                item-value="name"
                 dense
                 outlined
                 hide-details
                 :rules="[(v) => !!v || 'Nationality is required']"
-              ></v-autocomplete>
+              ></v-text-field>
             </v-col>
             <v-col md="4">
               <v-autocomplete
@@ -225,6 +222,7 @@
       </v-col>
       <v-col md="3" cols="12" sm="12">
         <v-autocomplete
+          :readonly="customer.country == 'International'"
           :items="states"
           item-text="name"
           item-value="name"
@@ -238,6 +236,7 @@
       </v-col>
       <v-col md="3" cols="12" sm="12">
         <v-autocomplete
+          :readonly="customer.country == 'International'"
           :items="cities"
           label="City"
           v-model="customer.city"
@@ -248,6 +247,7 @@
       </v-col>
       <v-col md="3" cols="12" sm="12">
         <v-text-field
+          :readonly="customer.country == 'International'"
           label="Zip Code"
           v-model="customer.zip_code"
           outlined
@@ -410,6 +410,9 @@ export default {
       if (countryObj) {
         // Set the states array from the found country object
         this.states = countryObj.states || [];
+        this.customer.state = null;
+        this.customer.city = null;
+        this.customer.zip_code = null;
       } else {
         // If country not found, clear the states array and handle error
         this.states = [];

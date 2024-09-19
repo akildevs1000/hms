@@ -1,259 +1,199 @@
 <template>
-  <v-dialog v-model="RoomDetailDialog" max-width="460">
+  <v-dialog v-model="PostingDialog" width="450">
+    <style scoped>
+      .simple-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .simple-table td {
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        padding: 5px;
+        text-align: center;
+      }
+    </style>
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
-        <v-icon color="primary" small> mdi-eye </v-icon><small class="ml-2">View</small>
-      </span>
-    </template>
-    <v-card>
-      <v-toolbar flat class="primary white--text" dense>
-        Rooms {{room_type}} <v-spacer></v-spacer
-        ><v-icon @click="RoomDetailDialog = false" color="white"
-          >mdi-close</v-icon
-        ></v-toolbar
+        <v-icon x-small color="primary">mdi-eye</v-icon>
+        <small style="font-size: 11px">View</small></span
       >
-      <v-container>
-        <v-tabs show-arrows>
-          <v-tab v-for="(item, index) in filteredSelectedRooms" :key="index">{{
-            item.room_no
-          }}</v-tab>
-          <v-tab-item v-for="(item, index) in filteredSelectedRooms" :key="index">
-           <v-container>
-            <div
-              class="px-5 pt-2 d-flex justify-space-between"
-              style="font-size: 16px; color: #aaaaaa"
-            >
-              <span> Room - {{ item.room_no }}</span>
-              <span> {{ item.room_type }}</span>
-            </div>
-            <v-divider></v-divider>
-            <section class="payment-section">
-              <div class="input-group input-group-sm px-5 pt-2">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Amount
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.price) }}
-                </div>
-              </div>
+    </template>
 
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Meal
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.food_plan_price) }}
-                </div>
-              </div>
+    <v-card>
+      <v-toolbar class="grey lighten-3 primary--text" flat dense>
+        <div style="font-size: 18px">View Room</div>
+        <v-spacer></v-spacer
+        ><AssetsButtonClose @close="PostingDialog = false" />
+      </v-toolbar>
 
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Early Checkin
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.early_check_in) }}
-                </div>
-              </div>
+      <v-card-text class="pa-3">
+        <v-container>
+          <v-row class="">
+            <v-col cols="4">
+              <v-text-field
+                style="font-size: 13px;height: 10px;"
+                v-model="item.room_type"
+                readonly
+                label="Room Type"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="item.room_no"
+                readonly
+                label="Room Number"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="2">
+              <v-text-field
+                v-model="item.no_of_adult"
+                readonly
+                label="Adult"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="2">
+              <v-text-field
+                v-model="item.no_of_child"
+                readonly
+                label="Child"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
 
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Late Checkout
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.late_check_out) }}
-                </div>
-              </div>
+            <v-col cols="4">
+              <v-text-field
+                v-model="formattedCheckIn"
+                readonly
+                label="Check In"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="formattedCheckOut"
+                readonly
+                label="Check Out"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="booking.total_days"
+                readonly
+                label="Nights"
+                dense
+                outlined
+                hide-details
+              ></v-text-field>
+            </v-col>
 
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Discount
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.room_discount) }}
-                </div>
-              </div>
+            <v-col cols="7">
+              <table class="simple-table">
+                <tbody>
+                  <tr>
+                    <td class="text-left"><small>Room</small></td>
+                    <td class="text-right">
+                      <small>{{ $utils.currency_format(item.price) }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Meal</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.food_plan_price)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Extra Bed</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.bed_amount)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Early Check In</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.early_check_in)
+                      }}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><small>Late Check Out</small></td>
+                    <td class="text-right">
+                      <small>{{
+                        $utils.currency_format(item.late_check_out)
+                      }}</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </v-col>
+            <v-col cols="5" class="text-center">
+              <v-card outlined>
+                <v-card-text>
+                  <div class="blue--text" style="font-size: 18px">
+                    {{ $dateFormat.dmy(item.date) || "---" }}
+                  </div>
+                  <div style="font-size: 14px">
+                    {{ item.day || "---" }}
+                  </div>
 
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Extra Amount
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.room_extra_amount) }}
-                </div>
-              </div>
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  After Dis.
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.after_discount) }}
-                </div>
-              </div>
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Grand Total
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ convert_decimal(item.total_price) }}
-                </div>
-              </div>
+                  <div class="py-4" style="font-size: 14px">
+                    {{ item.day_type || "---" }}
+                  </div>
 
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Discount Reason
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ item.discount_reason || "---" }}
-                </div>
-              </div>
-
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Amount Reason
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ item.extra_amount_reason || "---" }}
-                </div>
-              </div>
-
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Adult
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ item.no_of_adult }}
-                </div>
-              </div>
-
-              <div class="input-group input-group-sm px-5">
-                <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Child
-                </span>
-                <div
-                  type="text"
-                  class="form-control"
-                  aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-sm"
-                  disabled
-                >
-                  {{ item.no_of_child }}
-                </div>
-              </div>
-            </section>
-           </v-container>
-          </v-tab-item>
-        </v-tabs>
-      </v-container>
+                  <div style="font-size: 14px">Total Rs</div>
+                  <div class="blue--text" style="font-size: 18px">
+                    {{ $utils.currency_format(booking.total_price) || "---" }}
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 <script>
-const today = new Date();
-const tomorrow = new Date(today);
-tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["label", "selectedRooms","room_type"],
-  data: () => ({
-    RoomDetailDialog: false,
-    filteredSelectedRooms:[],
-  }),
-  created(){
-    this.filteredSelectedRooms = this.selectedRooms.filter(e => e.room_type == this.room_type);
-  },
-  methods: {
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00";
-      }
-    },
+  props: ["item", "booking"],
+  data() {
+    return {
+      PostingDialog: false,
+      items: [],
+    };
   },
   computed: {
-    formattedCheckinDate() {
-      if (!this.temp.check_in) return "";
-
-      const date = new Date(this.temp.check_in);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day} 12:00`;
+    formattedCheckIn() {
+      return this.booking.check_in + " 12:00";
     },
-    formattedCheckOutDate() {
-      if (!this.temp.check_out) return "";
-
-      const date = new Date(this.temp.check_out);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day} 11:00`;
+    formattedCheckOut() {
+      return this.booking.check_in + " 11:00";
     },
+  },
+  methods: {
+    // getTotalAmount() {
+    //   return this.items.reduce((total, num) => total + num.amount_with_tax, 0);
+    // },
   },
 };
 </script>

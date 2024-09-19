@@ -18,72 +18,101 @@
       </v-hover>
     </template>
     <v-card>
-      <v-toolbar flat class="primary white--text" dense>
-        Group Booking <v-spacer></v-spacer
-        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
-      >
+      <v-toolbar flat class="grey lighten-3" dense>
+        Group Booking <v-spacer></v-spacer><AssetsButtonClose @close="close"
+      /></v-toolbar>
       <v-container>
         <v-row>
-          <v-col cols="12">
-            <v-menu
-              v-model="checkin_menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  label="Check In"
-                  append-icon="mdi-calendar"
-                  outlined
-                  dense
-                  hide-details
-                  v-model="formattedCheckinDate"
-                  persistent-hint
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                :min="new Date().toISOString().substr(0, 10)"
-                v-model="temp.check_in"
-                no-title
-                @input="addOneDay(temp.check_in)"
-              ></v-date-picker>
-            </v-menu>
+          <v-col cols="8">
+            <v-row>
+              <v-col cols="12">
+                <v-menu
+                  v-model="checkin_menu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      label="Check In"
+                      append-icon="mdi-calendar"
+                      outlined
+                      dense
+                      hide-details
+                      v-model="formattedCheckinDate"
+                      persistent-hint
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    :min="new Date().toISOString().substr(0, 10)"
+                    v-model="temp.check_in"
+                    no-title
+                    @input="addOneDay(temp.check_in)"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12">
+                <v-menu
+                  v-model="checkout_menu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      label="Check Out"
+                      append-icon="mdi-calendar"
+                      outlined
+                      dense
+                      hide-details
+                      v-model="formattedCheckOutDate"
+                      persistent-hint
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="temp.check_out"
+                    no-title
+                    @input="checkout_menu = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+            </v-row>
           </v-col>
-          <v-col cols="12">
-            <v-menu
-              v-model="checkout_menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="auto"
+          <v-col cols="4">
+            <fieldset
+              style="
+                margin-top: -10px;
+                overflow: hidden;
+                height: 115px;
+                border-radius: 14px;
+                padding-top: 25px;
+                padding-left: 8px;
+                border: 1px solid grey;
+                position: relative;
+              "
             >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  label="Check Out"
-                  append-icon="mdi-calendar"
-                  outlined
-                  dense
-                  hide-details
-                  v-model="formattedCheckOutDate"
-                  persistent-hint
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="temp.check_out"
-                no-title
-                @input="checkout_menu = false"
-              ></v-date-picker>
-            </v-menu>
+              <legend>Nights</legend>
+              <div
+                style="
+                  position: absolute;
+                  left: 43%;
+                  width: 100%;
+                  margin: 0 auto;
+                "
+              >
+                {{ getDays() }}
+              </div>
+            </fieldset>
           </v-col>
           <v-col cols="12">
             <v-autocomplete
@@ -105,17 +134,25 @@
             ></v-autocomplete>
           </v-col>
           <v-col cols="9">
+            <!-- <pre>{{myArray}}</pre> -->
             <v-autocomplete
               multiple
               v-model="myArray"
               hide-details
-              :items="availableRooms"
+              :items="[
+                {
+                  id: -1,
+                  room_no: selectAllActive ? `Deselect All` : `Select All`,
+                },
+                ...availableRooms,
+              ]"
               item-value="id"
               item-text="room_no"
               label="Select Room"
               dense
               outlined
               return-object
+              @change="onRoomSelection"
             >
             </v-autocomplete>
           </v-col>
@@ -156,6 +193,29 @@
               @keyup="set_additional_charges"
             ></v-text-field>
           </v-col>
+
+          <v-col cols="12">
+            <v-row justify="center">
+              <v-col cols="6" class="d-flex justify-center">
+                <v-checkbox
+                  v-model="is_early_check_in"
+                  @change="set_additional_charges"
+                  label="Early Check In"
+                  hide-details
+                  dense
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="6" class="d-flex justify-center">
+                <v-checkbox
+                  v-model="is_late_check_out"
+                  @change="set_additional_charges"
+                  label="Late Check Out"
+                  hide-details
+                  dense
+                ></v-checkbox>
+              </v-col>
+            </v-row>
+          </v-col>
           <v-col cols="12">
             <v-autocomplete
               label="Food Plan"
@@ -171,55 +231,10 @@
               "
             ></v-autocomplete>
           </v-col>
-          <v-col cols="6">
-            <v-checkbox
-              v-model="is_early_check_in"
-              label="Early Check In"
-              :hide-details="true"
-              dense
-              @change="set_additional_charges"
-            >
-            </v-checkbox>
-          </v-col>
-          <v-col cols="6"
-            ><v-checkbox
-              v-model="is_late_check_out"
-              label="Late Check Out"
-              :hide-details="true"
-              dense
-              @change="set_additional_charges"
-            >
-            </v-checkbox>
-          </v-col>
-
           <v-col cols="12" class="text-center">
-            <v-hover v-slot:default="{ hover, props }">
-              <span v-bind="props">
-                <v-btn
-                  small
-                  :outlined="!hover"
-                  rounded
-                  color="red"
-                  class="white--text"
-                  @click="RoomDrawer = false"
-                  >Cancel</v-btn
-                >
-              </span>
-            </v-hover>
+            <AssetsButtonCancel @close="RoomDrawer = false" />
             &nbsp; &nbsp;
-            <v-hover v-slot:default="{ hover, props }">
-              <span v-bind="props">
-                <v-btn
-                  small
-                  :outlined="!hover"
-                  rounded
-                  color="green"
-                  class="white--text"
-                  @click="add_multiple_rooms"
-                  >Submit</v-btn
-                >
-              </span>
-            </v-hover>
+            <AssetsButtonSubmit @click="add_multiple_rooms" />
           </v-col>
         </v-row>
       </v-container>
@@ -291,6 +306,7 @@ export default {
         discount_reason: "",
         priceList: [],
       },
+      selectAllActive: false,
     };
   },
   async created() {
@@ -322,6 +338,26 @@ export default {
     },
   },
   methods: {
+    onRoomSelection(selectedRooms) {
+      const selectAllIndex = selectedRooms.findIndex((room) => room.id === -1);
+
+      if (selectAllIndex !== -1) {
+        // If "Select All" is selected, toggle between selecting and deselecting all rooms
+        if (this.selectAllActive) {
+          // Deselect all rooms
+          this.myArray = [];
+        } else {
+          // Select all rooms
+          this.myArray = [...this.availableRooms];
+        }
+        this.selectAllActive = !this.selectAllActive; // Toggle selectAllActive state
+      } else {
+        // Update myArray with the actual selected rooms excluding "Select All"
+        this.myArray = selectedRooms;
+        this.selectAllActive =
+          selectedRooms.length === this.availableRooms.length;
+      }
+    },
     close() {
       this.temp = {
         food_plan_price: 0,

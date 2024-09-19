@@ -372,11 +372,9 @@
   </div>
 </template>
 <script>
-import History from "../../components/customer/History.vue";
 import ImagePreview from "../../components/images/ImagePreview.vue";
 export default {
   components: {
-    History,
     ImagePreview,
   },
   inject: {

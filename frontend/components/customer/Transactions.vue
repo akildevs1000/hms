@@ -12,20 +12,34 @@
         text-align: center;
       }
     </style>
+
     <table class="simple-table mt-0">
-      <thead>
+      <TableHeader
+        :cols="[
+          `#`,
+          `Staff`,
+          `Date`,
+          `payment Mode`,
+          `Reference`,
+          `Description`,
+          `Debit`,
+          `Credit`,
+          `Balance`,
+        ]"
+      />
+      <!-- <thead>
         <tr class="table-header-text">
-          <td class="blue--text">#</td>
-          <td class="blue--text">Staff</td>
-          <td class="blue--text">Date</td>
-          <td class="blue--text">payment Mode</td>
-          <td class="blue--text">Reference</td>
-          <td class="blue--text">Description</td>
-          <td class="blue--text">Debit</td>
-          <td class="blue--text">Credit</td>
-          <td class="blue--text">Balance</td>
+          <td class="primary--text"><small>#</small></td>
+          <td class="primary--text"><small>Staff</small></td>
+          <td class="primary--text"><small>Date</small></td>
+          <td class="primary--text"><small>payment Mode</small></td>
+          <td class="primary--text"><small>Reference</small></td>
+          <td class="primary--text"><small>Description</small></td>
+          <td class="primary--text"><small>Debit</small></td>
+          <td class="primary--text"><small>Credit</small></td>
+          <td class="primary--text"><small>Balance</small></td>
         </tr>
-      </thead>
+      </thead> -->
       <tbody>
         <tr
           v-for="(item, index) in transactions"
@@ -34,45 +48,56 @@
           class="no-bg"
         >
           <td>
-            <b>{{ index + 1 }}</b>
+            <small>{{ index + 1 }}</small>
           </td>
           <td>
-            {{ item.user?.name || "---" }}
-            {{ item.user?.last_name }}
+            <small>{{ item.user?.name || "---" }}</small>
+            <br />
+            <small>{{ item.user?.last_name }}</small>
           </td>
           <td>
-            {{ item.date || "---" }} <br />
-            {{ item.time || "---" }}
+            <small>{{ item.date || "---" }}</small> <br />
+            <small> {{ item.time || "---" }}</small>
           </td>
 
           <td>
-            {{ (item && item.payment_mode && item.payment_mode.name) || "---" }}
+            <small>{{
+              (item && item.payment_mode && item.payment_mode.name) || "---"
+            }}</small>
           </td>
-          <td>{{ item.reference_number || "---" }}</td>
-          <td>{{ item.desc || "---" }}</td>
+          <td>
+            <small>{{ item.reference_number || "---" }}</small>
+          </td>
+          <td>
+            <small>{{ item.desc || "---" }}</small>
+          </td>
           <td class="text-right">
-            {{
+            <small>{{
               item && item.debit == 0
                 ? "---"
                 : $utils.currency_format(item.debit)
-            }}
+            }}</small>
           </td>
           <td class="text-right">
-            {{
-              item && item.credit == 0
-                ? "---"
-                : $utils.currency_format(item.credit)
-            }}
+            <small>
+              {{
+                item && item.credit == 0
+                  ? "---"
+                  : $utils.currency_format(item.credit)
+              }}</small
+            >
           </td>
           <td class="text-right">
-            {{
-              item.balance == 0 ? "---" : $utils.currency_format(item.balance)
-            }}
+            <small>
+              {{
+                item.balance == 0 ? "---" : $utils.currency_format(item.balance)
+              }}</small
+            >
           </td>
         </tr>
         <tr style="font-size: 13px">
           <td colspan="8" class="text-right blue--text">Balance</td>
-          <td class="text-right blue--text">
+          <td class="text-right red--text">
             {{ $utils.currency_format(totalTransactionAmount) }}
           </td>
         </tr>

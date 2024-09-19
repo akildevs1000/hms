@@ -887,7 +887,7 @@ input[type="number"] {
 }
 
 .zoom-on-hover:hover {
-  transform: scale(1.5); /* Zoom in by 10% */
+  transform: scale(1.2); /* Zoom in by 10% */
 }
 
 .search-box .v-input__append-inner {

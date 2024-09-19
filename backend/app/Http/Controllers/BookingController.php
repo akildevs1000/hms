@@ -17,6 +17,7 @@ use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Models\SubCustomer;
 use App\Models\TaxSlabs;
 use App\Models\Template;
 use App\Models\Transaction;
@@ -742,6 +743,10 @@ class BookingController extends Controller
 
     public function check_in_room(Request $request)
     {
+
+
+
+
         try {
 
             // session(['isCheckoutSes' => true]);
@@ -750,6 +755,35 @@ class BookingController extends Controller
             $room_id = $request->room_id;
             $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
             $customer = Customer::find($booking->customer_id);
+
+            if ($request->filled('guest')) {
+                $validatedData = $request->validate([
+                    'guest.title' => 'required|string|max:10',
+                    'guest.first_name' => 'required|string|max:50',
+                    'guest.last_name' => 'required|string|max:50',
+                    'guest.contact_no' => 'required|string|max:15',
+                    'guest.whatsapp' => 'nullable|string|max:15',
+                    'guest.email' => 'required|max:100',
+                    'guest.dob' => 'required|date',
+                    'guest.nationality' => 'required|string|max:50',
+                    // 'guest.country' => 'required|string|max:50',
+                    // 'guest.state' => 'required|string|max:50',
+                    // 'guest.city' => 'required|string|max:50',
+                    // "address" => "required",
+                ]);
+
+                if ($validatedData) {
+
+                    $validatedData["guest"]["customer_id"]  = $booking->customer_id;
+                    // return $validatedData;
+                    SubCustomer::create($validatedData["guest"]);
+
+                }
+            }
+
+        //    return  $request->all();
+
+
             if ($request->discount > 0) {
                 $this->updateTransaction($booking, $request, 'discount', 'debit', -abs($request->discount));
                 $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();

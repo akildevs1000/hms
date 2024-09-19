@@ -162,28 +162,29 @@
                             </v-btn>
                           </template>
 
-                          <v-card>
-                            <v-list>
+                          <v-list dense>
+                            <v-list-item-group>
                               <v-list-item>
-                                <RoomDetails
-                                  :key="roomDetailsCompKey"
-                                  :room_type="item.room_type"
-                                  :selectedRooms="selectedRooms"
-                                />
+                                <v-list-item-content>
+                                  <v-list-item-title>
+                                    <RoomDetails :item="item" :booking="room" />
+                                  </v-list-item-title>
+                                </v-list-item-content>
                               </v-list-item>
-                              <!-- <v-list-item>
-                              <RoomEditDialog
-                                label="Edit"
-                                :options="room"
-                                @tableData="handleTableData"
-                              />
-                            </v-list-item> -->
                               <v-list-item @click="deleteItem(index, item)">
-                                <v-icon small color="red">mdi-close</v-icon
-                                ><small class="ml-2">Delete</small>
+                                <v-list-item-content>
+                                  <v-list-item-title
+                                    ><v-icon x-small color="red"
+                                      >mdi-close</v-icon
+                                    >
+                                    <small style="font-size: 11px"
+                                      >Delete</small
+                                    ></v-list-item-title
+                                  >
+                                </v-list-item-content>
                               </v-list-item>
-                            </v-list>
-                          </v-card>
+                            </v-list-item-group>
+                          </v-list>
                         </v-menu>
                       </td>
                     </tr>
