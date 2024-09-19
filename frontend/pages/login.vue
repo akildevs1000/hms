@@ -1,25 +1,5 @@
 <template>
   <v-app style="width: 100%">
-    <style scoped>
-      .background-container {
-        background-image: url("/login/login-bg2.png");
-        background-size: cover; /* Ensure the image covers the entire container */
-        background-position: center; /* Center the image */
-        background-repeat: no-repeat; /* Prevent the image from repeating */
-        height: 100vh; /* Set the height of the container */
-        width: 100%; /* Set the width of the container */
-      }
-      .responsive-padding {
-        width: 100%;
-        padding-top: 150px; /* Default padding */
-      }
-      @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
-        /* Adjust padding for iPads (both portrait and landscape) */
-        .responsive-padding {
-          padding-top: 250px; /* Custom padding for iPads */
-        }
-      }
-    </style>
     <div class="background-container">
       <v-row no-gutter>
         <v-col cols="8"></v-col>
@@ -289,3 +269,23 @@ export default {
   },
 };
 </script>
+<style scoped>
+.background-container {
+  background-image: url("../static/login/login-bg2.png");
+  background-size: cover; /* Ensure the image covers the entire container */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  height: 100vh; /* Set the height of the container */
+  width: 100%; /* Set the width of the container */
+}
+.responsive-padding {
+  width: 100%;
+  padding-top: 150px; /* Default padding */
+}
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+  /* Adjust padding for iPads (both portrait and landscape) */
+  .responsive-padding {
+    padding-top: 250px; /* Custom padding for iPads */
+  }
+}
+</style>
