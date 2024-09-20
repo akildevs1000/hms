@@ -216,31 +216,55 @@
       <!-- cancel room  -->
       <v-dialog v-model="cancelDialog" persistent max-width="500">
         <v-card>
-          <v-card-title class="text-h6">
-            Are you sure you want to cancel this
-          </v-card-title>
-          <v-container grid-list-xs>
-            <v-textarea
-              placeholder="Reason"
-              rows="3"
-              dense
-              outlined
-              v-model="reason"
-            ></v-textarea>
-          </v-container>
-          <v-card-actions>
-            <v-btn
-              class="primary"
-              small
-              :loading="cancelLoad"
-              @click="cancelItem"
-            >
-              Yes
-            </v-btn>
-            <v-btn class="error" small @click="cancelDialog = false">
-              Cancel
-            </v-btn>
-          </v-card-actions>
+          <v-alert dense class="grey lighten-3 primary--text">
+            <v-row>
+              <v-col>
+                <div style="font-size: 18px">Cancel Room</div>
+              </v-col>
+              <!-- <v-col class="text-center">
+                <div style="font-size: 18px">
+                  Reservation # {{ checkData.reservation_no }}
+                </div>
+              </v-col> -->
+              <v-col>
+                <div class="text-right">
+                  <AssetsButtonClose
+                    @close="
+                      () => {
+                        cancelDialog = false;
+                        reason = null;
+                      }
+                    "
+                  />
+                </div>
+              </v-col>
+            </v-row>
+          </v-alert>
+          <v-card-text>
+            <v-row no-gutter>
+              <v-col cols="12">
+                <v-textarea
+                  placeholder="Reason"
+                  rows="3"
+                  dense
+                  outlined
+                  v-model="reason"
+                  hide-details
+                ></v-textarea>
+              </v-col>
+              <v-col cols="12" class="text-center">
+                <AssetsButtonCancel
+                  @close="
+                    () => {
+                      cancelDialog = false;
+                      reason = null;
+                    }
+                  "
+                />
+                <AssetsButtonSubmit @click="cancelItem" />
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
       </v-dialog>
       <v-dialog v-model="cancelCheckInDialog" persistent max-width="500">
@@ -303,11 +327,11 @@
               >
             </v-list-item>
 
-            <template v-if="bookingStatus == 1">
+            <template v-if="bookingStatus == 1 && checkData && checkData.id">
               <v-list-item>
                 <v-list-item-title>
                   <BookingCheckIn
-                    :key="evenIid"
+                    :key="`${evenIid}1${checkData.id}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -322,7 +346,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingPayAdvance
-                    :key="evenIid"
+                    :key="`${evenIid}2${checkData.id}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -334,25 +358,34 @@
                 <v-list-item-title
                   ><BookingModifyRoom
                     v-if="true"
-                    :key="evenIid"
+                    :key="`${evenIid}3${checkData.id}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
-                  <BookingModifyRoom
+                  <BookingModifyHall
                     v-if="false"
-                    :key="evenIid"
+                    :key="`${evenIid}3${checkData.id}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                 </v-list-item-title>
               </v-list-item>
+              <v-list-item>
+                <v-list-item-title
+                  ><BookingSingle
+                    :key="`${evenIid}4${checkData.id}`"
+                    :BookingId="checkData.id"
+                /></v-list-item-title>
+              </v-list-item>
             </template>
 
-            <template v-else-if="bookingStatus == 2">
+            <template
+              v-else-if="bookingStatus == 2 && checkData && checkData.id"
+            >
               <v-list-item>
                 <v-list-item-title>
                   <BookingCheckOut
-                    :key="evenIid"
+                    :key="`${evenIid}1${checkData.id}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -362,7 +395,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingPosting
-                    :key="evenIid"
+                    :key="`${evenIid}2${checkData.id}`"
                     :BookingData="checkData"
                     :evenIid="evenIid"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -372,7 +405,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingPayAdvance
-                    :key="evenIid + 1"
+                    :key="`${evenIid}3${checkData.id}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -382,7 +415,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingViewPosting
-                    :key="evenIid + 2"
+                    :key="`${evenIid}4${checkData.id}`"
                     :evenIid="evenIid"
                     @close-dialog="closeCheckInAndOpenGRC"
                   ></BookingViewPosting>
@@ -392,20 +425,24 @@
                 <v-list-item-title
                   ><BookingModifyRoom
                     v-if="true"
-                    :key="evenIid"
+                    :key="`${evenIid}5${checkData.id}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                   <BookingModifyRoom
                     v-if="false"
-                    :key="evenIid"
+                    :key="`${evenIid}5${checkData.id}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item @click="viewBillingDialog">
-                <v-list-item-title>View Billing</v-list-item-title>
+              <v-list-item>
+                <v-list-item-title
+                  ><BookingSingle
+                    :key="`${evenIid}6${checkData.id}`"
+                    :BookingId="checkData.id"
+                /></v-list-item-title>
               </v-list-item>
               <v-list-item
                 @click="cancelCheckInDialog = true"
@@ -417,7 +454,9 @@
               </v-list-item>
             </template>
 
-            <template v-else-if="bookingStatus == 3">
+            <template
+              v-else-if="bookingStatus == 3 && checkData && checkData.id"
+            >
               <v-list-item @click="setAvailable">
                 <v-list-item-title>Make Available</v-list-item-title>
               </v-list-item>
@@ -1400,9 +1439,10 @@ export default {
           ...data.members,
         };
         this.isIndex = true;
-        setTimeout(() => {
-          this.isPageLoad = true;
-        }, 100);
+        this.isPageLoad = true;
+        // setTimeout(() => {
+
+        // }, 100);
         return false;
       } else {
         let payload = {
@@ -1443,9 +1483,10 @@ export default {
             ...data.members,
           };
           this.isIndex = true;
-          setTimeout(() => {
-            this.isPageLoad = true;
-          }, 100);
+          this.isPageLoad = true;
+          // setTimeout(() => {
+
+          // }, 100);
         });
       }
     },
@@ -1457,11 +1498,6 @@ export default {
     dblclick() {
       this.isDbCLick = true;
       this.get_data();
-    },
-
-    viewBillingDialog() {
-      let id = this.bookingId;
-      this.$router.push(`/customer/details/${id}`);
     },
 
     get_event_by_db_click() {
@@ -1629,3 +1665,24 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.roombox1 {
+  float: left;
+  width: 55px;
+  height: 55px;
+  margin: 5px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.roombox {
+  /* width: 50px;
+  flex: 0 0 50px;
+  margin: 5px; */
+
+  width: 55px;
+  height: 55px;
+  font-size: 11px !important;
+  line-height: 14px !important;
+}
+</style>

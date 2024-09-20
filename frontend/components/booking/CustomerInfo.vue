@@ -74,6 +74,7 @@
             </v-col>
             <v-col md="3" cols="12" sm="12">
               <v-text-field
+                class="custom-text-field"
                 label="First Name *"
                 dense
                 outlined
@@ -258,7 +259,8 @@
     </v-row>
     <v-row>
       <v-col md="12">
-        <v-textarea
+        <v-textarea 
+          class="custom-text-field"
           rows="3"
           label="Customer Request"
           v-model="booking.request"

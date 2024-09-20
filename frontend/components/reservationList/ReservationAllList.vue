@@ -5,7 +5,7 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-row>
+    <!-- <v-row>
       <v-col col="3" xs="12" sm="12" md="2" cols="12">
         <v-card style="background-color: #3366cc" dark>
           <v-card-text>
@@ -14,7 +14,48 @@
           </v-card-text>
         </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
+
+    <v-container fluid>
+      <v-row class="">
+        <v-col v-for="(item, index) in stats" :key="index" cols="12" md="2">
+          <v-card rounded="lg" outlined class="pa-4">
+            <v-row no-gutter>
+              <v-col cols="2">
+                <v-icon size="40" color="black">{{ item.icon }}</v-icon>
+              </v-col>
+              <v-col class="text-center">
+                <h1>{{ item.count }}</h1>
+                <span>{{ item.label }}</span>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="8"></v-col>
+        <v-col cols="4" class="text-right">
+          <v-row>
+            <v-col>
+              <v-text-field
+                class=""
+                label="Search..."
+                dense
+                outlined
+                flat
+                append-icon="mdi-magnify"
+                @input="searchIt"
+                v-model="search"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <FilterDateRange @filter-attr="filterAttr" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <v-dialog v-model="payingDialog" persistent max-width="1000px">
       <v-card>
@@ -33,88 +74,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-
-    <v-row>
-      <v-col xs="12" sm="12" md="2" cols="12">
-        <v-text-field
-          class=""
-          label="Search..."
-          dense
-          outlined
-          flat
-          append-icon="mdi-magnify"
-          @input="searchIt"
-          v-model="search"
-          hide-details
-        ></v-text-field>
-      </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          outlined
-          v-model="type"
-          :items="types"
-          dense
-          placeholder="Type"
-          flat
-          :hide-details="true"
-          @change="getDataFromApi(endpoint)"
-        ></v-select>
-      </v-col>
-
-      <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          v-model="source"
-          :items="type == 'Online' ? sources : agentList"
-          item-value="name"
-          item-text="name"
-          placeholder="Sources"
-          @change="getDataFromApi(endpoint)"
-          dense
-          outlined
-          :hide-details="true"
-        ></v-select>
-      </v-col>
-      <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select
-          v-model="guest_mode"
-          :items="['Select All', 'Arrival', 'Departure']"
-          dense
-          outlined
-          placeholder="Type"
-          solo
-          flat
-          :hide-details="true"
-          @change="reload()"
-        ></v-select>
-      </v-col>
-      <!-- <v-col md="2">
-                <v-menu v-model="from_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-                    offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="from_date" readonly v-bind="attrs" v-on="on" dense :hide-details="true"
-                            class="custom-text-box shadow-none" solo flat label="From"></v-text-field>
-                    </template>
-                    <v-date-picker no-title v-model="from_date" @input="from_menu = false"
-                        @change="commonMethod"></v-date-picker>
-                </v-menu>
-            </v-col>
-            <v-col md="2">
-                <v-menu v-model="to_menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-                    offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="to_date" readonly v-bind="attrs" v-on="on" dense
-                            class="custom-text-box shadow-none" solo flat label="To" :hide-details="true"></v-text-field>
-                    </template>
-                    <v-date-picker v-model="to_date" @input="to_menu = false" @change="commonMethod"
-                        no-title></v-date-picker>
-                </v-menu>
-            </v-col> -->
-      <v-col md="4">
-        <CustomFilter @filter-attr="filterAttr" :defaultFilterType="4" />
-        <!-- <DateRangePicker key="reservationList" :disabled="false" :DPStart_date="from_date" :DPEnd_date="to_date"
-                    column="date_range" @selected-dates="handleDatesFilter" /> -->
-      </v-col>
-    </v-row>
 
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
       <v-alert class="rounded-md" color="primary" dense flat dark>
@@ -261,71 +220,7 @@
           </v-icon>
         </template>
       </v-data-table>
-      <!-- <table>
-                <tr>
-                    <th style="font-size: 13px" v-for="(item, index) in headers" :key="index">
-                        <span v-html="item.text"></span>
-                    </th>
-                </tr>
-                <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-                    color="primary"></v-progress-linear>
-                <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
-                    <td class="ps-3">
-                        <b>{{ ++index }}</b>
-                    </td>
-                    <td class="ps-3">
-                        <b>
-                            <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
-                                {{ item.reservation_no || "---" }}
-                            </span>
-                        </b>
-                    </td>
-                    <td style="width: 10%;">
-                        <span v-for="(room, index) in item.booked_rooms" :key="index">
-                            {{ room.room_no }}
-                            {{ item.booked_rooms.length - 1 == index ? "" : "," }}
-                        </span>
-                    </td>
-                    <td>{{ item.source }}</td>
-                    <td>{{ item.reference_no || "---" }}</td>
-                    <td>{{ item && item.customer.first_name || "---" }}</td>
-                    <td style="width: 120px">{{ convert_date_format(item.check_in) }}</td>
-                    <td style="width: 120px">
-                        {{ convert_date_format(item.check_out) }}
-                    </td>
-                    <td>{{ item.total_price }}</td>
-                    <td>{{ item.total_posting_amount || 0 }}</td>
-                    <td>{{ item.paid_amounts || 0 }}</td>
-                    <td>{{ item.balance || 0 }}</td>
-
-                    <td>{{ item.booking_date }}</td>
-
-                    <td>
-                        <v-icon @click="viewCustomerBilling(item)" x-small color="primary" class="mr-2">
-                            mdi-eye
-                        </v-icon>
-                    </td>
-                    <td>
-                        <v-icon @click="get_payment(item)" x-small color="primary" class="mr-2">
-                            mdi-cash-multiple
-                        </v-icon>
-                    </td>
-                    <td>
-                        <v-icon @click="redirect_to_invoice(item.id)" x-small color="primary" class="mr-2">
-                            mdi-cash-multiple
-                        </v-icon>
-                    </td>
-                </tr>
-            </table> -->
     </v-card>
-    <!-- <v-row>
-            <v-col md="12" class="float-right">
-                <div class="float-right">
-                    <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-                        :total-visible="12"></v-pagination>
-                </div>
-            </v-col>
-        </v-row> -->
   </div>
 </template>
 <script>
@@ -338,6 +233,14 @@ export default {
     CustomFilter,
   },
   data: () => ({
+    stats: [
+      { icon: "mdi-walk", number: "10", label: "WALKING" },
+      { icon: "mdi-laptop", number: "04", label: "OTA" },
+      { icon: "mdi-account-tie", number: "10", label: "Corporate" },
+      { icon: "mdi-cloud-outline", number: "10", label: "WebSite" },
+      { icon: "mdi-gift-outline", number: "01", label: "Complimentary" },
+      { icon: "mdi-account-outline", number: "01", label: "Travel Agent" },
+    ],
     cumulativeIndex: 1,
     perPage: 20,
     currentPage: 1,
@@ -783,8 +686,9 @@ export default {
           },
         };
 
-        this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+        this.$axios.get(url, options).then(({ data }) => {
           this.data = data.data;
+          this.calculateStates(data.data);
           this.pagination.current = data.current_page;
           this.pagination.total = data.last_page;
           this.loading = false;
@@ -801,6 +705,60 @@ export default {
       } else if (this.search.length > 2) {
         this.getDataFromApi();
       }
+    },
+    calculateStates(customers) {
+    
+
+      const countResult = customers.reduce((acc, {type}) => {
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Step 2: Map counts to desired output format
+      this.stats = [
+        {
+          icon: "mdi-walk",
+          count: countResult.Walking
+            ? countResult.Walking.toString().padStart(2, "0")
+            : "00",
+          label: "WALKING",
+        },
+        {
+          icon: "mdi-laptop",
+          count: countResult.Online
+            ? countResult.Online.toString().padStart(2, "0")
+            : "00",
+          label: "OTA",
+        },
+        {
+          icon: "mdi-account-tie",
+          count: countResult.Corporate
+            ? countResult.Corporate.toString().padStart(2, "0")
+            : "00",
+          label: "Corporate",
+        },
+        {
+          icon: "mdi-cloud-outline",
+          count: countResult.website
+            ? countResult.website.toString().padStart(2, "0")
+            : "00",
+          label: "WebSite",
+        },
+        {
+          icon: "mdi-gift-outline",
+          count: countResult.Complimentary
+            ? countResult.Complimentary.toString().padStart(2, "0")
+            : "00",
+          label: "Complimentary",
+        },
+        {
+          icon: "mdi-account-outline",
+          count: countResult["Travel Agency"]
+            ? countResult["Travel Agency"].toString().padStart(2, "0")
+            : "00",
+          label: "Travel Agent",
+        },
+      ];
     },
   },
 };

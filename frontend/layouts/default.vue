@@ -745,7 +745,17 @@ export default {
   font-family: "Source Sans Pro", sans-serif !important;
   margin: 0;
   padding: 0;
+  font-size: 12px;
 }
+.custom-text-field textarea {
+  color: #787878 !important;
+}
+
+input {
+  font-size: 12px !important;
+  color: #787878 !important;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -757,9 +767,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-</style>
 
-<style>
 .v-navigation-drawer {
   width: 80px !important;
   text-align: center;
@@ -839,65 +847,11 @@ input[type="number"] {
   top: 21px !important;
 }
 
-.boxheight {
-  height: 55px;
-  list-style: 5px;
-}
-
-.client {
-  width: fit-content;
-  block-size: fit-content;
-  border: solid #000000 1px;
-  padding: 15px;
-}
-
-.columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2em;
-}
-
-.columns .client {
-  width: auto;
-  flex: 1 1 40%;
-}
-.roombox1 {
-  float: left;
-  width: 55px;
-  height: 55px;
-  margin: 5px;
-  margin-top: 10px;
-  margin-left: 10px;
-}
-.roombox {
-  /* width: 50px;
-  flex: 0 0 50px;
-  margin: 5px; */
-
-  width: 55px;
-  height: 55px;
-  font-size: 11px !important;
-  line-height: 14px !important;
-}
-.small-text {
-  font-size: 12px;
-}
 .zoom-on-hover {
   transition: transform 0.3s ease-in-out;
 }
 
 .zoom-on-hover:hover {
   transform: scale(1.2); /* Zoom in by 10% */
-}
-
-.search-box .v-input__append-inner {
-  background: #4390fc !important;
-  padding: 6px !important;
-  margin-top: 0px !important;
-  margin-right: -11px !important;
-  color: #fff !important;
-}
-.search-box .v-icon {
-  color: #fff !important;
 }
 </style>

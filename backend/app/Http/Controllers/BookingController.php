@@ -743,10 +743,6 @@ class BookingController extends Controller
 
     public function check_in_room(Request $request)
     {
-
-
-
-
         try {
 
             // session(['isCheckoutSes' => true]);
@@ -777,11 +773,10 @@ class BookingController extends Controller
                     $validatedData["guest"]["customer_id"]  = $booking->customer_id;
                     // return $validatedData;
                     SubCustomer::create($validatedData["guest"]);
-
                 }
             }
 
-        //    return  $request->all();
+            //    return  $request->all();
 
 
             if ($request->discount > 0) {
@@ -871,7 +866,6 @@ class BookingController extends Controller
                     $payment->store($paymentsData);
                 }
                 $booking->booking_status = 2;
-                $booking->check_out = date('Y-m-d H:i');
                 $booking->save();
 
                 BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
