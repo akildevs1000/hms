@@ -335,34 +335,7 @@ class RoomController extends Controller
             $todayDate = date('Y-m-d');
         }
 
-        return $expectCheckOut = Room::with('device')
-            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate, $tomorrowDate) {
-                $query->where('company_id', $company_id);
 
-                if ($todayDate <= date("Y-m-d")) {
-                    $query->where(function ($query) use ($todayDate) {
-                        // Adjusting check-in and check-out comparisons based on the filter date.
-                        $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)));
-                        $query->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
-                    });
-                } else if ($todayDate == $tomorrowDate) {
-                    $query->where(function ($query) {
-                        $query->where('booking_status', 2);
-                    });
-                }
-            })
-            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
-                $q->with("customer");
-                $q->where("booking_status", ">", 0);
-
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $todayDate);
-                $q->where("booking_status", ">", 0);
-            }])
-            ->get();
-
-
-        return;
 
 
         // $expectCheckOut = Room::with('device')
@@ -400,20 +373,19 @@ class RoomController extends Controller
             ->get();
 
         $expectCheckOut = Room::with('device')
-            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
-            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate, $tomorrowDate) {
                 $query->where('company_id', $company_id);
-
 
                 if ($todayDate <= date("Y-m-d")) {
                     $query->where(function ($query) use ($todayDate) {
+                        // Adjusting check-in and check-out comparisons based on the filter date.
                         $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)));
                         $query->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
-                        // $query->whereDate('check_out', '!=', $todayDate);
                     });
-                } else {
-                    $query->whereDate('check_out', "2024-09-21");
-                    $query->where('booking_status', 2);
+                } else if ($todayDate == $tomorrowDate) {
+                    $query->where(function ($query) {
+                        $query->where('booking_status', 2);
+                    });
                 }
             })
             ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
@@ -425,6 +397,8 @@ class RoomController extends Controller
                 $q->where("booking_status", ">", 0);
             }])
             ->get();
+
+
 
         $expectCheckIn = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
             $q->whereDate('check_in', '<=', $todayDate);
