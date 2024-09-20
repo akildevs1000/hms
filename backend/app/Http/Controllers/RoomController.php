@@ -348,13 +348,13 @@ class RoomController extends Controller
             // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->where('company_id', $company_id);
-                $query->whereDate('check_out', ">", $todayDate);
+                $query->whereDate('check_out', $todayDate);
                 $query->where("booking_status", ">", 0);
             })
             ->with(['bookedRoom' => function ($q) use ($company_id) {
                 $q->where("company_id", $company_id);
-               
                 $q->with("customer");
+                $q->where("booking_status", ">", 0);
             }])
             ->get();
 
@@ -397,8 +397,8 @@ class RoomController extends Controller
             ->where('status', '!=', Room::Blocked)
             ->whereDoesntHave('bookedRoom', function ($q) use ($company_id, $todayDate) {
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_out', ">", $todayDate);
-                $q->where("booking_status", ">", 0);
+                $q->whereDate('check_out', $todayDate);
+                $q->where("booking_status", 0);
 
                 // // Option 1: Check for rooms that are not booked for the given date range
                 // $q->where(function ($query) use ($todayDate) {
