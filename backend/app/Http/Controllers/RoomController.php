@@ -372,30 +372,35 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $expectCheckOut = Room::with('device')
+            $expectCheckOut = Room::with('device')
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate, $tomorrowDate) {
                 $query->where('company_id', $company_id);
-
+        
+                // Case for today
                 if ($todayDate <= date("Y-m-d")) {
+                    // Filtering based on today's check-in and check-out
                     $query->where(function ($query) use ($todayDate) {
-                        // Adjusting check-in and check-out comparisons based on the filter date.
-                        $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)));
-                        $query->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
+                        $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)))
+                              ->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
                     });
-                } else if ($todayDate == $tomorrowDate) {
-                    $query->where(function ($query) {
-                        $query->where('booking_status', 2);
+                } else {
+                    // Case for future dates: Only show when check-out date matches exactly
+                    $query->where(function ($query) use ($todayDate) {
+                        $query->whereDate('check_out', '=', $todayDate); // Exact match with the check_out date
                     });
                 }
             })
-            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
-                $q->with("customer");
-                $q->where("booking_status", ">", 0);
 
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $todayDate);
-                $q->where("booking_status", ">", 0);
-            }])
+            
+
+            // ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
+            //     $q->with("customer");
+            //     $q->where("booking_status", ">", 0);
+
+            //     $q->where('company_id', $company_id);
+            //     $q->whereDate('check_out', $todayDate);
+            //     $q->where("booking_status", ">", 0);
+            // }])
             ->get();
 
 
