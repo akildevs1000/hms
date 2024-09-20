@@ -745,15 +745,34 @@ export default {
   font-family: "Source Sans Pro", sans-serif !important;
   margin: 0;
   padding: 0;
-  font-size: 12px;
-}
-.custom-text-field textarea {
-  color: #787878 !important;
 }
 
+.roombox1 {
+  float: left;
+  width: 55px;
+  height: 55px;
+  margin: 5px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.roombox {
+  /* width: 50px;
+  flex: 0 0 50px;
+  margin: 5px; */
+
+  width: 55px;
+  height: 55px;
+  font-size: 11px !important;
+  line-height: 14px !important;
+}
+.custom-text-field textarea {
+  /* color: #787878 !important; */
+}
+
+
 input {
-  font-size: 12px !important;
-  color: #787878 !important;
+  font-size: 14px !important;
+  /* color: #787878 !important; */
 }
 
 /* Chrome, Safari, Edge, Opera */

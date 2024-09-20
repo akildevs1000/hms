@@ -3,6 +3,7 @@
     <v-tab>In House</v-tab>
     <v-tab>Checkout</v-tab>
     <v-tab>Reservation</v-tab>
+    <v-tab>All Guest</v-tab>
     <v-tab-item>
       <div v-if="can('in_house_access') && can('in_house_view')">
         <ReservationAllList
@@ -23,6 +24,14 @@
         <ReservationAllList
           :endpoint="'up_coming_reservation_list'"
           :Model="'Reservation'"
+        />
+      </div>
+    </v-tab-item>
+    <v-tab-item>
+      <div v-if="can('reservation_access') && can('reservation_view')">
+        <ReservationAllList
+          :endpoint="'all_reservation_list'"
+          :Model="'All Guest'"
         />
       </div>
     </v-tab-item>

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="ViewBookingDialog" max-width="900">
+  <v-dialog v-model="ViewBookingDialog" max-width="1100">
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> View Billing </span>
     </template>

@@ -212,61 +212,6 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-
-      <!-- cancel room  -->
-      <v-dialog v-model="cancelDialog" persistent max-width="500">
-        <v-card>
-          <v-alert dense class="grey lighten-3 primary--text">
-            <v-row>
-              <v-col>
-                <div style="font-size: 18px">Cancel Room</div>
-              </v-col>
-              <!-- <v-col class="text-center">
-                <div style="font-size: 18px">
-                  Reservation # {{ checkData.reservation_no }}
-                </div>
-              </v-col> -->
-              <v-col>
-                <div class="text-right">
-                  <AssetsButtonClose
-                    @close="
-                      () => {
-                        cancelDialog = false;
-                        reason = null;
-                      }
-                    "
-                  />
-                </div>
-              </v-col>
-            </v-row>
-          </v-alert>
-          <v-card-text>
-            <v-row no-gutter>
-              <v-col cols="12">
-                <v-textarea
-                  placeholder="Reason"
-                  rows="3"
-                  dense
-                  outlined
-                  v-model="reason"
-                  hide-details
-                ></v-textarea>
-              </v-col>
-              <v-col cols="12" class="text-center">
-                <AssetsButtonCancel
-                  @close="
-                    () => {
-                      cancelDialog = false;
-                      reason = null;
-                    }
-                  "
-                />
-                <AssetsButtonSubmit @click="cancelItem" />
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
       <v-dialog v-model="cancelCheckInDialog" persistent max-width="500">
         <v-card>
           <v-card-title class="text-h6">
@@ -339,10 +284,6 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item @click="cancelDialog = true">
-                <v-list-item-title>Cancel Room</v-list-item-title>
-              </v-list-item>
-
               <v-list-item>
                 <v-list-item-title>
                   <BookingPayAdvance
@@ -376,6 +317,17 @@
                     :key="`${evenIid}4${checkData.id}`"
                     :BookingId="checkData.id"
                 /></v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingCancel
+                    :key="`${evenIid}5${checkData.id}`"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    :evenIid="evenIid"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingCancel
+                ></v-list-item-title>
               </v-list-item>
             </template>
 
@@ -932,7 +884,6 @@ export default {
       checkOutDialog: false,
       GRCDialog: false,
       postingDialog: false,
-      cancelDialog: false,
       NewBooking: false,
 
       formTitle: "",
@@ -1541,7 +1492,6 @@ export default {
             this.cancelLoad = false;
             this.room_list();
             this.reason = "";
-            this.cancelDialog = false;
             this.snackbar = data.status;
             this.response = data.message;
             this.cancelCheckInDialog = false;
@@ -1587,36 +1537,7 @@ export default {
         .catch((err) => console.log(err));
     },
 
-    cancelItem() {
-      if (this.reason == "") {
-        alert("Enter reason");
-        return;
-      }
-
-      this.cancelLoad = true;
-
-      let payload = {
-        reason: this.reason,
-        cancel_by: this.$auth.user.id,
-      };
-      this.$axios
-        .post(`cancel_room/${this.evenIid}`, payload)
-        .then(({ data }) => {
-          if (!data.status) {
-            this.snackbar = data.status;
-            this.response = data.message;
-            this.cancelLoad = false;
-            return;
-          }
-          this.cancelLoad = false;
-          this.room_list();
-          this.reason = "";
-          this.cancelDialog = false;
-          this.snackbar = data.status;
-          this.response = data.message;
-        })
-        .catch((err) => console.log(err));
-    },
+   
 
     succuss(data, check_in = true, posting = true, check_out = true) {
       if (check_in) {
@@ -1665,24 +1586,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.roombox1 {
-  float: left;
-  width: 55px;
-  height: 55px;
-  margin: 5px;
-  margin-top: 10px;
-  margin-left: 10px;
-}
-.roombox {
-  /* width: 50px;
-  flex: 0 0 50px;
-  margin: 5px; */
-
-  width: 55px;
-  height: 55px;
-  font-size: 11px !important;
-  line-height: 14px !important;
-}
-</style>

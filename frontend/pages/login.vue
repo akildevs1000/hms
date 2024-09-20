@@ -280,12 +280,19 @@ export default {
 }
 .responsive-padding {
   width: 100%;
-  padding-top: 150px; /* Default padding */
+  padding-top: 265px; /* Default padding */
 }
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
   /* Adjust padding for iPads (both portrait and landscape) */
   .responsive-padding {
     padding-top: 250px; /* Custom padding for iPads */
+  }
+}
+
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1441px) and (-webkit-min-device-pixel-ratio: 2) {
+  /* Adjust padding for iPads (both portrait and landscape) */
+  .responsive-padding {
+    padding-top: 150px; /* Custom padding for iPads */
   }
 }
 </style>

@@ -315,7 +315,26 @@ class RoomController extends Controller
 
     public function roomListForGridView(Request $request)
     {
+
         $company_id = $request->company_id;
+
+        if ($request->filled("filter_date")) {
+            $todayDate = $request->filter_date;
+        } else {
+            $todayDate = date('Y-m-d');
+        }
+
+
+        // $expectCheckOut = Room::with('device')
+        //     // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+        //     ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+        //         $query->where('company_id', $company_id);
+        //         $query->whereDate('check_out', "2024-09-21 23:59:00");
+        //     })
+           
+        //     ->get();
+
+        // return;
 
         /////////$todayDate = date('Y-m-d');
         ////$todayDate = $request->check_in;
@@ -324,11 +343,7 @@ class RoomController extends Controller
         //     return response()->json(['data' => 'Your system Date is wrong', 'status' => false]);
         // }
 
-        if ($request->filled("filter_date")) {
-            $todayDate = $request->filter_date;
-        } else {
-            $todayDate = date('Y-m-d');
-        }
+       
 
         $CheckedOut = Room::with('device')
             // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
@@ -348,12 +363,25 @@ class RoomController extends Controller
             // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->where('company_id', $company_id);
-                $query->whereDate('check_out', $todayDate);
-                $query->where("booking_status", ">", 0);
+
+
+                if ($todayDate <= date("Y-m-d")) {
+                    $query->where(function ($query) use ($todayDate) {
+                        $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)));
+                        $query->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
+                        // $query->whereDate('check_out', '!=', $todayDate);
+                    });
+                } else {
+                    $query->whereDate('check_out', "2024-09-21");
+                    $query->where('booking_status', 2);
+                }
             })
-            ->with(['bookedRoom' => function ($q) use ($company_id) {
-                $q->where("company_id", $company_id);
+            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
                 $q->with("customer");
+                $q->where("booking_status", ">", 0);
+
+                $q->where('company_id', $company_id);
+                $q->whereDate('check_out', $todayDate);
                 $q->where("booking_status", ">", 0);
             }])
             ->get();
@@ -397,22 +425,12 @@ class RoomController extends Controller
             ->where('status', '!=', Room::Blocked)
             ->whereDoesntHave('bookedRoom', function ($q) use ($company_id, $todayDate) {
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $todayDate);
-                $q->where("booking_status", 0);
-
-                // // Option 1: Check for rooms that are not booked for the given date range
-                // $q->where(function ($query) use ($todayDate) {
-                //     $query
-                //         ->whereDate("check_in", ">=", $todayDate)
-                //         ->whereDate("check_out", ">=", $todayDate)
-                //         ->where("booking_status", 0);
-                // });
-                // // Option 2: Exclude rooms based on booking status
-                // ->orWhere(function ($query) use ($todayDate) {
-                //     $query->whereDate("check_out", date('Y-m-d', strtotime($todayDate . " +1 day")));
-                //     $query->where("booking_status",">",0);
-                //     // $query->whereDate("check_out", "<", date('Y-m-d', strtotime($todayDate . " +1 day")));
-                // });
+                $q->where(function ($query) use ($todayDate) {
+                    $query->whereDate('check_out', $todayDate);
+                });
+                $q->orWhere(function ($query) {
+                    $query->where("booking_status", ">", 0);
+                });
             })
             ->get();
 

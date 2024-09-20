@@ -2352,8 +2352,7 @@ class BookingController extends Controller
             case 'in_house':
                 $model->where('booking_status', '=', 2);
                 break;
-            default:
-                abort(400, 'Invalid status');
+            default:;
         }
 
         return $model
@@ -2363,6 +2362,11 @@ class BookingController extends Controller
             ])
             ->where('company_id', $request->company_id)
             ->paginate($request->per_page ?? 20);
+    }
+
+    public function allReservationList(Request $request)
+    {
+        return $this->getReservationList($request, '');
     }
 
     public function upComingReservationList(Request $request)

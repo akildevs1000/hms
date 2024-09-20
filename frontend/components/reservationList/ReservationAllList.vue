@@ -76,7 +76,7 @@
     </v-dialog>
 
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
-      <v-alert class="rounded-md" color="primary" dense flat dark>
+      <v-alert class="rounded-md" dense flat>
         <v-row>
           <v-col>
             <span style="line-height: 20px"> {{ Model }} List</span></v-col
@@ -93,7 +93,7 @@
                   v-on="on"
                   @click="process('reservation_report_print', endpoint)"
                 >
-                  <v-icon class="white--text">mdi-printer-outline</v-icon>
+                  <v-icon>mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
               <span>PRINT</span>
@@ -109,7 +109,7 @@
                   v-on="on"
                   @click="process('reservation_report_download', endpoint)"
                 >
-                  <v-icon class="white--text">mdi-download-outline</v-icon>
+                  <v-icon>mdi-download-outline</v-icon>
                 </v-btn>
               </template>
               <span> DOWNLOAD </span>
@@ -117,8 +117,11 @@
           </v-col>
         </v-row>
       </v-alert>
-
+      <table style="width:100%;" cellspacing="0">
+        <TableHeader :cols="headers_table.map((e) => e.text)" />
+      </table>
       <v-data-table
+        hide-default-header
         dense
         small
         :headers="headers_table"
@@ -128,7 +131,7 @@
         :footer-props="{
           itemsPerPageOptions: [50, 100, 500, 1000],
         }"
-        class="elevation-1"
+        class="elevation-0"
         :server-items-length="totalRowsCount"
       >
         <template v-slot:item.sno="{ item, index }">
@@ -195,6 +198,13 @@
           </v-icon>
         </template>
         <template v-slot:item.payment="item">
+
+          <!-- <BookingPayAdvance
+                    :key="`${evenIid}2${checkData.id}`"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingPayAdvance> -->
           <v-icon
             v-if="
               can('reservation_edit') ||
@@ -707,9 +717,7 @@ export default {
       }
     },
     calculateStates(customers) {
-    
-
-      const countResult = customers.reduce((acc, {type}) => {
+      const countResult = customers.reduce((acc, { type }) => {
         acc[type] = (acc[type] || 0) + 1;
         return acc;
       }, {});

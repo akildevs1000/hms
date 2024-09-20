@@ -7,6 +7,11 @@
       <v-alert dense class="grey lighten-3 primary--text">
         <v-row>
           <v-col> <div style="font-size: 18px">Check Out</div> </v-col>
+          <v-col class="text-center">
+            <div style="font-size: 18px">
+              Reservation # {{ BookingData.reservation_no }}
+            </div>
+          </v-col>
           <v-col>
             <div class="text-right">
               <AssetsButtonClose @close="checkOutDialog = false" />
