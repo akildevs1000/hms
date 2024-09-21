@@ -278,21 +278,53 @@ export default {
   height: 100vh; /* Set the height of the container */
   width: 100%; /* Set the width of the container */
 }
+
+/* Default padding for small screens */
 .responsive-padding {
   width: 100%;
-  padding-top: 265px; /* Default padding */
+  padding-top: 10px;
 }
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
-  /* Adjust padding for iPads (both portrait and landscape) */
+
+/* Default padding for small screens */
+.responsive-padding {
+  width: 100%;
+  padding-top: 10px; /* Small screens default */
+}
+
+/* Height 769px to 819px */
+@media (min-height: 769px) and (max-height: 819px) {
   .responsive-padding {
-    padding-top: 250px; /* Custom padding for iPads */
+    padding-top: 220px;
   }
 }
 
-@media only screen and (min-device-width: 1024px) and (max-device-width: 1441px) and (-webkit-min-device-pixel-ratio: 2) {
-  /* Adjust padding for iPads (both portrait and landscape) */
+/* Height 820px to 910px */
+@media (min-height: 820px) and (max-height: 910px) {
   .responsive-padding {
-    padding-top: 150px; /* Custom padding for iPads */
+    padding-top: 150px;
   }
 }
+
+/* Height 911px to 1023px */
+@media (min-height: 911px) and (max-height: 1023px) {
+  .responsive-padding {
+    padding-top: 300px;
+  }
+}
+
+/* Height 1024px to 1025px */
+@media (min-height: 1024px) and (max-height: 1025px) {
+  .responsive-padding {
+    padding-top:  300px;
+  }
+}
+
+/* Height 1026px and above */
+@media (min-height: 1026px) {
+  .responsive-padding {
+    padding-top: 650px;
+  }
+}
+
+
 </style>
