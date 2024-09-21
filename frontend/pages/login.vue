@@ -294,7 +294,7 @@ export default {
 /* Height 769px to 819px */
 @media (min-height: 769px) and (max-height: 819px) {
   .responsive-padding {
-    padding-top: 220px;
+    padding-top: 125px;
   }
 }
 
@@ -321,6 +321,14 @@ export default {
 
 /* Height 1026px and above */
 @media (min-height: 1026px) {
+  .responsive-padding {
+    padding-top: 150px;
+  }
+}
+
+
+/* Height 1026px and above */
+@media (min-height: 1200px) {
   .responsive-padding {
     padding-top: 650px;
   }
