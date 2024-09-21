@@ -1,10 +1,5 @@
 <template>
   <div v-if="isPageLoad">
-    <!-- <
-          href="matrix/dist/css/style.min.css"
-          rel="stylesheet"
-          v-if="isIndex"
-        /> -->
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -462,261 +457,264 @@
       </v-menu>
     </div>
     <v-row>
-      <!-- <v-row
-      v-if="tabFilter == 'All' || tabFilter == 'occupied'"
-      no-gutters
-      class="mt-0"
-    >
-      <v-col cols="12">
-        <div>Occupied ({{ filteredRooms(Occupied).length }})</div>
-      </v-col> -->
-
-      <div
-        v-if="filteredRooms(Occupied).length == 0 && tabFilter == 'occupied'"
-      >
-        Occupied Rooms are Not Available
-      </div>
-
-      <div
-        v-if="tabFilter == 'All' || tabFilter == 'occupied'"
-        cols="1"
-        class="roombox1"
-        v-for="(occupied, index) in filteredRooms(Occupied)"
-        :key="index + 50"
-      >
-        <v-card
-          @mouseenter="showMenu = false"
-          @mousedown="showMenu = false"
-          @mouseup="showMenu = false"
-          @contextmenu="show"
-          @touchstart="
-            touchstart(
-              $event,
-              occupied && occupied.booked_room && occupied.booked_room.id,
-              occupied &&
-                occupied.booked_room &&
-                occupied.booked_room.booking &&
-                occupied.booked_room.booking.booking_status
-            )
-          "
-          :elevation="0"
-          @mouseover="
-            mouseOver(
-              occupied && occupied.booked_room && occupied.booked_room.id,
-              occupied &&
-                occupied.booked_room &&
-                occupied.booked_room.booking &&
-                occupied.booked_room.booking.booking_status
-            )
-          "
-          @dblclick="dblclick"
-          :class="` darken-2`"
-          dark
+      <div v-if="tabFilter == 'available' || tabFilter == 'All'">
+        <div
+          class="roombox1"
+          v-for="(room, index) in filteredRooms(availableRooms)"
+          :key="index"
         >
-          <v-card-text
-            class="p-3 roombox"
-            :style="'padding: 0px;' + getColorCode('occupied')"
-            title="Occupied"
+          <v-card
+            :class="` darken-2 `"
+            dark
+            @contextmenu="makeNewBooking($event, room)"
+            @mouseover="mouseOverForAvailable(room)"
+            @touchstart="makeNewBookingForTouch($event, room)"
           >
-            <div class="text-center white--text boxheight boxheight">
-              <v-icon
-                :color="
-                  occupied.device && occupied.latest_status == 1 ? 'red' : ''
-                "
-                >mdi-bed</v-icon
-              >
-              <div>{{ occupied?.room_no || "---" }}</div>
-              <div>
-                {{ occupied ? caps(occupied.room_type.name) : "---" }}
+            <v-card-text
+              class="green111 p-3 roombox available"
+              :style="'padding: 0px;'"
+              :title="
+                room.device && room.device.latest_status == 1
+                  ? 'Available and Light On'
+                  : 'Available'
+              "
+            >
+              <div class="text-center white--text boxheight">
+                <v-icon
+                  :color="
+                    room.device && room.device.latest_status == 1 ? 'red' : ''
+                  "
+                >
+                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                </v-icon>
+                <div>{{ room?.room_no || "---" }}</div>
+                <div v-if="room?.room_type?.type !== 'hall'">
+                  {{ room ? caps(room.room_type.name) : "---" }}
+                </div>
+                <div v-else>---</div>
               </div>
-            </div>
-          </v-card-text>
-        </v-card>
+            </v-card-text>
+          </v-card>
+        </div>
       </div>
-      <div
-        v-if="
-          filteredRooms(reservedWithoutAdvance).length == 0 &&
-          tabFilter == 'expected_arrival'
-        "
-      >
-        Arraival Rooms are not available
-      </div>
-      <div
-        v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'"
-        class="roombox1"
-        :class="noAvailableRoom.id"
-        v-for="(noAvailableRoom, i) in filteredRooms(reservedWithoutAdvance)"
-      >
-        <v-card
-          @mouseenter="showMenu = false"
-          @mousedown="showMenu = false"
-          @mouseup="showMenu = false"
-          @contextmenu="show"
-          @touchstart="handleTouchstart($event, noAvailableRoom)"
-          @mouseover="handleMouseOver(noAvailableRoom)"
-          @dblclick="dblclick"
-          :class="` `"
-          dark
+
+      <div v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'">
+        <div
+          class="roombox1"
+          v-for="(noAvailableRoom, i) in filteredRooms(reservedWithoutAdvance)"
+          :key="i"
         >
-          <v-card-text
-            class="blue1111 p-3 roombox"
-            :style="'padding: 0px;' + getColorCode('expected_arrival')"
-            title="Expected Arrival"
+          <v-card
+            @mouseenter="showMenu = false"
+            @mousedown="showMenu = false"
+            @mouseup="showMenu = false"
+            @contextmenu="show"
+            @touchstart="handleTouchstart($event, noAvailableRoom)"
+            @mouseover="handleMouseOver(noAvailableRoom)"
+            @dblclick="dblclick"
+            :class="` `"
+            dark
           >
-            <div class="text-center white--text boxheight">
-              <v-icon
-                :color="
-                  noAvailableRoom.device &&
-                  noAvailableRoom.device.latest_status == 1
-                    ? 'red'
-                    : ''
-                "
-              >
-                mdi mdi-bed
-              </v-icon>
-              <div>
-                {{ noAvailableRoom?.room_no || "---" }}
+            <v-card-text
+              class="blue1111 p-3 roombox"
+              :style="'padding: 0px;' + getColorCode('expected_arrival')"
+              title="Expected Arrival"
+            >
+              <div class="text-center white--text boxheight">
+                <v-icon
+                  :color="
+                    noAvailableRoom.device &&
+                    noAvailableRoom.device.latest_status == 1
+                      ? 'red'
+                      : ''
+                  "
+                >
+                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                </v-icon>
+                <div>
+                  {{ noAvailableRoom?.room_no || "---" }}
+                </div>
+                <div>
+                  {{
+                    noAvailableRoom
+                      ? caps(noAvailableRoom.room_type.name)
+                      : "---"
+                  }}
+                </div>
               </div>
-              <div>
-                {{
-                  noAvailableRoom ? caps(noAvailableRoom.room_type.name) : "---"
-                }}
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
+            </v-card-text>
+          </v-card>
+        </div>
       </div>
-      <!-- </v-row>
-    <v-row
-      v-if="tabFilter == 'available' || tabFilter == 'All'"
-      no-gutters
-      class="mt-0"
-    >
-      <v-col cols="12">
-        <div>Available ({{ filteredRooms(availableRooms).length }})</div>
-      </v-col> -->
-      <div
-        v-if="
-          filteredRooms(availableRooms).length == 0 && tabFilter == 'available'
-        "
-      >
-        Not Available
-      </div>
-      <div
-        class="roombox1"
-        v-if="tabFilter == 'available' || tabFilter == 'All'"
-        v-for="(room, index) in filteredRooms(availableRooms)"
-      >
-        <v-card
-          :class="` darken-2 `"
-          dark
-          @contextmenu="makeNewBooking($event, room)"
-          @mouseover="mouseOverForAvailable(room)"
-          @touchstart="makeNewBookingForTouch($event, room)"
+
+      <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
+        <div
+          class="roombox1"
+          v-for="(occupied, index) in filteredRooms(expectCheckOut)"
+          :key="index + 50"
         >
-          <v-card-text
-            class="green111 p-3 roombox"
-            :style="'padding: 0px;' + getColorCode('available')"
-            :title="
-              room.device && room.device.latest_status == 1
-                ? 'Available and Light On'
-                : 'Available'
+          <v-card
+            @mouseenter="showMenu = false"
+            @mousedown="showMenu = false"
+            @mouseup="showMenu = false"
+            @contextmenu="show"
+            @touchstart="
+              touchstart(
+                $event,
+                occupied && occupied.booked_room && occupied.booked_room.id,
+                occupied &&
+                  occupied.booked_room &&
+                  occupied.booked_room.booking &&
+                  occupied.booked_room.booking.booking_status
+              )
             "
-          >
-            <div class="text-center white--text boxheight">
-              <v-icon
-                :color="
-                  room.device && room.device.latest_status == 1 ? 'red' : ''
-                "
-              >
-                mdi mdi-bed
-              </v-icon>
-              <div>{{ room?.room_no || "---" }}</div>
-              <div>
-                {{ room ? caps(room.room_type.name) : "---" }}
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </div>
-
-      <div
-        v-if="
-          filteredRooms(expectCheckOut).length == 0 && tabFilter == 'available'
-        "
-      >
-        Not Available
-      </div>
-      <div
-        class="roombox1"
-        v-if="tabFilter == 'All'"
-        v-for="(occupied, index) in filteredRooms(expectCheckOut)"
-      >
-        <v-card
-          @mouseenter="showMenu = false"
-          @mousedown="showMenu = false"
-          @mouseup="showMenu = false"
-          @contextmenu="showExpectCheckOut($event, occupied)"
-          @touchstart="
-            touchstart(
-              $event,
-              occupied && occupied.booked_room && occupied.booked_room.id,
-              occupied &&
-                occupied.booked_room &&
-                occupied.booked_room.booking &&
-                occupied.booked_room.booking.booking_status
-            )
-          "
-          :elevation="0"
-          @dblclick="dblclick"
-          :class="` darken-2`"
-          dark
-        >
-          <v-card-text
-            class="green111 p-3 roombox"
-            :style="'padding: 0px;' + getColorCode('expected_checkout')"
-            :title="
-              room.device && room.device.latest_status == 1
-                ? 'Expected Checkout and Light On'
-                : 'Expected Checkout Available'
+            :elevation="0"
+            @mouseover="
+              mouseOver(
+                occupied && occupied.booked_room && occupied.booked_room.id,
+                occupied &&
+                  occupied.booked_room &&
+                  occupied.booked_room.booking &&
+                  occupied.booked_room.booking.booking_status
+              )
             "
+            @dblclick="dblclick"
+            :class="`zoom-card darken-2`"
+            dark
           >
-            <div class="text-center white--text boxheight boxheight">
-              <v-icon
-                :color="
-                  occupied.device && occupied.latest_status == 1 ? 'red' : ''
-                "
-                >mdi-bed</v-icon
-              >
-              <div>{{ occupied?.room_no || "---" }}</div>
-              <div>
-                {{ occupied ? caps(occupied.room_type.name) : "---" }}
+            <v-card-text
+              class="p-3 roombox expected_checkout"
+              :style="'padding: 0px;'"
+              title="Occupied"
+            >
+              <div class="text-center white--text boxheight boxheight">
+                <v-icon
+                  :color="
+                    occupied.device && occupied.latest_status == 1 ? 'red' : ''
+                  "
+                >
+                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                </v-icon>
+                <div>{{ occupied?.room_no || "---" }}</div>
+                <div>
+                  {{ occupied ? caps(occupied.room_type.name) : "---" }}
+                </div>
               </div>
-            </div>
-          </v-card-text>
-        </v-card>
+            </v-card-text>
+          </v-card>
+        </div>
+      </div>
+      <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
+        <div
+          class="roombox1"
+          v-for="(occupied, index) in filteredRooms(Occupied)"
+          :key="index + 50"
+        >
+          <v-card
+            @mouseenter="showMenu = false"
+            @mousedown="showMenu = false"
+            @mouseup="showMenu = false"
+            @contextmenu="show"
+            @touchstart="
+              touchstart(
+                $event,
+                occupied && occupied.booked_room && occupied.booked_room.id,
+                occupied &&
+                  occupied.booked_room &&
+                  occupied.booked_room.booking &&
+                  occupied.booked_room.booking.booking_status
+              )
+            "
+            :elevation="0"
+            @mouseover="
+              mouseOver(
+                occupied && occupied.booked_room && occupied.booked_room.id,
+                occupied &&
+                  occupied.booked_room &&
+                  occupied.booked_room.booking &&
+                  occupied.booked_room.booking.booking_status
+              )
+            "
+            @dblclick="dblclick"
+            :class="` darken-2`"
+            dark
+          >
+            <v-card-text
+              class="p-3 roombox occupied"
+              :style="'padding: 0px;'"
+              title="Occupied"
+            >
+              <div class="text-center white--text boxheight boxheight">
+                <v-icon
+                  :color="
+                    occupied.device && occupied.latest_status == 1 ? 'red' : ''
+                  "
+                >
+                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                </v-icon>
+                <div>{{ occupied?.room_no || "---" }}</div>
+                <div>
+                  {{ occupied ? caps(occupied.room_type.name) : "---" }}
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </div>
       </div>
 
-      <div
-        v-if="filteredRooms(blockedRooms).length == 0 && tabFilter == 'blocked'"
-      >
-        Blocked rooms are Not Available
+      <div v-if="tabFilter == 'checkedout' || tabFilter == 'All'">
+        <div
+          class="roombox1"
+          v-for="(checkedOutRoom, index) in filteredRooms(dirtyRoomsList)"
+          :key="index"
+        >
+          <v-card
+            :class="` darken-2 `"
+            dark
+            @dblclick="checkedOutDoubleClick(checkedOutRoom)"
+            @contextmenu="makeNewBooking($event, checkedOutRoom)"
+            @mouseover="mouseOverForAvailable(checkedOutRoom)"
+            @touchstart="makeNewBookingForTouch($event, checkedOutRoom)"
+          >
+            <v-card-text
+              class="purple333 p-3 roombox checked_out"
+              :style="'padding: 0px;'"
+              title="Checked Out/Dirty"
+            >
+              <div class="text-center white--text boxheight">
+                <v-icon
+                  :color="
+                    checkedOutRoom.device &&
+                    checkedOutRoom.device.latest_status == 1
+                      ? 'red'
+                      : ''
+                  "
+                >
+                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                </v-icon>
+                <div>{{ checkedOutRoom?.room_no || "---" }}</div>
+                <div>
+                  {{
+                    checkedOutRoom ? caps(checkedOutRoom.room_type.name) : "---"
+                  }}
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </div>
       </div>
-      <div
-        class="roombox1"
-        v-if="tabFilter == 'blocked' || tabFilter == 'All'"
-        v-for="(blockedRoom, index) in filteredRooms(blockedRooms)"
-      >
+      <div class="roombox1" v-if="tabFilter == 'blocked' || tabFilter == 'All'">
         <v-card
-          :class="` darken-2 `"
+          v-for="(blockedRoom, index) in filteredRooms(blockedRooms)"
+          :key="index"
           dark
           @contextmenu="makeNewBooking($event, blockedRoom)"
           @mouseover="mouseOverForAvailable(blockedRoom)"
           @touchstart="makeNewBookingForTouch($event, blockedRoom)"
         >
           <v-card-text
-            class="purple333 p-3 roombox"
-            :style="'padding: 0px;' + getColorCode('blocked')"
+            class="p-3 roombox blocked"
+            :style="'padding: 0px;'"
             title=" Blocked
             "
           >
@@ -728,54 +726,11 @@
                     : ''
                 "
               >
-                mdi mdi-bed
+                {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
               </v-icon>
               <div>{{ blockedRoom?.room_no || "---" }}</div>
               <div>
                 {{ blockedRoom ? caps(blockedRoom.room_type.name) : "---" }}
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </div>
-
-      <div v-if="dirtyRoomsList.length == 0 && tabFilter == 'checkedout'">
-        CheckedOut Rooms are Not Available
-      </div>
-      <div
-        class="roombox1"
-        v-if="tabFilter == 'checkedout' || tabFilter == 'All'"
-        v-for="(checkedOutRoom, index) in filteredRooms(dirtyRoomsList)"
-      >
-        <v-card
-          :class="` darken-2 `"
-          dark
-          @dblclick="checkedOutDoubleClick(checkedOutRoom)"
-          @contextmenu="makeNewBooking($event, checkedOutRoom)"
-          @mouseover="mouseOverForAvailable(checkedOutRoom)"
-          @touchstart="makeNewBookingForTouch($event, checkedOutRoom)"
-        >
-          <v-card-text
-            class="purple333 p-3 roombox"
-            :style="'padding: 0px;' + getColorCode('checked_out')"
-            title="Checked Out/Dirty"
-          >
-            <div class="text-center white--text boxheight">
-              <v-icon
-                :color="
-                  checkedOutRoom.device &&
-                  checkedOutRoom.device.latest_status == 1
-                    ? 'red'
-                    : ''
-                "
-              >
-                mdi mdi-bed
-              </v-icon>
-              <div>{{ checkedOutRoom?.room_no || "---" }}</div>
-              <div>
-                {{
-                  checkedOutRoom ? caps(checkedOutRoom.room_type.name) : "---"
-                }}
               </div>
             </div>
           </v-card-text>
@@ -1372,7 +1327,6 @@ export default {
         this.rooms = data;
 
         this.dirtyRooms = data.dirtyRooms;
-        this.availableRooms = data.availableRooms;
         this.notAvailableRooms = data.notAvailableRooms;
         this.blockedRooms = data.blockedRooms;
 
@@ -1385,6 +1339,16 @@ export default {
         this.confirmedBookingList = data.confirmedBookingList;
         this.dirtyRoomsList = data.dirtyRoomsList;
         this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+
+        let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
+        let data2 = data.expectCheckOut.map((e) => e.room_no);
+        let data3 = data.checkIn.map((e) => e.room_no);
+        let data4 = data.blockedRooms.map((e) => e.room_no);
+        let data5 = data.dirtyRoomsList.map((e) => e.room_no);
+
+        let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
+        let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+        this.availableRooms = data.availableRooms.filter(e => !uniqueRoomNumbers.includes(e.room_no));
 
         this.members = {
           ...data.members,
@@ -1536,8 +1500,6 @@ export default {
         })
         .catch((err) => console.log(err));
     },
-
-   
 
     succuss(data, check_in = true, posting = true, check_out = true) {
       if (check_in) {

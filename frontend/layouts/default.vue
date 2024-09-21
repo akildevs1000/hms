@@ -746,7 +746,24 @@ export default {
   margin: 0;
   padding: 0;
 }
-
+.available {
+  background-color: #538234;
+}
+.booked {
+  background-color: #71de36;
+}
+.occupied {
+  background-color: #03c1ec;
+}
+.expected_checkout {
+  background-color: #03c1ec;
+}
+.checked_out {
+  background-color: #dc3545;
+}
+.blocked {
+  background-color: #a6a6a6;
+}
 .roombox1 {
   float: left;
   width: 55px;
@@ -768,7 +785,6 @@ export default {
 .custom-text-field textarea {
   /* color: #787878 !important; */
 }
-
 
 input {
   font-size: 14px !important;
@@ -867,10 +883,25 @@ input[type="number"] {
 }
 
 .zoom-on-hover {
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.1s ease-in-out;
 }
 
 .zoom-on-hover:hover {
   transform: scale(1.2); /* Zoom in by 10% */
+}
+@keyframes zoomInOut {
+  0% {
+    transform: scale(1); /* Normal size */
+  }
+  50% {
+    transform: scale(1.2); /* Zoom in */
+  }
+  100% {
+    transform: scale(1); /* Zoom out */
+  }
+}
+
+.zoom-card {
+  animation: zoomInOut 2s infinite ease-in-out; /* Adjust duration as needed */
 }
 </style>
