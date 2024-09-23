@@ -354,19 +354,26 @@ class RoomController extends Controller
         $expectCheckOut = Room::with('device')
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate, $tomorrowDate) {
                 $query->where('company_id', $company_id);
+                $query->whereDate('check_out', '=', $todayDate);
+                $query->where('booking_status', 2);
 
-                // Case for today
-                if ($todayDate <= date("Y-m-d")) {
-                    $query->where(function ($query) use ($todayDate) {
-                        $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)))
-                            ->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
-                    });
-                } else {
-                    $query->where(function ($query) use ($todayDate) {
-                        $query->whereDate('check_out', '=', $todayDate);
-                        $query->where('booking_status', 2);
-                    });
-                }
+                // $query->whereDate('check_out', $todayDate);
+                // $query->where('booking_status', 2);
+
+                // // Case for today
+                // if ($todayDate <= date("Y-m-d")) {
+                //     $query->where(function ($query) use ($todayDate) {
+                //         $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)))
+                //             ->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
+                //         $query->where('booking_status', 2);
+
+                //     });
+                // } else {
+                //     $query->where(function ($query) use ($todayDate) {
+                //         $query->whereDate('check_out', '=', $todayDate);
+                //         $query->where('booking_status', 2);
+                //     });
+                // }
             })
 
             ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
