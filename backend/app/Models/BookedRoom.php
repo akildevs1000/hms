@@ -103,7 +103,7 @@ class BookedRoom extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class);
+        return $this->belongsTo(Booking::class)->orderBy("id", "desc");
     }
 
     public function customer()
@@ -134,6 +134,11 @@ class BookedRoom extends Model
     public function foodplan()
     {
         return $this->belongsTo(FoodPlan::class, "food_plan_id");
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     /**

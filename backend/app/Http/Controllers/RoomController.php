@@ -356,24 +356,6 @@ class RoomController extends Controller
                 $query->where('company_id', $company_id);
                 $query->whereDate('check_out', '=', $todayDate);
                 $query->where('booking_status', 2);
-
-                // $query->whereDate('check_out', $todayDate);
-                // $query->where('booking_status', 2);
-
-                // // Case for today
-                // if ($todayDate <= date("Y-m-d")) {
-                //     $query->where(function ($query) use ($todayDate) {
-                //         $query->whereDate('check_in', ">=", date("Y-m-d 12:00:00", strtotime($todayDate)))
-                //             ->whereDate('check_out', "<=", date("Y-m-d 11:00:00", strtotime($todayDate)));
-                //         $query->where('booking_status', 2);
-
-                //     });
-                // } else {
-                //     $query->where(function ($query) use ($todayDate) {
-                //         $query->whereDate('check_out', '=', $todayDate);
-                //         $query->where('booking_status', 2);
-                //     });
-                // }
             })
 
             ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
@@ -384,28 +366,6 @@ class RoomController extends Controller
                 $q->whereDate('check_out', $todayDate);
                 $q->where("booking_status", ">", 0);
             }])
-            ->get();
-
-
-
-        $expectCheckIn = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
-            $q->whereDate('check_in', '<=', $todayDate);
-            $q->where('booking_status', BookedRoom::BOOKED);
-            $q->where('company_id', $company_id);
-            $q->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('advance_price', ">", 0);
-                $q->where('company_id', $company_id);
-            });
-            $q->whereNotNull('room_id');
-            $q->where('company_id', $company_id);
-        })
-            ->with('device')
-            ->with(['bookedRoom' => function ($q) use ($company_id) {
-                $q->where("company_id", $company_id);
-                $q->where("booking_status", ">", 0);
-                $q->with("customer");
-            }])
-
             ->get();
 
         $reservedWithoutAdvance = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
@@ -466,10 +426,20 @@ class RoomController extends Controller
                 $query->where('company_id', $company_id);
                 $query->where('booking_status', 2);
             })
+
             ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
-                $q->where("company_id", $company_id);
-                $q->whereDate('check_in', $todayDate);
-                $q->where("booking_status", ">", 0);
+
+                $q->whereNotNull('room_id');
+                $q->where('company_id', $company_id);
+
+                $q->where(function ($query) use ($todayDate) {
+                    // Check if the check-in is before or equal to today, and check-out is after or equal to today
+                    $query->whereDate('check_in', '<=', $todayDate)
+                        ->whereDate('check_out', '>=', $todayDate)
+                        ->where('booking_status', BookedRoom::CHECKED_IN)
+                        ->where('booking_status', '!=', 0);
+                });
+
                 $q->with("customer");
             }])
             ->get();
@@ -546,7 +516,6 @@ class RoomController extends Controller
             'blockedRooms' => $BlockedRooms,
             'confirmedBookingList' => $confirmedBooking->get(),
             'waitingBooking' => $waitingBooking,
-            'expectCheckIn' => $expectCheckIn,
             'expectCheckOut' => $expectCheckOut,
             'reservedWithoutAdvance' => $reservedWithoutAdvance,
 

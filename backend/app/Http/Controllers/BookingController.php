@@ -1117,7 +1117,7 @@ class BookingController extends Controller
                     $payment->store($paymentsData);
                 }
                 $booking->booking_status = 3;
-                $booking->check_out = date('Y-m-d');
+                
                 $booking->save();
 
                 BookedRoom::where("booking_id", $booking_id)
@@ -1253,7 +1253,6 @@ class BookingController extends Controller
                     $payment->store($paymentsData);
                 }
                 $booking->booking_status = 3;
-                $booking->check_out = date('Y-m-d');
                 $booking->save();
 
                 BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(

@@ -11,7 +11,7 @@ class Room extends Model
 {
     const Available = 0;
     const Blocked = 1;
-    
+
     use HasFactory;
 
     protected $guarded = [];
@@ -51,7 +51,7 @@ class Room extends Model
      */
     public function bookedRoom(): HasOne
     {
-        return $this->hasOne(BookedRoom::class);
+        return $this->hasOne(BookedRoom::class)->orderBy("id", "desc");
     }
 
     /**
