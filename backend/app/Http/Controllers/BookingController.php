@@ -136,7 +136,7 @@ class BookingController extends Controller
 
 
         if ($bookedRoomsCount > 0) {
-            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error 
+            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
         }
 
 
@@ -158,7 +158,7 @@ class BookingController extends Controller
 
                 //DB::commit();
 
-                //recalculating Tax based on discount 
+                //recalculating Tax based on discount
                 $error = (new ManagementController())->generateOccupancyRateByBooking($request);
                 $error = (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
@@ -182,7 +182,7 @@ class BookingController extends Controller
             // all good
         } catch (\Exception $e) {
             // DB::rollback();
-            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error 
+            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error
         }
 
 
@@ -871,7 +871,7 @@ class BookingController extends Controller
                 BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
                     [
                         "booking_status" => 2,
-                        "check_out" => date('Y-m-d H:i')
+                        // "check_out" => date('Y-m-d')
                     ]
                 );
 
@@ -913,7 +913,7 @@ class BookingController extends Controller
 
             BookedRoom::where("booking_id", $id ?? 0)
                 ->where("room_id", $room_id)
-                ->update(['check_in' => date('Y-m-d H:i'), 'booking_status' => $status_id]);
+                ->update(['check_in' => date('Y-m-d'), 'booking_status' => $status_id]);
 
             return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
         } catch (\Exception $e) {
@@ -935,7 +935,7 @@ class BookingController extends Controller
 
             BookedRoom::where("booking_id", $id ?? 0)
                 ->whereIn("room_id", $room_ids)
-                ->update(['check_in' => date('Y-m-d H:i'), 'booking_status' => $status_id]);
+                ->update(['check_in' => date('Y-m-d'), 'booking_status' => $status_id]);
 
             return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
         } catch (\Exception $e) {
@@ -958,8 +958,8 @@ class BookingController extends Controller
             $booking->id_card_no = $request->id_card_no;
             $booking->expired = $request->expired;
             $booking->id_card_type = IdCardType::find($request->id_card_type_id)->name ?? "";
-            $booking->check_in = date('Y-m-d H:i');
-            $newBookingCheckIn = date('Y-m-d H:i');
+            $booking->check_in = date('Y-m-d');
+            $newBookingCheckIn = date('Y-m-d');
 
 
             if ($request->hasFile('document')) {
@@ -1117,7 +1117,7 @@ class BookingController extends Controller
                     $payment->store($paymentsData);
                 }
                 $booking->booking_status = 3;
-                $booking->check_out = date('Y-m-d H:i');
+                $booking->check_out = date('Y-m-d');
                 $booking->save();
 
                 BookedRoom::where("booking_id", $booking_id)
@@ -1125,7 +1125,7 @@ class BookingController extends Controller
                     ->update(
                         [
                             "booking_status" => 3,
-                            "check_out" => date('Y-m-d H:i')
+                            // "check_out" => date('Y-m-d')
                         ]
                     );
 
@@ -1253,13 +1253,13 @@ class BookingController extends Controller
                     $payment->store($paymentsData);
                 }
                 $booking->booking_status = 3;
-                $booking->check_out = date('Y-m-d H:i');
+                $booking->check_out = date('Y-m-d');
                 $booking->save();
 
                 BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
                     [
                         "booking_status" => 3,
-                        "check_out" => date('Y-m-d H:i')
+                        // "check_out" => date('Y-m-d')
                     ]
                 );
 
@@ -1724,7 +1724,7 @@ class BookingController extends Controller
                 $this->changeSingleRoom($oldRoom, $newRoom, $request);
 
 
-                //recalculating Tax based on discount 
+                //recalculating Tax based on discount
                 $RecalObj = new RecalculateTaxController();
                 $RecalObj->UpdateTaxWithID($oldRoom->booking_id);
 
@@ -1907,7 +1907,7 @@ class BookingController extends Controller
                 $payment->save();
             }
 
-            //recalculating Tax based on discount 
+            //recalculating Tax based on discount
             $RecalObj = new RecalculateTaxController();
             $RecalObj->UpdateTaxWithID($bookedRoom->booking_id);
 
@@ -2056,7 +2056,7 @@ class BookingController extends Controller
                 'remaining_price' => $booking_total_price,
                 'grand_remaining_price' => $booking_total_price,
 
-                // 'discount' => $room_discount,    
+                // 'discount' => $room_discount,
                 'after_discount' => $booking_total_price,
                 // 'inv_total_tax_collected' => $bookingPayload->total_tax,
                 // "rooms": "302,307",
@@ -2203,7 +2203,7 @@ class BookingController extends Controller
                 'remaining_price' => $balance,
                 'grand_remaining_price' => $balance,
 
-                // 'discount' => $room_discount,    
+                // 'discount' => $room_discount,
                 'after_discount' => $balance,
                 // 'inv_total_tax_collected' => $bookingPayload->total_tax,
                 // "rooms": "302,307",
@@ -2671,7 +2671,7 @@ class BookingController extends Controller
 
 
         if ($bookedRoomsCount > 0) {
-            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error 
+            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
         }
 
 
@@ -2689,7 +2689,7 @@ class BookingController extends Controller
 
             if ($booking) {
                 $this->storeBookedRooms($request, $booking);
-                //recalculating Tax based on discount 
+                //recalculating Tax based on discount
                 (new ManagementController())->generateOccupancyRateByBooking($request);
                 (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
@@ -2707,7 +2707,7 @@ class BookingController extends Controller
             // all good
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error 
+            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error
         }
     }
 
@@ -2893,7 +2893,7 @@ class BookingController extends Controller
 
 
         if ($bookedRoomsCount > 0) {
-            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error 
+            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
         }
 
 
@@ -2911,7 +2911,7 @@ class BookingController extends Controller
 
             if ($booking) {
                 $this->storeBookedRoomsForHall($request, $booking);
-                //recalculating Tax based on discount 
+                //recalculating Tax based on discount
                 (new ManagementController())->generateOccupancyRateByBooking($request);
                 (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
@@ -2929,7 +2929,7 @@ class BookingController extends Controller
             // all good
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error 
+            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error
         }
     }
 
