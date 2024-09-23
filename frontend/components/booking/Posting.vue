@@ -36,7 +36,7 @@
           </v-col>
           <v-col cols="4" class="text-left">
             <v-container>
-              Rep No: <span v-if="bill_no > 0">{{bill_no}}</span>
+              Rep No: <span v-if="bill_no > 0">{{ bill_no }}</span>
               <br />
               Date: {{ $dateFormat.dmyhm() }}
             </v-container>
@@ -46,19 +46,20 @@
       <v-card-text>
         <v-container class="pa-3">
           <table class="simple-table">
-            <thead>
-              <tr>
-                <td class="blue--text">#</td>
-                <td class="blue--text text-left">Category</td>
-                <td class="blue--text text-left">Item Description</td>
-                <td class="blue--text">Qty</td>
-                <td class="blue--text">Unit</td>
-                <td class="blue--text">Sub Total</td>
-                <td class="blue--text">Tax</td>
-                <td class="blue--text">Total</td>
-                <td class="blue--text"></td>
-              </tr>
-            </thead>
+            <TableHeader
+              :cols="[
+                `#`,
+                `Category`,
+                `Item Description`,
+                `Qty`,
+                `Unit`,
+                `Sub Total`,
+                `Tax`,
+                `Total`,
+                ``,
+              ]"
+            />
+            
             <tbody>
               <tr v-for="(posting, index) in postings" :key="index">
                 <td>{{ index + 1 }}</td>
@@ -66,7 +67,7 @@
                   <v-autocomplete
                     v-model="posting.tax_type"
                     :items="[
-                      { id: -1, name: 'select...' },
+                      { id: -1, name: '---' },
                       { name: 'Food' },
                       { name: 'Misc' },
                       { name: 'ExtraBed' },
@@ -108,13 +109,13 @@
                     hide-details
                   ></v-text-field>
                 </td>
-                <td class="text-center">
+                <td class="text-right">
                   {{ $utils.currency_format(posting.amount) }}
                 </td>
-                <td class="text-center">
+                <td class="text-right">
                   {{ $utils.currency_format(posting.tax) }}
                 </td>
-                <td class="text-center">
+                <td class="text-right">
                   {{ $utils.currency_format(posting.amount_with_tax) }}
                 </td>
                 <td class="blue--text">
@@ -141,7 +142,7 @@
                   </v-btn>
                 </td>
                 <td colspan="2" class="text-right blue--text">Total Rs,</td>
-                <td class="blue--text">
+                <td class="blue--text text-right">
                   {{ $utils.currency_format(totalAmount) }}
                 </td>
                 <td></td>

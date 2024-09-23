@@ -78,70 +78,6 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="ArrivalReportDialog" persistent max-width="700px">
-        <v-card>
-          <v-toolbar color="primary" dense flat dark>
-            <small>Arrival</small>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="ArrivalReportDialog = false">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <v-tabs right dense>
-                <v-tab>Pending</v-tab>
-                <v-tab>Arrival</v-tab>
-                <v-tab-item>
-                  <ExpectCheckInReport
-                    :data="expectCheckIn"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-                <v-tab-item>
-                  <CheckInRoomsReport
-                    :data="Occupied"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-              </v-tabs>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog v-model="CheckOutReportDialog" persistent max-width="700px">
-        <v-card>
-          <v-toolbar color="primary" dense flat dark>
-            <span>Checkout</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="CheckOutReportDialog = false">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <v-tabs right dense>
-                <v-tab>Pending</v-tab>
-                <v-tab>Arrival</v-tab>
-                <v-tab-item>
-                  <ExpectCheckOutReport
-                    :data="expectCheckOut"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-                <v-tab-item>
-                  <CheckOutRoomsReport
-                    :data="checkOut"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-              </v-tabs>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
       <v-dialog v-model="DirtyRoomsReportDialog" persistent max-width="700px">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -828,8 +764,6 @@ export default {
       DirtyRoomsReportDialog: false,
       PaidRoomReportDialog: false,
       BookedRoomReportDialog: false,
-      ArrivalReportDialog: false,
-      CheckOutReportDialog: false,
       AvailableRoomsReportDialog: false,
       ExpectCheckOutReportDialog: false,
       ExpectCheckInReportDialog: false,

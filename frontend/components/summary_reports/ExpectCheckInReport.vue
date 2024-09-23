@@ -1,73 +1,80 @@
 <template>
-  <div>
-    <div class="d-flex justify-center">
-      <v-btn
-        small
-        class="pt-4 pb-4 mr-1 elevation-0"
-        color="#ECF0F4"
-        @click="process('expect_checkin_report_print')"
-      >
-        Print
-        <v-icon right>mdi-printer</v-icon>
-      </v-btn>
-      <v-btn
-        small
-        class="pt-4 pb-4 elevation-0"
-        color="#ECF0F4"
-        @click="process('expect_checkin_report_download')"
-      >
-        Download
-        <v-icon right>mdi-file</v-icon>
-      </v-btn>
-    </div>
-
-    <table class="mt-4">
-      <tr class="my-0 py-0">
-        <td class="my-0 py-0">Room No</td>
-        <td class="my-0 py-0">Type</td>
-        <td class="my-0 py-0">Guest</td>
-        <td class="my-0 py-0">Check In</td>
-        <td class="my-0 py-0">Check Out</td>
-      </tr>
-      <tr
-        v-for="(item, index) in data"
-        :key="index"
-        style="background-color: white"
-        class="my-0 py-0"
-      >
-        <td class="my-1 py-1">{{ item.room_no || "---" }}</td>
-        <td class="my-1 py-1">{{ item.room_type.name || "---" }}</td>
-        <td class="my-1 py-1">{{ item.title || "---" }}</td>
-        <td class="my-1 py-1">{{ item.check_in || "---" }}</td>
-        <td class="my-1 py-1">{{ item.check_out || "---" }}</td>
-      </tr>
-    </table>
-  </div>
+  <span v-if="!loading">
+    <div class="text-right">
+        <v-icon small color="primary" @click="process('checkin_report_print')"
+          >mdi-printer-outline</v-icon
+        >
+        <!-- <v-icon
+          color="black"
+          right
+          @click="process('checkin_report_download')"
+          >mdi-printer-outline</v-icon
+        > -->
+      </div>
+      <AssetsTable :headers="headers" :items="items" />
+  </span>
 </template>
 <script>
 export default {
   props: ["data"],
   data() {
     return {
-      snackbar: false,
-      response: "",
-      preloader: false,
-      loading: false,
+      loading: true,
       errors: [],
+      headers: [],
+      items: [],
     };
   },
 
   created() {
-    this.preloader = false;
+    this.headers = [
+      { text: `Room No`, value: `room_no`, align: `center` },
+      { text: `Type`, value: `room_type`, align: `center` },
+      { text: `Guest`, value: `title`, align: `center` },
+      { text: `C/In`, value: `check_in`, align: `center` },
+      { text: `C/Out`, value: `check_out`, align: `center` },
+      { text: `Group`, value: `group`, align: `center` },
+      { text: `Source`, value: `source`, align: `center` },
+      { text: `Paid By`, value: `paid_by`, align: `center` },
+      { text: `Posting`, value: `postings`, align: `right` },
+      { text: `Total`, value: `total`, align: `right` },
+      { text: `Paid`, value: `paid`, align: `right` },
+      { text: `Balance`, value: `balance`, align: `right` },
+    ];
+
+    this.items = this.data.map((e) => ({
+      room_no: e.room_no,
+      room_type: e.room_type.name,
+      title: e.booked_room.title,
+      check_in: e.booked_room.check_in,
+      check_out: e.booked_room.check_out,
+      group: e?.booked_room?.booking?.group_name == "yes" ? "Yes" : "-",
+      source: e?.booked_room?.booking?.type,
+      paid_by: this.getPaidBy(e?.booked_room?.booking?.type),
+      postings: this.$utils.currency_format(
+        this.$utils.getSum(e.booked_room.postings.map((e) => e.amount_with_tax))
+      ),
+      total: this.$utils.currency_format(e?.booked_room?.grand_total),
+      paid: this.$utils.currency_format(e.booked_room.booking.paid_amounts),
+      balance: this.$utils.currency_format(e.booked_room.booking.balance),
+    }));
+
+    this.loading = false;
   },
 
   methods: {
+    getPaidBy(paid_by) {
+      let json = {
+        1: "Hotel",
+        2: "Agent",
+      };
+      return json[paid_by] || "---";
+    },
     process(type) {
       let comId = this.$auth.user.company.id;
       let date = new Date().toJSON().slice(0, 10);
       let url =
         process.env.BACKEND_URL + `${type}?company_id=${comId}&date=${date}`;
-      console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}`);
@@ -77,5 +84,3 @@ export default {
   },
 };
 </script>
-
-<style scoped src="../../assets/css/tableStyles.css"></style>

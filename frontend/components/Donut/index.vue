@@ -1,7 +1,12 @@
 <template>
   <v-row v-if="labels.length">
     <v-col cols="5" style="padding-left: 0px">
+      <div v-if="chartOptions.customTotalValue == 0" class="empty-doughnut1">
+        Total <br />
+        0
+      </div>
       <apexchart
+        v-else
         :key="key"
         style="margin: 0 auto; text-align: left; margin-left: -35px"
         :width="width ?? '170px'"

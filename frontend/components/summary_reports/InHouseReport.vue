@@ -1,17 +1,17 @@
 <template>
   <span v-if="!loading">
     <div class="text-right">
-        <v-icon small color="primary" @click="process('checkin_report_print')"
-          >mdi-printer-outline</v-icon
-        >
-        <!-- <v-icon
+      <v-icon small color="primary" @click="process('inhouse_report_print')"
+        >mdi-printer-outline</v-icon
+      >
+      <!-- <v-icon
           color="black"
           right
           @click="process('checkin_report_download')"
           >mdi-printer-outline</v-icon
         > -->
-      </div>
-      <AssetsTable :headers="headers" :items="items" />
+    </div>
+    <AssetsTable :headers="headers" :items="items" />
   </span>
 </template>
 <script>
@@ -20,6 +20,7 @@ export default {
   data() {
     return {
       loading: true,
+      errors: [],
       headers: [],
       items: [],
     };
@@ -33,12 +34,9 @@ export default {
       { text: `C/In`, value: `check_in`, align: `center` },
       { text: `C/Out`, value: `check_out`, align: `center` },
       { text: `Group`, value: `group`, align: `center` },
-      { text: `Source`, value: `source`, align: `center` },
-      { text: `Paid By`, value: `paid_by`, align: `center` },
-      { text: `Posting`, value: `postings`, align: `right` },
-      { text: `Total`, value: `total`, align: `right` },
-      { text: `Paid`, value: `paid`, align: `right` },
-      { text: `Balance`, value: `balance`, align: `right` },
+      { text: `Adult`, value: `no_of_adult`, align: `center` },
+      { text: `Children`, value: `no_of_child`, align: `center` },
+      { text: `Notes`, value: `notes`, align: `center` },
     ];
 
     this.items = this.data.map((e) => ({
@@ -49,13 +47,9 @@ export default {
       check_out: e.booked_room.check_out,
       group: e?.booked_room?.booking?.group_name == "yes" ? "Yes" : "-",
       source: e?.booked_room?.booking?.type,
-      paid_by: this.getPaidBy(e?.booked_room?.booking?.type),
-      postings: this.$utils.currency_format(
-        this.$utils.getSum(e.booked_room.postings.map((e) => e.amount_with_tax))
-      ),
-      total: this.$utils.currency_format(e?.booked_room?.grand_total),
-      paid: this.$utils.currency_format(e.booked_room.booking.paid_amounts),
-      balance: this.$utils.currency_format(e.booked_room.booking.balance),
+      no_of_adult: e.booked_room.no_of_adult,
+      no_of_child: e.booked_room.no_of_child,
+      notes: e.booked_room.booking.request,
     }));
 
     this.loading = false;
@@ -74,7 +68,6 @@ export default {
       let date = new Date().toJSON().slice(0, 10);
       let url =
         process.env.BACKEND_URL + `${type}?company_id=${comId}&date=${date}`;
-      console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}`);

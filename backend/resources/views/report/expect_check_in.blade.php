@@ -308,6 +308,14 @@
             padding: 2px 2px;
             border: 1px solid #e9e9e9;
         }
+
+        .text-right {
+            text-align: right
+        }
+
+        .text-center {
+            text-align: center
+        }
     </style>
 </head>
 
@@ -353,12 +361,18 @@
 
     <table class="mt-3 w-100">
         <tr style="background-color: white; color: black" class="my-0 py-0">
-            <th class="my-0 py-0"># </th>
             <th class="my-0 py-0">Room No </th>
-            <th class="my-0 py-0">Type</th>
             <th class="my-0 py-0">Guest</th>
             <th class="my-0 py-0">Checkin</th>
             <th class="my-0 py-0">Checkout</th>
+
+            <th class="my-0 py-0 text-center">Group</th>
+            <th class="my-0 py-0 text-center">Source</th>
+            <th class="my-0 py-0 text-center">Paid By</th>
+            <th class="my-0 py-0 text-right">Posting</th>
+            <th class="my-0 py-0 text-right">Total</th>
+            <th class="my-0 py-0 text-right">Paid</th>
+            <th class="my-0 py-0 text-right">Balance</th>
         </tr>
         @php
             $i = 1;
@@ -366,12 +380,22 @@
         @foreach ($data as $item)
             {{-- @dd($item) --}}
             <tr>
-                <td class="my-1 py-1">{{ $i++ }}</td>
-                <td class="my-1 py-1">{{ $item->room_no ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->room_type ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->title ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->check_in ?? '---' }}</td>
-                <td class="my-1 py-1">{{ $item->check_out ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">
+                    {{ $item->room_no ?? '---' }}
+                    <br>
+                    {{ $item->room_type ?? '---' }}
+                </td>
+                <td class="my-1 py-1 text-center">{{ $item->title ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item->check_in ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item->check_out ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item->booking->group_name == 'yes' ? 'Yes' : '-' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item->booking->type ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item->booking->paid_by == 1 ? 'Hotel' : 'Agent' }}</td>
+                <td class="my-1 py-1 text-right">{{ number_format($item->postings_sum_amount_with_tax, 2) ?? '---' }}
+                </td>
+                <td class="my-1 py-1 text-right">{{ number_format($item->grand_total, 2) ?? '---' }}</td>
+                <td class="my-1 py-1 text-right">{{ number_format($item->booking->paid_amounts, 2) ?? '---' }}</td>
+                <td class="my-1 py-1 text-right">{{ number_format($item->booking->balance, 2) ?? '---' }}</td>
             </tr>
         @endforeach
     </table>

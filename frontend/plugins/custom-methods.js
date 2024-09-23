@@ -10,6 +10,10 @@ export default ({ app }, inject) => {
       }
     },
 
+    getSum(values) {
+      return values.reduce((acc, curr) => acc + curr, 0);
+    },
+
     currency_format(n, type = "₹") {
       if (type == "₹") {
         return parseFloat(n).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });

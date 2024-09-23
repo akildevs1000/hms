@@ -83,67 +83,112 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="ArrivalReportDialog" persistent max-width="700px">
+      <v-dialog v-model="ArrivalReportDialog" persistent max-width="900px">
         <v-card>
-          <v-toolbar color="primary" dense flat dark>
-            <small>Arrival</small>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="ArrivalReportDialog = false">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <v-tabs right dense>
-                <v-tab>Pending</v-tab>
-                <v-tab>Arrival</v-tab>
-                <v-tab-item>
-                  <ExpectCheckInReport
-                    :data="expectCheckIn"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-                <v-tab-item>
-                  <CheckInRoomsReport
-                    :data="Occupied"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-              </v-tabs>
-            </v-container>
-          </v-card-text>
+          <v-alert color="grey lighten-3" dense flat>
+            <v-row no-gutter>
+              <v-col>
+                <small>Arrival</small>
+              </v-col>
+              <v-col class="text-right">
+                <v-btn
+                  text
+                  small
+                  :color="isActiveTab == 1 ? 'primary' : ''"
+                  @click="isActiveTab = 1"
+                  ><small>Pending</small></v-btn
+                >
+                <v-btn
+                  text
+                  small
+                  :color="isActiveTab == 2 ? 'primary' : ''"
+                  @click="isActiveTab = 2"
+                  ><small>Arrived</small></v-btn
+                >
+
+                <AssetsButtonClose @close="ArrivalReportDialog = false" />
+              </v-col>
+            </v-row>
+          </v-alert>
+          <v-container class="pt-0 mt-0">
+            <ExpectCheckInReport
+              v-if="isActiveTab == 1"
+              :data="reservedWithoutAdvance"
+              @close-dialog="closeDialogs"
+              :key="keyTabAll"
+            />
+            <CheckInRoomsReport
+              v-if="isActiveTab == 2"
+              :data="Occupied"
+              @close-dialog="closeDialogs"
+              :key="keyTabAll"
+            />
+          </v-container>
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="CheckOutReportDialog" persistent max-width="700px">
+      <v-dialog v-model="CheckOutReportDialog" persistent max-width="900px">
         <v-card>
-          <v-toolbar color="primary" dense flat dark>
-            <span>Checkout</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="CheckOutReportDialog = false">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <v-tabs right dense>
-                <v-tab>Pending</v-tab>
-                <v-tab>Arrival</v-tab>
-                <v-tab-item>
-                  <ExpectCheckOutReport
-                    :data="expectCheckOut"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-                <v-tab-item>
-                  <CheckOutRoomsReport
-                    :data="checkOut"
-                    @close-dialog="closeDialogs"
-                  />
-                </v-tab-item>
-              </v-tabs>
-            </v-container>
-          </v-card-text>
+          <v-alert color="grey lighten-3" dense flat>
+            <v-row no-gutter>
+              <v-col>
+                <small>Checkout</small>
+              </v-col>
+              <v-col class="text-right">
+                <v-btn
+                  text
+                  small
+                  :color="isActiveTab == 1 ? 'primary' : ''"
+                  @click="isActiveTab = 1"
+                  ><small>Pending</small></v-btn
+                >
+                <v-btn
+                  text
+                  small
+                  :color="isActiveTab == 2 ? 'primary' : ''"
+                  @click="isActiveTab = 2"
+                  ><small>Checked Out</small></v-btn
+                >
+                <AssetsButtonClose @close="CheckOutReportDialog = false" />
+              </v-col>
+            </v-row>
+          </v-alert>
+          <v-container class="pt-0 mt-0">
+            <ExpectCheckInReport
+              v-if="isActiveTab == 1"
+              :data="expectCheckOut"
+              @close-dialog="closeDialogs"
+              :key="keyTabAll"
+            />
+            <CheckInRoomsReport
+              v-if="isActiveTab == 2"
+              :data="dirtyRoomsList"
+              @close-dialog="closeDialogs"
+              :key="keyTabAll"
+            />
+          </v-container>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="InHouseDialog" persistent max-width="900px">
+        <v-card>
+          <v-alert color="grey lighten-3" dense flat>
+            <v-row no-gutter>
+              <v-col>
+                <small>In House</small>
+              </v-col>
+              <v-col class="text-right">
+                <AssetsButtonClose @close="InHouseDialog = false" />
+              </v-col>
+            </v-row>
+          </v-alert>
+          <v-container class="pt-0 mt-0">
+            <InHouseReport
+              :data="Occupied"
+              @close-dialog="closeDialogs"
+              :key="keyTabAll"
+            />
+          </v-container>
         </v-card>
       </v-dialog>
 
@@ -177,6 +222,17 @@
 
       <v-dialog v-model="FoodDialog" persistent max-width="700px">
         <v-card>
+          <v-alert color="grey lighten-3" dense flat>
+            <v-row no-gutter>
+              <v-col>
+                <small>Food Orders</small>
+              </v-col>
+              <v-col class="text-right">
+                <AssetsButtonClose @close="ArrivalReportDialog = false" />
+              </v-col>
+            </v-row>
+          </v-alert>
+
           <v-toolbar class="rounded-md" color="primary" dense flat dark>
             <span>Food Orders</span>
             <v-spacer></v-spacer>
@@ -186,15 +242,11 @@
           </v-toolbar>
           <v-card-text>
             <v-container>
-              <FoodOrderRooms :key="key" @close-dialog="closeDialogs">
-              </FoodOrderRooms>
+              <FoodOrderRooms :key="key" @close-dialog="closeDialogs" />
             </v-container>
           </v-card-text>
         </v-card>
       </v-dialog>
-
-
-    
     </div>
     <!--end dialogs -->
     <v-row>
@@ -208,38 +260,37 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="CheckOutReportDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
+              :key="keyTabAll"
               name="margin"
               size="100%"
               :total="'100'"
-              :colors="colors"
+              :colors="[`#538234`, `#71de36`, `#ffc000`, `#dc3545`]"
               :labels="[
                 {
-                  color: `#4caf50`,
-                  text: `Vacant`,
-                  value: 10,
-                },
-                {
                   color: `#538234`,
-                  text: `Sold`,
-                  value: 15,
+                  text: `Available`,
+                  value: availableRooms.length,
                 },
                 {
-                  color: `#0f642b`,
-                  text: `Day Use`,
-                  value: 20,
+                  color: `#71de36`,
+                  text: `Reserved`,
+                  value: reservedWithoutAdvance.length,
                 },
-
                 {
-                  color: `#010002`,
-                  text: `Complim`,
-                  value: 30,
+                  color: `#ffc000`,
+                  text: `CheckIn`,
+                  value: Occupied.length,
+                },
+                {
+                  color: `#dc3545`,
+                  text: `Dirty`,
+                  value: dirtyRoomsList.length,
                 },
               ]"
             />
@@ -263,20 +314,21 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
-              name="expectCheckIn"
-              :total="expectCheckIn.length + expectCheckOut.length"
+              :key="keyTabAll"
+              name="reservedWithoutAdvance"
+              :total="reservedWithoutAdvance.length + Occupied.length"
               size="100%"
               :colors="colors"
               :labels="[
                 {
                   color: `blue`,
-                  text: `Arrival`,
-                  value: `${expectCheckOut.length}`,
+                  text: `Arrived`,
+                  value: `${Occupied.length}`,
                 },
                 {
                   color: `green`,
                   text: `Pending`,
-                  value: `${expectCheckIn.length}`,
+                  value: `${reservedWithoutAdvance.length}`,
                 },
               ]"
             />
@@ -289,7 +341,7 @@
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
-                >Checkedout</v-col
+                >Checkout</v-col
               >
 
               <v-col cols="4" class="text-right align-right"
@@ -332,7 +384,7 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="CheckOutReportDialog = true"
+                  @click="InHouseDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -365,7 +417,7 @@
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
-                >Food Order {{ key }}</v-col
+                >Food Order</v-col
               >
 
               <v-col cols="4" class="text-right align-right"
@@ -700,6 +752,8 @@ import ExpectCheckInSvg from "../components/svg/ExpectCheckInSvg.vue";
 import ExpectCheckOutSvg from "../components/svg/ExpectCheckOutSvg.vue";
 import CheckInSvg from "../components/svg/CheckInSvg.vue";
 // import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
+
+import InHouseReport from "../components/summary_reports/InHouseReport.vue";
 import ExpectCheckInReport from "../components/summary_reports/ExpectCheckInReport.vue";
 import ExpectCheckOutReport from "../components/summary_reports/ExpectCheckOutReport.vue";
 import AvailableRoomsReport from "../components/summary_reports/AvailableRoomsReport.vue";
@@ -720,6 +774,7 @@ export default {
   },
 
   components: {
+    InHouseReport,
     Grc,
     DirtyRoomsReport,
     CheckOutRoomsReport,
@@ -747,6 +802,7 @@ export default {
   },
   data() {
     return {
+      isActiveTab: 1,
       BookingQuickCheckInCompKey: 1,
       calenderColorCodes: [],
       tab: 0,
@@ -783,6 +839,7 @@ export default {
       BookedRoomReportDialog: false,
       ArrivalReportDialog: false,
       CheckOutReportDialog: false,
+      InHouseDialog: false,
       AvailableRoomsReportDialog: false,
       ExpectCheckOutReportDialog: false,
       ExpectCheckInReportDialog: false,
@@ -873,7 +930,6 @@ export default {
       },
       foodplan: null,
       dirtyRooms: 0,
-      expectCheckIn: "",
       expectCheckOut: "",
       headers: [
         { text: "#" },
@@ -1334,13 +1390,23 @@ export default {
 
         this.confirmedBooking = data.confirmedBooking;
         this.waitingBooking = data.waitingBooking;
-        this.expectCheckIn = data.expectCheckIn;
         this.expectCheckOut = data.expectCheckOut;
         this.Occupied = data.checkIn;
         this.checkOut = data.checkOut;
         this.confirmedBookingList = data.confirmedBookingList;
         this.dirtyRoomsList = data.dirtyRoomsList;
         this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+
+        let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
+        let data2 = data.expectCheckOut.map((e) => e.room_no);
+        let data3 = data.checkIn.map((e) => e.room_no);
+        let data4 = data.blockedRooms.map((e) => e.room_no);
+        let data5 = data.dirtyRoomsList.map((e) => e.room_no);
+
+        let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
+        let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+        this.availableRooms = data.availableRooms.filter(e => !uniqueRoomNumbers.includes(e.room_no));
+
 
         this.members = {
           ...data.members,

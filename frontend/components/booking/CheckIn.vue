@@ -346,12 +346,13 @@
                             }}
                           </td>
                           <td colspan="2" class="text-center">
-                            <span style="font-size: 18px" class="blue--text">{{
-                              $utils.currency_format(
-                                parseFloat(roomData.price) +
-                                  parseFloat(BookingData.total_posting_amount)
-                              )
-                            }}</span>
+                            <span style="font-size: 18px" class="blue--text">
+                              {{
+                                $utils.currency_format(
+                                  parseFloat(roomData.grand_total)
+                                )
+                              }}
+                            </span>
                           </td>
                         </tr>
                       </table>

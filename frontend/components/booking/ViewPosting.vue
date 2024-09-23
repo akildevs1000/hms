@@ -12,9 +12,6 @@
       <v-card-text>
         <v-container>
           <AssetsTable :headers="headers" :items="postings" />
-          <!-- <div class="mt-5 text-center">
-            <AssetsButtonCancel @close="viewPostingDialog = false" />
-          </div> -->
         </v-container>
       </v-card-text>
     </v-card>
@@ -61,7 +58,7 @@ export default {
         title: e.booked_room.title,
         item: e.item,
         qty: e.qty,
-        amount: this.$utils.currency_format(e.amount),
+        amount: this.$utils.currency_format(e.amount_with_tax),
         posting_date: this.$dateFormat.dmy(e.posting_date),
       }));
     },

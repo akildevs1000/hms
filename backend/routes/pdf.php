@@ -10,8 +10,10 @@
 
    Route::get('checkin_report_print', [ReportController::class, 'CHeckInReport']);
    Route::get('checkin_report_download', [ReportController::class, 'CHeckInReportDownload']);
+   Route::get('inhouse_report_print', [ReportController::class, 'InHouseReport']);
 
    Route::get('checkout_report_print', [ReportController::class, 'CHeckOutReport']);
+   
    Route::get('checkout_report_download', [ReportController::class, 'CHeckOutReportDownload']);
 
    Route::get('expect_checkin_report_print', [ReportController::class, 'expectCHeckInReport']);

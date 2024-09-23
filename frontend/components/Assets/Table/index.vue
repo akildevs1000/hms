@@ -10,7 +10,7 @@
             border-bottom: 1px solid #bdbdbd;
           "
           class="primary--text py-2"
-          :class="`${col !== 'Total' ? `text-center` : `text-left pl-3`}`"
+          :class="`text-${col.align}`"
         >
           <small>{{ col.text }}</small>
         </td>
@@ -19,12 +19,13 @@
     <tbody>
       <tr v-for="(item, index) in items" :key="index">
         <td
-          v-for="(td, tdIndex) in headers"
+          v-for="(col, tdIndex) in headers"
           :key="tdIndex"
-          class="text-center py-2"
-          style="border-bottom: 1px solid #e0e0e0"
+          :class="`text-${col.align}`"
+          class="py-2"
+          style="border-bottom: 1px solid #e0e0e0; color: #8a8a8a"
         >
-          <small>{{ item[td.value] }}</small>
+          <small>{{ item[col.value] }}</small>
         </td>
       </tr>
     </tbody>
