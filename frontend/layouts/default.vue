@@ -355,6 +355,15 @@ export default {
           to: "/account",
           menu: "accounts_posting_access",
         },
+
+        {
+          topMenu: "account",
+          icon: "mdi-bank-transfer",
+          title: "Income",
+          to: "/city_ledger",
+          menu: "accounts_posting_access",
+        },
+
         {
           topMenu: "sales",
           icon: "mdi-cash",
@@ -746,6 +755,9 @@ export default {
   margin: 0;
   padding: 0;
 }
+small {
+  font-size: 11px;
+}
 .available {
   background-color: #538234;
 }
@@ -753,7 +765,7 @@ export default {
   background-color: #71de36;
 }
 .occupied {
-  background-color: #03c1ec;
+  background-color: #ffc000;
 }
 .expected_checkout {
   background-color: #03c1ec;
@@ -881,7 +893,16 @@ input[type="number"] {
 .global-search-date .v-label {
   top: 21px !important;
 }
-
+.empty-doughnut1 {
+  border: 16px solid rgb(150, 150, 150);
+  height: 100px;
+  width: 100px;
+  padding-top: 17px;
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+  border-radius: 50%;
+}
 .zoom-on-hover {
   transition: transform 0.1s ease-in-out;
 }
