@@ -1,26 +1,30 @@
 <template>
   <v-dialog v-model="NewCustomerDialog" max-width="750px">
     <template v-slot:activator="{ on, attrs }">
-      <span
-        v-bind="attrs"
-        v-on="on"
-        small
-      >
+      <span v-bind="attrs" v-on="on" small>
         <v-icon small color="black">mdi-plus</v-icon> Guest
       </span>
     </template>
 
     <v-card>
-      <v-alert class="rounded-md" color="grey lighten-3" dense flat>
+      <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
+        <span>Create Guest </span>
+        <v-spacer></v-spacer>
+        <SearchCustomer @foundCustomer="handleFoundCustomer" />
+        <AssetsButtonClose @close="close" />
+      </v-toolbar>
+
+      <!-- <v-alert class="rounded-md" color="grey lighten-3" dense flat>
         <v-row no-gutter>
           <v-col>
             <span>Create Guest</span>
           </v-col>
           <v-col class="text-right">
+            <SearchCustomer @foundCustomer="handleFoundCustomer" />
             <AssetsButtonClose @close="close" />
           </v-col>
         </v-row>
-      </v-alert>
+      </v-alert> -->
       <v-card-text>
         <v-container>
           <span>
@@ -336,6 +340,12 @@ export default {
     await this.get_business_sources();
   },
   methods: {
+    handleFoundCustomer(e) {
+      this.customer = {
+        ...this.customer,
+        ...e,
+      };
+    },
     close() {
       this.customer = {
         customer_type: null,
