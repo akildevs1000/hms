@@ -112,13 +112,13 @@
             </v-row>
           </v-alert>
           <v-container class="pt-0 mt-0">
-            <ExpectCheckInReport
+            <ExpectCheckOutReport
               v-if="isActiveTab == 1"
               :data="[...Occupied, ...expectCheckOut]"
               @close-dialog="closeDialogs"
               :key="keyTabAll"
             />
-            <CheckInRoomsReport
+            <CheckOutRoomsReport
               v-if="isActiveTab == 2"
               :data="dirtyRoomsList"
               @close-dialog="closeDialogs"

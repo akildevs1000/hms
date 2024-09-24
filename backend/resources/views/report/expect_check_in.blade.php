@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Food Order Room List</title>
+    <title>Expect Check In</title>
     <style>
         * {
             box-sizing: border-box;
@@ -381,21 +381,21 @@
             {{-- @dd($item) --}}
             <tr>
                 <td class="my-1 py-1 text-center">
-                    {{ $item->room_no ?? '---' }}
+                    {{ $item['room_no'] ?? '---' }}
                     <br>
-                    {{ $item->room_type ?? '---' }}
+                    {{ $item['room_type'] ?? '---' }}
                 </td>
-                <td class="my-1 py-1 text-center">{{ $item->title ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->check_in ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->check_out ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->booking->group_name == 'yes' ? 'Yes' : '-' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->booking->type ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->booking->paid_by == 1 ? 'Hotel' : 'Agent' }}</td>
-                <td class="my-1 py-1 text-right">{{ number_format($item->postings_sum_amount_with_tax, 2) ?? '---' }}
+                <td class="my-1 py-1 text-center">{{ $item['title'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['check_in'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['check_out'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['booking']['group_name'] == 'yes' ? 'Yes' : '-' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['booking']['type'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['booking']['paid_by'] == 1 ? 'Hotel' : 'Agent' }}</td>
+                <td class="my-1 py-1 text-right">{{ numFormat($item['postings_sum_amount_with_tax'], 2) ?? '---' }}
                 </td>
-                <td class="my-1 py-1 text-right">{{ number_format($item->grand_total, 2) ?? '---' }}</td>
-                <td class="my-1 py-1 text-right">{{ number_format($item->booking->paid_amounts, 2) ?? '---' }}</td>
-                <td class="my-1 py-1 text-right">{{ number_format($item->booking->balance, 2) ?? '---' }}</td>
+                <td class="my-1 py-1 text-right">{{ numFormat($item['grand_total'], 2) ?? '---' }}</td>
+                <td class="my-1 py-1 text-right">{{ numFormat($item['booking']['paid_amounts'], 2) ?? '---' }}</td>
+                <td class="my-1 py-1 text-right">{{ numFormat($item['booking']['balance'], 2) ?? '---' }}</td>
             </tr>
         @endforeach
     </table>

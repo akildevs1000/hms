@@ -1,7 +1,7 @@
 <template>
   <span v-if="!loading">
     <div class="text-right">
-        <v-icon small color="primary" @click="process('checkin_report_print')"
+        <v-icon small color="primary" @click="process('checkout_report_print')"
           >mdi-printer-outline</v-icon
         >
         <!-- <v-icon

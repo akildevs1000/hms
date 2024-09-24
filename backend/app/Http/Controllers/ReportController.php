@@ -19,24 +19,26 @@ class ReportController extends Controller
 {
     public function CHeckInReport(Request $request)
     {
-        $company_id = $request->company_id;
-        $expectCheckInModel = BookedRoom::query();
 
-        // right now i have has Many relation with Posting. but i want sum of that postings
-        // how to get postings sum 
-        $data = $expectCheckInModel->whereDate('check_in', $request->date)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-            })
+        $company_id = $request->company_id;
+
+        $data1 = BookedRoom::whereDate('check_out', $request->date)
+            ->where('booking_status', 2)
+            ->where('company_id', $company_id)
             ->withSum('postings', 'amount_with_tax')
             ->orderBy("updated_at", "desc")
-            ->get();
+            ->get()->toArray();
 
-        $company = Company::find($request->company_id);
+        $data2 = BookedRoom::whereDate('check_in', $request->date)
+            ->where('booking_status', 2)
+            ->where('company_id', $company_id)
+            ->withSum('postings', 'amount_with_tax')
+            ->orderBy("updated_at", "desc")
+            ->get()->toArray();
 
-        return Pdf::loadView('report.check_in', compact("data", "company"))
+        $data = array_merge($data1, $data2);
+
+        return Pdf::loadView('report.check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
             ->stream();
     }
@@ -340,18 +342,16 @@ class ReportController extends Controller
 
     public function expectCHeckInReport(Request $request)
     {
-        
+
         $company_id = $request->company_id;
-        $expectCheckInModel = BookedRoom::query();
-        $data = $expectCheckInModel->whereDate('check_in', $request->date)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 1);
-                $q->where('company_id', $company_id);
-            })
+
+        $data = BookedRoom::whereDate('check_in', '<=', $request->date)
+            ->whereDate('check_out', '>=', $request->date)
+            ->where('booking_status', 1)
+            ->where('company_id', $company_id)
             ->withSum('postings', 'amount_with_tax')
             ->orderBy("updated_at", "desc")
-            ->get();
+            ->get()->toArray();
 
         return Pdf::loadView('report.expect_check_in', ['data' => $data, 'company' => Company::find($request->company_id)])
             ->setPaper('a4', 'portrait')
@@ -383,11 +383,9 @@ class ReportController extends Controller
         // right now i have has Many relation with Posting. but i want sum of that postings
         // how to get postings sum 
         $data1 = $expectCheckInModel->whereDate('check_in', $request->date)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-            })
+            ->where('booking_status', '!=', 0)
+            ->where('booking_status', '=', 2)
+            ->where('company_id', $company_id)
             ->withSum('postings', 'amount_with_tax')
             ->orderBy("updated_at", "desc")
             ->get();
@@ -396,11 +394,9 @@ class ReportController extends Controller
         $datamodel2 = BookedRoom::query();
 
         $data2 = $datamodel2->whereDate('check_out', $request->date)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-            })
+            ->where('booking_status', '!=', 0)
+            ->where('booking_status', '=', 2)
+            ->where('company_id', $company_id)
             ->withSum('postings', 'amount_with_tax')
             ->orderBy("updated_at", "desc")
             ->get();
