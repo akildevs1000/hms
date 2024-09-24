@@ -248,10 +248,10 @@
               name="reservedWithoutAdvance"
               :total="reservedWithoutAdvance.length + Occupied.length"
               size="100%"
-              :colors="[`#03c1ec`, `#71de36`]"
+              :colors="[`#ffc000`, `#71de36`]"
               :labels="[
                 {
-                  color: `#03c1ec`,
+                  color: `#ffc000`,
                   text: `Arrived`,
                   value: Occupied.length + expectCheckOut.length,
                 },
@@ -286,7 +286,7 @@
               name="dirtyRoomsList"
               :total="dirtyRoomsList.length + expectCheckOut.length"
               size="100%"
-              :colors="[`#dc3545`, `#03c1ec`]"
+              :colors="[`#dc3545`, `#ffc000`]"
               :labels="[
                 {
                   color: `#dc3545`,
@@ -294,7 +294,7 @@
                   value: `${dirtyRoomsList.length}`,
                 },
                 {
-                  color: `#03c1ec`,
+                  color: `#ffc000`,
                   text: `Pending`,
                   value: `${Occupied.length + expectCheckOut.length}`,
                 },
