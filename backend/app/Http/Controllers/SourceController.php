@@ -16,13 +16,17 @@ class SourceController extends Controller
         $model = Source::query();
         $model->where('company_id', $request->company_id);
 
+        if ($request->filled('type') && $request->type) {
+            $model->where('type', $request->type);
+        }
+
+
         if ($request->filled('search') && $request->search) {
             $model->where(function ($q) use ($request) {
                 $q->orWhere('name', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
                 $q->orWhere('contact_name', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
                 $q->orWhere('mobile', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
                 $q->orWhere('gst', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
-                $q->orWhere('type', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
             });
         }
         return $model->paginate(10 ?? $request->perPage);

@@ -42,38 +42,11 @@
       </v-card>
     </v-dialog>
 
-    <v-row>
-      <v-col cols="10">
-      </v-col>
-      <v-col cols="2">
-        <div style="display: flex; align-items: center">
-          <v-text-field
-            class="global-search-textbox"
-            append-icon="mdi-magnify"
-            label="Search..."
-            clearable
-            dense
-            outlined
-            hide-details
-            @input="searchIt"
-            v-model="search"
-          ></v-text-field>
-          &nbsp;
-          <!-- <FilterDateRange height="30" @filter-attr="filterAttr" /> -->
-
-          <v-btn class="primary" small @click="NewCustomerDialog = true">
-            <v-icon small white>mdi-plus</v-icon> New
-          </v-btn>
-        </div>
-      </v-col>
-    </v-row>
-
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
-      <v-alert dense type="primary"> Guest List </v-alert>
-
       <v-row>
         <v-col cols="12">
           <v-data-table
+            hide-default-header
             dense
             :headers="headers_table"
             :items="data"
@@ -82,48 +55,85 @@
             :footer-props="{
               itemsPerPageOptions: [20, 50, 100, 500, 1000],
             }"
-            class="elevation-1"
+            class="px-2"
             :server-items-length="totalTableRowsCount"
           >
-            <template v-slot:header="{ props: { headers } }">
-              <tr v-if="isFilter">
-                <td v-for="header in headers" :key="header.text">
+            <template v-slot:top>
+              <v-toolbar flat dense class="mb-5">
+                <span class="text-color">{{ Model }}</span>
+                <v-icon
+                  color="primary"
+                  right
+                  class="mt-1"
+                  @click="getDataFromApi()"
+                  >mdi-reload</v-icon
+                >
+                <v-spacer></v-spacer>
+                <div style="display: flex; align-items: center">
                   <v-text-field
+                    class="global-search-textbox"
+                    append-icon="mdi-magnify"
+                    label="Search..."
                     clearable
-                    :hide-details="true"
-                    v-if="header.filterable && !header.filterSpecial"
-                    v-model="filters[header.key]"
-                    :id="header.value"
-                    @input="applyFilters(header.key, $event)"
-                    outlined
                     dense
-                    autocomplete="off"
+                    outlined
+                    hide-details
+                    @input="searchIt"
+                    v-model="search"
                   ></v-text-field>
-                </td>
-              </tr>
+                  &nbsp;
+                  <v-btn
+                    class="primary"
+                    small
+                    @click="NewCustomerDialog = true"
+                  >
+                    <v-icon small white>mdi-plus</v-icon> New
+                  </v-btn>
+                  <!-- <FilterDateRange height="30" @filter-attr="filterAttr" /> -->
+                </div>
+              </v-toolbar>
+            </template>
+            <template v-slot:header="{ props: { headers } }">
+              <thead>
+                <tr>
+                  <td
+                    v-for="(header, index) in headers"
+                    :key="index"
+                    class="primary--text"
+                    style="
+                      border-top: 1px solid #bdbdbd;
+                      border-bottom: 1px solid #bdbdbd;
+                    "
+                  >
+                    <small>{{ header.text }}</small>
+                  </td>
+                </tr>
+              </thead>
             </template>
             <template v-slot:item.sno="{ item, index }">
-              {{
+              <small class="text-color">{{
                 currentPage
                   ? (currentPage - 1) * perPage +
                     (cumulativeIndex + itemIndex(item))
                   : ""
-              }}
+              }}</small>
             </template>
             <template v-slot:item.first_name="{ item }">
               <small class="text-color">{{ item.full_name }}</small>
             </template>
             <template v-slot:item.email="{ item }">
-             <small class="text-color"> {{ item.email || "---" }}</small>
+              <small class="text-color"> {{ item.email || "---" }}</small>
             </template>
             <template v-slot:item.contact_no="{ item }">
               <small class="text-color">{{ item.contact_no || "---" }}</small>
             </template>
             <template v-slot:item.id_card_type.name="{ item }">
-             <small class="text-color"> {{ item.id_card_type ? item.id_card_type.name : "---" }}</small>
+              <small class="text-color">
+                {{ item.id_card_type ? item.id_card_type.name : "---" }}</small
+              >
             </template>
             <template v-slot:item.id_card_no="{ item }">
-             <small class="text-color"> {{ item.id_card_no || "---" }}</small>
+              <small class="text-color"> {{ item.id_card_no || "---" }}</small>
             </template>
             <template v-slot:item.car_no="{ item }">
               <small class="text-color">{{ item.car_no || "---" }}</small>
@@ -148,49 +158,6 @@
           </v-data-table>
         </v-col>
       </v-row>
-
-      <!-- <table>
-        <tr style="font-size: 13px">
-          <th v-for="(item, index) in headers" :key="index">
-            {{ item.text }}
-          </th>
-        </tr>
-        <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-          color="primary"></v-progress-linear>
-        <tr v-for="(item, index) in data" :key="index" style="font-size: 13px">
-          <td>
-            <b>{{ ++index }}</b>
-          </td>
-          <td>{{ item.full_name || "---" }}</td>
-          <td>{{ item.contact_no || "---" }}</td>
-          <td>{{ item.email || "---" }}</td>
-          <td>
-            {{ (item.id_card_type && item.id_card_type.name) || "---" }}
-          </td>
-          <td>{{ item.id_card_no || "---" }}</td>
-          <td>{{ item.car_no || "---" }}</td>
-
-          <td>{{ item.gst_number || "---" }}</td>
-          <td>{{ item.address || "---" }}</td>
-          <td>
-            <v-icon x-small v-if="can('guest_edit')" color="primary" @click="viewCustomerBilling(item)" class="mr-2">
-              mdi-pencil
-            </v-icon>
-          </td>
-        </tr>
-      </table>
-   
-    <div>
-      <v-row>
-        <v-col md="12" class="float-right">
-          <div class="float-right">
-            <v-pagination v-model="pagination.current" :length="pagination.total" @input="onPageChange"
-              :total-visible="12"></v-pagination>
-          </div>
-        </v-col>
-      </v-row>
-
-  </div>-->
     </v-card>
   </div>
   <NoAccess v-else />
@@ -240,52 +207,15 @@ export default {
         filterSpecial: false,
       },
       {
-        text: "Id Card Type",
-        value: "id_card_type.name",
-        key: "id_card_type_name",
+        text: "Contact_no",
+        value: "contact_no",
+        key: "contact_no",
         align: "left",
         sortable: true,
         filterable: true,
         filterSpecial: true,
         width: "150px",
       },
-      {
-        text: "Id Card  ",
-        value: "id_card_no",
-        key: "id_card_no",
-        align: "left",
-        sortable: true,
-        filterable: true,
-        filterSpecial: false,
-      },
-      {
-        text: "Car No.  ",
-        value: "car_no",
-        key: "car_no",
-        align: "left",
-        sortable: true,
-        filterable: true,
-        filterSpecial: false,
-      },
-      {
-        text: "GST",
-        value: "gst_number",
-        align: "left",
-        key: "gst_number",
-        sortable: true,
-        filterable: true,
-        filterSpecial: false,
-      },
-      {
-        text: "Address",
-        value: "address",
-        align: "left",
-        key: "address",
-        sortable: true,
-        filterable: true,
-        filterSpecial: false,
-      },
-
       { text: "Options", value: "options", align: "left", sortable: false },
     ],
 
@@ -447,48 +377,3 @@ export default {
   },
 };
 </script>
-<!-- 
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
-
-.custom-text-box {
-  border-radius: 2px !important;
-  border: 1px solid #dbdddf !important;
-  height: 50px;
-}
-
-input[type="text"]:focus.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select.custom-text-box {
-  border: 2px solid #5fafa3 !important;
-}
-
-select:focus {
-  outline: none !important;
-  border-color: #5fafa3;
-  box-shadow: 0 0 0px #5fafa3;
-}
-</style> -->
-
-<!-- 
-<style scoped>
-.custom-height .v-input__control {
-  height: 40px; /* Set your desired height */
-}
-</style> -->

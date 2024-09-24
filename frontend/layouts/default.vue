@@ -334,17 +334,17 @@ export default {
           to: "/history",
           menu: "guest_access",
         },
-        {
-          topMenu: "customer",
-          icon: "mdi mdi-account-tie",
-          title: "Guest",
-          to: "/customer/list",
-          menu: "guest_access",
-        },
+        // {
+        //   topMenu: "customer",
+        //   icon: "mdi mdi-account-tie",
+        //   title: "Guest",
+        //   to: "/customer/list",
+        //   menu: "guest_access",
+        // },
         {
           topMenu: "customer",
           icon: "mdi-ticket-account",
-          title: "Source",
+          title: "Customers",
           to: "/source",
           menu: "source_access",
         },
@@ -757,6 +757,9 @@ export default {
 }
 small {
   font-size: 11px;
+}
+.text-color {
+  color: #8a8a8a;
 }
 .available {
   background-color: #538234;
