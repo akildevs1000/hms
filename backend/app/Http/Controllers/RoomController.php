@@ -324,9 +324,6 @@ class RoomController extends Controller
             $todayDate = date('Y-m-d');
         }
 
-        $tomorrowDate = date('Y-m-d', strtotime('+1 day'));
-
-
         $company_id = $request->company_id;
 
         if ($request->filled("filter_date")) {
@@ -337,22 +334,8 @@ class RoomController extends Controller
 
         $AvailableRooms = Room::where('company_id', $company_id)->get();
 
-        $CheckedOut = Room::with('device')
-            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
-            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
-                $query->whereDate('check_out', "<=", $todayDate);
-                $query->where('company_id', $company_id);
-                $query->where('booking_status', 3);
-            })
-            ->with(['bookedRoom' => function ($q) use ($company_id) {
-                $q->where("company_id", $company_id);
-                $q->where('booking_status', 3);
-                $q->with("customer");
-            }])
-            ->get();
-
         $expectCheckOut = Room::with('device')
-            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate, $tomorrowDate) {
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->where('company_id', $company_id);
                 $query->whereDate('check_out', '=', $todayDate);
                 $query->where('booking_status', 2);
@@ -360,8 +343,6 @@ class RoomController extends Controller
 
             ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
                 $q->with("customer");
-                $q->where("booking_status", ">", 0);
-
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_out', $todayDate);
                 $q->where("booking_status", ">", 0);
@@ -419,7 +400,7 @@ class RoomController extends Controller
             'dinner' => $this->getCustomersDinnerOnly($dinner),
         ];
 
-        $checkIn = Room::with('device')
+        $Occupied = Room::with('device')
             // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', $todayDate);
@@ -453,30 +434,8 @@ class RoomController extends Controller
                 $q->where('company_id', $company_id);
             })->get();
 
-        $confirmedBooking = BookedRoom::with('device')->whereHas('booking', function ($q) use ($company_id) {
-            $q->where('booking_status', '!=', 0);
-            $q->where('booking_status', 1);
-            $q->where('advance_price', '!=', 0);
-            $q->where('company_id', $company_id);
-        });
 
-        $waitingBooking = BookedRoom::with('device')->whereHas('booking', function ($q) use ($company_id) {
-            $q->where('booking_status', '!=', 0);
-            $q->where('booking_status', 1);
-            $q->where('advance_price', '=', 0);
-            $q->where('company_id', $company_id);
-        })->count();
 
-        $checkInRooms = BookedRoom::with('device')->whereHas('booking', function ($q) use ($company_id) {
-            $q->where('booking_status', '!=', 0);
-            $q->where('company_id', $company_id);
-            $q->where('booking_status', 2);
-        })->get(["booking_id", "no_of_adult", "no_of_child", "no_of_baby"])->toArray();
-        [
-            $no_of_adult = array_column($checkInRooms, 'no_of_adult'),
-            $no_of_child = array_column($checkInRooms, 'no_of_child'),
-            $no_of_baby = array_column($checkInRooms, 'no_of_baby'),
-        ];
 
         $dirtyRooms = Room::with(['device', 'bookedRoom'])
             ->whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
@@ -493,41 +452,50 @@ class RoomController extends Controller
                 $q->where("company_id", $company_id)
                     ->where('booking_status', 3) // Only consider dirty rooms
                     ->with("customer");
-            }]);
+            }])->get();
 
 
-        //booking 1
-        //checking 2
-        //checkout 3
-        //3 dirty
-        //4 maintaining
-        //0 available;
 
-        // ======================
+        $inHouseData = BookedRoom::where('company_id', $company_id)
+            ->where(function ($query) use ($todayDate) {
+                $query->whereDate('check_out', $todayDate)
+                    ->orWhereDate('check_in', $todayDate);
+            })
+            ->where('booking_status', 2)
+            ->selectRaw("
+            SUM(CASE WHEN DATE(check_out) = ? THEN no_of_adult ELSE 0 END) as expected_adult,
+            SUM(CASE WHEN DATE(check_out) = ? THEN no_of_child ELSE 0 END) as expected_child,
+            SUM(CASE WHEN DATE(check_in) = ? THEN no_of_adult ELSE 0 END) as occupied_adult,
+            SUM(CASE WHEN DATE(check_in) = ? THEN no_of_child ELSE 0 END) as occupied_child
+        ", [$todayDate, $todayDate, $todayDate, $todayDate])
+            ->first();
 
-        // return $checkIn;
+
+        $expectedAdult = $inHouseData->expected_adult ?? 0;
+        $expectedChild = $inHouseData->expected_child ?? 0;
+
+        $occupiedAdult = $inHouseData->occupied_adult ?? 0;
+        $occupiedChild = $inHouseData->occupied_child ?? 0;
+
+        $totalAdult = $expectedAdult + $occupiedAdult;
+        $totalChild = $expectedChild + $occupiedChild;
+
+        $membersCount = [
+            "adult" => $totalAdult,
+            "child" => $totalChild,
+            "total" => $totalAdult + $totalChild,
+        ];
 
         return [
-            'checkedOut' => $CheckedOut,
-            'dirtyRooms' => $dirtyRooms->count(),
-            'dirtyRoomsList' => $dirtyRooms->get(),
             'availableRooms' => $AvailableRooms,
-            'confirmedBooking' => $confirmedBooking->count(),
-            'blockedRooms' => $BlockedRooms,
-            'confirmedBookingList' => $confirmedBooking->get(),
-            'waitingBooking' => $waitingBooking,
-            'expectCheckOut' => $expectCheckOut,
             'reservedWithoutAdvance' => $reservedWithoutAdvance,
+            'checkIn' => $Occupied,
+            'expectCheckOut' => $expectCheckOut,
+            'dirtyRoomsList' => $dirtyRooms,
+            'blockedRooms' => $BlockedRooms,
 
-            'checkIn' => $checkIn,
             'checkOut' => $checkOut,
-
-            'members' => [
-                'adult' => array_sum($no_of_adult),
-                'child' => array_sum($no_of_child),
-                'baby' => array_sum($no_of_baby),
-            ],
-
+            'members' => $membersCount,
             'fooForCustomers' => $fooForCustomers,
             'status' => true,
         ];
