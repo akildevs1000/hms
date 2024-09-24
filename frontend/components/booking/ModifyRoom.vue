@@ -155,7 +155,6 @@
                       <v-row justify="center">
                         <v-col cols="4" class="d-flex justify-center">
                           <v-checkbox
-                            v-model="bookingResponse.early_check_in"
                             readonly
                             label="Early C/I"
                             hide-details
@@ -164,7 +163,6 @@
                         </v-col>
                         <v-col cols="4" class="d-flex justify-center">
                           <v-checkbox
-                            v-model="bookingResponse.late_check_out"
                             readonly
                             label="Late C/O"
                             hide-details
@@ -185,6 +183,36 @@
                       <Heading label="Edit Booking" />
                     </v-col>
                     <v-col cols="6">
+                      <!-- <tr>
+                <th>Early Check In</th>
+                <td>
+                  <v-checkbox
+                    v-model="is_early_check_in"
+                    :label="`Early Check In (${early_check_in})`"
+                    :hide-details="true"
+                    dense
+                  ></v-checkbox>
+                </td>
+              </tr> -->
+                      <!-- <tr>
+                <th>Late Check Out</th>
+                <td>
+                  <v-checkbox
+                    v-model="is_late_check_out"
+                    :label="`Early Check In (${late_check_out})`"
+                    :hide-details="true"
+                    dense
+                    @change="
+                      () => {
+                        late_check_out = is_late_check_out
+                          ? payload.late_check_out
+                          : 0;
+                      }
+                    "
+                  ></v-checkbox>
+                </td>
+              </tr> -->
+
                       <v-menu
                         v-model="checkin_menu"
                         :close-on-content-click="false"
@@ -256,6 +284,7 @@
 
                     <v-col cols="4">
                       <v-text-field
+                        readonly
                         v-model="payload.no_of_adult"
                         label="Adults"
                         dense
@@ -265,6 +294,7 @@
                     </v-col>
                     <v-col cols="4">
                       <v-text-field
+                        readonly
                         v-model="payload.no_of_child"
                         label="Children"
                         dense
@@ -274,6 +304,7 @@
                     </v-col>
                     <v-col cols="4">
                       <v-text-field
+                        readonly
                         min="0"
                         @keyup="adjust_bed_charges"
                         v-model="payload.extra_bed_qty"
@@ -330,22 +361,15 @@
                       <v-row justify="center">
                         <v-col cols="4" class="d-flex justify-center">
                           <v-checkbox
-                            v-model="is_early_check_in"
+                            readonly
                             label="Early C/I"
                             hide-details
                             dense
-                            @change="
-                              () => {
-                                late_check_out = is_late_check_out
-                                  ? payload.late_check_out
-                                  : 0;
-                              }
-                            "
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="4" class="d-flex justify-center">
                           <v-checkbox
-                            v-model="is_late_check_out"
+                            readonly
                             label="Late C/O"
                             hide-details
                             dense
@@ -384,9 +408,9 @@
                               border-bottom: 1px solid #eeeeee;
                             "
                           >
-                            <span>{{
+                            <b>{{
                               $utils.currency_format(old.booking_total_price)
-                            }}</span>
+                            }}</b>
                           </td>
                           <td colspan="2" class="text-center">Old Balance</td>
                         </tr>
@@ -396,11 +420,11 @@
                             {{ $utils.currency_format(payload.advance_price) }}
                           </td>
                           <td colspan="2" class="text-center">
-                            <span style="font-size: 22px" class="blue--text">{{
+                            <b style="font-size: 22px" class="blue--text">{{
                               $utils.currency_format(
                                 old.booking_total_price - payload.advance_price
                               )
-                            }}</span>
+                            }}</b>
                           </td>
                         </tr>
                       </table>
@@ -427,7 +451,7 @@
                               )
                             }}
                           </td>
-                          <td colspan="2" class="text-center">New Balance</td>
+                          <td colspan="2" class="text-center">Old Balance</td>
                         </tr>
                         <tr>
                           <td>Advance Adj</td>
@@ -435,12 +459,12 @@
                             {{ $utils.currency_format(payload.advance_price) }}
                           </td>
                           <td colspan="2" class="text-center">
-                            <span style="font-size: 22px" class="red--text">{{
+                            <b style="font-size: 22px" class="red--text">{{
                               $utils.currency_format(
                                 payload.booking_total_price -
                                   payload.advance_price
                               )
-                            }}</span>
+                            }}</b>
                           </td>
                         </tr>
                       </table>
@@ -766,11 +790,11 @@ export default {
           check_out: data.check_out,
         };
 
-        this.early_check_in = data.early_check_in;
-        this.late_check_out = data.late_check_out;
+        // this.early_check_in = data.early_check_in;
+        // this.late_check_out = data.late_check_out;
 
-        this.is_early_check_in = this.early_check_in > 0 ? true : false;
-        this.is_late_check_out = this.late_check_out > 0 ? true : false;
+        // this.is_early_check_in = this.early_check_in > 0 ? true : false;
+        // this.is_late_check_out = this.late_check_out > 0 ? true : false;
 
         this.payload = {
           id: data.id,
