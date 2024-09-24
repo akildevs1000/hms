@@ -16,7 +16,7 @@
           >
         </v-toolbar>
         <v-container>
-          <CreateCustomer @close-dialog="closeDialogs" />
+          <CustomerCreate @close-dialog="closeDialogs" />
         </v-container>
         <v-card-actions> </v-card-actions>
       </v-card>
@@ -196,13 +196,7 @@
   <NoAccess v-else />
 </template>
 <script>
-import CreateCustomer from "../../components/customer/CreateCustomer.vue";
-import CustomerIndex from "../../components/customer/CustomerIndex.vue";
 export default {
-  components: {
-    CustomerIndex,
-    CreateCustomer,
-  },
   data: () => ({
     page: 1,
     perPage: 0,

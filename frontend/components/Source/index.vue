@@ -14,13 +14,16 @@
     <div>
       <v-dialog v-model="agentDialog" max-width="40%">
         <v-card>
-          <v-toolbar class="rounded-md" color="blue" dense flat dark>
-            <span>{{ formTitle }} {{ Model }}</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="agentDialog = false"
-              >mdi-close</v-icon
-            >
-          </v-toolbar>
+          <v-alert class="rounded-md" color="grey lighten-3" dense flat>
+            <v-row no-gutter>
+              <v-col>
+                <span>{{ formTitle }} {{ Model }}</span>
+              </v-col>
+              <v-col class="text-right">
+                <AssetsButtonClose @close="agentDialog = false" />
+              </v-col>
+            </v-row>
+          </v-alert>
           <v-card-text>
             <v-container>
               <v-row>
@@ -137,14 +140,9 @@
                   }}</span>
                 </v-col>
                 <v-col cols="12" class="text-right">
-                  <v-btn
-                    small
-                    class="grey white--text"
-                    @click="agentDialog = false"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn small class="primary" @click="save">Save</v-btn>
+                  <AssetsButtonCancel @click="agentDialog = false" />
+                  &nbsp; &nbsp;
+                  <AssetsButtonSubmit @click="save" />
                 </v-col>
               </v-row>
             </v-container>
@@ -184,8 +182,8 @@
           </v-toolbar>
         </template>
         <template v-slot:header="{ props: { headers } }">
-          <thead >
-            <tr >
+          <thead>
+            <tr>
               <td
                 v-for="(header, index) in headers"
                 :key="index"
@@ -212,14 +210,10 @@
           <small class="text-color">{{ caps(item.type) }}</small></template
         >
         <template v-slot:item.mobile="{ item }">
-          <small class="text-color">{{
-            caps(item.mobile)
-          }}</small></template
+          <small class="text-color">{{ caps(item.mobile) }}</small></template
         >
         <template v-slot:item.landline="{ item }">
-          <small class="text-color">{{
-            caps(item.landline)
-          }}</small></template
+          <small class="text-color">{{ caps(item.landline) }}</small></template
         >
         <template v-slot:item.email="{ item }">
           <small class="text-color">{{ caps(item.email) }}</small></template
@@ -228,9 +222,7 @@
           <small class="text-color">{{ caps(item.gst) }}</small></template
         >
         <template v-slot:item.address="{ item }">
-          <small class="text-color">{{
-            caps(item.address)
-          }}</small></template
+          <small class="text-color">{{ caps(item.address) }}</small></template
         >
         <template v-slot:item.created_at="{ item }">
           <small class="text-color">{{
@@ -252,6 +244,19 @@
                   Edit
                 </v-list-item-title>
               </v-list-item>
+              <v-list-item v-if="can('source_edit')">
+                <v-list-item-title style="cursor: pointer">
+                  <!-- <v-icon color="secondary" small> mdi-plus </v-icon>
+                  Add Guest -->
+                  <SourceGuestCreate />
+                </v-list-item-title>
+              </v-list-item>
+              <!-- <v-list-item v-if="can('source_edit')" @click="editItem(item)">
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon color="secondary" small> mdi-eye-outline </v-icon>
+                  View Guest
+                </v-list-item-title>
+              </v-list-item> -->
               <v-list-item
                 v-if="can('source_delete')"
                 @click="deleteItem(item)"

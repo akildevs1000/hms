@@ -5,23 +5,6 @@
         {{ response }}
       </v-snackbar>
     </div>
-
-    <v-dialog v-model="NewCustomerDialog" max-width="60%">
-      <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
-          <span>Create Customer</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="NewCustomerDialog = false"
-            >mdi-close</v-icon
-          >
-        </v-toolbar>
-        <v-container>
-          <CreateCustomer @close-dialog="closeDialogs" />
-        </v-container>
-        <v-card-actions> </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <v-dialog v-model="viewCustomerDialog" max-width="60%">
       <v-card>
         <v-toolbar class="rounded-md" color="background" dense flat dark>
@@ -82,13 +65,7 @@
                     v-model="search"
                   ></v-text-field>
                   &nbsp;
-                  <v-btn
-                    class="primary"
-                    small
-                    @click="NewCustomerDialog = true"
-                  >
-                    <v-icon small white>mdi-plus</v-icon> New
-                  </v-btn>
+                  <CustomerCreate @close-dialog="closeDialogs" />
                   <!-- <FilterDateRange height="30" @filter-attr="filterAttr" /> -->
                 </div>
               </v-toolbar>
@@ -127,6 +104,37 @@
             <template v-slot:item.contact_no="{ item }">
               <small class="text-color">{{ item.contact_no || "---" }}</small>
             </template>
+            <template v-slot:item.whatsapp="{ item }">
+              <small class="text-color">{{ item.whatsapp || "---" }}</small>
+            </template>
+            <template v-slot:item.address="{ item }">
+              <!-- {{ item.city }},{{ item.state }},{{ item.zip_code }} ,{{
+                item.country
+              }} -->
+              <small class="text-color">
+                <span v-if="item.city">{{ item.city }}</span>
+                <span v-if="item.city && item.state">, </span>
+                <span v-if="item.state">{{ item.state }}</span>
+                <span v-if="item.state && item.zip_code">
+                  {{ item.zip_code }}</span
+                >
+                <span
+                  v-if="
+                    (item.city || item.state || item.zip_code) && item.country
+                  "
+                  >,
+                </span>
+                <span v-if="item.country">{{ item.country }}</span>
+              </small>
+              <!-- <small
+                v-if="
+                  !item.city && !item.state && !item.zip_code && !item.country
+                "
+                class="text-color"
+              >
+                ---</small
+              > -->
+            </template>
             <template v-slot:item.id_card_type.name="{ item }">
               <small class="text-color">
                 {{ item.id_card_type ? item.id_card_type.name : "---" }}</small
@@ -141,19 +149,28 @@
             <template v-slot:item.gst="{ item }">
               <small class="text-color">{{ item.gst || "---" }}</small>
             </template>
-            <template v-slot:item.address="{ item }">
-              <small class="text-color">{{ item.address || "---" }}</small>
-            </template>
             <template v-slot:item.options="{ item }">
-              <v-icon
-                x-small
-                v-if="can('guest_edit')"
-                color="primary"
-                @click="viewCustomerBilling(item)"
-                class="mr-2"
-              >
-                mdi-pencil
-              </v-icon>
+              <v-menu bottom left>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list width="120" dense>
+                  <v-list-item>
+                    <v-list-item-title style="cursor: pointer">
+                      <CustomerEdit @close-dialog="closeDialogs" :item="item" />
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+                <v-list width="120" dense>
+                  <v-list-item>
+                    <v-list-item-title style="cursor: pointer">
+                      <CustomerView :item="item" />
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </template>
           </v-data-table>
         </v-col>
@@ -163,13 +180,7 @@
   <NoAccess v-else />
 </template>
 <script>
-import CreateCustomer from "../../components/customer/CreateCustomer.vue";
-import CustomerIndex from "../../components/customer/CustomerIndex.vue";
 export default {
-  components: {
-    CustomerIndex,
-    CreateCustomer,
-  },
   data: () => ({
     page: 1,
     perPage: 0,
@@ -207,9 +218,29 @@ export default {
         filterSpecial: false,
       },
       {
-        text: "Contact_no",
+        text: "Contact",
         value: "contact_no",
         key: "contact_no",
+        align: "left",
+        sortable: true,
+        filterable: true,
+        filterSpecial: true,
+        width: "150px",
+      },
+      {
+        text: "Whatsapp",
+        value: "whatsapp",
+        key: "whatsapp",
+        align: "left",
+        sortable: true,
+        filterable: true,
+        filterSpecial: true,
+        width: "150px",
+      },
+      {
+        text: "Address",
+        value: "address",
+        key: "address",
         align: "left",
         sortable: true,
         filterable: true,
@@ -229,7 +260,6 @@ export default {
     endpoint: "customer",
     search: "",
     snackbar: false,
-    NewCustomerDialog: false,
     viewCustomerDialog: false,
     dialog: false,
     ids: [],
@@ -298,13 +328,15 @@ export default {
   },
 
   methods: {
+    handleSelectedCustomer({ customer }) {
+      this.customer = customer;
+    },
     onPageChange() {
       this.getDataFromApi();
     },
 
     closeDialogs() {
       this.getDataFromApi();
-      this.NewCustomerDialog = false;
       this.viewCustomerDialog = false;
     },
     can(per) {
@@ -366,13 +398,13 @@ export default {
     },
 
     searchIt() {
-      let s = this.search.length;
       let search = this.search;
-      if (s == 0) {
-        this.getDataFromApi(this.endpoint);
-      } else if (s > 2) {
+      if (search && search.length > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${search}`);
+        return;
       }
+
+      this.getDataFromApi(this.endpoint);
     },
   },
 };

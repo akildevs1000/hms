@@ -45,7 +45,12 @@ class UpdateRequest extends FormRequest
 
             'title'      => 'required',
             'whatsapp'      => 'nullable',
-            'nationality'      => 'required',
+            'nationality'      => 'nullable',
+
+            'country' => 'nullable',
+            'state' => 'nullable',
+            'city' => 'nullable',
+            'zip_code' => 'nullable',
         ];
 
         return $arr;
