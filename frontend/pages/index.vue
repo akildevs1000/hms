@@ -194,10 +194,10 @@
               name="margin"
               size="100%"
               :total="'100'"
-              :colors="[`#538234`, `#71de36`, `#ffc000`, `#dc3545`]"
+              :colors="[`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`]"
               :labels="[
                 {
-                  color: `#538234`,
+                  color: `#139c4a`,
                   text: `Available`,
                   value: availableRooms.length,
                 },

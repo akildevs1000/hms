@@ -762,7 +762,7 @@ small {
   color: #8a8a8a;
 }
 .available {
-  background-color: #538234;
+  background-color: #139c4a;
 }
 .booked {
   background-color: #71de36;
