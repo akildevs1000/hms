@@ -379,26 +379,7 @@ class RoomController extends Controller
             }])
             ->get();
 
-
-
-
         $BlockedRooms = Room::with('device')->where("status", Room::Blocked)->where('company_id', $company_id)->get();
-
-        $fooForCustomers = Food::whereHas('booking', function ($q) use ($company_id) {
-            $q->where('booking_status', '!=', 0);
-            $q->where('booking_status', 2);
-            $q->where('company_id', $company_id);
-        })->get(['breakfast', 'lunch', 'dinner'])->toArray();
-
-        $breakfast = array_column($fooForCustomers, 'breakfast');
-        $lunch = array_column($fooForCustomers, 'lunch');
-        $dinner = array_column($fooForCustomers, 'dinner');
-
-        $fooForCustomers = [
-            'breakfast' => $this->getCustomersBreakfastOnly($breakfast),
-            'lunch' => $this->getCustomersLunchOnly($lunch),
-            'dinner' => $this->getCustomersDinnerOnly($dinner),
-        ];
 
         $Occupied = Room::with('device')
             // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
@@ -454,8 +435,6 @@ class RoomController extends Controller
                     ->with("customer");
             }])->get();
 
-
-
         $inHouseData = BookedRoom::where('company_id', $company_id)
             ->where(function ($query) use ($todayDate) {
                 $query->whereDate('check_out', $todayDate)
@@ -493,10 +472,8 @@ class RoomController extends Controller
             'expectCheckOut' => $expectCheckOut,
             'dirtyRoomsList' => $dirtyRooms,
             'blockedRooms' => $BlockedRooms,
-
             'checkOut' => $checkOut,
             'members' => $membersCount,
-            'fooForCustomers' => $fooForCustomers,
             'status' => true,
         ];
     }
