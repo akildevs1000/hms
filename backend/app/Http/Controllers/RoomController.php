@@ -465,6 +465,43 @@ class RoomController extends Controller
             "total" => $totalAdult + $totalChild,
         ];
 
+
+
+        $FoodOrder = BookedRoom::where('company_id', $company_id)
+            ->where(function ($query) use ($todayDate) {
+                $query->whereDate('check_out', $todayDate)
+                    ->orWhereDate('check_in', $todayDate);
+            })
+            ->where('booking_status', 2)
+            ->selectRaw("
+            SUM(CASE WHEN DATE(check_out) = ? THEN breakfast ELSE 0 END) as expected_breakfast,
+            SUM(CASE WHEN DATE(check_out) = ? THEN lunch ELSE 0 END) as expected_lunch,
+            SUM(CASE WHEN DATE(check_out) = ? THEN dinner ELSE 0 END) as expected_dinner,
+            SUM(CASE WHEN DATE(check_in) = ? THEN breakfast ELSE 0 END) as occupied_breakfast,
+            SUM(CASE WHEN DATE(check_in) = ? THEN lunch ELSE 0 END) as occupied_lunch,
+            SUM(CASE WHEN DATE(check_in) = ? THEN dinner ELSE 0 END) as occupied_dinner
+        ", [$todayDate, $todayDate, $todayDate, $todayDate, $todayDate, $todayDate])
+            ->first();
+
+        $expectedBreakfast =$FoodOrder->expected_breakfast ?? 0;
+        $expectedLunch =$FoodOrder->expected_lunch ?? 0;
+        $expectedDinner =$FoodOrder->expected_dinner ?? 0;
+
+        $occupiedBreakfast =$FoodOrder->occupied_breakfast ?? 0;
+        $occupiedLunch =$FoodOrder->occupied_lunch ?? 0;
+        $occupiedDinner =$FoodOrder->occupied_dinner ?? 0;
+
+        $totalBreakfast = $expectedBreakfast + $occupiedBreakfast;
+        $totalLunch = $expectedLunch + $occupiedLunch;
+        $totalDinner = $expectedDinner + $occupiedDinner;
+
+        $foodOrdersCount = [
+            "breakfast" => $totalBreakfast,
+            "lunch" => $totalLunch,
+            "dinner" => $totalDinner,
+            "total" => $totalBreakfast + $totalLunch + $totalDinner,
+        ];
+
         return [
             'availableRooms' => $AvailableRooms,
             'reservedWithoutAdvance' => $reservedWithoutAdvance,
@@ -474,6 +511,7 @@ class RoomController extends Controller
             'blockedRooms' => $BlockedRooms,
             'checkOut' => $checkOut,
             'members' => $membersCount,
+            'foodOrdersCount' => $foodOrdersCount,
             'status' => true,
         ];
     }

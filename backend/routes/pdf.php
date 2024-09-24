@@ -11,7 +11,8 @@
    Route::get('checkin_report_print', [ReportController::class, 'CHeckInReport']);
    Route::get('checkin_report_download', [ReportController::class, 'CHeckInReportDownload']);
    Route::get('inhouse_report_print', [ReportController::class, 'InHouseReport']);
-
+   Route::get('foodorder_report_print', [ReportController::class, 'FoodOrderReport']);
+   
    Route::get('checkout_report_print', [ReportController::class, 'CHeckOutReport']);
    
    Route::get('checkout_report_download', [ReportController::class, 'CHeckOutReportDownload']);

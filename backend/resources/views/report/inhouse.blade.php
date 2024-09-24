@@ -369,6 +369,7 @@
             <th class="my-0 py-0 text-center">Group</th>
             <th class="my-0 py-0 text-center">Adult</th>
             <th class="my-0 py-0 text-center">Child</th>
+            
             <th class="my-0 py-0 text-center">Notes</th>
 
         </tr>
@@ -378,17 +379,17 @@
         @foreach ($data as $item)
             <tr>
                 <td class="my-1 py-1 text-center">
-                    {{ $item->room_no ?? '---' }}
+                    {{ $item['room_no'] ?? '---' }}
                     <br>
-                    {{ $item->room_type ?? '---' }}
+                    {{ $item['room_type'] ?? '---' }}
                 </td>
-                <td class="my-1 py-1 text-center">{{ $item->title ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->check_in ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->check_out ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->booking->group_name == 'yes' ? 'Yes' : '-' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->no_of_adult ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->no_of_child ?? '---' }}</td>
-                <td class="my-1 py-1 text-center">{{ $item->booking->request ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['title'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['check_in'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['check_out'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['booking']['group_name'] == 'yes' ? 'Yes' : '-' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['no_of_adult'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['no_of_child'] ?? '---' }}</td>
+                <td class="my-1 py-1 text-center">{{ $item['booking']['request'] ?? '---' }}</td>
                 </td>
             </tr>
         @endforeach

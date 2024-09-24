@@ -1,17 +1,11 @@
 <template>
   <span v-if="!loading">
     <div class="text-right">
-        <v-icon small color="primary" @click="process('expect_checkout_report_print')"
-          >mdi-printer-outline</v-icon
-        >
-        <!-- <v-icon
-          color="black"
-          right
-          @click="process('checkin_report_download')"
-          >mdi-printer-outline</v-icon
-        > -->
-      </div>
-      <AssetsTable :headers="headers" :items="items" />
+      <v-icon small color="primary" @click="process('foodorder_report_print')"
+        >mdi-printer-outline</v-icon
+      >
+    </div>
+    <AssetsTable :headers="headers" :items="items" />
   </span>
 </template>
 <script>
@@ -34,12 +28,12 @@ export default {
       { text: `C/In`, value: `check_in`, align: `center` },
       { text: `C/Out`, value: `check_out`, align: `center` },
       { text: `Group`, value: `group`, align: `center` },
-      { text: `Source`, value: `source`, align: `center` },
-      { text: `Paid By`, value: `paid_by`, align: `center` },
-      { text: `Posting`, value: `postings`, align: `right` },
-      { text: `Total`, value: `total`, align: `right` },
-      { text: `Paid`, value: `paid`, align: `right` },
-      { text: `Balance`, value: `balance`, align: `right` },
+      { text: `Adult`, value: `no_of_adult`, align: `center` },
+      { text: `Children`, value: `no_of_child`, align: `center` },
+      { text: `Breakfast`, value: `breakfast`, align: `center` },
+      { text: `Lunch`, value: `lunch`, align: `center` },
+      { text: `Dinner`, value: `dinner`, align: `center` },
+      { text: `Notes`, value: `notes`, align: `center` },
     ];
 
     this.items = this.data.map((e) => ({
@@ -50,13 +44,12 @@ export default {
       check_out: e.booked_room.check_out,
       group: e?.booked_room?.booking?.group_name == "yes" ? "Yes" : "-",
       source: e?.booked_room?.booking?.type,
-      paid_by: this.getPaidBy(e?.booked_room?.booking?.type),
-      postings: this.$utils.currency_format(
-        this.$utils.getSum(e.booked_room.postings.map((e) => e.amount_with_tax))
-      ),
-      total: this.$utils.currency_format(e?.booked_room?.grand_total),
-      paid: this.$utils.currency_format(e.booked_room.booking.paid_amounts),
-      balance: this.$utils.currency_format(e.booked_room.booking.balance),
+      no_of_adult: e.booked_room.no_of_adult,
+      no_of_child: e.booked_room.no_of_child,
+      breakfast: e.booked_room.breakfast,
+      lunch: e.booked_room.lunch,
+      dinner: e.booked_room.dinner,
+      notes: e.booked_room.booking.request,
     }));
 
     this.loading = false;

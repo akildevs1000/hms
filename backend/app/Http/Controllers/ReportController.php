@@ -40,6 +40,7 @@ class ReportController extends Controller
             ->setPaper('a4', 'portrait')
             ->stream();
     }
+
     public function InHouseReport(Request $request)
     {
         $company_id = $request->company_id;
@@ -47,7 +48,7 @@ class ReportController extends Controller
 
         // right now i have has Many relation with Posting. but i want sum of that postings
         // how to get postings sum 
-        $data = $expectCheckInModel->whereDate('check_in', $request->date)
+        $data1 = $expectCheckInModel->whereDate('check_in', $request->date)
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 2);
@@ -57,13 +58,67 @@ class ReportController extends Controller
             ->orderBy("updated_at", "desc")
             ->get();
 
+
+        $datamodel2 = BookedRoom::query();
+
+        $data2 = $datamodel2->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+                $q->where('company_id', $company_id);
+            })
+            ->withSum('postings', 'amount_with_tax')
+            ->orderBy("updated_at", "desc")
+            ->get();
+
+        $data = array_merge($data1->toArray(), $data2->toArray());
+
         $company = Company::find($request->company_id);
 
         return Pdf::loadView('report.inhouse', compact("data", "company"))
             ->setPaper('a4', 'portrait')
             ->stream();
     }
-    
+
+    public function FoodOrderReport(Request $request)
+    {
+        $company_id = $request->company_id;
+        $expectCheckInModel = BookedRoom::query();
+
+        // right now i have has Many relation with Posting. but i want sum of that postings
+        // how to get postings sum 
+        $data1 = $expectCheckInModel->whereDate('check_in', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+                $q->where('company_id', $company_id);
+            })
+            ->withSum('postings', 'amount_with_tax')
+            ->orderBy("updated_at", "desc")
+            ->get();
+
+
+        $datamodel2 = BookedRoom::query();
+
+        $data2 = $datamodel2->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+                $q->where('company_id', $company_id);
+            })
+            ->withSum('postings', 'amount_with_tax')
+            ->orderBy("updated_at", "desc")
+            ->get();
+
+        $data = array_merge($data1->toArray(), $data2->toArray());
+
+        $company = Company::find($request->company_id);
+
+        return Pdf::loadView('report.foodorder', compact("data", "company"))
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
     public function CHeckInReportDownload(Request $request)
     {
         $data = $this->CHeckInReportProcess($request);
@@ -92,7 +147,7 @@ class ReportController extends Controller
 
         // right now i have has Many relation with Posting. but i want sum of that postings
         // how to get postings sum 
-        $data = $expectCheckInModel->whereDate('check_in', $request->date)
+        $data = $expectCheckInModel->whereDate('check_out', $request->date)
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 3);
@@ -285,6 +340,7 @@ class ReportController extends Controller
 
     public function expectCHeckInReport(Request $request)
     {
+        
         $company_id = $request->company_id;
         $expectCheckInModel = BookedRoom::query();
         $data = $expectCheckInModel->whereDate('check_in', $request->date)
@@ -322,15 +378,38 @@ class ReportController extends Controller
     public function expectCHeckOutReport(Request $request)
     {
         $company_id = $request->company_id;
-        $expectCheckOutModel = BookedRoom::query();
-        $data = $expectCheckOutModel->whereDate('check_out', $request->date)
+        $expectCheckInModel = BookedRoom::query();
+
+        // right now i have has Many relation with Posting. but i want sum of that postings
+        // how to get postings sum 
+        $data1 = $expectCheckInModel->whereDate('check_in', $request->date)
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '=', 2);
                 $q->where('company_id', $company_id);
-            })->get();
+            })
+            ->withSum('postings', 'amount_with_tax')
+            ->orderBy("updated_at", "desc")
+            ->get();
 
-        return Pdf::loadView('report.expect_check_out', ['data' => $data, 'company' => Company::find($request->company_id)])
+
+        $datamodel2 = BookedRoom::query();
+
+        $data2 = $datamodel2->whereDate('check_out', $request->date)
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', 0);
+                $q->where('booking_status', '=', 2);
+                $q->where('company_id', $company_id);
+            })
+            ->withSum('postings', 'amount_with_tax')
+            ->orderBy("updated_at", "desc")
+            ->get();
+
+        $data = array_merge($data1->toArray(), $data2->toArray());
+
+        $company = Company::find($request->company_id);
+
+        return Pdf::loadView('report.expect_check_out', compact("data", "company"))
             ->setPaper('a4', 'portrait')
             ->stream();
     }

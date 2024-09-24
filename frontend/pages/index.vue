@@ -77,7 +77,7 @@
             />
             <CheckInRoomsReport
               v-if="isActiveTab == 2"
-              :data="[...Occupied,...expectCheckOut]"
+              :data="[...Occupied, ...expectCheckOut]"
               @close-dialog="closeDialogs"
               :key="keyTabAll"
             />
@@ -114,7 +114,7 @@
           <v-container class="pt-0 mt-0">
             <ExpectCheckInReport
               v-if="isActiveTab == 1"
-              :data="[...Occupied,...expectCheckOut]"
+              :data="[...Occupied, ...expectCheckOut]"
               @close-dialog="closeDialogs"
               :key="keyTabAll"
             />
@@ -142,7 +142,7 @@
           </v-alert>
           <v-container class="pt-0 mt-0">
             <InHouseReport
-              :data="[...Occupied,...expectCheckOut]"
+              :data="[...Occupied, ...expectCheckOut]"
               @close-dialog="closeDialogs"
               :key="keyTabAll"
             />
@@ -150,31 +150,25 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="FoodDialog" persistent max-width="700px">
+      <v-dialog v-model="FoodDialog" persistent max-width="900px">
         <v-card>
           <v-alert color="grey lighten-3" dense flat>
             <v-row no-gutter>
               <v-col>
-                <small>Food Orders</small>
+                <small>Food Order</small>
               </v-col>
               <v-col class="text-right">
-                <AssetsButtonClose @close="ArrivalReportDialog = false" />
+                <AssetsButtonClose @close="FoodDialog = false" />
               </v-col>
             </v-row>
           </v-alert>
-
-          <v-toolbar class="rounded-md" color="primary" dense flat dark>
-            <span>Food Orders</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="FoodDialog = false">
-              mdi mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <FoodOrderRooms :key="key" @close-dialog="closeDialogs" />
-            </v-container>
-          </v-card-text>
+          <v-container class="pt-0 mt-0">
+            <FoodOrderReport
+              :data="[...Occupied, ...expectCheckOut]"
+              @close-dialog="closeDialogs"
+              :key="keyTabAll"
+            />
+          </v-container>
         </v-card>
       </v-dialog>
     </div>
@@ -360,30 +354,26 @@
             <v-divider color="#DDD" style="margin-bottom: 10px" />
 
             <Donut
-              v-if="foodplan"
-              name="foodplan"
+              v-if="foodOrdersCount"
+              name="foodOrdersCount"
               size="100%"
               :colors="colors"
-              :total="
-                parseInt(foodplan.breakfast) +
-                parseInt(foodplan.lunch) +
-                parseInt(foodplan.dinner)
-              "
+              :total="foodOrdersCount.total"
               :labels="[
                 {
                   color: `blue`,
                   text: `Breakfast`,
-                  value: foodplan ? parseInt(foodplan.breakfast) : 0,
+                  value: foodOrdersCount.breakfast,
                 },
                 {
                   color: `green`,
                   text: `Lunch`,
-                  value: foodplan ? parseInt(foodplan.lunch) : 0,
+                  value: foodOrdersCount.lunch,
                 },
                 {
                   color: `orange`,
                   text: `Dinner`,
-                  value: foodplan ? parseInt(foodplan.dinner) : 0,
+                  value: foodOrdersCount.dinner,
                 },
               ]"
             />
@@ -629,6 +619,7 @@ import ExpectCheckOutSvg from "../components/svg/ExpectCheckOutSvg.vue";
 import CheckInSvg from "../components/svg/CheckInSvg.vue";
 // import FoodOrderRooms from "../components/food/FoodOrderRooms.vue";
 
+import FoodOrderReport from "../components/summary_reports/FoodOrderReport.vue";
 import InHouseReport from "../components/summary_reports/InHouseReport.vue";
 import ExpectCheckInReport from "../components/summary_reports/ExpectCheckInReport.vue";
 import ExpectCheckOutReport from "../components/summary_reports/ExpectCheckOutReport.vue";
@@ -659,7 +650,7 @@ export default {
     CheckInRoomsReport,
     ExpectCheckOutReport,
     ExpectCheckInReport,
-    // FoodOrderRooms,
+    FoodOrderReport,
     CheckInSvg,
     ExpectCheckOutSvg,
     ExpectCheckInSvg,
@@ -777,7 +768,7 @@ export default {
         child: 0,
         total: 0,
       },
-      foodplan: null,
+      foodOrdersCount: null,
       expectCheckOut: "",
       headers: [
         { text: "#" },
@@ -819,29 +810,7 @@ export default {
       this.keyTabAll++;
       this.room_list();
     },
-    tab() {
-      // if (this.tab == 0) {
-      //   this.keyTabAll++;
-      // }
-      // if (this.tab == 1) {
-      //   this.keyTabexpected_arrival++;
-      // }
-      // if (this.tab == 2) {
-      //   this.keyTabdirty++;
-      // }
-      // if (this.tab == 3) {
-      //   this.keyTabblocked++;
-      // }
-      // if (this.tab == 4) {
-      //   this.keyTabavailable++;
-      // }
-      // if (this.tab == 5) {
-      //   this.keyTabcompliment++;
-      // }
-      // if (this.tab == 6) {
-      //   this.keyTabdirty++;
-      // }
-    },
+    tab() {},
     checkInDialog() {
       this.formTitle = "Check In";
       this.get_data();
@@ -886,8 +855,6 @@ export default {
       this.room_list();
       this.key = this.key + 1;
     }, 1000 * 60 * 2);
-
-    this.get_food_plan();
 
     let payload = {
       params: {
@@ -1184,22 +1151,6 @@ export default {
         .catch((err) => console.log(err));
     },
 
-    get_remaining(val) {
-      let total = this.checkData.remaining_price;
-      let advance_price = val;
-    },
-
-    get_food_plan() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`foodplan-count`, payload).then(({ data }) => {
-        this.foodplan = data;
-      });
-    },
-
     get_posting() {
       let id = this.evenIid;
       let payload = {
@@ -1249,6 +1200,7 @@ export default {
         );
 
         this.members = data.members;
+        this.foodOrdersCount = data.foodOrdersCount;
 
         this.isIndex = true;
         setTimeout(() => {
