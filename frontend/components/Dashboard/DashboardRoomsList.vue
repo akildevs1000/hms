@@ -519,7 +519,7 @@
             dark
           >
             <v-card-text
-              class="p-3 roombox expected_checkout"
+              class="p-3 roombox occupied"
               :style="'padding: 0px;'"
               title="Occupied"
             >

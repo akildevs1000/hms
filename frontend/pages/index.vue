@@ -41,48 +41,6 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="BookedRoomReportDialog" persistent max-width="700px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Reserved Room Report (Unpaid)</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="BookedRoomReportDialog = false">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <BookedRoomsReport
-                :data="reservedWithoutAdvance"
-                @close-dialog="closeDialogs"
-              />
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog v-model="PaidRoomReportDialog" persistent max-width="700px">
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Paid Room Report</span>
-            <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="PaidRoomReportDialog = false">
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <PaidRoomsReport
-                :data="confirmedBookingList"
-                @close-dialog="closeDialogs"
-              />
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
       <v-dialog v-model="ArrivalReportDialog" persistent max-width="900px">
         <v-card>
           <v-alert color="grey lighten-3" dense flat>
@@ -119,7 +77,7 @@
             />
             <CheckInRoomsReport
               v-if="isActiveTab == 2"
-              :data="Occupied"
+              :data="[...Occupied,...expectCheckOut]"
               @close-dialog="closeDialogs"
               :key="keyTabAll"
             />
@@ -156,7 +114,7 @@
           <v-container class="pt-0 mt-0">
             <ExpectCheckInReport
               v-if="isActiveTab == 1"
-              :data="expectCheckOut"
+              :data="[...Occupied,...expectCheckOut]"
               @close-dialog="closeDialogs"
               :key="keyTabAll"
             />
@@ -184,39 +142,11 @@
           </v-alert>
           <v-container class="pt-0 mt-0">
             <InHouseReport
-              :data="Occupied"
+              :data="[...Occupied,...expectCheckOut]"
               @close-dialog="closeDialogs"
               :key="keyTabAll"
             />
           </v-container>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog
-        v-model="AvailableRoomsReportDialog"
-        persistent
-        max-width="700px"
-      >
-        <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
-            <span>Available Rooms Report</span>
-            <v-spacer></v-spacer>
-            <v-icon
-              dark
-              class="pa-0"
-              @click="AvailableRoomsReportDialog = false"
-            >
-              mdi-close
-            </v-icon>
-          </v-toolbar>
-          <v-card-text>
-            <v-container>
-              <AvailableRoomsReport
-                :data="availableRooms"
-                @close-dialog="closeDialogs"
-              />
-            </v-container>
-          </v-card-text>
         </v-card>
       </v-dialog>
 
@@ -285,7 +215,7 @@
                 {
                   color: `#ffc000`,
                   text: `CheckIn`,
-                  value: Occupied.length,
+                  value: Occupied.length + expectCheckOut.length,
                 },
                 {
                   color: `#dc3545`,
@@ -318,15 +248,15 @@
               name="reservedWithoutAdvance"
               :total="reservedWithoutAdvance.length + Occupied.length"
               size="100%"
-              :colors="colors"
+              :colors="[`#03c1ec`, `#71de36`]"
               :labels="[
                 {
-                  color: `blue`,
+                  color: `#03c1ec`,
                   text: `Arrived`,
-                  value: `${Occupied.length}`,
+                  value: Occupied.length + expectCheckOut.length,
                 },
                 {
-                  color: `green`,
+                  color: `#71de36`,
                   text: `Pending`,
                   value: `${reservedWithoutAdvance.length}`,
                 },
@@ -356,17 +286,17 @@
               name="dirtyRoomsList"
               :total="dirtyRoomsList.length + expectCheckOut.length"
               size="100%"
-              :colors="colors"
+              :colors="[`#dc3545`, `#03c1ec`]"
               :labels="[
                 {
-                  color: `blue`,
-                  text: `Checkout`,
+                  color: `#dc3545`,
+                  text: `CheckOut`,
                   value: `${dirtyRoomsList.length}`,
                 },
                 {
-                  color: `green`,
+                  color: `#03c1ec`,
                   text: `Pending`,
-                  value: `${expectCheckOut.length}`,
+                  value: `${Occupied.length + expectCheckOut.length}`,
                 },
               ]"
             />
@@ -392,19 +322,19 @@
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
               name="members"
-              :total="members.adult + members.child"
+              :total="members.total"
               size="100%"
               :colors="colors"
               :labels="[
                 {
                   color: `blue`,
                   text: `Adult`,
-                  value: `${members.adult}`,
+                  value: members.adult,
                 },
                 {
                   color: `green`,
                   text: `Children`,
-                  value: `${members.child}`,
+                  value: members.child,
                 },
               ]"
             />
@@ -637,17 +567,6 @@
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList>
-                        <!-- <DashboardRoomsList
-                          ref="RoomComp"
-                          name="checkedOut"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'checkedOut'"
-                          :key="keyTabdirty"
-                          :data="rooms"
-                          :calenderColorCodes="calenderColorCodes"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList
-                      > -->
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
@@ -667,20 +586,6 @@
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
-
-                  <!-- <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          v-if="tab == 4"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'sold'"
-                          :key="keyTabexpected_arrival"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item> -->
                   <v-tab-item>
                     <v-card color="basil">
                       <v-card-text>
@@ -697,35 +602,6 @@
                       ></v-card-text>
                     </v-card>
                   </v-tab-item>
-                  <!-- <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          v-if="tab == 6"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'compliment'"
-                          :key="keyTabcompliment"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item> -->
-                  <!-- <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          name="checkedout"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'checkedout'"
-                          :key="keyTabdirty"
-                          :calenderColorCodes="calenderColorCodes"
-                          :data="rooms"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item> -->
                 </v-tabs>
               </v-col>
             </v-row>
@@ -834,15 +710,9 @@ export default {
       isDirty: true,
       payingAdvance: false,
 
-      DirtyRoomsReportDialog: false,
-      PaidRoomReportDialog: false,
-      BookedRoomReportDialog: false,
       ArrivalReportDialog: false,
       CheckOutReportDialog: false,
       InHouseDialog: false,
-      AvailableRoomsReportDialog: false,
-      ExpectCheckOutReportDialog: false,
-      ExpectCheckInReportDialog: false,
       FoodDialog: false,
       checkInDialog: false,
       checkInKey: 1,
@@ -869,22 +739,6 @@ export default {
 
       logs: [],
 
-      total_items: [],
-      items_by_cities: [],
-      test_headers: [
-        {
-          text: "Customer",
-          align: "left",
-          sortable: false,
-          value: "company_name",
-        },
-        {
-          text: "Order Total",
-          align: "left",
-          sortable: false,
-          value: "order_total",
-        },
-      ],
       orders: "",
       products: "",
       customers: "",
@@ -896,16 +750,11 @@ export default {
       rooms: [],
       postings: [],
       dirtyRoomsList: [],
-      confirmedBookingList: [],
-      notAvailableRooms: [],
       availableRooms: [],
-      blockedRooms: [],
       Occupied: [],
       checkIn: [],
       checkOut: [],
       reservedWithoutAdvance: [],
-      confirmedBooking: "",
-      waitingBooking: "",
       reason: "",
       totalTransactionAmount: 0,
       new_payment: 0,
@@ -926,10 +775,9 @@ export default {
       members: {
         adult: 0,
         child: 0,
-        baby: 0,
+        total: 0,
       },
       foodplan: null,
-      dirtyRooms: 0,
       expectCheckOut: "",
       headers: [
         { text: "#" },
@@ -1382,20 +1230,11 @@ export default {
         }
 
         this.rooms = data;
-
-        this.dirtyRooms = data.dirtyRooms;
         this.availableRooms = data.availableRooms;
-        this.notAvailableRooms = data.notAvailableRooms;
-        this.blockedRooms = data.blockedRooms;
-
-        this.confirmedBooking = data.confirmedBooking;
-        this.waitingBooking = data.waitingBooking;
-        this.expectCheckOut = data.expectCheckOut;
-        this.Occupied = data.checkIn;
-        this.checkOut = data.checkOut;
-        this.confirmedBookingList = data.confirmedBookingList;
-        this.dirtyRoomsList = data.dirtyRoomsList;
         this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+        this.Occupied = data.checkIn;
+        this.expectCheckOut = data.expectCheckOut;
+        this.dirtyRoomsList = data.dirtyRoomsList;
 
         let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
         let data2 = data.expectCheckOut.map((e) => e.room_no);
@@ -1405,12 +1244,12 @@ export default {
 
         let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
         let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
-        this.availableRooms = data.availableRooms.filter(e => !uniqueRoomNumbers.includes(e.room_no));
+        this.availableRooms = data.availableRooms.filter(
+          (e) => !uniqueRoomNumbers.includes(e.room_no)
+        );
 
+        this.members = data.members;
 
-        this.members = {
-          ...data.members,
-        };
         this.isIndex = true;
         setTimeout(() => {
           this.isPageLoad = true;
