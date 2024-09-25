@@ -1,152 +1,25 @@
 <template>
-  <div>
+  <v-container>
     <v-row>
-      <v-col cols="12" md="4" xl="4">
-        <v-card class="px-2" color="#800000">
-          <v-card-text class="text-center white--text">
-            <h6 class="text-uppercase">Revenue</h6>
-            <div class="mb-0" style="font-size: 20px">{{ $auth.user.company.currency }}{{ revenue || 0 }}</div>
-          </v-card-text>
+      <v-col v-for="(stat, index) in stats" :key="index">
+        <v-card rounded="lg" outlined class="pa-2">
+          <v-row no-gutter>
+            <v-col cols="2" class="pt-5">
+              <v-icon size="30" color="black">{{ stat.icon }}</v-icon>
+            </v-col>
+            <v-col class="text-center">
+              <AssetsTextLabel color="black" :label="stat.value" />
+              <br>
+              <AssetsTextLabel :label="stat.label" />
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
-      <v-col cols="12" md="4" xl="4">
-        <v-card class="px-2" color="#4390fc">
-          <v-card-text class="text-center white--text">
-            <h6 class="text-uppercase">City Ledger</h6>
-            <div class="mb-0" style="font-size: 20px">
-              {{ $auth.user.company.currency }}{{ city_ledger || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="4" xl="4">
-        <v-card class="px-2" color="#ffbe00">
-          <v-card-text class="text-center white--text">
-            <h6 class="text-uppercase">Number of Visit</h6>
-            <div class="mb-0" style="font-size: 20px">
-              {{ bookings.length || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
+      <v-col cols="12" v-if="bookings.length">
+        <AssetsTable :headers="headers" :items="bookings" />
       </v-col>
     </v-row>
-
-    <!-- <v-row class="my-2 mx-0">
-      <v-col cols="12" md="6" lg="4" xl="4" class="py-0">
-        <v-card class="mx-1 elevation-0">
-          <v-row class="box text-center no-of-visit-txt" style="background-color: #02ada4;height: 81px;">
-            <v-col md="6">
-              <h1 class="font-light text-white">
-                <PaidBookedSvg />
-                <h4 class="pb-0 mb-0 text-left white--text
-                                                              dash-font-size ipad-font-grid ipad-font-paid-grid
-                                                               laptop-font-paid-grid"
-                  style="  margin: -15px 0px 0px 0px;   ">
-                  Revenue
-                </h4>
-              </h1>
-            </v-col>
-            <v-col md="6">
-              <h1 class="big-screen laptop-font-grid ipad-font-qty-grid mt-4">
-                {{ revenue }}
-              </h1>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" lg="4" md="6" xl="4" class="py-0">
-        <v-card class="mx-1 elevation-0">
-          <v-row class="box text-center no-of-visit-txt" style="background-color: #4390fc;height: 81px;">
-            <v-col md="6">
-              <h1 class="font-light text-white">
-                <PaidBookedSvg />
-                <h4
-                  class="pb-0 mb-0 text-left white--text dash-font-size ipad-font-grid ipad-font-paid-grid laptop-font-paid-grid"
-                  style="  margin: -15px 0px 0px 0px;   ">
-                  City Ledger
-                </h4>
-              </h1>
-            </v-col>
-            <v-col md="6">
-              <h1 class="big-screen laptop-font-grid ipad-font-qty-grid mt-4">
-                {{ city_ledger }}
-              </h1>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" lg="4" md="12" xl="4" class="py-0 no-of-visit-div">
-        <v-card class="mx-1 elevation-0">
-          <v-row class="box text-center no-of-visit-txt-vis" style="background-color: #ffbe00;height: 81px;">
-            <v-col md="6">
-              <h1 class="font-light text-white" style="    margin-top: -10px;  ">
-                <Available />
-                <h4
-                  class="pb-0 mb-0 white--text text-left mt-3 dash-font-size ipad-font-grid ipad-font-paid-grid no-of-visit"
-                  style="  margin: -15px 0px 0px 0px;   ">
-                  Number of Visit
-                </h4>
-              </h1>
-            </v-col>
-            <v-col md="6">
-              <h1 class="big-screen laptop-font-grid ipad-font-qty-grid mt-4">
-                {{ bookings.length || "0" }}
-              </h1>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row> -->
-    <v-row>
-      <v-col md="12">
-        <table class="responsive-table">
-          <thead>
-            <tr>
-              <th scope="col" v-for="(item, index) in headers" :key="index">
-                {{ item.text }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in bookings" :key="index">
-              <th scope="row">
-                <b>{{ ++index }}</b>
-              </th>
-              <td scope="row">
-                <span class="blue--text" @click="goToRevView(item)" style="cursor: pointer">
-                  {{ item.reservation_no || "---" }}
-                </span>
-              </td>
-              <td scope="row">{{ item.type || "---" }}</td>
-              <td data-title="Released">
-                {{ item.source || "---" }}
-              </td>
-              <td data-title="Studio">{{ item.rooms || "---" }}</td>
-              <td data-title="Worldwide Gross" data-type="currency">
-                {{ item.booking_date || "---" }}
-              </td>
-              <td data-title="Domestic Gross" data-type="currency">
-                {{ item.check_in || "---" }}
-              </td>
-              <td data-title="International Gross" data-type="currency">
-                {{ item.check_out || "---" }}
-              </td>
-              <td data-title="Budget" data-type="currency">
-                {{ item.total_price || "---" }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </v-col>
-      <!-- <v-col cols="12" class="text-right">
-        <v-btn x-small @click="prevTab" dark color="background">
-          Back
-        </v-btn>
-      </v-col> -->
-    </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -160,44 +33,16 @@ export default {
   props: ["customerId"],
   data() {
     return {
+      stats: [],
       customer: "",
-      bookings: "",
+      bookings: [],
       revenue: "",
       city_ledger: "",
       payments: "",
       bookedRooms: "",
-      loading: false,
       viewportWidth: 0,
       viewportHeight: 0,
-      headers: [
-        {
-          text: "#",
-        },
-        {
-          text: "Rev. No",
-        },
-        {
-          text: "Type",
-        },
-        {
-          text: "Source",
-        },
-        {
-          text: "Rooms",
-        },
-        {
-          text: "Booking Date",
-        },
-        {
-          text: "Check In",
-        },
-        {
-          text: "Check Out",
-        },
-        {
-          text: "Total Price",
-        },
-      ],
+      headers: [],
     };
   },
   watch: {
@@ -226,121 +71,61 @@ export default {
         .get(`get_customer_history/${this.customerId}`)
         .then(({ data }) => {
           this.customer = data.data;
-          this.bookings = data.data.bookings;
-          this.revenue = data.revenue;
-          this.city_ledger = data.city_ledger;
-          this.loading = false;
+
+          this.headers = [
+            // { text: `#`, value: `serial`, align: `center` },
+            { text: `Rev. No`, value: `reservation_no`, align: `center` },
+            // { text: `Type`, value: `type`, align: `center` },
+            // { text: `Source`, value: `source`, align: `center` },
+            { text: `Room`, value: `room`, align: `center` },
+            // { text: `Cat`, value: `category`, align: `center` },
+            // { text: `Booking Date`, value: `booking_date`, align: `center` },
+            { text: `Check In`, value: `check_in`, align: `center` },
+            { text: `Check Out`, value: `check_out`, align: `center` },
+            { text: `Total Price`, value: `total_price`, align: `right` },
+            { text: `Paid`, value: `paid`, align: `right` },
+            { text: `Balance`, value: `balance`, align: `right` },
+
+          ];
+          this.bookings = data.data.bookings.map((e, i) => ({
+            // serial: i + 1,
+            reservation_no: e.reservation_no, // @click="goToRevView(item)"
+            // type: e.type,
+            // source: e.source,
+            room: e.booked_rooms && e.booked_rooms.length ? e.booked_rooms.map(e => e.room_no).join(",")  : "",
+            // category: e.booked_rooms && e.booked_rooms.length ? e.booked_rooms.map(e => e.room_type).join(",")  : "",
+            booking_date: this.$dateFormat.dmy(e.booking_date),
+            check_in: this.$dateFormat.dmy(e.check_in),
+            check_out: this.$dateFormat.dmy(e.check_out),
+            total_price: this.$utils.currency_format(e.total_price),
+            paid: this.$utils.currency_format(e.paid_amounts),
+            balance: this.$utils.currency_format(e.balance),
+          }));
+
+          this.stats = [
+            {
+              icon: "mdi-car",
+              label: "Number of Visit",
+              value: this.bookings.length,
+            },
+            {
+              icon: "mdi-bed",
+              label: "Number of Nights",
+              value: data.data.order_rooms_count,
+            },
+            {
+              icon: "mdi-cash",
+              label: "Revenue",
+              value: this.$utils.currency_format(data.revenue),
+            },
+            {
+              icon: "mdi-wallet",
+              label: "City Ledger",
+              value: this.$utils.currency_format(data.city_ledger),
+            },
+          ];
         });
     },
   },
 };
 </script>
-
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid #e9e9e9;
-}
-
-td,
-th {
-  text-align: left;
-  padding: 8px;
-  border: 1px solid #e9e9e9;
-}
-
-tr:nth-child(even) {
-  background-color: #e9e9e9;
-}
-
-.dash-font-size {
-  font-size: 13px;
-}
-
-.big-screen {
-  font-size: 25px;
-  color: white;
-}
-
-.food-icon-size {
-  font-size: 30px !important;
-}
-
-@media only screen and (min-width: 1025px) and (max-width: 1199px) {
-
-  /* Adjust layout for iPad pro landscape mode */
-  .ipad-font-grid {
-    font-size: 12px !important;
-    color: white;
-    margin-top: 10px !important;
-  }
-}
-
-@media only screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
-  .laptop-font-grid {
-    font-size: 15px !important;
-    color: white !important;
-    margin-top: 7px !important;
-  }
-
-  .no-of-visit {
-    margin-top: 24px !important;
-    font-size: 11px !important;
-  }
-
-  .laptop-font-paid-grid {
-    font-size: 11px !important;
-    color: white;
-    margin-top: 17px !important;
-    font-weight: bold;
-  }
-
-  .available-room-list {
-    width: 13.333333% !important;
-  }
-}
-
-@media only screen and (min-width: 1024px) and (max-width: 1024px) and (min-height: 768px) and (max-height: 768px) {
-
-  /* ipad mini Air */
-  .ipad-font-qty-grid {
-    font-size: 55px !important;
-    color: white;
-  }
-
-  .ipad-font-paid-grid {
-    font-size: 11px !important;
-    color: white;
-    margin-top: 17px !important;
-    font-weight: bold;
-  }
-
-  .ipad-font-food-grid {
-    color: red !important;
-  }
-
-  .available-room-list {
-    width: 13.333333% !important;
-  }
-
-  .no-of-visit-div {
-    margin-top: 100px;
-  }
-}
-
-@media only screen and (min-width: 1112px) and (max-width: 1112px) and (min-height: 764px) and (max-height: 764px) {
-  .no-of-visit-div {
-    margin-top: 30px;
-  }
-
-  .no-of-visit-txt {
-    height: 120px !important;
-  }
-
-  .no-of-visit-txt-vis {
-    height: 150px !important;
-  }
-}
-</style>

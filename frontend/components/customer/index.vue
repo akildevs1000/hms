@@ -25,108 +25,91 @@
       </v-card>
     </v-dialog>
 
-    <v-card class="mb-5 rounded-md mt-3" elevation="0">
-      <v-row>
-        <v-col cols="12">
-          <v-data-table
-            hide-default-header
-            dense
-            :headers="headers_table"
-            :items="data"
-            :loading="loading"
-            :options.sync="options"
-            :footer-props="{
-              itemsPerPageOptions: [20, 50, 100, 500, 1000],
-            }"
-            class="px-2"
-            :server-items-length="totalTableRowsCount"
-          >
-            <template v-slot:top>
-              <v-toolbar flat dense class="mb-5">
-                <span class="text-color">{{ Model }}</span>
-                <v-icon
-                  color="primary"
-                  right
-                  class="mt-1"
-                  @click="getDataFromApi()"
-                  >mdi-reload</v-icon
-                >
-                <v-spacer></v-spacer>
-                <div style="display: flex; align-items: center">
-                  <v-text-field
-                    class="global-search-textbox"
-                    append-icon="mdi-magnify"
-                    label="Search..."
-                    clearable
-                    dense
-                    outlined
-                    hide-details
-                    @input="searchIt"
-                    v-model="search"
-                  ></v-text-field>
-                  &nbsp;
-                  <CustomerCreate @close-dialog="closeDialogs" />
-                  <!-- <FilterDateRange height="30" @filter-attr="filterAttr" /> -->
-                </div>
-              </v-toolbar>
-            </template>
-            <template v-slot:header="{ props: { headers } }">
-              <thead>
-                <tr>
-                  <td
-                    v-for="(header, index) in headers"
-                    :key="index"
-                    class="primary--text"
-                    style="
-                      border-top: 1px solid #bdbdbd;
-                      border-bottom: 1px solid #bdbdbd;
-                    "
-                  >
-                    <small>{{ header.text }}</small>
-                  </td>
-                </tr>
-              </thead>
-            </template>
-            <template v-slot:item.sno="{ item, index }">
-              <small class="text-color">{{
-                currentPage
-                  ? (currentPage - 1) * perPage +
-                    (cumulativeIndex + itemIndex(item))
-                  : ""
-              }}</small>
-            </template>
-            <template v-slot:item.first_name="{ item }">
-              <small class="text-color">{{ item.full_name }}</small>
-            </template>
-            <template v-slot:item.email="{ item }">
-              <small class="text-color"> {{ item.email || "---" }}</small>
-            </template>
-            <template v-slot:item.contact_no="{ item }">
-              <small class="text-color">{{ item.contact_no || "---" }}</small>
-            </template>
-            <template v-slot:item.whatsapp="{ item }">
-              <small class="text-color">{{ item.whatsapp || "---" }}</small>
-            </template>
-            <template v-slot:item.address="{ item }">
-              <!-- {{ item.city }},{{ item.state }},{{ item.zip_code }} ,{{
+    <v-row class="px-2 pb-2">
+      <v-col cols="2">
+        <v-text-field
+          class="global-search-textbox"
+          append-icon="mdi-magnify"
+          label="Search..."
+          clearable
+          dense
+          outlined
+          hide-details
+          @input="searchIt"
+          v-model="search"
+        ></v-text-field>
+      </v-col>
+      <v-col class="text-right">
+        <CustomerCreate @close-dialog="closeDialogs" />
+        <!-- <FilterDateRange height="30" @filter-attr="filterAttr" /> -->
+      </v-col>
+    </v-row>
+
+    <v-data-table
+      hide-default-header
+      dense
+      :headers="headers_table"
+      :items="data"
+      :loading="loading"
+      :options.sync="options"
+      :footer-props="{
+        itemsPerPageOptions: [20, 50, 100, 500, 1000],
+      }"
+      class="px-2"
+      :server-items-length="totalTableRowsCount"
+    >
+      <template v-slot:header="{ props: { headers } }">
+        <thead>
+          <tr>
+            <td
+              v-for="(header, index) in headers"
+              :key="index"
+              class="primary--text"
+              style="
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+              "
+            >
+              <small>{{ header.text }}</small>
+            </td>
+          </tr>
+        </thead>
+      </template>
+      <template v-slot:item.sno="{ item, index }">
+        <small class="text-color">{{
+          currentPage
+            ? (currentPage - 1) * perPage + (cumulativeIndex + itemIndex(item))
+            : ""
+        }}</small>
+      </template>
+      <template v-slot:item.first_name="{ item }">
+        <small class="text-color">{{ item.full_name }}</small>
+      </template>
+      <template v-slot:item.email="{ item }">
+        <small class="text-color"> {{ item.email || "---" }}</small>
+      </template>
+      <template v-slot:item.contact_no="{ item }">
+        <small class="text-color">{{ item.contact_no || "---" }}</small>
+      </template>
+      <template v-slot:item.whatsapp="{ item }">
+        <small class="text-color">{{ item.whatsapp || "---" }}</small>
+      </template>
+      <template v-slot:item.address="{ item }">
+        <!-- {{ item.city }},{{ item.state }},{{ item.zip_code }} ,{{
                 item.country
               }} -->
-              <small class="text-color">
-                <span v-if="item.city">{{ item.city }}</span>
-                <span v-if="item.city && item.state">, </span>
-                <span v-if="item.state">{{ item.state }}</span>
-                <span v-if="item.state && item.zip_code">
-                  {{ item.zip_code }}</span
-                >
-                <span
-                  v-if="
-                    (item.city || item.state || item.zip_code) && item.country
-                  "
-                  >,
-                </span>
-                <span v-if="item.country">{{ item.country }}</span>
-              </small>
-              <!-- <small
+        <small class="text-color">
+          <span v-if="item.city">{{ item.city }}</span>
+          <span v-if="item.city && item.state">, </span>
+          <span v-if="item.state">{{ item.state }}</span>
+          <span v-if="item.state && item.zip_code"> {{ item.zip_code }}</span>
+          <span
+            v-if="(item.city || item.state || item.zip_code) && item.country"
+            >,
+          </span>
+          <span v-if="item.country">{{ item.country }}</span>
+        </small>
+        <!-- <small
                 v-if="
                   !item.city && !item.state && !item.zip_code && !item.country
                 "
@@ -134,48 +117,43 @@
               >
                 ---</small
               > -->
-            </template>
-            <template v-slot:item.id_card_type.name="{ item }">
-              <small class="text-color">
-                {{ item.id_card_type ? item.id_card_type.name : "---" }}</small
-              >
-            </template>
-            <template v-slot:item.id_card_no="{ item }">
-              <small class="text-color"> {{ item.id_card_no || "---" }}</small>
-            </template>
-            <template v-slot:item.car_no="{ item }">
-              <small class="text-color">{{ item.car_no || "---" }}</small>
-            </template>
-            <template v-slot:item.gst="{ item }">
-              <small class="text-color">{{ item.gst || "---" }}</small>
-            </template>
-            <template v-slot:item.options="{ item }">
-              <v-menu bottom left>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </template>
-                <v-list width="120" dense>
-                  <v-list-item>
-                    <v-list-item-title style="cursor: pointer">
-                      <CustomerEdit @close-dialog="closeDialogs" :item="item" />
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-                <v-list width="120" dense>
-                  <v-list-item>
-                    <v-list-item-title style="cursor: pointer">
-                      <CustomerView :item="item" />
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </template>
-          </v-data-table>
-        </v-col>
-      </v-row>
-    </v-card>
+      </template>
+      <template v-slot:item.id_card_type.name="{ item }">
+        <small class="text-color">
+          {{ item.id_card_type ? item.id_card_type.name : "---" }}</small
+        >
+      </template>
+      <template v-slot:item.id_card_no="{ item }">
+        <small class="text-color"> {{ item.id_card_no || "---" }}</small>
+      </template>
+      <template v-slot:item.car_no="{ item }">
+        <small class="text-color">{{ item.car_no || "---" }}</small>
+      </template>
+      <template v-slot:item.gst="{ item }">
+        <small class="text-color">{{ item.gst || "---" }}</small>
+      </template>
+      <template v-slot:item.options="{ item }">
+        <v-menu bottom left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn dark-2 icon v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list width="80" dense>
+            <v-list-item>
+              <v-list-item-title style="cursor: pointer">
+                <CustomerEdit @close-dialog="closeDialogs" :item="item" />
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title style="cursor: pointer">
+                <CustomerView :item="item" />
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+    </v-data-table>
   </div>
   <NoAccess v-else />
 </template>

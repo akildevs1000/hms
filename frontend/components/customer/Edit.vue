@@ -2,7 +2,8 @@
   <v-dialog v-model="NewCustomerDialog" max-width="750px">
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
-        <v-icon small color="primary">mdi-pencil</v-icon> Edit
+        <v-icon x-small color="primary">mdi-pencil</v-icon>
+        <AssetsTextLabel color="text-color" label="Edit" />
       </span>
     </template>
 

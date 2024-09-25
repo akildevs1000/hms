@@ -5,57 +5,50 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <!-- <v-row class="mt-0 mb-0">
-      <v-col cols="6">
-        <h3>{{ Model }}</h3>
-        <div>Dashboard / {{ Model }}</div>
-      </v-col>
-    </v-row> -->
-    <div>
-      <v-dialog v-model="agentDialog" max-width="40%">
-        <v-card>
-          <v-alert class="rounded-md" color="grey lighten-3" dense flat>
-            <v-row no-gutter>
-              <v-col>
-                <span>{{ formTitle }} {{ Model }}</span>
+    <v-dialog v-model="agentDialog" max-width="40%">
+      <v-card>
+        <v-alert class="rounded-md" color="grey lighten-3" dense flat>
+          <v-row no-gutter>
+            <v-col>
+              <span>{{ formTitle }} {{ Model }}</span>
+            </v-col>
+            <v-col class="text-right">
+              <AssetsButtonClose @close="agentDialog = false" />
+            </v-col>
+          </v-row>
+        </v-alert>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col md="6" cols="12">
+                <v-text-field
+                  v-model="editedItem.name"
+                  placeholder="Company"
+                  :hide-details="true"
+                  outlined
+                  label="Company"
+                  dense
+                ></v-text-field>
+                <span v-if="errors && errors.name" class="error--text">{{
+                  errors.name[0]
+                }}</span>
               </v-col>
-              <v-col class="text-right">
-                <AssetsButtonClose @close="agentDialog = false" />
+              <v-col md="6" cols="12">
+                <v-text-field
+                  v-model="editedItem.contact_name"
+                  placeholder="Name"
+                  label="Name"
+                  outlined
+                  :hide-details="true"
+                  dense
+                ></v-text-field>
+                <span
+                  v-if="errors && errors.contact_name"
+                  class="error--text"
+                  >{{ errors.contact_name[0] }}</span
+                >
               </v-col>
-            </v-row>
-          </v-alert>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="editedItem.contact_name"
-                    placeholder="Name"
-                    label="Name"
-                    outlined
-                    :hide-details="true"
-                    dense
-                  ></v-text-field>
-                  <span
-                    v-if="errors && errors.contact_name"
-                    class="error--text"
-                    >{{ errors.contact_name[0] }}</span
-                  >
-                </v-col>
-                <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="editedItem.name"
-                    placeholder="Company"
-                    :hide-details="true"
-                    outlined
-                    label="Company"
-                    dense
-                  ></v-text-field>
-                  <span v-if="errors && errors.name" class="error--text">{{
-                    errors.name[0]
-                  }}</span>
-                </v-col>
-                <v-col md="12" cols="12">
+              <!-- <v-col md="12" cols="12">
                   <v-select
                     v-model="editedItem.type"
                     :items="sourceTypeList"
@@ -70,207 +63,206 @@
                   <span v-if="errors && errors.type" class="error--text">{{
                     errors.type[0]
                   }}</span>
-                </v-col>
-                <v-col md="6" cols="6">
-                  <v-text-field
-                    v-model="editedItem.mobile"
-                    placeholder="Mobile"
-                    label="Mobile"
-                    outlined
-                    dense
-                    :hide-details="true"
-                    type="number"
-                  ></v-text-field>
-                  <span v-if="errors && errors.mobile" class="error--text">{{
-                    errors.mobile[0]
-                  }}</span>
-                </v-col>
-                <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="editedItem.landline"
-                    placeholder="Landline"
-                    outlined
-                    label="Landline"
-                    dense
-                    :hide-details="true"
-                    type="number"
-                  ></v-text-field>
-                  <span v-if="errors && errors.mobile" class="error--text">{{
-                    errors.mobile[0]
-                  }}</span>
-                </v-col>
-                <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="editedItem.email"
-                    placeholder="Email"
-                    outlined
-                    label="Email"
-                    dense
-                    :hide-details="true"
-                    type="email"
-                  ></v-text-field>
-                  <span v-if="errors && errors.email" class="error--text">{{
-                    errors.email[0]
-                  }}</span>
-                </v-col>
-                <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="editedItem.gst"
-                    placeholder="GST"
-                    label="GST"
-                    :hide-details="true"
-                    outlined
-                    dense
-                  ></v-text-field>
-                  <span v-if="errors && errors.gst" class="error--text">{{
-                    errors.gst[0]
-                  }}</span>
-                </v-col>
-                <v-col md="12" cols="12">
-                  <v-text-field
-                    v-model="editedItem.address"
-                    placeholder="Address"
-                    outlined
-                    label="Address"
-                    textarea
-                    hide-details
-                  ></v-text-field>
-                  <span v-if="errors && errors.address" class="error--text">{{
-                    errors.gst[0]
-                  }}</span>
-                </v-col>
-                <v-col cols="12" class="text-right">
-                  <AssetsButtonCancel @click="agentDialog = false" />
-                  &nbsp; &nbsp;
-                  <AssetsButtonSubmit @click="save" />
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
-      <v-data-table
-        hide-default-header
-        dense
-        :headers="headers"
-        :items="data"
-        :loading="loading"
-        :options.sync="options"
-        :footer-props="{
-          itemsPerPageOptions: [100, 500, 1000],
-        }"
-        class="elevation-1 px-2"
+                </v-col> -->
+              <v-col md="6" cols="6">
+                <v-text-field
+                  v-model="editedItem.mobile"
+                  placeholder="Mobile"
+                  label="Mobile"
+                  outlined
+                  dense
+                  :hide-details="true"
+                  type="number"
+                ></v-text-field>
+                <span v-if="errors && errors.mobile" class="error--text">{{
+                  errors.mobile[0]
+                }}</span>
+              </v-col>
+              <v-col md="6" cols="12">
+                <v-text-field
+                  v-model="editedItem.landline"
+                  placeholder="Landline"
+                  outlined
+                  label="Landline"
+                  dense
+                  :hide-details="true"
+                  type="number"
+                ></v-text-field>
+                <span v-if="errors && errors.mobile" class="error--text">{{
+                  errors.mobile[0]
+                }}</span>
+              </v-col>
+              <v-col md="6" cols="12">
+                <v-text-field
+                  v-model="editedItem.email"
+                  placeholder="Email"
+                  outlined
+                  label="Email"
+                  dense
+                  :hide-details="true"
+                  type="email"
+                ></v-text-field>
+                <span v-if="errors && errors.email" class="error--text">{{
+                  errors.email[0]
+                }}</span>
+              </v-col>
+              <v-col md="6" cols="12">
+                <v-text-field
+                  v-model="editedItem.gst"
+                  placeholder="GST"
+                  label="GST"
+                  :hide-details="true"
+                  outlined
+                  dense
+                ></v-text-field>
+                <span v-if="errors && errors.gst" class="error--text">{{
+                  errors.gst[0]
+                }}</span>
+              </v-col>
+              <v-col md="12" cols="12">
+                <v-text-field
+                  v-model="editedItem.address"
+                  placeholder="Address"
+                  outlined
+                  label="Address"
+                  textarea
+                  hide-details
+                ></v-text-field>
+                <span v-if="errors && errors.address" class="error--text">{{
+                  errors.gst[0]
+                }}</span>
+              </v-col>
+              <v-col cols="12" class="text-right">
+                <AssetsButtonCancel @click="agentDialog = false" />
+                &nbsp; &nbsp;
+                <AssetsButtonSubmit @click="save" />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-row class="px-2 pb-2">
+      <v-col cols="2">
+        <v-text-field
+          class="global-search-textbox"
+          append-icon="mdi-magnify"
+          label="Search..."
+          clearable
+          dense
+          outlined
+          hide-details
+          @input="getDataFromApi"
+          v-model="search"
+        ></v-text-field>
+      </v-col>
+      <v-col class="text-right">
+        <v-btn
+          v-if="can('source_create')"
+          class="py-3"
+          @click="agentDialog = true"
+          x-small
+          color="primary"
+        >
+          <v-icon color="white" small class="py-5">mdi-plus</v-icon>
+          New
+        </v-btn>
+        <!-- <FilterDateRange height="30" @filter-attr="filterAttr" /> -->
+      </v-col>
+    </v-row>
+    <v-data-table
+      hide-default-header
+      dense
+      :headers="headers"
+      :items="data"
+      :loading="loading"
+      :options.sync="options"
+      :footer-props="{
+        itemsPerPageOptions: [100, 500, 1000],
+      }"
+      class="elevation-1 px-2"
+    >
+      <template v-slot:header="{ props: { headers } }">
+        <thead>
+          <tr>
+            <td
+              v-for="(header, index) in headers"
+              :key="index"
+              class="primary--text"
+              style="
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+              "
+            >
+              <small>{{ header.text }}</small>
+            </td>
+          </tr>
+        </thead>
+      </template>
+      <template v-slot:item.name="{ item }">
+        <small class="text-color">{{
+          caps(item.contact_name)
+        }}</small></template
       >
-        <template v-slot:top>
-          <v-toolbar flat dense class="mb-5">
-            <span class="text-color">{{ Model }}</span>
-            <v-icon color="primary" right class="mt-1" @click="getDataFromApi()"
-              >mdi-reload</v-icon
-            >
-            <v-spacer></v-spacer>
-            <v-btn
-              v-if="can('source_create')"
-              class="float-right py-3"
-              @click="agentDialog = true"
-              x-small
-              color="primary"
-            >
-              <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-              Source
+      <template v-slot:item.company="{ item }">
+        <small class="text-color">{{ caps(item.name) }}</small></template
+      >
+      <template v-slot:item.type="{ item }">
+        <small class="text-color">{{ caps(item.type) }}</small></template
+      >
+      <template v-slot:item.mobile="{ item }">
+        <small class="text-color">{{ caps(item.mobile) }}</small></template
+      >
+      <template v-slot:item.landline="{ item }">
+        <small class="text-color">{{ caps(item.landline) }}</small></template
+      >
+      <template v-slot:item.email="{ item }">
+        <small class="text-color">{{ caps(item.email) }}</small></template
+      >
+      <template v-slot:item.gst="{ item }">
+        <small class="text-color">{{ caps(item.gst) }}</small></template
+      >
+      <template v-slot:item.address="{ item }">
+        <small class="text-color">{{ caps(item.address) }}</small></template
+      >
+      <template v-slot:item.created_at="{ item }">
+        <small class="text-color">{{ caps(item.created_at) }}</small></template
+      >
+      <template v-slot:item.action="{ item }">
+        <v-menu bottom left v-if="can('source_edit') || can('source_delete')">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn dark-2 icon v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
-          </v-toolbar>
-        </template>
-        <template v-slot:header="{ props: { headers } }">
-          <thead>
-            <tr>
-              <td
-                v-for="(header, index) in headers"
-                :key="index"
-                class="primary--text"
-                style="
-                  border-top: 1px solid #bdbdbd;
-                  border-bottom: 1px solid #bdbdbd;
-                "
-              >
-                <small>{{ header.text }}</small>
-              </td>
-            </tr>
-          </thead>
-        </template>
-        <template v-slot:item.name="{ item }">
-          <small class="text-color">{{
-            caps(item.contact_name)
-          }}</small></template
-        >
-        <template v-slot:item.company="{ item }">
-          <small class="text-color">{{ caps(item.name) }}</small></template
-        >
-        <template v-slot:item.type="{ item }">
-          <small class="text-color">{{ caps(item.type) }}</small></template
-        >
-        <template v-slot:item.mobile="{ item }">
-          <small class="text-color">{{ caps(item.mobile) }}</small></template
-        >
-        <template v-slot:item.landline="{ item }">
-          <small class="text-color">{{ caps(item.landline) }}</small></template
-        >
-        <template v-slot:item.email="{ item }">
-          <small class="text-color">{{ caps(item.email) }}</small></template
-        >
-        <template v-slot:item.gst="{ item }">
-          <small class="text-color">{{ caps(item.gst) }}</small></template
-        >
-        <template v-slot:item.address="{ item }">
-          <small class="text-color">{{ caps(item.address) }}</small></template
-        >
-        <template v-slot:item.created_at="{ item }">
-          <small class="text-color">{{
-            caps(item.created_at)
-          }}</small></template
-        >
-
-        <template v-slot:item.action="{ item }">
-          <v-menu bottom left v-if="can('source_edit') || can('source_delete')">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <v-list width="120" dense>
-              <v-list-item v-if="can('source_edit')" @click="editItem(item)">
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="secondary" small> mdi-pencil </v-icon>
-                  Edit
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item v-if="can('source_edit')">
-                <v-list-item-title style="cursor: pointer">
-                  <!-- <v-icon color="secondary" small> mdi-plus </v-icon>
-                  Add Guest -->
-                  <SourceGuestCreate />
-                </v-list-item-title>
-              </v-list-item>
-              <!-- <v-list-item v-if="can('source_edit')" @click="editItem(item)">
+          </template>
+          <v-list width="120" dense>
+            <v-list-item v-if="can('source_edit')" @click="editItem(item)">
+              <v-list-item-title style="cursor: pointer">
+                <v-icon color="secondary" small> mdi-pencil </v-icon>
+                Edit
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item v-if="type == 'corporate'">
+              <v-list-item-title style="cursor: pointer">
+                <SourceGuestCreate />
+              </v-list-item-title>
+            </v-list-item>
+            <!-- <v-list-item v-if="can('source_edit')" @click="editItem(item)">
                 <v-list-item-title style="cursor: pointer">
                   <v-icon color="secondary" small> mdi-eye-outline </v-icon>
                   View Guest
                 </v-list-item-title>
               </v-list-item> -->
-              <v-list-item
-                v-if="can('source_delete')"
-                @click="deleteItem(item)"
-              >
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="error" small> mdi-delete </v-icon>
-                  Delete
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template>
-      </v-data-table>
-    </div>
+            <v-list-item v-if="can('source_delete')" @click="deleteItem(item)">
+              <v-list-item-title style="cursor: pointer">
+                <v-icon color="error" small> mdi-delete </v-icon>
+                Delete
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+    </v-data-table>
   </div>
   <NoAccess v-else />
 </template>
@@ -383,7 +375,7 @@ export default {
     onPageChange() {
       this.getDataFromApi();
     },
-    getDataFromApi(url = this.endpoint) {
+    getDataFromApi() {
       this.loading = true;
       let page = this.pagination.current;
       let options = {
@@ -396,31 +388,16 @@ export default {
         },
       };
 
-      this.$axios.get(url, options).then(({ data }) => {
+      this.$axios.get(this.endpoint, options).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
         this.loading = false;
       });
     },
-    searchIt(e) {
-      let s = e.toLowerCase();
-      this.getDataFromApi();
-      return;
-
-      if (s.length == 0) {
-        this.getDataFromApi();
-      } else if (s.length > 2) {
-        this.getDataFromApi(`${this.endpoint}/search/${s}`);
-      }
-    },
-
     editItem(item) {
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
-
-      console.log(item);
-
       this.agentDialog = true;
     },
 
@@ -473,7 +450,7 @@ export default {
     save() {
       let payload = {
         name: this.editedItem.name.toLowerCase(),
-        type: this.editedItem.type.toLowerCase(),
+        type: this.type,
         gst: this.editedItem.gst,
         address: this.editedItem.address,
         mobile: this.editedItem.mobile,

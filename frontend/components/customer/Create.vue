@@ -4,11 +4,12 @@
       <v-btn
         v-bind="attrs"
         v-on="on"
-        class="primary"
-        small
+        class="py-3"
+        color="primary"
+        x-small
         @click="NewCustomerDialog = true"
       >
-        <v-icon x-small white>mdi-plus</v-icon> <small>New</small>
+        <v-icon color="white" small class="py-5">mdi-plus</v-icon> New
       </v-btn>
     </template>
 

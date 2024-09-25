@@ -41,9 +41,29 @@ class Customer extends Model
             }]);
     }
 
+    public function order_rooms()
+    {
+        return $this->hasMany(OrderRoom::class);
+    }
+
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class)
+
+            ->with(["bookedRooms" => function ($q) {
+                $q->withOut("booking");
+                $q->select(
+                    "id",
+                    "booking_id",
+                    "customer_id",
+                    "room_no",
+                    "room_type",
+                    "check_in",
+                    "check_out",
+                );
+
+            }])
+            ->withCount("orderRooms");
     }
 
     public function idCardType(): BelongsTo

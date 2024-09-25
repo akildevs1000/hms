@@ -10,7 +10,9 @@ use App\Models\IdCardType;
 use App\Models\Payment;
 use App\Models\Posting;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
@@ -210,13 +212,65 @@ class CustomerController extends Controller
 
     public function getCustomerHistory($id)
     {
-        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType'])->find($id);
+        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType'])
+            ->withCount("order_rooms")
+            ->find($id);
         $res = $customer->bookings->toArray();
         $bookingIds = array_column($res, 'id');
         $revenue = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
         $city_ledger = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 1)->sum('amount');
         return response()->json(['data' => $customer, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
     }
+
+    public function getCustomerAnalytics(Request $request, $id)
+    {
+        // Parse the date range
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date);
+
+
+        if (env("APP_ENV") == "local") {
+            $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
+                ->where('is_city_ledger', 0)
+                ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
+                ->whereMonth('date', "<=", date("m", strtotime($request->to_date)))->select(
+                    DB::raw('strftime("%m", date) as month'),  // Extract the month (SQLite compatible)
+                    DB::raw('strftime("%Y", date) as year'),   // Extract the year (SQLite compatible)
+                    DB::raw('SUM(amount) as total_revenue')
+                )
+                ->groupBy('year', 'month')  // Group by year and month
+                ->get();
+        } else {
+            $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
+                ->where('is_city_ledger', 0)
+                ->whereBetween('date', [$fromDate, $toDate])
+                ->select(
+                    DB::raw('MONTH(date) as month'),  // Extract the month
+                    DB::raw('YEAR(date) as year'),    // Extract the year (in case payments cross years)
+                    DB::raw('SUM(amount) as total_revenue')
+                )
+                ->groupBy('year', 'month')  // Group by year and month
+                ->get();
+        }
+
+
+        // Prepare an array to hold the revenue for each month in the range
+        $revenues = [];
+
+        // Loop through each month from the from_date to the to_date
+        for ($date = $fromDate; $date <= $toDate; $date->addMonth()) {
+            $monthRevenue = $payments->firstWhere('month', $date->month);
+
+
+            $revenues[] = [
+                "label" => $date->format('M y'),
+                "value" => $monthRevenue ? $monthRevenue->total_revenue : 0,
+            ];
+        }
+
+        return response()->json($revenues);
+    }
+
 
     public function show($id)
     {

@@ -21,19 +21,18 @@
         <v-col v-for="(item, index) in stats" :key="index" cols="12" md="2">
           <v-card rounded="lg" outlined class="pa-4">
             <v-row no-gutter>
-              <v-col cols="2">
+              <v-col cols="2" class="pt-7">
                 <v-icon size="40" color="black">{{ item.icon }}</v-icon>
               </v-col>
               <v-col class="text-center">
-                <h1>{{ item.count }}</h1>
-                <span>{{ item.label }}</span>
+                <h1><AssetsTextLabel color="black" :label="item.count" /></h1>
+                <AssetsTextLabel color="black" :label="item.label" />
               </v-col>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="8"></v-col>
         <v-col cols="4" class="text-right">
           <v-row>
             <v-col>
@@ -53,6 +52,17 @@
               <FilterDateRange @filter-attr="filterAttr" />
             </v-col>
           </v-row>
+        </v-col>
+        <v-col class="text-right">
+          <AssetsIcon
+            icon="printer-outline"
+            @click="process('reservation_report_print', endpoint)"
+          />
+          &nbsp;
+          <AssetsIcon
+            icon="download-outline"
+            @click="process('reservation_report_download', endpoint)"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -76,50 +86,11 @@
     </v-dialog>
 
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
-      <v-alert class="rounded-md" dense flat>
+      <!-- <v-alert class="rounded-md" dense flat>
         <v-row>
-          <v-col>
-            <span style="line-height: 20px"> {{ Model }} List</span></v-col
-          >
-          <v-col class="text-right">
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  class="ma-0"
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('reservation_report_print', endpoint)"
-                >
-                  <v-icon>mdi-printer-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>PRINT</span>
-            </v-tooltip>
-
-            <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-small
-                  :ripple="false"
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="process('reservation_report_download', endpoint)"
-                >
-                  <v-icon>mdi-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span> DOWNLOAD </span>
-            </v-tooltip>
-          </v-col>
+          <v-col> <AssetsTextLabel :label="`${Model} List`" /></v-col>
         </v-row>
-      </v-alert>
-      <table style="width:100%;" cellspacing="0">
-        <TableHeader :cols="headers_table.map((e) => e.text)" />
-      </table>
+      </v-alert> -->
       <v-data-table
         hide-default-header
         dense
@@ -134,13 +105,18 @@
         class="elevation-0"
         :server-items-length="totalRowsCount"
       >
+        <template v-slot:header="{ props: { headers } }">
+          <AssetsTableHeader :cols="headers" />
+        </template>
+
         <template v-slot:item.sno="{ item, index }">
-          {{
+          <AssetsTextLabel :label="index + 1" />
+          <!-- {{
             currentPage
               ? (currentPage - 1) * perPage +
                 (cumulativeIndex + itemIndex(item))
               : ""
-          }}
+          }} -->
         </template>
         <template v-slot:item.res_number="item">
           <span
@@ -148,86 +124,109 @@
             @click="goToRevView(item.item)"
             style="cursor: pointer"
           >
-            {{ item.item.reservation_no || "---" }}
+            <AssetsTextLabel :label="item.item.reservation_no || `---`" />
           </span>
         </template>
         <template v-slot:item.source="item">
-          {{ item.item.source || "---" }}
+          <AssetsTextLabel :label="item.item.source || `---`" />
         </template>
         <template v-slot:item.rooms="item">
           <span v-for="(room, index) in item.item.booked_rooms" :key="index">
-            {{ room.room_no }}
-            {{ item.item.booked_rooms.length - 1 == index ? "" : "," }}
+            <AssetsTextLabel :label="room.room_no" />
+            <AssetsTextLabel
+              :label="item.item.booked_rooms.length - 1 == index ? `` : `,`"
+            />
           </span>
         </template>
         <template v-slot:item.reference="item">
-          {{ item.item.reference_no || "---" }}
+          <AssetsTextLabel :label="item.item.reference_no || `---`" />
         </template>
         <template v-slot:item.guest="item">
-          {{ (item && item.item.customer.first_name) || "---" }}
+          <AssetsTextLabel :label="item.item.customer.first_name || `---`" />
         </template>
         <template v-slot:item.check_in="item">
-          {{ convert_date_format(item.item.check_in) }}
+          <AssetsTextLabel :label="convert_date_format(item.item.check_in)" />
         </template>
         <template v-slot:item.check_out="item">
-          {{ convert_date_format(item.item.check_out) }}
+          <AssetsTextLabel :label="convert_date_format(item.item.check_out)" />
         </template>
         <template v-slot:item.total="item">
-          {{ item.item.total_price }}
+          <AssetsTextLabel
+            :label="$utils.currency_format(item.item.total_price)"
+          />
         </template>
         <template v-slot:item.posting="item">
-          {{ item.item.total_posting_amount || 0 }}
+          <AssetsTextLabel
+            :label="$utils.currency_format(item.item.total_posting_amount)"
+          />
         </template>
         <template v-slot:item.paid="item">
-          {{ item.item.paid_amounts || 0 }}
+          <AssetsTextLabel
+            :label="$utils.currency_format(item.item.paid_amounts)"
+          />
         </template>
         <template v-slot:item.balance="item">
-          {{ item.item.balance || 0 }}
+          <AssetsTextLabel :label="$utils.currency_format(item.item.balance)" />
         </template>
         <template v-slot:item.res_date="item">
-          {{ item.item.booking_date }}
+          <AssetsTextLabel
+            :label="convert_date_format(item.item.booking_date)"
+          />
         </template>
-        <template v-slot:item.view="item">
-          <v-icon
-            @click="viewCustomerBilling(item.item)"
-            x-small
-            color="primary"
-            class="mr-2"
-          >
-            mdi-eye
-          </v-icon>
-        </template>
-        <template v-slot:item.payment="item">
-
-          <!-- <BookingPayAdvance
-                    :key="`${evenIid}2${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingPayAdvance> -->
-          <v-icon
-            v-if="
-              can('reservation_edit') ||
-              can('in_house_edit') ||
-              can('checkout_edit')
-            "
-            @click="get_payment(item.item)"
-            x-small
-            color="primary"
-            class="mr-2"
-          >
-            mdi-cash-multiple
-          </v-icon>
-        </template>
-        <template v-slot:item.invoice="item">
-          <v-icon
-            @click="redirect_to_invoice(item.item.id)"
-            x-small
-            color="primary"
-            class="mr-2"
-          >
-            mdi-cash-multiple
-          </v-icon>
+        <template v-slot:item.options="{ item }">
+          <v-menu bottom left>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list dense>
+              <v-list-item>
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon
+                    @click="viewCustomerBilling(item)"
+                    x-small
+                    color="primary"
+                    class="mr-2"
+                  >
+                    mdi-eye
+                  </v-icon>
+                  <AssetsTextLabel color="text-color" label="View" />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon
+                    v-if="
+                      can('reservation_edit') ||
+                      can('in_house_edit') ||
+                      can('checkout_edit')
+                    "
+                    @click="get_payment(item)"
+                    x-small
+                    color="primary"
+                    class="mr-2"
+                  >
+                    mdi-cash-multiple
+                  </v-icon>
+                  <AssetsTextLabel color="text-color" label="Pay" />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon
+                    @click="redirect_to_invoice(item.id)"
+                    x-small
+                    color="primary"
+                    class="mr-2"
+                  >
+                    mdi-cash-multiple
+                  </v-icon>
+                  <AssetsTextLabel color="text-color" label="Invoice" />
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
       </v-data-table>
     </v-card>
@@ -417,30 +416,7 @@ export default {
         filterable: true,
         value: "res_date",
       },
-      {
-        text: "View",
-        align: "left",
-        sortable: false,
-        key: "employee_id",
-        filterable: true,
-        value: "view",
-      },
-      {
-        text: "Pay",
-        align: "left",
-        sortable: false,
-        key: "employee_id",
-        filterable: true,
-        value: "payment",
-      },
-      {
-        text: "Inv",
-        align: "left",
-        sortable: false,
-        key: "employee_id",
-        filterable: true,
-        value: "invoice",
-      },
+      { text: "Options", value: "options", align: "left", sortable: false },
     ],
     editedIndex: -1,
     response: "",
