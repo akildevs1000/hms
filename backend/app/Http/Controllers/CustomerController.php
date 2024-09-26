@@ -266,7 +266,7 @@ class CustomerController extends Controller
 
             $revenues[] = [
                 "label" => $date->format('M y'),
-                "value" => $monthRevenue ? $monthRevenue->total_revenue : 0,
+                "value" => (float) $monthRevenue ? $monthRevenue->total_revenue : 0,
             ];
         }
 
