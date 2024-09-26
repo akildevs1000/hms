@@ -233,7 +233,8 @@ class CustomerController extends Controller
             $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
                 ->where('is_city_ledger', 0)
                 ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
-                ->whereMonth('date', "<=", date("m", strtotime($request->to_date)))->select(
+                ->whereMonth('date', "<=", date("m", strtotime($request->to_date)))
+                ->select(
                     DB::raw('strftime("%m", date) as month'),  // Extract the month (SQLite compatible)
                     DB::raw('strftime("%Y", date) as year'),   // Extract the year (SQLite compatible)
                     DB::raw('SUM(amount) as total_revenue')
@@ -243,7 +244,8 @@ class CustomerController extends Controller
         } else {
             $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
                 ->where('is_city_ledger', 0)
-                ->whereBetween('date', [$fromDate, $toDate])
+                ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
+                ->whereMonth('date', "<=", date("m", strtotime($request->to_date)))
                 ->select(
                     DB::raw('MONTH(date) as month'),  // Extract the month
                     DB::raw('YEAR(date) as year'),    // Extract the year (in case payments cross years)
