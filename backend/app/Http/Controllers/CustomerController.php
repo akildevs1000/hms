@@ -247,8 +247,8 @@ class CustomerController extends Controller
                 ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
                 ->whereMonth('date', "<=", date("m", strtotime($request->to_date)))
                 ->select(
-                    DB::raw('MONTH(date) as month'),  // Extract the month
-                    DB::raw('YEAR(date) as year'),    // Extract the year (in case payments cross years)
+                    DB::raw('to_char(date, \'MM\') as month'),  // Extract the month in PostgreSQL
+                    DB::raw('to_char(date, \'YYYY\') as year'), // Extract the year in PostgreSQL
                     DB::raw('SUM(amount) as total_revenue')
                 )
                 ->groupBy('year', 'month')  // Group by year and month
