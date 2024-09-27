@@ -8,9 +8,9 @@
               <v-icon size="30" color="black">{{ stat.icon }}</v-icon>
             </v-col>
             <v-col class="text-center">
-              <AssetsTextLabel color="black" :label="stat.value" />
-              <br>
-              <AssetsTextLabel :label="stat.label" />
+              <AssetsTextLabel :name="stat.value" color="black" :label="stat.value" />
+              <br />
+              <AssetsTextLabel :name="stat.label" :label="stat.label" />
             </v-col>
           </v-row>
         </v-card>
@@ -23,13 +23,7 @@
 </template>
 
 <script>
-import PaidBookedSvg from "../svg/PaidBookedSvg.vue";
-import Available from "../svg/Available.vue";
 export default {
-  components: {
-    Available,
-    PaidBookedSvg,
-  },
   props: ["customerId"],
   data() {
     return {
@@ -45,11 +39,6 @@ export default {
       headers: [],
     };
   },
-  watch: {
-    customerId() {
-      this.get_customer_history();
-    },
-  },
   mounted() {
     this.get_customer_history();
 
@@ -62,10 +51,6 @@ export default {
     });
   },
   methods: {
-    goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
-    },
-
     get_customer_history() {
       this.$axios
         .get(`get_customer_history/${this.customerId}`)
@@ -74,7 +59,12 @@ export default {
 
           this.headers = [
             // { text: `#`, value: `serial`, align: `center` },
-            { text: `Rev. No`, value: `reservation_no`, align: `center` },
+            {
+              text: `Rev. No`,
+              value: `reservation_no`,
+              align: `center`,
+              link: `/customer/details`,
+            },
             // { text: `Type`, value: `type`, align: `center` },
             // { text: `Source`, value: `source`, align: `center` },
             { text: `Room`, value: `room`, align: `center` },
@@ -85,14 +75,14 @@ export default {
             { text: `Total Price`, value: `total_price`, align: `right` },
             { text: `Paid`, value: `paid`, align: `right` },
             { text: `Balance`, value: `balance`, align: `right` },
-
           ];
           this.bookings = data.data.bookings.map((e, i) => ({
             // serial: i + 1,
-            reservation_no: e.reservation_no, // @click="goToRevView(item)"
-            // type: e.type,
-            // source: e.source,
-            room: e.booked_rooms && e.booked_rooms.length ? e.booked_rooms.map(e => e.room_no).join(",")  : "",
+            reservation_no: e.reservation_no,
+            room:
+              e.booked_rooms && e.booked_rooms.length
+                ? e.booked_rooms.map((e) => e.room_no).join(",")
+                : "",
             // category: e.booked_rooms && e.booked_rooms.length ? e.booked_rooms.map(e => e.room_type).join(",")  : "",
             booking_date: this.$dateFormat.dmy(e.booking_date),
             check_in: this.$dateFormat.dmy(e.check_in),

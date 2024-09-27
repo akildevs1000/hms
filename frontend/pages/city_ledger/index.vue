@@ -7,7 +7,7 @@
     </div>
     <v-dialog v-model="agentPaymentDialog" persistent max-width="700px">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>City Ledger Payment</span>
         </v-toolbar>
         <v-card-text>
@@ -156,7 +156,7 @@
 
     <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span> {{ Model }} List</span>
         </v-toolbar>
         <table>

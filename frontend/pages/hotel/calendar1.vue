@@ -52,7 +52,7 @@
 
     <v-dialog v-model="checkOutDialog" persistent max-width="1000px">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="checkOutDialog = false"
@@ -98,7 +98,7 @@
 
     <v-dialog v-model="postingDialog" persistent max-width="700px">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="postingDialog = false">
@@ -119,7 +119,7 @@
 
     <v-dialog v-model="viewPostingDialog" persistent max-width="900px">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>{{ formTitle }}</span>
         </v-toolbar>
         <v-card-text>
@@ -166,7 +166,7 @@
       class="checkin-models"
     >
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="close">mdi-close</v-icon>
@@ -182,7 +182,7 @@
 
     <v-dialog v-model="payingAdvance" persistent max-width="700px">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>{{ formTitle }}</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="payingAdvance = false"
@@ -202,7 +202,7 @@
 
     <v-dialog v-model="changeRoomDialog" persistent width="90%">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Change Room</span>
           <v-spacer></v-spacer>
           <v-icon

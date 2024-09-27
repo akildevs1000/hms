@@ -20,7 +20,7 @@
         <v-row>
           <v-dialog v-model="documentDialog" max-width="30%">
             <v-card>
-              <v-toolbar class="rounded-md" color="background" dense flat dark>
+              <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
                 <span>Add ID</span>
                 <v-spacer></v-spacer>
                 <v-icon dark class="pa-0" @click="documentDialog = false"
@@ -136,7 +136,7 @@
           </v-dialog>
           <v-dialog v-model="imgView" max-width="80%">
             <v-card>
-              <v-toolbar class="rounded-md" color="background" dense flat dark>
+              <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
                 <span>Preview</span>
                 <v-spacer></v-spacer>
                 <v-icon dark class="pa-0" @click="imgView = false">
@@ -810,7 +810,7 @@
               <v-tab-item>
                 <v-card flat>
                   <v-card-text>
-                    <History :customerId="customer.id"></History>
+                    <CustomerHistory :customerId="customer.id" />
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -1269,7 +1269,7 @@
     </v-dialog>
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">
@@ -1627,7 +1627,7 @@
   <NoAccess v-else />
 </template>
 <script>
-import History from "../../components/customer/History.vue";
+import History from "../../components/Customer/History.vue";
 import ImagePreview from "../../components/images/ImagePreview.vue";
 const today = new Date();
 const tomorrow = new Date(today);

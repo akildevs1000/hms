@@ -8,10 +8,10 @@
         </span>
       </template>
       <v-card v-if="item && item.id">
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Convert to Quotation For {{ item.inquiry_type }}</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
+          <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-card-text>
           <!-- <pre>
@@ -27,19 +27,18 @@
             </v-card-text>
           </v-card>
 
-          <table class="table" style="width: 100%">
+          <table cellspacing="0"  style="width: 100%">
             <thead>
               <tr>
-                <td class="primary white--text text-center">#</td>
-                <td class="primary white--text">Room Type</td>
-                <td class="primary white--text">Food</td>
-
-                <td class="primary white--text">Tarrif</td>
-                <td class="primary white--text">PAX</td>
-                <td class="primary white--text">Rooms</td>
-                <td class="primary white--text">Nights</td>
-                <td class="primary white--text text-center">Total</td>
-                <td class="primary"></td>
+                <td class="primary--text text-center">#</td>
+                <td class="primary--text text-center">Room Type</td>
+                <td class="primary--text text-center">Food</td>
+                <td class="primary--text text-center">Tarrif</td>
+                <td class="primary--text text-center">PAX</td>
+                <td class="primary--text text-center">Rooms</td>
+                <td class="primary--text text-center">Nights</td>
+                <td class="primary--text text-right">Total</td>
+                <td class=""></td>
               </tr>
             </thead>
             <tbody>
@@ -221,7 +220,7 @@
 
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">
@@ -658,6 +657,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-@import url("@/assets/css/tableStyles.css");
-</style>

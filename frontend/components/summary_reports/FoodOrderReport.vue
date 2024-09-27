@@ -1,9 +1,12 @@
 <template>
   <span v-if="!loading">
     <div class="text-right">
-      <v-icon small color="primary" @click="process('foodorder_report_print')"
-        >mdi-printer-outline</v-icon
-      >
+      <div class="mb-1">
+        <AssetsIcon
+          icon="printer-outline"
+          @click="process_file('foodorder_report_print')"
+        />
+      </div>
     </div>
     <AssetsTable :headers="headers" :items="items" />
   </span>

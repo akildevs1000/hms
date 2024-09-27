@@ -6,7 +6,7 @@
 
         <v-row>
             <v-col md="12" lg="6" cols="12">
-                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
                     <span> Month wise Report </span>
                     <v-spacer></v-spacer>
                     <v-tooltip top color="primary">

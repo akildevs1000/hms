@@ -2,10 +2,10 @@
   <div v-if="can('calendar_create')">
     <v-dialog persistent v-model="dialog" width="1000">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Individual Booking Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
+          <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-card-text>
           <v-tabs v-model="activeTab">
@@ -339,7 +339,7 @@
             <v-tab-item>
               <v-card flat>
                 <v-card-text>
-                  <History :customerId="customer.id"></History>
+                  <CustomerHistory :customerId="customer.id"></CustomerHistory>
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -350,7 +350,7 @@
 
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">
@@ -447,7 +447,7 @@
   <NoAccess v-else />
 </template>
 <script>
-import History from "../../components/customer/History.vue";
+import History from "../../components/Customer/History.vue";
 import RoomDetails from "../RoomDetails.vue";
 const today = new Date();
 const tomorrow = new Date(today);

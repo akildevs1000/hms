@@ -57,7 +57,7 @@
     </v-row>
 
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
-      <v-toolbar class="rounded-md" color="background" dense flat dark>
+      <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
         <span> Day Report</span>
       </v-toolbar>
       <client-only>

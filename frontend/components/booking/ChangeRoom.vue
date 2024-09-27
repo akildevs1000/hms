@@ -813,7 +813,7 @@
     <!---------------------------------------------------------------->
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">
@@ -957,7 +957,7 @@
   </div>
 </template>
 <script>
-import History from "../../components/customer/History.vue";
+import History from "../../components/Customer/History.vue";
 import ImagePreview from "../../components/images/ImagePreview.vue";
 
 export default {

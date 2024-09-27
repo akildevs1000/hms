@@ -38,7 +38,7 @@ function storeBooking($request)
                 $payment->store($transactionData, $request->total_price, 'debit');
 
                 if ($request->advance_price && $request->advance_price > 0) {
-                    $transactionData['desc'] = 'advance payment';
+                    $transactionData['desc'] = 'payment';
                     $payment->store($transactionData, $request->advance_price, 'credit');
                 }
                 //End Transaction

@@ -14,10 +14,10 @@
         </v-btn>
       </template>
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Quotation Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
+          <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-card-text>
           <v-tabs v-model="activeTab">
@@ -44,18 +44,18 @@
                 </v-card-text>
               </v-card>
 
-              <table class="table" style="width: 100%">
+              <table cellspacing="0"  style="width: 100%">
                 <thead>
                   <tr>
-                    <td class="primary white--text text-center">#</td>
-                    <td class="primary white--text">Room Type</td>
-                    <td class="primary white--text">Food</td>
+                    <td class="primary--text text-center">#</td>
+                    <td class="primary--text">Room Type</td>
+                    <td class="primary--text">Food</td>
 
-                    <td class="primary white--text">Tarrif</td>
-                    <td class="primary white--text">PAX</td>
-                    <td class="primary white--text">Rooms</td>
-                    <td class="primary white--text">Nights</td>
-                    <td class="primary white--text text-center">Total</td>
+                    <td class="primary--text">Tarrif</td>
+                    <td class="primary--text">PAX</td>
+                    <td class="primary--text">Rooms</td>
+                    <td class="primary--text">Nights</td>
+                    <td class="primary--text text-center">Total</td>
                     <td class="primary"></td>
                   </tr>
                 </thead>
@@ -244,7 +244,7 @@
             <v-tab-item>
               <v-card flat>
                 <v-card-text>
-                  <History :customerId="customer.id"></History>
+                  <CustomerHistory :customerId="customer.id" />
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -255,7 +255,7 @@
 
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">

@@ -16,7 +16,7 @@
         >
           <span>Hall Booking Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
+          <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-card-text>
           <v-container>

@@ -10,6 +10,7 @@ use App\Models\IdCardType;
 use App\Models\Payment;
 use App\Models\Posting;
 use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,7 @@ class CustomerController extends Controller
             $model->orderBy('updated_at', 'DESC');
         }
 
-        return $model->paginate($request->per_page);
+        return $model->paginate($request->per_page ?? 10000);
     }
 
     public function store(StoreRequest $request)
@@ -222,55 +223,101 @@ class CustomerController extends Controller
         return response()->json(['data' => $customer, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
     }
 
+    public function getCustomerStatement(Request $request, $id)
+    {
+        $statement_type = $request->statement_type;
+
+        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType', "company"])
+            ->withCount("order_rooms")
+            ->find($id);
+        $res = $customer->bookings->toArray();
+        $bookingIds = array_column($res, 'id');
+
+        $payments = Payment::with("booking")->whereIn('booking_id', $bookingIds)
+            // ->where('is_city_ledger', 0)
+            ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
+            ->whereMonth('date', "<=", date("m", strtotime($request->to_date)));
+
+
+        $openBalancePayment = Payment::with("booking")
+            ->whereIn('booking_id', $bookingIds)
+            ->where('is_city_ledger', 1)
+            ->whereMonth('date', "<", date("m", strtotime($request->from_date)))
+            ->sum('amount');
+
+        if ($statement_type !== "All") {
+            $payments->where('is_city_ledger', 1);
+        }
+
+        $paymentData = $payments->get()->toArray();
+
+        $arr = [
+            "isOpeningBalance" => true,
+            "date" => "---",
+            "transaction" => "***Openning Balance***",
+            "description" => "---",
+            "amount" => 0,
+            "payment" => 0,
+            "balance" => $openBalancePayment,
+        ];
+
+
+        array_unshift($paymentData, $arr);
+
+        return response()->json([
+            'customer' => $customer,
+            'company' => $customer->company,
+            'statementSum' => $payments->sum('amount'),
+            'statementList' => $paymentData,
+            'status' => true
+        ]);
+    }
+
+
+
     public function getCustomerAnalytics(Request $request, $id)
     {
         // Parse the date range
         $fromDate = Carbon::parse($request->from_date);
         $toDate = Carbon::parse($request->to_date);
 
+        $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
+            ->where('is_city_ledger', 0)
+            ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
+            ->whereMonth('date', "<=", date("m", strtotime($request->to_date)));
+
 
         if (env("APP_ENV") == "local") {
-            $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
-                ->where('is_city_ledger', 0)
-                ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
-                ->whereMonth('date', "<=", date("m", strtotime($request->to_date)))
-                ->select(
-                    DB::raw('strftime("%m", date) as month'),  // Extract the month (SQLite compatible)
-                    DB::raw('strftime("%Y", date) as year'),   // Extract the year (SQLite compatible)
-                    DB::raw('SUM(amount) as total_revenue')
-                )
-                ->groupBy('year', 'month')  // Group by year and month
-                ->get();
+            $payments->select(
+                DB::raw('strftime("%m", date) as month'),  // Extract the month (SQLite compatible)
+                DB::raw('strftime("%Y", date) as year'),   // Extract the year (SQLite compatible)
+                DB::raw('SUM(amount) as total_revenue')
+            );
         } else {
-            $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
-                ->where('is_city_ledger', 0)
-                ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
-                ->whereMonth('date', "<=", date("m", strtotime($request->to_date)))
-                ->select(
-                    DB::raw('to_char(date, \'MM\') as month'),  // Extract the month in PostgreSQL
-                    DB::raw('to_char(date, \'YYYY\') as year'), // Extract the year in PostgreSQL
-                    DB::raw('SUM(amount) as total_revenue')
-                )
-                ->groupBy('year', 'month')  // Group by year and month
-                ->get();
+            $payments->select(
+                DB::raw('to_char(date, \'MM\') as month'),  // Extract the month in PostgreSQL
+                DB::raw('to_char(date, \'YYYY\') as year'), // Extract the year in PostgreSQL
+                DB::raw('SUM(amount) as total_revenue')
+            );
         }
 
+        $data = $payments->groupBy('year', 'month')->get();
 
         // Prepare an array to hold the revenue for each month in the range
-        $revenues = [];
+        $statements = [];
 
         // Loop through each month from the from_date to the to_date
         for ($date = $fromDate; $date <= $toDate; $date->addMonth()) {
-            $monthRevenue = $payments->firstWhere('month', $date->month);
+            $monthRevenue = $data->firstWhere('month', $date->month);
 
 
-            $revenues[] = [
+            $statements[] = [
                 "label" => $date->format('M y'),
                 "value" => $monthRevenue ? (float) $monthRevenue->total_revenue : 0,
             ];
         }
 
-        return response()->json($revenues);
+        return response()->json($statements);
     }
 
 
@@ -283,5 +330,78 @@ class CustomerController extends Controller
     public function customer_validate(StoreRequest $request)
     {
         return $this->response('Customer validated.', null, true);
+    }
+
+    public function statementPrint($id, $statement_type, $from_date, $to_date)
+    {
+
+        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType', "company"])
+            ->withCount("order_rooms")
+            ->find($id);
+        $res = $customer->bookings->toArray();
+        $bookingIds = array_column($res, 'id');
+
+        $payments = Payment::with("booking")
+            ->whereIn('booking_id', $bookingIds)
+            ->whereMonth('date', ">=", date("m", strtotime($from_date)))
+            ->whereMonth('date', "<=", date("m", strtotime($to_date)));
+
+
+        if ($statement_type !== "All") {
+            $payments->where('is_city_ledger', 1);
+        }
+
+
+        $first = date('Y-m-d', strtotime($from_date));
+        $last = date('Y-m-t', strtotime($to_date));
+
+        return Pdf::loadView('statement.index', [
+            'customer' => $customer,
+            'company' => $customer->company,
+            'statementSum' => $payments->sum('amount'),
+            'statementList' => $payments->get(),
+
+            'from' => date('M d, Y', strtotime($first)),
+            'to' => date('M d, Y', strtotime($last)),
+        ])
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function statementDownload($id, $statement_type, $from_date, $to_date)
+    {
+        $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType', "company"])
+            ->withCount("order_rooms")
+            ->find($id);
+        $res = $customer->bookings->toArray();
+        $bookingIds = array_column($res, 'id');
+
+        $payments = Payment::with("booking")
+            ->whereIn('booking_id', $bookingIds)
+            ->whereMonth('date', ">=", date("m", strtotime($from_date)))
+            ->whereMonth('date', "<=", date("m", strtotime($to_date)));
+
+
+        if ($statement_type !== "All") {
+            $payments->where('is_city_ledger', 1);
+        }
+
+
+        $first = date('Y-m-d', strtotime($from_date));
+        $last = date('Y-m-t', strtotime($to_date));
+
+        return Pdf::loadView('statement.index', [
+            'customer' => $customer,
+            'company' => $customer->company,
+            'statementSum' => $payments->sum('amount'),
+            'statementList' => $payments->get(),
+
+            'from' => date('M d, Y', strtotime($first)),
+            'to' => date('M d, Y', strtotime($last)),
+        ])
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->download();
     }
 }

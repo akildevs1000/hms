@@ -257,7 +257,7 @@ class BookingController extends Controller
             $payment->store($transactionData, $request->total_price, 'debit');
 
             if ($request->advance_price && $request->advance_price > 0) {
-                $transactionData['desc'] = 'advance payment';
+                $transactionData['desc'] = 'payment';
                 $transactionData['payment_method_id'] = $booked->payment_mode_id;
 
                 $payment->store($transactionData, $request->advance_price, 'credit');
@@ -792,7 +792,7 @@ class BookingController extends Controller
                 'date' => now(),
                 'company_id' => $booking->company_id ?? '',
                 'payment_method_id' => $request->payment_mode_id,
-                'desc' => 'check out payment',
+                'desc' => 'check in payment',
                 'reference_number' => $request->reference_number,
                 'user_id' => $request->user_id,
             ];
@@ -821,7 +821,7 @@ class BookingController extends Controller
                     $paymentsData = [
                         'booking_id' => $booking_id,
                         'payment_mode' => $request->payment_mode_id,
-                        'description' => 'checkout payment',
+                        'description' => 'check in payment',
                         'amount' => $request->full_payment,
                         'type' => 'customer',
                         'room' => $booking->rooms,
@@ -848,7 +848,7 @@ class BookingController extends Controller
                     $paymentsData = [
                         'booking_id' => $booking_id,
                         'payment_mode' => $request->payment_mode_id,
-                        'description' => 'checkout payment',
+                        'description' => 'check in payment',
                         'amount' => $request->full_payment,
                         'type' => 'customer',
                         'room' => $booking->rooms,
@@ -2753,7 +2753,7 @@ class BookingController extends Controller
             $payment->store($transactionData, $request->total_price, 'debit');
 
             if ($request->advance_price && $request->advance_price > 0) {
-                $transactionData['desc'] = 'advance payment';
+                $transactionData['desc'] = 'payment';
                 $transactionData['payment_method_id'] = $booked->payment_mode_id;
 
                 $payment->store($transactionData, $request->advance_price, 'credit');

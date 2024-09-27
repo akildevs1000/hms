@@ -16,7 +16,7 @@
             </div>
           </v-col>
           <v-col class="text-center">
-            <div style="font-size: 18px">
+            <div style="font-size: 18px; color: #1402f7">
               Reservation # {{ BookingData.reservation_no }}
             </div>
           </v-col>
@@ -233,7 +233,7 @@
             </v-container>
           </v-col>
           <v-divider v-if="isGroupBooking" vertical></v-divider>
-          <v-col :cols="isGroupBooking ? '4' : '6'">
+          <v-col :cols="isGroupBooking ? '4' : '5'">
             <v-row no-gutter>
               <v-col cols="12" class="text-center">
                 <v-avatar size="125">
@@ -313,51 +313,118 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-10">
-                      <!-- <pre>{{ roomData }}</pre> -->
+                      <v-row no-gutter>
+                        <v-col cols="8">
+                          <table style="width: 100%">
+                            <tr>
+                              <td
+                                class="text-left"
+                                style="
+                                  width: 110px;
+                                  border-bottom: 1px solid #eeeeee;
+                                "
+                              >
+                                Room
+                              </td>
+                              <td
+                                class="text-right"
+                                style="
+                                  width: 110px;
+                                  border-bottom: 1px solid #eeeeee;
+                                "
+                              >
+                                {{ $utils.currency_format(roomData.price) }}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td
+                                class="text-left"
+                                style="
+                                  width: 110px;
+                                  border-bottom: 1px solid #eeeeee;
+                                "
+                              >
+                                Posting
+                              </td>
+                              <td
+                                class="text-right"
+                                style="
+                                  width: 110px;
+                                  border-bottom: 1px solid #eeeeee;
+                                "
+                              >
+                                {{
+                                  $utils.currency_format(
+                                    BookingData.total_posting_amount
+                                  )
+                                }}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td
+                                class="text-left"
+                                style="
+                                  width: 110px;
+                                  border-bottom: 1px solid #eeeeee;
+                                "
+                              >
+                                Total
+                              </td>
+                              <td
+                                class="text-right"
+                                style="
+                                  width: 110px;
+                                  border-bottom: 1px solid #eeeeee;
+                                "
+                              >
+                                {{
+                                  $utils.currency_format(roomData.grand_total)
+                                }}
+                              </td>
+                              <!-- <td colspan="2" class="text-center">Total Rs.</td> -->
+                            </tr>
+                            <tr>
+                              <td
+                                class="text-left red--text"
+                                style="width: 110px"
+                              >
+                                Paid
+                              </td>
+                              <td class="text-right" style="width: 110px">
+                                {{
+                                  $utils.currency_format(
+                                    BookingData.paid_amounts
+                                  )
+                                }}
+                              </td>
+                              <!-- <td colspan="2" class="text-center">Balance Rs.</td> -->
+                            </tr>
+                          </table>
+                        </v-col>
+                        <v-col class="pt-8">
+                          <table>
+                            <tr>
+                              <td class="text-center">Total Rs.</td>
+                            </tr>
+                            <tr>
+                              <td class="text-center">
+                                <span
+                                  style="font-size: 18px"
+                                  class="blue--text"
+                                >
+                                  {{
+                                    $utils.currency_format(
+                                      parseFloat(roomData.grand_total)
+                                    )
+                                  }}
+                                </span>
+                              </td>
+                            </tr>
+                          </table>
+                        </v-col>
+                      </v-row>
 
-                      <table style="width: 100%">
-                        <tr>
-                          <td
-                            class="text-left"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Room
-                          </td>
-                          <td
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{ $utils.currency_format(roomData.price) }}
-                          </td>
-                          <td colspan="2" class="text-center">Total Rs.</td>
-                        </tr>
-                        <tr>
-                          <td class="text-left">Posting</td>
-                          <td>
-                            {{
-                              $utils.currency_format(
-                                BookingData.total_posting_amount
-                              )
-                            }}
-                          </td>
-                          <td colspan="2" class="text-center">
-                            <span style="font-size: 18px" class="blue--text">
-                              {{
-                                $utils.currency_format(
-                                  parseFloat(roomData.grand_total)
-                                )
-                              }}
-                            </span>
-                          </td>
-                        </tr>
-                      </table>
-                      <v-divider></v-divider>
-                      <table style="width: 100%">
+                      <!-- <table style="width: 100%">
                         <tr>
                           <td
                             class="text-left"
@@ -391,7 +458,7 @@
                             }}</span>
                           </td>
                         </tr>
-                      </table>
+                      </table> -->
                     </v-col>
                   </v-row>
                 </v-container>
@@ -399,7 +466,7 @@
             </v-row>
           </v-col>
           <v-divider vertical></v-divider>
-          <v-col :cols="isGroupBooking ? '4' : '6'">
+          <v-col :cols="isGroupBooking ? '4' : '7'">
             <v-row>
               <v-col>
                 <v-container>
@@ -418,7 +485,7 @@
                             Date
                           </td>
                           <td
-                            class="text-center primary--text"
+                            class="text-right primary--text"
                             style="
                               width: 110px;
                               border-bottom: 1px solid #eeeeee;
@@ -427,7 +494,7 @@
                             Debit
                           </td>
                           <td
-                            class="text-center primary--text"
+                            class="text-right primary--text"
                             style="
                               width: 110px;
                               border-bottom: 1px solid #eeeeee;
@@ -436,7 +503,7 @@
                             Credit
                           </td>
                           <td
-                            class="text-center primary--text"
+                            class="text-right primary--text"
                             style="
                               width: 110px;
                               border-bottom: 1px solid #eeeeee;
@@ -444,7 +511,7 @@
                           >
                             Balance
                           </td>
-                          <td
+                          <!-- <td
                             class="text-center primary--text"
                             style="
                               width: 110px;
@@ -452,7 +519,7 @@
                             "
                           >
                             Receipt
-                          </td>
+                          </td> -->
                         </tr>
 
                         <tr
@@ -470,7 +537,7 @@
                             {{ item.created_at || "---" }}
                           </td>
                           <td
-                            class="text-center"
+                            class="text-right"
                             style="
                               width: 110px;
                               border-bottom: 1px solid #eeeeee;
@@ -483,7 +550,7 @@
                             }}
                           </td>
                           <td
-                            class="text-center"
+                            class="text-right"
                             style="
                               width: 110px;
                               border-bottom: 1px solid #eeeeee;
@@ -496,7 +563,7 @@
                             }}
                           </td>
                           <td
-                            class="text-center"
+                            class="text-right"
                             style="
                               width: 110px;
                               border-bottom: 1px solid #eeeeee;
@@ -504,7 +571,7 @@
                           >
                             {{ $utils.currency_format(item.balance) || "---" }}
                           </td>
-                          <td
+                          <!-- <td
                             class="text-center blue--text"
                             style="
                               width: 110px;
@@ -512,7 +579,7 @@
                             "
                           >
                             {{ item.id }}
-                          </td>
+                          </td> -->
                         </tr>
 
                         <tr style="font-size: 13px">
@@ -528,7 +595,7 @@
                           </td>
                           <td
                             colspan="2"
-                            class="text-left pl-3 primary--text"
+                            class="text-right pl-3 primary--text"
                             style="
                               width: 110px;
                               border-bottom: 1px solid #eeeeee;
@@ -543,7 +610,7 @@
                       <v-divider></v-divider>
                     </v-col>
                     <v-col cols="12">
-                      <v-card outlined>
+                      <v-card outlined class="pa-2">
                         <v-container>
                           <v-row>
                             <v-col cols="6">
@@ -593,7 +660,7 @@
                                 hide-details
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="6">
+                            <v-col cols="4">
                               <v-text-field
                                 v-model="tempBalance"
                                 label="Balance"
@@ -603,7 +670,7 @@
                                 @keyup="setNewBalance(tempBalance, discount)"
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="6">
+                            <v-col cols="4">
                               <v-text-field
                                 v-model="discount"
                                 label="Discount"
@@ -613,16 +680,25 @@
                                 @keyup="setNewBalance(tempBalance, discount)"
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="12">
+                            <v-col cols="4">
                               <v-text-field
-                                v-model="full_payment"
-                                label="New Balance"
+                                v-model="after_discount_balance"
+                                label="After Discount"
                                 outlined
                                 dense
                                 hide-details
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="12" class="text-center mt-5">
+                            <v-col>
+                              <v-text-field
+                                v-model="full_payment"
+                                label="Amount to Pay"
+                                outlined
+                                dense
+                                hide-details
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" class="text-center">
                               <AssetsButtonCancel
                                 @click="$emit(`close-dialog`)"
                               />
@@ -725,7 +801,6 @@ export default {
       this.grand_remaining_price = grand_remaining_price;
       this.remaining_price = remaining_price;
       this.full_payment = remaining_price - this.discount;
-      this.after_discount_balance = grand_remaining_price;
 
       this.actualCheckoutTime = this.roomData.check_out_time;
 
@@ -765,12 +840,8 @@ export default {
         : 0;
     },
     setNewBalance(tempBalance, discount) {
-      this.full_payment = parseFloat(tempBalance) - parseFloat(discount);
-    },
-    get_after_discount_balance(amt = 0) {
-      let discount = amt || 0;
-      let blc = parseFloat(this.grand_remaining_price) - parseFloat(discount);
-      this.after_discount_balance = blc.toFixed(2) || 0;
+      this.after_discount_balance =
+        parseFloat(tempBalance) - parseFloat(discount);
     },
 
     store() {

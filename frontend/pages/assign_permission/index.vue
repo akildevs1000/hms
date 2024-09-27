@@ -42,7 +42,7 @@
         </v-row>
         <v-card class="mb-5" elevation="0" v-for="(item, index) in  data " :key="index">
 
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
             <v-toolbar-title><span> {{ item.role && capsTitle(item.role.name) }}</span></v-toolbar-title>
 
 

@@ -4,7 +4,7 @@
 
         <v-dialog v-model="viewCustomerDialog" max-width="60%">
             <v-card>
-                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
                     <span>Customer History</span>
                     <v-spacer></v-spacer>
                     <v-icon dark class="pa-0" @click="viewCustomerDialog = false">mdi-close</v-icon>

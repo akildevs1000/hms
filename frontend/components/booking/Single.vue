@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="ViewBookingDialog" max-width="1100">
-    <template v-slot:activator="{ on, attrs }">
+    <template v-if="!noLabel" v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> View Billing </span>
     </template>
     <v-card class="rounded-md" elevation="0">
@@ -536,7 +536,7 @@
 </template>
 <script>
 export default {
-  props: ["BookingId"],
+  props: ["BookingId","noLabel"],
   data: () => ({
     ViewBookingDialog: false,
     roomTypeColor: "grey lighten-3",

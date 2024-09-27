@@ -69,7 +69,7 @@
 
     <v-dialog v-model="payingDialog" persistent max-width="1000px">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="payingDialog = false"
@@ -110,13 +110,14 @@
         </template>
 
         <template v-slot:item.sno="{ item, index }">
-          <AssetsTextLabel :label="index + 1" />
-          <!-- {{
-            currentPage
-              ? (currentPage - 1) * perPage +
-                (cumulativeIndex + itemIndex(item))
-              : ""
-          }} -->
+          <AssetsTextLabel
+            :label="
+              currentPage
+                ? (currentPage - 1) * perPage +
+                  (cumulativeIndex + itemIndex(item))
+                : ''
+            "
+          />
         </template>
         <template v-slot:item.res_number="item">
           <span

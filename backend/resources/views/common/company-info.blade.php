@@ -16,6 +16,9 @@
             <td class="text-right border-none col-4">
                 <h5 class="reds">{{ $name }}</h5>
                 <div class="greens" style="line-height: 1">
+                    P.O.Box: <small>{{ $p_o_box_no }}</small>
+                </div>
+                <div class="greens" style="line-height: 1">
                     <small>{{ $location }}</small>
                 </div>
                 <div class="greens" style="line-height: 1">

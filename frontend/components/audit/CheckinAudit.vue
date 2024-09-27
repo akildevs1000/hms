@@ -2,7 +2,7 @@
   <div>
     <v-col md="12">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <label class="white--text">Today Checkin Report</label>
           <v-spacer></v-spacer>
           <v-tooltip top color="primary">

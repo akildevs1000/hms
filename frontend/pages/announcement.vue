@@ -253,7 +253,7 @@
           class="elevation-1"
         >
           <template v-slot:top>
-            <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
               <span> {{ Model }} List</span>
             </v-toolbar>
             <v-toolbar flat color="">

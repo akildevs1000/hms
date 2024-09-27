@@ -32,7 +32,7 @@
 
     <v-dialog v-model="imgView" max-width="80%">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Preview</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView = false">mdi-close</v-icon>
@@ -47,7 +47,7 @@
 
     <v-dialog v-model="expenseDialog" max-width="40%">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <v-toolbar color="background" dense flat dark>
             <span>{{ formTitle }} {{ Model }}</span>
           </v-toolbar>
@@ -163,7 +163,7 @@
     <v-row>
       <v-col md="12" class="float-right">
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
             <span> Today {{ Model }} List</span>
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">

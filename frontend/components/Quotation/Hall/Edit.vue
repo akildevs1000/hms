@@ -8,10 +8,10 @@
         </div>
       </template>
       <v-card v-if="item && item.id">
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Quotation Edit Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
+          <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-card-text>
           <v-card flat class="mt-5">
@@ -151,7 +151,7 @@
 
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">

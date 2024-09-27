@@ -1,15 +1,12 @@
 <template>
   <span v-if="!loading">
     <div class="text-right">
-        <v-icon small color="primary" @click="process('checkin_report_print')"
-          >mdi-printer-outline</v-icon
-        >
-        <!-- <v-icon
-          color="black"
-          right
-          @click="process('checkin_report_download')"
-          >mdi-printer-outline</v-icon
-        > -->
+      <div class="mb-1">
+        <AssetsIcon
+          icon="printer-outline"
+          @click="process_file('checkin_report_print')"
+        />
+      </div>
       </div>
       <AssetsTable :headers="headers" :items="items" />
   </span>

@@ -61,9 +61,13 @@ class Customer extends Model
                     "check_in",
                     "check_out",
                 );
-
             }])
             ->withCount("orderRooms");
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class)->with("user:id,company_id,email");
     }
 
     public function idCardType(): BelongsTo

@@ -11,7 +11,13 @@
         {{ response }}
       </v-snackbar>
     </div>
-
+    <BookingSingle
+      :noLabel="true"
+      v-if="bookingId"
+      ref="BookingSingleComp"
+      :key="bookingId"
+      :BookingId="bookingId"
+    />
     <!-- dialogs -->
     <div>
       <v-dialog
@@ -204,7 +210,7 @@
             </v-list-item>
 
             <template v-if="bookingStatus == 1 && checkData && checkData.id">
-              <v-list-item>
+              <v-list-item v-if="currentDate == filterDate">
                 <v-list-item-title>
                   <BookingCheckIn
                     :key="`${evenIid}1${checkData.id}`"
@@ -370,7 +376,7 @@
           </v-list-item-group>
           <v-list-item-group v-else>
             <v-list-item
-              v-if="newBookingRoom.status == 0"
+              v-if="newBookingRoom.status == 0 && currentDate == filterDate"
               @click="NewBooking = true"
             >
               <!-- direct check in dialog -->
@@ -700,7 +706,13 @@ import DirtyRoomsReport from "../summary_reports/DirtyRoomsReport.vue";
 import Grc from "../booking/GRC.vue";
 
 export default {
-  props: ["searchQuery", "tabFilter", "data", "calenderColorCodes"],
+  props: [
+    "searchQuery",
+    "tabFilter",
+    "data",
+    "calenderColorCodes",
+    "filterDate",
+  ],
   layout({ $auth }) {
     if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {
       return "guest";
@@ -734,7 +746,9 @@ export default {
   data() {
     return {
       room: "",
-      filterDate: "2024-08-15",
+      currentDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
       menu2: false,
       colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
       key: 1,
@@ -840,7 +854,7 @@ export default {
       checkData: {},
       roomData: null,
       customerId: "",
-      bookingId: "",
+      bookingId: 0,
       document: null,
       lastTapTime: null,
       isDbCLick: false,
@@ -1282,7 +1296,9 @@ export default {
 
         let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
         let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
-        this.availableRooms = data.availableRooms.filter(e => !uniqueRoomNumbers.includes(e.room_no));
+        this.availableRooms = data.availableRooms.filter(
+          (e) => !uniqueRoomNumbers.includes(e.room_no)
+        );
 
         this.members = {
           ...data.members,
@@ -1350,7 +1366,23 @@ export default {
     },
 
     get_event_by_db_click() {
-      this.$router.push(`/customer/details/${this.bookingId}`);
+      this.$nextTick(() => {
+        const bookingSingleComp = this.$refs["BookingSingleComp"];
+        if (bookingSingleComp) {
+          bookingSingleComp.ViewBookingDialog = true;
+          console.log(
+            "🚀 ~ dblclick ~ BookingSingleComp",
+            bookingSingleComp.ViewBookingDialog
+          );
+        } else {
+          console.warn("BookingSingleComp ref is undefined");
+        }
+
+        this.isDbCLick = false;
+      });
+
+      // console.log(this.$refs["BookingSingleComp"]);
+      // this.$router.push(`/customer/details/${this.bookingId}`);
     },
     changeCheckInAdminProcess() {
       if (this.$auth.user.role.name.toLowerCase() != "admin") {

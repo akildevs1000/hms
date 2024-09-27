@@ -2,7 +2,7 @@
   <div>
     <v-dialog v-model="imgView" :width="imgPreviewWidth">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Preview</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView = false"
@@ -17,7 +17,7 @@
     </v-dialog>
     <v-dialog v-model="imgView1" width="500">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Item Image</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView1 = false"
@@ -32,7 +32,7 @@
     </v-dialog>
     <v-dialog v-model="imgView2" width="500">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Courier Receipt</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView2 = false"
@@ -47,7 +47,7 @@
     </v-dialog>
     <v-dialog v-model="imgView3" width="500">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Preview</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="imgView3 = false"

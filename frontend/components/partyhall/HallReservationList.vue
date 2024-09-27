@@ -30,7 +30,7 @@
 
         <v-dialog v-model="payingDialog" persistent max-width="1000px">
             <v-card>
-                <v-toolbar class="rounded-md" color="background" dense flat dark>
+                <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
                     <span>Payment</span>
                     <v-spacer></v-spacer>
                     <v-icon dark class="pa-0" @click="payingDialog = false">mdi-close</v-icon>
@@ -76,7 +76,7 @@
         </v-row>
 
         <v-card class="mb-5 rounded-md mt-3" elevation="0">
-            <v-toolbar class="rounded-md" color="background" dense flat dark>
+            <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
                 <span style="line-height:20px"> {{ Model }} List</span>
                 <v-spacer></v-spacer>
                 <v-tooltip top color="primary">

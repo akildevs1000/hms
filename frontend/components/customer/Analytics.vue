@@ -15,41 +15,10 @@
       }
     </style>
     <v-row>
-      <!-- <v-col cols="12">
-        <FilterDateRange height="30" @filter-attr="filterAttr" />
-      </v-col> -->
       <v-col cols="12">
         <v-tabs right>
-          <div class="py-3">
-            <span>
-              <v-menu
-                v-model="menu2"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    class="text-field-customer"
-                    dense
-                    outlined
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                    v-model="dates"
-                    hide-details
-                  ></v-text-field>
-                </template>
-
-                <v-date-picker
-                  v-model="dates"
-                  range
-                  @input="CustomFilter"
-                  no-title
-                ></v-date-picker>
-              </v-menu>
-            </span>
+          <div class="pt-1">
+            <AssetsPickerMonthly @months="CustomFilter" />
           </div>
           <v-spacer></v-spacer>
           <v-tab>statistical </v-tab>
@@ -71,28 +40,12 @@
 </template>
 
 <script>
-import DatePicker from "vue2-datepicker";
-import "vue2-datepicker/index.css";
-const getFirstAndLastDateOfCurrentMonth = () => {
-  const startDate = new Date();
-  startDate.setDate(1); // Set to the 1st of the month
-
-  const endDate = new Date(
-    startDate.getFullYear(),
-    startDate.getMonth() + 1,
-    0
-  ); // Get the last date of the month
-
-  return [
-    startDate.toISOString().substr(0, 10), // First date
-    endDate.toISOString().substr(0, 10), // Last date
-  ];
+const getFirstAndLastMonth = () => {
+  const fullYear = new Date().getFullYear();
+  return [`${fullYear}-01`, `${fullYear}-12`];
 };
 
 export default {
-  components: {
-    DatePicker,
-  },
   props: ["customerId"],
   data() {
     return {
@@ -191,7 +144,7 @@ export default {
           },
         ],
       },
-      dates: getFirstAndLastDateOfCurrentMonth(),
+      months: getFirstAndLastMonth(),
     };
   },
   computed: {},
@@ -207,11 +160,9 @@ export default {
     });
   },
   methods: {
-    CustomFilter() {
-      if (this.dates[0] && this.dates[1]) {
-        this.get_customer_history();
-        this.menu2 = false;
-      }
+    CustomFilter(e) {
+      this.months = e;
+      this.get_customer_history();
     },
     goToRevView(item) {
       this.$router.push(`/customer/details/${item.id}`);
@@ -220,8 +171,8 @@ export default {
     get_customer_history() {
       let config = {
         params: {
-          from_date: this.dates[0],
-          to_date: this.dates[1],
+          from_date: this.months[0],
+          to_date: this.months[1],
         },
       };
       this.$axios

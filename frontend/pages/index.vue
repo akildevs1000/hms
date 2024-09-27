@@ -26,7 +26,7 @@
         class="checkin-models"
       >
         <v-card>
-          <v-toolbar class="rounded-md" color="background" dense flat dark>
+          <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
             <v-icon dark class="pa-0" @click="GRCDialog = false"
@@ -506,6 +506,7 @@
                           :tabFilter="'All'"
                           :key="keyTabAll"
                           :data="rooms"
+                          :filterDate="filterDate"
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
@@ -522,6 +523,7 @@
                           :tabFilter="'occupied'"
                           :key="keyTabOccupied"
                           :data="rooms"
+                          :filterDate="filterDate"
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList>
@@ -538,6 +540,7 @@
                           :tabFilter="'expected_arrival'"
                           :key="keyTabexpected_arrival"
                           :data="rooms"
+                          :filterDate="filterDate"
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
@@ -554,6 +557,7 @@
                           :tabFilter="'checkedout'"
                           :key="keyTabdirty"
                           :data="rooms"
+                          :filterDate="filterDate"
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList>
@@ -570,6 +574,7 @@
                           :tabFilter="'blocked'"
                           :key="keyTabblocked"
                           :data="rooms"
+                          :filterDate="filterDate"
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList
@@ -586,6 +591,7 @@
                           :tabFilter="'available'"
                           :key="keyTabavailable"
                           :data="rooms"
+                          :filterDate="filterDate"
                           :calenderColorCodes="calenderColorCodes"
                           @call_room_list="refreshRoomList"
                         ></DashboardRoomsList

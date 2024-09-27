@@ -12,19 +12,26 @@
     </div>
 
     <div>
-      <v-dialog v-model="newItem" max-width="60%">
+      <v-dialog v-model="newItem" max-width="900">
         <template>
           <v-card>
-            <v-tabs
-              dense
-              small
-              v-model="tab"
-              background-color="primary"
-              right
-              dark
-            >
-              <v-tabs-slider></v-tabs-slider>
-
+            <v-tabs dense small v-model="tab" background-color="grey lighten-3">
+              <div style="width: 100%">
+                <v-row>
+                  <v-col cols="1" class="pt-4"
+                    ><SearchReservation @reservation="handleReservation"
+                  /></v-col>
+                  <v-col>
+                    <div
+                      style="font-size: 18px; color: #1402f7"
+                      class="text-center mt-2"
+                    >
+                      Reservation # {{ bookingData.reservation_no }}
+                    </div>
+                  </v-col>
+                </v-row>
+              </div>
+              <v-spacer></v-spacer>
               <v-tab href="#tab-1">
                 <small>Guest</small>
                 <v-icon small right>mdi-human-male-female-child</v-icon>
@@ -48,650 +55,670 @@
             </v-tabs>
             <v-tabs-items v-model="tab">
               <v-tab-item value="tab-1">
-                <v-card>
-                  <!-- <v-card-title v-if="editedIndex == -1">Search Booking Id</v-card-title>
-                                    <v-card-title v-else>Guest Details</v-card-title> -->
-                  <v-card-text>
-                    <v-row class="mb-2 mt=4" v-if="editedIndex == -1">
-                      <v-col md="3" cols="12">
-                        <v-text-field
-                          type="number"
-                          v-model="reservation_no"
-                          placeholder="Enter Booking ID"
-                          outlined
-                          :hide-details="true"
-                          dense
-                          clearable
-                          @click:clear="clearForm()"
-                        ></v-text-field>
+                <v-card-text>
+                  <v-container class="py-5">
+                    <v-row no-gutter>
+                      <v-col md="3" cols="12" class="text-center">
+                        <v-avatar tile size="150">
+                          <v-card>
+                            <img
+                              class="zoom-on-hover"
+                              style="z-index: 1; width: 100%"
+                              :src="
+                                bookingData?.customer?.captured_photo ||
+                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
+                              "
+                            />
+                          </v-card>
+                        </v-avatar>
                       </v-col>
-                      <v-col md="3" cols="12">
-                        <v-btn
-                          :loading="loading"
-                          class="primary"
-                          @click="searchBookingId()"
-                          >Get Reservation Details</v-btn
-                        >
-                      </v-col>
-                      <v-col md="6" cols="12">
-                        <span style="color: red; text-align: left" class="mr-5">
-                          {{ response }}
-                        </span>
-
-                        <span
-                          v-if="
-                            bookingData &&
-                            bookingData.id &&
-                            editedItem &&
-                            editedItem.id
-                          "
-                          style="color: red; text-align: left"
-                          class="mr-5"
-                        >
-                          Lost Item name(s):
-                          {{
-                            editedItem && editedItem.item_name
-                              ? editedItem.item_name
-                              : ""
-                          }}
-                        </span>
-                      </v-col>
-                    </v-row>
-
-                    <v-row class="mb-2 mt=4">
-                      <v-col md="3" cols="12" style="height: 100px">
-                        <v-img
-                          v-if="bookingData && bookingData.customer.image"
-                          style="
-                            width: 250px;
-                            height: 250px;
-                            margin: 0 auto;
-                            border-radius: 60%;
-                          "
-                          :src="bookingData && bookingData.customer.image"
-                        ></v-img>
-                        <v-img
-                          v-else
-                          style="border-radius: 50%; width: 250px !important"
-                          src="/no-profile-image.jpg"
-                        ></v-img>
-                      </v-col>
-                      <v-col md="9" cols="12"
-                        ><v-row>
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Rev.No</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.reservation_no
-                                    ? bookingData.reservation_no
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                      <v-col md="9" cols="12">
+                        <v-row>
+                          <v-col md="3" cols="12" sm="12">
+                            <v-text-field
+                              label="First Name *"
+                              dense
+                              outlined
+                              type="text"
+                              v-model="bookingData.customer.title"
+                              hide-details
+                            ></v-text-field>
                           </v-col>
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Room Number</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.rooms
-                                    ? bookingData.rooms
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                          <v-col md="9" cols="12" sm="12">
+                            <v-row>
+                              <v-col>
+                                <v-text-field
+                                  label="First Name *"
+                                  dense
+                                  outlined
+                                  type="text"
+                                  v-model="bookingData.customer.first_name"
+                                  hide-details
+                                ></v-text-field>
+                              </v-col>
+                              <v-col>
+                                <v-text-field
+                                  label="Last Name"
+                                  dense
+                                  hide-details
+                                  outlined
+                                  type="text"
+                                  v-model="bookingData.customer.last_name"
+                                ></v-text-field>
+                              </v-col>
+                            </v-row>
                           </v-col>
 
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Guest Name</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.customer
-                                    ? bookingData.customer.full_name
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                          <v-col cols="6">
+                            <v-text-field
+                              dense
+                              label="Email *"
+                              outlined
+                              type="email"
+                              v-model="bookingData.customer.email"
+                              hide-details
+                            ></v-text-field>
                           </v-col>
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Contact Number</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.customer
-                                    ? bookingData.customer.contact_no
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                          <v-col cols="6">
+                            <v-text-field
+                              v-model="bookingData.customer.dob"
+                              readonly
+                              label="DOB"
+                              hide-details
+                              dense
+                              outlined
+                            ></v-text-field>
                           </v-col>
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Check in Date</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.check_in
-                                    ? bookingData.check_in
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                          <v-col cols="6">
+                            <v-text-field
+                              dense
+                              label="Contact No *"
+                              outlined
+                              max="1111111111111"
+                              type="number"
+                              v-model="bookingData.customer.contact_no"
+                              hide-details
+                            ></v-text-field>
                           </v-col>
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Check Out Date</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.check_out
-                                    ? bookingData.check_out
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                          <v-col cols="6">
+                            <v-text-field
+                              dense
+                              label="Whatsapp No"
+                              outlined
+                              max="1111111111111"
+                              type="number"
+                              v-model="bookingData.customer.whatsapp"
+                              hide-details
+                            ></v-text-field>
                           </v-col>
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Type</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.type
-                                    ? bookingData.type
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                          <v-col md="3" cols="12" sm="12">
+                            <v-text-field
+                              dense
+                              label="country"
+                              outlined
+                              v-model="bookingData.customer.country"
+                              hide-details
+                            ></v-text-field>
                           </v-col>
-                          <v-col md="3">
-                            <div class="text-box" style="float: left">
-                              <h6>Source</h6>
-                              <p>
-                                {{
-                                  bookingData && bookingData.source
-                                    ? bookingData.source
-                                    : "---"
-                                }}
-                              </p>
-                            </div>
+                          <v-col md="3" cols="12" sm="12">
+                            <v-text-field
+                              dense
+                              label="state"
+                              outlined
+                              v-model="bookingData.customer.state"
+                              hide-details
+                            ></v-text-field>
+                          </v-col>
+                          <v-col md="3" cols="12" sm="12">
+                            <v-text-field
+                              dense
+                              label="city"
+                              outlined
+                              v-model="bookingData.customer.city"
+                              hide-details
+                            ></v-text-field>
+                          </v-col>
+                          <v-col md="3" cols="12" sm="12">
+                            <v-text-field
+                              label="Zip Code"
+                              v-model="bookingData.customer.zip_code"
+                              outlined
+                              hide-details
+                              dense
+                            ></v-text-field>
                           </v-col>
 
-                          <v-col md="12">
-                            <div class="text-box" style="float: left">
-                              <h6>Address</h6>
-                              <p>
-                                {{
+                          <v-col md="6" cols="12" sm="12">
+                            <v-text-field
+                              label="Check In"
+                              v-model="bookingData.check_in_date"
+                              outlined
+                              hide-details
+                              dense
+                            ></v-text-field>
+                          </v-col>
+
+                          <v-col md="6" cols="12" sm="12">
+                            <v-text-field
+                              label="Check Out"
+                              v-model="bookingData.check_out_date"
+                              outlined
+                              hide-details
+                              dense
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            style="position: relative"
+                            class="text-center"
+                            v-if="!viewMode"
+                          >
+                            <AssetsButtonCancel @close="newItem = false" />
+                            &nbsp;
+                            <AssetsButtonSubmit
+                              v-if="bookingId"
+                              @click="tab = `tab-2`"
+                            />
+                          </v-col>
+                          <!-- <v-col v-if="editedIndex == -1">
+                          <v-row class="mb-2 mt=4" >
+                            <v-col md="6" cols="12">
+                              <span
+                                style="color: red; text-align: left"
+                                class="mr-5"
+                              >
+                                {{ response }}
+                              </span>
+
+                              <span
+                                v-if="
                                   bookingData &&
-                                  bookingData.customer &&
-                                  bookingData.customer.address
-                                    ? bookingData.customer.address
-                                    : "---"
+                                  bookingData.id &&
+                                  editedItem &&
+                                  editedItem.id
+                                "
+                                style="color: red; text-align: left"
+                                class="mr-5"
+                              >
+                                Lost Item name(s):
+                                {{
+                                  editedItem && editedItem.item_name
+                                    ? editedItem.item_name
+                                    : ""
                                 }}
-                              </p>
-                            </div>
-                          </v-col>
+                              </span>
+                            </v-col>
+                          </v-row>
+                         </v-col> -->
                         </v-row>
                       </v-col>
                     </v-row>
-                  </v-card-text>
-                </v-card>
+                  </v-container>
+                </v-card-text>
               </v-tab-item>
               <v-tab-item value="tab-2">
                 <v-card>
-                  <v-card-title>Lost Item Details</v-card-title>
-                  <v-card-text>
-                    <v-row>
-                      <v-col md="12" cols="12">
-                        <strong></strong>
-                        <v-text-field
-                          label="Lost Item name(s)*"
-                          hide-details
-                          v-model="editedItem.item_name"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                        <span
-                          dense
-                          v-if="errors && errors.item_name"
-                          class="error--text"
-                          >{{ errors.item_name[0] }}</span
-                        >
-                      </v-col>
-                      <v-col md="3" cols="12">
-                        <v-menu
-                          v-model="menu1"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              label="Missing Date*"
-                              hide-details
-                              dense
-                              small
-                              outlined
+                  <!-- <v-card-title>Lost Item Details</v-card-title> -->
+                  <v-card-text class="pt-2">
+                    <v-container>
+                      <v-row>
+                        <v-col md="4" cols="12">
+                          <strong></strong>
+                          <v-text-field
+                            label="Lost Item name(s)*"
+                            hide-details
+                            v-model="editedItem.item_name"
+                            small
+                            dense
+                            outlined
+                          ></v-text-field>
+                          <span
+                            dense
+                            v-if="errors && errors.item_name"
+                            class="error--text"
+                            >{{ errors.item_name[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="4" cols="12">
+                          <v-menu
+                            v-model="menu1"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                label="Missing Date*"
+                                hide-details
+                                dense
+                                small
+                                outlined
+                                v-model="missing_date"
+                                readonly
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              no-title
                               v-model="missing_date"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            no-title
-                            v-model="missing_date"
-                            @input="menu1 = false"
-                          ></v-date-picker>
-                        </v-menu>
-                        <span
-                          dense
-                          v-if="errors && errors.missing_datetime"
-                          class="error--text"
-                          >{{ errors.missing_datetime[0] }}</span
-                        >
-                      </v-col>
-                      <v-col md="3" cols="12">
-                        <v-menu
-                          ref="menu"
-                          v-model="menu2"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="missing_time"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              label="Missing Time"
-                              hide-details
-                              dense
-                              small
-                              outlined
+                              @input="menu1 = false"
+                            ></v-date-picker>
+                          </v-menu>
+                          <span
+                            dense
+                            v-if="errors && errors.missing_datetime"
+                            class="error--text"
+                            >{{ errors.missing_datetime[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="4" cols="12">
+                          <v-menu
+                            ref="menu"
+                            v-model="menu2"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            :return-value.sync="missing_time"
+                            transition="scale-transition"
+                            offset-y
+                            max-width="290px"
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                label="Missing Time"
+                                hide-details
+                                dense
+                                small
+                                outlined
+                                v-model="missing_time"
+                                readonly
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-time-picker
+                              no-title
+                              v-if="menu2"
                               v-model="missing_time"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            no-title
-                            v-if="menu2"
-                            v-model="missing_time"
-                            full-width
-                            @click:minute="$refs.menu.save(missing_time)"
-                          ></v-time-picker>
-                        </v-menu>
-                        <span
-                          dense
-                          v-if="errors && errors.missing_datetime"
-                          class="error--text"
-                          >{{ errors.missing_datetime[0] }}</span
-                        >
-                      </v-col>
-                      <v-col md="6" cols="12">
-                        <v-text-field
-                          label="Remarks"
-                          hide-details
-                          v-model="editedItem.missing_remarks"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col md="12" cols="12">
-                        <v-textarea
-                          rows="3"
-                          v-model="editedItem.missing_notes"
-                          outlined
-                          name="input-7-4"
-                          label="Notes"
-                          value=" "
-                        ></v-textarea>
-                      </v-col>
-                    </v-row>
-
-                    <v-card-actions v-if="!viewMode">
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        small
-                        :loading="loading"
-                        :disabled="disableNextProcess"
-                        class="primary"
-                        @click="saveMissingItems()"
-                      >
-                        Save Lost Items
-                      </v-btn>
-                    </v-card-actions>
+                              full-width
+                              @click:minute="$refs.menu.save(missing_time)"
+                            ></v-time-picker>
+                          </v-menu>
+                          <span
+                            dense
+                            v-if="errors && errors.missing_datetime"
+                            class="error--text"
+                            >{{ errors.missing_datetime[0] }}</span
+                          >
+                        </v-col>
+                        <v-col md="12" cols="12">
+                          <v-text-field
+                            label="Remarks"
+                            hide-details
+                            v-model="editedItem.missing_remarks"
+                            small
+                            dense
+                            outlined
+                          ></v-text-field>
+                        </v-col>
+                        <v-col md="12" cols="12">
+                          <v-textarea
+                            rows="3"
+                            v-model="editedItem.missing_notes"
+                            outlined
+                            name="input-7-4"
+                            label="Notes"
+                            value=" "
+                            hide-details
+                          ></v-textarea>
+                        </v-col>
+                        <v-col class="text-center" v-if="!viewMode">
+                          <AssetsButtonCancel @close="newItem = false" />
+                          &nbsp;
+                          <AssetsButtonSubmit @click="saveMissingItems()" />
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
               <v-tab-item value="tab-3">
                 <v-card flat>
-                  <v-card-title>Found Item Details</v-card-title>
+                  <!-- <v-card-title>Found Item Details</v-card-title> -->
                   <v-card-text>
-                    <v-row>
-                      <v-col>
-                        <v-menu
-                          v-model="menu3"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              label="Found Date"
-                              hide-details
-                              dense
-                              small
-                              outlined
-                              v-model="found_date"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="3">
+                          <v-card outlined>
+                            <v-img
+                              style="
+                                height: 100%;
 
-                          <v-date-picker
-                            no-title
-                            v-model="found_date"
-                            @input="menu3 = false"
-                          ></v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col>
-                        <v-menu
-                          ref="menu4"
-                          v-model="menu4"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="found_time"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              label="Found Time"
-                              hide-details
-                              dense
+                                margin: 0 auto;
+                                border-radius: 10%;
+                              "
+                              :src="showFoundImage"
+                            ></v-img>
+                            <v-btn
+                              v-if="!viewMode"
+                              block
                               small
-                              outlined
-                              v-model="found_time"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            no-title
-                            v-if="menu4"
-                            v-model="found_time"
-                            full-width
-                            @click:minute="$refs.menu4.save(found_time)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col>
-                        <v-text-field
-                          label="Found By"
-                          hide-details
-                          v-model="editedItem.found_person_name"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col>
-                        <v-text-field
-                          label="Found Location"
-                          hide-details
-                          v-model="editedItem.found_location"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col>
-                        <v-text-field
-                          label="Remarks"
-                          hide-details
-                          v-model="editedItem.found_remarks"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-textarea
-                          rows="4"
-                          v-model="editedItem.found_notes"
-                          outlined
-                          label="Notes"
-                          hide-details
-                        ></v-textarea>
-                      </v-col>
-                      <v-col cols="3">
-                        <v-card>
-                          <v-img
-                            style="
-                              height: 100%;
-
-                              margin: 0 auto;
-                              border-radius: 10%;
-                            "
-                            :src="showFoundImage"
-                          ></v-img>
-                          <v-btn
-                            v-if="!viewMode"
-                            block
-                            small
-                            color="primary"
-                            @click="$refs.attachment_input.click()"
-                            >Upload Image</v-btn
+                              class="primary--text"
+                              text
+                              @click="$refs.attachment_input.click()"
+                              >Upload Image</v-btn
+                            >
+                          </v-card>
+                          <a
+                            v-if="viewMode"
+                            download
+                            target="_blank"
+                            :href="showFoundImage"
                           >
-                        </v-card>
-                        <a
-                          v-if="viewMode"
-                          download
-                          target="_blank"
-                          :href="showFoundImage"
-                        >
-                          <v-icon color="primary" class="mt-2" small
-                            >mdi-eye</v-icon
-                          ></a
-                        >
-                        <input
-                          required
-                          type="file"
-                          @change="attachment"
-                          style="display: none"
-                          accept="image/*"
-                          ref="attachment_input"
-                        />
-                      </v-col>
-                      <v-col class="text-right" cols="12" v-if="!viewMode">
-                        <v-btn
-                          small
-                          :loading="loading"
-                          :disabled="disableNextProcess"
-                          class="primary"
-                          @click="saveFoundDetails"
-                        >
-                          Save Found Details
-                        </v-btn>
-                      </v-col>
-                    </v-row>
+                            <v-icon color="primary" class="mt-2" small
+                              >mdi-eye</v-icon
+                            ></a
+                          >
+                          <input
+                            required
+                            type="file"
+                            @change="attachment"
+                            style="display: none"
+                            accept="image/*"
+                            ref="attachment_input"
+                          />
+                        </v-col>
+                        <v-col cols="9">
+                          <v-row>
+                            <v-col cols="4">
+                              <v-menu
+                                v-model="menu3"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    label="Found Date"
+                                    hide-details
+                                    dense
+                                    small
+                                    outlined
+                                    v-model="found_date"
+                                    readonly
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  ></v-text-field>
+                                </template>
+
+                                <v-date-picker
+                                  no-title
+                                  v-model="found_date"
+                                  @input="menu3 = false"
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col cols="4">
+                              <v-menu
+                                ref="menu4"
+                                v-model="menu4"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                :return-value.sync="found_time"
+                                transition="scale-transition"
+                                offset-y
+                                max-width="290px"
+                                min-width="290px"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    label="Found Time"
+                                    hide-details
+                                    dense
+                                    small
+                                    outlined
+                                    v-model="found_time"
+                                    readonly
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-time-picker
+                                  no-title
+                                  v-if="menu4"
+                                  v-model="found_time"
+                                  full-width
+                                  @click:minute="$refs.menu4.save(found_time)"
+                                ></v-time-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col cols="4">
+                              <v-text-field
+                                label="Found By"
+                                hide-details
+                                v-model="editedItem.found_person_name"
+                                small
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                label="Found Location"
+                                hide-details
+                                v-model="editedItem.found_location"
+                                small
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                label="Remarks"
+                                hide-details
+                                v-model="editedItem.found_remarks"
+                                small
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-textarea
+                                rows="2"
+                                v-model="editedItem.found_notes"
+                                outlined
+                                label="Notes"
+                                hide-details
+                              ></v-textarea>
+                            </v-col>
+                            <v-col
+                              cols="12"
+                              class="text-center"
+                              v-if="!viewMode"
+                            >
+                              <AssetsButtonCancel @close="newItem = false" />
+                              &nbsp;
+                              <AssetsButtonSubmit @click="saveFoundDetails" />
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
               <v-tab-item value="tab-4">
                 <v-card flat>
-                  <v-card-title>Return Item Details</v-card-title>
+                  <!-- <v-card-title>Return Item Details</v-card-title> -->
                   <v-card-text>
-                    <v-row>
-                      <v-col>
-                        <v-menu
-                          v-model="menu5"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              label="Retuned Date"
-                              hide-details
-                              dense
-                              small
-                              outlined
-                              v-model="returned_date"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            no-title
-                            v-model="returned_date"
-                            @input="menu5 = false"
-                          ></v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col>
-                        <v-menu
-                          ref="menu6"
-                          v-model="menu6"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="returned_time"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              label="Retuned Time"
-                              hide-details
-                              dense
-                              small
-                              outlined
-                              v-model="returned_time"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            no-title
-                            v-if="menu6"
-                            v-model="returned_time"
-                            full-width
-                            @click:minute="$refs.menu6.save(returned_time)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col>
-                        <v-text-field
-                          label="Returned By"
-                          hide-details
-                          v-model="editedItem.returned_person_name"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col>
-                        <v-text-field
-                          label="Approved By"
-                          hide-details
-                          v-model="editedItem.approved_person_name"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col>
-                        <v-text-field
-                          label="Remarks"
-                          hide-details
-                          v-model="editedItem.returned_remarks"
-                          small
-                          dense
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-textarea
-                          label="Notes"
-                          hide-details
-                          rows="4"
-                          v-model="editedItem.returned_notes"
-                          outlined
-                        ></v-textarea>
-                      </v-col>
-
-                      <v-col cols="3">
-                        <v-card>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="3">
+                          <v-card outlined>
                             <v-img
-                         
-                          style="
-                            height: 100%;
-                            margin: 0 auto;
-                            border-radius: 10%;
-                          "
-                          :src="showRetunedImage"
-                        ></v-img>
-                          <v-btn
-                            v-if="!viewMode"
-                            block
-                            small
-                            color="primary"
-                            @click="$refs.returned_attachment_input.click()"
-                            >Upload Image</v-btn
+                              style="
+                                height: 100%;
+                                margin: 0 auto;
+                                border-radius: 10%;
+                              "
+                              :src="showRetunedImage"
+                            ></v-img>
+                            <v-btn
+                              v-if="!viewMode"
+                              block
+                              small
+                              class="primary--text"
+                              text
+                              @click="$refs.returned_attachment_input.click()"
+                              >Upload Image</v-btn
+                            >
+                          </v-card>
+                          <a
+                            v-if="viewMode"
+                            download
+                            target="_blank"
+                            :href="showRetunedImage"
                           >
-                        </v-card>
-                        <a
-                          v-if="viewMode"
-                          download
-                          target="_blank"
-                          :href="showRetunedImage"
-                        >
-                          <v-icon color="primary" class="mt-2" small
-                            >mdi-eye</v-icon
-                          ></a
-                        >
-                        <input
-                          v-nodel="input_returned_image"
-                          required
-                          type="file"
-                          @change="return_attachment"
-                          style="display: none"
-                          accept="image/*"
-                          ref="returned_attachment_input"
-                        />
-                      </v-col>
-                      <v-col class="text-right" cols="12" v-if="!viewMode">
-                        <v-btn
-                          small
-                          @click="saveReturnedDetails()"
-                          :loading="loading"
-                          :disabled="disableNextProcess"
-                          class="primary"
-                        >
-                          Save Return Details
-                        </v-btn>
-                      </v-col>
-                    </v-row>
+                            <v-icon color="primary" class="mt-2" small
+                              >mdi-eye</v-icon
+                            ></a
+                          >
+                          <input
+                            v-nodel="input_returned_image"
+                            required
+                            type="file"
+                            @change="return_attachment"
+                            style="display: none"
+                            accept="image/*"
+                            ref="returned_attachment_input"
+                          />
+                        </v-col>
+                        <v-col cols="9">
+                          <v-row>
+                            <v-col cols="4">
+                              <v-menu
+                                v-model="menu5"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    label="Retuned Date"
+                                    hide-details
+                                    dense
+                                    small
+                                    outlined
+                                    v-model="returned_date"
+                                    readonly
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  no-title
+                                  v-model="returned_date"
+                                  @input="menu5 = false"
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col cols="4">
+                              <v-menu
+                                ref="menu6"
+                                v-model="menu6"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                :return-value.sync="returned_time"
+                                transition="scale-transition"
+                                offset-y
+                                max-width="290px"
+                                min-width="290px"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    label="Retuned Time"
+                                    hide-details
+                                    dense
+                                    small
+                                    outlined
+                                    v-model="returned_time"
+                                    readonly
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-time-picker
+                                  no-title
+                                  v-if="menu6"
+                                  v-model="returned_time"
+                                  full-width
+                                  @click:minute="
+                                    $refs.menu6.save(returned_time)
+                                  "
+                                ></v-time-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col cols="4">
+                              <v-text-field
+                                label="Returned By"
+                                hide-details
+                                v-model="editedItem.returned_person_name"
+                                small
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                label="Approved By"
+                                hide-details
+                                v-model="editedItem.approved_person_name"
+                                small
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                label="Remarks"
+                                hide-details
+                                v-model="editedItem.returned_remarks"
+                                small
+                                dense
+                                outlined
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-textarea
+                                label="Notes"
+                                hide-details
+                                rows="2"
+                                v-model="editedItem.returned_notes"
+                                outlined
+                              ></v-textarea>
+                            </v-col>
+                            <v-col
+                              cols="12"
+                              class="text-center"
+                              v-if="!viewMode"
+                            >
+                              <AssetsButtonCancel @close="newItem = false" />
+                              &nbsp;
+                              <AssetsButtonSubmit
+                                @click="saveReturnedDetails"
+                              />
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -716,446 +743,185 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-      <v-row>
-        <!-- Lost -->
-        <v-col cols="3">
-          <v-card style="background-color: #800000" dark>
-            <v-card-text>
-              <strong class="white--text">Lost</strong>
-              <div class="white--text">{{ totalLostCount }}</div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <!-- Recovered -->
-        <v-col cols="3">
-          <v-card style="background-color: #ce008e" dark>
-            <v-card-text>
-              <strong class="white--text">Recovered</strong>
-              <div class="white--text">{{ totalRecoveredCount }}</div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <!-- Handovered -->
-        <v-col cols="3">
-          <v-card style="background-color: #00b300" dark>
-            <v-card-text>
-              <strong class="white--text">Handovered</strong>
-              <div class="white--text">{{ totalReturnedCount }}</div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <!-- Pending -->
-        <v-col cols="3">
-          <v-card style="background-color: #ffbe00" dark>
-            <v-card-text>
-              <strong class="white--text">Pending</strong>
-              <div class="white--text">{{ totalPendingCount }}</div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <!-- Time Filter -->
-      <v-row class="mb-2">
-        <v-col cols="3">
-          <CustomFilter @filter-attr="filterAttr" :defaultFilterType="4" />
-        </v-col>
-      </v-row>
-
-      <v-data-table
-        dense
-        :headers="headers_table"
-        :items="data"
-        :loading="loading"
-        :options.sync="options"
-        :footer-props="{
-          itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
-        }"
-        class="elevation-1"
-        :server-items-length="totalRowsCount"
-        @page-change="updateIndex"
-      >
-        <template v-slot:top>
-          <v-alert color="primary" dense flat dark>
-            <v-row no-gutter>
-              <v-col>
-                <span> Lost & Found</span>
-              </v-col>
-              <v-col class="text-right">
-                <v-tooltip top color="primary">
-                  <template
-                    v-if="can('lost_and_found_create')"
-                    v-slot:activator="{ on, attrs }"
-                  >
-                    <v-btn
-                      x-small
-                      :ripple="false"
-                      text
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="openNewRecord()"
-                    >
-                      <v-icon color="white" dark white>mdi-plus-circle</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Add New Record</span>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-          </v-alert>
-        </template>
-        <template v-slot:header="{ props: { headers } }">
-          <tr v-if="isFilter">
-            <td v-for="header in headers" :key="header.text">
-              <v-text-field
-                clearable
-                :hide-details="true"
-                v-if="header.filterable && !header.filterSpecial"
-                v-model="filters[header.key]"
-                :id="header.value"
-                @input="applyFilters(header.key, $event)"
-                outlined
+      <v-card>
+        <v-container fluid>
+          <v-row>
+            <v-col v-for="(stat, index) in stats" :key="index">
+              <v-card rounded="lg" outlined class="pa-4">
+                <v-row no-gutter>
+                  <v-col cols="4" class="pt-5 text-left">
+                    <v-row>
+                      <v-col cols="12" class="tex-center">
+                        <div class="text-center">
+                          <v-icon size="40" class="" :color="stat.iconColor">{{
+                            stat.icon
+                          }}</v-icon>
+                          <div :class="`${stat.iconColor}--text`">
+                            <small>{{ stat.label }}</small>
+                          </div>
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col class="text-center mt-3">
+                    <h1 :class="`${stat.iconColor}--text`">
+                      {{ stat.value }}
+                      <!-- <AssetsTextLabel color="black" :label="stat.value" /> -->
+                    </h1>
+                    <!-- <div :class="`${stat.iconColor}--text`">
+                      {{ stat.label }}
+                    </div> -->
+                    <!-- <AssetsTextLabel color="black" :label="stat.label" /> -->
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col cols="12">
+              <v-data-table
+                hide-default-header
                 dense
-                autocomplete="off"
-              ></v-text-field>
-              <v-autocomplete
-                v-else-if="header.filterable && header.value == 'status'"
-                clearable
-                @click:clear="
-                  filters[header.value] = '';
-                  applyFilters();
-                "
-                :hide-details="true"
-                @change="applyFilters('status', $event)"
-                item-value="value"
-                item-text="title"
-                v-model="filters[header.value]"
-                outlined
-                dense
-                :items="[
-                  { value: '', title: 'All' },
-                  { value: '0', title: 'Not Found' },
-                  {
-                    value: '1',
-                    title: 'Found',
-                  },
-                  { value: '2', title: 'Returned' },
-                ]"
-                placeholder="Status"
-              ></v-autocomplete>
-
-              <v-menu
-                v-if="header.filterSpecial && header.value == 'found_datetime'"
-                ref="from_menu_filter"
-                v-model="from_menu_filter"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
+                :headers="headers_table"
+                :items="data"
+                :loading="loading"
+                :options.sync="options"
+                :footer-props="{
+                  itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+                }"
+                class="elevation-0"
+                :server-items-length="totalRowsCount"
+                @page-change="updateIndex"
               >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    clearable
-                    @click:clear="
-                      filters[header.value] = '';
-                      applyFilters();
-                    "
-                    :hide-details="!from_date_filter"
-                    outlined
-                    dense
-                    v-model="filters[header.value]"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                    placeholder="Select Date"
-                  ></v-text-field>
+                <template v-slot:top>
+                  <v-row no-gutter>
+                    <v-col cols="2">
+                      <FilterDateRange @filter-attr="filterAttr" />
+                    </v-col>
+                    <v-col class="text-right">
+                      <v-btn
+                        class="py-3"
+                        color="primary"
+                        x-small
+                        @click="openNewRecord()"
+                      >
+                        <v-icon color="white" small class="py-5"
+                          >mdi-plus</v-icon
+                        >
+                        New
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </template>
-                <v-date-picker
-                  style="height: 400px"
-                  v-model="filters[header.value]"
-                  no-title
-                  scrollable
-                  @input="applyFilters()"
-                >
-                  <v-spacer></v-spacer>
-
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="
-                      filters[header.value] = '';
-                      from_menu_filter = false;
-                      applyFilters();
-                    "
-                  >
-                    Clear
-                  </v-btn>
-                </v-date-picker>
-              </v-menu>
-              <v-menu
-                v-if="
-                  header.filterSpecial && header.value == 'returned_datetime'
-                "
-                ref="to_menu_filter"
-                v-model="to_menu_filter"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    clearable
-                    @click:clear="
-                      filters[header.value] = '';
-                      applyFilters();
-                    "
-                    :hide-details="!to_date_filter"
-                    outlined
-                    dense
-                    v-model="filters[header.value]"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                    placeholder="Select Date"
-                  ></v-text-field>
+                <template v-slot:header="{ props: { headers } }">
+                  <AssetsTableHeader :cols="headers" />
                 </template>
-                <v-date-picker
-                  style="height: 400px"
-                  v-model="filters[header.value]"
-                  no-title
-                  scrollable
-                  @input="applyFilters()"
-                >
-                  <v-spacer></v-spacer>
-
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="
-                      filters[header.value] = '';
-                      to_menu_filter = false;
-                      applyFilters();
-                    "
-                  >
-                    Clear
-                  </v-btn>
-                </v-date-picker>
-              </v-menu>
-              <v-menu
-                v-if="header.filterSpecial && header.value == 'created_at'"
-                ref="to_menu_filter1"
-                v-model="to_menu_filter1"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    clearable
-                    @click:clear="
-                      filters[header.value] = '';
-                      applyFilters();
-                    "
-                    :hide-details="!to_date_filter"
-                    outlined
-                    dense
-                    v-model="filters[header.value]"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                    placeholder="Select Date"
-                  ></v-text-field>
+                <template v-slot:item.sno="{ item, index }">
+                  {{
+                    currentPage
+                      ? (currentPage - 1) * perPage +
+                        (cumulativeIndex + itemIndex(item))
+                      : ""
+                  }}
                 </template>
-                <v-date-picker
-                  style="height: 400px"
-                  v-model="filters[header.value]"
-                  no-title
-                  scrollable
-                  @input="applyFilters()"
-                >
-                  <v-spacer></v-spacer>
-
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="
-                      filters[header.value] = '';
-                      to_menu_filter1 = false;
-                      applyFilters();
-                    "
-                  >
-                    Clear
-                  </v-btn>
-                </v-date-picker>
-              </v-menu>
-              <v-menu
-                v-if="
-                  header.filterSpecial && header.value == 'missing_datetime'
-                "
-                ref="to_menu_filter3"
-                v-model="to_menu_filter3"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    clearable
-                    @click:clear="
-                      filters[header.value] = '';
-                      applyFilters();
-                    "
-                    :hide-details="!to_date_filter"
-                    outlined
-                    dense
-                    v-model="filters[header.value]"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                    placeholder="Select Date"
-                  ></v-text-field>
+                <template v-slot:item.booking.reservation_no="{ item }">
+                  {{ item.booking.reservation_no }}
                 </template>
-                <v-date-picker
-                  style="height: 400px"
-                  v-model="filters[header.value]"
-                  no-title
-                  scrollable
-                  @input="applyFilters()"
-                >
-                  <v-spacer></v-spacer>
+                <template v-slot:item.bookings.rooms="{ item }">
+                  {{ item.booking.rooms }}
+                </template>
 
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="
-                      filters[header.value] = '';
-                      to_menu_filter3 = false;
-                      applyFilters();
-                    "
-                  >
-                    Clear
-                  </v-btn>
-                </v-date-picker>
-              </v-menu>
-            </td>
-          </tr>
-        </template>
-        <template v-slot:item.sno="{ item, index }">
-          {{
-            currentPage
-              ? (currentPage - 1) * perPage +
-                (cumulativeIndex + itemIndex(item))
-              : ""
-          }}
-        </template>
-        <template v-slot:item.booking.reservation_no="{ item }">
-          {{ item.booking.reservation_no }}
-        </template>
-        <template v-slot:item.bookings.rooms="{ item }">
-          {{ item.booking.rooms }}
-        </template>
+                <template v-slot:item.customer.name="{ item }">
+                  {{ item.booking.customer.title }}
+                  {{ item.booking.customer.first_name }}
+                  {{ item.booking.customer.last_name }}
+                </template>
+                <template v-slot:item.missing_datetime="{ item }">
+                  {{ formatDateTime(item.missing_datetime) }}
+                </template>
+                <template v-slot:item.found_datetime="{ item }">
+                  {{ item.found_datetime }}
+                </template>
+                <template v-slot:item.returned_datetime="{ item }">
+                  {{ item.returned_datetime }}
+                </template>
+                <template v-slot:item.returned_remarks="{ item }">
+                  {{ item.returned_remarks }}
+                </template>
+                <template v-slot:item.created_at="{ item }">
+                  {{ formatDateTime(item.created_at) }}
+                </template>
 
-        <template v-slot:item.customer.name="{ item }">
-          {{ item.booking.customer.title }}
-          {{ item.booking.customer.first_name }}
-          {{ item.booking.customer.last_name }}
-        </template>
-        <template v-slot:item.missing_datetime="{ item }">
-          {{ formatDateTime(item.missing_datetime) }}
-        </template>
-        <template v-slot:item.found_datetime="{ item }">
-          {{ item.found_datetime }}
-        </template>
-        <template v-slot:item.returned_datetime="{ item }">
-          {{ item.returned_datetime }}
-        </template>
-        <template v-slot:item.returned_remarks="{ item }">
-          {{ item.returned_remarks }}
-        </template>
-        <template v-slot:item.created_at="{ item }">
-          {{ formatDateTime(item.created_at) }}
-        </template>
-
-        <template v-slot:item.status="{ item }">
-          <span> {{ getStatus(item.status) }}</span>
-          <!-- <v-icon title="Item Not Found yet" v-if="item.status == 0" color="red" dark
+                <template v-slot:item.status="{ item }">
+                  <span> {{ getStatus(item.status) }}</span>
+                  <!-- <v-icon title="Item Not Found yet" v-if="item.status == 0" color="red" dark
                                     white>mdi-minus-circle</v-icon>
                                 <v-icon title="Item Found and Not Returned yet" v-if="item.status == 1" color="yellow" dark
                                     white>mdi-plus-circle</v-icon>
                                 <v-icon title="Item Found and Returned to Guest" v-if="item.status == 2" color="green" dark
                                     white>mdi-emoticon-happy</v-icon> -->
-        </template>
+                </template>
 
-        <template v-slot:item.options="{ item }">
-          <v-menu
-            bottom
-            left
-            v-if="
-              can('lost_and_found_create') ||
-              can('lost_and_found_edit') ||
-              can('lost_and_found_delete')
-            "
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <v-list width="120" dense>
-              <v-list-item
-                v-if="can('lost_and_found_edit')"
-                @click="editItem(item, true)"
-              >
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="primary" small> mdi-eye </v-icon>
-                  View
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                v-if="can('lost_and_found_edit')"
-                @click="editItem(item, false)"
-              >
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="secondary" small> mdi-pencil </v-icon>
-                  Edit
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                v-if="can('lost_and_found_delete')"
-                @click="deleteItem(item)"
-              >
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="error" small> mdi-delete </v-icon>
-                  Delete
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template>
-      </v-data-table>
+                <template v-slot:item.options="{ item }">
+                  <v-menu
+                    bottom
+                    left
+                    v-if="
+                      can('lost_and_found_create') ||
+                      can('lost_and_found_edit') ||
+                      can('lost_and_found_delete')
+                    "
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list width="120" dense>
+                      <v-list-item
+                        v-if="can('lost_and_found_edit')"
+                        @click="editItem(item, true)"
+                      >
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="primary" small> mdi-eye </v-icon>
+                          View
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item
+                        v-if="can('lost_and_found_edit')"
+                        @click="editItem(item, false)"
+                      >
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="secondary" small> mdi-pencil </v-icon>
+                          Edit
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item
+                        v-if="can('lost_and_found_delete')"
+                        @click="deleteItem(item)"
+                      >
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="error" small> mdi-delete </v-icon>
+                          Delete
+                        </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </template>
+              </v-data-table>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
     </div>
   </div>
   <NoAccess v-else />
 </template>
 <script>
-import CustomFilter from "../../components/filter/CustomFilter.vue";
 import ItemLost from "/components/ItemLost.vue";
 export default {
   components: {
     ItemLost,
-    CustomFilter,
   },
   data: () => ({
-    totalLostCount: 0,
-    totalPendingCount: 0,
-    totalRecoveredCount: 0,
-    totalReturnedCount: 0,
     viewDialog: false,
     snackbarColor: "black",
 
@@ -1366,6 +1132,7 @@ export default {
     errors: [],
     viewMode: false,
     lost_item_id: "",
+    stats: [],
   }),
 
   computed: {
@@ -1444,6 +1211,11 @@ export default {
   },
 
   methods: {
+    handleReservation(booking) {
+      this.disableNextProcess = false;
+      this.bookingData = booking;
+      this.bookingId = booking.id;
+    },
     formatDate(date) {
       var day = date.getDate();
       var month = date.getMonth() + 1; // Months are zero-based
@@ -1594,65 +1366,7 @@ export default {
       else if (status == 1) return "Item Found";
       else if (status == 2) return "Returned";
     },
-    searchBookingId(url = this.endpoint) {
-      this.disableNextProcess = true;
 
-      this.response = "";
-      if (this.reservation_no == "") {
-        this.clearForm();
-        return false;
-      }
-      let lostItemId = "";
-      this.loading = true;
-      this.bookingData = { customer: {} };
-      let options = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          lostItemId: lostItemId,
-        },
-      };
-
-      this.$axios
-        .post(
-          `${url}/search_by_reference/${this.reservation_no}`,
-          options.params
-        )
-        .then(({ data }) => {
-          this.clearForm();
-          this.loading = false;
-          if (!data || data == "") {
-            this.clearForm();
-            return false;
-          } else {
-            this.bookingData = data.booking;
-            this.bookingId = data.booking.id;
-            this.disableNextProcess = false;
-
-            if (this.bookingData && this.bookingData.booking_status != 1) {
-            }
-
-            if (this.bookingData) {
-              if (this.bookingData.booking_status < 0) {
-                this.snackbarColor = "red";
-                this.disableNextProcess = true;
-                this.snackbar = true;
-                this.response =
-                  " Check-in is not avaialle. You can not add Missing Item details";
-              }
-            } else {
-              this.disableNextProcess = true;
-              this.snackbarColor = "red";
-              this.snackbar = true;
-              this.response = "Booking Details are not avaialbe";
-            }
-
-            // this.editedIndex = this.data.id;
-            // if (this.bookingData.booking_status == 1)
-            //     this.disableNextProcess = false;
-            //this.loadLostItemDetails();
-          }
-        });
-    },
     loadLostItemDetails(missingItemData) {
       if (missingItemData) {
         this.editedItem = missingItemData;
@@ -1908,46 +1622,34 @@ export default {
       this.$axios
         .get(`lost_and_found_items_statistics`, options)
         .then(({ data }) => {
-          this.totalLostCount = data.missing;
-          this.totalPendingCount = this.totalLostCount - data.returned;
-          this.totalRecoveredCount = data.recovered;
-          this.totalReturnedCount = data.returned;
+          this.stats = [
+            {
+              iconColor: "red",
+              icon: "mdi-alert-circle-outline", // Lost icon
+              label: "Lost",
+              value: data.missing,
+            },
+            {
+              iconColor: "green",
+              icon: "mdi-shield-check-outline", // Recovered icon
+              label: "Recovered",
+              value: data.recovered,
+            },
+            {
+              iconColor: "blue",
+              icon: "mdi-package-variant-closed", // Handovered icon
+              label: "Handovered",
+              value: data.returned,
+            },
+            {
+              iconColor: "orange",
+              icon: "mdi-timer-sand", // Pending icon
+              label: "Pending",
+              value: data.missing - data.returned,
+            },
+          ];
         });
     },
-    // searchIt(e) {
-    //     let s = e.toLowerCase();
-    //     this.getDataFromApi();
-    //     return;
-    // },
-
-    // editItem(item) {
-    //     this.editedIndex = this.data.indexOf(item);
-    //     this.editedItem = Object.assign({}, item);
-
-    //     this.roomTypeDialog = true;
-    // },
-
-    // delteteSelectedRecords() {
-    //     let just_ids = this.ids.map((e) => e.id);
-    //     confirm(
-    //         "Are you sure you wish to delete selected records , to mitigate any inconvenience in future."
-    //     ) &&
-    //         this.$axios
-    //             .post(`${ this.endpoint } / delete /selected`, {
-    //                 ids: just_ids,
-    //             })
-    //             .then((res) => {
-    //                 if (!res.data.status) {
-    //                     this.errors = res.data.errors;
-    //                 } else {
-    //                     this.getDataFromApi();
-    //                     this.snackbar = res.data.status;
-    //                     this.ids = [];
-    //                     this.response = "Selected records has been deleted";
-    //                 }
-    //             })
-    //             .catch((err) => console.log(err));
-    // },
 
     deleteItem(item) {
       confirm("Are you sure you wish to delete?") &&
@@ -1960,59 +1662,6 @@ export default {
           })
           .catch((err) => console.log(err));
     },
-
-    // close() {
-    //     this.roomTypeDialog = false;
-
-    //     // setTimeout(() => {
-    //     this.editedItem = Object.assign({}, this.defaultItem);
-    //     this.editedIndex = -1;
-    //     // }, 300);
-    // },
-
-    // save() {
-    //     let payload = {
-    //         name: this.editedItem.name,
-    //         price: this.editedItem.price,
-    //         adult: this.editedItem.adult,
-    //         child: this.editedItem.child,
-    //         baby: this.editedItem.baby,
-    //         company_id: this.$auth.user.company.id,
-    //     };
-    //     if (this.editedIndex > -1) {
-    //         this.$axios
-    //             .put('room_types' + "/" + this.editedItem.id, payload)
-    //             .then(({ data }) => {
-    //                 console.log(data);
-    //                 if (!data.status) {
-    //                     this.errors = data.errors;
-    //                 } else {
-    //                     console.log('suc');
-    //                     this.getDataFromApi();
-    //                     this.snackbar = data.status;
-    //                     this.response = data.message;
-    //                     this.close();
-    //                 }
-    //             })
-    //             .catch((err) => console.log(err));
-    //     } else {
-    //         this.$axios
-    //             .post('room_types', payload)
-    //             .then(({ data }) => {
-    //                 if (!data.status) {
-    //                     this.errors = data.errors;
-    //                 } else {
-    //                     this.getDataFromApi();
-    //                     this.snackbar = data.status;
-    //                     this.response = data.message;
-    //                     this.close();
-    //                     this.errors = [];
-    //                     this.search = "";
-    //                 }
-    //             })
-    //             .catch((res) => console.log(res));
-    //     }
-    // },
   },
 };
 </script>

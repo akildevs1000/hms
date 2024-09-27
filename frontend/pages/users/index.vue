@@ -7,7 +7,7 @@
     </div>
     <v-dialog v-model="userDialog" max-width="50%">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <v-toolbar color="background" dense flat dark>
             <span>{{ formTitle }} {{ Model }}</span>
           </v-toolbar>

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog persistent v-model="NewCustomerDialog" max-width="900px" lazy>
+  <v-dialog persistent v-model="NewCustomerDialog" max-width="900px">
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         <v-icon x-small color="primary">mdi-eye</v-icon>
@@ -213,13 +213,6 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
-              <!-- <v-row>
-              <v-col cols="12" class="text-right">
-                <AssetsButtonCancel @close="close" />
-                &nbsp;&nbsp;
-                <AssetsButtonSubmit @click="submit" />
-              </v-col>
-            </v-row> -->
             </span>
           </v-container>
         </v-tab-item>

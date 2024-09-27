@@ -7,7 +7,7 @@
     </div>
     <v-dialog v-model="agentPaymentDialog" persistent max-width="800px">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Agent Payment</span>
         </v-toolbar>
         <v-card-text>
@@ -171,7 +171,7 @@
 
     <div v-if="can(`agents_view`)">
       <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span> {{ Model }} List</span>
           <v-spacer></v-spacer>
           <!-- <v-btn class="primary" small @click="agentCreate">New</v-btn> -->

@@ -14,10 +14,10 @@
         </v-btn>
       </template>
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Quotation Information</span>
           <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="close"> mdi-close </v-icon>
+          <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-card-text>
           <v-tabs v-model="activeTab">
@@ -203,7 +203,7 @@
             <v-tab-item>
               <v-card flat>
                 <v-card-text>
-                  <History :customerId="customer.id"></History>
+                  <CustomerHistory :customerId="customer.id" />
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -214,7 +214,7 @@
 
     <v-dialog v-model="advanceDialog" width="600">
       <v-card>
-        <v-toolbar class="rounded-md" color="background" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
           <v-spacer></v-spacer>
           <v-icon dark class="pa-0" @click="advanceDialog = false">
