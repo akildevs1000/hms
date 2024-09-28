@@ -60,75 +60,96 @@
           <FilterDateRange height="30" @filter-attr="filterAttr" />
         </v-col>
         <v-col>
-          <table>
-            <tr>
-              <td v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </td>
-            </tr>
-            <v-progress-linear
-              v-if="loading"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
+          <table cellspacing="0" style="width: 100%">
+            <AssetsTableHeader :cols="incomeHeaders" />
+            <tbody>
+              <tr v-for="(item, index) in incomeData" :key="index">
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ ++index }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ item.date }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ item.time }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.booking.reservation_no || "---" }}
+                    </span>
+                  </small>
+                </td>
+                <td class="text-center   py-2 border-bottom">
+                  <small>{{ item.room || "---" }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>
+                    {{
+                      item &&
+                      item.booking &&
+                      item.booking.customer &&
+                      item.booking.customer.first_name
+                    }}
+                  </small>
+                </td>
+                <td class="text-left py-2 border-bottom">
+                  <small>{{ item.description }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Cash) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Card) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Online) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Bank) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.UPI) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Cheque) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.CityLedger) }}</small>
+                </td>
+              </tr>
+            </tbody>
 
-            <tr v-for="(item, index) in incomeData" :key="index">
-              <td>{{ ++index }}</td>
-              <td>{{ item.date }}</td>
-              <td>{{ item.time }}</td>
-              <td>
-                <span
-                  class="blue--text"
-                  @click="goToRevView(item)"
-                  style="cursor: pointer"
-                >
-                  {{ item.booking.reservation_no || "---" }}
-                </span>
-              </td>
-              <td style="max-width: 20px !important">
-                {{ item.room }}
-              </td>
-              <td>
-                {{
-                  item &&
-                  item.booking &&
-                  item.booking.customer &&
-                  item.booking.customer.first_name
-                }}
-              </td>
-              <td class="text-right">{{ item.description }}</td>
-              <td class="text-right">{{ convert_decimal(item.Cash) }}</td>
-              <td class="text-right">{{ convert_decimal(item.Card) }}</td>
-              <td class="text-right">{{ convert_decimal(item.Online) }}</td>
-              <td class="text-right">{{ convert_decimal(item.Bank) }}</td>
-              <td class="text-right">{{ convert_decimal(item.UPI) }}</td>
-              <td class="text-right">{{ convert_decimal(item.Cheque) }}</td>
-              <td class="text-right">
-                {{ convert_decimal(item.CityLedger) }}
-              </td>
-            </tr>
             <tr>
-              <td colspan="7">Total</td>
-              <td class="text-right">
-                {{ convert_decimal(incomeStats.Cash) }}
+              <td colspan="7" class="py-2 border-bottom">
+                <small>Total</small>
               </td>
-              <td class="text-right">
-                {{ convert_decimal(incomeStats.Card) }}
+              <td class="text-right py-2 border-bottom">
+                <small>{{ $utils.currency_format(incomeStats.Cash) }}</small>
               </td>
-              <td class="text-right">
-                {{ convert_decimal(incomeStats.Online) }}
+              <td class="text-right py-2 border-bottom">
+                <small>{{ $utils.currency_format(incomeStats.Card) }}</small>
               </td>
-              <td class="text-right">
-                {{ convert_decimal(incomeStats.Bank) }}
+              <td class="text-right py-2 border-bottom">
+                <small>{{ $utils.currency_format(incomeStats.Online) }}</small>
               </td>
-              <td class="text-right">{{ convert_decimal(incomeStats.UPI) }}</td>
-              <td class="text-right">
-                {{ convert_decimal(incomeStats.Cheque) }}
+              <td class="text-right py-2 border-bottom">
+                <small>{{ $utils.currency_format(incomeStats.Bank) }}</small>
               </td>
-              <td class="text-right">
-                {{ convert_decimal(incomeStats.CityLedger) }}
+              <td class="text-right py-2 border-bottom">
+                <small>{{ $utils.currency_format(incomeStats.UPI) }}</small>
+              </td>
+              <td class="text-right py-2 border-bottom">
+                <small>{{ $utils.currency_format(incomeStats.Cheque) }}</small>
+              </td>
+              <td class="text-right py-2 border-bottom">
+                <small>{{
+                  $utils.currency_format(incomeStats.CityLedger)
+                }}</small>
               </td>
             </tr>
           </table>
@@ -170,20 +191,20 @@ export default {
     loading: false,
     total: 0,
     incomeHeaders: [
-      { text: "#" },
-      { text: "Date" },
-      { text: "Time" },
-      { text: "Rev. No" },
-      { text: "Rooms" },
-      { text: "Guest" },
-      { text: "Description" },
-      { text: "Cash" },
-      { text: "Card" },
-      { text: "Online" },
-      { text: "Bank" },
-      { text: "UPI" },
-      { text: "Cheque" },
-      { text: "City Ledger" },
+      { align: "center", text: "#" },
+      { align: "center", text: "Date" },
+      { align: "center", text: "Time" },
+      { align: "center", text: "Rev. No" },
+      { align: "center", text: "Rooms" },
+      { align: "center", text: "Guest" },
+      { align: "left", text: "Description" },
+      { align: "right", text: "Cash" },
+      { align: "right", text: "Card" },
+      { align: "right", text: "Online" },
+      { align: "right", text: "Bank" },
+      { align: "right", text: "UPI" },
+      { align: "right", text: "Cheque" },
+      { align: "right", text: "City Ledger" },
     ],
     editedIndex: -1,
     response: "",
@@ -295,17 +316,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-</style>

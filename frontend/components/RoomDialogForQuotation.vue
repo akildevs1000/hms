@@ -1,23 +1,19 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        small
-        color="primary"
-        class="white--text"
-        dark
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-icon color="white" small> mdi-plus </v-icon> {{ label }}
-      </v-btn>
+      <v-hover v-slot:default="{ hover, props }">
+        <span v-bind="props">
+          <v-btn v-bind="attrs" v-on="on" small elevation="0"
+            ><v-icon small color="primary">mdi-plus-circle</v-icon>Room</v-btn
+          >
+        </span>
+      </v-hover>
     </template>
     <v-card>
-      <v-toolbar flat class="primary white--text" dense>
-        Room Information <v-spacer></v-spacer
-        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
-      >
-      <v-container>
+      <v-toolbar flat class="grey lighten-3" dense>
+        Room Information <v-spacer></v-spacer><AssetsButtonClose @close="close"
+      /></v-toolbar>
+      <v-container class="pa-5">
         <v-row>
           <v-col cols="12">
             <v-menu
@@ -100,20 +96,28 @@
             ></v-autocomplete>
           </v-col>
           <v-col cols="12">
-            <v-autocomplete
-              multiple
-              v-model="myArray"
-              hide-details
-              :items="availableRooms"
-              item-value="id"
-              item-text="room_no"
-              label="Select Room"
-              dense
-              outlined
-              return-object
-            >
-            </v-autocomplete>
+            <div style="display: flex">
+              <div style="width: 79%">
+                <v-autocomplete
+                  multiple
+                  v-model="myArray"
+                  hide-details
+                  :items="availableRooms"
+                  item-value="id"
+                  item-text="room_no"
+                  label="Select Room"
+                  dense
+                  outlined
+                  return-object
+                >
+                </v-autocomplete>
+              </div>
+              <div class="ml-3" style="width: 5%">
+                <v-btn outlined right color="primary">OK</v-btn>
+              </div>
+            </div>
           </v-col>
+
           <v-col cols="12">
             <v-autocomplete
               label="No of Pax"
@@ -161,10 +165,22 @@
             </v-checkbox>
           </v-col> -->
 
-          <v-col cols="12">
-            <v-btn block @click="add_multiple_rooms" color="primary" small>
-              Confirm Room
-            </v-btn>
+          <v-col cols="12" class="text-center">
+            <AssetsButton
+              :options="{
+                color: `red`,
+                label: `Cancel`,
+              }"
+              @click="close"
+            />
+            &nbsp;
+            <AssetsButton
+              :options="{
+                color: `blue`,
+                label: `Confirm`,
+              }"
+              @click="add_multiple_rooms"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -500,6 +516,8 @@ export default {
         room_id: this.multipleRoomId.id,
         room_type_object: this.room_type_object,
         priceList: arrToMerge,
+        arrival_date: this.temp.check_in,
+        departure_date: this.temp.check_out,
       };
 
       // this.alert("Success!", "success selected room", "success");

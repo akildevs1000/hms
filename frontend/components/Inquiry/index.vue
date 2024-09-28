@@ -8,10 +8,11 @@
 
     <v-dialog v-model="inquiryDialog" max-width="60%">
       <v-card>
-        <v-toolbar class="rounded-md" color="blue" dense flat dark>
+        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>{{ formTitle }} Inquiry</span>
           <v-spacer></v-spacer>
-          <v-icon @click="close" color="white">mdi-close</v-icon>
+          <SearchInquiry @foundCustomer="handleFoundCustomer" />
+          <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-container>
           <v-row class="m-0 p-0 mt-0">
@@ -20,57 +21,33 @@
                 <v-card-text>
                   <v-row>
                     <v-col md="2" cols="12">
-                      <v-img
-                        @click="onpick_attachment"
-                        style="
-                          width: 150px;
-                          height: 150px;
-                          margin: 0 auto;
-                          border-radius: 50%;
-                        "
-                        :src="showImage"
-                      ></v-img>
-                      <input
-                        required
-                        type="file"
-                        @change="attachment"
-                        style="display: none"
-                        accept="image/*"
-                        ref="attachment_input"
-                      />
-                      <span
-                        v-if="errors && errors.image"
-                        class="red--text mt-2"
-                      >
-                        {{ errors.image[0] }}</span
-                      >
+                      <v-avatar tile size="120">
+                        <v-card>
+                          <img
+                            class="zoom-on-hover"
+                            style="z-index: 1; width: 100%"
+                            :src="showImage"
+                          />
+                        </v-card>
+                      </v-avatar>
                     </v-col>
                     <v-col md="10" cols="12">
                       <v-row>
                         <v-col md="3" cols="12" sm="12">
-                          <!-- 
-                         -->
-                          <div style="display: flex">
-                            <SearchInquiry
-                              @foundCustomer="handleFoundCustomer"
-                            />
-
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <v-select
-                              v-model="inquiry.title"
-                              :items="titleItems"
-                              label="Tittle"
-                              dense
-                              item-text="name"
-                              item-value="name"
-                              :hide-details="errors && !errors.title"
-                              :error="errors && errors.title"
-                              :error-messages="
-                                errors && errors.title ? errors.title[0] : ''
-                              "
-                              outlined
-                            ></v-select>
-                          </div>
+                          <v-select
+                            v-model="inquiry.title"
+                            :items="titleItems"
+                            label="Tittle"
+                            dense
+                            item-text="name"
+                            item-value="name"
+                            :hide-details="errors && !errors.title"
+                            :error="errors && errors.title"
+                            :error-messages="
+                              errors && errors.title ? errors.title[0] : ''
+                            "
+                            outlined
+                          ></v-select>
                         </v-col>
                         <v-col md="3" cols="12" sm="12">
                           <v-text-field
@@ -211,6 +188,7 @@
                               ></v-text-field>
                             </template>
                             <v-date-picker
+                              no-title
                               v-model="inquiry.check_in"
                               @input="check_in_menu = false"
                             ></v-date-picker>
@@ -237,6 +215,7 @@
                               ></v-text-field>
                             </template>
                             <v-date-picker
+                              no-title
                               v-model="inquiry.check_out"
                               @input="check_out_menu = false"
                             ></v-date-picker>
@@ -286,12 +265,9 @@
 
                   <v-row>
                     <v-col cols="12" class="text-right">
-                      <v-btn small color="grey white--text" @click="close"
-                        >Close</v-btn
-                      >
-                      <v-btn small color="blue white--text" @click="submit"
-                        >Submit</v-btn
-                      >
+                      <AssetsButtonCancel @close="close" />
+                      &nbsp;
+                      <AssetsButtonSubmit @click="submit" />
                     </v-col>
                   </v-row>
                 </v-card-text>
@@ -312,11 +288,12 @@
       :footer-props="{
         itemsPerPageOptions: [10, 50, 100],
       }"
+      class="px-2"
     >
       <template v-slot:top>
         <v-toolbar flat dense class="mb-5">
           {{ Model }}
-          <v-icon color="blue white--text" right @click="getDataFromApi()"
+          <v-icon color="primary white--text" right @click="getDataFromApi()"
             >mdi-reload</v-icon
           >
           <v-spacer></v-spacer>
@@ -325,9 +302,7 @@
             v-if="can(`inquiry_create`)"
             @click="inquiryDialog = true"
             small
-            color="blue"
-            class="white--text"
-            dark
+            class="primary"
           >
             <v-icon color="white" small> mdi-plus </v-icon> {{ Model }}
           </v-btn>
@@ -343,7 +318,13 @@
       </template>
 
       <template v-slot:item.quotation="{ item }">
-        <span style="cursor: pointer;" v-if="item?.quotation?.book_date"  @click="openExternalWinodw(item)" class="blue--text">{{item?.quotation?.ref_no}}</span>
+        <span
+          style="cursor: pointer"
+          v-if="item?.quotation?.book_date"
+          @click="openExternalWinodw(item)"
+          class="primary--text"
+          >{{ item?.quotation?.ref_no }}</span
+        >
         <span v-else>---</span>
       </template>
 
@@ -490,7 +471,7 @@ export default {
     },
     showImage() {
       if (!this.inquiry.image && !this.previewImage) {
-        return "/no-profile-image.jpg";
+        return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU";
       } else if (this.previewImage) {
         return this.previewImage;
       }
@@ -658,9 +639,10 @@ export default {
               this.errors = data.errors;
             } else {
               this.getDataFromApi();
-              this.snackbar = data.status;
-              this.response = data.message;
+              this.$swal("Success!", data.message, "success");
               this.close();
+              this.errors = [];
+              this.search = "";
             }
           })
           .catch((err) => console.log(err));
@@ -674,8 +656,7 @@ export default {
               this.errors = data.errors;
             } else {
               this.getDataFromApi();
-              this.snackbar = data.status;
-              this.response = data.message;
+              this.$swal("Success!", data.message, "success");
               this.close();
               this.errors = [];
               this.search = "";

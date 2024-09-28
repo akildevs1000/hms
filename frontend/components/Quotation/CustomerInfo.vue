@@ -28,41 +28,45 @@
       </v-col>
       <v-col md="10" cols="12">
         <v-row>
-          <v-col md="2" cols="12" sm="12">
-            <v-select
-              v-model="customer.title"
-              :items="titleItems"
-              label="Title *"
-              dense
-              item-text="name"
-              item-value="name"
-              hide-details
-              outlined
-            ></v-select>
-          </v-col>
-          <v-col md="10" cols="12" sm="12">
+          <v-col md="12" cols="12" sm="12">
             <v-row>
-              <v-col>
-                <v-text-field
-                  @blur="submit"
-                  label="First Name *"
+              <v-col md="3" cols="12" sm="12">
+                <v-select
+                  v-model="customer.title"
+                  :items="titleItems"
+                  label="Title *"
                   dense
-                  outlined
-                  type="text"
-                  v-model="customer.first_name"
+                  item-text="name"
+                  item-value="name"
                   hide-details
-                ></v-text-field>
+                  outlined
+                ></v-select>
               </v-col>
-              <v-col>
-                <v-text-field
-                  @blur="submit"
-                  label="Last Name"
-                  dense
-                  hide-details
-                  outlined
-                  type="text"
-                  v-model="customer.last_name"
-                ></v-text-field>
+              <v-col cols="9">
+                <v-row no-gutter>
+                  <v-col>
+                    <v-text-field
+                      @blur="submit"
+                      label="First Name *"
+                      dense
+                      outlined
+                      type="text"
+                      v-model="customer.first_name"
+                      hide-details
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      @blur="submit"
+                      label="Last Name"
+                      dense
+                      hide-details
+                      outlined
+                      type="text"
+                      v-model="customer.last_name"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </v-col>

@@ -171,7 +171,6 @@
       </v-col>
     </v-row>
     <v-data-table
-      hide-default-header
       dense
       :headers="headers"
       :items="data"
@@ -182,23 +181,6 @@
       }"
       class="elevation-1 px-2"
     >
-      <template v-slot:header="{ props: { headers } }">
-        <thead>
-          <tr>
-            <td
-              v-for="(header, index) in headers"
-              :key="index"
-              class="primary--text"
-              style="
-                border-top: 1px solid #bdbdbd;
-                border-bottom: 1px solid #bdbdbd;
-              "
-            >
-              <small>{{ header.text }}</small>
-            </td>
-          </tr>
-        </thead>
-      </template>
       <template v-slot:item.name="{ item }">
         <small class="text-color">{{
           caps(item.contact_name)

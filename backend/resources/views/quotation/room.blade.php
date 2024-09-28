@@ -294,12 +294,12 @@
                     <p>{{ $quotation->customer->contact_no ?? '' }}</p>
                 </td>
                 <td class="text-left border-none col-3">
-                    <h4>Check In</h4>
+                    <h4>First Check In</h4>
                     <p>{{ $quotation->arrival_date }} 12:00 AM</p>
                     <p></p>
                 </td>
                 <td class="text-left border-none col-3">
-                    <h4>Check Out</h4>
+                    <h4>Last Check Out</h4>
                     <p>{{ $quotation->departure_date }} 11:00 AM</p>
                     <p></p>
                 </td>
@@ -334,8 +334,8 @@
                 <th class="text-center">#</th>
                 <th>Room Type</th>
                 <th>Food</th>
-                <th class="text-center">Tariff</th>
                 <th class="text-center">Pax</th>
+                <th class="text-center">Tariff</th>
                 <th class="text-center">Rooms</th>
                 <th class="text-center">Nights</th>
                 <th class="text-center">Total</th>
@@ -348,11 +348,11 @@
                     <td style="width:50px;" class="text-center">{{ $key + 1 }}</td>
                     <td>{{ $item['room_type'] }}</td>
                     <td>{{ $item['meal_name'] }}</td>
-                    <td class="text-right">{{ number_format($item['price'], 2) }}</td>
                     <td class="text-center">{{ $item['no_of_adult'] }}</td>
+                    <td class="text-right">{{ number_format($item['price'], 2) }}</td>
                     <td class="text-center">{{ $item['no_of_rooms'] }}</td>
                     <td class="text-center">{{ $item['no_of_nights'] }}</td>
-                    <td class="text-right">{{ number_format($item['total_price'], 2) }}</td>
+                    <td class="text-right">{{ number_format($item['price'] * $item['no_of_rooms'] * $item['no_of_nights'], 2) }}</td>
                 </tr>
             @endforeach
 

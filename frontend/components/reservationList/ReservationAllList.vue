@@ -19,17 +19,7 @@
     <v-container fluid>
       <v-row class="">
         <v-col v-for="(item, index) in stats" :key="index" cols="12" md="2">
-          <v-card rounded="lg" outlined class="pa-4">
-            <v-row no-gutter>
-              <v-col cols="2" class="pt-7">
-                <v-icon size="40" color="black">{{ item.icon }}</v-icon>
-              </v-col>
-              <v-col class="text-center">
-                <h1><AssetsTextLabel color="black" :label="item.count" /></h1>
-                <AssetsTextLabel color="black" :label="item.label" />
-              </v-col>
-            </v-row>
-          </v-card>
+          <AssetsCard :options="item" />
         </v-col>
       </v-row>
       <v-row>
@@ -91,145 +81,146 @@
           <v-col> <AssetsTextLabel :label="`${Model} List`" /></v-col>
         </v-row>
       </v-alert> -->
-      <v-data-table
-        hide-default-header
-        dense
-        small
-        :headers="headers_table"
-        :items="data"
-        :loading="loading"
-        :options.sync="options"
-        :footer-props="{
-          itemsPerPageOptions: [50, 100, 500, 1000],
-        }"
-        class="elevation-0"
-        :server-items-length="totalRowsCount"
-      >
-        <template v-slot:header="{ props: { headers } }">
-          <AssetsTableHeader :cols="headers" />
-        </template>
-
-        <template v-slot:item.sno="{ item, index }">
-          <AssetsTextLabel
-            :label="
-              currentPage
-                ? (currentPage - 1) * perPage +
-                  (cumulativeIndex + itemIndex(item))
-                : ''
-            "
-          />
-        </template>
-        <template v-slot:item.res_number="item">
-          <span
-            class="blue--text"
-            @click="goToRevView(item.item)"
-            style="cursor: pointer"
-          >
-            <AssetsTextLabel :label="item.item.reservation_no || `---`" />
-          </span>
-        </template>
-        <template v-slot:item.source="item">
-          <AssetsTextLabel :label="item.item.source || `---`" />
-        </template>
-        <template v-slot:item.rooms="item">
-          <span v-for="(room, index) in item.item.booked_rooms" :key="index">
-            <AssetsTextLabel :label="room.room_no" />
+      <v-container fluid>
+        <v-data-table
+          dense
+          small
+          :headers="headers_table"
+          :items="data"
+          :loading="loading"
+          :options.sync="options"
+          :footer-props="{
+            itemsPerPageOptions: [50, 100, 500, 1000],
+          }"
+          class="elevation-0"
+          :server-items-length="totalRowsCount"
+        >
+          <template v-slot:item.sno="{ item, index }">
             <AssetsTextLabel
-              :label="item.item.booked_rooms.length - 1 == index ? `` : `,`"
+              :label="
+                currentPage
+                  ? (currentPage - 1) * perPage +
+                    (cumulativeIndex + itemIndex(item))
+                  : ''
+              "
             />
-          </span>
-        </template>
-        <template v-slot:item.reference="item">
-          <AssetsTextLabel :label="item.item.reference_no || `---`" />
-        </template>
-        <template v-slot:item.guest="item">
-          <AssetsTextLabel :label="item.item.customer.first_name || `---`" />
-        </template>
-        <template v-slot:item.check_in="item">
-          <AssetsTextLabel :label="convert_date_format(item.item.check_in)" />
-        </template>
-        <template v-slot:item.check_out="item">
-          <AssetsTextLabel :label="convert_date_format(item.item.check_out)" />
-        </template>
-        <template v-slot:item.total="item">
-          <AssetsTextLabel
-            :label="$utils.currency_format(item.item.total_price)"
-          />
-        </template>
-        <template v-slot:item.posting="item">
-          <AssetsTextLabel
-            :label="$utils.currency_format(item.item.total_posting_amount)"
-          />
-        </template>
-        <template v-slot:item.paid="item">
-          <AssetsTextLabel
-            :label="$utils.currency_format(item.item.paid_amounts)"
-          />
-        </template>
-        <template v-slot:item.balance="item">
-          <AssetsTextLabel :label="$utils.currency_format(item.item.balance)" />
-        </template>
-        <template v-slot:item.res_date="item">
-          <AssetsTextLabel
-            :label="convert_date_format(item.item.booking_date)"
-          />
-        </template>
-        <template v-slot:item.options="{ item }">
-          <v-menu bottom left>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <v-list dense>
-              <v-list-item>
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon
-                    @click="viewCustomerBilling(item)"
-                    x-small
-                    color="primary"
-                    class="mr-2"
-                  >
-                    mdi-eye
-                  </v-icon>
-                  <AssetsTextLabel color="text-color" label="View" />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon
-                    v-if="
-                      can('reservation_edit') ||
-                      can('in_house_edit') ||
-                      can('checkout_edit')
-                    "
-                    @click="get_payment(item)"
-                    x-small
-                    color="primary"
-                    class="mr-2"
-                  >
-                    mdi-cash-multiple
-                  </v-icon>
-                  <AssetsTextLabel color="text-color" label="Pay" />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon
-                    @click="redirect_to_invoice(item.id)"
-                    x-small
-                    color="primary"
-                    class="mr-2"
-                  >
-                    mdi-cash-multiple
-                  </v-icon>
-                  <AssetsTextLabel color="text-color" label="Invoice" />
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template>
-      </v-data-table>
+          </template>
+          <template v-slot:item.res_number="item">
+            <span
+              class="blue--text"
+              @click="goToRevView(item.item)"
+              style="cursor: pointer"
+            >
+              <AssetsTextLabel :label="item.item.reservation_no || `---`" />
+            </span>
+          </template>
+          <template v-slot:item.source="item">
+            <AssetsTextLabel :label="item.item.source || `---`" />
+          </template>
+          <template v-slot:item.rooms="item">
+            <span v-for="(room, index) in item.item.booked_rooms" :key="index">
+              <AssetsTextLabel :label="room.room_no" />
+              <AssetsTextLabel
+                :label="item.item.booked_rooms.length - 1 == index ? `` : `,`"
+              />
+            </span>
+          </template>
+          <template v-slot:item.reference="item">
+            <AssetsTextLabel :label="item.item.reference_no || `---`" />
+          </template>
+          <template v-slot:item.guest="item">
+            <AssetsTextLabel :label="item.item.customer.first_name || `---`" />
+          </template>
+          <template v-slot:item.check_in="item">
+            <AssetsTextLabel :label="convert_date_format(item.item.check_in)" />
+          </template>
+          <template v-slot:item.check_out="item">
+            <AssetsTextLabel
+              :label="convert_date_format(item.item.check_out)"
+            />
+          </template>
+          <template v-slot:item.total="item">
+            <AssetsTextLabel
+              :label="$utils.currency_format(item.item.total_price)"
+            />
+          </template>
+          <template v-slot:item.posting="item">
+            <AssetsTextLabel
+              :label="$utils.currency_format(item.item.total_posting_amount)"
+            />
+          </template>
+          <template v-slot:item.paid="item">
+            <AssetsTextLabel
+              :label="$utils.currency_format(item.item.paid_amounts)"
+            />
+          </template>
+          <template v-slot:item.balance="item">
+            <AssetsTextLabel
+              :label="$utils.currency_format(item.item.balance)"
+            />
+          </template>
+          <template v-slot:item.res_date="item">
+            <AssetsTextLabel
+              :label="convert_date_format(item.item.booking_date)"
+            />
+          </template>
+          <template v-slot:item.options="{ item }">
+            <v-menu bottom left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list dense>
+                <v-list-item>
+                  <v-list-item-title style="cursor: pointer">
+                    <v-icon
+                      @click="viewCustomerBilling(item)"
+                      x-small
+                      color="primary"
+                      class="mr-2"
+                    >
+                      mdi-eye
+                    </v-icon>
+                    <AssetsTextLabel color="text-color" label="View" />
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title style="cursor: pointer">
+                    <v-icon
+                      v-if="
+                        can('reservation_edit') ||
+                        can('in_house_edit') ||
+                        can('checkout_edit')
+                      "
+                      @click="get_payment(item)"
+                      x-small
+                      color="primary"
+                      class="mr-2"
+                    >
+                      mdi-cash-multiple
+                    </v-icon>
+                    <AssetsTextLabel color="text-color" label="Pay" />
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title style="cursor: pointer">
+                    <v-icon
+                      @click="redirect_to_invoice(item.id)"
+                      x-small
+                      color="primary"
+                      class="mr-2"
+                    >
+                      mdi-cash-multiple
+                    </v-icon>
+                    <AssetsTextLabel color="text-color" label="Invoice" />
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+        </v-data-table>
+      </v-container>
     </v-card>
   </div>
 </template>
@@ -243,14 +234,7 @@ export default {
     CustomFilter,
   },
   data: () => ({
-    stats: [
-      { icon: "mdi-walk", number: "10", label: "WALKING" },
-      { icon: "mdi-laptop", number: "04", label: "OTA" },
-      { icon: "mdi-account-tie", number: "10", label: "Corporate" },
-      { icon: "mdi-cloud-outline", number: "10", label: "WebSite" },
-      { icon: "mdi-gift-outline", number: "01", label: "Complimentary" },
-      { icon: "mdi-account-outline", number: "01", label: "Travel Agent" },
-    ],
+    stats: [],
     cumulativeIndex: 1,
     perPage: 20,
     currentPage: 1,
@@ -703,45 +687,57 @@ export default {
       this.stats = [
         {
           icon: "mdi-walk",
-          count: countResult.Walking
+          value: countResult.Walking
             ? countResult.Walking.toString().padStart(2, "0")
             : "00",
           label: "WALKING",
+          col: 7,
+          color: "green", // For activity (Walking)
         },
         {
           icon: "mdi-laptop",
-          count: countResult.Online
+          value: countResult.Online
             ? countResult.Online.toString().padStart(2, "0")
             : "00",
           label: "OTA",
+          col: 7,
+          color: "blue", // For online/technology (OTA)
         },
         {
           icon: "mdi-account-tie",
-          count: countResult.Corporate
+          value: countResult.Corporate
             ? countResult.Corporate.toString().padStart(2, "0")
             : "00",
           label: "Corporate",
+          col: 7,
+          color: "orange", // For business (Corporate)
         },
         {
           icon: "mdi-cloud-outline",
-          count: countResult.website
+          value: countResult.website
             ? countResult.website.toString().padStart(2, "0")
             : "00",
           label: "WebSite",
+          col: 7,
+          color: "purple", // For cloud/web (Website)
         },
         {
           icon: "mdi-gift-outline",
-          count: countResult.Complimentary
+          value: countResult.Complimentary
             ? countResult.Complimentary.toString().padStart(2, "0")
             : "00",
           label: "Complimentary",
+          col: 7,
+          color: "pink", // For gifts (Complimentary)
         },
         {
           icon: "mdi-account-outline",
-          count: countResult["Travel Agency"]
+          value: countResult["Travel Agency"]
             ? countResult["Travel Agency"].toString().padStart(2, "0")
             : "00",
           label: "Travel Agent",
+          col: 7,
+          color: "teal", // For service/people (Travel Agent)
         },
       ];
     },

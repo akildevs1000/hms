@@ -747,38 +747,10 @@
         <v-container fluid>
           <v-row>
             <v-col v-for="(stat, index) in stats" :key="index">
-              <v-card rounded="lg" outlined class="pa-4">
-                <v-row no-gutter>
-                  <v-col cols="4" class="pt-5 text-left">
-                    <v-row>
-                      <v-col cols="12" class="tex-center">
-                        <div class="text-center">
-                          <v-icon size="40" class="" :color="stat.iconColor">{{
-                            stat.icon
-                          }}</v-icon>
-                          <div :class="`${stat.iconColor}--text`">
-                            <small>{{ stat.label }}</small>
-                          </div>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col class="text-center mt-3">
-                    <h1 :class="`${stat.iconColor}--text`">
-                      {{ stat.value }}
-                      <!-- <AssetsTextLabel color="black" :label="stat.value" /> -->
-                    </h1>
-                    <!-- <div :class="`${stat.iconColor}--text`">
-                      {{ stat.label }}
-                    </div> -->
-                    <!-- <AssetsTextLabel color="black" :label="stat.label" /> -->
-                  </v-col>
-                </v-row>
-              </v-card>
+              <AssetsCard :options="stat" />
             </v-col>
             <v-col cols="12">
               <v-data-table
-                hide-default-header
                 dense
                 :headers="headers_table"
                 :items="data"
@@ -810,9 +782,6 @@
                       </v-btn>
                     </v-col>
                   </v-row>
-                </template>
-                <template v-slot:header="{ props: { headers } }">
-                  <AssetsTableHeader :cols="headers" />
                 </template>
                 <template v-slot:item.sno="{ item, index }">
                   {{
@@ -1624,25 +1593,25 @@ export default {
         .then(({ data }) => {
           this.stats = [
             {
-              iconColor: "red",
+              color: "red",
               icon: "mdi-alert-circle-outline", // Lost icon
               label: "Lost",
               value: data.missing,
             },
             {
-              iconColor: "green",
+              color: "green",
               icon: "mdi-shield-check-outline", // Recovered icon
               label: "Recovered",
               value: data.recovered,
             },
             {
-              iconColor: "blue",
+              color: "blue",
               icon: "mdi-package-variant-closed", // Handovered icon
               label: "Handovered",
               value: data.returned,
             },
             {
-              iconColor: "orange",
+              color: "orange",
               icon: "mdi-timer-sand", // Pending icon
               label: "Pending",
               value: data.missing - data.returned,

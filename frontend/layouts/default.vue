@@ -762,6 +762,15 @@ small {
   color: #8a8a8a;
 }
 
+.v-data-table th {
+  font-weight: normal;
+  color: #4390fc !important; /* Table cell text color */
+  border-top: 1px solid #bdbdbd;
+  border-bottom: 1px solid #bdbdbd !important;
+}
+.border-bottom {
+  border-bottom: 1px solid #e0e0e0;
+}
 .v-data-table td {
   color: #8a8a8a !important; /* Table cell text color */
 }

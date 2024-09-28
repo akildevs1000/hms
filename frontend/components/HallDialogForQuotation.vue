@@ -1,22 +1,14 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        small
-        color="primary"
-        class="white--text"
-        dark
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-icon color="white" small> mdi-plus </v-icon> {{ label }}
+      <v-btn small elevation="0" v-bind="attrs" v-on="on">
+        <v-icon small color="primary">mdi-plus-circle</v-icon> Hall
       </v-btn>
     </template>
     <v-card>
       <v-toolbar flat class="grey lighten-3" dense>
-        Hall Booking <v-spacer></v-spacer
-        ><AssetsButtonClose @close="close" /></v-toolbar
-      >
+        Hall Booking <v-spacer></v-spacer><AssetsButtonClose @close="close"
+      /></v-toolbar>
       <v-container>
         <v-row>
           <v-col cols="6">
@@ -251,10 +243,22 @@
             >
             </v-checkbox>
           </v-col> -->
-          <v-col cols="12">
-            <v-btn block @click="selectRoom" color="primary" small>
-              Confirm Hall
-            </v-btn>
+          <v-col cols="12" class="text-center">
+            <AssetsButton
+              :options="{
+                color: `red`,
+                label: `Cancel`,
+              }"
+              @click="close"
+            />
+            &nbsp;
+            <AssetsButton
+              :options="{
+                color: `blue`,
+                label: `Confirm`,
+              }"
+              @click="selectRoom"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -424,10 +428,7 @@ export default {
 
         no_of_adult: 1,
         function_name: null,
-        
-        
-        
-        
+
         priceList: [],
       },
 
@@ -464,11 +465,8 @@ export default {
         company_id: this.$auth.user.company.id,
 
         no_of_adult: 1,
-        function_name:null,
-        
-        
-        
-        
+        function_name: null,
+
         priceList: [],
       },
       merge_food_in_room_price: "",
@@ -646,7 +644,7 @@ export default {
         grand_total: 0, //(total * days)
         company_id: this.$auth.user.company.id,
         no_of_adult: 1,
-        function_name:null,
+        function_name: null,
         priceList: [],
       };
 
@@ -892,7 +890,6 @@ export default {
       total_booking_hours,
       extra_hours_charges,
     }) {
-        
       if (!this.checkRoomAvailability(room_type)) {
         return;
       }
@@ -981,7 +978,6 @@ export default {
         });
       this.runAllFunctions();
     },
-
 
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);

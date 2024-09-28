@@ -60,46 +60,72 @@
           <FilterDateRange height="30" @filter-attr="filterAttr" />
         </v-col>
         <v-col>
-          <table>
-            <tr>
-              <td v-for="(item, index) in incomeHeaders" :key="index">
-                <span v-html="item.text"></span>
-              </td>
-            </tr>
-            <v-progress-linear
-              v-if="loading"
-              :active="loading"
-              :indeterminate="loading"
-              absolute
-              color="primary"
-            ></v-progress-linear>
+          <table cellspacing="0" style="width: 100%">
+            <AssetsTableHeader :cols="incomeHeaders" />
 
-            <tr v-for="(item, index) in expenseData" :key="index">
-              <td>{{ ++index }}</td>
-              <td>{{ item.expense.datetime }}</td>
-              <td>{{ item?.expense?.vendor?.first_name }}</td>
-              <td>{{ item?.expense?.vendor?.vendor_category?.name }}</td>
+            <tbody>
+  <tr v-for="(item, index) in expenseData" :key="index">
+    <td class="text-center py-2 border-bottom"><small>{{ ++index }}</small></td>
+    <td class="text-center py-2 border-bottom">
+      <small>{{ item.expense.datetime }}</small>
+    </td>
+    <td class="text-center py-2 border-bottom">
+      <small>{{ item?.expense?.vendor?.first_name }}</small>
+    </td>
+    <td class="text-center py-2 border-bottom">
+      <small>{{ item?.expense?.vendor?.vendor_category?.name }}</small>
+    </td>
 
-              <td>{{ item.detail }}</td>
-              <td>{{ item.qty }}</td>
+    <td class="text-center py-2 border-bottom">
+      <small>{{ item.detail }}</small>
+    </td>
+    <td class="text-center py-2 border-bottom">
+      <small>{{ item.qty }}</small>
+    </td>
 
-              <td>{{ item.Cash }}</td>
-              <td>{{ item.Card }}</td>
-              <td>{{ item.Online }}</td>
-              <td>{{ item.Bank }}</td>
-              <td>{{ item.UPI }}</td>
-              <td>{{ item.Cheque }}</td>
-            </tr>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(item.Cash) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(item.Card) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(item.Online) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(item.Bank) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(item.UPI) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(item.Cheque) }}</small>
+    </td>
+  </tr>
+  <tr>
+    <td class="text-right py-2 border-bottom" colspan="6"><small>Total</small></td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(stats.Cash) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(stats.Card) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(stats.Online) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(stats.Bank) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(stats.UPI) }}</small>
+    </td>
+    <td class="text-right py-2 border-bottom">
+      <small>{{ $utils.currency_format(stats.Cheque) }}</small>
+    </td>
+  </tr>
+</tbody>
 
-            <tr class="text-right">
-              <td colspan="6">Total</td>
-              <td>{{ stats.Cash }}</td>
-              <td>{{ stats.Card }}</td>
-              <td>{{ stats.Online }}</td>
-              <td>{{ stats.Bank }}</td>
-              <td>{{ stats.UPI }}</td>
-              <td>{{ stats.Cheque }}</td>
-            </tr>
+           
           </table>
         </v-col>
       </v-row>
@@ -134,18 +160,18 @@ export default {
     loading: false,
     total: 0,
     incomeHeaders: [
-      { text: "#" },
-      { text: "DateTime" },
-      { text: "Vendor" },
-      { text: "Category" },
-      { text: "Item" },
-      { text: "Qty" },
-      { text: "Cash" },
-      { text: "Card" },
-      { text: "Online" },
-      { text: "Bank" },
-      { text: "UPI" },
-      { text: "Cheque" },
+      { align: "center", text: "#" },
+      { align: "center", text: "DateTime" },
+      { align: "center", text: "Vendor" },
+      { align: "center", text: "Category" },
+      { align: "center", text: "Item" },
+      { align: "center", text: "Qty" },
+      { align: "right", text: "Cash" },
+      { align: "right", text: "Card" },
+      { align: "right", text: "Online" },
+      { align: "right", text: "Bank" },
+      { align: "right", text: "UPI" },
+      { align: "right", text: "Cheque" },
     ],
     editedIndex: -1,
     response: "",
@@ -247,21 +273,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-@import url("@/assets/css/tableStyles.css");
-</style>
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-</style>

@@ -1,8 +1,7 @@
 <template>
   <v-dialog v-model="searchDialog" width="350">
     <template v-slot:activator="{ on, attrs }">
-      <div style="width: 50px" class="ma-2 text-center">
-        <v-hover v-slot:default="{ hover, props }">
+      <v-hover v-slot:default="{ hover, props }">
           <span v-bind="props">
             <v-icon
               class="zoom-on-hover"
@@ -15,20 +14,8 @@
             >
           </span>
         </v-hover>
-      </div>
     </template>
     <v-card>
-      <!-- <v-alert class="primary" dense dark>
-        <v-row>
-          <v-col> Customer </v-col>
-          <v-col>
-            <div class="text-right">
-              <v-icon @click="searchDialog = false">mdi-close</v-icon>
-            </div>
-          </v-col>
-        </v-row>
-      </v-alert> -->
-
       <v-container>
         <v-text-field
           class="ma-0 pa-0"

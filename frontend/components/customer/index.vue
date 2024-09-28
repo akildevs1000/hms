@@ -46,7 +46,6 @@
     </v-row>
 
     <v-data-table
-      hide-default-header
       dense
       :headers="headers_table"
       :items="data"
@@ -58,23 +57,6 @@
       class="px-2"
       :server-items-length="totalTableRowsCount"
     >
-      <template v-slot:header="{ props: { headers } }">
-        <thead>
-          <tr>
-            <td
-              v-for="(header, index) in headers"
-              :key="index"
-              class="primary--text"
-              style="
-                border-top: 1px solid #bdbdbd;
-                border-bottom: 1px solid #bdbdbd;
-              "
-            >
-              <small>{{ header.text }}</small>
-            </td>
-          </tr>
-        </thead>
-      </template>
       <template v-slot:item.sno="{ item, index }">
         <small class="text-color">{{
           currentPage

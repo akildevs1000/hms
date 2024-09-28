@@ -1,36 +1,48 @@
 <template>
   <v-dialog v-model="searchDialog" width="350">
     <template v-slot:activator="{ on, attrs }">
-      <v-icon  class="mt-1" color="primary" v-bind="attrs" v-on="on">mdi-magnify</v-icon>
-
+      <v-hover v-slot:default="{ hover, props }">
+        <span v-bind="props">
+          <v-icon
+            class="zoom-on-hover"
+            v-bind="attrs"
+            v-on="on"
+            :outlined="!hover"
+            :color="hover ? `` : `primary`"
+            :style="{ color: hover ? '#6946dd' : '' }"
+            >mdi-magnify</v-icon
+          >
+        </span>
+      </v-hover>
     </template>
     <v-card>
-      <v-alert class="primary" dense dark>
-        <v-row>
-          <v-col> Customer </v-col>
-          <v-col>
-            <div class="text-right">
-              <v-icon @click="searchDialog = false">mdi-close</v-icon>
-            </div>
-          </v-col>
-        </v-row>
-      </v-alert>
-
-      <v-card-text>
+      <v-container>
         <v-text-field
+          class="ma-0 pa-0"
           label="Search By Mobile Number"
           dense
           outlined
           v-model="contact_no"
-          :hide-details="true"
+          hide-details
         >
           <template v-slot:append>
-            <v-icon :loading="checkLoader" right @click="get_customer"
+            <v-icon
+              style="
+                border-radius: 5px;
+                padding: 7px;
+                top: 0px;
+                position: absolute;
+                right: 1px;
+                height: 40px;
+              "
+              class="primary white--text"
+              :loading="checkLoader"
+              @click="get_customer"
               >mdi-magnify</v-icon
             >
           </template>
         </v-text-field>
-      </v-card-text>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>

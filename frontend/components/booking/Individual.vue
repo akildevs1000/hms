@@ -66,6 +66,7 @@
                       `E. C/in`,
                       `L. C/out`,
                       `Total`,
+                      ``,
                     ]"
                   />
                   <tbody>
@@ -73,80 +74,57 @@
                       v-for="(item, index) in priceListTableView"
                       :key="index"
                     >
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>
                           {{ $dateFormat.dmy(item.date) }} <br />
                           {{ item.day }}
                         </small>
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>
                           {{ item.room_no }} <br />
                           {{ item.room_type }}
                         </small>
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>
                           {{ item.day_type }}
                         </small>
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>{{ item.no_of_adult }}</small>
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>{{ item.no_of_child }}</small>
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>{{ item.meal_name }}</small>
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small> {{ item.extra_bed_qty || "-" }}</small>
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>
                           {{ item.early_check_in > 0 ? "Yes" : "-" }}</small
                         >
                       </td>
-                      <td
-                        class="text-center py-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td class="text-center py-2 border-bottom">
                         <small>{{
                           item.late_check_out > 0 ? "Yes" : "-"
                         }}</small>
                       </td>
                       <td
-                        class="text-right py-2"
-                        style="border-bottom: 1px solid #e0e0e0; width: 90px"
+                        class="text-right py-2 border-bottom"
+                        style="width: 90px"
                       >
                         <small>
                           {{ $utils.convert_decimal(item.total_price) }}</small
                         >
-
+                      </td>
+                      <td
+                        class="text-right py-2 border-bottom"
+                        style="width: 10px"
+                      >
                         <v-menu
                           nudge-bottom="50"
                           nudge-left="20"
@@ -203,27 +181,20 @@
                   <table style="width: 100%">
                     <tr>
                       <td colspan="9"></td>
-                      <td style="border-bottom: 1px solid #e0e0e0">
+                      <td class="border-bottom">
                         <small>Sub Total:</small>
                       </td>
-                      <td
-                        colspan="10"
-                        class="text-right pb-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td colspan="10" class="text-right pb-2 border-bottom">
                         <small>{{ $utils.convert_decimal(subTotal()) }}</small>
                       </td>
                     </tr>
                     <tr>
                       <td colspan="9"></td>
-                      <td style="border-bottom: 1px solid #e0e0e0">
+
+                      <td class="border-bottom">
                         <small>Add:</small>
                       </td>
-                      <td
-                        colspan="10"
-                        class="text-right pb-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td colspan="10" class="text-right pb-2 border-bottom">
                         <v-hover v-slot:default="{ hover, props }">
                           <div v-bind="props">
                             <small>
@@ -259,14 +230,10 @@
                     </tr>
                     <tr>
                       <td colspan="9"></td>
-                      <td style="border-bottom: 1px solid #e0e0e0">
+                      <td class="border-bottom">
                         <small>Discount:</small>
                       </td>
-                      <td
-                        colspan="10"
-                        class="text-right pb-2"
-                        style="border-bottom: 1px solid #e0e0e0"
-                      >
+                      <td colspan="10" class="text-right pb-2 border-bottom">
                         <v-hover v-slot:default="{ hover, props }">
                           <div v-bind="props">
                             <small>
@@ -298,16 +265,12 @@
                     </tr>
                     <tr>
                       <td colspan="9"></td>
-                      <td
-                        style="border-bottom: 1px solid #e0e0e0"
-                        class="primary--text"
-                      >
+                      <td border-bottom class="primary--text">
                         <small>Total:</small>
                       </td>
                       <td
                         colspan="10"
-                        class="text-right pb-2 primary--text"
-                        style="border-bottom: 1px solid #e0e0e0"
+                        class="text-right pb-2 border-bottomprimary--text"
                       >
                         <small>
                           {{

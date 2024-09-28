@@ -9,8 +9,10 @@
       </template>
       <v-card v-if="item && item.id">
         <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-          <span>Quotation Information</span>
+          <span>Quotation Clone Information</span>
           <v-spacer></v-spacer>
+          <SearchCustomer @foundCustomer="handleFoundCustomer" />
+          &nbsp;
           <AssetsButtonClose @close="close" />
         </v-toolbar>
         <v-card-text>
@@ -24,55 +26,28 @@
             </v-card-text>
           </v-card>
 
-          <table class="table" style="width: 100%">
-            <thead>
-              <tr>
-                <td class="primary white--text text-center">#</td>
-                <td class="primary white--text">Description</td>
-                <td class="primary white--text text-center">Qty</td>
-                <td class="primary white--text text-center">Unit Price</td>
-                <td class="primary white--text text-center">Total</td>
-                <td class="primary"></td>
-              </tr>
-            </thead>
+          <table cellspacing="0" style="width: 100%">
+            <AssetsTableHeader :cols="headers" />
             <tbody>
               <tr v-for="(item, index) in priceListTableView" :key="index">
-                <td style="width: 50px" class="text-center">
+                <td style="width: 50px" class="text-center py-2 border-bottom">
                   {{ index + 1 }}
                 </td>
-                <td style="width: 320px">
-                  <v-text-field
-                    outlined
-                    dense
-                    hide-details
-                    v-model="item.description"
-                  ></v-text-field>
+                <td style="width: 420px" class="pa-1 border-bottom">
+                  <small>{{ item.description }}</small>
                 </td>
-                <td style="width: 120px">
-                  <v-text-field
-                    outlined
-                    dense
-                    hide-details
-                    v-model.number="item.qty"
-                    @input="calculateItemTotal(item)"
-                    type="number"
-                  ></v-text-field>
+                <td style="width: 120px" class="pa-1 border-bottom">
+                  <small>{{ item.qty }}</small>
                 </td>
-                <td style="width: 120px">
-                  <v-text-field
-                    outlined
-                    dense
-                    hide-details
-                    v-model.number="item.unit_price"
-                    @input="calculateItemTotal(item)"
-                    type="number"
-                  ></v-text-field>
+                <td style="width: 120px" class="pa-1 border-bottom">
+                  <small>{{ item.unit_price }}</small>
                 </td>
-
-                <td class="text-center">
-                  {{ convert_decimal(item.total_price) }}
+                <td class="text-right py-2 border-bottom">
+                  <small class="pt-2 text-right">
+                    {{ $utils.currency_format(item.total_price) }}
+                  </small>
                 </td>
-                <td class="text-center">
+                <td class="text-right py-2 border-bottom" style="width: 50px">
                   <v-icon @click="deleteItem(index, item)" small color="red"
                     >mdi-close</v-icon
                   >
@@ -81,70 +56,123 @@
             </tbody>
           </table>
 
-          <div class="d-flex justify-space-around py-3" style="margin-top: 5px">
-            <v-col cols="10" class="text-right">
-              <div>Sub Total:</div>
-              <!-- <div>Add :</div> -->
-              <div>Discount :</div>
-              <div style="font-size: 18px; font-weight: bold">Total :</div>
-            </v-col>
-            <v-col cols="2" class="text-right">
-              <div>
-                {{ convert_decimal(subTotal()) }}
-              </div>
-
-              <!-- <div>
-                {{ convert_decimal(room.room_extra_amount || 0) }}
-              </div> -->
-              <div style="color: red">
-                <v-hover v-slot:default="{ hover, props }">
-                  <div v-bind="props">
-                    -{{ convert_decimal(room.room_discount || 0) }}
-                    <v-icon
-                      v-if="hover"
-                      small
-                      color="primary"
-                      @click="$refs[`DiscountComp`][`discountPopUp`] = true"
-                      >mdi-pencil</v-icon
-                    >
-                    <Discount
-                      ref="DiscountComp"
-                      :sub_total="room.sub_total"
-                      @discountAbleAmount="
-                        (e) => {
-                          room.room_discount = e;
-                        }
-                      "
-                    />
-                  </div>
-                </v-hover>
-              </div>
-              <div style="font-size: 18px; font-weight: bold">
-                {{ convert_decimal(processCalculation()) }}
-              </div>
-            </v-col>
+          <div class="mt-2">
+            <HallDialogForQuotation @tableData="handleTableData" />
+            &nbsp;
+            <QuotationHallItem
+              @selectedItem="
+                (e) => {
+                  priceListTableView.push(e);
+                }
+              "
+            />
           </div>
+
+          <v-row>
+            <v-col cols="9"></v-col>
+            <v-col>
+              <table style="width: 100%">
+                <tr>
+                  <td colspan="9"></td>
+                  <td class="border-bottom">
+                    <small>Sub Total:</small>
+                  </td>
+                  <td colspan="10" class="text-right pb-2 border-bottom">
+                    <small>{{ $utils.convert_decimal(subTotal()) }}</small>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="9"></td>
+
+                  <td class="border-bottom">
+                    <small>Add:</small>
+                  </td>
+                  <td colspan="10" class="text-right pb-2 border-bottom">
+                    <v-hover v-slot:default="{ hover, props }">
+                      <div v-bind="props">
+                        <small>
+                          {{
+                            $utils.convert_decimal(room.room_extra_amount || 0)
+                          }}</small
+                        >
+                        <v-icon
+                          v-if="hover"
+                          small
+                          color="primary"
+                          @click="
+                            $refs[`ExtraAmountComp`][`extraAmountPopUp`] = true
+                          "
+                          >mdi-pencil</v-icon
+                        >
+                        <ExtraAmount
+                          ref="ExtraAmountComp"
+                          :sub_total="room.sub_total"
+                          @extraAddedAmount="
+                            (e) => {
+                              room.room_extra_amount = e;
+                            }
+                          "
+                        />
+                      </div>
+                    </v-hover>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="9"></td>
+                  <td class="border-bottom">
+                    <small>Discount:</small>
+                  </td>
+                  <td colspan="10" class="text-right pb-2 border-bottom">
+                    <v-hover v-slot:default="{ hover, props }">
+                      <div v-bind="props">
+                        <small>
+                          -{{
+                            $utils.convert_decimal(room.room_discount || 0)
+                          }}</small
+                        >
+                        <v-icon
+                          v-if="hover"
+                          small
+                          color="primary"
+                          @click="$refs[`DiscountComp`][`discountPopUp`] = true"
+                          >mdi-pencil</v-icon
+                        >
+                        <Discount
+                          ref="DiscountComp"
+                          :sub_total="room.sub_total"
+                          @discountAbleAmount="
+                            (e) => {
+                              room.room_discount = e;
+                            }
+                          "
+                        />
+                      </div>
+                    </v-hover>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="9"></td>
+                  <td border-bottom class="primary--text">
+                    <small>Total:</small>
+                  </td>
+                  <td
+                    colspan="10"
+                    class="text-right pb-2 border-bottomprimary--text"
+                  >
+                    <small>
+                      {{ $utils.currency_format(processCalculation()) }}</small
+                    >
+                  </td>
+                </tr>
+              </table>
+            </v-col>
+          </v-row>
 
           <v-row class="text-right mb-3">
             <v-col>
-
-              <HallDialogForQuotation
-                label="Hall"
-                @tableData="handleTableData"
-              />
-
-              <v-btn small class="blue" @click="addItem" dark
-                ><v-icon small class="mt-1">mdi-plus</v-icon> Add Row</v-btn
-              >
-
-              <v-btn
-                small
-                class="primary"
-                @click="submit"
-                :loading="subLoad"
-                dark
-                ><v-icon small class="mt-1">mdi-floppy</v-icon> Submit</v-btn
-              >
+              <AssetsButtonCancel @close="close" />
+              &nbsp;
+              <AssetsButtonSubmit @click="submit" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -314,10 +342,34 @@ export default {
       customer: {},
       errors: [],
       extraPayType: "",
+      headers: [
+        {
+          text: `#`,
+          align: "center",
+        },
+        {
+          text: `Description`,
+        },
+        {
+          text: `Qty`,
+        },
+        {
+          text: `Unit Price`,
+        },
+        {
+          text: `Total`,
+          align: "right",
+        },
+        {
+          text: ``,
+          align: "right",
+        },
+      ],
     };
   },
   async created() {
     this.priceListTableView = this.item.items;
+    this.customer = this.item.customer;
     this.room.room_discount = this.item.discount;
     this.room.sub_total = this.item.sub_total;
     this.runAllFunctions();
@@ -532,10 +584,22 @@ export default {
         return;
       }
 
+      let arrival_date = this.formatDate(new Date());
+      let departure_date = this.formatDate(new Date());
+
+      if (this.selectedRooms.length) {
+        arrival_date = this.selectedRooms[0].check_in;
+        departure_date =
+          this.selectedRooms[this.selectedRooms.length - 1].check_out;
+      } else {
+        arrival_date = this.item.arrival_date;
+        departure_date = this.item.departure_date;
+      }
+
       let quotaion = {
         book_date: this.formatDate(new Date()),
-        arrival_date: this.formatDate(new Date()),
-        departure_date: this.formatDate(new Date()),
+        arrival_date: arrival_date,
+        departure_date: departure_date,
         sub_total: this.subTotal(),
         discount: this.room.room_discount,
         tax: 0,
@@ -564,6 +628,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-@import url("@/assets/css/tableStyles.css");
-</style>

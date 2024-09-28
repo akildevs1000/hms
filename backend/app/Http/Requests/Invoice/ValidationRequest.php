@@ -41,8 +41,10 @@ class ValidationRequest extends FormRequest
             'quotation_id' => 'nullable',
 
             'items' => 'required|array',
-            
+
             'invoice_type' => 'required',
+            'company_id' => 'required',
+
         ];
     }
 }
