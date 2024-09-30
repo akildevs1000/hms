@@ -447,16 +447,12 @@
   <NoAccess v-else />
 </template>
 <script>
-import History from "../../components/Customer/History.vue";
-import RoomDetails from "../RoomDetails.vue";
+
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
   props: ["onlyButton", "reservation"],
-  components: {
-    History,
-  },
   data() {
     return {
       dialog: false,

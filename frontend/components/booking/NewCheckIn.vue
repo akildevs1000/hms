@@ -1173,13 +1173,12 @@
   </div>
 </template>
 <script>
-import History from "../../components/Customer/History.vue";
+
 import ImagePreview from "../../components/images/ImagePreview.vue";
 
 export default {
   props: ["reservation"],
   components: {
-    History,
     ImagePreview,
   },
   data() {

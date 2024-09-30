@@ -1314,14 +1314,13 @@
   <NoAccess v-else />
 </template>
 <script>
-import History from "../../components/Customer/History.vue";
+
 import ImagePreview from "../../components/images/ImagePreview.vue";
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
   components: {
-    History,
     ImagePreview,
   },
   data() {

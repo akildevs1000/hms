@@ -276,14 +276,13 @@
   <NoAccess v-else />
 </template>
 <script>
-import History from "@/components/customer/History.vue";
+
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
   props: ["model", "endpoint", "item"],
   components: {
-    History,
   },
   data() {
     return {

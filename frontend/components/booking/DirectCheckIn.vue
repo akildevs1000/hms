@@ -320,7 +320,7 @@
 //                   <CustomerHistory :customerId="customer.id" />
 //                 </v-card-text>
 //               </v-card>
-// import History from "../../components/Customer/History.vue";
+// 
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);

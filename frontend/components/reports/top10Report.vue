@@ -97,12 +97,7 @@
   
 <script>
 
-import CustomerIndex from "../../components/customer/CustomerIndex.vue";
 export default {
-    components: {
-        CustomerIndex,
-
-    },
     props: ['filter_from_date', 'filter_to_date'],
 
     data() {

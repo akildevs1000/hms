@@ -384,7 +384,7 @@
   <NoAccess v-else />
 </template>
 <script>
-import History from "../../components/Customer/History.vue";
+
 import ImagePreview from "../../components/images/ImagePreview.vue";
 const today = new Date();
 const tomorrow = new Date(today);
@@ -401,7 +401,6 @@ checkoutTime.setHours(today.getHours() + 4);
 export default {
   props: ["onlyButton"],
   components: {
-    History,
     ImagePreview,
   },
   data() {

@@ -29,86 +29,6 @@
     </v-row>
     <v-card class="pa-5 mt-2" elevation="0" v-if="customer && customer.id">
       <v-row>
-        <!-- <v-col cols="8">
-          <v-img :src="company.logo" max-width="100" class="mb-3"></v-img>
-          <div style="display: block">
-            <h4><AssetsTextLabel label="To" /></h4>
-            <AssetsTextLabel
-              :label="`${customer.title} ${customer.full_name}`"
-            />
-            <br />
-            <AssetsTextLabel :label="customer.country" />
-            <AssetsTextLabel label="TRN 100437109000003" />
-          </div>
-        </v-col>
-
-        <v-col cols="4" class="text-right">
-          <h4>
-            <AssetsTextLabel color="black" :label="`${company.name}`" />
-          </h4>
-          <AssetsTextLabel :label="`P.O.BOX: ${company.p_o_box_no}`" />
-          <br />
-          <AssetsTextLabel :label="`${company.location}`" />
-          <br />
-          <AssetsTextLabel label="TRN 100391471000003" />
-          <br />
-
-          <h4 class="mt-5">
-            <AssetsTextLabel color="black" label="Statement of Accounts" />
-          </h4>
-
-          <span
-            class=""
-            style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd"
-          >
-            <AssetsTextLabel :label="formattedMonths" />
-          </span>
-
-          <v-row class="pb-5 pt-2">
-            <v-col></v-col>
-            <v-col cols="10">
-              <table style="width: 100%" cellspacing="0">
-                <tr>
-                  <td colspan="2" class="text-left px-1 grey lighten-3">
-                    <h4>
-                      <AssetsTextLabel color="black" label="Account Summary" />
-                    </h4>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">
-                    <AssetsTextLabel label="Opening Balance" />
-                  </td>
-                  <td><AssetsTextLabel label="AED 3,659.25" /></td>
-                </tr>
-                <tr>
-                  <td class="text-left">
-                    <AssetsTextLabel label="Invoiced Amount" />
-                  </td>
-                  <td>
-                    <AssetsTextLabel label="AED 6,851.25" />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">
-                    <AssetsTextLabel label="Amount Received" />
-                  </td>
-                  <td>
-                    <AssetsTextLabel label="AED 8,526.00" />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left" style="border-top: 1px solid #ddd">
-                    <AssetsTextLabel label="Balance Due" />
-                  </td>
-                  <td style="border-top: 1px solid #ddd">
-                    <AssetsTextLabel label="AED 1,984.50" />
-                  </td>
-                </tr>
-              </table>
-            </v-col>
-          </v-row>
-        </v-col> -->
         <v-col cols="12" v-if="statements.length">
           <AssetsTable :headers="headers" :items="statements" />
         </v-col>
@@ -204,8 +124,8 @@ export default {
       let config = {
         params: {
           statement_type: this.statement_type,
-          from_date: this.months[0],
-          to_date: this.months[1],
+          from_date: this.months[0] + "-01",
+          to_date: this.months[1] + "-30",
         },
       };
       this.$axios
@@ -227,7 +147,6 @@ export default {
           let tempBalance = 0;
 
           this.statements = data.statementList.map((e, i) => {
-
             if (e.isOpeningBalance) {
               return {
                 serial: i + 1,
