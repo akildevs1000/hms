@@ -8,7 +8,8 @@
         :color="options.color || 'green'"
         class="white--text"
         @click="$emit(`click`)"
-        ><v-icon small>mdi-{{ options.icon }}</v-icon>{{ options.label || "Submit" }}</v-btn
+        ><v-icon small>mdi-{{ options.icon }}</v-icon
+        ><small>{{ options.label || "Submit" }}</small></v-btn
       >
     </span>
   </v-hover>

@@ -4,21 +4,21 @@
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
-          color="blue"
+          color="primary"
           class="white--text"
           dark
           v-bind="attrs"
           v-on="on"
         >
-          <v-icon color="white" small> mdi-plus </v-icon> {{ model }}
+          <v-icon color="white" small> mdi-plus </v-icon> New
         </v-btn>
       </template>
 
       <v-card>
-        <v-toolbar flat class="blue white--text" dense>
+        <v-toolbar flat class="grey lighten-3" dense>
           Create {{ model }} <v-spacer></v-spacer
-          ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
-        >
+          ><AssetsButtonClose @close="close"
+        /></v-toolbar>
 
         <v-card-text class="py-5">
           <v-container>
@@ -37,13 +37,15 @@
                 ></v-autocomplete>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  outlined
+                <v-autocomplete
+                  clearable
+                  label="Select Vendor Type"
                   dense
-                  hide-details
-                  v-model="payload.company_name"
-                  label="Company Name"
-                ></v-text-field>
+                  outlined
+                  v-model="payload.type"
+                  :items="[`Personal`, `Company`]"
+                  :hide-details="true"
+                ></v-autocomplete>
               </v-col>
               <v-col cols="4">
                 <v-autocomplete
@@ -74,14 +76,13 @@
                   label="Last Name"
                 ></v-text-field>
               </v-col>
-             
               <v-col cols="6">
                 <v-text-field
                   outlined
                   dense
                   hide-details
-                  v-model="payload.vendor_display_name"
-                  label="Vendor Display Name"
+                  v-model="payload.company_name"
+                  label="Company Name"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -120,7 +121,7 @@
                   label="Mobile"
                 ></v-text-field>
               </v-col>
-              
+
               <v-col cols="12">
                 <FullAddress @location="handleFullAddress" />
                 <!-- <v-text-field
@@ -136,25 +137,21 @@
                 <span class="red--text">{{ errorResponse }}</span>
               </v-col>
               <v-col cols="12" class="text-right">
-                <v-btn
-                  small
-                  color="grey"
-                  class="white--text"
-                  dark
+                <AssetsButton
+                  :options="{
+                    label: `Cancel`,
+                    color: `red`,
+                  }"
                   @click="close"
-                >
-                  Close
-                </v-btn>
-                <v-btn
-                  :loading="loading"
-                  small
-                  color="blue"
-                  class="white--text"
-                  dark
+                />
+                &nbsp;
+                <AssetsButton
+                  :options="{
+                    label: `Submit`,
+                    color: `green`,
+                  }"
                   @click="submit"
-                >
-                  Submit
-                </v-btn>
+                />
               </v-col>
             </v-row>
           </v-container>
@@ -174,12 +171,17 @@ export default {
         first_name: "",
         last_name: "",
         company_name: "",
-        vendor_display_name: "",
+        vendor_display_name: "----------",
         email: "",
         work_phone: "",
         mobile: "",
         tax_number: "",
         address: "",
+
+        country: "",
+        state: "",
+        city: "",
+        zip_code: "",
       },
       dialog: false,
       loading: false,
@@ -202,6 +204,19 @@ export default {
       this.dialog = false;
       this.loading = false;
       this.errorResponse = null;
+
+      this.payload = {
+        title: "",
+        first_name: "",
+        last_name: "",
+        company_name: "",
+        vendor_display_name: "----------",
+        email: "",
+        work_phone: "",
+        mobile: "",
+        tax_number: "",
+        address: "",
+      };
     },
     async getVendorCategory() {
       let { data } = await this.$axios.get(`vendor-category-list`);
@@ -211,6 +226,7 @@ export default {
     async submit() {
       this.loading = true;
       try {
+        this.payload.company_id = this.$auth.user.company_id;
         await this.$axios.post(this.endpoint, this.payload);
         this.close();
         this.$emit("response", "payload has been inserted");

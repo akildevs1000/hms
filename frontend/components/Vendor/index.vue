@@ -26,7 +26,7 @@
         </v-toolbar>
       </template>
       <template v-slot:item.full_name="{ item }">
-        {{ item.first_name }} {{ item.last_name }}
+        {{item.title}} {{ item.first_name }} {{ item.last_name }}
       </template>
       <template v-slot:item.company="{ item }">
         <div>
@@ -39,9 +39,6 @@
         </small>
       </template>
       <template v-slot:item.contact="{ item }">
-        <div>
-          {{ item.work_phone }}
-        </div>
         <div>
           {{ item.mobile }}
         </div>
@@ -118,10 +115,6 @@ export default {
     errors: [],
     headers: [
       {
-        text: "Title",
-        value: "title",
-      },
-      {
         text: "Full Name",
         value: "full_name",
       },
@@ -141,6 +134,10 @@ export default {
       {
         text: "Category",
         value: "vendor_category.name",
+      },
+      {
+        text: "Vendor Type",
+        value: "type",
       },
       {
         text: "Action",

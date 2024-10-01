@@ -4,21 +4,21 @@
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
-          color="blue"
+          color="primary"
           class="white--text"
           dark
           v-bind="attrs"
           v-on="on"
         >
-          <v-icon color="white" small> mdi-plus </v-icon> {{ model }}
+          <v-icon color="white" small> mdi-plus </v-icon> New
         </v-btn>
       </template>
 
       <v-card>
-        <v-toolbar flat class="blue white--text" dense>
+        <v-toolbar flat class="grey lighten-3" dense>
           Create {{ model }} <v-spacer></v-spacer
-          ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
-        >
+          ><AssetsButtonClose @close="close"
+        /></v-toolbar>
 
         <v-card-text class="py-5">
           <v-container>
@@ -48,25 +48,21 @@
                 <span class="red--text">{{ errorResponse }}</span>
               </v-col>
               <v-col cols="12" class="text-right">
-                <v-btn
-                  small
-                  color="grey"
-                  class="white--text"
-                  dark
+                <AssetsButton
+                  :options="{
+                    label: `Cancel`,
+                    color: `red`,
+                  }"
                   @click="close"
-                >
-                  Close
-                </v-btn>
-                <v-btn
-                  :loading="loading"
-                  small
-                  color="blue"
-                  class="white--text"
-                  dark
+                />
+                &nbsp;
+                <AssetsButton
+                  :options="{
+                    label: `Submit`,
+                    color: `green`,
+                  }"
                   @click="submit"
-                >
-                  Submit
-                </v-btn>
+                />
               </v-col>
             </v-row>
           </v-container>

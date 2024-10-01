@@ -15,6 +15,12 @@ class AdminExpenseItem extends Model
         'tax' => 'integer',
     ];
 
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
+
     /**
      * Get the user that owns the AdminExpenseItem
      *

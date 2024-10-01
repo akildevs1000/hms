@@ -8,7 +8,7 @@
         <v-row>
           <v-col> <div style="font-size: 18px">Check Out</div> </v-col>
           <v-col class="text-center">
-            <div style="font-size: 18px">
+            <div style="font-size: 18px; color: #1402f7">
               Reservation # {{ BookingData.reservation_no }}
             </div>
           </v-col>
@@ -111,71 +111,111 @@
                     hide-details
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" class="pt-10">
-                  <!-- <pre>{{ roomData }}</pre> -->
-
-                  <table style="width: 100%">
-                    <tr>
-                      <td
-                        class="text-left"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
-                        Room
-                      </td>
-                      <td
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
-                        {{ $utils.currency_format(roomData.price) }}
-                      </td>
-                      <td colspan="2" class="text-center">Total Rs.</td>
-                    </tr>
-                    <tr>
-                      <td class="text-left">Posting</td>
-                      <td>
-                        {{
-                          $utils.currency_format(
-                            BookingData.total_posting_amount
-                          )
-                        }}
-                      </td>
-                      <td colspan="2" class="text-center">
-                        <span style="font-size: 18px" class="blue--text">{{
-                          $utils.currency_format(
-                            parseFloat(roomData.price) +
-                              parseFloat(BookingData.total_posting_amount)
-                          )
-                        }}</span>
-                      </td>
-                    </tr>
-                  </table>
-                  <v-divider></v-divider>
-                  <table style="width: 100%">
-                    <tr>
-                      <td
-                        class="text-left"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
-                        Paid
-                      </td>
-                      <td
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
-                        {{ $utils.currency_format(BookingData.paid_amounts) }}
-                      </td>
-                      <td colspan="2" class="text-center">Balance Rs.</td>
-                    </tr>
-                    <tr>
-                      <td class="text-left">Others</td>
-                      <td>
-                        {{ $utils.currency_format(0) }}
-                      </td>
-                      <td colspan="2" class="text-center">
-                        <span style="font-size: 18px" class="red--text">{{
-                          $utils.currency_format(tempBalance)
-                        }}</span>
-                      </td>
-                    </tr>
-                  </table>
+                <v-col cols="12" class="pt-15">
+                  <v-row no-gutter>
+                    <v-col cols="8">
+                      <table style="width: 100%">
+                        <tr>
+                          <td
+                            class="text-left"
+                            style="
+                              width: 110px;
+                              border-bottom: 1px solid #eeeeee;
+                            "
+                          >
+                            Room
+                          </td>
+                          <td
+                            class="text-right"
+                            style="
+                              width: 110px;
+                              border-bottom: 1px solid #eeeeee;
+                            "
+                          >
+                            {{
+                              isGroupBooking
+                                ? BookingData.group_name
+                                : $utils.currency_format(roomData.price)
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            class="text-left"
+                            style="
+                              width: 110px;
+                              border-bottom: 1px solid #eeeeee;
+                            "
+                          >
+                            Posting
+                          </td>
+                          <td
+                            class="text-right"
+                            style="
+                              width: 110px;
+                              border-bottom: 1px solid #eeeeee;
+                            "
+                          >
+                            {{
+                              $utils.currency_format(
+                                BookingData.total_posting_amount
+                              )
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            class="text-left"
+                            style="
+                              width: 110px;
+                              border-bottom: 1px solid #eeeeee;
+                            "
+                          >
+                            Total
+                          </td>
+                          <td
+                            class="text-right"
+                            style="
+                              width: 110px;
+                              border-bottom: 1px solid #eeeeee;
+                            "
+                          >
+                            {{ $utils.currency_format(roomData.grand_total) }}
+                          </td>
+                          <!-- <td colspan="2" class="text-center">Total Rs.</td> -->
+                        </tr>
+                        <tr>
+                          <td class="text-left red--text" style="width: 110px">
+                            Paid
+                          </td>
+                          <td class="text-right" style="width: 110px">
+                            {{
+                              $utils.currency_format(BookingData.paid_amounts)
+                            }}
+                          </td>
+                          <!-- <td colspan="2" class="text-center">Balance Rs.</td> -->
+                        </tr>
+                      </table>
+                    </v-col>
+                    <v-col class="pt-8">
+                      <table>
+                        <tr>
+                          <td class="text-center">Total Rs.</td>
+                        </tr>
+                        <tr>
+                          <td class="text-center">
+                            <span style="font-size: 18px" class="blue--text">
+                              {{
+                                $utils.currency_format(
+                                  parseFloat(roomData.grand_total)
+                                )
+                              }}
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-row>
             </v-container>
@@ -369,11 +409,37 @@
                         <v-col cols="12" class="text-center mt-5">
                           <AssetsButtonCancel @click="$emit(`close-dialog`)" />
                           &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-                          <AssetsButtonSubmit @click="store_check_out" />
+                          <AssetsButtonSubmit />
                         </v-col>
                       </v-row>
                     </v-container>
                   </v-card>
+                </v-col>
+                <v-col cols="12" class="text-center">
+                  <div
+                    style="position: relative; height: 80px; text-align: center"
+                  >
+                    <div
+                      class=""
+                      style="position: absolute; bottom: 0%; width: 100%"
+                    >
+                      <v-hover v-slot:default="{ hover, props }">
+                        <span v-bind="props">
+                          <v-btn
+                            block
+                            small
+                            :outlined="!hover"
+                            rounded
+                            color="green lighten-1"
+                            class="white--text"
+                            @click="store_check_out"
+                          >
+                            Check Out
+                          </v-btn>
+                        </span>
+                      </v-hover>
+                    </div>
+                  </div>
                 </v-col>
               </v-row>
             </v-container>
@@ -472,6 +538,9 @@ export default {
     }
   },
   computed: {
+    isGroupBooking() {
+      return this.BookingData.group_name == "yes";
+    },
     customer_full_address() {
       let { customer } = this.roomData;
 

@@ -15,7 +15,7 @@
     <v-card>
       <v-toolbar flat class="primary white--text" dense>
         Calendar Booking <v-spacer></v-spacer
-        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
+        ><AssetsButtonClose @close="close" /></v-toolbar
       >
       <v-container>
         <v-row>

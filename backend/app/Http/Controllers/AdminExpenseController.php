@@ -18,6 +18,13 @@ class AdminExpenseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function getLastThreeRecords()
+    {
+        return AdminExpense::where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
+            ->where("vendor_id", request("vendor_id", 0))
+            ->get();
+    }
+
     public function index()
     {
         return AdminExpense::with(
@@ -269,5 +276,18 @@ class AdminExpenseController extends Controller
             "data" => $items,
             "stats" => $stats
         ];
+    }
+
+    public function lastAdminExpenseNumber()
+    {
+        // Get the last expense ID for the given company_id
+        $lastId = AdminExpense::where("company_id", request("company_id", 0))
+            ->max("id");
+
+        // If no ID is found, set it to 0
+        $lastId = $lastId ?? 0;
+
+        // Return formatted ID with leading zeros if necessary
+        return sprintf('%04d', $lastId);
     }
 }

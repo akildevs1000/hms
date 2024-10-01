@@ -33,6 +33,13 @@ class ValidationRequest extends FormRequest
             'payment_mode' => 'required',
             'payment_mode_ref' => 'nullable',
             'admin_expense_id' => 'required|exists:admin_expenses,id',
+
+
+            'amount' => 'required',
+            'discount' => 'required',
+            'paid' => 'required',
+            'balance' => 'required',
+
         ];
     }
 }

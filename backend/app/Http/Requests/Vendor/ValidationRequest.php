@@ -38,9 +38,12 @@ class ValidationRequest extends FormRequest
             'vendor_category_id' => 'required|exists:vendor_categories,id',
 
             'country' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'zip_code' => 'required|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:255',
+
+            'type' => 'required',
+            'company_id' => 'nullable',
         ];
     }
 }

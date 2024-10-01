@@ -68,6 +68,9 @@ export default {
   }),
   methods: {
     getStates(country) {
+      if (country == "International") {
+        this.exposeLocation();
+      }
       // Find the country object from the countries array
       const countryObj = this.countries.find((e) => e.name === country);
 
@@ -78,7 +81,6 @@ export default {
         this.location.state = null;
         this.location.city = null;
         this.location.zip_code = null;
-
       } else {
         // If country not found, clear the states array and handle error
         this.states = [];

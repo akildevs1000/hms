@@ -18,7 +18,8 @@
             >mdi-reload</v-icon
           >
           <v-spacer></v-spacer>
-          <ExpenseManagementCreate
+          <ExpenseCreate
+            :is_admin_expense="is_admin_expense"
             :model="Model"
             :endpoint="endpoint"
             @response="getDataFromApi"
@@ -26,12 +27,18 @@
         </v-toolbar>
       </template>
       <template v-slot:item.attachments="{ item }">
-        <div v-if="item.attachments">
+        <div v-if="item.attachments.length > 0">
           <ViewMultipleAttachments
             :key="getRandomeId()"
             :attachments="item.attachments"
           />
         </div>
+      </template>
+      <template v-slot:item.total="{ item }">
+        {{ $utils.currency_format(item.total) }}
+      </template>
+      <template v-slot:item.tax="{ item }">
+        {{ $utils.currency_format(item.tax) }}%
       </template>
       <template v-slot:item.options="{ item }">
         <v-menu bottom left>
@@ -44,7 +51,7 @@
           <v-list width="120" dense>
             <v-list-item>
               <v-list-item-title>
-                <ExpenseManagementView
+                <ExpenseView
                   :model="Model"
                   :endpoint="endpoint"
                   :item="item"
@@ -54,7 +61,7 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <ExpenseManagementEdit
+                <ExpenseEdit
                   :model="Model"
                   :endpoint="endpoint"
                   :item="item"
@@ -64,10 +71,10 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <ExpenseManagementPayment
-                  :endpoint="`expense-payment`"
-                  :id="item.id"
-                  :vendor_id="item.vendor_id"
+                <ExpensePayment
+                  :model="Model"
+                  :endpoint="endpoint"
+                  :item="item"
                   @response="getDataFromApi"
                 />
               </v-list-item-title>
@@ -80,7 +87,7 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <ExpenseManagementDelete
+                <ExpenseDelete
                   :id="item.id"
                   :endpoint="endpoint"
                   @response="getDataFromApi"
@@ -103,6 +110,7 @@ let y = date.getFullYear();
 let currentDate = y + "-" + m + "-" + d;
 
 export default {
+  props: ["is_admin_expense"],
   data: () => ({
     Model: "Expense",
     endpoint: "admin-expense",
@@ -122,10 +130,7 @@ export default {
         text: "Vendor",
         value: "vendor.first_name",
       },
-      {
-        text: "Total",
-        value: "total",
-      },
+
       {
         text: "Bill #",
         value: "bill_number",
@@ -141,6 +146,18 @@ export default {
       {
         text: "Attachments",
         value: "attachments",
+      },
+      {
+        text: "notes",
+        value: "notes",
+      },
+      {
+        text: "Tax",
+        value: "tax",
+      },
+      {
+        text: "Total",
+        value: "total",
       },
       {
         text: "Created At",
@@ -181,10 +198,10 @@ export default {
       this.loading = true;
       let config = {
         params: {
-          is_admin_expense: 1,
+          is_admin_expense: this.is_admin_expense,
         },
       };
-      let { data } = await this.$axios.get(this.endpoint,config);
+      let { data } = await this.$axios.get(this.endpoint, config);
       this.loading = false;
       this.expenses = data.data;
     },

@@ -15,7 +15,7 @@ class ExpensePaymentController extends Controller
      */
     public function index()
     {
-        return ExpensePayment::paginate(request("per_page", 50));
+        return ExpensePayment::where("admin_expense_id", request("admin_expense_id"))->get();
     }
 
     public function store(ValidationRequest $request)

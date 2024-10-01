@@ -8,10 +8,10 @@
     </template>
 
     <v-card>
-      <v-toolbar flat class="blue white--text" dense>
+      <v-toolbar flat class="grey lighten-3" dense>
         Follow Up
         {{ model }} <v-spacer></v-spacer
-        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
+        ><AssetsButtonClose @close="close" /></v-toolbar
       >
 
       <v-card-text class="py-5">

@@ -1,40 +1,33 @@
 <template>
-  <div style="max-height: 400px; overflow: auto" class="px-1">
+  <div style="max-height: 150px; overflow: auto" class="px-1">
     <table cellspacing="0" style="width: 100%">
       <thead>
         <tr>
           <td
             v-for="(col, index) in headers"
             :key="index"
-            style="
-              border-top: 1px solid #bdbdbd;
-              border-bottom: 1px solid #bdbdbd;
-            "
-            class="primary--text py-2"
+            class="primary--text py-1 px-2 border-top border-bottom"
             :class="`text-${col.align}`"
           >
-            <small>{{ col.text }}</small>
+            {{ col.text }}
           </td>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(item, index) in items" :key="index">
           <td
-            v-for="(col, tdIndex) in headers"
+            v-for="(header, tdIndex) in headers"
             :key="tdIndex"
-            :class="`text-${col.align}`"
-            class="py-2"
-            style="border-bottom: 1px solid #e0e0e0; color: #8a8a8a"
+            :class="`text-${header.align}`"
+            class="py-1 px-2 border-bottom text-color"
+            :width="header.width"
           >
-            <small style="cursor: pointer;"
-              v-if="col.link"
-              class="blue--text"
-              @click="$router.push(`${col.link}/${item[col.value]}`)"
-              >{{ item[col.value] }}</small
-            >
-            <small v-else>{{ item[col.value] }}</small>
+            <slot :name="header.value" :item="item">{{
+              item[header.value]
+            }}</slot>
           </td>
         </tr>
+        <slot name="row"></slot>
       </tbody>
     </table>
   </div>
@@ -43,6 +36,5 @@
 <script>
 export default {
   props: ["items", "headers"],
-  methods: {},
 };
 </script>

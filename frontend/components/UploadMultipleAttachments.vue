@@ -1,7 +1,7 @@
 <template>
   <span>
     <div style="display: flex; align-items: center; cursor: pointer">
-      <div @click="triggerFileInput" style="height: 25px; width: 25px">
+      <div @click="triggerFileInput" style="height: 19px; width: 19px">
         <svg
           data-v-7d68c7d9=""
           xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +30,7 @@
               icon="mdi-paperclip"
               :src="file.preview"
             />
-            <v-icon class="mr-2" color="primary" @click="deleteItem(index)"
+            <v-icon small class="mr-2" color="primary" @click="deleteItem(index)"
               >mdi-close</v-icon
             >
           </span>
@@ -58,7 +58,7 @@
 export default {
   props: {
     label: {
-      default: "Upload attachments",
+      default: "",
       type: String,
     },
     color: {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Vendor\ValidationRequest;
 use App\Models\Vendor;
+use Illuminate\Http\Request;
 
 class VendorController extends Controller
 {
@@ -44,6 +45,32 @@ class VendorController extends Controller
         $vendor->update($request->validated());
 
         return $vendor;
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Vendor  $vendor
+     * @return \Illuminate\Http\Response
+     */
+    public function vendorSearch(Request $request)
+    {
+        $search = $request->search;
+        $company_id = $request->company_id;
+
+        $query = Vendor::query();
+        $query->where("company_id",$company_id);
+        $query->when($search ?? false, fn($query, $search) =>
+        $query->where(
+            fn($query) => $query
+                ->orWhere('company_name', $search)
+                ->orWhere('first_name', $search)
+                ->orWhere('last_name', $search)
+                ->orWhere('mobile', $search)
+        ));
+
+        return $query->with("vendor_category")->first();
     }
 
     /**

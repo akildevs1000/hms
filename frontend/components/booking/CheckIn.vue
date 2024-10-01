@@ -2,721 +2,174 @@
   <v-dialog
     v-model="checkInDialog"
     persistent
-    :max-width="isGroupBooking ? '' : '850'"
+    :max-width="isGroupBooking ? '1100' : '850'"
+    style="position: relative"
   >
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> Check In </span>
     </template>
-    <v-card>
-      <v-alert dense class="grey lighten-3 primary--text">
-        <v-row>
-          <v-col>
-            <div style="font-size: 18px">
-              {{ isGroupBooking ? "Group " : "" }} Check In
-            </div>
-          </v-col>
-          <v-col class="text-center">
-            <div style="font-size: 18px; color: #1402f7">
-              Reservation # {{ BookingData.reservation_no }}
-            </div>
-          </v-col>
-          <v-col>
-            <div class="text-right">
-              <AssetsButtonClose @close="checkInDialog = false" />
-            </div>
-          </v-col>
-        </v-row>
-      </v-alert>
-      <v-card-text>
-        <v-row no-gutter v-if="BookingData && BookingData.id">
-          <v-col v-if="isGroupBooking" cols="4" class="text-center">
-            <v-row no-gutter>
-              <v-col cols="12" class="text-center">
-                <v-avatar size="125">
-                  <img
-                    class="pa-2"
-                    style="border: 1px solid grey"
-                    :src="
-                      roomData?.customer?.captured_photo ||
-                      'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
-                    "
-                    alt="Profile Image"
-                  />
-                </v-avatar>
-              </v-col>
-            </v-row>
-            <v-container>
-              <v-row class="mt-2">
-                <v-col cols="3">
-                  <v-autocomplete
-                    v-model="guest.title"
-                    :items="[
-                      { id: 1, name: `Mr` },
-                      { id: 2, name: `Mrs` },
-                      { id: 3, name: `Miss` },
-                      { id: 4, name: `Ms` },
-                      { id: 5, name: `Dr` },
-                    ]"
-                    label="Title *"
-                    dense
-                    item-text="name"
-                    item-value="name"
-                    hide-details
-                    outlined
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="9">
+    <span
+      style="position: absolute; z-index: 1; left: 1250px"
+      :style="closeIconPosition"
+    >
+      <v-icon
+        @click="checkInDialog = false"
+        color="white"
+        class="grey"
+        size="30"
+        style="border-radius: 50px; width: 15px; height: 15px"
+      >
+        mdi-close-circle
+      </v-icon>
+    </span>
+    <div class="grey lighten-3 pa-2" style="overflow: hidden">
+      <v-row>
+        <v-col cols="4">
+          <v-card style="border: 3px solid white; min-height: 477px">
+            <v-card-text>
+              <v-row no-gutter v-if="BookingData && BookingData.id">
+                <v-col cols="12" class="pa-0 ma-0">
                   <v-row no-gutter>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="guest.first_name"
-                        label="First Name"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="guest.last_name"
-                        label="Last Name"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-col>
-
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="guest.contact_no"
-                    label="Phone Number"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="guest.whatsapp"
-                    label="Whatsapp"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="guest.email"
-                    label="Last Name"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-menu
-                    v-model="dob_menu"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="guest.dob"
-                        readonly
-                        label="DOB"
-                        v-on="on"
-                        v-bind="attrs"
-                        hide-details
-                        dense
-                        outlined
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      no-title
-                      v-model="guest.dob"
-                      @input="dob_menu = false"
-                    ></v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="guest.nationality"
-                    label="Phone Number"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="guest.country"
-                    label="Country"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="guest.state"
-                    label="State"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="guest.city"
-                    label="City"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="4">
-                  <v-autocomplete
-                    readonly
-                    label="Adult"
-                    :items="[0, 1, 2, 3]"
-                    dense
-                    outlined
-                    v-model="roomData.no_of_adult"
-                    hide-details
-                    required
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="4">
-                  <v-autocomplete
-                    readonly
-                    label="Child"
-                    :items="[0, 1, 2, 3]"
-                    dense
-                    outlined
-                    v-model="roomData.no_of_child"
-                    hide-details
-                    required
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="4">
-                  <v-autocomplete
-                    readonly
-                    label="Extra Bed"
-                    :items="[0, 1, 2, 3]"
-                    dense
-                    outlined
-                    v-model="roomData.extra_bed_qty"
-                    hide-details
-                    required
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="12">
-                  <v-textarea
-                    readonly
-                    rows="2"
-                    v-model="BookingData.request"
-                    label="Customer Request"
-                    outlined
-                    dense
-                    hide-details
-                  ></v-textarea>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-          <v-divider v-if="isGroupBooking" vertical></v-divider>
-          <v-col :cols="isGroupBooking ? '4' : '5'">
-            <v-row no-gutter>
-              <v-col cols="12" class="text-center">
-                <v-avatar size="125">
-                  <img
-                    class="pa-2"
-                    style="border: 1px solid grey"
-                    :src="
-                      roomData?.customer?.captured_photo ||
-                      'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
-                    "
-                    alt="Profile Image"
-                  />
-                </v-avatar>
-              </v-col>
-              <v-col class="text-center">
-                <v-container class="mt-2">
-                  <v-row>
                     <v-col cols="12">
-                      <v-text-field
-                        v-model="roomData.customer.full_name"
-                        readonly
-                        label="Full Name"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        v-model="roomData.customer.contact_no"
-                        readonly
-                        label="Phone Number"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        rows="2"
-                        v-model="roomData.booking.source"
-                        readonly
-                        label="Source"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="roomData.checkin_datetime_only"
-                        readonly
-                        label="Check IN"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="roomData.checkout_datetime_only"
-                        readonly
-                        label="Check Out"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        v-model="BookingData.room_no"
-                        readonly
-                        label="Room Number"
-                        outlined
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-10">
-                      <v-row no-gutter>
-                        <v-col cols="8">
-                          <table style="width: 100%">
-                            <tr>
-                              <td
-                                class="text-left"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Room
-                              </td>
-                              <td
-                                class="text-right"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{ $utils.currency_format(roomData.price) }}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td
-                                class="text-left"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Posting
-                              </td>
-                              <td
-                                class="text-right"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{
-                                  $utils.currency_format(
-                                    BookingData.total_posting_amount
-                                  )
-                                }}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td
-                                class="text-left"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                Total
-                              </td>
-                              <td
-                                class="text-right"
-                                style="
-                                  width: 110px;
-                                  border-bottom: 1px solid #eeeeee;
-                                "
-                              >
-                                {{
-                                  $utils.currency_format(roomData.grand_total)
-                                }}
-                              </td>
-                              <!-- <td colspan="2" class="text-center">Total Rs.</td> -->
-                            </tr>
-                            <tr>
-                              <td
-                                class="text-left red--text"
-                                style="width: 110px"
-                              >
-                                Paid
-                              </td>
-                              <td class="text-right" style="width: 110px">
-                                {{
-                                  $utils.currency_format(
-                                    BookingData.paid_amounts
-                                  )
-                                }}
-                              </td>
-                              <!-- <td colspan="2" class="text-center">Balance Rs.</td> -->
-                            </tr>
-                          </table>
-                        </v-col>
-                        <v-col class="pt-8">
-                          <table>
-                            <tr>
-                              <td class="text-center">Total Rs.</td>
-                            </tr>
-                            <tr>
-                              <td class="text-center">
-                                <span
-                                  style="font-size: 18px"
-                                  class="blue--text"
-                                >
-                                  {{
-                                    $utils.currency_format(
-                                      parseFloat(roomData.grand_total)
-                                    )
-                                  }}
-                                </span>
-                              </td>
-                            </tr>
-                          </table>
-                        </v-col>
-                      </v-row>
-
-                      <!-- <table style="width: 100%">
+                      <AssetsHeadDialog>
+                        <template #label>
+                          <span>Group Booking</span>
+                        </template>
+                      </AssetsHeadDialog>
+                      <table cellspacing="0" style="width: 100%">
                         <tr>
-                          <td
-                            class="text-left"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Paid
+                          <td class="blue--text">
+                            <span> Payer </span>
                           </td>
-                          <td
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{
-                              $utils.currency_format(BookingData.paid_amounts)
-                            }}
-                          </td>
-                          <td colspan="2" class="text-center">Balance Rs.</td>
                         </tr>
                         <tr>
-                          <td class="text-left">Others</td>
                           <td>
-                            {{ $utils.currency_format(0) }}
-                          </td>
-                          <td colspan="2" class="text-center">
-                            <span style="font-size: 18px" class="red--text">{{
-                              $utils.currency_format(tempBalance)
-                            }}</span>
+                            <b
+                              >{{ roomData.customer?.title || "---" }} :
+                              {{ roomData.customer?.full_name || "---" }}</b
+                            >
                           </td>
                         </tr>
-                      </table> -->
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-divider vertical></v-divider>
-          <v-col :cols="isGroupBooking ? '4' : '7'">
-            <v-row>
-              <v-col>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <Heading class="mb-3" label="Transactions" />
-                      <table style="width: 100%">
-                        <tr style="font-size: 13px">
-                          <td
-                            class="text-center primary--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Date
+                        <tr>
+                          <td>
+                            Tel : {{ roomData.customer?.contact_no || "---" }}
                           </td>
-                          <td
-                            class="text-right primary--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Debit
-                          </td>
-                          <td
-                            class="text-right primary--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Credit
-                          </td>
-                          <td
-                            class="text-right primary--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Balance
-                          </td>
-                          <!-- <td
-                            class="text-center primary--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Receipt
-                          </td> -->
                         </tr>
-
-                        <tr
-                          style="font-size: 13px"
-                          v-for="(item, index) in transactions"
-                          :key="index"
-                        >
-                          <td
-                            class="text-center"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{ item.created_at || "---" }}
+                        <tr>
+                          <td>
+                            Email : {{ roomData.customer?.email || "---" }}
                           </td>
-                          <td
-                            class="text-right"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{
-                              item && item.debit == 0
-                                ? "---"
-                                : $utils.currency_format(item.debit)
-                            }}
-                          </td>
-                          <td
-                            class="text-right"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{
-                              item && item.credit == 0
-                                ? "---"
-                                : $utils.currency_format(item.credit)
-                            }}
-                          </td>
-                          <td
-                            class="text-right"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{ $utils.currency_format(item.balance) || "---" }}
-                          </td>
-                          <!-- <td
-                            class="text-center blue--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{ item.id }}
-                          </td> -->
                         </tr>
-
-                        <tr style="font-size: 13px">
-                          <td
-                            colspan="3"
-                            class="text-right primary--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            Total Balance
-                          </td>
-                          <td
-                            colspan="2"
-                            class="text-right pl-3 primary--text"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{ $utils.currency_format(totalTransactionAmount) }}
-                          </td>
+                        <tr>
+                          <td>Address : {{ customer_full_address }}</td>
                         </tr>
                       </table>
                     </v-col>
                     <v-col cols="12">
-                      <v-divider></v-divider>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-card outlined class="pa-2">
-                        <v-container>
-                          <v-row>
-                            <v-col cols="6">
-                              <Heading label="Payment" />
-                            </v-col>
-                            <v-col cols="6" class="text-right">
-                              <!-- <v-icon
-                            small
-                            color="primary"
-                            @click="redirect_to_invoice(roomData.booking_id)"
-                            >mdi-printer</v-icon
-                          >
-                          &nbsp;
-                          <v-icon
-                            small
-                            color="primary"
-                            @click="redirect_to_invoice(roomData.booking_id)"
-                            >mdi-download</v-icon
-                          > -->
-                            </v-col>
-                            <v-col cols="4">
-                              <v-autocomplete
-                                label="Mode"
-                                v-model="payment_mode_id"
-                                :items="[
-                                  { id: 1, name: 'Cash' },
-                                  { id: 2, name: 'Card' },
-                                  { id: 3, name: 'Online' },
-                                  { id: 4, name: 'Bank' },
-                                  { id: 5, name: 'UPI' },
-                                  { id: 6, name: 'Cheque' },
-                                ]"
-                                item-text="name"
-                                item-value="id"
-                                dense
-                                outlined
-                                hide-details
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col cols="8">
-                              <v-text-field
-                                label="Reference"
-                                dense
-                                outlined
-                                type="text"
-                                v-model="reference"
-                                hide-details
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="4">
-                              <v-text-field
-                                v-model="tempBalance"
-                                label="Balance"
-                                outlined
-                                dense
-                                hide-details
-                                @keyup="setNewBalance(tempBalance, discount)"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="4">
-                              <v-text-field
-                                v-model="discount"
-                                label="Discount"
-                                outlined
-                                dense
-                                hide-details
-                                @keyup="setNewBalance(tempBalance, discount)"
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="4">
-                              <v-text-field
-                                v-model="after_discount_balance"
-                                label="After Discount"
-                                outlined
-                                dense
-                                hide-details
-                              ></v-text-field>
-                            </v-col>
-                            <v-col>
-                              <v-text-field
-                                v-model="full_payment"
-                                label="Amount to Pay"
-                                outlined
-                                dense
-                                hide-details
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" class="text-center">
-                              <AssetsButtonCancel
-                                @click="$emit(`close-dialog`)"
-                              />
-                              &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-                              <AssetsButtonSubmit @click="store" />
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                      </v-card>
+                      <table style="width: 100%">
+                        <tr>
+                          <td class="blue--text">
+                            <span> Room Details </span>
+                          </td>
+                          <td class="red--text text-right">
+                            <span>
+                              Reservation # {{ BookingData.reservation_no }}
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+                      <v-container>
+                        <table border="1" style="width: 100%">
+                          <tr>
+                            <td style="padding: 3px" width="50%">Inv</td>
+                            <td style="padding: 3px" width="50%">1234</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 3px" width="50%">Rooms</td>
+                            <td style="padding: 3px" width="50%">
+                              {{ BookingData.room_no }}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td style="padding: 3px" width="50%">Check In</td>
+                            <td style="padding: 3px" width="50%">
+                              {{ roomData.checkin_datetime_only }}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td style="padding: 3px" width="50%">Check Out</td>
+                            <td style="padding: 3px" width="50%">
+                              {{ roomData.checkout_datetime_only }}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td style="padding: 3px" width="50%">Extra Bed</td>
+                            <td style="padding: 3px" width="50%">
+                              {{ roomData.extra_bed_qty }}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td style="padding: 3px" width="50%">Food</td>
+                            <td style="padding: 3px" width="50%">
+                              {{ roomData.food_plan || "No Food" }}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td style="padding: 3px" width="50%">
+                              Early Check In
+                            </td>
+                            <td style="padding: 3px" width="50%">
+                              {{ roomData?.early_check_in ? "yes" : "no" }}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td style="padding: 3px" width="50%">
+                              Late Check Out
+                            </td>
+                            <td style="padding: 3px" width="50%">
+                              {{ roomData?.late_check_out ? "yes" : "no" }}
+                            </td>
+                          </tr>
+                        </table>
+                      </v-container>
+                      <div>Notes</div>
+                      <div>{{ BookingData.request }}</div>
                     </v-col>
                   </v-row>
-                </v-container>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="8">
+          <v-card style="border: 3px solid white; min-height: 477px">
+            <v-card-text>
+              <v-row no-gutter v-if="BookingData && BookingData.id">
+                <v-col cols="12" class="pa-0 ma-0">
+                  <v-row no-gutter>
+                    <v-col cols="12">
+                      <AssetsHeadDialog>
+                        <template #label>
+                          <span>Group Booking</span>
+                        </template>
+                      </AssetsHeadDialog>
+                      <BookingCustomerInfo  />
+                    </v-col>
+                    
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
   </v-dialog>
 </template>
 <script>
@@ -811,6 +264,14 @@ export default {
     }
   },
   computed: {
+    closeIconPosition() {
+      const minHeight = {
+        Company: "115px",
+        default: "100px",
+      };
+
+      return `top:${minHeight[this.vendorObject?.type] || minHeight.default};`;
+    },
     isGroupBooking() {
       return this.BookingData.group_name == "yes";
     },

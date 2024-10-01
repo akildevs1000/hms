@@ -2,16 +2,15 @@
   <v-dialog v-model="dialog" width="500">
     <template v-slot:activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
-        <v-icon color="blue" small> mdi-pencil </v-icon>
+        <v-icon color="primary" small> mdi-pencil </v-icon>
         Edit
       </div>
     </template>
 
     <v-card>
-      <v-toolbar flat class="blue white--text" dense>
-        Edit {{ model }} <v-spacer></v-spacer
-        ><v-icon @click="close" color="white">mdi-close</v-icon></v-toolbar
-      >
+      <v-toolbar flat class="grey lighten-3" dense>
+        Edit {{ model }} <v-spacer></v-spacer><AssetsButtonClose @close="close"
+      /></v-toolbar>
 
       <v-card-text class="py-5">
         <v-container>
@@ -39,19 +38,21 @@
               <span class="red--text">{{ errorResponse }}</span>
             </v-col>
             <v-col cols="12" class="text-right">
-              <v-btn small color="grey" class="white--text" dark @click="close">
-                Close
-              </v-btn>
-              <v-btn
-                :loading="loading"
-                small
-                color="blue"
-                class="white--text"
-                dark
+              <AssetsButton
+                :options="{
+                  label: `Cancel`,
+                  color: `red`,
+                }"
+                @click="close"
+              />
+              &nbsp;
+              <AssetsButton
+                :options="{
+                  label: `Submit`,
+                  color: `green`,
+                }"
                 @click="submit"
-              >
-                Submit
-              </v-btn>
+              />
             </v-col>
           </v-row>
         </v-container>

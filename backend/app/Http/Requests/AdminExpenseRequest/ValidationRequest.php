@@ -33,6 +33,12 @@ class ValidationRequest extends FormRequest
             'total' => 'required|max:255',
             'status' => 'nullable|string|max:255',
             'is_admin_expense' => "nullable",
+
+
+            'tax' => "nullable",
+            'notes' => "nullable",
+            'company_id' => "nullable",
+
         ];
     }
 }

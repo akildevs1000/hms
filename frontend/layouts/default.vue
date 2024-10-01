@@ -761,6 +761,17 @@ small {
 .text-color {
   color: #8a8a8a;
 }
+table {
+  border-spacing: 0;
+  border-collapse: collapse; /* To ensure borders are collapsed like the effect of cellspacing="0" */
+  width: 100%;
+}
+/* span {
+  font-size: 13px;
+}
+td {
+  font-size: 12px;
+} */
 
 .v-data-table th {
   font-weight: normal;

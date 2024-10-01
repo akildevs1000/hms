@@ -24,4 +24,8 @@ Route::resource('expense-payment', ExpensePaymentController::class);
 
 
 
-Route::get('expense-count', [AdminExpenseController::class,"expenseCount"]);
+
+Route::get('expense-count', [AdminExpenseController::class, "expenseCount"]);
+Route::get('expense-last-number', [AdminExpenseController::class, "lastAdminExpenseNumber"]);
+
+Route::get('get-last-three-records', [AdminExpenseController::class, "getLastThreeRecords"]);
