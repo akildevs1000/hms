@@ -458,8 +458,8 @@
             dark
           >
             <v-card-text
-              class="blue1111 p-3 roombox"
-              :style="'padding: 0px;' + getColorCode('expected_arrival')"
+              class="blue1111 p-3 roombox booked"
+              :style="'padding: 0px;'"
               title="Expected Arrival"
             >
               <div class="text-center white--text boxheight">

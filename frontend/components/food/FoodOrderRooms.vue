@@ -95,5 +95,3 @@ export default {
   },
 };
 </script>
-
-<style scoped src="@/assets/css/checkout.css"></style>

@@ -1,25 +1,13 @@
 <template>
-  <v-dialog v-model="dialog" width="900" style="position: relative">
+  <v-dialog v-model="dialog" width="900">
     <template v-slot:activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
         <v-icon color="blue" small> mdi-eye </v-icon>
         View
       </div>
     </template>
-    <span
-      style="position: absolute; z-index: 1; left: 1150px"
-      :style="closeIconPosition"
-    >
-      <v-icon
-        @click="dialog = false"
-        color="white"
-        class="grey"
-        size="30"
-        style="border-radius: 50px; width: 15px; height: 15px"
-      >
-        mdi-close-circle
-      </v-icon>
-    </span>
+
+    <AssetsIconClose @click="dialog = false" />
 
     <div
       class="grey lighten-3 pa-2"
@@ -344,14 +332,6 @@ export default {
         minHeight[this.vendorObject?.type] || minHeight.default
       };`;
     },
-    closeIconPosition() {
-      const minHeight = {
-        Company: "115px",
-        default: "145px",
-      };
-
-      return `top:${minHeight[this.vendorObject?.type] || minHeight.default};`;
-    },
   },
   async created() {
     let { vendor, ...item } = this.item;
@@ -362,11 +342,11 @@ export default {
       full_name: `${vendor.title}. ${vendor.first_name} ${vendor.last_name}`,
       address: `${vendor.city} ${vendor.state}, ${vendor.country}`,
     };
-    this.getLastThreeRecords(vendor.id,item.is_admin_expense);
+    this.getLastThreeRecords(vendor.id, item.is_admin_expense);
   },
 
   methods: {
-    async getLastThreeRecords(vendor_id,is_admin_expense) {
+    async getLastThreeRecords(vendor_id, is_admin_expense) {
       let config = {
         params: {
           vendor_id: vendor_id,

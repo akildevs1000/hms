@@ -1117,7 +1117,7 @@ class BookingController extends Controller
                     $payment->store($paymentsData);
                 }
                 $booking->booking_status = 3;
-                
+
                 $booking->save();
 
                 BookedRoom::where("booking_id", $booking_id)
@@ -1479,7 +1479,12 @@ class BookingController extends Controller
     {
 
 
-        $bookedRoom = BookedRoom::with(['booking', 'customer', "room"])->where('company_id', $request->company_id)->findOrFail($request->id);
+        $bookedRoom = BookedRoom::with(['booking' => function ($q) {
+            $q->with(["bookedRooms" => function ($q) {
+                $q->withOut("booking", "postings");
+                $q->select("id", "booking_id", "room_id", "room_no", "room_type", "booking_status");
+            }]);
+        }, 'customer', "room"])->where('company_id', $request->company_id)->findOrFail($request->id);
         $bookedRoom->booking->room_id = $bookedRoom->room_id;
         $bookedRoom->booking->room_no = $bookedRoom->room_no;
         $bookedRoom->booking->room_type = $bookedRoom->room_type;

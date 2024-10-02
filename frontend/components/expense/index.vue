@@ -75,7 +75,13 @@
                   :model="Model"
                   :endpoint="endpoint"
                   :item="item"
-                  @response="getDataFromApi"
+                  @response="
+                    () => {
+                      ExpensePaymentKey++;
+                      getDataFromApi();
+                    }
+                  "
+                  :key="ExpensePaymentKey"
                 />
               </v-list-item-title>
             </v-list-item>
@@ -112,6 +118,7 @@ let currentDate = y + "-" + m + "-" + d;
 export default {
   props: ["is_admin_expense"],
   data: () => ({
+    ExpensePaymentKey: 1,
     Model: "Expense",
     endpoint: "admin-expense",
     currentDate,

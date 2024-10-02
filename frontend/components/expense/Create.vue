@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="900" style="position: relative">
+    <v-dialog v-model="dialog" width="900">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
@@ -13,20 +13,8 @@
           <v-icon color="white" small> mdi-plus </v-icon> New
         </v-btn>
       </template>
-      <span
-        style="position: absolute; z-index: 1; left: 1150px"
-        :style="closeIconPosition"
-      >
-        <v-icon
-          @click="dialog = false"
-          color="white"
-          class="grey"
-          size="30"
-          style="border-radius: 50px; width: 15px; height: 15px"
-        >
-          mdi-close-circle
-        </v-icon>
-      </span>
+      <AssetsIconClose @click="dialog = false" />
+
       <div class="grey lighten-3 pa-2" style="overflow: hidden">
         <v-row>
           <v-col cols="4">
@@ -351,14 +339,6 @@ export default {
       return `min-height:${
         minHeight[this.vendorObject?.type] || minHeight.default
       };`;
-    },
-    closeIconPosition() {
-      const minHeight = {
-        Company: "115px",
-        default: "145px",
-      };
-
-      return `top:${minHeight[this.vendorObject?.type] || minHeight.default};`;
     },
   },
 

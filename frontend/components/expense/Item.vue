@@ -4,7 +4,7 @@
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
           <v-btn v-bind="attrs" v-on="on" x-small elevation="0"
-            ><v-icon x-small color="primary">mdi-plus-circle</v-icon><small>New Row</small></v-btn
+            ><v-icon x-small color="primary">mdi-plus-circle</v-icon><span>New Row</span></v-btn
           >
         </span>
       </v-hover>

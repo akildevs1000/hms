@@ -766,12 +766,9 @@ table {
   border-collapse: collapse; /* To ensure borders are collapsed like the effect of cellspacing="0" */
   width: 100%;
 }
-/* span {
-  font-size: 13px;
-}
 td {
   font-size: 12px;
-} */
+}
 
 .v-data-table th {
   font-weight: normal;

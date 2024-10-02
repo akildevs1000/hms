@@ -545,7 +545,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-@import url("../../assets/css/tableStyles.css");
-</style>

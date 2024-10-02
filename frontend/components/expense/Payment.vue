@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="1100" style="position: relative">
+  <v-dialog v-model="dialog" width="1100">
     <template v-slot:activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
         <v-icon color="blue" small> mdi-cash </v-icon>
@@ -12,20 +12,8 @@
         outline: none; /* Remove default outline */
       }
     </style>
-    <span
-      style="position: absolute; z-index: 1; left: 1250px"
-      :style="closeIconPosition"
-    >
-      <v-icon
-        @click="dialog = false"
-        color="white"
-        class="grey"
-        size="30"
-        style="border-radius: 50px; width: 15px; height: 15px"
-      >
-        mdi-close-circle
-      </v-icon>
-    </span>
+
+    <AssetsIconClose :left="1090" @click="close" />
 
     <div
       class="grey lighten-3 pa-2"
@@ -173,7 +161,7 @@
                   </AssetsHeadDialog>
                 </v-col>
                 <v-col cols="12">
-                  <AssetsTable :headers="headers" :items="payload.items">
+                  <AssetsTable :headers="headers" :items="items">
                     <template #amount="{ item }">
                       {{ $utils.currency_format(item.amount) }}
                     </template>
@@ -236,7 +224,7 @@
                             outlined
                             dense
                             hide-details
-                            v-model="paymentJson.amount"
+                            v-model="OpeningBalance"
                             label="Balance"
                           ></v-text-field>
                         </v-col>
@@ -247,21 +235,21 @@
                             dense
                             hide-details
                             v-model="paymentJson.discount"
-                            @input="calculateNewBalance(paymentJson.discount)"
+                            @input="calculateNewBalance(paymentJson)"
                             label="Discount"
                           ></v-text-field>
                         </v-col>
 
-                        <v-col cols="12">
+                        <!-- <v-col cols="6">
                           <v-text-field
                             readonly
                             outlined
                             dense
                             hide-details
-                            v-model="paymentJson.balance"
+                            v-model="paymentJson.amount"
                             label="After Discount"
                           ></v-text-field>
-                        </v-col>
+                        </v-col> -->
                         <v-col cols="12">
                           <v-text-field
                             outlined
@@ -269,8 +257,20 @@
                             hide-details
                             v-model="paymentJson.paid"
                             label="Amount to Pay"
+                            @input="calculateNewBalance(paymentJson)"
                           ></v-text-field>
                         </v-col>
+
+                        <!-- <v-col cols="6">
+                          <v-text-field
+                            outlined
+                            dense
+                            hide-details
+                            v-model="paymentJson.balance"
+                            label="New Balance"
+                          ></v-text-field>
+                        </v-col> -->
+
                         <v-col cols="12" v-if="errorResponse">
                           <span class="red--text">{{ errorResponse }}</span>
                         </v-col>
@@ -340,6 +340,7 @@ export default {
   data() {
     return {
       menu2: false,
+      OpeningBalance: 0,
       payload: {
         vendor_id: 1,
         notes: "test",
@@ -357,7 +358,7 @@ export default {
       },
       paymentJson: {
         vendor_id: 1,
-        payment_number: "234234",
+        payment_number: "----",
         payment_date: new Date(
           Date.now() - new Date().getTimezoneOffset() * 60000
         )
@@ -368,9 +369,28 @@ export default {
         attachments: [],
         note: "test",
 
-        amount: 100,
-        discount: 10,
-        paid: 50,
+        amount: 0,
+        discount: 0,
+        paid: 0,
+        balance: 0,
+      },
+
+      defaultPaymentJson: {
+        vendor_id: 1,
+        payment_number: "----",
+        payment_date: new Date(
+          Date.now() - new Date().getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .substr(0, 10),
+        payment_mode: `Cash`,
+        payment_mode_ref: `111111`,
+        attachments: [],
+        note: "test",
+
+        amount: 0,
+        discount: 0,
+        paid: 0,
         balance: 0,
       },
       dialog: false,
@@ -396,6 +416,7 @@ export default {
       lastThreeRecords: [],
       emptyRowLength: 3,
       tempBalance: 0,
+      items: [],
     };
   },
   computed: {
@@ -409,14 +430,6 @@ export default {
         minHeight[this.vendorObject?.type] || minHeight.default
       };`;
     },
-    closeIconPosition() {
-      const minHeight = {
-        Company: "115px",
-        default: "135px",
-      };
-
-      return `top:${minHeight[this.vendorObject?.type] || minHeight.default};`;
-    },
   },
   async created() {
     let { vendor, ...item } = this.item;
@@ -429,7 +442,6 @@ export default {
     };
 
     this.paymentJson.vendor_id = vendor.id;
-    this.paymentJson.amount = item.total;
 
     this.getLastThreeRecords(vendor.id, item.is_admin_expense);
 
@@ -437,8 +449,9 @@ export default {
   },
 
   methods: {
-    calculateNewBalance(discount) {
-      this.paymentJson.balance = this.item.total - discount;
+    calculateNewBalance({ discount, paid, amount }) {
+      this.paymentJson.amount = this.OpeningBalance - discount;
+      this.paymentJson.balance = amount - paid;
     },
     async getLastThreeRecords(vendor_id, is_admin_expense) {
       let config = {
@@ -469,7 +482,7 @@ export default {
         },
       };
       let { data } = await this.$axios.get(`expense-payment`, config);
-      this.payload.items = data;
+      this.items = data;
       this.calculateTotalPreviosBalance(data);
     },
     handleFoundVendor(e) {
@@ -482,9 +495,13 @@ export default {
       this.payload.vendor_id = e.id;
     },
     calculateTotalPreviosBalance(data) {
-      this.paymentJson.amount = 0;
+      if (data.length == 0) {
+        this.OpeningBalance = this.item.total;
+        return;
+      }
+      this.OpeningBalance = 0;
       data.forEach((e) => {
-        this.paymentJson.amount += parseFloat(e.balance);
+        this.OpeningBalance = parseFloat(e.balance);
       });
     },
 
@@ -506,18 +523,24 @@ export default {
       });
     },
     close() {
+      this.paymentJson = this.defaultPaymentJson;
       this.dialog = false;
       this.loading = false;
       this.errorResponse = null;
     },
     deleteItem(index) {
-      this.payload.items.splice(index, 1);
+      this.items.splice(index, 1);
     },
     async submit() {
       this.loading = true;
-      this.paymentJson.admin_expense_id = this.item.id;
+      let payload = this.paymentJson;
+      payload.admin_expense_id = this.item.id;
+      if (this.items.length == 0) {
+        payload.amount = this.item.total;
+      }
+
       try {
-        await this.$axios.post(`expense-payment`, this.paymentJson);
+        await this.$axios.post(`expense-payment`, payload);
         this.close();
         this.$emit("response", "Record has been inserted");
       } catch (error) {
