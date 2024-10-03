@@ -1,5 +1,6 @@
 <template>
   <v-dialog persistent v-model="NewCustomerDialog" max-width="900px">
+    <AssetsIconClose left="890"  @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         <v-icon x-small color="primary">mdi-eye</v-icon>
@@ -17,7 +18,6 @@
         <v-tab>Transactions</v-tab>
         <v-tab>Analytics</v-tab>
         <v-tab>Statement</v-tab>
-        <AssetsButtonClose class="mt-2" @close="close" />
         <v-tab-item>
           <v-container>
             <span>

@@ -1,129 +1,156 @@
 <template>
-  <div>
-    <v-row>
-      <v-col md="7">
-        <v-container>
-          <table>
-            <v-progress-linear v-if="false" :active="loading" :indeterminate="loading" absolute
-              color="primary"></v-progress-linear>
-            <tr>
-              <th>Guest Name</th>
-              <td style="width: 300px">
-                {{ BookingData && BookingData.title }}
-              </td>
-            </tr>
-            <tr>
-              <th>Room No</th>
-              <td>
-                {{ BookingData.rooms }}
-              </td>
-            </tr>
-            <tr>
-              <th>Check In</th>
-              <td>
-                {{ BookingData && BookingData.check_in_date }}
-              </td>
-            </tr>
-            <tr>
-              <th>Check Out</th>
-              <td>
-                {{ BookingData && BookingData.check_out_date }}
-              </td>
-            </tr>
-            <tr>
-              <th>
-                Pay Mode
-                <span class="error--text">*</span>
-              </th>
-              <td>
-                <v-select v-model="BookingData.payment_mode_id" :items="[
-                  { id: 1, name: 'Cash' },
-                  { id: 2, name: 'Card' },
-                  { id: 3, name: 'Online' },
-                  { id: 4, name: 'Bank' },
-                  { id: 5, name: 'UPI' },
-                  { id: 6, name: 'Cheque' },
-                ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-select>
-              </td>
-            </tr>
-            <tr v-if="BookingData.payment_mode_id != 1">
-              <th>
-                Reference Number
-                <span class="error--text">*</span>
-              </th>
-              <td>
-                <v-text-field dense outlined type="text" v-model="reference" :hide-details="true"></v-text-field>
-              </td>
-            </tr>
-            <tr v-if="can()">
-              <th>
-                Description
-                <span class="error--text">*</span>
-              </th>
-              <td>
-                <v-text-field dense outlined type="text" v-model="desc" :hide-details="true"></v-text-field>
-              </td>
-            </tr>
-            <tr>
-              <th>Total Amount</th>
-              <td>{{ BookingData && BookingData.total_price }}</td>
-            </tr>
+  <v-row>
+    <v-col>
+      <table cellspacing="0" style="width: 100%">
+        <tr>
+          <td width="50%" class="border-bottom">Guest Name</td>
+          <td width="50%" class="border-bottom">
+            {{ BookingData && BookingData.title }}
+          </td>
+        </tr>
+        <tr>
+          <td width="50%" class="border-bottom">Room No</td>
+          <td width="50%" class="border-bottom">
+            {{ bookedRooms }}
+          </td>
+        </tr>
+        <tr>
+          <td width="50%" class="border-bottom">Check In</td>
+          <td width="50%" class="border-bottom">
+            {{ BookingData && BookingData.check_in_date }}
+          </td>
+        </tr>
+        <tr>
+          <td width="50%" class="border-bottom">Check Out</td>
+          <td width="50%" class="border-bottom">
+            {{ BookingData && BookingData.check_out_date }}
+          </td>
+        </tr>
+        <tr>
+          <td width="50%" class="border-bottom">
+            Pay Mode
+            <span class="error--text">*</span>
+          </td>
+          <td width="50%" class="border-bottom py-1">
+            <v-autocomplete
+              outlined
+              v-model="BookingData.payment_mode_id"
+              :items="[
+                { id: 1, name: 'Cash' },
+                { id: 2, name: 'Card' },
+                { id: 3, name: 'Online' },
+                { id: 4, name: 'Bank' },
+                { id: 5, name: 'UPI' },
+                { id: 6, name: 'Cheque' },
+              ]"
+              item-text="name"
+              item-value="id"
+              dense
+              hide-details
+            ></v-autocomplete>
+          </td>
+        </tr>
+        <tr v-if="BookingData.payment_mode_id != 1">
+          <td width="50%" class="border-bottom">
+            Reference Number
+            <span class="error--text">*</span>
+          </td>
+          <td width="50%" class="border-bottom">
+            <v-text-field
+              outlined
+              dense
+              type="text"
+              v-model="reference"
+              hide-details
+            ></v-text-field>
+          </td>
+        </tr>
+        <tr v-if="can()">
+          <td width="50%" class="border-bottom">
+            Description
+            <span class="error--text">*</span>
+          </td>
+          <td width="50%" class="border-bottom py-1">
+            <v-text-field
+              dense
+              outlined
+              type="text"
+              v-model="desc"
+              hide-details
+            ></v-text-field>
+          </td>
+        </tr>
+        <tr>
+          <td width="50%" class="border-bottom">Total Amount</td>
+          <td width="50%" class="border-bottom">
+            {{ $utils.currency_format(BookingData && BookingData.total_price) }}
+          </td>
+        </tr>
 
-            <tr>
-              <th>Balance Due</th>
-              <td>{{ BookingData.balance }}</td>
-            </tr>
+        <tr>
+          <td width="50%" class="border-bottom">Balance Due</td>
+          <td width="50%" class="border-bottom">
+            {{ $utils.currency_format(BookingData.balance) }}
+          </td>
+        </tr>
 
-            <tr style="background-color: white">
-              <th>
-                Payment
-                <span class="error--text">*</span>
-              </th>
-              <td>
-                <v-text-field dense outlined type="number" v-model="new_payment" :hide-details="true"></v-text-field>
-              </td>
-            </tr>
-            <tr></tr>
-          </table>
-        </v-container>
-      </v-col>
-      <v-col md="5" class="mt-3">
-        <table>
-          <tr style="font-size: 13px; background-color: white; color: black">
-            <th>#</th>
-            <th>Date</th>
-            <th>Debit</th>
-            <th>Credit</th>
-            <th>Balance</th>
-          </tr>
-
-          <tr v-for="(item, index) in transactions" :key="index"
-            style="font-size: 13px; background-color: white; color: black">
-            <td>
-              <b>{{ ++index }}</b>
-            </td>
-            <td>{{ item.created_at || "---" }}</td>
-            <td class="text-right">
-              {{ item && item.debit == 0 ? "---" : item.debit }}
-            </td>
-            <td class="text-right">
-              {{ item && item.credit == 0 ? "---" : item.credit }}
-            </td>
-            <td class="text-right">{{ item.balance || "---" }}</td>
-          </tr>
-          <tr style="font-size: 13px; background-color: white; color: black">
-            <th colspan="4" class="text-right">Balance</th>
-            <td class="text-right" style="background-color: white">
-              {{ totalTransactionAmount }}
+        <tr style="background-color: white">
+          <td width="50%" class="border-bottom">
+            Payment
+            <span class="error--text">*</span>
+          </td>
+          <td width="50%" class="border-bottom py-1">
+            <v-text-field
+              dense
+              outlined
+              type="number"
+              v-model="new_payment"
+              hide-details
+            ></v-text-field>
+          </td>
+        </tr>
+        <tr></tr>
+      </table>
+    </v-col>
+    <v-col>
+      <AssetsTable :headers="headers" :items="transactions">
+        <template #debit="{ item }">
+          {{ $utils.currency_format(item.debit) }}
+        </template>
+        <template #credit="{ item }">
+          {{ $utils.currency_format(item.credit) }}
+        </template>
+        <template #balance="{ item }">
+          {{ $utils.currency_format(item.balance) }}
+        </template>
+        <template #row>
+          <tr>
+            <td colspan="4" class="text-right primary--text pr-2">
+              Total Balance &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {{ $utils.currency_format(totalTransactionAmount) }}
             </td>
           </tr>
-        </table>
-      </v-col>
-    </v-row>
-    <v-btn class="primary mt-3" small @click="store_advance(BookingData)" :loading="loading">
-      Pay
-    </v-btn>
-  </div>
+        </template>
+      </AssetsTable>
+    </v-col>
+    <v-col cols="12" class="text-center">
+      <AssetsButton
+        :options="{
+          label: `Cancel`,
+          color: `red`,
+        }"
+        @click="store_advance(BookingData)"
+      />
+      &nbsp;
+      <AssetsButton
+        :options="{
+          label: `Submit`,
+          color: `green`,
+        }"
+        @click="store_advance(BookingData)"
+      />
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -142,6 +169,17 @@ export default {
       transactions: [],
       errors: [],
       checkOutDialog: false,
+      headers: [
+        {
+          text: `Date`,
+          value: `created_at`,
+          align: `left`,
+          width: "250px",
+        },
+        { text: `Debit`, value: `debit`, align: `right` },
+        { text: `Credit`, value: `credit`, align: `right` },
+        { text: `Balance`, value: `balance`, align: `right` },
+      ],
     };
   },
 
@@ -159,7 +197,14 @@ export default {
     this.get_transaction();
   },
 
-  computed: {},
+  computed: {
+    bookedRooms() {
+      return (
+        this.BookingData &&
+        this.BookingData.booked_rooms.map((e) => e.room_no).join(", ")
+      );
+    },
+  },
 
   methods: {
     get_transaction() {

@@ -5,21 +5,14 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-dialog v-model="agentDialog" max-width="40%">
+    <v-dialog v-model="agentDialog" max-width="500">
+      <AssetsIconClose left="490"  @click="agentDialog = false" />
       <v-card>
-        <v-alert class="rounded-md" color="grey lighten-3" dense flat>
-          <v-row no-gutter>
-            <v-col>
-              <span>{{ formTitle }} {{ Model }}</span>
-            </v-col>
-            <v-col class="text-right">
-              <AssetsButtonClose @close="agentDialog = false" />
-            </v-col>
-          </v-row>
+        <v-alert class="rounded" color="grey lighten-3" dense flat>
+          <span>{{ formTitle }} {{ Model }}</span>
         </v-alert>
         <v-card-text>
-          <v-container>
-            <v-row>
+          <v-row>
               <v-col md="6" cols="12">
                 <v-text-field
                   v-model="editedItem.name"
@@ -138,7 +131,6 @@
                 <AssetsButtonSubmit @click="save" />
               </v-col>
             </v-row>
-          </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>

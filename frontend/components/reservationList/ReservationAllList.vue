@@ -57,15 +57,12 @@
       </v-row>
     </v-container>
 
-    <v-dialog v-model="payingDialog" persistent max-width="1000px">
+    <v-dialog v-model="payingDialog" persistent max-width="700">
+      <AssetsIconClose left="690"  @click="payingDialog = false" />
       <v-card>
-        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
+        <v-alert class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingDialog = false"
-            >mdi-close</v-icon
-          >
-        </v-toolbar>
+        </v-alert>
         <v-card-text>
           <Paying
             :BookingData="checkData"

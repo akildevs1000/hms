@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="dialog" width="900">
+  <v-dialog v-model="dialog" width="650">
+    <AssetsIconClose left="640" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
         <v-icon color="blue" small> mdi-eye </v-icon>
@@ -8,14 +9,12 @@
     </template>
 
     <v-card>
-      <v-toolbar flat class="grey lighten-3" dense>
-        View {{ model }} <v-spacer></v-spacer
-        ><AssetsButtonClose @close="close" /></v-toolbar
-      >
+      <v-alert flat class="grey lighten-3" dense>
+        <span> View {{ model }}</span>
+      </v-alert>
 
-      <v-card-text class="py-5">
-        <v-container>
-          <v-row>
+      <v-card-text>
+        <v-row>
             <v-col cols="12">
               <v-autocomplete
                 clearable
@@ -121,27 +120,7 @@
                 label="Address"
               ></v-text-field>
             </v-col>
-
-            <v-col cols="12" v-if="errorResponse">
-              <span class="red--text">{{ errorResponse }}</span>
-            </v-col>
-            <v-col cols="12" class="text-right">
-              <v-btn small color="grey" class="white--text" dark @click="close">
-                Close
-              </v-btn>
-              <v-btn
-                :loading="loading"
-                small
-                color="blue"
-                class="white--text"
-                dark
-                @click="submit"
-              >
-                Submit
-              </v-btn>
-            </v-col>
           </v-row>
-        </v-container>
       </v-card-text>
     </v-card>
   </v-dialog>

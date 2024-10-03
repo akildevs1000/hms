@@ -1,6 +1,7 @@
 <template>
   <div v-if="can('calendar_create')">
     <v-dialog persistent v-model="dialog" width="900">
+      <AssetsIconClose left="890" @click="dialog = false" />
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
@@ -14,24 +15,19 @@
         </v-btn>
       </template>
       <v-card>
-        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-          <span>Quotation Information</span>
-          <v-spacer></v-spacer>
-          <SearchCustomer @foundCustomer="handleFoundCustomer" />
-          &nbsp;
-          <AssetsButtonClose @close="close" />
-        </v-toolbar>
+        <AssetsHeadDialog>
+          <template #label>Quotation Information</template>
+          <template #search
+            ><SearchCustomer @foundCustomer="handleFoundCustomer"
+          /></template>
+        </AssetsHeadDialog>
         <v-card-text>
-          <v-card flat class="mt-5">
-            <v-card-text>
-              <QuotationCustomerInfo
-                :defaultCustomer="customer"
-                :key="customerCompKey"
-                @selectedCustomer="handleSelectedCustomer"
-              />
-            </v-card-text>
-          </v-card>
-
+          <QuotationCustomerInfo
+            :defaultCustomer="customer"
+            :key="customerCompKey"
+            @selectedCustomer="handleSelectedCustomer"
+          />
+          <br>
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="headers" />
             <tbody>
@@ -187,7 +183,7 @@
             </v-col>
           </v-row>
 
-          <v-row class="text-right mb-3">
+          <v-row class="text-right">
             <v-col>
               <AssetsButtonCancel @close="close" />
               &nbsp;

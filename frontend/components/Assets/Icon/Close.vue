@@ -14,6 +14,7 @@
             @click="$emit('click')"
             size="30"
             :class="iconClass(hover)"
+            class="transition-icon"
             style="border-radius: 50px; width: 15px; height: 15px"
           >
             mdi-close-circle
@@ -43,3 +44,13 @@ export default {
   },
 };
 </script>
+<style scoped>
+.transition-icon {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Rotation Effect on Hover */
+.transition-icon:hover {
+  transform: rotate(180deg);
+}
+</style>

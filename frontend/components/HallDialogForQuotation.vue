@@ -1,14 +1,13 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
+    <AssetsIconClose left="390" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <v-btn small elevation="0" v-bind="attrs" v-on="on">
         <v-icon small color="primary">mdi-plus-circle</v-icon> Hall
       </v-btn>
     </template>
     <v-card>
-      <v-toolbar flat class="grey lighten-3" dense>
-        Hall Booking <v-spacer></v-spacer><AssetsButtonClose @close="close"
-      /></v-toolbar>
+      <v-alert flat class="grey lighten-3" dense> Hall Booking</v-alert>
       <v-container>
         <v-row>
           <v-col cols="6">

@@ -1,5 +1,6 @@
 <template>
   <v-dialog v-model="NewCustomerDialog" max-width="750px">
+    <AssetsIconClose left="740"  @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         <v-icon x-small color="primary">mdi-pencil</v-icon>
@@ -8,15 +9,8 @@
     </template>
 
     <v-card>
-      <v-alert class="rounded-md" color="grey lighten-3" dense flat>
-        <v-row no-gutter>
-          <v-col>
-            <span>Edit Customer</span>
-          </v-col>
-          <v-col class="text-right">
-            <AssetsButtonClose @close="close" />
-          </v-col>
-        </v-row>
+      <v-alert class="rounded" color="grey lighten-3" dense flat>
+        <span>Edit Customer</span>
       </v-alert>
       <v-card-text>
         <v-container v-if="customer && customer.id">

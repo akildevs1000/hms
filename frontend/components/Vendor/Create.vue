@@ -1,6 +1,7 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="700">
+    <v-dialog v-model="dialog" width="650">
+      <AssetsIconClose left="640" @click="close" />
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           small
@@ -15,14 +16,12 @@
       </template>
 
       <v-card>
-        <v-toolbar flat class="grey lighten-3" dense>
-          Create {{ model }} <v-spacer></v-spacer
-          ><AssetsButtonClose @close="close"
-        /></v-toolbar>
+        <v-alert flat class="grey lighten-3" dense>
+          <span>Create {{ model }}</span>
+        </v-alert>
 
-        <v-card-text class="py-5">
-          <v-container>
-            <v-row>
+        <v-card-text>
+          <v-row>
               <v-col cols="6">
                 <v-autocomplete
                   clearable
@@ -154,7 +153,6 @@
                 />
               </v-col>
             </v-row>
-          </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>

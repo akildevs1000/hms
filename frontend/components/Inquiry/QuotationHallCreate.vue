@@ -1,6 +1,7 @@
 <template>
   <div v-if="can('calendar_create')">
     <v-dialog persistent v-model="hallDialog" width="800">
+      <AssetsIconClose left="790" @click="close" />
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs" v-on="on">
           <v-icon color="blue" small> mdi-cash</v-icon>
@@ -8,22 +9,15 @@
         </span>
       </template>
       <v-card v-if="item && item.id">
-        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
+        <v-alert class="rounded-md" color="grey lighten-3" dense flat>
           <span>Convert to Quotation For {{ item.inquiry_type }}</span>
-          <v-spacer></v-spacer>
-          <AssetsButtonClose @close="close" />
-        </v-toolbar>
+        </v-alert>
         <v-card-text>
-          <v-card flat class="mt-5">
-            <v-card-text>
-              <QuotationCustomerInfo
-                :defaultCustomer="item"
-                :key="customerCompKey"
-                @selectedCustomer="handleSelectedCustomer"
-              />
-            </v-card-text>
-          </v-card>
-
+          <QuotationCustomerInfo
+            :defaultCustomer="item"
+            :key="customerCompKey"
+            @selectedCustomer="handleSelectedCustomer"
+          />
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="headers" />
 
@@ -274,14 +268,12 @@
   <NoAccess v-else />
 </template>
 <script>
-
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
   props: ["model", "endpoint", "item"],
-  components: {
-  },
+  components: {},
   data() {
     return {
       hallDialog: false,
@@ -580,7 +572,8 @@ export default {
       let quotaion = {
         book_date: this.formatDate(new Date()),
         arrival_date: this.selectedRooms[0].check_in,
-        departure_date: this.selectedRooms[this.selectedRooms.length - 1].check_out,  // Last room's check_out date
+        departure_date:
+          this.selectedRooms[this.selectedRooms.length - 1].check_out, // Last room's check_out date
         sub_total: this.subTotal(),
         discount: this.room.room_discount,
         tax: 0,

@@ -13,6 +13,7 @@
 
     <div>
       <v-dialog v-model="newItem" max-width="900">
+        <AssetsIconClose @click="newItem = false" />
         <template>
           <v-card>
             <v-tabs dense small v-model="tab" background-color="grey lighten-3">
@@ -48,9 +49,6 @@
               <v-tab href="#tab-4" :disabled="editedIndex == -1">
                 <small>Return</small>
                 <v-icon small right>mdi-emoticon-happy-outline</v-icon>
-              </v-tab>
-              <v-tab @click="newItem = false">
-                <v-icon dark class="pa-0">mdi-close</v-icon>
               </v-tab>
             </v-tabs>
             <v-tabs-items v-model="tab">

@@ -1,6 +1,7 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-dialog persistent v-model="dialog" width="900">
+    <v-dialog persistent v-model="dialog" width="800">
+      <AssetsIconClose left="790" @click="close" />
       <template v-slot:activator="{ on, attrs }">
         <div v-bind="attrs" v-on="on">
           <v-icon color="blue" small> mdi-content-duplicate </v-icon>
@@ -8,23 +9,20 @@
         </div>
       </template>
       <v-card v-if="item && item.id">
-        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-          <span>Quotation Clone Information</span>
-          <v-spacer></v-spacer>
-          <SearchCustomer @foundCustomer="handleFoundCustomer" />
-          &nbsp;
-          <AssetsButtonClose @close="close" />
-        </v-toolbar>
+        <AssetsHeadDialog>
+          <template #label>Quotation Clone Information</template>
+          <template #search
+            ><SearchCustomer @foundCustomer="handleFoundCustomer"
+          /></template>
+        </AssetsHeadDialog>
         <v-card-text>
-          <v-card flat class="mt-5">
-            <v-card-text>
-              <QuotationCustomerInfo
-                :defaultCustomer="customer"
-                :key="customerCompKey"
-                @selectedCustomer="handleSelectedCustomer"
-              />
-            </v-card-text>
-          </v-card>
+          <QuotationCustomerInfo
+            :defaultCustomer="customer"
+            :key="customerCompKey"
+            @selectedCustomer="handleSelectedCustomer"
+          />
+
+          <br>
 
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="headers" />
@@ -168,7 +166,7 @@
             </v-col>
           </v-row>
 
-          <v-row class="text-right mb-3">
+          <v-row class="text-right">
             <v-col>
               <AssetsButtonCancel @close="close" />
               &nbsp;

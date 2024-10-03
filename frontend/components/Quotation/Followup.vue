@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="dialog" width="600">
+  <v-dialog v-model="dialog" width="500">
+    <AssetsIconClose left="490" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
         <v-icon color="blue" small> mdi-clock-outline </v-icon>
@@ -8,56 +9,40 @@
     </template>
 
     <v-card>
-      <v-toolbar flat class="grey lighten-3" dense>
-        Follow Up
-        {{ model }} <v-spacer></v-spacer
-        ><AssetsButtonClose @close="close" /></v-toolbar
-      >
+      <v-alert flat class="grey lighten-3" dense>Follow Up {{ model }}</v-alert>
 
-      <v-card-text class="py-5">
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-textarea
-                rows="3"
-                hide-details
-                dense
-                outlined
-                v-model="payload.description"
-                label="Description"
-              ></v-textarea>
-            </v-col>
-            <v-col cols="12">
-              <v-select
-                outlined
-                dense
-                hide-details
-                v-model="payload.status"
-                :items="[`Open`, `Close`]"
-                label="Status"
-              ></v-select>
-            </v-col>
+      <v-card-text>
+        <v-row>
+          <v-col cols="12">
+            <v-textarea
+              rows="3"
+              hide-details
+              dense
+              outlined
+              v-model="payload.description"
+              label="Description"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12">
+            <v-select
+              outlined
+              dense
+              hide-details
+              v-model="payload.status"
+              :items="[`Open`, `Close`]"
+              label="Status"
+            ></v-select>
+          </v-col>
 
-            <v-col cols="12" v-if="errorResponse">
-              <span class="red--text">{{ errorResponse }}</span>
-            </v-col>
-            <v-col cols="12" class="text-right">
-              <v-btn small color="grey" class="white--text" dark @click="close">
-                Close
-              </v-btn>
-              <v-btn
-                :loading="loading"
-                small
-                color="blue"
-                class="white--text"
-                dark
-                @click="submit"
-              >
-                Submit
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
+          <v-col cols="12" v-if="errorResponse">
+            <span class="red--text">{{ errorResponse }}</span>
+          </v-col>
+          <v-col cols="12" class="text-right">
+            <AssetsButtonCancel @close="close" />
+            &nbsp;
+            <AssetsButtonSubmit @click="submit" />
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
   </v-dialog>

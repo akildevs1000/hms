@@ -471,7 +471,11 @@
                       : ''
                   "
                 >
-                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                  {{
+                    room?.room_type?.type == "hall"
+                      ? "mdi-cake"
+                      : "mdi-account-group"
+                  }}
                 </v-icon>
                 <div>
                   {{ noAvailableRoom?.room_no || "---" }}
@@ -916,42 +920,6 @@ export default {
   },
 
   methods: {
-    getColorCode(status) {
-      let status_id = "---";
-      if (status == "available") {
-        status_id = 0;
-      } else if (status == "booked") {
-        status_id = 1;
-      } else if (status == "occupied") {
-        status_id = 2;
-      } else if (status == "dirty" || status == "checked_out") {
-        status_id = 3;
-      } else if (status == "expected_arrival") {
-        status_id = 4;
-      } else if (status == "expected_arrival") {
-        status_id = 4;
-      } else if (status == "blocked") {
-        status_id = 6;
-      } else if (status == "expected_checkout") {
-        status_id = 7;
-      } else if (status == "checkedout_due_payment") {
-        status_id = 8;
-      }
-
-      if (status_id != "---" && this.calenderColorCodes) {
-        let color1 = this.calenderColorCodes.filter(
-          (e) => e.status_id == status_id
-        );
-        if (color1.length) {
-          return ";background-color:" + color1[0].color + ";";
-        } else return " ";
-      }
-      return " ";
-    },
-    handleReload() {
-      this.room_list();
-    },
-    getRoomsByFilter() {},
     filteredRooms(rooms) {
       if (!this.searchQuery) return rooms; // Early return for empty search
 

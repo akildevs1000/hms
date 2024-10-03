@@ -1,6 +1,7 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-dialog persistent v-model="hallDialog" width="900">
+    <v-dialog persistent v-model="hallDialog" width="800">
+      <AssetsIconClose left="790" @click="close" />
       <template v-slot:activator="{ on, attrs }">
         <div v-bind="attrs" v-on="on">
           <v-icon color="blue" small> mdi-cash </v-icon>
@@ -8,21 +9,19 @@
         </div>
       </template>
       <v-card v-if="item && item.id">
-        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-          <span>Convert to INV</span>
-          <v-spacer></v-spacer>
-          <AssetsButtonClose @close="close" />
-        </v-toolbar>
+        <AssetsHeadDialog>
+          <template #label>Convert to INV</template>
+          <template #search
+            ><SearchCustomer @foundCustomer="handleFoundCustomer"
+          /></template>
+        </AssetsHeadDialog>
         <v-card-text>
-          <v-card flat class="mt-5">
-            <v-card-text v-if="item.customer && item.customer.id">
-              <QuotationCustomerInfo
-                :defaultCustomer="item.customer"
-                :key="customerCompKey"
-                @selectedCustomer="handleSelectedCustomer"
-              />
-            </v-card-text>
-          </v-card>
+          <QuotationCustomerInfo
+            v-if="item.customer && item.customer.id"
+            :defaultCustomer="item.customer"
+            :key="customerCompKey"
+            @selectedCustomer="handleSelectedCustomer"
+          />
 
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="headers" />
@@ -166,7 +165,7 @@
             </v-col>
           </v-row>
 
-          <v-row class="text-right mb-3">
+          <v-row class="text-right">
             <v-col>
               <AssetsButtonCancel @close="close" />
               &nbsp;
@@ -276,14 +275,12 @@
   <NoAccess v-else />
 </template>
 <script>
-
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
   props: ["model", "endpoint", "item"],
-  components: {
-  },
+  components: {},
   data() {
     return {
       hallDialog: false,
