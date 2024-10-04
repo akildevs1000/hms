@@ -271,112 +271,115 @@
                       </AssetsTable>
                     </v-col>
                     <v-col cols="12">
-                      <v-row class="mt-4">
-                        <v-col cols="6">
-                          <v-card outlined class="pa-2">
-                            <Heading label="Payment" />
+                      <v-tabs right dense class="pa-1">
+                        <v-tab>Payment</v-tab>
+                        <v-tab>Rooms</v-tab>
+                        <v-tab-item>
+                          <v-card outlined class="ma-1">
                             <v-container>
                               <v-row>
-                                <v-col cols="4">
-                                  <v-autocomplete
-                                    label="Mode"
-                                    v-model="payment_mode_id"
-                                    :items="[
-                                      { id: 1, name: 'Cash' },
-                                      { id: 2, name: 'Card' },
-                                      { id: 3, name: 'Online' },
-                                      { id: 4, name: 'Bank' },
-                                      { id: 5, name: 'UPI' },
-                                      { id: 6, name: 'Cheque' },
-                                    ]"
-                                    item-text="name"
-                                    item-value="id"
-                                    dense
-                                    outlined
-                                    hide-details
-                                  ></v-autocomplete>
-                                </v-col>
                                 <v-col cols="8">
-                                  <v-text-field
-                                    label="Reference"
-                                    dense
-                                    outlined
-                                    type="text"
-                                    v-model="reference"
-                                    hide-details
-                                  ></v-text-field>
+                                  <v-row>
+                                    <v-col cols="4">
+                                      <v-autocomplete
+                                        label="Mode"
+                                        v-model="payment_mode_id"
+                                        :items="[
+                                          { id: 1, name: 'Cash' },
+                                          { id: 2, name: 'Card' },
+                                          { id: 3, name: 'Online' },
+                                          { id: 4, name: 'Bank' },
+                                          { id: 5, name: 'UPI' },
+                                          { id: 6, name: 'Cheque' },
+                                        ]"
+                                        item-text="name"
+                                        item-value="id"
+                                        dense
+                                        outlined
+                                        hide-details
+                                      ></v-autocomplete>
+                                    </v-col>
+                                    <v-col cols="8">
+                                      <v-text-field
+                                        label="Reference"
+                                        dense
+                                        outlined
+                                        type="text"
+                                        v-model="reference"
+                                        hide-details
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="4">
+                                      <v-text-field
+                                        v-model="tempBalance"
+                                        label="Balance"
+                                        outlined
+                                        dense
+                                        hide-details
+                                        @keyup="
+                                          setNewBalance(tempBalance, discount)
+                                        "
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="4">
+                                      <v-text-field
+                                        v-model="discount"
+                                        label="Discount"
+                                        outlined
+                                        dense
+                                        hide-details
+                                        @keyup="
+                                          setNewBalance(tempBalance, discount)
+                                        "
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="4">
+                                      <v-text-field
+                                        v-model="after_discount_balance"
+                                        label="After Discount"
+                                        outlined
+                                        dense
+                                        hide-details
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col>
+                                      <v-text-field
+                                        v-model="full_payment"
+                                        label="Amount to Pay"
+                                        outlined
+                                        dense
+                                        hide-details
+                                      ></v-text-field>
+                                    </v-col>
+                                  </v-row>
                                 </v-col>
-                                <v-col cols="4">
-                                  <v-text-field
-                                    v-model="tempBalance"
-                                    label="Balance"
-                                    outlined
-                                    dense
-                                    hide-details
-                                    @keyup="
-                                      setNewBalance(tempBalance, discount)
-                                    "
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col cols="4">
-                                  <v-text-field
-                                    v-model="discount"
-                                    label="Discount"
-                                    outlined
-                                    dense
-                                    hide-details
-                                    @keyup="
-                                      setNewBalance(tempBalance, discount)
-                                    "
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col cols="4">
-                                  <v-text-field
-                                    v-model="after_discount_balance"
-                                    label="After Discount"
-                                    outlined
-                                    dense
-                                    hide-details
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col>
-                                  <v-text-field
-                                    v-model="full_payment"
-                                    label="Amount to Pay"
-                                    outlined
-                                    dense
-                                    hide-details
-                                  ></v-text-field>
-                                </v-col>
-
-                                <v-col cols="12" class="text-center">
-                                  <AssetsButton
-                                    :options="{
-                                      color: `red`,
-                                      label: `cancel`,
-                                    }"
-                                    @click="$emit(`close-dialog`)"
-                                  />
-                                  <AssetsButton
-                                    :options="{
-                                      color: `green`,
-                                      label: `Submit`,
-                                    }"
-                                    @click="store"
-                                  />
+                                <v-col
+                                  cols="4"
+                                  class="d-flex align-center justify-center text-center"
+                                >
+                                  <v-hover v-slot:default="{ hover, props }">
+                                    <span v-bind="props">
+                                      <v-btn
+                                        :color="'blue'"
+                                        class="white--text"
+                                        @click="store"
+                                      >
+                                        <small>{{ "PAY" }}</small>
+                                      </v-btn>
+                                    </span>
+                                  </v-hover>
                                 </v-col>
                               </v-row>
                             </v-container>
                           </v-card>
-                        </v-col>
-
-                        <v-col cols="6">
-                          <v-card outlined class="pa-2">
+                        </v-tab-item>
+                        <v-tab-item>
+                          <v-card outlined class="pa-2 ma-1">
                             <Heading label="Rooms" />
                             <v-container v-if="BookingData.booked_rooms.length">
                               <v-row no-gutters>
                                 <v-col
-                                  cols="3"
+                                  cols="1"
                                   v-for="(
                                     room, index
                                   ) in BookingData.booked_rooms"
@@ -388,7 +391,7 @@
                                       getRelatedClass(room.booking_status)
                                     "
                                     style="border-radius: 5px"
-                                    class="text-center white--text pa-2 ma-1"
+                                    class="text-center white--text pa-1 ma-1"
                                   >
                                     {{ room.room_no }}
                                   </div>
@@ -396,8 +399,8 @@
                               </v-row>
                             </v-container>
                           </v-card>
-                        </v-col>
-                      </v-row>
+                        </v-tab-item>
+                      </v-tabs>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -528,7 +531,7 @@ export default {
       let { grand_remaining_price, remaining_price } = this.BookingData;
       this.grand_remaining_price = grand_remaining_price;
       this.remaining_price = remaining_price;
-      this.full_payment = remaining_price - this.discount;
+      // this.full_payment = remaining_price - this.discount;
 
       this.actualCheckoutTime = this.roomData.check_out_time;
 
@@ -593,9 +596,11 @@ export default {
     },
     handleSelectedCustomer({ customer }) {
       if (this.isGroupBooking) {
+        this.defaultCustomer = customer;
         this.guest = customer;
         return;
       }
+      this.defaultCustomer = customer;
       this.customer = customer;
     },
     async get_additional_charges() {
@@ -619,27 +624,27 @@ export default {
 
     store() {
       if (!this.defaultCustomer.title) {
-        this.$swal("Warning", "Customer title is required", "error");
+        alert("Customer title is required");
         return;
       }
 
       if (!this.defaultCustomer.first_name) {
-        this.$swal("Warning", "Customer first name is required", "error");
+        alert("Customer first name is required");
         return;
       }
 
       if (!this.defaultCustomer.last_name) {
-        this.$swal("Warning", "Customer last name is required", "error");
+        alert("Customer last name is required");
         return;
       }
 
       if (!this.defaultCustomer.contact_no) {
-        this.$swal("Warning", "Customer Contact no is required", "error");
+        alert("Customer Contact no is required");
         return;
       }
 
       if (!this.defaultCustomer.nationality) {
-        this.$swal("Warning", "Customer Nationality is required", "error");
+        alert("Customer Nationality is required");
         return;
       }
       let payload = {
@@ -759,7 +764,7 @@ export default {
           this.transactions = data.transactions;
           this.totalTransactionAmount = data.totalTransactionAmount;
           this.tempBalance = data.totalTransactionAmount;
-          this.full_payment = data.totalTransactionAmount;
+          // this.full_payment = data.totalTransactionAmount;
         });
     },
 

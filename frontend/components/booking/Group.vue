@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-dialog persistent v-model="groupBookingDialog" width="1000">
+      <AssetsIconClose left="990" @click="close" />
       <template v-slot:activator="{ on, attrs }">
         <div style="text-align: center">
           <v-btn
@@ -22,12 +23,10 @@
         </div>
       </template>
       <v-card>
-        <v-toolbar class="rounded-md" color="grey lighten-2" dense flat>
-          <span>Group Booking Information</span>
-          <v-spacer></v-spacer>
-          <SearchCustomer @foundCustomer="handleFoundCustomer" />
-          <v-icon color="primary" @click="close"> mdi-close-circle </v-icon>
-        </v-toolbar>
+        <AssetsHeadDialog>
+          <template #label>Group Booking Information</template>
+          <template #search><SearchCustomer @foundCustomer="handleFoundCustomer" /></template>
+        </AssetsHeadDialog>
         <v-stepper v-model="e1">
           <v-stepper-header style="display: none">
             <v-stepper-step :complete="e1 > 1" step="1">

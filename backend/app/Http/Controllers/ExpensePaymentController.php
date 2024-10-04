@@ -15,7 +15,7 @@ class ExpensePaymentController extends Controller
      */
     public function index()
     {
-        return ExpensePayment::where("admin_expense_id", request("admin_expense_id"))->get();
+        return ExpensePayment::with("vendor")->where("admin_expense_id", request("admin_expense_id"))->get();
     }
 
     public function store(ValidationRequest $request)

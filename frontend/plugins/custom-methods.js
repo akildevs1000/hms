@@ -1,6 +1,10 @@
 export default ({ app }, inject) => {
 
   inject("utils", {
+    add_zeros(number) {
+      return number && number.toString().padStart(4, '0');
+
+    },
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2) + ".00".replace(".00.00", ".00");

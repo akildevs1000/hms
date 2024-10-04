@@ -22,6 +22,8 @@ class AdminExpenseController extends Controller
     {
         return AdminExpense::where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
             ->where("vendor_id", request("vendor_id", 0))
+            ->latest()
+            ->take(3)
             ->get();
     }
 
@@ -285,7 +287,7 @@ class AdminExpenseController extends Controller
             ->max("id");
 
         // If no ID is found, set it to 0
-        $lastId = $lastId ?? 0;
+        $lastId = $lastId + 1 ?? 0;
 
         // Return formatted ID with leading zeros if necessary
         return sprintf('%04d', $lastId);

@@ -448,18 +448,11 @@
                           v-on="on"
                         ></v-text-field>
                       </template>
-                      <!-- <v-date-picker
+                      <v-date-picker dense
                         v-model="filterDate"
                         @input="menu2 = false"
                         no-title
-                      ></v-date-picker> -->
-                      <v-date-picker
-                        v-model="filterDate"
-                        @input="menu2 = false"
-                        no-title
-                      >
-                        <v-btn small outlined color="primary">Today</v-btn>
-                      </v-date-picker>
+                      ></v-date-picker>
                     </v-menu>
                     <!-- <v-select
                       class="global-search-select"

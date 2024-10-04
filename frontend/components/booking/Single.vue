@@ -37,13 +37,13 @@
                         <img
                           @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
                           class="zoom-on-hover"
-                          style="z-index: 1;width: 100%;"
+                          style="z-index: 1; width: 100%"
                           :src="
                             booking?.customer?.captured_photo ||
                             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
                           "
                         />
-                          <!-- <div class="text-right pa-2">
+                        <!-- <div class="text-right pa-2">
                               <v-icon
                                 color="white"
                                
@@ -445,6 +445,13 @@
             </v-row>
           </v-tab-item>
           <v-tab-item class="px-3 py-4">
+            <CustomerGuest
+              v-if="booking.group_name == 'yes'"
+              :booking="booking"
+              :sub_customers="sub_customers"
+            />
+          </v-tab-item>
+          <v-tab-item class="px-3 py-4">
             <CustomerRooms :booking="booking" :orderRooms="orderRooms" />
           </v-tab-item>
           <v-tab-item class="px-3 py-4">
@@ -536,7 +543,7 @@
 </template>
 <script>
 export default {
-  props: ["BookingId","noLabel"],
+  props: ["BookingId", "noLabel"],
   data: () => ({
     ViewBookingDialog: false,
     roomTypeColor: "grey lighten-3",
@@ -603,6 +610,7 @@ export default {
     room_category_type: "",
     food: [],
     extra_amounts: [],
+    sub_customers:[],
   }),
 
   computed: {
@@ -668,67 +676,9 @@ export default {
           "Online Booking",
         ];
 
-        return;
-
-        if (this.room_category_type == "Hall") {
-          this.roomTypeColor = "green";
-          this.itemsCustomer = [
-            "Reservation",
-            "Room",
-            "Postings",
-            "Transaction",
-            "Food",
-            "Price List",
-          ];
-          if (data.booking.hall_booking)
-            this.food = data.booking.hall_booking.food;
-          this.extra_amounts = data.booking.hall_booking.extra_amounts;
-
-          this.hallRentTotalAmount = data.booking.hall_booking.hall_rent_amount;
-          this.electricityTotalAmount =
-            data.booking.hall_booking.hall_electricity_amount;
-
-          this.audioTotalAmount = data.booking.hall_booking.hall_audio_system;
-          this.projecterTotalAmount =
-            data.booking.hall_booking.hall_projector_amount;
-          this.cleaningTotalAmount =
-            data.booking.hall_booking.hall_cleaning_charges;
-          this.foodTotalAmount = data.booking.hall_booking.food_total_amount;
-          this.otherCharges =
-            data.booking.hall_booking.hall_extra_amounts_total;
-          this.inv_total_tax = data.booking.hall_booking.inv_total_tax;
-          this.inv_total_without_tax =
-            data.booking.hall_booking.inv_total_without_tax;
-          this.inv_total = data.booking.hall_booking.inv_total;
-          this.discount = data.booking.hall_booking.discount;
-
-          this.hallItemsTotal =
-            parseFloat(this.hallRentTotalAmount) +
-            parseFloat(this.electricityTotalAmount) +
-            parseFloat(this.audioTotalAmount) +
-            parseFloat(this.projecterTotalAmount) +
-            parseFloat(this.cleaningTotalAmount) +
-            parseFloat(this.foodTotalAmount) +
-            parseFloat(this.otherCharges);
-        } else {
-          this.roomTypeColor = "primary";
-
-          if (data.bookingwidget_confirmation_number != "") {
-            this.itemsCustomer = [
-              "Reservation",
-              "Room",
-              "Postings",
-              "Transaction",
-              "Online Booking",
-            ];
-          } else {
-            this.itemsCustomer = [
-              "Reservation",
-              "Room",
-              "Postings",
-              "Transaction",
-            ];
-          }
+        if (data.booking.group_name == "yes") {
+          this.sub_customers = booking.customer.sub_customers;
+          this.itemsCustomer.splice(1, 0, "Guest");
         }
       });
     },

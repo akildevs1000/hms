@@ -443,7 +443,7 @@
       <div v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'">
         <div
           class="roombox1"
-          v-for="(noAvailableRoom, i) in filteredRooms(reservedWithoutAdvance)"
+          v-for="(room, i) in filteredRooms(reservedWithoutAdvance)"
           :key="i"
         >
           <v-card
@@ -451,8 +451,8 @@
             @mousedown="showMenu = false"
             @mouseup="showMenu = false"
             @contextmenu="show"
-            @touchstart="handleTouchstart($event, noAvailableRoom)"
-            @mouseover="handleMouseOver(noAvailableRoom)"
+            @touchstart="handleTouchstart($event, room)"
+            @mouseover="handleMouseOver(room)"
             @dblclick="dblclick"
             :class="` `"
             dark
@@ -465,25 +465,18 @@
               <div class="text-center white--text boxheight">
                 <v-icon
                   :color="
-                    noAvailableRoom.device &&
-                    noAvailableRoom.device.latest_status == 1
-                      ? 'red'
-                      : ''
+                    room.device && room.device.latest_status == 1 ? 'red' : ''
                   "
                 >
-                  {{
-                    room?.room_type?.type == "hall"
-                      ? "mdi-cake"
-                      : "mdi-account-group"
-                  }}
+                  {{ getRelatedIcon(room.booked_room.booking) }}
                 </v-icon>
                 <div>
-                  {{ noAvailableRoom?.room_no || "---" }}
+                  {{ room?.room_no || "---" }}
                 </div>
                 <div>
                   {{
-                    noAvailableRoom
-                      ? caps(noAvailableRoom.room_type.name)
+                    room.booked_room.booking.booking_type !== "hall"
+                      ? caps(room.room_type.name)
                       : "---"
                   }}
                 </div>
@@ -539,7 +532,7 @@
                     occupied.device && occupied.latest_status == 1 ? 'red' : ''
                   "
                 >
-                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                  {{ getRelatedIcon(occupied.booked_room.booking) }}
                 </v-icon>
                 <div>{{ occupied?.room_no || "---" }}</div>
                 <div>
@@ -596,7 +589,7 @@
                     occupied.device && occupied.latest_status == 1 ? 'red' : ''
                   "
                 >
-                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                  {{ getRelatedIcon(occupied.booked_room.booking) }}
                 </v-icon>
                 <div>{{ occupied?.room_no || "---" }}</div>
                 <div>
@@ -636,7 +629,7 @@
                       : ''
                   "
                 >
-                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                  {{ getRelatedIcon(checkedOutRoom.booked_room.booking) }}
                 </v-icon>
                 <div>{{ checkedOutRoom?.room_no || "---" }}</div>
                 <div>
@@ -920,6 +913,15 @@ export default {
   },
 
   methods: {
+    getRelatedIcon({ booking_type, group_name }) {
+      if (booking_type == "hall") {
+        return "mdi-google-classroom";
+      } else if (group_name == "yes") {
+        return "mdi-account-group";
+      } else {
+        return "mdi-account";
+      }
+    },
     filteredRooms(rooms) {
       if (!this.searchQuery) return rooms; // Early return for empty search
 

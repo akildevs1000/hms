@@ -35,18 +35,28 @@
                   <table>
                     <tr>
                       <td class="blue--text">Receipt Number</td>
-                      <td class="blue--text">: VN {{ payload.bill_number }}</td>
+                      <td class="blue--text">
+                        : {{ $utils.add_zeros(payload.id) }}
+                      </td>
                     </tr>
                     <tr>
                       <td>Date</td>
-                      <td>: {{ payload.bill_date }}</td>
+                      <td>: {{ $dateFormat.dmy(payload.created_at)  }}</td>
                     </tr>
                     <tr>
                       <td>Category</td>
                       <td>
                         :
-                        {{ vendorObject?.vendor_category?.name || "---" }}
+                        {{ displayVendor?.vendor_category?.name || "---" }}
                       </td>
+                    </tr>
+                    <tr>
+                      <td>Customer Invoice</td>
+                      <td>: {{ payload.bill_number }}</td>
+                    </tr>
+                    <tr>
+                      <td>Invoice Date</td>
+                      <td>: {{ $dateFormat.dmy(payload.bill_date)  }}</td>
                     </tr>
                     <tr>
                       <td>Prepared By</td>
@@ -156,8 +166,8 @@
             style="border: 3px solid white"
             :style="detailContainerHeight"
           >
-            <v-container>
-              <v-row>
+            <v-card-text>
+              <v-row no-gutter>
                 <v-col cols="12" class="pa-0 ma-0">
                   <AssetsHeadDialog>
                     <template #label> <span>View Detail</span> </template>
@@ -267,7 +277,7 @@
                   />
                 </v-col> -->
               </v-row>
-            </v-container>
+            </v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -322,10 +332,13 @@ export default {
   },
 
   computed: {
+    displayVendor() {
+      return this.item.vendor;
+    },
     detailContainerHeight() {
       const minHeight = {
         Company: "515px",
-        default: "450px",
+        default: "490px",
       };
 
       return `min-height:${

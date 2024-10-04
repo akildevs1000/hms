@@ -85,12 +85,6 @@
                 />
               </v-list-item-title>
             </v-list-item>
-            <v-list-item @click="openVoucher(item.id)">
-              <v-list-item-title>
-                <v-icon color="blue" small> mdi-cash-multiple </v-icon>
-                Voucher
-              </v-list-item-title>
-            </v-list-item>
             <v-list-item>
               <v-list-item-title>
                 <ExpenseDelete
@@ -137,7 +131,6 @@ export default {
         text: "Vendor",
         value: "vendor.first_name",
       },
-
       {
         text: "Bill #",
         value: "bill_number",
@@ -193,11 +186,6 @@ export default {
     },
   },
   methods: {
-    openVoucher(id) {
-      window.open(
-        `https://hms-backend.test/api/payment-voucher/${id}?payee=${this.$auth.user.name}`
-      );
-    },
     getRandomeId() {
       return Math.random();
     },

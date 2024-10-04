@@ -30,11 +30,13 @@
                   <table>
                     <tr>
                       <td class="blue--text">Receipt Number</td>
-                      <td class="blue--text">: VN {{ payload.bill_number }}</td>
+                      <td class="blue--text">
+                        : VN {{ $utils.add_zeros(payload.id) }}
+                      </td>
                     </tr>
                     <tr>
                       <td>Date</td>
-                      <td>: {{ payload.bill_date }}</td>
+                      <td>: {{ $dateFormat.dmy(payload.created_at) }}</td>
                     </tr>
                     <tr>
                       <td>Category</td>
@@ -161,6 +163,27 @@
                       /></template> -->
                   </AssetsHeadDialog>
                 </v-col>
+                <v-col>
+                  <v-text-field
+                    outlined
+                    dense
+                    hide-details
+                    label="Customer Invoice Number"
+                    v-model="payload.bill_number"
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col>
+                  <AssetsPickerDate
+                    label="Invoice Date"
+                    :defaultDate="payload.bill_date"
+                    @date="
+                      (e) => {
+                        payload.bill_date = e;
+                      }
+                    "
+                  />
+                </v-col>
                 <v-col cols="12">
                   <AssetsTable :headers="headers" :items="payload.items">
                     <template #rate="{ item }">
@@ -244,7 +267,11 @@
                 <v-col cols="12" v-if="errorResponse">
                   <span class="red--text">{{ errorResponse }}</span>
                 </v-col>
-                <v-col cols="12" class="text-center">
+                <v-col
+                  cols="12"
+                  class="text-center"
+                  style="position: absolute; bottom: 0"
+                >
                   <AssetsButton
                     :options="{
                       color: `red`,
@@ -296,6 +323,12 @@ export default {
       vendors: [],
       headers: [
         {
+          text: `Invoice Number`,
+          value: `bill_number`,
+          align: `left`,
+          width: "250px",
+        },
+        {
           text: `Item Details`,
           value: `detail`,
           align: `left`,
@@ -317,7 +350,7 @@ export default {
     detailContainerHeight() {
       const minHeight = {
         Company: "515px",
-        default: "450px",
+        default: "447px",
       };
 
       return `min-height:${
@@ -334,11 +367,11 @@ export default {
       full_name: `${vendor.title}. ${vendor.first_name} ${vendor.last_name}`,
       address: `${vendor.city} ${vendor.state}, ${vendor.country}`,
     };
-    this.getLastThreeRecords(vendor.id,item.is_admin_expense);
+    this.getLastThreeRecords(vendor.id, item.is_admin_expense);
   },
 
   methods: {
-    async getLastThreeRecords(vendor_id,is_admin_expense) {
+    async getLastThreeRecords(vendor_id, is_admin_expense) {
       let config = {
         params: {
           vendor_id: vendor_id,
@@ -369,7 +402,6 @@ export default {
       this.vendorEditItem = e;
       this.payload.vendor_id = e.id;
       // this.getLastThreeRecords(e.id);
-
     },
     calculateOverAll() {
       this.payload.sub_total = 0;

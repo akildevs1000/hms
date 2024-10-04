@@ -20,4 +20,9 @@ class ExpensePayment extends Model
     {
         return $this->belongsTo(PaymentMode::class, "name", "payment_mode");
     }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class)->with("vendor_category");
+    }
 }

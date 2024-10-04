@@ -14,23 +14,6 @@
     </style>
     <table class="simple-table mt-0">
       <TableHeader :cols="headers" />
-      <!-- <thead>
-        <tr>
-          <td class="blue--text">No</td>
-          <td class="blue--text">Date</td>
-          <td class="blue--text">Room</td>
-          <td class="blue--text">Tariff</td>
-          <td class="blue--text">Adults</td>
-          <td class="blue--text">Child</td>
-          <td class="blue--text">Meal</td>
-          <td class="blue--text">Extra Bed</td>
-          <td class="blue--text">Early Checkin</td>
-          <td class="blue--text">Late Checkout</td>
-          <td class="blue--text text-right">Total</td>
-          <td class="blue--text text-right"></td>
-        </tr>
-      </thead> -->
-
       <tbody>
         <tr
           style="font-size: 13px"

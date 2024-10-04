@@ -22,7 +22,7 @@
     >
       <v-row>
         <v-col cols="4">
-          <v-card style="border: 3px solid white; min-height: 477px">
+          <v-card style="border: 3px solid white; min-height: 437px">
             <v-card-text>
               <v-row no-gutter>
                 <v-col cols="12" class="pa-0 ma-0">
@@ -36,11 +36,13 @@
                   <table>
                     <tr>
                       <td class="blue--text">Receipt Number</td>
-                      <td class="blue--text">: VN {{ payload.bill_number }}</td>
+                      <td class="blue--text">
+                        : {{ $utils.add_zeros(payload.id) }}
+                      </td>
                     </tr>
                     <tr>
                       <td>Date</td>
-                      <td>: {{ payload.bill_date }}</td>
+                      <td>: {{ $dateFormat.dmy(payload.created_at) }}</td>
                     </tr>
                     <tr>
                       <td>Category</td>
@@ -48,6 +50,14 @@
                         :
                         {{ vendorObject?.vendor_category?.name || "---" }}
                       </td>
+                    </tr>
+                    <tr>
+                      <td>Customer Invoice</td>
+                      <td>: {{ payload.bill_number }}</td>
+                    </tr>
+                    <tr>
+                      <td>Invoice Date</td>
+                      <td>: {{ $dateFormat.dmy(payload.bill_date) }}</td>
                     </tr>
                     <tr>
                       <td>Prepared By</td>
@@ -175,24 +185,22 @@
                       {{ $utils.currency_format(item.balance) }}
                     </template>
                     <template #action="{ item }">
-                      <v-icon
-                        style="cursor: pointer"
-                        @click="deleteItem(index, item)"
-                        small
-                        color="red"
-                        >mdi-close</v-icon
-                      >
+                      <ExpenseVoucher
+                        :vendor="vendorObject"
+                        :model="`Voucher`"
+                        :endpoint="endpoint"
+                        :item="item"
+                      />
                     </template>
                   </AssetsTable>
                 </v-col>
 
-                <v-col cols="6">
+                <v-col cols="7">
                   <v-card outlined>
                     <v-card-text>
                       <v-row>
                         <v-col cols="4">
                           <v-autocomplete
-                            append-icon=""
                             outlined
                             dense
                             hide-details
@@ -295,7 +303,7 @@
                   </v-card>
                 </v-col>
 
-                <v-col cols="6">
+                <v-col cols="5">
                   <fieldset
                     style="
                       border: 1px solid rgb(224, 224, 224);
@@ -365,7 +373,7 @@ export default {
           .toISOString()
           .substr(0, 10),
         payment_mode: `Cash`,
-        payment_mode_ref: `111111`,
+        payment_mode_ref: ``,
         attachments: [],
         note: "test",
 
@@ -410,6 +418,7 @@ export default {
         { text: `Discount`, value: `discount`, align: `right` },
         { text: `paid`, value: `paid`, align: `right` },
         { text: `Balance`, value: `balance`, align: `right` },
+        { text: ``, value: `action`, align: `center` },
       ],
       vendorObject: null,
       vendorEditItem: null,
@@ -423,7 +432,7 @@ export default {
     detailContainerHeight() {
       const minHeight = {
         Company: "515px",
-        default: "450px",
+        default: "490px",
       };
 
       return `min-height:${

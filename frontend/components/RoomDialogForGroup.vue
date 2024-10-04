@@ -1,5 +1,6 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
+    <AssetsIconClose left="390" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
@@ -18,9 +19,7 @@
       </v-hover>
     </template>
     <v-card>
-      <v-toolbar flat class="grey lighten-3" dense>
-        Group Booking <v-spacer></v-spacer><AssetsButtonClose @close="close"
-      /></v-toolbar>
+      <v-alert flat class="grey lighten-3" dense> Group Booking</v-alert>
       <v-container>
         <v-row>
           <v-col cols="8">
@@ -157,7 +156,7 @@
             </v-autocomplete>
           </v-col>
           <v-col cols="3">
-            <v-btn block color="primary">OK</v-btn>
+            <v-btn outlined block color="primary">OK</v-btn>
           </v-col>
           <v-col cols="4">
             <v-autocomplete

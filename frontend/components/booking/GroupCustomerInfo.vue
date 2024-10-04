@@ -46,6 +46,7 @@
           <v-row no-gutters>
             <v-col class="ma-1" cols="2">
               <v-select
+                @change="submit"
                 v-model="customer.title"
                 :items="titleItems"
                 label="Title *"
@@ -63,6 +64,7 @@
                 dense
                 outlined
                 type="text"
+                @change="submit"
                 v-model="customer.first_name"
                 hide-details
               ></v-text-field>
@@ -75,6 +77,7 @@
                 hide-details
                 outlined
                 type="text"
+                @change="submit"
                 v-model="customer.last_name"
               ></v-text-field>
             </v-col>
@@ -85,6 +88,7 @@
                 label="Email *"
                 outlined
                 type="email"
+                @change="submit"
                 v-model="customer.email"
                 hide-details
               ></v-text-field>
@@ -99,6 +103,7 @@
                 outlined
                 max="1111111111111"
                 type="number"
+                @change="submit"
                 v-model="customer.contact_no"
                 hide-details
                 @keyup="mergeContact"
@@ -112,6 +117,7 @@
                 outlined
                 max="1111111111111"
                 type="number"
+                @change="submit"
                 v-model="customer.whatsapp"
                 hide-details
               ></v-text-field>
@@ -140,7 +146,12 @@
                 <v-date-picker
                   no-title
                   v-model="customer.dob"
-                  @input="customer.dob_menu = false"
+                  @input="
+                    () => {
+                      customer.dob_menu = false;
+                      submit();
+                    }
+                  "
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -186,6 +197,7 @@
             <v-col class="ma-1">
               <v-text-field
                 label="Zip Code"
+                @change="submit"
                 v-model="customer.zip_code"
                 outlined
                 hide-details
@@ -263,7 +275,7 @@ export default {
       ],
       customer: {
         customer_type: null,
-        title: "Mr",
+        title: null,
         whatsapp: "",
         nationality: "-----",
         first_name: "",

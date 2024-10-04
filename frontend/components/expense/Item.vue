@@ -1,5 +1,6 @@
 <template>
-  <v-dialog persistent v-model="itemDialog" max-width="400">
+  <v-dialog persistent v-model="itemDialog" max-width="350">
+    <AssetsIconClose left="340" @click="itemDialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
@@ -11,12 +12,9 @@
     </template>
     <v-card>
       <v-alert flat class="grey lighten-3" dense>
-        <v-row no-gutter>
-          <v-col>Item Information</v-col>
-          <v-col class="text-right"><AssetsButtonClose @close="close" /></v-col>
-        </v-row>
+        <span>Item Information</span>
       </v-alert>
-      <v-container class="pa-5">
+      <v-card-text>
         <v-row>
           <v-col cols="12">
             <v-text-field
@@ -86,7 +84,6 @@
               ]"
             ></v-autocomplete>
           </v-col>
-
           <v-col cols="12">
             <v-text-field
               label="Amount"
@@ -98,7 +95,6 @@
               type="number"
             ></v-text-field>
           </v-col>
-
           <v-col cols="12" class="text-center">
             <AssetsButton
               :options="{
@@ -117,7 +113,7 @@
             />
           </v-col>
         </v-row>
-      </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>

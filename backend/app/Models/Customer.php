@@ -46,6 +46,12 @@ class Customer extends Model
         return $this->hasMany(OrderRoom::class);
     }
 
+    public function sub_customers()
+    {
+        return $this->hasMany(SubCustomer::class);
+    }
+
+
     public function bookings()
     {
         return $this->hasMany(Booking::class)

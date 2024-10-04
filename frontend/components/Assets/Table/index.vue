@@ -1,5 +1,5 @@
 <template>
-  <div style="max-height: 150px; overflow: auto" class="px-1">
+  <div :style="`max-height: ${height || 150}px; overflow: auto`" class="px-1">
     <table cellspacing="0" style="width: 100%">
       <thead>
         <tr>
@@ -35,6 +35,6 @@
 
 <script>
 export default {
-  props: ["items", "headers"],
+  props: ["items", "headers","height"],
 };
 </script>

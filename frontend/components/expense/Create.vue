@@ -37,13 +37,11 @@
                     <table>
                       <tr>
                         <td class="blue--text">Receipt Number</td>
-                        <td class="blue--text">
-                          : VN {{ payload.bill_number }}
-                        </td>
+                        <td class="blue--text">: VN {{ ReceiptNumber }}</td>
                       </tr>
                       <tr>
                         <td>Date</td>
-                        <td>: {{ payload.bill_date }}</td>
+                        <td>: {{ $dateFormat.dmy(current_date) }}</td>
                       </tr>
                       <tr>
                         <td>Category</td>
@@ -167,6 +165,26 @@
                       /></template>
                     </AssetsHeadDialog>
                   </v-col>
+                  <v-col>
+                    <v-text-field
+                      outlined
+                      dense
+                      hide-details
+                      label="Customer Invoice Number"
+                      v-model="payload.bill_number"
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col>
+                    <AssetsPickerDate
+                      label="Invoice Date"
+                      @date="
+                        (e) => {
+                          payload.bill_date = e;
+                        }
+                      "
+                    />
+                  </v-col>
                   <v-col cols="12">
                     <AssetsTable :headers="headers" :items="payload.items">
                       <template #rate="{ item }">
@@ -196,13 +214,6 @@
                                       payload.items.push(e);
                                       calculateOverAll();
                                     }
-                                  "
-                                />
-                              </v-col>
-                              <v-col>
-                                <UploadMultipleAttachments
-                                  @files-selected="
-                                    handleMultipleFileSelection($event)
                                   "
                                 />
                               </v-col>
@@ -250,7 +261,13 @@
                       </tr>
                     </table>
                   </v-col>
-
+                  <v-col cols="12">
+                  <span class="primary--text">
+                    <UploadMultipleAttachments
+                      @files-selected="handleMultipleFileSelection($event)"
+                    />
+                  </span>
+                </v-col>
                   <v-col cols="12" v-if="errorResponse">
                     <span class="red--text">{{ errorResponse }}</span>
                   </v-col>
@@ -289,15 +306,21 @@ export default {
 
   data() {
     return {
+      current_date: new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10),
       menu2: false,
       payload: {
         vendor_id: 1,
         notes: "test",
         tax: 0,
-        bill_number: null,
+        bill_number: "11133334555",
         bill_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
           .toISOString()
           .substr(0, 10),
+
         items: [],
         attachments: [],
 
@@ -311,6 +334,12 @@ export default {
       errorResponse: null,
       vendors: [],
       headers: [
+        {
+          text: `Invoice Number`,
+          value: `bill_number`,
+          align: `left`,
+          width: "250px",
+        },
         {
           text: `Item Details`,
           value: `detail`,
@@ -327,6 +356,7 @@ export default {
       vendorEditItem: null,
       lastThreeRecords: [],
       emptyRowLength: 3,
+      ReceiptNumber:null,
     };
   },
   computed: {
@@ -350,7 +380,7 @@ export default {
     };
     let { data } = await this.$axios.get(`expense-last-number`, config);
 
-    this.payload.bill_number = data;
+    this.ReceiptNumber = data;
   },
   methods: {
     async getLastThreeRecords(vendor_id) {
@@ -420,6 +450,11 @@ export default {
       this.payload.items.splice(index, 1);
     },
     async submit() {
+      this.errorResponse = null;
+      if(!this.payload.items.length) {
+        alert(`Item is not added.`);
+        return;
+      }
       this.loading = true;
       try {
         this.payload.is_admin_expense = this.is_admin_expense;
@@ -427,7 +462,6 @@ export default {
         this.close();
         this.$emit("response", "Record has been inserted");
       } catch (error) {
-        console.log(error);
         this.errorResponse = error?.response?.data?.message || "Unknown error";
         this.loading = false;
       }
