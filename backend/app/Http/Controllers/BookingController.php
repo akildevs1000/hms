@@ -15,9 +15,11 @@ use App\Models\Holiday;
 use App\Models\IdCardType;
 use App\Models\OrderRoom;
 use App\Models\Payment;
+use App\Models\PostingPayment;
 use App\Models\Room;
 use App\Models\RoomType;
 use App\Models\SubCustomer;
+use App\Models\SubCustomerRoomHistory;
 use App\Models\TaxSlabs;
 use App\Models\Template;
 use App\Models\Transaction;
@@ -762,17 +764,28 @@ class BookingController extends Controller
                     'guest.email' => 'required|max:100',
                     'guest.dob' => 'required|date',
                     'guest.nationality' => 'required|string|max:50',
-                    // 'guest.country' => 'required|string|max:50',
-                    // 'guest.state' => 'required|string|max:50',
-                    // 'guest.city' => 'required|string|max:50',
-                    // "address" => "required",
+                    'guest.city' => 'required|string|max:50',
+                    'guest.state' => 'required|string|max:50',
+                    'guest.country' => 'required|string|max:50',
+                    'guest.zip_code' => 'required|string|max:50',
                 ]);
 
                 if ($validatedData) {
+                    $guest = $validatedData["guest"];
+                    $guest["customer_id"]  = $booking->customer_id;
+                    $subCustomer = SubCustomer::create($guest);
 
-                    $validatedData["guest"]["customer_id"]  = $booking->customer_id;
-                    // return $validatedData;
-                    SubCustomer::create($validatedData["guest"]);
+
+                    SubCustomerRoomHistory::create([
+                        "room_id" => $room_id,
+                        "sub_customer_id" => $subCustomer->id,
+                    ]);
+
+                    PostingPayment::create([
+                        "booking_id" => $booking_id,
+                        "room_id" => $room_id,
+                        "sub_customer_id" => $subCustomer->id,
+                    ]);
                 }
             }
 
@@ -1477,18 +1490,22 @@ class BookingController extends Controller
 
     public function get_booked_room(Request $request)
     {
-
-
         $bookedRoom = BookedRoom::with(['booking' => function ($q) {
             $q->with(["bookedRooms" => function ($q) {
                 $q->withOut("booking", "postings");
                 $q->select("id", "booking_id", "room_id", "room_no", "room_type", "booking_status");
             }]);
-        }, 'customer', "room"])->where('company_id', $request->company_id)->findOrFail($request->id);
+        }, 'customer', "room", "sub_customer_room_history"])->where('company_id', $request->company_id)->findOrFail($request->id);
         $bookedRoom->booking->room_id = $bookedRoom->room_id;
         $bookedRoom->booking->room_no = $bookedRoom->room_no;
         $bookedRoom->booking->room_type = $bookedRoom->room_type;
         $bookedRoom->booking->contact_no = $bookedRoom->customer->contact_no;
+
+
+        $bookedRoom->posting_payment  = PostingPayment::where("booking_id", $bookedRoom->booking_id)
+            ->where("room_id", $bookedRoom->room_id)
+            ->where("sub_customer_id", $bookedRoom->sub_customer_room_history->sub_customer_id ?? 0)->first();
+
 
         // return RoomType::HALL;
 
@@ -2317,6 +2334,7 @@ class BookingController extends Controller
 
     public function getReservationList(Request $request, $status)
     {
+
         $model = Booking::query()
             ->latest()
             ->filter(request('search'));
@@ -2327,19 +2345,23 @@ class BookingController extends Controller
             $model->where('source', env("WILD_CARD") ?? 'ILIKE', '%' . $request->source . '%');
         }
 
-        if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->WhereDate('check_in', '>=', $request->from);
-            $model->whereDate('check_in', '<=', $request->to);
+        if ($request->isSelectAll != -1) {
+            if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+                $model->WhereDate('check_in', '>=', $request->from);
+                $model->whereDate('check_in', '<=', $request->to);
+            }
+
+            if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+                $model->WhereDate('check_out', '>=', $request->from);
+                $model->whereDate('check_out', '<=', $request->to);
+            }
+            if ($request->guest_mode == '' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+                $model->WhereDate('check_in', '>=', $request->from);
+                $model->whereDate('check_in', '<=', $request->to);
+            }
         }
 
-        if ($request->guest_mode == 'Departure' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->WhereDate('check_out', '>=', $request->from);
-            $model->whereDate('check_out', '<=', $request->to);
-        }
-        if ($request->guest_mode == '' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->WhereDate('check_in', '>=', $request->from);
-            $model->whereDate('check_in', '<=', $request->to);
-        }
+
 
         $model->orderBy('id', 'desc');
 

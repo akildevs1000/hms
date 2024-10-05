@@ -359,7 +359,7 @@ export default {
         {
           topMenu: "account",
           icon: "mdi-bank-transfer",
-          title: "Income",
+          title: "City Ledger",
           to: "/city_ledger",
           menu: "accounts_posting_access",
         },

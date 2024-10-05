@@ -29,11 +29,9 @@
 export default {
   props: {
     left: {
-      type: Number,
       default: 893,
     },
     top: {
-      type: Number,
       default: -13,
     },
   },

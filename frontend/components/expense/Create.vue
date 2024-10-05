@@ -335,12 +335,6 @@ export default {
       vendors: [],
       headers: [
         {
-          text: `Invoice Number`,
-          value: `bill_number`,
-          align: `left`,
-          width: "250px",
-        },
-        {
           text: `Item Details`,
           value: `detail`,
           align: `left`,

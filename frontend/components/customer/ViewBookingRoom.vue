@@ -1,5 +1,6 @@
 <template>
   <v-dialog v-model="PostingDialog" width="650">
+    <AssetsIconClose left="640" @click="PostingDialog = false" />
     <style scoped>
       .simple-table {
         width: 100%;
@@ -19,11 +20,9 @@
     </template>
 
     <v-card>
-      <v-toolbar class="grey lighten-3 primary--text" flat dense>
-        <div style="font-size: 18px">View Booking</div>
-        <v-spacer></v-spacer
-        ><AssetsButtonClose @close="PostingDialog = false" />
-      </v-toolbar>
+      <v-alert class="grey lighten-3 primary--text" flat dense>
+        View Booking
+      </v-alert>
 
       <v-card-text class="pa-3">
         <v-container>
@@ -104,57 +103,49 @@
               <table class="simple-table">
                 <tbody>
                   <tr>
-                    <td class="text-left"><small>Room</small></td>
+                    <td class="text-left">Room</td>
                     <td class="text-right">
-                      <small>{{ $utils.currency_format(item.price) }}</small>
+                      {{ $utils.currency_format(item.price) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Meal</small></td>
+                    <td class="text-left">Meal</td>
                     <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.food_plan_price)
-                      }}</small>
+                      {{ $utils.currency_format(item.food_plan_price) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Extra Bed</small></td>
+                    <td class="text-left">Extra Bed</td>
                     <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.bed_amount)
-                      }}</small>
+                      {{ $utils.currency_format(item.bed_amount) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Early Check In</small></td>
+                    <td class="text-left">Early Check In</td>
                     <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.early_check_in)
-                      }}</small>
+                      {{ $utils.currency_format(item.early_check_in) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Late Check Out</small></td>
+                    <td class="text-left">Late Check Out</td>
                     <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.late_check_out)
-                      }}</small>
+                      {{ $utils.currency_format(item.late_check_out) }}
                     </td>
                   </tr>
                   <!-- <tr>
-                    <td class="text-left"><small>Discount</small></td>
+                    <td class="text-left">Discount</td>
                     <td class="text-right">
-                      <small>{{
+                      {{
                         $utils.currency_format(item.room_discount)
-                      }}</small>
+                      }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Add</small></td>
+                    <td class="text-left">Add</td>
                     <td class="text-right">
-                      <small>{{
+                      {{
                         $utils.currency_format(item.room_extra_amount || 0)
-                      }}</small>
+                      }}
                     </td>
                   </tr> -->
                 </tbody>

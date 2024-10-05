@@ -11,7 +11,7 @@
       </v-toolbar>
       <v-card-text>
         <v-container>
-          <AssetsTable :headers="headers" :items="postings" />
+          <AssetsTable v-if="postings.length" :headers="headers" :items="postings" />
         </v-container>
       </v-card-text>
     </v-card>

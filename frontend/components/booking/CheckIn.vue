@@ -10,44 +10,54 @@
     <AssetsIconClose :left="990" @click="checkInDialog = false" />
     <div class="grey lighten-3 pa-2" style="overflow: hidden">
       <v-row>
-        <v-col cols="4">
+        <v-col cols="3">
           <v-card style="border: 3px solid white; min-height: 477px">
             <v-card-text>
               <v-row no-gutter v-if="BookingData && BookingData.id">
                 <v-col cols="12" class="pa-0 ma-0">
                   <v-row no-gutter>
                     <v-col cols="12">
-                      <AssetsHeadDialog>
-                        <template #label>
-                          <small>Group Booking</small>
-                        </template>
-                      </AssetsHeadDialog>
-                      <div class="mx-2">
+                      <div
+                        class="grey lighten-3 py-2 px-1"
+                        style="
+                          border-radius: 5px;
+                          color: #6f6f68;
+                          font-size: 14px;
+                        "
+                      >
+                        Group Booking
+                      </div>
+                      <div class="mx-2 mt-1">
                         <table cellspacing="0" style="width: 100%">
                           <tr>
-                            <td class="blue--text">
-                              <span> Payer </span>
-                            </td>
-                            <td class="text-right">
-                              <v-btn
-                                v-if="customerScreen"
-                                @click="showRelatedScreen(`payment`)"
-                                text
-                                small
-                                class="grey lighten-3"
-                                ><v-icon color="primary">mdi-cash</v-icon>
-                                Pay</v-btn
-                              >
-
-                              <v-btn
-                                v-if="paymentScreen"
-                                @click="showRelatedScreen(`guest`)"
-                                text
-                                small
-                                class="grey lighten-3"
-                                ><v-icon color="primary">mdi-account</v-icon>
-                                Guest</v-btn
-                              >
+                            <td colspan="2" class="blue--text">
+                              <v-row>
+                                <v-col>
+                                  <span> Payer </span>
+                                </v-col>
+                                <v-col cols="6" class="text-right">
+                                  <v-btn
+                                    v-if="customerScreen"
+                                    @click="showRelatedScreen(`payment`)"
+                                    text
+                                    small
+                                    class="grey lighten-3"
+                                    ><v-icon color="primary">mdi-cash</v-icon>
+                                    Pay</v-btn
+                                  >
+                                  <v-btn
+                                    v-if="paymentScreen"
+                                    @click="showRelatedScreen(`guest`)"
+                                    text
+                                    small
+                                    class="grey lighten-3"
+                                    ><v-icon color="primary"
+                                      >mdi-account</v-icon
+                                    >
+                                    Guest</v-btn
+                                  >
+                                </v-col>
+                              </v-row>
                             </td>
                           </tr>
                           <tr>
@@ -160,7 +170,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="8">
+        <v-col cols="9">
           <v-card style="border: 3px solid white; min-height: 477px">
             <v-card-text>
               <v-row no-gutter v-if="BookingData && BookingData.id">
@@ -169,7 +179,9 @@
                     <v-col cols="12">
                       <AssetsHeadDialog>
                         <template #label>
-                          <small>Guest Details</small>
+                          <div style="color: #6f6f68; font-size: 14px">
+                            Guest Details
+                          </div>
                         </template>
                         <template #search>
                           <small
@@ -240,6 +252,9 @@
                       <AssetsHeadDialog>
                         <template #label>
                           <small>Payment Details</small>
+                          <div style="color: #6f6f68; font-size: 14px">
+                            Guest Details
+                          </div>
                         </template>
                       </AssetsHeadDialog>
                     </v-col>

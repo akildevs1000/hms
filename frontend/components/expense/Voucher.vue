@@ -21,29 +21,30 @@
               <td width="33%">
                 <img :src="company && company.logo" style="width: 100px" />
               </td>
-              <td width="33%"></td>
+              <td width="33%" class="text-center">
+                <b><Heading label="PAYMENT VOUCHER" color="#ddd"></Heading></b>
+              </td>
               <td width="33%" class="text-right">
                 <table style="width: 100%">
                   <tr>
                     <td>
-                      <b>{{ company.name }}</b>
+                      <div>
+                        <b>{{ company.name }}</b>
+                       
+                      </div>
+                      <div>
+                        <span>242/7 Thirivalluval Nager</span>
+                      </div>
+                      <div>
+                        <span>Tel : 04362 646411,</span>
+                       
+                      </div>
+                      <div>
+                        <span>{{ company.location }}</span>
+                      </div>
                     </td>
                   </tr>
-                  <tr>
-                    <td>242/7 Thirivalluval Nager</td>
-                  </tr>
-                  <tr>
-                    <td>Tel : 04362 646411,</td>
-                  </tr>
-                  <tr>
-                    <td>{{ company.location }}</td>
-                  </tr>
                 </table>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3" class="text-center">
-                <b><Heading label="PAYMENT VOUCHER" color="#ddd"></Heading></b>
               </td>
             </tr>
             <tr>
@@ -67,16 +68,24 @@
                     <td class="blue--text">: VN {{ item.id }}</td>
                   </tr>
                   <tr>
-                    <td class="red--text">Customer Invoice #</td>
-                    <td class="red--text">: VN {{ item.bill_number }}</td>
-                  </tr>
-                  <tr>
                     <td>Date</td>
                     <td>: {{ item.payment_date }}</td>
                   </tr>
                   <tr>
                     <td>Category</td>
                     <td>: {{ vendor.vendor_category?.name }}</td>
+                  </tr>
+                  <tr>
+                    <td class="red--text">Customer Invoice #</td>
+                    <td class="red--text">
+                      {{ expense.bill_number }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="red--text">Invoice Date #</td>
+                    <td class="red--text">
+                      {{ $dateFormat.dmy(expense.bill_date) }}
+                    </td>
                   </tr>
                   <tr>
                     <td>Prepared By</td>
@@ -112,8 +121,8 @@
           <table style="width: 100%">
             <tr>
               <td width="50%" class="py-1 border-bottom">
-                Rs {{ $utils.currency_format(item.amount) }} ( Two Thousand Five
-                Hindered Only )
+                Rs {{ $utils.currency_format(item.amount) }}
+                {{ $utils.numberToWords(item.amount) }}
               </td>
               <td class="py-1 border-bottom text-center">
                 Payment by : {{ item.payment_mode }}
@@ -161,13 +170,19 @@
 </template>
 <script>
 export default {
-  props: ["item", "endpoint", "model", "vendor"],
+  props: ["item", "endpoint", "model"],
   data: () => ({
     dialog: false,
   }),
   computed: {
     company() {
       return this.$auth.user.company;
+    },
+    vendor() {
+      return this.item.vendor;
+    },
+    expense() {
+      return this.item.expense;
     },
   },
 

@@ -750,7 +750,7 @@ export default {
             ) {
               let roomPrice = this.old.food_plan_price + this.old.room_price;
               let restOfPrices = this.old.booking_total_price - roomPrice;
-              this.payload.booking_total_price = this.currency_format(
+              this.payload.booking_total_price = this.$utils.currency_format(
                 this.payload.booking_total_price + restOfPrices
               );
             }

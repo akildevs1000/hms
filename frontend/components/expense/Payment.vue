@@ -144,7 +144,7 @@
                       <td>{{ record.date }}</td>
                       <td class="text-right">{{ record.amount }}</td>
                     </tr>
-                    <tr v-for="(n, index) in emptyRowLength" :key="index">
+                    <tr v-for="(n, emptyRowIndex) in emptyRowLength" :key="emptyRowIndex">
                       <td>---</td>
                       <td>---</td>
                       <td class="text-right">---</td>
@@ -186,7 +186,6 @@
                     </template>
                     <template #action="{ item }">
                       <ExpenseVoucher
-                        :vendor="vendorObject"
                         :model="`Voucher`"
                         :endpoint="endpoint"
                         :item="item"

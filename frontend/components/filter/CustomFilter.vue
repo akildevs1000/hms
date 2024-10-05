@@ -5,6 +5,10 @@
         v-model="filterType"
         :items="[
           {
+            id: -1,
+            name: 'All',
+          },
+          {
             id: 1,
             name: 'Today',
           },

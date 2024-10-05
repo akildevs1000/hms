@@ -17,6 +17,7 @@
       ref="BookingSingleComp"
       :key="bookingId"
       :BookingId="bookingId"
+      :roomData="roomData"
     />
     <!-- dialogs -->
     <div>
@@ -427,7 +428,11 @@
                     room.device && room.device.latest_status == 1 ? 'red' : ''
                   "
                 >
-                  {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                  {{
+                    room?.room_type?.type == "hall"
+                      ? "mdi-human-male-board"
+                      : "mdi-bed"
+                  }}
                 </v-icon>
                 <div>{{ room?.room_no || "---" }}</div>
                 <div v-if="room?.room_type?.type !== 'hall'">
@@ -665,7 +670,11 @@
                     : ''
                 "
               >
-                {{ room?.room_type?.type == "hall" ? "mdi-cake" : "mdi-bed" }}
+                {{
+                  room?.room_type?.type == "hall"
+                    ? "mdi-human-male-board"
+                    : "mdi-bed"
+                }}
               </v-icon>
               <div>{{ blockedRoom?.room_no || "---" }}</div>
               <div>
@@ -915,7 +924,7 @@ export default {
   methods: {
     getRelatedIcon({ booking_type, group_name }) {
       if (booking_type == "hall") {
-        return "mdi-google-classroom";
+        return "mdi-human-male-board";
       } else if (group_name == "yes") {
         return "mdi-account-group";
       } else {
@@ -1340,10 +1349,6 @@ export default {
         const bookingSingleComp = this.$refs["BookingSingleComp"];
         if (bookingSingleComp) {
           bookingSingleComp.ViewBookingDialog = true;
-          console.log(
-            "🚀 ~ dblclick ~ BookingSingleComp",
-            bookingSingleComp.ViewBookingDialog
-          );
         } else {
           console.warn("BookingSingleComp ref is undefined");
         }

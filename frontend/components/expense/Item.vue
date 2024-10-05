@@ -132,10 +132,10 @@ export default {
       },
       defaultItem: {
         detail: "test",
-        rate: 0,
-        qty: 0,
+        rate: 1,
+        qty: 1,
         tax: 0,
-        amount: 0,
+        amount: 1,
       },
     };
   },

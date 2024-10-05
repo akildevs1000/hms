@@ -25,4 +25,9 @@ class ExpensePayment extends Model
     {
         return $this->belongsTo(Vendor::class)->with("vendor_category");
     }
+
+    public function expense()
+    {
+        return $this->belongsTo(AdminExpense::class,"admin_expense_id");
+    }
 }

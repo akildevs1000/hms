@@ -1,28 +1,15 @@
 <template>
-  <v-dialog v-model="PostingDialog" width="850">
-    <style scoped>
-      .simple-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .simple-table td {
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-        padding: 5px;
-        text-align: center;
-      }
-    </style>
+  <v-dialog v-model="PostingDialog" width="750">
+    <AssetsIconClose left="740" @click="PostingDialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         <v-icon small color="primary">mdi-eye</v-icon></span
       >
     </template>
 
-    <v-card>
+    <v-card style="overflow: hidden">
       <v-row no-gutter class="pa-0 grey lighten-3">
-        <v-col cols="12" class="text-right">
-          <AssetsButtonClose @close="PostingDialog = false" />
-        </v-col>
+        <v-col cols="12" class="text-right"> </v-col>
       </v-row>
       <v-card-text class="pa-3">
         <v-row class="grey lighten-3">
@@ -41,7 +28,7 @@
               <b>ROOM POSTING</b>
             </v-container>
           </v-col>
-          <v-col cols="3" class="text-left">
+          <v-col cols="4" class="text-right">
             <v-container>
               Bill No: {{ bill_no || "---" }}
               <br />
@@ -52,69 +39,74 @@
       </v-card-text>
       <v-card-text>
         <v-container class="pa-3">
-          <table class="simple-table">
-            <TableHeader
-              :cols="[
-                `#`,
-                `Category`,
-                `Item Description`,
-                `Qty`,
-                `Unit`,
-                `Sub Total`,
-                `Tax`,
-                `Total`,
-              ]"
-            />
-            <!-- <thead>
-              <tr>
-                <td class="blue--text">#</td>
-                <td class="blue--text text-left">Category</td>
-                <td class="blue--text text-left">Item Description</td>
-                <td class="blue--text">Qty</td>
-                <td class="blue--text">Unit</td>
-                <td class="blue--text">Sub Total</td>
-                <td class="blue--text">Tax</td>
-                <td class="blue--text">Total</td>
-              </tr>
-            </thead> -->
-            <tbody>
-              <tr v-for="(posting, index) in fitleredItems" :key="index">
-                <td>{{ index + 1 }}</td>
-                <td style="width: 200px">
-                  {{ posting.tax_type }}
-                </td>
-                <td style="width: 150px">
-                  {{ posting.item }}
-                </td>
-                <td style="width: 80px">
-                  {{ posting.qty }}
-                </td>
-                <td style="width: 80px" class="text-center">
-                  {{ $utils.currency_format(posting.single_amt) }}
-                </td>
-                <td class="text-center">
-                  {{ $utils.currency_format(posting.amount) }}
-                </td>
-                <td class="text-center">
-                  {{ $utils.currency_format(posting.tax) }}
-                </td>
-                <td class="text-center">
-                  {{ $utils.currency_format(posting.amount_with_tax) }}
-                </td>
-              </tr>
+          <AssetsTable
+            height="300"
+            :headers="[
+              {
+                text: `Category`,
+                value: `tax_type`,
+                align: `center`,
+              },
+              {
+                text: `Item Description`,
+                value: `item`,
+                align: `center`,
+              },
+              {
+                text: `Qty`,
+                value: `qty`,
+                align: `center`,
+              },
+              {
+                text: `Unit`,
+                value: `unit`,
+                align: `right`,
+              },
+              {
+                text: `Sub Total`,
+                value: `amount`,
+                align: `right`,
+              },
+              {
+                text: `Tax`,
+                value: `tax`,
+                align: `right`,
+              },
+              {
+                text: `Total`,
+                value: `total`,
+                align: `right`,
+              },
+            ]"
+            :items="fitleredItems"
+          >
+            <template #unit="{ item }">
+              {{ $utils.currency_format(item.single_amt) || "---" }}
+            </template>
+            <template #amount="{ item }">
+              {{ $utils.currency_format(item.amount) || "---" }}
+            </template>
+            <template #tax="{ item }">
+              {{ $utils.currency_format(item.tax) || "---" }}
+            </template>
+            <template #total="{ item }">
+              {{ $utils.currency_format(item.amount_with_tax) }}
+            </template>
+            <template #row>
               <tr>
                 <td
                   style="border: none; padding: 0"
                   class="text-left pt-5"
-                  colspan="5"
+                  colspan="6"
                 ></td>
-                <td colspan="2" class="text-right blue--text">Total Rs,</td>
-                <td class="blue--text">
-                  {{ $utils.currency_format(getTotalAmount()) }}
+                <td  class="text-right blue--text">
+                  Total Rs, {{ $utils.currency_format(getTotalAmount()) }}
                 </td>
-                <td></td>
               </tr>
-            </tbody>
+            </template>
+          </AssetsTable>
+          <table class="simple-table">
+            <tbody></tbody>
           </table>
         </v-container>
       </v-card-text>
@@ -127,17 +119,16 @@ export default {
   data() {
     return {
       PostingDialog: false,
-      postings: [],
     };
   },
   computed: {
     fitleredItems() {
-      return this.items.filter((e) => e.bill_no == this.bill_no);
+      return this.items.filter((e) => e.room.room_no == this.room_no);
     },
   },
   methods: {
     getTotalAmount() {
-      return this.items.reduce((total, num) => total + num.amount_with_tax, 0);
+      return this.fitleredItems.reduce((total, num) => total + num.amount_with_tax, 0);
     },
   },
 };

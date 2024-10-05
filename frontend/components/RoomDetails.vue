@@ -1,37 +1,23 @@
 <template>
-  <v-dialog v-model="PostingDialog" width="450">
-    <style scoped>
-      .simple-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .simple-table td {
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-        padding: 5px;
-        text-align: center;
-      }
-    </style>
+  <v-dialog v-model="PostingDialog" width="550">
+    <AssetsIconClose left="540" @click="PostingDialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         <v-icon x-small color="primary">mdi-eye</v-icon>
-        <small style="font-size: 11px">View</small></span
+        View</span
       >
     </template>
 
     <v-card>
-      <v-toolbar class="grey lighten-3 primary--text" flat dense>
-        <div style="font-size: 18px">View Room</div>
-        <v-spacer></v-spacer
-        ><AssetsButtonClose @close="PostingDialog = false" />
-      </v-toolbar>
+      <v-alert class="grey lighten-3 primary--text" flat dense>
+        View Room
+      </v-alert>
 
-      <v-card-text class="pa-3">
-        <v-container>
-          <v-row class="">
+      <v-card-text>
+        <v-row class="">
             <v-col cols="4">
               <v-text-field
-                style="font-size: 13px;height: 10px;"
+                style="font-size: 13px; height: 10px"
                 v-model="item.room_type"
                 readonly
                 label="Room Type"
@@ -106,41 +92,33 @@
               <table class="simple-table">
                 <tbody>
                   <tr>
-                    <td class="text-left"><small>Room</small></td>
-                    <td class="text-right">
-                      <small>{{ $utils.currency_format(item.price) }}</small>
+                    <td class="border-top border-bottom py-1 text-left">Room</td>
+                    <td class="border-top border-bottom py-1 text-right">
+                      {{ $utils.currency_format(item.price) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Meal</small></td>
-                    <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.food_plan_price)
-                      }}</small>
+                    <td class="border-top border-bottom py-1 text-left">Meal</td>
+                    <td class="border-top border-bottom py-1 text-right">
+                      {{ $utils.currency_format(item.food_plan_price) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Extra Bed</small></td>
-                    <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.bed_amount)
-                      }}</small>
+                    <td class="border-top border-bottom py-1 text-left">Extra Bed</td>
+                    <td class="border-top border-bottom py-1 text-right">
+                      {{ $utils.currency_format(item.bed_amount) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Early Check In</small></td>
-                    <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.early_check_in)
-                      }}</small>
+                    <td class="border-top border-bottom py-1 text-left">Early Check In</td>
+                    <td class="border-top border-bottom py-1 text-right">
+                      {{ $utils.currency_format(item.early_check_in) }}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><small>Late Check Out</small></td>
-                    <td class="text-right">
-                      <small>{{
-                        $utils.currency_format(item.late_check_out)
-                      }}</small>
+                    <td class="border-top border-bottom py-1 text-left">Late Check Out</td>
+                    <td class="border-top border-bottom py-1 text-right">
+                      {{ $utils.currency_format(item.late_check_out) }}
                     </td>
                   </tr>
                 </tbody>
@@ -168,7 +146,6 @@
               </v-card>
             </v-col>
           </v-row>
-        </v-container>
       </v-card-text>
     </v-card>
   </v-dialog>

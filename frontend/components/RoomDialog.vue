@@ -1,5 +1,6 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
+    <AssetsIconClose left="390" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
@@ -18,10 +19,8 @@
       </v-hover>
     </template>
     <v-card>
-      <v-toolbar flat class="grey lighten-3" dense>
-        Room Booking <v-spacer></v-spacer><AssetsButtonClose @close="close" />
-      </v-toolbar>
-      <v-container>
+      <v-alert flat class="grey lighten-3" dense> Room Booking</v-alert>
+      <v-card-text>
         <v-row>
           <v-col cols="12">
             <v-row>
@@ -232,7 +231,7 @@
             <AssetsButtonSubmit @click="add_room(temp)" />
           </v-col>
         </v-row>
-      </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>

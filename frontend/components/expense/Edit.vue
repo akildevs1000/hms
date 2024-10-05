@@ -208,7 +208,10 @@
                           <ExpenseItem
                             @selectedItem="
                               (e) => {
-                                payload.items.push(e);
+                                payload.items.push({
+                                  admin_expense_id: item.id,
+                                  ...e,
+                                });
                                 calculateOverAll();
                               }
                             "
@@ -322,12 +325,6 @@ export default {
       errorResponse: null,
       vendors: [],
       headers: [
-        {
-          text: `Invoice Number`,
-          value: `bill_number`,
-          align: `left`,
-          width: "250px",
-        },
         {
           text: `Item Details`,
           value: `detail`,

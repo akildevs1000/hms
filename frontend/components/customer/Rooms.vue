@@ -1,129 +1,120 @@
 <template>
   <span>
-    <style scoped>
-      .simple-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .simple-table td {
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-        padding: 5px;
-        text-align: center;
-      }
-    </style>
-    <table class="simple-table mt-0">
-      <TableHeader :cols="headers" />
-      <tbody>
-        <tr
-          style="font-size: 13px"
-          v-for="(item, index) in orderRooms"
-          :key="index"
-        >
-          <td>
-            <small>{{ ++index || "---" }}</small>
-          </td>
-          <td>
-            <small>{{ $dateFormat.dmy(item.date) || "---" }}</small> <br />
-            <small>{{ item.day || "---" }}</small>
-          </td>
-          <td>
-            <small>{{ item.room_no || "---" }}</small> <br /><small>{{
-              item.room_type || "---"
-            }}</small>
-          </td>
-          <td>
-            <small>{{ item.tariff }}</small>
-          </td>
-          <td>
-            <small>{{ item.no_of_adult }}</small>
-          </td>
-          <td>
-            <small>{{ item.no_of_child }}</small>
-          </td>
-          <td>
-            <small>{{ item?.foodplan?.title || "---" }}</small>
-          </td>
-          <template v-if="booking.booking_type == 'hall'">
-            <td>
-              <small>{{
-                $utils.currency_format(
-                  parseFloat(item.extra_booking_hours_charges) +
-                    parseFloat(item.cleaning) +
-                    parseFloat(item.electricity) +
-                    parseFloat(item.generator) +
-                    parseFloat(item.audio) +
-                    parseFloat(item.projector)
-                )
-              }}</small>
-            </td>
-          </template>
-          <template v-else>
-            <td>
-              <small>{{ item.extra_bed_qty || "---" }}</small>
-            </td>
-            <td>
-              <small>{{ item.early_check_in ? "Yes" : "No" }}</small>
-            </td>
-            <td>
-              <small>{{ item.late_check_out ? "Yes" : "No" }}</small>
-            </td>
-          </template>
+    <AssetsTable height="300" :headers="headers" :items="filteredItems">
+      <template #date="{ item }">
+        {{ $dateFormat.dmy(item.date) || "---" }}
+        <br />
+        {{ item.day || "---" }}
+      </template>
+      <template #room="{ item }">
+        {{ item.room_no || "---" }}
+        <br />
+        {{ item.room_type || "---" }}
+      </template>
+      <template #meal="{ item }">
+        {{ item?.foodplan?.title || "---" }}
+      </template>
 
-          <td class="text-right">
-            <small>{{ $utils.currency_format(item.total) || "---" }}</small>
-          </td>
-          <td class="blue--text text-right">
-            <small>
-              <CustomerViewBookingHall
-                v-if="booking.booking_type == 'hall'"
-                :booking="booking"
-                :item="item" />
+      <template #extra_bed_qty="{ item }">
+        {{ item.extra_bed_qty || "---" }}
+      </template>
 
-              <CustomerViewBookingRoom v-else :booking="booking" :item="item"
-            /></small>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <template #early_check_in="{ item }">
+        {{ item.early_check_in ? "Yes" : "No" }}
+      </template>
+
+      <template #late_check_out="{ item }">
+        {{ item.late_check_out ? "Yes" : "No" }}
+      </template>
+
+      <template #extras="{ item }">
+        {{
+          $utils.currency_format(
+            parseFloat(item.extra_booking_hours_charges) +
+              parseFloat(item.cleaning) +
+              parseFloat(item.electricity) +
+              parseFloat(item.generator) +
+              parseFloat(item.audio) +
+              parseFloat(item.projector)
+          )
+        }}
+      </template>
+
+      <template #action="{ item }">
+        <CustomerViewBookingHall
+          v-if="booking.booking_type == 'hall'"
+          :booking="booking"
+          :item="item"
+        />
+
+        <CustomerViewBookingRoom v-else :booking="booking" :item="item" />
+      </template>
+    </AssetsTable>
   </span>
 </template>
 <script>
 export default {
-  props: ["orderRooms", "booking"],
+  props: ["orderRooms", "booking", "room_no"],
   data: () => ({
     headers: [],
+    items: [],
   }),
   created() {
     if (this.booking.booking_type == "hall") {
       this.headers = [
-        `No`,
-        `Date`,
-        `Room`,
-        `Tariff`,
-        `Adults`,
-        `Child`,
-        `Meal`,
-        `Extras `,
-        `Total`,
-        ``,
+        {
+          text: `Date`,
+          value: `date`,
+          align: `center`,
+        },
+        { text: `Room`, value: `room`, align: `center` },
+        { text: `Tariff`, value: `tariff`, align: `center` },
+        { text: `Adults`, value: `no_of_adult`, align: `center` },
+        { text: `Child`, value: `no_of_child`, align: `center` },
+        { text: `Meal`, value: `meal`, align: `center` },
+        { text: `Extras`, value: `extras`, align: `center` },
+        { text: `Total`, value: `total`, align: `right` },
+        { text: ``, value: `action`, align: `center`, width: "30px" },
       ];
     } else {
       this.headers = [
-        `No`,
-        `Date`,
-        `Room`,
-        `Tariff`,
-        `Adults`,
-        `Child`,
-        `Meal`,
-        `Extra Bed`,
-        `Early Checkin`,
-        `Late Checkout`,
-        `Total`,
-        ``,
+        {
+          text: `Date`,
+          value: `date`,
+          align: `center`,
+        },
+        { text: `Room`, value: `room`, align: `center` },
+        { text: `Tariff`, value: `tariff`, align: `center` },
+        { text: `Adults`, value: `no_of_adult`, align: `center` },
+        { text: `Child`, value: `no_of_child`, align: `center` },
+        { text: `Meal`, value: `meal`, align: `center` },
+        {
+          text: `Extra Bed`,
+          value: `extra_bed_qty`,
+          align: `center`,
+        },
+        {
+          text: `Early Checkin`,
+          value: `early_check_in`,
+          align: `center`,
+        },
+        {
+          text: `Late Checkout`,
+          value: `late_check_out`,
+          align: `center`,
+        },
+        { text: `Total`, value: `total`, align: `right` },
+        { text: ``, value: `action`, align: `center`, width: "30px" },
       ];
     }
+  },
+  computed: {
+    filteredItems() {
+      if (this.room_no > 0) {
+        return this.orderRooms.filter((e) => e.room_no == this.room_no);
+      }
+      return this.orderRooms;
+    },
   },
 };
 </script>

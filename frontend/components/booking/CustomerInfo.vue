@@ -270,17 +270,18 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="text-right">
+      <v-col cols="12" class="text-right mb-2">
         <v-hover v-slot:default="{ hover, props }">
           <span v-bind="props">
             <v-btn
               x-small
               :outlined="!hover"
               :class="hover ? `white--text` : `primary--text`"
+              class="pl-4"
               rounded
               color="primary"
               @click="nextTab"
-              >Next <v-icon small>mdi-chevron-right</v-icon></v-btn
+              >Next <v-icon small center>mdi-chevron-right</v-icon></v-btn
             >
           </span>
         </v-hover>

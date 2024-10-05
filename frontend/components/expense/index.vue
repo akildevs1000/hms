@@ -65,7 +65,13 @@
                   :model="Model"
                   :endpoint="endpoint"
                   :item="item"
-                  @response="getDataFromApi"
+                  @response="
+                    () => {
+                      ExpensePaymentKey++;
+                      getDataFromApi();
+                    }
+                  "
+                  :key="ExpensePaymentKey + 1"
                 />
               </v-list-item-title>
             </v-list-item>
@@ -81,7 +87,7 @@
                       getDataFromApi();
                     }
                   "
-                  :key="ExpensePaymentKey"
+                  :key="ExpensePaymentKey + 2"
                 />
               </v-list-item-title>
             </v-list-item>
