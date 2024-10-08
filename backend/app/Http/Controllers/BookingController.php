@@ -24,6 +24,7 @@ use App\Models\TaxSlabs;
 use App\Models\Template;
 use App\Models\Transaction;
 use App\Models\Weekend;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -3156,60 +3157,43 @@ class BookingController extends Controller
 
     public function getTenDaysForecast($id = 0)
     {
+        $AvailableRooms = Room::where('company_id', $id)->count();
 
-        $today = date("Y-m-d");
-        $tenDaysLater = date("Y-m-d", strtotime("+10 days", strtotime($today)));
 
-        $AvailableRoomCount = Room::where('company_id', $id)->count(); // This is 100%
-
-        // Create an array of all the dates between today and 10 days later
+        $today = Carbon::today();
         $dates = [];
         for ($i = 0; $i < 10; $i++) {
             $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
-
-            $bookedData = BookedRoom::without("booking")
-                ->orderBy("check_in")
-                ->whereDate('check_in', $date)
-                ->orWhereDate('check_out', $date)
-                ->where('booking_status', BookedRoom::BOOKED);
             $dates[$date] = [
-                "date" => $date,
-                "label" => date("D", strtotime("+$i days", strtotime($today))),
-                "value" => 0, // Default to 0
-                "bookedCount" => $bookedData->count(), // Default to 0
-                "availableCount" => $AvailableRoomCount, // Default to 0
+                "label" => date("D", strtotime($date)),
+                "bookedCount" => 0,
+                "bookedPercent" => 0,
+                "availableCount" => $AvailableRooms,
+                "availablePercent" => 100,
             ];
-        }
-
-        return $dates;
-
-        // Get booked room data and map it
-        $bookedData = BookedRoom::without("booking")
-            ->orderBy("check_in")
-            ->whereDate('check_in', '>=', $today)
-            ->orWhereDate('check_in', '<=', $tenDaysLater)
-            ->where('booking_status', BookedRoom::BOOKED)
-            ->get()
-            ->groupBy("check_in")
-            ->map(function ($group, $key) use ($AvailableRoomCount) {
-                $bookedCount = $group->count();
-                $bookedPercent = ($bookedCount / $AvailableRoomCount) * 100;
-
-                return [
-                    "label" => date("D", strtotime($key)),  // Day abbreviation
-                    "value" => round($bookedPercent, 2),    // Rounded to 2 decimal places
-                    "bookedCount" => $bookedCount, // Default to 0
-                    "availableCount" => $AvailableRoomCount - $bookedCount, // Default to 0
-                ];
-            });
-
-        // Merge booked data with the full list of dates
-        foreach ($bookedData as $key => $value) {
-            if (isset($dates[$key])) {
-                $dates[$key] = $value;  // Override default 0 values with booked data
+            $bookedData = BookedRoom::without("booking", "postings")
+                ->orderBy("check_in")
+                ->whereDate('check_in', ">=",  $today)
+                ->orWhereDate('check_in', "<=",  $today)
+                ->where('booking_status', BookedRoom::BOOKED)
+                ->get(["check_in", "check_out"]);
+            $counter = 0;
+            foreach ($bookedData as $book) {
+                $check_in = $book->check_in;
+                $check_out = $book->check_out;
+                if ($date >= $check_in && $date <= $check_out) {
+                    ++$counter;
+                    $dates[$date] = [
+                        "label" => date("D", strtotime($date)),
+                        "bookedCount" => $counter,
+                        "bookedPercent" => round(($counter / $AvailableRooms) * 100, 2),
+                        "availableCount" => $AvailableRooms - $counter,
+                        "availablePercent" => round((($AvailableRooms - $counter) / $AvailableRooms) * 100, 2),
+                    ];
+                }
             }
         }
 
-        return array_values($dates); // Return as an indexed array
+        return array_values($dates);
     }
 }

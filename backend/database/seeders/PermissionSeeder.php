@@ -20,6 +20,12 @@ class PermissionSeeder extends Seeder
         // AssignPermission::truncate();
 
         // //new
+        Permission::create(['module' => 'dashboard', 'title' => 'Dashboard Access', 'name' => 'dashboard_access']);
+        Permission::create(['module' => 'dashboard', 'title' => 'Dashboard View', 'name' => 'dashboard_view']);
+        Permission::create(['module' => 'dashboard', 'title' => 'Dashboard Create', 'name' => 'dashboard_create']);
+        Permission::create(['module' => 'dashboard', 'title' => 'Dashboard Edit', 'name' => 'dashboard_edit']);
+        Permission::create(['module' => 'dashboard', 'title' => 'Dashboard Delete', 'name' => 'dashboard_delete']);
+
         Permission::create(['module' => 'calendar', 'title' => 'Calendar Access', 'name' => 'calendar_access']);
         Permission::create(['module' => 'calendar', 'title' => 'Calendar View', 'name' => 'calendar_view']);
         Permission::create(['module' => 'calendar', 'title' => 'Calendar Create', 'name' => 'calendar_create']);

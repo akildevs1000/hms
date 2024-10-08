@@ -2,7 +2,7 @@
   <v-card dense>
     <v-card-text>
       <v-row no-gutter>
-        <v-col> <v-icon left color="blue">mdi-chat</v-icon> Chat </v-col>
+        <v-col style="font-size: 12px"> <v-icon left color="blue">mdi-chat</v-icon> Chat </v-col>
         <v-col cols="12">
           <v-simple-table dense>
             <template v-slot:default>

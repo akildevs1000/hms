@@ -369,119 +369,119 @@
             </v-card>
           </v-col>
           <v-col cols="12" class="pt-0">
-            <v-card style="min-height:395px;">
+            <v-card style="min-height: 395px">
               <v-tabs hide-slider right v-model="tab" color="#0d652d">
-              <v-tab style="font-weight: bold">All</v-tab>
-              <v-tab style="font-weight: bold">Occupied</v-tab>
-              <v-tab style="font-weight: bold">Arrival</v-tab>
-              <v-tab style="font-weight: bold">Checkedout </v-tab>
-              <v-tab style="font-weight: bold">Blocked</v-tab>
-              <!-- <v-tab>Sold </v-tab> -->
-              <v-tab style="font-weight: bold">Available</v-tab>
-              <!-- <v-tab>Compliment</v-tab> -->
-              <v-tab-item>
-                <v-card color="basil" style="height: auto">
-                  <v-card-text>
-                    <DashboardRoomsList
-                      ref="RoomComp"
-                      name="All"
-                      :searchQuery="searchQuery"
-                      :tabFilter="'All'"
-                      :key="keyTabAll"
-                      :data="rooms"
-                      :filterDate="filterDate"
-                      :calenderColorCodes="calenderColorCodes"
-                      @call_room_list="refreshRoomList"
-                    ></DashboardRoomsList
-                  ></v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <v-card color="basil" style="height: auto">
-                  <v-card-text>
-                    <DashboardRoomsList
-                      ref="RoomComp"
-                      name="occupied"
-                      :searchQuery="searchQuery"
-                      :tabFilter="'occupied'"
-                      :key="keyTabOccupied"
-                      :data="rooms"
-                      :filterDate="filterDate"
-                      :calenderColorCodes="calenderColorCodes"
-                      @call_room_list="refreshRoomList"
-                    ></DashboardRoomsList>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <v-card color="basil">
-                  <v-card-text>
-                    <DashboardRoomsList
-                      ref="RoomComp"
-                      name="expected_arrival"
-                      :searchQuery="searchQuery"
-                      :tabFilter="'expected_arrival'"
-                      :key="keyTabexpected_arrival"
-                      :data="rooms"
-                      :filterDate="filterDate"
-                      :calenderColorCodes="calenderColorCodes"
-                      @call_room_list="refreshRoomList"
-                    ></DashboardRoomsList
-                  ></v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <v-card color="basil">
-                  <v-card-text>
-                    <DashboardRoomsList
-                      ref="RoomComp"
-                      name="checkedout"
-                      :searchQuery="searchQuery"
-                      :tabFilter="'checkedout'"
-                      :key="keyTabdirty"
-                      :data="rooms"
-                      :filterDate="filterDate"
-                      :calenderColorCodes="calenderColorCodes"
-                      @call_room_list="refreshRoomList"
-                    ></DashboardRoomsList>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <v-card color="basil">
-                  <v-card-text>
-                    <DashboardRoomsList
-                      ref="RoomComp"
-                      name="blocked"
-                      :searchQuery="searchQuery"
-                      :tabFilter="'blocked'"
-                      :key="keyTabblocked"
-                      :data="rooms"
-                      :filterDate="filterDate"
-                      :calenderColorCodes="calenderColorCodes"
-                      @call_room_list="refreshRoomList"
-                    ></DashboardRoomsList
-                  ></v-card-text>
-                </v-card>
-              </v-tab-item>
-              <v-tab-item>
-                <v-card color="basil">
-                  <v-card-text>
-                    <DashboardRoomsList
-                      ref="RoomComp"
-                      name="available"
-                      :searchQuery="searchQuery"
-                      :tabFilter="'available'"
-                      :key="keyTabavailable"
-                      :data="rooms"
-                      :filterDate="filterDate"
-                      :calenderColorCodes="calenderColorCodes"
-                      @call_room_list="refreshRoomList"
-                    ></DashboardRoomsList
-                  ></v-card-text>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
+                <v-tab style="font-weight: bold">All</v-tab>
+                <v-tab style="font-weight: bold">Occupied</v-tab>
+                <v-tab style="font-weight: bold">Arrival</v-tab>
+                <v-tab style="font-weight: bold">Checkedout </v-tab>
+                <v-tab style="font-weight: bold">Blocked</v-tab>
+                <!-- <v-tab>Sold </v-tab> -->
+                <v-tab style="font-weight: bold">Available</v-tab>
+                <!-- <v-tab>Compliment</v-tab> -->
+                <v-tab-item>
+                  <v-card color="basil" style="height: auto">
+                    <v-card-text>
+                      <DashboardRoomsList
+                        ref="RoomComp"
+                        name="All"
+                        :searchQuery="searchQuery"
+                        :tabFilter="'All'"
+                        :key="keyTabAll"
+                        :data="rooms"
+                        :filterDate="filterDate"
+                        :calenderColorCodes="calenderColorCodes"
+                        @call_room_list="refreshRoomList"
+                      ></DashboardRoomsList
+                    ></v-card-text>
+                  </v-card>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card color="basil" style="height: auto">
+                    <v-card-text>
+                      <DashboardRoomsList
+                        ref="RoomComp"
+                        name="occupied"
+                        :searchQuery="searchQuery"
+                        :tabFilter="'occupied'"
+                        :key="keyTabOccupied"
+                        :data="rooms"
+                        :filterDate="filterDate"
+                        :calenderColorCodes="calenderColorCodes"
+                        @call_room_list="refreshRoomList"
+                      ></DashboardRoomsList>
+                    </v-card-text>
+                  </v-card>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card color="basil">
+                    <v-card-text>
+                      <DashboardRoomsList
+                        ref="RoomComp"
+                        name="expected_arrival"
+                        :searchQuery="searchQuery"
+                        :tabFilter="'expected_arrival'"
+                        :key="keyTabexpected_arrival"
+                        :data="rooms"
+                        :filterDate="filterDate"
+                        :calenderColorCodes="calenderColorCodes"
+                        @call_room_list="refreshRoomList"
+                      ></DashboardRoomsList
+                    ></v-card-text>
+                  </v-card>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card color="basil">
+                    <v-card-text>
+                      <DashboardRoomsList
+                        ref="RoomComp"
+                        name="checkedout"
+                        :searchQuery="searchQuery"
+                        :tabFilter="'checkedout'"
+                        :key="keyTabdirty"
+                        :data="rooms"
+                        :filterDate="filterDate"
+                        :calenderColorCodes="calenderColorCodes"
+                        @call_room_list="refreshRoomList"
+                      ></DashboardRoomsList>
+                    </v-card-text>
+                  </v-card>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card color="basil">
+                    <v-card-text>
+                      <DashboardRoomsList
+                        ref="RoomComp"
+                        name="blocked"
+                        :searchQuery="searchQuery"
+                        :tabFilter="'blocked'"
+                        :key="keyTabblocked"
+                        :data="rooms"
+                        :filterDate="filterDate"
+                        :calenderColorCodes="calenderColorCodes"
+                        @call_room_list="refreshRoomList"
+                      ></DashboardRoomsList
+                    ></v-card-text>
+                  </v-card>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card color="basil">
+                    <v-card-text>
+                      <DashboardRoomsList
+                        ref="RoomComp"
+                        name="available"
+                        :searchQuery="searchQuery"
+                        :tabFilter="'available'"
+                        :key="keyTabavailable"
+                        :data="rooms"
+                        :filterDate="filterDate"
+                        :calenderColorCodes="calenderColorCodes"
+                        @call_room_list="refreshRoomList"
+                      ></DashboardRoomsList
+                    ></v-card-text>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs>
             </v-card>
           </v-col>
         </v-row>
@@ -526,12 +526,7 @@
                           {{ item.text }}
                         </td>
                         <td style="font-size: 11px" class="border-bottom">
-                          <span
-                            v-if="showPriceFormat && showPriceFormat == 'true'"
-                          >
-                            {{ getPriceFormat(item.value) }}
-                          </span>
-                          <span v-else>
+                          <span>
                             {{ item.value == 0 ? 0 : parseInt(item.value) }}
                           </span>
                         </td>
@@ -571,12 +566,7 @@
                           {{ item.text }}
                         </td>
                         <td style="font-size: 11px" class="border-bottom">
-                          <span
-                            v-if="showPriceFormat && showPriceFormat == 'true'"
-                          >
-                            {{ getPriceFormat(item.value) }}
-                          </span>
-                          <span v-else>
+                          <span>
                             {{ item.value == 0 ? 0 : parseInt(item.value) }}
                           </span>
                         </td>
@@ -593,9 +583,9 @@
           </v-col>
           <v-col cols="12" class="pt-2">
             <WidgetsChatSummary />
-          </v-col> 
+          </v-col>
           <v-col cols="12" class="pt-2">
-            <WidgetsTenDaysForCast />
+            <WidgetsTenDaysForCast :key="keyTabAll" />
           </v-col>
         </v-row>
       </v-col>
