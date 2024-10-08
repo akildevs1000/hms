@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="checkOutDialog" persistent max-width="850px">
+  <v-dialog v-model="checkOutDialog" persistent max-width="900px">
+    <AssetsIconClose left="890" @click="checkOutDialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> Check Out </span>
     </template>
@@ -7,14 +8,9 @@
       <v-alert dense class="grey lighten-3 primary--text">
         <v-row>
           <v-col> <div style="font-size: 18px">Check Out</div> </v-col>
-          <v-col class="text-center">
+          <v-col class="text-right">
             <div style="font-size: 18px; color: #1402f7">
               Reservation # {{ BookingData.reservation_no }}
-            </div>
-          </v-col>
-          <v-col>
-            <div class="text-right">
-              <AssetsButtonClose @close="checkOutDialog = false" />
             </div>
           </v-col>
         </v-row>
@@ -37,7 +33,7 @@
                 </v-avatar>
               </v-col>
             </v-row>
-            <v-container>
+            <v-container v-if="!isGroupBooking">
               <v-row>
                 <v-col cols="12">
                   <v-text-field
@@ -59,17 +55,6 @@
                     hide-details
                   ></v-text-field>
                 </v-col>
-                <!-- <v-col cols="12">
-            <v-textarea
-              rows="2"
-              v-model="customer_full_address"
-              readonly
-              label="Address"
-              outlined
-              dense
-              hide-details
-            ></v-textarea>
-          </v-col> -->
                 <v-col cols="12">
                   <v-text-field
                     rows="2"
@@ -111,50 +96,40 @@
                     hide-details
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" class="pt-15">
+              </v-row>
+              <v-row>
+                <v-col cols="12" class="pt-10">
                   <v-row no-gutter>
                     <v-col cols="8">
                       <table style="width: 100%">
                         <tr>
                           <td
-                            class="text-left"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
+                            class="text-left border-bottom"
+                            style="width: 110px"
                           >
                             Room
                           </td>
                           <td
-                            class="text-right"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
+                            class="text-right border-bottom"
+                            style="width: 110px"
                           >
                             {{
                               isGroupBooking
-                                ? BookingData.group_name
+                                ? "Group Booking"
                                 : $utils.currency_format(roomData.price)
                             }}
                           </td>
                         </tr>
                         <tr>
                           <td
-                            class="text-left"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
+                            class="text-left border-bottom"
+                            style="width: 110px"
                           >
                             Posting
                           </td>
                           <td
-                            class="text-right"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
+                            class="text-right border-bottom"
+                            style="width: 110px"
                           >
                             {{
                               $utils.currency_format(
@@ -165,30 +140,30 @@
                         </tr>
                         <tr>
                           <td
-                            class="text-left"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
+                            class="text-left border-bottom"
+                            style="width: 110px"
                           >
                             Total
                           </td>
                           <td
-                            class="text-right"
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
+                            class="text-right border-bottom"
+                            style="width: 110px"
                           >
                             {{ $utils.currency_format(roomData.grand_total) }}
                           </td>
                           <!-- <td colspan="2" class="text-center">Total Rs.</td> -->
                         </tr>
                         <tr>
-                          <td class="text-left red--text" style="width: 110px">
+                          <td
+                            class="text-left border-bottom red--text"
+                            style="width: 110px"
+                          >
                             Paid
                           </td>
-                          <td class="text-right" style="width: 110px">
+                          <td
+                            class="text-right border-bottom"
+                            style="width: 110px"
+                          >
                             {{
                               $utils.currency_format(BookingData.paid_amounts)
                             }}
@@ -219,44 +194,194 @@
                 </v-col>
               </v-row>
             </v-container>
+            <v-container v-else>
+              <v-row v-if="sub_customer && sub_customer.id">
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="sub_customer.first_name"
+                    readonly
+                    label="First Name"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="sub_customer.last_name"
+                    readonly
+                    label="Last Name"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="sub_customer.contact_no"
+                    readonly
+                    label="Phone Number"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="roomData.checkin_datetime_only"
+                    readonly
+                    label="Check IN"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="roomData.checkout_datetime_only"
+                    readonly
+                    label="Check Out"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="BookingData.room_no"
+                    readonly
+                    label="Room Number"
+                    outlined
+                    dense
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" class="pt-10">
+                  <v-row no-gutter>
+                    <v-col cols="8">
+                      <table style="width: 100%">
+                        <tr>
+                          <td
+                            class="text-left border-bottom"
+                            style="width: 110px"
+                          >
+                            Room
+                          </td>
+                          <td
+                            class="text-right border-bottom"
+                            style="width: 110px"
+                          >
+                            {{
+                              isGroupBooking
+                                ? "Group Booking"
+                                : $utils.currency_format(roomData.price)
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            class="text-left border-bottom"
+                            style="width: 110px"
+                          >
+                            Posting
+                          </td>
+                          <td
+                            class="text-right border-bottom"
+                            style="width: 110px"
+                          >
+                            {{ $utils.currency_format(guestPostingAmount) }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            class="text-left border-bottom red--text"
+                            style="width: 110px"
+                          >
+                            Discount
+                          </td>
+                          <td
+                            class="text-right border-bottom"
+                            style="width: 110px"
+                          >
+                            {{
+                              $utils.currency_format(posting_payment.discount)
+                            }}
+                          </td>
+                          <!-- <td colspan="2" class="text-center">Balance Rs.</td> -->
+                        </tr>
+                        <tr>
+                          <td
+                            class="text-left border-bottom red--text"
+                            style="width: 110px"
+                          >
+                            Paid
+                          </td>
+                          <td
+                            class="text-right border-bottom"
+                            style="width: 110px"
+                          >
+                            {{ $utils.currency_format(posting_payment.paid) }}
+                          </td>
+                          <!-- <td colspan="2" class="text-center">Balance Rs.</td> -->
+                        </tr>
+                      </table>
+                    </v-col>
+                    <v-col class="pt-8">
+                      <table>
+                        <tr>
+                          <td class="text-center">Total Rs.</td>
+                        </tr>
+                        <tr>
+                          <td class="text-center">
+                            <span style="font-size: 18px" class="blue--text">
+                              {{
+                                $utils.currency_format(
+                                  parseFloat(setInitialBalance)
+                                )
+                              }}
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-col>
           <v-divider vertical></v-divider>
           <v-col cols="6">
             <v-container>
               <v-row>
-                <v-col cols="12">
+                <v-col cols="12" v-if="!isGroupBooking">
                   <Heading class="mb-3" label="Transactions" />
                   <table style="width: 100%">
                     <tr style="font-size: 13px">
                       <td
-                        class="text-center primary--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        class="text-center primary--text border-bottom"
+                        style="width: 110px"
                       >
                         Date
                       </td>
                       <td
-                        class="text-center primary--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        class="text-right primary--text border-bottom"
+                        style="width: 110px"
                       >
                         Debit
                       </td>
                       <td
-                        class="text-center primary--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        class="text-right primary--text border-bottom"
+                        style="width: 110px"
                       >
                         Credit
                       </td>
                       <td
-                        class="text-center primary--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        class="text-right primary--text border-bottom"
+                        style="width: 110px"
                       >
                         Balance
-                      </td>
-                      <td
-                        class="text-center primary--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
-                        Receipt
                       </td>
                     </tr>
 
@@ -266,42 +391,27 @@
                       :key="index"
                     >
                       <td
-                        class="text-center"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        class="text-center border-bottom"
+                        style="width: 110px"
                       >
                         {{ item.created_at || "---" }}
                       </td>
-                      <td
-                        class="text-center"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
+                      <td class="text-right border-bottom" style="width: 110px">
                         {{
                           item && item.debit == 0
                             ? "---"
                             : $utils.currency_format(item.debit)
                         }}
                       </td>
-                      <td
-                        class="text-center"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
+                      <td class="text-right border-bottom" style="width: 110px">
                         {{
                           item && item.credit == 0
                             ? "---"
                             : $utils.currency_format(item.credit)
                         }}
                       </td>
-                      <td
-                        class="text-center"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
+                      <td class="text-right border-bottom" style="width: 110px">
                         {{ $utils.currency_format(item.balance) || "---" }}
-                      </td>
-                      <td
-                        class="text-center blue--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
-                      >
-                        {{ item.id }}
                       </td>
                     </tr>
 
@@ -309,24 +419,29 @@
                       <td
                         colspan="3"
                         class="text-right primary--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        style="width: 110px"
                       >
                         Total Balance
                       </td>
                       <td
-                        colspan="2"
-                        class="text-left pl-3 primary--text"
-                        style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        class="text-right pl-3 primary--text"
+                        style="width: 110px"
                       >
                         {{ $utils.currency_format(totalTransactionAmount) }}
                       </td>
                     </tr>
                   </table>
                 </v-col>
+                <v-col v-else>
+                  <Heading class="mb-3" label="Postings" />
+                  <BookingPostingList
+                    :room_id="roomData && roomData.id"
+                  ></BookingPostingList>
+                </v-col>
                 <v-col cols="12">
                   <v-divider></v-divider>
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="12" v-if="!isGroupBooking">
                   <v-card outlined>
                     <v-container>
                       <v-row>
@@ -408,8 +523,113 @@
                         </v-col>
                         <v-col cols="12" class="text-center mt-5">
                           <AssetsButtonCancel @click="$emit(`close-dialog`)" />
-                          &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+                          &nbsp; &nbsp;
                           <AssetsButtonSubmit />
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-card outlined>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="6">
+                          <Heading label="Payment (Postings)" />
+                        </v-col>
+                        <v-col cols="6" class="text-right">
+                          <!-- <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-printer</v-icon
+                          >
+                          &nbsp;
+                          <v-icon
+                            small
+                            color="primary"
+                            @click="redirect_to_invoice(roomData.booking_id)"
+                            >mdi-download</v-icon
+                          > -->
+                        </v-col>
+                        <v-col cols="4">
+                          <v-autocomplete
+                            label="Mode"
+                            v-model="postingPaymentPayload.payment_mode"
+                            :items="[
+                              'Cash',
+                              'Card',
+                              'Online',
+                              'Bank',
+                              'UPI',
+                              'Cheque',
+                            ]"
+                            item-text="name"
+                            item-value="id"
+                            dense
+                            outlined
+                            hide-details
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="8">
+                          <v-text-field
+                            label="Reference"
+                            dense
+                            outlined
+                            type="text"
+                            v-model="postingPaymentPayload.reference"
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            readonly
+                            v-model="setInitialBalance"
+                            label="Balance"
+                            outlined
+                            dense
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            v-model="postingPaymentPayload.discount"
+                            label="Discount"
+                            outlined
+                            dense
+                            hide-details
+                            @keyup="
+                              setAfterDiscount(postingPaymentPayload.discount)
+                            "
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            readonly
+                            v-model="postingPaymentPayload.after_discount"
+                            label="After Discount"
+                            outlined
+                            dense
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="postingPaymentPayload.paid"
+                            label="Amount to Pay"
+                            outlined
+                            dense
+                            hide-details
+                            @keyup="setNewBalance(postingPaymentPayload)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="text-center mt-5">
+                          <AssetsButtonCancel @click="$emit(`close-dialog`)" />
+                          &nbsp; &nbsp;
+                          <AssetsButtonSubmit
+                            :isDisabled="!setInitialBalance"
+                            @click="processPostingPayment"
+                          />
                         </v-col>
                       </v-row>
                     </v-container>
@@ -462,6 +682,16 @@ export default {
 
   data() {
     return {
+      old_balance: 0,
+      postingPaymentPayload: {
+        paid: 0,
+        balance: 0,
+        payment_mode: "Cash",
+        reference: "REF123456",
+        discount: 0,
+        after_discount: 0,
+      },
+
       payment_mode_id: 1,
       change_checkout_time: false,
 
@@ -538,6 +768,29 @@ export default {
     }
   },
   computed: {
+    sub_customer() {
+      return this.roomData?.sub_customer_room_history?.sub_customer || null;
+    },
+    posting_payment() {
+      if (this.roomData && this.roomData.posting_payment) {
+        return this.roomData.posting_payment;
+      }
+    },
+    guestPostingAmount() {
+      return this.roomData.postings.reduce((acc, cur) => {
+        return acc + cur.amount_with_tax;
+      }, 0);
+    },
+    setInitialBalance() {
+      if (!this.posting_payment) {
+        return 0;
+      }
+
+      if (this.posting_payment.paid == 0 && this.posting_payment.balance == 0) {
+        return this.guestPostingAmount;
+      }
+      return this.posting_payment.balance;
+    },
     isGroupBooking() {
       return this.BookingData.group_name == "yes";
     },
@@ -696,6 +949,31 @@ export default {
 
     alert(title = "Success!", message = "hello", type = "error") {
       this.$swal(title, message, type);
+    },
+
+    setAfterDiscount(discount) {
+      this.postingPaymentPayload.after_discount =
+        parseFloat(this.setInitialBalance) - parseFloat(discount);
+    },
+    setNewBalance({ after_discount, paid }) {
+      this.postingPaymentPayload.balance =
+        parseFloat(after_discount) - parseFloat(paid);
+    },
+    async processPostingPayment() {
+      let payload = {
+        booking_id: this.roomData.booking_id,
+        room_id: this.roomData.room_id,
+        sub_customer_id: this.sub_customer.id,
+        ...this.postingPaymentPayload,
+      };
+
+      console.log(payload);
+      try {
+        await this.$axios.post(`posting-payment`, payload);
+        alert("Payment has been processed");
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

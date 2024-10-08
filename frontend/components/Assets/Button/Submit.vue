@@ -2,6 +2,7 @@
   <v-hover v-slot:default="{ hover, props }">
     <span v-bind="props">
       <v-btn
+        :disabled="isDisabled || false"
         x-small
         :outlined="!hover"
         rounded
@@ -16,6 +17,7 @@
 
 <script>
 export default {
+  props: ["isDisabled"],
   methods: {
     submitClose() {
       this.$emit("click");
