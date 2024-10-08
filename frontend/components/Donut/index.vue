@@ -14,8 +14,8 @@
         legend="false"
         :options="chartOptions"
         :series="series"
-      ></apexchart
-    ></v-col>
+      ></apexchart>
+    </v-col>
     <v-col
       cols="7"
       style="padding-left: 0px; margin: auto; font-size: 11px"
@@ -99,7 +99,7 @@ export default {
             labels: {
               show: true,
               name: {
-                show: true,
+                show: false,
                 fontSize: "22px",
                 fontFamily: "Source Sans Pro , sans-serif !important",
                 color: "#dfsda",
@@ -109,8 +109,8 @@ export default {
                 show: true,
                 fontSize: "16px",
                 fontFamily: "Source Sans Pro , sans-serif !important",
-                color: undefined,
-                offsetY: 16,
+                // fontWeight: "bold", // Make the total value bold
+                color: "#8a8a8a",
                 formatter: function (val) {
                   return val;
                 },

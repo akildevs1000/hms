@@ -279,25 +279,17 @@
                               </div>
                             </v-col>
                             <v-col>
-                              <table
-                                style="width: 100%; border-collapse: collapse"
-                              >
+                              <table>
                                 <tr>
                                   <td
-                                    class="text-left"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     Room:
                                   </td>
                                   <td
-                                    class="text-right"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-right border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     {{
                                       transactionSummary &&
@@ -310,20 +302,14 @@
                                 </tr>
                                 <tr>
                                   <td
-                                    class="text-left"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     Posting:
                                   </td>
                                   <td
-                                    class="text-right"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-right border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     {{
                                       transactionSummary &&
@@ -335,20 +321,14 @@
                                 </tr>
                                 <tr>
                                   <td
-                                    class="text-left"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     Total:
                                   </td>
                                   <td
-                                    class="text-right"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-right border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     {{
                                       transactionSummary &&
@@ -360,46 +340,53 @@
                                 </tr>
                                 <tr>
                                   <td
-                                    class="text-left"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
+                                  >
+                                    Discount:
+                                  </td>
+                                  <td
+                                    class="text-right border-bottom red--text"
+                                    style="font-size: 11px"
+                                  >
+                                    -
+                                    {{
+                                      $utils.currency_format(booking.discount)
+                                    }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     Paid:
                                   </td>
                                   <td
-                                    class="text-right red--text"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-right border-bottom red--text"
+                                    style="font-size: 11px"
                                   >
                                     -{{
-                                      transactionSummary &&
                                       $utils.currency_format(
-                                        transactionSummary.sumCredit
+                                        booking.paid_amounts
                                       )
                                     }}
                                   </td>
                                 </tr>
                                 <tr>
                                   <td
-                                    class="text-left"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
                                   >
                                     Balance:
                                   </td>
                                   <td
-                                    class="text-right primary--text"
-                                    style="
-                                      font-size: 11px;
-                                      border-bottom: 1px solid #ccc;
-                                    "
+                                    class="text-right border-bottom primary--text"
+                                    style="font-size: 11px"
                                   >
+                                    <!-- {{
+                                      $utils.currency_format(booking.balance)
+                                    }} -->
                                     {{
                                       transactionSummary &&
                                       $utils.currency_format(
@@ -759,7 +746,7 @@
                           </v-row>
                         </v-col>
 
-                        <v-col v-if="customer && customer.id">
+                        <v-col v-if="sub_customer && sub_customer.id">
                           <v-row>
                             <v-col cols="2">
                               <v-text-field
@@ -875,6 +862,19 @@
                             </v-col>
                           </v-row>
                         </v-col>
+                        <v-col v-else>
+                          <div
+                            class="text-center"
+                            style="
+                              height: 100%;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                            "
+                          >
+                            No Guest Added Yet
+                          </div>
+                        </v-col>
                       </v-row>
                     </v-tab-item>
                     <v-tab-item class="px-3 py-4">
@@ -904,9 +904,11 @@
                     </v-tab-item>
                     <v-tab-item class="px-3 pt-5">
                       <CustomerTransactions
+                        :BookingId="BookingId"
                         :bookedRooms="bookedRooms"
                         :transactions="transactions"
                         :totalTransactionAmount="totalTransactionAmount"
+                        @response="ViewBookingDialog = false"
                       />
                     </v-tab-item>
 

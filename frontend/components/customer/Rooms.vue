@@ -39,14 +39,15 @@
           )
         }}
       </template>
-
+      <template #total="{ item }">
+        {{ $utils.currency_format(item.total) }}
+      </template>
       <template #action="{ item }">
         <CustomerViewBookingHall
           v-if="booking.booking_type == 'hall'"
           :booking="booking"
           :item="item"
         />
-
         <CustomerViewBookingRoom v-else :booking="booking" :item="item" />
       </template>
     </AssetsTable>

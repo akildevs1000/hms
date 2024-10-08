@@ -61,7 +61,18 @@ export default ({ app }, inject) => {
     full_address({ city, state, country }) {
       const formatValue = (value) => value && value !== "null" ? value : "---";
       return `${formatValue(city)} ${formatValue(state)} ${formatValue(country)}`;
-    }
+    },
+    getRelatedClass(status_id) {
+      let status = {
+        0: "available",
+        1: "booked",
+        2: "occupied",
+        3: "checked_out",
+        4: "blocked",
+      };
+
+      return status[status_id || ""];
+    },
   });
 
   inject("dateFormat", {

@@ -44,12 +44,7 @@
                 item-value="name"
                 outlined
                 hide-details
-                :rules="[
-                  (v) => !!v || 'Name is required',
-                  (v) =>
-                    (v && v.length <= 10) ||
-                    'Name must be less than 10 characters',
-                ]"
+                :rules="[(v) => !!v || 'Name is required']"
               ></v-autocomplete>
             </v-col>
             <v-col md="8">
@@ -259,7 +254,7 @@
     </v-row>
     <v-row>
       <v-col md="12">
-        <v-textarea 
+        <v-textarea
           class="custom-text-field"
           rows="3"
           label="Customer Request"

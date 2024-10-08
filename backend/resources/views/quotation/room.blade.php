@@ -278,7 +278,7 @@
             </td>
 
             <td class="text-right border-none col-4">
-                <p class="text-right">Ref: {{ $quotation->ref_no ?? '' }}</p>
+                <p class="text-right" style="color: #408dfb"><span style="font-size: 13px">Quotation</span>: {{ $quotation->ref_no ?? '' }}</p>
             </td>
         </tr>
     </table>

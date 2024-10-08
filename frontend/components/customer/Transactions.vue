@@ -54,21 +54,13 @@
         {{ (item && item.payment_mode && item.payment_mode.name) || "---" }}
       </template>
       <template #debit="{ item }">
-        {{
-          item && item.debit == 0 ? "---" : $utils.currency_format(item.debit)
-        }}
+        {{ $utils.currency_format(item.debit) }}
       </template>
       <template #credit="{ item }">
-        {{
-          item && item.credit == 0 ? "---" : $utils.currency_format(item.credit)
-        }}
+        {{ $utils.currency_format(item.credit) }}
       </template>
       <template #balance="{ item }">
-        {{
-          item && item.balance == 0
-            ? "---"
-            : $utils.currency_format(item.balance)
-        }}
+        {{ $utils.currency_format(item.balance) }}
       </template>
       <template #row>
         <tr style="font-size: 13px">
@@ -94,14 +86,14 @@
                       <v-col cols="4">
                         <v-autocomplete
                           label="Mode"
-                          v-model="payment.payment_mode"
+                          v-model="payment.payment_mode_id"
                           :items="[
-                            'Cash',
-                            'Card',
-                            'Online',
-                            'Bank',
-                            'UPI',
-                            'Cheque',
+                            { id: 1, name: 'Cash' },
+                            { id: 2, name: 'Card' },
+                            { id: 3, name: 'Online' },
+                            { id: 4, name: 'Bank' },
+                            { id: 5, name: 'UPI' },
+                            { id: 6, name: 'Cheque' },
                           ]"
                           item-text="name"
                           item-value="id"
@@ -143,7 +135,7 @@
                       <v-col cols="4">
                         <v-text-field
                           readonly
-                          v-model="payment.after_discount_balance"
+                          v-model="payment.after_discount"
                           label="After Discount"
                           outlined
                           dense
@@ -185,7 +177,7 @@
                     dark
                   >
                     <div
-                      :class="getRelatedClass(room.booking_status)"
+                      :class="$utils.getRelatedClass(room.booking_status)"
                       style="border-radius: 5px"
                       class="text-center white--text pa-1 ma-1"
                     >
@@ -203,17 +195,20 @@
 </template>
 <script>
 export default {
-  props: ["transactions", "totalTransactionAmount","bookedRooms"],
+  props: ["transactions", "totalTransactionAmount", "bookedRooms", "BookingId"],
   data: () => ({
     payment: {
+      payment_mode_id: 1,
+      reference: "---",
       paid: 0,
       balance: 0,
-      payment_mode: "Cash",
-      reference: "REF123456",
       discount: 0,
-      after_discount_balance: 0,
+      after_discount: 0,
     },
   }),
+  created() {
+    this.payment.after_discount = this.totalTransactionAmount;
+  },
   watch: {
     // Detect changes in room_no
     room_no(newRoomNo, oldRoomNo) {
@@ -227,55 +222,45 @@ export default {
   },
   methods: {
     setAfterDiscount(discount) {
-      this.payment.after_discount_balance =
+      this.payment.after_discount =
         parseFloat(this.totalTransactionAmount) - parseFloat(discount);
     },
-    setNewBalance({ after_discount_balance, paid }) {
-      this.payment.balance =
-        parseFloat(after_discount_balance) - parseFloat(paid);
+    setNewBalance({ after_discount, paid }) {
+      this.payment.balance = parseFloat(after_discount) - parseFloat(paid);
     },
     submit() {
-      // let full_payment = parseFloat(this.full_payment);
-      // if (full_payment <= 0) {
-      //   this.alert("Warning", "Payment should be greater than zero","error");
-      //   return;
-      // }
       let payload = {
-        grand_remaining_price: this.grand_remaining_price,
-        new_advance: parseFloat(this.full_payment),
-        reference_number: this.reference,
-        booking_id: this.BookingData.id,
-        remaining_price: this.remaining_price,
-        payment_mode_id: this.payment_mode_id,
+        new_advance: parseFloat(this.payment.paid),
+        reference_number: this.payment.reference,
+        payment_mode_id: this.payment.payment_mode_id,
+
+        balance: this.payment.balance,
+        discount: this.payment.discount,
+        after_discount: this.payment.after_discount,
+        booking_id: this.BookingId,
         company_id: this.$auth.user.company.id,
         user_id: this.$auth.user.id,
       };
 
-      // this.loading = true;
+      this.loading = true;
       this.$axios
-        .post("/paying_advance", payload)
+        .post("/process-payment", payload)
         .then(({ data }) => {
           if (!data.status) {
             this.errors = data.errors;
             this.loading = false;
           } else {
             this.loading = false;
-            this.$emit("close-dialog");
-            this.$swal("Success!", "Payment has been done", "success");
+            this.$swal("Success!", "Payment has been done", "success").then(
+              () => {
+                this.$emit("response");
+              }
+            );
           }
         })
-        .catch((e) => console.log(e));
-    },
-    getRelatedClass(status_id) {
-      let status = {
-        0: "available",
-        1: "booked",
-        2: "occupied",
-        3: "checked_out",
-        4: "blocked",
-      };
-
-      return status[status_id || ""];
+        .catch((e) => {
+          this.loading = false;
+        });
     },
   },
 };

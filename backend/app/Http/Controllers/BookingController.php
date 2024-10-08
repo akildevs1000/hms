@@ -1375,63 +1375,122 @@ class BookingController extends Controller
         }
     }
 
-    public function payingAmount(Request $request)
+    public function ProcessPayment(Request $request)
     {
+        // SELECT id,total_price,remaining_price,grand_remaining_price,balance,paid_amounts,advance_price,sub_total,discount,after_discount FROM bookings ORDER BY "id" desc LIMIT 1
+        $payAmt = $request->new_advance;
+        $discount = (int) $request->discount;
+
         try {
-            $booking_id = $request->booking_id;
-            $booking = Booking::find($booking_id);
-            $rem = (int) $request->remaining_price - (int) $request->new_advance;
-            $booking->remaining_price = $rem;
-            $booking->grand_remaining_price = (int) $rem + (int) $booking->total_posting_amount;
-            $booking->advance_price = $request->new_advance;
-            $booking->payment_mode_id = $request->payment_mode_id;
+            $booking = Booking::find($request->booking_id);
 
-            if ($booking->save()) {
+            $transactionData = [
+                'booking_id' => $booking->id,
+                'customer_id' => $booking->customer_id ?? '',
+                'date' => now(),
+                'company_id' => $booking->company_id ?? '',
+                'payment_method_id' => $request->payment_mode_id,
+                'desc' => $request->input('desc', 'payment'), // $desc 'advance payment',
+                'reference_number' => $request->reference_number,
+                'user_id' => $request->user_id,
+            ];
 
-                $transactionData = [
-                    'booking_id' => $booking_id,
+            $paymentsData = [
+                'booking_id' => $booking->id,
+                'payment_mode' => $request->payment_mode_id,
+                'description' => 'payment',
+                'amount' => $payAmt,
+                'company_id' => $booking->company_id,
+                'type' => 'room',
+                'room' => $booking->rooms,
+            ];
+
+            if ($discount > 0) {
+                $booking->advance_price = (int) $booking->advance_price + (int) $payAmt;
+                $booking->paid_amounts = (int) $booking->paid_amounts + (int) $payAmt;
+                $booking->discount = (int) $booking->discount + (int) $discount;
+                $booking->after_discount = (int) $request->after_discount;
+                $booking->remaining_price = (int) $request->after_discount - $payAmt;
+                $booking->grand_remaining_price = (int) $request->after_discount - $payAmt;
+                $booking->balance = (int) $request->after_discount - $payAmt;
+                $booking->save();
+
+                $transactionDiscountData = [
+                    'booking_id' => $booking->id,
                     'customer_id' => $booking->customer_id ?? '',
                     'date' => now(),
                     'company_id' => $booking->company_id ?? '',
-                    'payment_method_id' => $request->payment_mode_id,
+                    'payment_method_id' => 0,
+                    'desc' => 'discount',
+                    'reference_number' => "----",
+                    'user_id' => $request->user_id,
                 ];
 
-                $payment = new TransactionController();
-                if ($request->new_advance && $request->new_advance > 0) {
-                    $payment->store($transactionData, $request->new_advance, 'credit');
-
-                    $paymentsData = [
-                        'booking_id' => $booking_id,
-                        'payment_mode' => $request->payment_mode_id,
-                        'description' => 'advance payment',
-                        'amount' => $request->new_advance,
-                        'company_id' => $booking->company_id,
-                        'type' => 'room',
-                        'room' => $booking->rooms,
-                    ];
-
-                    $payment = Payment::whereBookingId($booking->id)->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
-                    if ($payment) {
-                        $payment->amount = (int) $payment->amount - (int) $request->new_advance;
-                        $payment->save();
-                    }
-                    $payment = new PaymentController();
-                    $payment->store($paymentsData);
-
-                    $totCredit = Transaction::whereBookingId($booking->id)->where('company_id', $booking->company_id)->sum('credit');
-                    $cityLedger = Agent::whereBookingId($booking->id)->where('company_id', $booking->company_id)->first();
-                    if ($cityLedger) {
-                        $cityLedger->agent_paid_amount = $totCredit;
-                        $cityLedger->save();
-                    }
-                }
-
-                return response()->json(['bookingId' => $booking->id, 'message' => 'Payment Successfully', 'status' => true]);
+                $this->processTransaction($booking->id, $transactionDiscountData, $discount, 'credit');
             }
-            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+
+
+            if ($payAmt > 0) {
+                $booking->advance_price = (int) $booking->advance_price + (int) $payAmt;
+                $booking->paid_amounts = (int) $booking->paid_amounts + (int) $payAmt;
+                $booking->discount = (int) $booking->discount + (int) $discount;
+                $booking->after_discount = (int) $request->after_discount;
+                $booking->remaining_price = (int) $request->after_discount - $payAmt;
+                $booking->grand_remaining_price = (int) $request->after_discount - $payAmt;
+                $booking->balance = (int) $request->after_discount - $payAmt;
+                $booking->save();
+                // Booking::find($trans->booking_id)->update(['balance' => $trans->balance]);
+                (new PaymentController())->store($paymentsData);
+                $this->processTransaction($booking->id, $transactionData, $payAmt, $payAmt < 0 ? 'debit' : 'credit');
+            }
+
+
+
+            $payment = Payment::whereBookingId($booking->id)->where('is_city_ledger', 1)->first();
+            if ($payment) {
+
+                $payAmt < 0 ? $payment->amount = (int) $payment->amount + (int) $payAmt : $payment->amount = (int) $payment->amount - (int) $payAmt;
+                $payment->save();
+            }
+
+            if (app()->isProduction() && $payAmt > 0) {
+
+                $customer = Customer::find($booking->customer_id);
+                (new WhatsappNotificationController())
+                    ->advancePayingNotification($booking->fresh(), $customer, $payAmt, $request->payment_mode_id);
+            }
+
+            return response()->json(['data' => '', 'message' => 'Payment Successfully', 'status' => true]);
         } catch (\Throwable $th) {
-            throw $th;
+
+            echo  " Cron:  .\n" . $th;
+            Logger::channel("custom")->error($th);
+            return response()->json(['data' => '', 'message' => 'Unsuccessfully update', 'status' => false]);
+            // throw $th;
         }
+    }
+
+    public function processTransaction($bookingId, $data, $amount, $paymentType = null)
+    {
+        $model = Transaction::query();
+        $payment = $model->whereBookingId($bookingId)->orderBy('id', 'desc')->first();
+
+        if ($payment) {
+            switch ($paymentType) {
+                case 'credit':
+                    $data['credit'] = $amount;
+                    $data['balance'] = $payment->balance - $amount;
+                    break;
+                case 'debit':
+                    $data['debit'] = $amount;
+                    $data['balance'] = $payment->balance + $amount;
+            }
+        } else {
+            $data['debit'] = $amount;
+            $data['balance'] = $amount;
+        }
+
+        $model->create($data);
     }
 
     private function roomDetails($id)
@@ -3080,9 +3139,6 @@ class BookingController extends Controller
 
 
 
-
-
-
             ['status_id' => 11, 'color' => '#04b0f2', "desc" => "OTA Online Travel Agency"],
             ['status_id' => 12, 'color' => '#7551e5', "desc" => "Walkin customer "],
             ['status_id' => 13, 'color' => '#ff00dc', "desc" => "Travel agent"],
@@ -3096,5 +3152,10 @@ class BookingController extends Controller
     public function getOrderRoomData($id)
     {
         return OrderRoom::with("foodplan")->where("booking_id", $id)->first();
+    }
+
+    public function getTenDaysForcast()
+    {
+        return BookedRoom::get();
     }
 }

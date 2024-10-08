@@ -173,436 +173,431 @@
       </v-dialog>
     </div>
     <!--end dialogs -->
-    <v-row>
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Room Status</v-col
+
+    <v-row no-gutters>
+      <v-col cols="9" class="px-2">
+        <v-row>
+          <v-col cols="4">
+            <v-card class="elevation-2" style="height: 180px">
+              <v-card-text>
+                <v-row style="margin-top: -12px"
+                  ><v-col cols="8"
+                    ><span class="text-color">Room Status</span></v-col
+                  >
+
+                  <v-col cols="4" class="text-right align-right"
+                    ><img
+                      src="/dashboard-arrow.png"
+                      style="width: 18px; padding-top: 5px"
+                  /></v-col>
+                </v-row>
+                <v-divider color="#DDD" style="margin-bottom: 10px" />
+                <Donut
+                  :key="keyTabAll"
+                  name="margin"
+                  size="100%"
+                  :total="'100'"
+                  :colors="[`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`]"
+                  :labels="[
+                    {
+                      color: `#139c4a`,
+                      text: `Available`,
+                      value: availableRooms.length,
+                    },
+                    {
+                      color: `#71de36`,
+                      text: `Reserved`,
+                      value: reservedWithoutAdvance.length,
+                    },
+                    {
+                      color: `#ffc000`,
+                      text: `CheckIn`,
+                      value: Occupied.length + expectCheckOut.length,
+                    },
+                    {
+                      color: `#dc3545`,
+                      text: `Dirty`,
+                      value: dirtyRoomsList.length,
+                    },
+                  ]"
+                />
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card class="elevation-2" style="height: 180px">
+              <v-card-text>
+                <v-row style="margin-top: -12px"
+                  ><v-col cols="8"
+                    ><span class="text-color">Arrival</span></v-col
+                  >
+
+                  <v-col cols="4" class="text-right align-right"
+                    ><img
+                      @click="ArrivalReportDialog = true"
+                      src="/dashboard-arrow.png"
+                      style="width: 18px; padding-top: 5px"
+                  /></v-col>
+                </v-row>
+                <v-divider color="#DDD" style="margin-bottom: 10px" />
+                <Donut
+                  :key="keyTabAll"
+                  name="reservedWithoutAdvance"
+                  :total="reservedWithoutAdvance.length + Occupied.length"
+                  size="100%"
+                  :colors="[`#ffc000`, `#71de36`]"
+                  :labels="[
+                    {
+                      color: `#ffc000`,
+                      text: `Arrived`,
+                      value: Occupied.length + expectCheckOut.length,
+                    },
+                    {
+                      color: `#71de36`,
+                      text: `Pending`,
+                      value: `${reservedWithoutAdvance.length}`,
+                    },
+                  ]"
+                />
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card class="elevation-2" style="height: 180px">
+              <v-card-text>
+                <v-row style="margin-top: -12px"
+                  ><v-col cols="8"
+                    ><span class="text-color">Checkout</span></v-col
+                  >
+
+                  <v-col cols="4" class="text-right align-right"
+                    ><img
+                      @click="CheckOutReportDialog = true"
+                      src="/dashboard-arrow.png"
+                      style="width: 18px; padding-top: 5px"
+                  /></v-col>
+                </v-row>
+                <v-divider color="#DDD" style="margin-bottom: 10px" />
+                <Donut
+                  name="dirtyRoomsList"
+                  :total="dirtyRoomsList.length + expectCheckOut.length"
+                  size="100%"
+                  :colors="[`#dc3545`, `#ffc000`]"
+                  :labels="[
+                    {
+                      color: `#dc3545`,
+                      text: `CheckOut`,
+                      value: `${dirtyRoomsList.length}`,
+                    },
+                    {
+                      color: `#ffc000`,
+                      text: `Pending`,
+                      value: `${Occupied.length + expectCheckOut.length}`,
+                    },
+                  ]"
+                />
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="12" class="pt-0">
+            <v-card>
+              <div
+                class="pt-6 px-2"
+                style="display: flex; justify-content: right; gap: 10px"
               >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              :key="keyTabAll"
-              name="margin"
-              size="100%"
-              :total="'100'"
-              :colors="[`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`]"
-              :labels="[
-                {
-                  color: `#139c4a`,
-                  text: `Available`,
-                  value: availableRooms.length,
-                },
-                {
-                  color: `#71de36`,
-                  text: `Reserved`,
-                  value: reservedWithoutAdvance.length,
-                },
-                {
-                  color: `#ffc000`,
-                  text: `CheckIn`,
-                  value: Occupied.length + expectCheckOut.length,
-                },
-                {
-                  color: `#dc3545`,
-                  text: `Dirty`,
-                  value: dirtyRoomsList.length,
-                },
-              ]"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Arrival</v-col
-              >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="ArrivalReportDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              :key="keyTabAll"
-              name="reservedWithoutAdvance"
-              :total="reservedWithoutAdvance.length + Occupied.length"
-              size="100%"
-              :colors="[`#ffc000`, `#71de36`]"
-              :labels="[
-                {
-                  color: `#ffc000`,
-                  text: `Arrived`,
-                  value: Occupied.length + expectCheckOut.length,
-                },
-                {
-                  color: `#71de36`,
-                  text: `Pending`,
-                  value: `${reservedWithoutAdvance.length}`,
-                },
-              ]"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Checkout</v-col
-              >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="CheckOutReportDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              name="dirtyRoomsList"
-              :total="dirtyRoomsList.length + expectCheckOut.length"
-              size="100%"
-              :colors="[`#dc3545`, `#ffc000`]"
-              :labels="[
-                {
-                  color: `#dc3545`,
-                  text: `CheckOut`,
-                  value: `${dirtyRoomsList.length}`,
-                },
-                {
-                  color: `#ffc000`,
-                  text: `Pending`,
-                  value: `${Occupied.length + expectCheckOut.length}`,
-                },
-              ]"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >In-House</v-col
-              >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="InHouseDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              name="members"
-              :total="members.total"
-              size="100%"
-              :colors="colors"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Adult`,
-                  value: members.adult,
-                },
-                {
-                  color: `green`,
-                  text: `Children`,
-                  value: members.child,
-                },
-              ]"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3" class="pr-0" style="max-width: 20%">
-        <v-card class="elevation-2" style="height: 180px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Food Order</v-col
-              >
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="FoodDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-
-            <Donut
-              v-if="foodOrdersCount"
-              name="foodOrdersCount"
-              size="100%"
-              :colors="colors"
-              :total="foodOrdersCount.total"
-              :labels="[
-                {
-                  color: `blue`,
-                  text: `Breakfast`,
-                  value: foodOrdersCount.breakfast,
-                },
-                {
-                  color: `green`,
-                  text: `Lunch`,
-                  value: foodOrdersCount.lunch,
-                },
-                {
-                  color: `orange`,
-                  text: `Dinner`,
-                  value: foodOrdersCount.dinner,
-                },
-              ]"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" style="padding-top: 0px">
-        <v-card class="py-2">
-          <v-container fluid>
-            <v-row>
-              <v-col></v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingHall
                   @success="handleSuccess(`Hall has been Booked`)"
                   :onlyButton="true"
                 />
-              </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingIndividual
                   @success="handleSuccess(`Room has been Booked`)"
                   :onlyButton="true"
                 />
-              </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingGroup
                   @success="handleSuccess(`Room(s) has been Booked`)"
                   :onlyButton="true"
                 />
-              </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingQuickCheckIn
                   :key="BookingQuickCheckInCompKey"
                   @success="handleNewSuccess"
                 />
-              </v-col>
-              <v-col cols="1" class="mt-0" style="max-width: 60px">
                 <BookingQuickCheckOut
                   :key="keyTabAll"
                   @success="handleSuccess(`Room(s) has been Checked Out`)"
                 />
-              </v-col>
-              <v-col cols="3">
-                <v-row>
-                  <v-col cols="6">
-                    <v-text-field
-                      small
-                      class="global-search-textbox"
-                      clearable
-                      dense
-                      label="Search..."
-                      outlined
-                      v-model="searchQuery"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-menu
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :nudge-right="-120"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          outlined
-                          label="Filter Date"
-                          class="global-search-date"
-                          v-model="filterDate"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker dense
-                        v-model="filterDate"
-                        @input="menu2 = false"
-                        no-title
-                      ></v-date-picker>
-                    </v-menu>
-                    <!-- <v-select
-                      class="global-search-select"
-                      dense
-                      :items="[
-                        { id: ``, name: `Select All` },
-                        { id: `expected_arrival`, name: `Arrival` },
-                        { id: `expected_checkout`, name: `Checkout` },
-                        { id: `blocked`, name: `Blocked` },
-                        // { id: `expected_arrival`, name: `Sold` },
-                        { id: `available`, name: `Available` },
-                        // { id: `compliment`, name: `Compliment` },
-                        { id: `dirty`, name: `Dirty` },
-                      ]"
-                      item-text="name"
-                      item-value="id"
-                      label="Select  Item"
-                      outlined
-                      v-model="filterQuery"
-                      @change="getRoomsByFilter"
-                    ></v-select> -->
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
 
-            <v-row
-              style="margin-top: -30px; padding-top: 0px; min-height: 600px"
-            >
-              <v-col
-                cols="12"
-                style="margin-top: 0px; padding-top: 0px; height: auto"
-              >
-                <!-- <pre>{{Occupied}}</pre> -->
-                <v-tabs hide-slider right v-model="tab" color="#0d652d">
-                  <v-tab style="font-weight: bold">All</v-tab>
-                  <v-tab style="font-weight: bold">Occupied</v-tab>
-                  <v-tab style="font-weight: bold">Arrival</v-tab>
-                  <v-tab style="font-weight: bold">Checkedout </v-tab>
-                  <v-tab style="font-weight: bold">Blocked</v-tab>
-                  <!-- <v-tab>Sold </v-tab> -->
-                  <v-tab style="font-weight: bold">Available</v-tab>
-                  <!-- <v-tab>Compliment</v-tab> -->
-                  <v-tab-item>
-                    <v-card color="basil" style="height: auto">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          name="All"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'All'"
-                          :key="keyTabAll"
-                          :data="rooms"
-                          :filterDate="filterDate"
-                          :calenderColorCodes="calenderColorCodes"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil" style="height: auto">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          name="occupied"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'occupied'"
-                          :key="keyTabOccupied"
-                          :data="rooms"
-                          :filterDate="filterDate"
-                          :calenderColorCodes="calenderColorCodes"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList>
-                      </v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          name="expected_arrival"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'expected_arrival'"
-                          :key="keyTabexpected_arrival"
-                          :data="rooms"
-                          :filterDate="filterDate"
-                          :calenderColorCodes="calenderColorCodes"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          name="checkedout"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'checkedout'"
-                          :key="keyTabdirty"
-                          :data="rooms"
-                          :filterDate="filterDate"
-                          :calenderColorCodes="calenderColorCodes"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList>
-                      </v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          name="blocked"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'blocked'"
-                          :key="keyTabblocked"
-                          :data="rooms"
-                          :filterDate="filterDate"
-                          :calenderColorCodes="calenderColorCodes"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card color="basil">
-                      <v-card-text>
-                        <DashboardRoomsList
-                          ref="RoomComp"
-                          name="available"
-                          :searchQuery="searchQuery"
-                          :tabFilter="'available'"
-                          :key="keyTabavailable"
-                          :data="rooms"
-                          :filterDate="filterDate"
-                          :calenderColorCodes="calenderColorCodes"
-                          @call_room_list="refreshRoomList"
-                        ></DashboardRoomsList
-                      ></v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                </v-tabs>
+                <div>
+                  <v-text-field
+                    small
+                    class="global-search-textbox"
+                    clearable
+                    dense
+                    label="Search..."
+                    outlined
+                    v-model="searchQuery"
+                  ></v-text-field>
+                </div>
+                <div>
+                  <v-menu
+                    v-model="menu2"
+                    :close-on-content-click="false"
+                    :nudge-right="-120"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        outlined
+                        label="Filter Date"
+                        class="global-search-date"
+                        v-model="filterDate"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      dense
+                      v-model="filterDate"
+                      @input="menu2 = false"
+                      no-title
+                    ></v-date-picker>
+                  </v-menu>
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" class="pt-0">
+            <v-card style="min-height:395px;">
+              <v-tabs hide-slider right v-model="tab" color="#0d652d">
+              <v-tab style="font-weight: bold">All</v-tab>
+              <v-tab style="font-weight: bold">Occupied</v-tab>
+              <v-tab style="font-weight: bold">Arrival</v-tab>
+              <v-tab style="font-weight: bold">Checkedout </v-tab>
+              <v-tab style="font-weight: bold">Blocked</v-tab>
+              <!-- <v-tab>Sold </v-tab> -->
+              <v-tab style="font-weight: bold">Available</v-tab>
+              <!-- <v-tab>Compliment</v-tab> -->
+              <v-tab-item>
+                <v-card color="basil" style="height: auto">
+                  <v-card-text>
+                    <DashboardRoomsList
+                      ref="RoomComp"
+                      name="All"
+                      :searchQuery="searchQuery"
+                      :tabFilter="'All'"
+                      :key="keyTabAll"
+                      :data="rooms"
+                      :filterDate="filterDate"
+                      :calenderColorCodes="calenderColorCodes"
+                      @call_room_list="refreshRoomList"
+                    ></DashboardRoomsList
+                  ></v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item>
+                <v-card color="basil" style="height: auto">
+                  <v-card-text>
+                    <DashboardRoomsList
+                      ref="RoomComp"
+                      name="occupied"
+                      :searchQuery="searchQuery"
+                      :tabFilter="'occupied'"
+                      :key="keyTabOccupied"
+                      :data="rooms"
+                      :filterDate="filterDate"
+                      :calenderColorCodes="calenderColorCodes"
+                      @call_room_list="refreshRoomList"
+                    ></DashboardRoomsList>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item>
+                <v-card color="basil">
+                  <v-card-text>
+                    <DashboardRoomsList
+                      ref="RoomComp"
+                      name="expected_arrival"
+                      :searchQuery="searchQuery"
+                      :tabFilter="'expected_arrival'"
+                      :key="keyTabexpected_arrival"
+                      :data="rooms"
+                      :filterDate="filterDate"
+                      :calenderColorCodes="calenderColorCodes"
+                      @call_room_list="refreshRoomList"
+                    ></DashboardRoomsList
+                  ></v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item>
+                <v-card color="basil">
+                  <v-card-text>
+                    <DashboardRoomsList
+                      ref="RoomComp"
+                      name="checkedout"
+                      :searchQuery="searchQuery"
+                      :tabFilter="'checkedout'"
+                      :key="keyTabdirty"
+                      :data="rooms"
+                      :filterDate="filterDate"
+                      :calenderColorCodes="calenderColorCodes"
+                      @call_room_list="refreshRoomList"
+                    ></DashboardRoomsList>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item>
+                <v-card color="basil">
+                  <v-card-text>
+                    <DashboardRoomsList
+                      ref="RoomComp"
+                      name="blocked"
+                      :searchQuery="searchQuery"
+                      :tabFilter="'blocked'"
+                      :key="keyTabblocked"
+                      :data="rooms"
+                      :filterDate="filterDate"
+                      :calenderColorCodes="calenderColorCodes"
+                      @call_room_list="refreshRoomList"
+                    ></DashboardRoomsList
+                  ></v-card-text>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item>
+                <v-card color="basil">
+                  <v-card-text>
+                    <DashboardRoomsList
+                      ref="RoomComp"
+                      name="available"
+                      :searchQuery="searchQuery"
+                      :tabFilter="'available'"
+                      :key="keyTabavailable"
+                      :data="rooms"
+                      :filterDate="filterDate"
+                      :calenderColorCodes="calenderColorCodes"
+                      @call_room_list="refreshRoomList"
+                    ></DashboardRoomsList
+                  ></v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="3">
+        <v-row no-gutters>
+          <v-col cols="12">
+            <v-row no-gutters>
+              <v-col class="mr-2">
+                <v-card class="elevation-2" style="height: 135px">
+                  <v-card-text>
+                    <div class="pb-1">
+                      <v-icon color="purple" @click="FoodDialog = true"
+                        >mdi-food</v-icon
+                      ><span class="ml-3 text-color">Food</span>
+                    </div>
+                    <table>
+                      <tr
+                        v-for="(item, index) in [
+                          {
+                            color: `blue`,
+                            text: `Breakfast`,
+                            value: foodOrdersCount.breakfast,
+                          },
+                          {
+                            color: `green`,
+                            text: `Lunch`,
+                            value: foodOrdersCount.lunch,
+                          },
+                          {
+                            color: `orange`,
+                            text: `Dinner`,
+                            value: foodOrdersCount.dinner,
+                          },
+                        ]"
+                        :key="index"
+                      >
+                        <td style="font-size: 11px" class="border-bottom">
+                          <v-icon :color="colors[index]"
+                            >mdi-square-medium</v-icon
+                          >
+                          {{ item.text }}
+                        </td>
+                        <td style="font-size: 11px" class="border-bottom">
+                          <span
+                            v-if="showPriceFormat && showPriceFormat == 'true'"
+                          >
+                            {{ getPriceFormat(item.value) }}
+                          </span>
+                          <span v-else>
+                            {{ item.value == 0 ? 0 : parseInt(item.value) }}
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+              <v-col>
+                <v-card class="elevation-2" style="height: 135px">
+                  <v-card-text>
+                    <div class="pb-1">
+                      <v-icon color="purple" @click="InHouseDialog = true"
+                        >mdi-human-male-female-child</v-icon
+                      ><span class="ml-3 text-color">Occupancy</span>
+                    </div>
+                    <table>
+                      <tr
+                        v-for="(item, index) in [
+                          {
+                            color: `blue`,
+                            text: `Adult`,
+                            value: members.adult,
+                          },
+                          {
+                            color: `green`,
+                            text: `Children`,
+                            value: members.child,
+                          },
+                        ]"
+                        :key="index"
+                      >
+                        <td style="font-size: 11px" class="border-bottom">
+                          <v-icon :color="colors[index]"
+                            >mdi-square-medium</v-icon
+                          >
+                          {{ item.text }}
+                        </td>
+                        <td style="font-size: 11px" class="border-bottom">
+                          <span
+                            v-if="showPriceFormat && showPriceFormat == 'true'"
+                          >
+                            {{ getPriceFormat(item.value) }}
+                          </span>
+                          <span v-else>
+                            {{ item.value == 0 ? 0 : parseInt(item.value) }}
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
-          </v-container>
-        </v-card>
+          </v-col>
+
+          <v-col cols="12" class="pt-2">
+            <WidgetsOnlineBooking />
+          </v-col>
+          <v-col cols="12" class="pt-2">
+            <WidgetsChatSummary />
+          </v-col> 
+          <v-col cols="12" class="pt-2">
+            <WidgetsTenDaysForCast />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </div>
