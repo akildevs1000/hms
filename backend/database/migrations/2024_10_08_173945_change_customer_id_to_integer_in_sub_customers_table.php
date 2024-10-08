@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('sub_customers', function (Blueprint $table) {
             $table->dropColumn('customer_id');
 
-            $table->unsignedBigInteger('customer_id')->default(0)->change();
+            $table->unsignedBigInteger('customer_id')->default(0);
         });
     }
 
