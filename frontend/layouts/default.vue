@@ -924,7 +924,7 @@ input[type="number"] {
   border: 16px solid rgb(150, 150, 150);
   height: 100px;
   width: 100px;
-  padding-top: 17px;
+  padding-top: 20%;
   font-size: 14px;
   margin-top: 8px;
   text-align: center;
