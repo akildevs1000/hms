@@ -24,7 +24,6 @@ use App\Models\TaxSlabs;
 use App\Models\Template;
 use App\Models\Transaction;
 use App\Models\Weekend;
-use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +34,7 @@ class BookingController extends Controller
 {
     public function groupList(Request $request)
     {
+        return [];
         return Booking::with(["customer", "room"])
             ->whereNotNull("group_name")
             ->where('company_id', $request->company_id)
@@ -200,7 +200,7 @@ class BookingController extends Controller
         $merge_food_in_room_price = (int)$request->merge_food_in_room_price;
         $data = [];
         $data = $request->only(Booking::bookingAttributes());
-        $data['booking_date'] = now();
+        $data['booking_date'] = date("Y-m-d");
         $data['merge_food_in_room_price'] =   $merge_food_in_room_price;
         $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
         $data['remaining_price'] = (float) $request->total_price - (float) $request->advance_price;
@@ -2804,7 +2804,7 @@ class BookingController extends Controller
 
         $data = [];
         $data = $request->only(Booking::bookingAttributes());
-        $data['booking_date'] = now();
+        $data['booking_date'] = date("Y-m-d");
         $data['payment_status'] = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
         $data['remaining_price'] = (float) $request->total_price - (float) $request->advance_price;
         $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
@@ -3154,8 +3154,62 @@ class BookingController extends Controller
         return OrderRoom::with("foodplan")->where("booking_id", $id)->first();
     }
 
-    public function getTenDaysForcast()
+    public function getTenDaysForecast($id = 0)
     {
-        return BookedRoom::get();
+
+        $today = date("Y-m-d");
+        $tenDaysLater = date("Y-m-d", strtotime("+10 days", strtotime($today)));
+
+        $AvailableRoomCount = Room::where('company_id', $id)->count(); // This is 100%
+
+        // Create an array of all the dates between today and 10 days later
+        $dates = [];
+        for ($i = 0; $i < 10; $i++) {
+            $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
+
+            $bookedData = BookedRoom::without("booking")
+                ->orderBy("check_in")
+                ->whereDate('check_in', $date)
+                ->orWhereDate('check_out', $date)
+                ->where('booking_status', BookedRoom::BOOKED);
+            $dates[$date] = [
+                "date" => $date,
+                "label" => date("D", strtotime("+$i days", strtotime($today))),
+                "value" => 0, // Default to 0
+                "bookedCount" => $bookedData->count(), // Default to 0
+                "availableCount" => $AvailableRoomCount, // Default to 0
+            ];
+        }
+
+        return $dates;
+
+        // Get booked room data and map it
+        $bookedData = BookedRoom::without("booking")
+            ->orderBy("check_in")
+            ->whereDate('check_in', '>=', $today)
+            ->orWhereDate('check_in', '<=', $tenDaysLater)
+            ->where('booking_status', BookedRoom::BOOKED)
+            ->get()
+            ->groupBy("check_in")
+            ->map(function ($group, $key) use ($AvailableRoomCount) {
+                $bookedCount = $group->count();
+                $bookedPercent = ($bookedCount / $AvailableRoomCount) * 100;
+
+                return [
+                    "label" => date("D", strtotime($key)),  // Day abbreviation
+                    "value" => round($bookedPercent, 2),    // Rounded to 2 decimal places
+                    "bookedCount" => $bookedCount, // Default to 0
+                    "availableCount" => $AvailableRoomCount - $bookedCount, // Default to 0
+                ];
+            });
+
+        // Merge booked data with the full list of dates
+        foreach ($bookedData as $key => $value) {
+            if (isset($dates[$key])) {
+                $dates[$key] = $value;  // Override default 0 values with booked data
+            }
+        }
+
+        return array_values($dates); // Return as an indexed array
     }
 }
