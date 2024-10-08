@@ -11,13 +11,13 @@ class SubCustomer extends Model
 
     protected $guarded = [];
 
-    /**
-     * Get the Customer that owns the SubCustomer
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class);
-    }
+    // /**
+    //  * Get the Customer that owns the SubCustomer
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    //  */
+    // public function customer()
+    // {
+    //     return $this->belongsTo(Customer::class);
+    // }
 }
