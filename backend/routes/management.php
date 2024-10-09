@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditHistoryController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\ReportGenerateController;
@@ -13,7 +14,8 @@ Route::get('get_occupancy_rate_by_month2', [ManagementController::class, 'getOcc
 
 Route::get('get_source_rate_by_month', [ManagementController::class, 'getSourceRateByMonth']);
 
-Route::get('get_audit_report', [ManagementController::class, 'getAuditReport']);
+// Route::get('get_audit_report', [ManagementController::class, 'getAuditReport']);
+Route::get('get_audit_report', [AuditHistoryController::class, 'getAuditReport']);
 Route::get('get_occupancy_rate_by_filter', [ManagementController::class, 'getOccupancyRateByFilter']);
 
 // Route::get('get_audit_report_pdf', [ManagementController::class, 'testcheckin']);
