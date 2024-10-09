@@ -1,6 +1,7 @@
 <template>
   <v-card>
     <v-container>
+      <!-- <AssetsTestAccordian /> -->
       <v-expansion-panels style="max-height: 450px; overflow-y: auto">
         <v-expansion-panel v-for="(menu, index) in topMenus" :key="index" dense>
           <v-expansion-panel-header
@@ -166,7 +167,7 @@
                           dense
                           hide-details
                           @change="
-                            $emit(`selectedPermissions`, this.permission_ids)
+                            $emit(`selectedPermissions`, permission_ids)
                           "
                         >
                         </v-checkbox>
