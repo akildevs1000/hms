@@ -23,6 +23,17 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col>
+          <AssetsIcon
+            icon="printer-outline"
+            @click="process('reservation_report_print', endpoint)"
+          />
+          &nbsp;
+          <AssetsIcon
+            icon="download-outline"
+            @click="process('reservation_report_download', endpoint)"
+          />
+        </v-col>
         <v-col cols="4" class="text-right">
           <v-row>
             <v-col>
@@ -43,22 +54,11 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col class="text-right">
-          <AssetsIcon
-            icon="printer-outline"
-            @click="process('reservation_report_print', endpoint)"
-          />
-          &nbsp;
-          <AssetsIcon
-            icon="download-outline"
-            @click="process('reservation_report_download', endpoint)"
-          />
-        </v-col>
       </v-row>
     </v-container>
 
     <v-dialog v-model="payingDialog" persistent max-width="700">
-      <AssetsIconClose left="690"  @click="payingDialog = false" />
+      <AssetsIconClose left="690" @click="payingDialog = false" />
       <v-card>
         <v-alert class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>

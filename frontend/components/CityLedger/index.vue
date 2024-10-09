@@ -35,7 +35,7 @@
       <v-container fluid>
         <v-row class="">
           <v-col v-for="(item, index) in stats" :key="index" cols="12" md="2">
-            <AssetsCard :options="item" />
+            <AssetsCardAmount :options="item" />
           </v-col>
         </v-row>
         <v-row>
