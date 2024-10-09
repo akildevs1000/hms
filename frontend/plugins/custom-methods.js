@@ -73,6 +73,16 @@ export default ({ app }, inject) => {
 
       return status[status_id || ""];
     },
+    capsTitle(val) {
+      if (val == "gst") {
+        val = val.toUpperCase();
+        return val;
+      }
+      let res = val;
+      let r = res.replace(/[^a-z]/g, " ");
+      let title = r.replace(/\b\w/g, (c) => c.toUpperCase());
+      return title;
+    },
   });
 
   inject("dateFormat", {

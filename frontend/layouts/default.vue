@@ -750,6 +750,10 @@ export default {
 };
 </script>
 <style>
+.my-checkbox label {
+  /* background: red; */
+  font-size: 11px;
+}
 * {
   font-family: "Source Sans Pro", sans-serif !important;
   margin: 0;

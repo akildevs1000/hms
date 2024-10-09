@@ -30,216 +30,216 @@
               <v-tab> Verfication </v-tab>
 
               <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <v-row>
-                      <v-col cols="4">
-                        <v-text-field
-                          readonly
-                          label="Company Code"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.company_code"
-                        >
-                        </v-text-field>
-                      </v-col>
-                      <v-col cols="4">
-                        <v-text-field
-                          label="Company Name"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.name"
-                        >
-                        </v-text-field>
-                        <span
-                          v-if="errors && errors.name"
-                          class="error--text mt-2"
-                          >{{ errors.name[0] }}</span
-                        >
-                      </v-col>
-                      <v-col cols="4">
-                        <v-text-field
-                          label="Company Email"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="user_payload.email"
-                        >
-                        </v-text-field>
-                        <span
-                          v-if="errors && errors.email"
-                          class="error--text mt-2"
-                          >{{ errors.email[0] }}</span
-                        >
-                      </v-col>
-
-                      <v-col cols="4">
-                        <v-text-field
-                          label="Mol ID"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.mol_id"
-                        >
-                        </v-text-field>
-                        <span
-                          v-if="errors && errors.mol_id"
-                          class="error--text mt-2"
-                          >{{ errors.mol_id[0] }}</span
-                        >
-                      </v-col>
-
-                      <v-col cols="4">
-                        <v-text-field
-                          label="P.O Box"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.p_o_box_no"
-                        >
-                        </v-text-field>
-                        <span
-                          v-if="errors && errors.p_o_box_no"
-                          class="error--text mt-2"
-                          >{{ errors.p_o_box_no[0] }}</span
-                        >
-                      </v-col>
-
-                      <v-col cols="4">
-                        <v-text-field
-                          label="Currency"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.currency"
-                        >
-                        </v-text-field>
-                        <span
-                          v-if="errors && errors.currency"
-                          class="error--text mt-2"
-                          >{{ errors.currency[0] }}</span
-                        >
-                      </v-col>
-
-                      <v-col cols="4">
-                        <v-text-field
-                          readonly
-                          label="Member From"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.member_from"
-                        >
-                        </v-text-field>
-                      </v-col>
-
-                      <v-col cols="4">
-                        <v-text-field
-                          readonly
-                          label="Expiry Date"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.expiry"
-                        >
-                        </v-text-field>
-                      </v-col>
-                      <v-col cols="4"></v-col>
-                      <v-col cols="4">
-                        <v-text-field
-                          readonly
-                          label="Max Branches"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.max_branches"
-                        >
-                        </v-text-field>
-                      </v-col>
-
-                      <v-col cols="4">
-                        <v-text-field
-                          readonly
-                          label="Max customers"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.max_employee"
-                        >
-                        </v-text-field>
-                      </v-col>
-
-                      <v-col cols="4">
-                        <v-text-field
-                          readonly
-                          label="Max Devices"
-                          dense
-                          outlined
-                          hide-details
-                          v-model="company_payload.max_devices"
-                        >
-                        </v-text-field>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-card max-width="300" class="pa-1" outlined>
-                          <div class="text-center">
-                            <v-avatar tile size="250">
-                              <img
-                                @click="onpick_attachment"
-                                :src="
-                                  previewImage ||
-                                  company_payload.logo ||
-                                  '/no-profile-image.jpg'
-                                "
-                              />
-                            </v-avatar>
-                          </div>
-                          <br />
-                          <v-btn
-                            color="primary"
-                            block
-                            @click="onpick_attachment"
-                            >{{
-                              !upload.name ? "Upload Logo" : "Logo Uploaded"
-                            }}
-                            <v-icon right dark>mdi-cloud-upload</v-icon>
-                          </v-btn>
-                        </v-card>
-
-                        <input
-                          required
-                          type="file"
-                          @change="attachment"
-                          style="display: none"
-                          accept="image/*"
-                          ref="attachment_input"
-                        />
-
-                        <span
-                          v-if="errors && errors.logo"
-                          class="error--text mt-2"
-                          >{{ errors.logo[0] }}</span
-                        >
-                      </v-col>
-
-                      <v-col cols="12">
-                        <div class="text-right">
-                          <v-btn
-                            v-if="can('company_edit')"
-                            small
-                            :loading="loading"
-                            color="primary"
-                            @click="update_company"
-                          >
-                            Submit
-                          </v-btn>
+                <v-container fluid>
+                  <v-row class="mt-5">
+                    <v-col cols="2" class="text-center">
+                      <v-card class="pa-1" flat>
+                        <div class="text-center">
+                          <v-avatar size="150">
+                            <img
+                              style="border: 1px solid #ddd"
+                              :src="
+                                previewImage ||
+                                company_payload.logo ||
+                                '/no-profile-image.jpg'
+                              "
+                            />
+                          </v-avatar>
                         </div>
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
+                        <div class="mt-5">
+                          <AssetsButton
+                            :options="{
+                              icon: `mdi-cloud-upload`,
+                              label: `${
+                                !upload.name ? 'Upload Logo' : 'Logo Uploaded'
+                              }`,
+                              color: `blue`,
+                            }"
+                            @click="onpick_attachment"
+                          />
+                        </div>
+                      </v-card>
+
+                      <input
+                        required
+                        type="file"
+                        @change="attachment"
+                        style="display: none"
+                        accept="image/*"
+                        ref="attachment_input"
+                      />
+
+                      <span
+                        v-if="errors && errors.logo"
+                        class="error--text mt-2"
+                        >{{ errors.logo[0] }}</span
+                      >
+                    </v-col>
+                    <v-col>
+                      <v-row>
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Company Name"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.name"
+                          >
+                          </v-text-field>
+                          <span
+                            v-if="errors && errors.name"
+                            class="error--text mt-2"
+                            >{{ errors.name[0] }}</span
+                          >
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Company Email"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="user_payload.email"
+                          >
+                          </v-text-field>
+                          <span
+                            v-if="errors && errors.email"
+                            class="error--text mt-2"
+                            >{{ errors.email[0] }}</span
+                          >
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            readonly
+                            label="Company Code"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.company_code"
+                          >
+                          </v-text-field>
+                        </v-col>
+
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Mol ID"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.mol_id"
+                          >
+                          </v-text-field>
+                          <span
+                            v-if="errors && errors.mol_id"
+                            class="error--text mt-2"
+                            >{{ errors.mol_id[0] }}</span
+                          >
+                        </v-col>
+
+                        <v-col cols="4">
+                          <v-text-field
+                            label="P.O Box"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.p_o_box_no"
+                          >
+                          </v-text-field>
+                          <span
+                            v-if="errors && errors.p_o_box_no"
+                            class="error--text mt-2"
+                            >{{ errors.p_o_box_no[0] }}</span
+                          >
+                        </v-col>
+
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Currency"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.currency"
+                          >
+                          </v-text-field>
+                          <span
+                            v-if="errors && errors.currency"
+                            class="error--text mt-2"
+                            >{{ errors.currency[0] }}</span
+                          >
+                        </v-col>
+
+                        <v-col cols="6">
+                          <v-text-field
+                            readonly
+                            label="Member From"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.member_from"
+                          >
+                          </v-text-field>
+                        </v-col>
+
+                        <v-col cols="6">
+                          <v-text-field
+                            readonly
+                            label="Expiry Date"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.expiry"
+                          >
+                          </v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                          <v-text-field
+                            readonly
+                            label="Max Branches"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.max_branches"
+                          >
+                          </v-text-field>
+                        </v-col>
+
+                        <v-col cols="4">
+                          <v-text-field
+                            readonly
+                            label="Max customers"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.max_employee"
+                          >
+                          </v-text-field>
+                        </v-col>
+
+                        <v-col cols="4">
+                          <v-text-field
+                            readonly
+                            label="Max Devices"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.max_devices"
+                          >
+                          </v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" class="text-right">
+                          <AssetsButton
+                              :options="{
+                                icon: `mdi-cloud-upload`,
+                                label: `Submit`,
+                                color: `green`,
+                              }"
+                               @click="update_company"
+                            />
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-tab-item>
 
               <v-tab-item>

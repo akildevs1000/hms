@@ -1,138 +1,66 @@
 <template>
   <div v-if="can('settings_roles_access') && can('settings_roles_view')">
-    <v-dialog v-model="dialogNewRole" width="60%">
+    <v-dialog persistent v-model="dialogNewRole" width="900">
+      <AssetsIconClose left="890" @click="closeDialog" />
       <v-card>
-        <v-toolbar dense flat class="primary white--text">
+        <v-alert dense flat class="grey lighten-3">
           {{ formTitle }} {{ Model }} and Permissions
           <v-spacer></v-spacer>
-          <v-icon @click="dialogNewRole = false" outlined dark color="white">
-            mdi mdi-close
-          </v-icon>
-        </v-toolbar>
+        </v-alert>
         <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="5">
-                <v-text-field
-                  hide-details
-                  label="Role Name"
-                  outlined
-                  dense
-                  v-model="editedItem.name"
-                ></v-text-field>
-                <span v-if="errors && errors.name" class="error--text">
-                  {{ errors.name[0] }}</span
-                >
-              </v-col>
-              <v-col cols="5">
-                <v-text-field
-                  hide-details
-                  label="Role Description"
-                  outlined
-                  dense
-                  v-model="editedItem.description"
-                ></v-text-field>
-                <span v-if="errors && errors.description" class="error--text">
-                  {{ errors.description[0] }}</span
-                >
-              </v-col>
-              <v-col cols="2" class="text-right">
-                <v-btn color="primary" fill small @click="save">Save</v-btn>
-              </v-col>
-
-              <v-col cols="12">
-                <table class="mb-15">
-                  <tr>
-                    <td><b>Module</b></td>
-                    <td class="text-center">
-                      <v-checkbox
-                        dense
-                        hide-details
-                        label="Access"
-                        @change="setAllIds('access', $event)"
-                        v-model="selectall1"
-                      >
-                      </v-checkbox>
-                    </td>
-                    <td class="text-center">
-                      <v-checkbox
-                        dense
-                        hide-details
-                        label="View"
-                        @change="setAllIds('view', $event)"
-                        v-model="selectall2"
-                      >
-                      </v-checkbox>
-                    </td>
-                    <td class="text-center">
-                      <v-checkbox
-                        dense
-                        hide-details
-                        label="Create"
-                        @change="setAllIds('create', $event)"
-                        v-model="selectall3"
-                      >
-                      </v-checkbox>
-                    </td>
-                    <td class="text-center">
-                      <v-checkbox
-                        dense
-                        hide-details
-                        label="Edit"
-                        @change="setAllIds('edit', $event)"
-                        v-model="selectall4"
-                      >
-                      </v-checkbox>
-                    </td>
-                    <td class="text-center">
-                      <v-checkbox
-                        dense
-                        hide-details
-                        label="Delete"
-                        @change="setAllIds('delete', $event)"
-                        v-model="selectall5"
-                      >
-                      </v-checkbox>
-                    </td>
-                  </tr>
-                  <tr v-for="(items, idx) in permissions" :key="idx">
-                    <td>{{ capsTitle(idx) }}</td>
-
-                    <td v-for="(pa, idx) in items" :key="idx">
-                      <div
-                        class="d-flex align-center justify-center"
-                        style="height: 100%"
-                      >
-                        <v-checkbox
-                          :disabled="!can(`settings_permissions_create`)"
-                          :value="pa.id"
-                          v-model="permission_ids"
-                          dense
-                          hide-details
-                        ></v-checkbox>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </v-col>
-              <v-col cols="6" class="text-right">
-                <span v-if="errors && errors.permission_ids" class="red--text">
-                  {{ errors.permission_ids[0] }}
-                </span>
-                <span v-if="errors && errors.name" class="error--text">
-                  {{ errors.name[0] }}</span
-                >
-                <span v-if="errors && errors.description" class="error--text">
-                  {{ errors.description[0] }}</span
-                >
-              </v-col>
-            </v-row>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <!-- <v-btn class="error" small @click="close"> Cancel </v-btn> -->
+          <v-row>
+            <v-col cols="5">
+              <v-text-field
+                hide-details
+                label="Role Name"
+                outlined
+                dense
+                v-model="editedItem.name"
+              ></v-text-field>
+              <span v-if="errors && errors.name" class="error--text">
+                {{ errors.name[0] }}</span
+              >
+            </v-col>
+            <v-col cols="5">
+              <v-text-field
+                hide-details
+                label="Role Description"
+                outlined
+                dense
+                v-model="editedItem.description"
+              ></v-text-field>
+              <span v-if="errors && errors.description" class="error--text">
+                {{ errors.description[0] }}</span
+              >
+            </v-col>
+            <v-col cols="2" class="text-right">
               <v-btn color="primary" fill small @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-container>
+            </v-col>
+
+            <v-col cols="12">
+              <Accordian
+                :defaultPermissionsIds="
+                  editedIndex === -1 ? [] : permission_ids
+                "
+                :permissions="permissions"
+                @selectedPermissions="handleSelectedPermissions"
+              />
+            </v-col>
+            <v-col cols="6" class="text-right">
+              <span v-if="errors && errors.permission_ids" class="red--text">
+                {{ errors.permission_ids[0] }}
+              </span>
+              <span v-if="errors && errors.name" class="error--text">
+                {{ errors.name[0] }}</span
+              >
+              <span v-if="errors && errors.description" class="error--text">
+                {{ errors.description[0] }}</span
+              >
+            </v-col>
+            <v-col class="text-right">
+              <v-btn color="primary" fill small @click="save">Save</v-btn>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -187,8 +115,6 @@
                       dense
                       color="blue"
                       small
-                      v-bind="attrs"
-                      v-on="on"
                       @click="dispalyNewDialog()"
                     >
                       <v-icon color="white" small> mdi-plus </v-icon>
@@ -231,6 +157,7 @@
 <script>
 export default {
   data: () => ({
+    compKey: 1,
     dialogNewRole: false,
     options: {},
     Model: "Role",
@@ -275,11 +202,6 @@ export default {
     permission_ids: [],
     permissions: [],
     formTitle: "New",
-    selectall1: "",
-    selectall2: "",
-    selectall3: "",
-    selectall4: "",
-    selectall5: "",
     editPermissionId: "",
   }),
 
@@ -309,6 +231,13 @@ export default {
   },
 
   methods: {
+    closeDialog() {
+      this.dialogNewRole = false;
+      ++this.compKey;
+    },
+    handleSelectedPermissions(e) {
+      this.permission_ids = e;
+    },
     dispalyNewDialog() {
       this.errors = [];
       this.editedItem = { name: "", description: "" };
@@ -353,17 +282,13 @@ export default {
     },
 
     editItem(item) {
+      console.log(item);
       this.errors = [];
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       //this.dialog = true;
       this.dialogNewRole = true;
 
-      this.selectall1 = false;
-      this.selectall2 = false;
-      this.selectall3 = false;
-      this.selectall4 = false;
-      this.selectall5 = false;
       this.loading = true;
 
       const { page, itemsPerPage } = this.options;
@@ -544,43 +469,6 @@ export default {
       let r = res.replace(/[^a-z]/g, " ");
       let title = r.replace(/\b\w/g, (c) => c.toUpperCase());
       return title;
-    },
-    setAllIds(filter, e) {
-      let isSelected = e;
-
-      // this.permission_ids = this.just_ids
-      //   ? this.permissions.map(e => e.id)
-      //   : [];
-
-      // Function to filter IDs containing the text "edit"
-      let data = this.permissions;
-      const filteredIds = [];
-
-      // Loop through each module in the data
-      for (const module in data) {
-        if (data.hasOwnProperty(module)) {
-          // Filter the items in the module where the "name" contains "edit"
-          const editItems = data[module].filter((item) =>
-            item.name.includes(filter)
-          );
-
-          // Extract and store the IDs from the filtered items
-          const editItemIds = editItems.map((item) => item.id);
-
-          if (isSelected) this.permission_ids.push(...editItemIds);
-          else {
-            const indexToDelete = this.permission_ids.findIndex(
-              (item) => item === editItemIds[0]
-            );
-
-            if (indexToDelete !== -1) {
-              this.permission_ids.splice(indexToDelete, 1);
-            }
-          }
-        }
-      }
-      const uniqueSet = new Set(this.permission_ids);
-      this.permission_ids = Array.from(uniqueSet);
     },
 
     savePermisions(role_id) {

@@ -11,10 +11,10 @@ class Permission extends Model
 
     public $timestamps = false;
 
-    protected $appends = ["title"];
+    // protected $appends = ["title"];
 
-    public function getTitleAttribute()
-    {
-        return Str::replace('_', ' ', $this->name);
-    }
+    // public function getTitleAttribute()
+    // {
+    //     return Str::replace('_', ' ', $this->name);
+    // }
 }
