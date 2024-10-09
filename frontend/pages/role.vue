@@ -1,7 +1,7 @@
 <template>
   <div v-if="can('settings_roles_access') && can('settings_roles_view')">
-    <v-dialog persistent v-model="dialogNewRole" width="900">
-      <AssetsIconClose left="890" @click="closeDialog" />
+    <v-dialog persistent v-model="dialogNewRole" width="800">
+      <AssetsIconClose left="790" @click="closeDialog" />
       <v-card>
         <v-alert dense flat class="grey lighten-3">
           {{ formTitle }} {{ Model }} and Permissions

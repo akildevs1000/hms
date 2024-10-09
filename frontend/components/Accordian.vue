@@ -1,187 +1,166 @@
 <template>
-  <v-card>
-    <v-container>
-      <!-- <AssetsTestAccordian /> -->
-      <v-expansion-panels style="max-height: 450px; overflow-y: auto">
-        <v-expansion-panel v-for="(menu, index) in topMenus" :key="index" dense>
-          <v-expansion-panel-header
-            ><div class="text-color" style="font-size: 12px">
-              {{ menu.label }}
-            </div></v-expansion-panel-header
-          >
-          <v-expansion-panel-content>
-            <v-list dense style="max-height: 250px; overflow-y: scroll">
-              <v-list-item>
-                <table>
-                  <tr>
-                    <td style="width: 30%" class="border-bottom">
-                      <div class="text-color"></div>
-                    </td>
-                    <td class="border-bottom">
-                      <div class="text-color text-center">Access</div>
-                    </td>
-                    <td class="border-bottom">
-                      <div class="text-color text-center">View</div>
-                    </td>
-                    <td class="border-bottom">
-                      <div class="text-color text-center">Create</div>
-                    </td>
-                    <td class="border-bottom">
-                      <div class="text-color text-center">Edit</div>
-                    </td>
-                    <td class="border-bottom">
-                      <div class="text-color text-center">Delete</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="width: 30%" class="border-bottom">
-                      <div class="text-color">
-                        <b>Select All</b>
-                      </div>
-                    </td>
-                    <td class="border-bottom">
-                      <div
-                        class="text-color text-center d-flex align-center justify-center"
-                      >
-                        <v-checkbox
-                          class="py-1 pl-1 ma-0"
-                          color="purple"
-                          dense
-                          hide-details
-                          @change="
-                            (isChecked) =>
-                              selectAllByfilteredMenus(
-                                'access',
-                                menu.name,
-                                isChecked
-                              )
-                          "
-                        ></v-checkbox>
-                      </div>
-                    </td>
-                    <td class="border-bottom">
-                      <div
-                        class="text-color text-center d-flex align-center justify-center"
-                      >
-                        <v-checkbox
-                          class="py-1 pl-1 ma-0"
-                          color="purple"
-                          dense
-                          hide-details
-                          @change="
-                            (isChecked) =>
-                              selectAllByfilteredMenus(
-                                'view',
-                                menu.name,
-                                isChecked
-                              )
-                          "
-                        ></v-checkbox>
-                      </div>
-                    </td>
-                    <td class="border-bottom">
-                      <div
-                        class="text-color text-center d-flex align-center justify-center"
-                      >
-                        <v-checkbox
-                          class="py-1 pl-1 ma-0"
-                          color="purple"
-                          dense
-                          hide-details
-                          @change="
-                            (isChecked) =>
-                              selectAllByfilteredMenus(
-                                'create',
-                                menu.name,
-                                isChecked
-                              )
-                          "
-                        ></v-checkbox>
-                      </div>
-                    </td>
-                    <td class="border-bottom">
-                      <div
-                        class="text-color text-center d-flex align-center justify-center"
-                      >
-                        <v-checkbox
-                          class="py-1 pl-1 ma-0"
-                          color="purple"
-                          dense
-                          hide-details
-                          @change="
-                            (isChecked) =>
-                              selectAllByfilteredMenus(
-                                'edit',
-                                menu.name,
-                                isChecked
-                              )
-                          "
-                        ></v-checkbox>
-                      </div>
-                    </td>
-                    <td class="border-bottom">
-                      <div
-                        class="text-color text-center d-flex align-center justify-center"
-                      >
-                        <v-checkbox
-                          class="py-1 pl-1 ma-0"
-                          color="purple"
-                          dense
-                          hide-details
-                          @change="
-                            (isChecked) =>
-                              selectAllByfilteredMenus(
-                                'delete',
-                                menu.name,
-                                isChecked
-                              )
-                          "
-                        ></v-checkbox>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr
-                    v-for="(childMenu, idx) in filteredMenus(menu.name)"
-                    :key="idx"
+  <div style="max-height: 450px; overflow-y: auto">
+    <v-card v-for="(menu, index) in topMenus" :key="index" class="mb-2" flat>
+      <v-row no-gutters>
+        <v-col>
+          <div class="text-color mx-3 my-1">
+            {{ menu.label }}
+          </div>
+        </v-col>
+        <v-col class="text-right">
+          <div class="mx-3 my-1">
+            <v-icon color="text-color " small text @click="toggleExpand(index)">
+              mdi-chevron-down
+            </v-icon>
+          </div>
+        </v-col>
+      </v-row>
+      <v-expand-transition>
+        <v-card-text
+          v-if="expandedIndex === index"
+          style="max-height: 250px; overflow-y: scroll"
+        >
+          <table>
+            <tr>
+              <td style="width: 30%" class="border-bottom">
+                <div class="text-color"></div>
+              </td>
+              <td class="border-bottom">
+                <div class="text-color text-center">Access</div>
+              </td>
+              <td class="border-bottom">
+                <div class="text-color text-center">View</div>
+              </td>
+              <td class="border-bottom">
+                <div class="text-color text-center">Create</div>
+              </td>
+              <td class="border-bottom">
+                <div class="text-color text-center">Edit</div>
+              </td>
+              <td class="border-bottom">
+                <div class="text-color text-center">Delete</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30%" class="border-bottom">
+                <div class="text-color">
+                  <b>Select All</b>
+                </div>
+              </td>
+              <td class="border-bottom">
+                <div
+                  class="text-color text-center d-flex align-center justify-center"
+                >
+                  <v-checkbox
+                    class="py-1 pl-1 ma-0"
+                    color="purple"
+                    dense
+                    hide-details
+                    @change="
+                      (isChecked) =>
+                        selectAllByfilteredMenus('access', menu.name, isChecked)
+                    "
+                  ></v-checkbox>
+                </div>
+              </td>
+              <td class="border-bottom">
+                <div
+                  class="text-color text-center d-flex align-center justify-center"
+                >
+                  <v-checkbox
+                    class="py-1 pl-1 ma-0"
+                    color="purple"
+                    dense
+                    hide-details
+                    @change="
+                      (isChecked) =>
+                        selectAllByfilteredMenus('view', menu.name, isChecked)
+                    "
+                  ></v-checkbox>
+                </div>
+              </td>
+              <td class="border-bottom">
+                <div
+                  class="text-color text-center d-flex align-center justify-center"
+                >
+                  <v-checkbox
+                    class="py-1 pl-1 ma-0"
+                    color="purple"
+                    dense
+                    hide-details
+                    @change="
+                      (isChecked) =>
+                        selectAllByfilteredMenus('create', menu.name, isChecked)
+                    "
+                  ></v-checkbox>
+                </div>
+              </td>
+              <td class="border-bottom">
+                <div
+                  class="text-color text-center d-flex align-center justify-center"
+                >
+                  <v-checkbox
+                    class="py-1 pl-1 ma-0"
+                    color="purple"
+                    dense
+                    hide-details
+                    @change="
+                      (isChecked) =>
+                        selectAllByfilteredMenus('edit', menu.name, isChecked)
+                    "
+                  ></v-checkbox>
+                </div>
+              </td>
+              <td class="border-bottom">
+                <div
+                  class="text-color text-center d-flex align-center justify-center"
+                >
+                  <v-checkbox
+                    class="py-1 pl-1 ma-0"
+                    color="purple"
+                    dense
+                    hide-details
+                    @change="
+                      (isChecked) =>
+                        selectAllByfilteredMenus('delete', menu.name, isChecked)
+                    "
+                  ></v-checkbox>
+                </div>
+              </td>
+            </tr>
+            <tr v-for="(childMenu, idx) in filteredMenus(menu.name)" :key="idx">
+              <td style="width: 30%" class="border-bottom">
+                <div class="text-color">
+                  {{ childMenu.title }}
+                </div>
+              </td>
+              <td
+                class="border-bottom"
+                v-for="(perm, permIndex) in filteredPermissions(
+                  childMenu.module
+                )"
+                :key="permIndex"
+              >
+                <div class="text-center d-flex align-center justify-center">
+                  <v-checkbox
+                    class="py-1 pl-1 ma-0"
+                    color="purple"
+                    :value="perm.id"
+                    v-model="permission_ids"
+                    dense
+                    hide-details
+                    @change="$emit(`selectedPermissions`, permission_ids)"
                   >
-                    <td style="width: 30%" class="border-bottom">
-                      <div class="text-color">
-                        {{ childMenu.title }}
-                      </div>
-                    </td>
-                    <td
-                      class="border-bottom"
-                      v-for="(perm, permIndex) in filteredPermissions(
-                        childMenu.module
-                      )"
-                      :key="permIndex"
-                    >
-                      <div
-                        class="text-center d-flex align-center justify-center"
-                      >
-                        <v-checkbox
-                          class="py-1 pl-1 ma-0"
-                          color="purple"
-                          :value="perm.id"
-                          v-model="permission_ids"
-                          dense
-                          hide-details
-                          @change="
-                            $emit(`selectedPermissions`, permission_ids)
-                          "
-                        >
-                        </v-checkbox>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </v-list-item>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-container>
-  </v-card>
+                  </v-checkbox>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </v-card-text>
+      </v-expand-transition>
+      <v-divider></v-divider>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -189,6 +168,7 @@ export default {
   props: ["permissions", "defaultPermissionsIds"],
   data() {
     return {
+      expandedIndex: null, // Index of the currently expanded item
       permission_ids: [],
       topMenus: [
         { label: "Dashboard", name: "dashboard" },
@@ -414,6 +394,10 @@ export default {
   },
 
   methods: {
+    toggleExpand(index) {
+      // If the index is already expanded, collapse it; otherwise, expand it
+      this.expandedIndex = this.expandedIndex === index ? null : index;
+    },
     filteredPermissions(module) {
       return this.permissions[module.toLocaleLowerCase()];
     },
