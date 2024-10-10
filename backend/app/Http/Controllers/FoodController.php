@@ -17,7 +17,17 @@ class FoodController extends Controller
      */
     public function index(Request $request)
     {
-        $model = $this->processCompany($request);
+        $todayDate = date("Y-m-d");
+        $model = BookedRoom::query();
+        $model->whereCompanyId($request->company_id);
+        $model->where(function ($query) use ($todayDate) {
+            $query->whereDate('check_out', $todayDate)
+                ->orWhereDate('check_in', $todayDate);
+        });
+        $model->without('booking');
+        $model->with("foodplan");
+        $model->whereIn('booking_status', [1, 2]);
+
         return $this->processFoodOrderList($model->get());
     }
 
@@ -27,39 +37,27 @@ class FoodController extends Controller
 
         foreach ($bookedRooms as $bookedRoom) {
 
-            $breakfast = explode('|', $bookedRoom->meal)[0];
-            $lunch = explode('|', $bookedRoom->meal)[1];
-            $dinner = explode('|', $bookedRoom->meal)[2];
-
-            // if ($breakfast == '--- ' && $lunch == ' --- ' && $dinner == ' ---') {
-            //     continue;
-            // }
-
-            if ($breakfast != '--- ') {
-                $bookedRoom['breakfast'] = [
-                    'title' => 'BreakFast',
-                    'no_of_adult' => $bookedRoom->no_of_adult,
-                    'no_of_child' => $bookedRoom->no_of_child,
-                    'no_of_baby' => $bookedRoom->no_of_baby,
-                ];
-            }
-            if ($lunch != ' --- ') {
-                $bookedRoom['lunch'] = [
-                    'title' => 'Lunch',
-                    'no_of_adult' => $bookedRoom->no_of_adult,
-                    'no_of_child' => $bookedRoom->no_of_child,
-                    'no_of_baby' => $bookedRoom->no_of_baby,
-                ];
-            }
-
-            if ($dinner != ' ---') {
-                $bookedRoom['dinner'] = [
-                    'title' => 'Dinner',
-                    'no_of_adult' => $bookedRoom->no_of_adult,
-                    'no_of_child' => $bookedRoom->no_of_child,
-                    'no_of_baby' => $bookedRoom->no_of_baby,
-                ];
-            }
+            $breakfast =  $bookedRoom->foodplan->breakfast;
+            $lunch =  $bookedRoom->foodplan->lunch;
+            $dinner =  $bookedRoom->foodplan->dinner;
+            $bookedRoom['breakfast'] = [
+                'title' => 'BreakFast',
+                'no_of_adult' => $bookedRoom->no_of_adult * $breakfast,
+                'no_of_child' => $bookedRoom->no_of_child * $breakfast,
+                'no_of_baby' => $bookedRoom->no_of_baby * $breakfast,
+            ];
+            $bookedRoom['lunch'] = [
+                'title' => 'Lunch',
+                'no_of_adult' => $bookedRoom->no_of_adult * $lunch,
+                'no_of_child' => $bookedRoom->no_of_child * $lunch,
+                'no_of_baby' => $bookedRoom->no_of_baby * $lunch,
+            ];
+            $bookedRoom['dinner'] = [
+                'title' => 'Dinner',
+                'no_of_adult' => $bookedRoom->no_of_adult * $dinner,
+                'no_of_child' => $bookedRoom->no_of_child * $dinner,
+                'no_of_baby' => $bookedRoom->no_of_baby * $dinner,
+            ];
 
             $tem[] = $bookedRoom;
         }
