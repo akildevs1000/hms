@@ -53,7 +53,7 @@
                 >
                   <v-checkbox
                     class="py-1 pl-1 ma-0"
-                    color="purple"
+                    color="primary"
                     dense
                     hide-details
                     @change="
@@ -69,7 +69,7 @@
                 >
                   <v-checkbox
                     class="py-1 pl-1 ma-0"
-                    color="purple"
+                    color="primary"
                     dense
                     hide-details
                     @change="
@@ -85,7 +85,7 @@
                 >
                   <v-checkbox
                     class="py-1 pl-1 ma-0"
-                    color="purple"
+                    color="primary"
                     dense
                     hide-details
                     @change="
@@ -101,7 +101,7 @@
                 >
                   <v-checkbox
                     class="py-1 pl-1 ma-0"
-                    color="purple"
+                    color="primary"
                     dense
                     hide-details
                     @change="
@@ -117,7 +117,7 @@
                 >
                   <v-checkbox
                     class="py-1 pl-1 ma-0"
-                    color="purple"
+                    color="primary"
                     dense
                     hide-details
                     @change="
@@ -144,7 +144,7 @@
                 <div class="text-center d-flex align-center justify-center">
                   <v-checkbox
                     class="py-1 pl-1 ma-0"
-                    color="purple"
+                    color="primary"
                     :value="perm.id"
                     v-model="permission_ids"
                     dense
