@@ -483,13 +483,13 @@ class RoomController extends Controller
         ", [$todayDate, $todayDate, $todayDate, $todayDate, $todayDate, $todayDate])
             ->first();
 
-        $expectedBreakfast =$FoodOrder->expected_breakfast ?? 0;
-        $expectedLunch =$FoodOrder->expected_lunch ?? 0;
-        $expectedDinner =$FoodOrder->expected_dinner ?? 0;
+        $expectedBreakfast = $FoodOrder->expected_breakfast ?? 0;
+        $expectedLunch = $FoodOrder->expected_lunch ?? 0;
+        $expectedDinner = $FoodOrder->expected_dinner ?? 0;
 
-        $occupiedBreakfast =$FoodOrder->occupied_breakfast ?? 0;
-        $occupiedLunch =$FoodOrder->occupied_lunch ?? 0;
-        $occupiedDinner =$FoodOrder->occupied_dinner ?? 0;
+        $occupiedBreakfast = $FoodOrder->occupied_breakfast ?? 0;
+        $occupiedLunch = $FoodOrder->occupied_lunch ?? 0;
+        $occupiedDinner = $FoodOrder->occupied_dinner ?? 0;
 
         $totalBreakfast = $expectedBreakfast + $occupiedBreakfast;
         $totalLunch = $expectedLunch + $occupiedLunch;
@@ -540,27 +540,45 @@ class RoomController extends Controller
         $company_id = $request->company_id;
         $roomTypeId = $request->room_type_id;
 
-        return Room::with('device')
-            ->where('company_id', $company_id)
-            ->where('status', '!=', Room::Blocked)
-            ->where('room_type_id', $roomTypeId)
-            ->where('status', '!=', Room::Blocked)
-            ->whereDoesntHave('bookedRoom', function ($q) use ($company_id, $checkIn, $checkOut) {
+        $model = BookedRoom::query();
+        $roomIds = $model
+            ->whereDate('check_in', '<=', $checkIn)
+            ->WhereDate('check_out', '>=', date('Y-m-d', strtotime($checkOut . " +1 day")))
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->where('booking_status', '!=', 0);
                 $q->where('company_id', $company_id);
-
-                // Option 1: Check for rooms that are not booked for the given date range
-                $q->where(function ($query) use ($checkIn, $checkOut) {
-
-                    $query->whereDate('check_in', '>=', $checkIn);
-                    $query->whereDate("check_out", "<=", date('Y-m-d', strtotime($checkOut . " +1 day")));
-                })
-                    // Option 2: Exclude rooms based on booking status
-                    ->orWhere(function ($query) use ($checkIn, $checkOut) {
-                        // $query->whereDate('check_out', $todayDate);
-                        $query->where('booking_status', 0);
-                    });
             })
+            ->pluck('room_id');
+
+        return Room::whereNotIn('id', $roomIds)
+            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+            ->where('room_type_id', $roomTypeId)
+            ->where('company_id', $company_id)
+            ->with('device')
             ->get();
+
+
+
+        // return Room::with('device')
+        //     ->where('company_id', $company_id)
+        //     ->where('status', '!=', Room::Blocked)
+        //     ->where('room_type_id', $roomTypeId)
+        //     ->whereDoesntHave('bookedRoom', function ($q) use ($company_id, $checkIn, $checkOut) {
+        //         $q->where('company_id', $company_id);
+
+        //         // Option 1: Check for rooms that are not booked for the given date range
+        //         $q->where(function ($query) use ($checkIn, $checkOut) {
+
+        //             $query->whereDate('check_in', '>=', $checkIn);
+        //             $query->whereDate("check_out", "<=", date('Y-m-d', strtotime($checkOut . " +1 day")));
+        //         })
+        //             // Option 2: Exclude rooms based on booking status
+        //             ->orWhere(function ($query) use ($checkIn, $checkOut) {
+        //                 // $query->whereDate('check_out', $todayDate);
+        //                 $query->where('booking_status', 0);
+        //             });
+        //     })
+        //     ->get();
     }
 
 
