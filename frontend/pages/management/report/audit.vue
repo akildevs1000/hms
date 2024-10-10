@@ -156,9 +156,8 @@
           <v-tabs-slider color="#1259a7"></v-tabs-slider>
           <!-- today checkin -->
           <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
+            <v-container fluid>
+              <table>
                   <tr class="">
                     <td
                       :class="`text-${item.align}`"
@@ -243,15 +242,13 @@
                     </td>
                   </tr>
                 </table>
-              </v-card>
-            </v-card>
+            </v-container>
           </v-tab-item>
 
           <!-- continueRooms -->
           <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
+            <v-container fluid>
+              <table>
                   <tr>
                     <td v-for="(item, index) in headers" :key="index">
                       <span v-html="item.text"></span>
@@ -322,15 +319,13 @@
                     </td>
                   </tr>
                 </table>
-              </v-card>
-            </v-card>
+            </v-container>
           </v-tab-item>
 
           <!-- today payment -->
           <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
+            <v-container fluid>
+              <table>
                   <tr>
                     <td v-for="(item, index) in headers" :key="index">
                       <span v-html="item.text"></span>
@@ -402,8 +397,7 @@
                     </td>
                   </tr>
                 </table>
-              </v-card>
-            </v-card>
+            </v-container>
           </v-tab-item>
 
           <!-- today payment -->
@@ -488,249 +482,230 @@
 
           <!-- today cityledger -->
           <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <td v-for="(item, index) in headers" :key="index">
-                      <span v-html="item.text"></span>
-                    </td>
-                  </tr>
-                  <tr
-                    v-for="(item, index) in cityLedgerPaymentsAudit"
-                    :key="index"
-                  >
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
-
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">
-                      {{ setAdvancePayment(item.advance_price) }}
-                    </td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <td class="text-right" colspan="9">Total</td>
-                    <td class="text-right">{{ cityLedgerTotalCash }}</td>
-                    <td class="text-right">{{ cityLedgerTotalCard }}</td>
-                    <td class="text-right">{{ cityLedgerTotalOnline }}</td>
-                    <td class="text-right">{{ cityLedgerTotalBank }}</td>
-                    <td class="text-right">{{ cityLedgerTotalUPI }}</td>
-                    <td class="text-right">{{ cityLedgerTotalBalance }}</td>
-                    <td></td>
-                    <td class="text-center">
-                      {{ cityLedgerGenerateDateTime }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        small
-                        color="primary"
-                        @click="openExternalLink(cityLedgerPath)"
-                        >mdi-file</v-icon
-                      >
-                    </td>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <td>Rev. No</td>
-                    <td>Room No</td>
-                    <td>Room Type</td>
-                    <td>Booking</td>
-                    <td>C/In Time</td>
-                    <td>Cancel Time</td>
-                    <td>Amount</td>
-                    <td>Reason</td>
-                    <td>Reason</td>
-                    <td>File Generated Date Time</td>
-                    <td>PDF File</td>
-                    <td>Action</td>
-                    <td>Cancel By</td>
-                    <td>Status</td>
-                  </tr>
-                  <tr v-for="(item, index) in cancelRooms" :key="index">
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevViewFromCancel(item)"
-                        style="cursor: pointer"
-                      >
-                        {{
-                          item && item.booking && item.booking.reservation_no
-                        }}
-                      </span>
-                    </td>
-                    <td>{{ item && item.room_no }}</td>
-                    <td>{{ item && item.room_type }}</td>
-                    <td>{{ item && item.booking.created_at }}</td>
-                    <td>
-                      {{
-                        item.status_before_cancelation == 2
-                          ? item.check_in
-                          : "---"
-                      }}
-                    </td>
-                    <td>{{ item && item.time }}</td>
-                    <td class="text-right">{{ item && item.grand_total }}</td>
-                    <td>{{ item && item.reason }}</td>
-                    <td>{{ item && item.action }}</td>
-                    <td class="text-center">
-                      {{ cancelRoomsGenerateDateTime }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        small
-                        color="primary"
-                        @click="openExternalLink(cancelRoomsPath)"
-                        >mdi-file</v-icon
-                      >
-                    </td>
-                    <td>{{ item && item.user && item.user.name }}</td>
-                    <td>{{ item && item.status_before_cancelation_msg }}</td>
-                   
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table
-                  v-for="(item, index) in FoodData"
+            <v-container fluid>
+              <table>
+                <tr>
+                  <td v-for="(item, index) in headers" :key="index">
+                    <span v-html="item.text"></span>
+                  </td>
+                </tr>
+                <tr
+                  v-for="(item, index) in cityLedgerPaymentsAudit"
                   :key="index"
-                  class="mt-4"
                 >
-                  <tr
-                    style="background-color: #ecf0f4; color: black"
-                    class="my-0 py-0"
-                  >
-                    <th class="my-0 py-0">
-                      Room No - {{ item.room_no || "---" }}
-                    </th>
-                    <th class="my-0 py-0">Adult</th>
-                    <th class="my-0 py-0">Child</th>
-                    <th class="my-0 py-0">Baby</th>
-                  </tr>
-                  <tr style="background-color: white" class="my-0 py-0">
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.breakfast && item.breakfast.title) ||
-                        "Breakfast"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item &&
-                          item.breakfast &&
-                          item.breakfast.no_of_adult) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item &&
-                          item.breakfast &&
-                          item.breakfast.no_of_child) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.breakfast && item.breakfast.no_of_baby) ||
-                        "---"
-                      }}
-                    </td>
-                  </tr>
-                  <tr style="background-color: white" class="my-0 py-0">
-                    <td class="my-0 py-0">
-                      {{ (item && item.lunch && item.lunch.title) || "Lunch" }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.lunch && item.lunch.no_of_adult) || "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.lunch && item.lunch.no_of_child) || "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.lunch && item.lunch.no_of_baby) || "---"
-                      }}
-                    </td>
-                  </tr>
-                  <tr style="background-color: white" class="my-0 py-0">
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.title) || "Dinner"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.no_of_adult) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.no_of_child) ||
-                        "---"
-                      }}
-                    </td>
-                    <td class="my-0 py-0">
-                      {{
-                        (item && item.dinner && item.dinner.no_of_baby) || "---"
-                      }}
-                    </td>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
+                  <td>{{ ++index }}</td>
+                  <td>
+                    {{ item && item.customer && item.customer.first_name }}
+                  </td>
+                  <td>
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.reservation_no }}
+                    </span>
+                  </td>
+                  <td class="room-width">
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.rooms }}
+                    </span>
+                  </td>
+
+                  <td>{{ item && item.source }}</td>
+                  <td>{{ item && item.check_in }}</td>
+                  <td>{{ item && item.check_out }}</td>
+                  <td class="text-right">{{ item.total_price }}</td>
+                  <td class="text-right">
+                    {{ setAdvancePayment(item.advance_price) }}
+                  </td>
+                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
+
+                  <td class="text-right">
+                    {{ item.balance }}
+                  </td>
+                  <td>
+                    {{ item.balance > 0 ? "Due" : "Paid" }}
+                  </td>
+                </tr>
+                <tr class="text-right">
+                  <td class="text-right" colspan="9">Total</td>
+                  <td class="text-right">{{ cityLedgerTotalCash }}</td>
+                  <td class="text-right">{{ cityLedgerTotalCard }}</td>
+                  <td class="text-right">{{ cityLedgerTotalOnline }}</td>
+                  <td class="text-right">{{ cityLedgerTotalBank }}</td>
+                  <td class="text-right">{{ cityLedgerTotalUPI }}</td>
+                  <td class="text-right">{{ cityLedgerTotalBalance }}</td>
+                  <td></td>
+                  <td class="text-center">
+                    {{ cityLedgerGenerateDateTime }}
+                  </td>
+                  <td class="text-center">
+                    <v-icon
+                      small
+                      color="primary"
+                      @click="openExternalLink(cityLedgerPath)"
+                      >mdi-file</v-icon
+                    >
+                  </td>
+                </tr>
+              </table>
+            </v-container>
+          </v-tab-item>
+
+          <v-tab-item>
+            <v-container fluid>
+              <table>
+                <tr>
+                  <td>Rev. No</td>
+                  <td>Room No</td>
+                  <td>Room Type</td>
+                  <td>Booking</td>
+                  <td>C/In Time</td>
+                  <td>Cancel Time</td>
+                  <td>Amount</td>
+                  <td>Reason</td>
+                  <td>Reason</td>
+                  <td>File Generated Date Time</td>
+                  <td>PDF File</td>
+                  <td>Action</td>
+                  <td>Cancel By</td>
+                  <td>Status</td>
+                </tr>
+                <tr v-for="(item, index) in cancelRooms" :key="index">
+                  <td class="room-width">
+                    <span
+                      class="blue--text"
+                      @click="goToRevViewFromCancel(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item && item.booking && item.booking.reservation_no }}
+                    </span>
+                  </td>
+                  <td>{{ item && item.room_no }}</td>
+                  <td>{{ item && item.room_type }}</td>
+                  <td>{{ item && item.booking.created_at }}</td>
+                  <td>
+                    {{
+                      item.status_before_cancelation == 2
+                        ? item.check_in
+                        : "---"
+                    }}
+                  </td>
+                  <td>{{ item && item.time }}</td>
+                  <td class="text-right">{{ item && item.grand_total }}</td>
+                  <td>{{ item && item.reason }}</td>
+                  <td>{{ item && item.action }}</td>
+                  <td class="text-center">
+                    {{ cancelRoomsGenerateDateTime }}
+                  </td>
+                  <td class="text-center">
+                    <v-icon
+                      small
+                      color="primary"
+                      @click="openExternalLink(cancelRoomsPath)"
+                      >mdi-file</v-icon
+                    >
+                  </td>
+                  <td>{{ item && item.user && item.user.name }}</td>
+                  <td>{{ item && item.status_before_cancelation_msg }}</td>
+                </tr>
+              </table>
+            </v-container>
+          </v-tab-item>
+
+          <v-tab-item>
+            <v-container fluid>
+              <table
+                v-for="(item, index) in FoodData"
+                :key="index"
+                class="mt-4"
+              >
+                <tr
+                  style="background-color: #ecf0f4; color: black"
+                  class="my-0 py-0"
+                >
+                  <th class="my-0 py-0">
+                    Room No - {{ item.room_no || "---" }}
+                  </th>
+                  <th class="my-0 py-0">Adult</th>
+                  <th class="my-0 py-0">Child</th>
+                  <th class="my-0 py-0">Baby</th>
+                </tr>
+                <tr style="background-color: white" class="my-0 py-0">
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.breakfast && item.breakfast.title) ||
+                      "Breakfast"
+                    }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.breakfast && item.breakfast.no_of_adult) ||
+                      "---"
+                    }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.breakfast && item.breakfast.no_of_child) ||
+                      "---"
+                    }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.breakfast && item.breakfast.no_of_baby) ||
+                      "---"
+                    }}
+                  </td>
+                </tr>
+                <tr style="background-color: white" class="my-0 py-0">
+                  <td class="my-0 py-0">
+                    {{ (item && item.lunch && item.lunch.title) || "Lunch" }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.lunch && item.lunch.no_of_adult) || "---"
+                    }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.lunch && item.lunch.no_of_child) || "---"
+                    }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{ (item && item.lunch && item.lunch.no_of_baby) || "---" }}
+                  </td>
+                </tr>
+                <tr style="background-color: white" class="my-0 py-0">
+                  <td class="my-0 py-0">
+                    {{ (item && item.dinner && item.dinner.title) || "Dinner" }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.dinner && item.dinner.no_of_adult) || "---"
+                    }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.dinner && item.dinner.no_of_child) || "---"
+                    }}
+                  </td>
+                  <td class="my-0 py-0">
+                    {{
+                      (item && item.dinner && item.dinner.no_of_baby) || "---"
+                    }}
+                  </td>
+                </tr>
+              </table>
+            </v-container>
           </v-tab-item>
         </v-tabs>
       </v-card>
