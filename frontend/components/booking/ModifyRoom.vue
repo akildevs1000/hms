@@ -1,189 +1,190 @@
 <template>
   <div class="text-center">
     <v-dialog persistent v-model="dialog" width="850">
+      <AssetsIconClose left="840" @click="dialog = false" />
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs" v-on="on"> Modify Booking </span>
       </template>
 
       <v-card>
-        <v-toolbar class="grey lighten-3 primary--text" flat dense>
+        <v-alert class="grey lighten-3 primary--text" flat dense>
           <div style="font-size: 18px">Modify Booking</div>
-          <v-spacer></v-spacer><AssetsButtonClose @close="dialog = false" />
-        </v-toolbar>
+        </v-alert>
 
-        <v-card-text class="py-5">
-          <v-container v-if="payload && payload.booking_id">
-            <v-row v-if="bookingResponse">
-              <!-- Left Column -->
-              <v-col cols="12" md="6">
-                <v-row no-gutter>
-                  <v-col cols="12" class="text-center">
-                    <v-avatar size="125">
-                      <img
-                        class="pa-2"
-                        style="border: 1px solid grey"
-                        :src="
-                          bookingResponse?.customer?.captured_photo ||
-                          'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
-                        "
-                        alt="Profile Image"
-                      />
-                    </v-avatar>
+        <v-card-text
+          v-if="payload && payload.booking_id"
+          style="max-height: 600px; overflow: auto"
+        >
+          <v-row v-if="bookingResponse">
+            <!-- Left Column -->
+            <v-col cols="12" md="6">
+              <v-row no-gutter>
+                <v-col cols="12" class="text-center">
+                  <v-avatar size="125">
+                    <img
+                      class="pa-2"
+                      style="border: 1px solid grey"
+                      :src="
+                        bookingResponse?.customer?.captured_photo ||
+                        'https://i.pinimg.com/474x/e4/c5/9f/e4c59fdbb41ccd0f87dc0be871d91d98.jpg'
+                      "
+                      alt="Profile Image"
+                    />
+                  </v-avatar>
+                </v-col>
+              </v-row>
+              <v-container>
+                <v-row>
+                  <v-col cols="12">
+                    <!-- Form Fields -->
+                    <v-text-field
+                      readonly
+                      v-model="bookingResponse.customer.full_name"
+                      label="Full Name"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      readonly
+                      v-model="bookingResponse.customer.contact_no"
+                      label="Phone Number"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      readonly
+                      v-model="bookingResponse.booking.source"
+                      label="Source"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      readonly
+                      v-model="formattedCheckinDate"
+                      label="Check In"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      readonly
+                      v-model="formattedCheckOutDate"
+                      label="Check Out"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+                  <v-col cols="4">
+                    <v-text-field
+                      label="Adult"
+                      dense
+                      outlined
+                      v-model="bookingResponse.no_of_adult"
+                      hide-details
+                      readonly
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-text-field
+                      label="Child"
+                      dense
+                      outlined
+                      v-model="bookingResponse.no_of_child"
+                      hide-details
+                      readonly
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-text-field
+                      label="Extra Bed"
+                      dense
+                      outlined
+                      v-model="bookingResponse.extra_bed_qty"
+                      hide-details
+                      readonly
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      readonly
+                      v-model="bookingResponse.room_type"
+                      label="Room Type"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      readonly
+                      v-model="bookingResponse.room_no"
+                      label="Room Number"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-text-field
+                      readonly
+                      v-model="formattedFoodPlan"
+                      label="Food Plan"
+                      dense
+                      hide-details
+                      outlined
+                    />
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-row justify="center">
+                      <v-col cols="4" class="d-flex justify-center">
+                        <v-checkbox
+                          readonly
+                          label="Early C/I"
+                          hide-details
+                          dense
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="4" class="d-flex justify-center">
+                        <v-checkbox
+                          readonly
+                          label="Late C/O"
+                          hide-details
+                          dense
+                        ></v-checkbox>
+                      </v-col>
+                    </v-row>
                   </v-col>
                 </v-row>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <!-- Form Fields -->
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.customer.full_name"
-                        label="Full Name"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.customer.contact_no"
-                        label="Phone Number"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.booking.source"
-                        label="Source"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-
-                    <v-col cols="6">
-                      <v-text-field
-                        readonly
-                        v-model="formattedCheckinDate"
-                        label="Check In"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-
-                    <v-col cols="6">
-                      <v-text-field
-                        readonly
-                        v-model="formattedCheckOutDate"
-                        label="Check Out"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-
-                    <v-col cols="4">
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.no_of_adult"
-                        label="Adults"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-                    <v-col cols="4">
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.no_of_child"
-                        label="Children"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-                    <v-col cols="4">
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.extra_bed_qty"
-                        label="Extra Bed"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-
-                    <v-col cols="6">
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.room_type"
-                        label="Room Type"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-
-                    <v-col cols="6">
-                      <v-text-field
-                        readonly
-                        v-model="bookingResponse.room_no"
-                        label="Room Number"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-
-                    <v-col cols="12">
-                      <v-text-field
-                        readonly
-                        v-model="formattedFoodPlan"
-                        label="Food Plan"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-
-                    <v-col cols="12">
-                      <v-row justify="center">
-                        <v-col cols="4" class="d-flex justify-center">
-                          <v-checkbox
-                            readonly
-                            label="Early C/I"
-                            hide-details
-                            dense
-                          ></v-checkbox>
-                        </v-col>
-                        <v-col cols="4" class="d-flex justify-center">
-                          <v-checkbox
-                            readonly
-                            label="Late C/O"
-                            hide-details
-                            dense
-                          ></v-checkbox>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-col>
-              <v-divider vertical></v-divider>
-              <!-- Right Column -->
-              <v-col cols="12" md="6">
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <Heading label="Edit Booking" />
-                    </v-col>
-                    <v-col cols="6">
-                      <!-- <tr>
+              </v-container>
+            </v-col>
+            <v-divider vertical></v-divider>
+            <!-- Right Column -->
+            <v-col cols="12" md="6">
+              <v-container>
+                <v-row>
+                  <v-col cols="12">
+                    <Heading label="Edit Booking" />
+                  </v-col>
+                  <v-col cols="6">
+                    <!-- <tr>
                 <th>Early Check In</th>
                 <td>
                   <v-checkbox
@@ -194,7 +195,7 @@
                   ></v-checkbox>
                 </td>
               </tr> -->
-                      <!-- <tr>
+                    <!-- <tr>
                 <th>Late Check Out</th>
                 <td>
                   <v-checkbox
@@ -213,293 +214,277 @@
                 </td>
               </tr> -->
 
-                      <v-menu
-                        v-model="checkin_menu"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            outlined
-                            dense
-                            hide-details
-                            v-model="formattedCheckinDate"
-                            persistent-hint
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          :min="new Date().toISOString().substr(0, 10)"
-                          v-model="payload.check_in"
-                          no-title
-                          @input="
-                            () => {
-                              checkin_menu = false;
-                              getPricesByRoomId(payload.room_id);
-                            }
-                          "
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
+                    <v-menu
+                      v-model="checkin_menu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="formattedCheckinDate"
+                          persistent-hint
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        :min="new Date().toISOString().substr(0, 10)"
+                        v-model="payload.check_in"
+                        no-title
+                        @input="
+                          () => {
+                            checkin_menu = false;
+                            getPricesByRoomId(payload.room_id);
+                          }
+                        "
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
 
-                    <v-col cols="6">
-                      <v-menu
-                        v-model="checkout_menu"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            outlined
-                            dense
-                            hide-details
-                            v-model="formattedCheckOutDate"
-                            persistent-hint
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          :min="addOneDay(payload.check_in)"
-                          v-model="payload.check_out"
-                          no-title
-                          @input="
-                            () => {
-                              checkout_menu = false;
-                              getPricesByRoomId(payload.room_id);
-                            }
-                          "
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
+                  <v-col cols="6">
+                    <v-menu
+                      v-model="checkout_menu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          outlined
+                          dense
+                          hide-details
+                          v-model="formattedCheckOutDate"
+                          persistent-hint
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        :min="addOneDay(payload.check_in)"
+                        v-model="payload.check_out"
+                        no-title
+                        @input="
+                          () => {
+                            checkout_menu = false;
+                            getPricesByRoomId(payload.room_id);
+                          }
+                        "
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
 
-                    <v-col cols="4">
-                      <v-text-field
-                        readonly
-                        v-model="payload.no_of_adult"
-                        label="Adults"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-                    <v-col cols="4">
-                      <v-text-field
-                        readonly
-                        v-model="payload.no_of_child"
-                        label="Children"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
-                    <v-col cols="4">
-                      <v-text-field
-                        readonly
-                        min="0"
-                        @keyup="adjust_bed_charges"
-                        v-model="payload.extra_bed_qty"
-                        label="Extra Bed"
-                        dense
-                        hide-details
-                        outlined
-                      />
-                    </v-col>
+                  <v-col cols="4">
+                    <v-autocomplete
+                      label="Adult"
+                      :items="[1, 2, 3]"
+                      dense
+                      outlined
+                      v-model="payload.no_of_adult"
+                      hide-details
+                      required
+                      @change="getPricesByRoomId(payload.room_id)"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-autocomplete
+                      label="Child"
+                      :items="[0, 1, 2, 3]"
+                      dense
+                      outlined
+                      v-model="payload.no_of_child"
+                      hide-details
+                      required
+                      @change="getPricesByRoomId(payload.room_id)"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-autocomplete
+                      label="Extra Bed"
+                      :items="[0, 1, 2, 3]"
+                      dense
+                      outlined
+                      v-model="payload.extra_bed_qty"
+                      hide-details
+                      required
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-autocomplete
+                      v-model="payload.room_type_id"
+                      @change="getFilteredRooms"
+                      label="Room Type"
+                      outlined
+                      dense
+                      hide-details
+                      item-value="id"
+                      item-text="name"
+                      :items="roomTypes"
+                      return-object
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-autocomplete
+                      @change="getPricesByRoomId(payload.room_id)"
+                      :items="filteredRooms"
+                      item-text="room_no"
+                      item-value="id"
+                      dense
+                      outlined
+                      v-model="payload.room_id"
+                      :hide-details="true"
+                    ></v-autocomplete>
+                  </v-col>
 
-                    <v-col cols="6">
-                      <v-autocomplete
-                        v-model="payload.room_type_id"
-                        @change="getFilteredRooms"
-                        label="Room Type"
-                        outlined
-                        dense
-                        hide-details
-                        item-value="id"
-                        item-text="name"
-                        :items="roomTypes"
-                        return-object
-                      ></v-autocomplete>
-                    </v-col>
+                  <v-col cols="12">
+                    <v-autocomplete
+                      label="Food Plan"
+                      outlined
+                      dense
+                      hide-details
+                      item-value="id"
+                      item-text="title"
+                      v-model="payload.food_plan_id"
+                      :items="foodplans"
+                      @change="getPricesByRoomId(payload.room_id)"
+                    ></v-autocomplete>
+                  </v-col>
 
-                    <v-col cols="6">
-                      <v-autocomplete
-                        @change="getPricesByRoomId(payload.room_id)"
-                        :items="filteredRooms"
-                        item-text="room_no"
-                        item-value="id"
-                        dense
-                        outlined
-                        v-model="payload.room_id"
-                        :hide-details="true"
-                      ></v-autocomplete>
-                    </v-col>
+                  <v-col cols="12">
+                    <v-row justify="center">
+                      <v-col cols="4" class="d-flex justify-center">
+                        <v-checkbox
+                          readonly
+                          label="Early C/I"
+                          hide-details
+                          dense
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="4" class="d-flex justify-center">
+                        <v-checkbox
+                          readonly
+                          label="Late C/O"
+                          hide-details
+                          dense
+                        ></v-checkbox>
+                      </v-col>
+                    </v-row>
+                  </v-col>
 
-                    <v-col cols="12">
-                      <v-autocomplete
-                        label="Food Plan"
-                        outlined
-                        dense
-                        hide-details
-                        item-value="id"
-                        item-text="title"
-                        v-model="payload.food_plan_id"
-                        :items="foodplans"
-                        @change="getPricesByRoomId(payload.room_id)"
-                      ></v-autocomplete>
-                    </v-col>
+                  <v-col cols="12">
+                    <v-textarea
+                      label="Notes"
+                      dense
+                      hide-details
+                      outlined
+                      rows="2"
+                    />
+                  </v-col>
 
-                    <v-col cols="12">
-                      <v-row justify="center">
-                        <v-col cols="4" class="d-flex justify-center">
-                          <v-checkbox
-                            readonly
-                            label="Early C/I"
-                            hide-details
-                            dense
-                          ></v-checkbox>
-                        </v-col>
-                        <v-col cols="4" class="d-flex justify-center">
-                          <v-checkbox
-                            readonly
-                            label="Late C/O"
-                            hide-details
-                            dense
-                          ></v-checkbox>
-                        </v-col>
-                      </v-row>
-                    </v-col>
+                  <v-col cols="12" class="my-3">
+                    <Heading label="New Price" />
+                  </v-col>
+                  <v-col>
+                    <table style="width: 100%" cellspacing="3">
+                      <tr>
+                        <td
+                          style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        >
+                          <b>Old Booking</b>
+                        </td>
+                        <td
+                          style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        >
+                          {{ $utils.currency_format(old.booking_total_price) }}
+                        </td>
+                        <td colspan="2" class="text-center">Old Balance</td>
+                      </tr>
+                      <tr>
+                        <td>Advance Paid</td>
+                        <td>
+                          {{ $utils.currency_format(payload.advance_price) }}
+                        </td>
+                        <td colspan="2" class="text-center">
+                          <span style="font-size: 22px" class="blue--text">{{
+                            $utils.currency_format(
+                              old.booking_total_price - payload.advance_price
+                            )
+                          }}</span>
+                        </td>
+                      </tr>
+                    </table>
+                    <v-divider></v-divider>
+                    <table style="width: 100%">
+                      <tr>
+                        <td
+                          style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        >
+                          New Booking
+                        </td>
+                        <td
+                          style="width: 110px; border-bottom: 1px solid #eeeeee"
+                        >
+                          {{
+                            $utils.currency_format(payload.booking_total_price)
+                          }}
+                        </td>
+                        <td colspan="2" class="text-center">New Balance</td>
+                      </tr>
+                      <tr>
+                        <td>Advance Adj</td>
+                        <td>
+                          {{ $utils.currency_format(payload.advance_price) }}
+                        </td>
+                        <td colspan="2" class="text-center">
+                          <span style="font-size: 22px" class="red--text">{{
+                            $utils.currency_format(
+                              payload.booking_total_price -
+                                payload.advance_price
+                            )
+                          }}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-col>
 
-                    <v-col cols="12">
-                      <v-textarea
-                        label="Notes"
-                        dense
-                        hide-details
-                        outlined
-                        rows="2"
-                      />
-                    </v-col>
-
-                    <v-col cols="12" class="my-3">
-                      <Heading label="New Price" />
-                    </v-col>
-                    <v-col>
-                      <table style="width: 100%" cellspacing="3">
-                        <tr>
-                          <td
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            <b>Old Booking</b>
-                          </td>
-                          <td
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            <b>{{
-                              $utils.currency_format(old.booking_total_price)
-                            }}</b>
-                          </td>
-                          <td colspan="2" class="text-center">Old Balance</td>
-                        </tr>
-                        <tr>
-                          <td>Advance Paid</td>
-                          <td>
-                            {{ $utils.currency_format(payload.advance_price) }}
-                          </td>
-                          <td colspan="2" class="text-center">
-                            <b style="font-size: 22px" class="blue--text">{{
-                              $utils.currency_format(
-                                old.booking_total_price - payload.advance_price
-                              )
-                            }}</b>
-                          </td>
-                        </tr>
-                      </table>
-                      <v-divider></v-divider>
-                      <table style="width: 100%">
-                        <tr>
-                          <td
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            New Booking
-                          </td>
-                          <td
-                            style="
-                              width: 110px;
-                              border-bottom: 1px solid #eeeeee;
-                            "
-                          >
-                            {{
-                              $utils.currency_format(
-                                payload.booking_total_price
-                              )
-                            }}
-                          </td>
-                          <td colspan="2" class="text-center">Old Balance</td>
-                        </tr>
-                        <tr>
-                          <td>Advance Adj</td>
-                          <td>
-                            {{ $utils.currency_format(payload.advance_price) }}
-                          </td>
-                          <td colspan="2" class="text-center">
-                            <b style="font-size: 22px" class="red--text">{{
-                              $utils.currency_format(
-                                payload.booking_total_price -
-                                  payload.advance_price
-                              )
-                            }}</b>
-                          </td>
-                        </tr>
-                      </table>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-col>
-
-              <v-col cols="6">
-                <v-textarea
-                  readonly
-                  v-model="bookingResponse.booking.request"
-                  label="Guest Request"
-                  dense
-                  hide-details
-                  outlined
-                  rows="2"
-                />
-              </v-col>
-              <v-divider vertical></v-divider>
-              <v-col cols="6" class="text-center mt-5">
-                <AssetsButtonCancel @close="dialog = false" />
-                &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-                <AssetsButtonSubmit @click="submit" />
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-container v-else>
+            <v-col cols="6">
+              <v-textarea
+                readonly
+                v-model="bookingResponse.booking.request"
+                label="Guest Request"
+                dense
+                hide-details
+                outlined
+                rows="2"
+              />
+            </v-col>
+            <v-divider vertical></v-divider>
+            <v-col cols="6" class="text-center mt-5">
+              <AssetsButtonCancel @close="dialog = false" />
+              &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+              <AssetsButtonSubmit @click="submit" />
+            </v-col>
+          </v-row>
+          <v-card-text v-else>
             <div
               class="d-flex justify-center align-center"
               style="height: 400px"
             >
               <div>Loading......</div>
             </div>
-          </v-container>
+          </v-card-text>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -719,7 +704,17 @@ export default {
 
           let unit_price = this.get_food_charges(this.payload.food_plan_id);
           let total_days = data.data.length || 0;
-          let food_plan_price_for_all_days = unit_price * total_days;
+          let no_of_adult = this.payload.no_of_adult;
+          let no_of_child = this.payload.no_of_child;
+          let childFoodCharges = no_of_child > 0 ? no_of_child / 2 : 0;
+
+          let foodChargesByTotalPerson = no_of_adult + childFoodCharges;
+
+          console.log(foodChargesByTotalPerson);
+          
+
+          let food_plan_price_for_all_days =
+            unit_price * total_days * foodChargesByTotalPerson;
           let new_room_price_single_day = data.total_price / total_days;
           let room_price_with_meal = unit_price + new_room_price_single_day;
 
@@ -883,8 +878,8 @@ export default {
         booking_remaining_price: this.payload.booking_remaining_price,
         booking_total_price: this.payload.booking_total_price,
         food_plan_price: this.payload.food_plan_price,
-        no_of_adult: this.bookingResponse.no_of_adult,
-        no_of_child: this.bookingResponse.no_of_child,
+        no_of_adult: this.payload.no_of_adult,
+        no_of_child: this.payload.no_of_child,
 
         breakfast: this.bookingResponse.breakfast,
         lunch: this.bookingResponse.lunch,
