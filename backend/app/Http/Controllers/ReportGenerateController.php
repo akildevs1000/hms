@@ -17,7 +17,7 @@ class ReportGenerateController extends Controller
     public function generateAuditReport()
     {
         $company_ids = $this->getNotificationCompanyIds();
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('yesterday')); // Use yesterday's date
         //$date = date('Y-07-01');
 
         foreach ($company_ids as $company_id) {

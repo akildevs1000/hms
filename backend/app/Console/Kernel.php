@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
             ->command('task:generate_audit_report')
             // ->everyMinute()
             // ->everyThirtyMinutes()
-            ->dailyAt('23:50')
+            ->dailyAt('1:00')
             //->hourly()
             ->appendOutputTo(storage_path("logs/pdf.log"))
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
