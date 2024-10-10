@@ -599,6 +599,18 @@ export default {
   },
 
   methods: {
+    set_additional_charges() {
+      // this.temp.early_check_in = this.is_early_check_in
+      //   ? this.additional_charges.early_check_in
+      //   : 0;
+      // this.temp.late_check_out = this.is_late_check_out
+      //   ? this.additional_charges.late_check_out
+      //   : 0;
+
+      this.payload.bed_amount = this.payload.extra_bed_qty
+        ? this.payload.extra_bed_qty * this.additional_charges.extra_bed
+        : 0;
+    },
     async get_additional_charges() {
       let { data } = await this.$axios.get(`additional_charges`, {
         params: {
@@ -703,24 +715,18 @@ export default {
           this.room_orders = data.data;
 
           let unit_price = this.get_food_charges(this.payload.food_plan_id);
+          let selected_food_plan = this.getFoodCalculation(this.payload);
+
           let total_days = data.data.length || 0;
-          let no_of_adult = this.payload.no_of_adult;
-          let no_of_child = this.payload.no_of_child;
-          let childFoodCharges = no_of_child > 0 ? no_of_child / 2 : 0;
-
-          let foodChargesByTotalPerson = no_of_adult + childFoodCharges;
-
-          console.log(foodChargesByTotalPerson);
-          
-
           let food_plan_price_for_all_days =
-            unit_price * total_days * foodChargesByTotalPerson;
+            total_days * selected_food_plan.food_plan_price;
+
           let new_room_price_single_day = data.total_price / total_days;
           let room_price_with_meal = unit_price + new_room_price_single_day;
 
           this.payload = {
             ...this.payload,
-            food_plan_price: unit_price,
+            ...selected_food_plan,
             room_no: found.room_no,
             room_type_id: data.room.room_type_id,
             room_id: data.room.id,
@@ -752,7 +758,29 @@ export default {
           }
         });
     },
+    getFoodCalculation({ no_of_adult, no_of_child, food_plan_id }) {
+      let selectedFP = this.foodplans.find((e) => e.id == food_plan_id);
 
+      if (!selectedFP) {
+        return null;
+      }
+
+      let total_members = no_of_adult + no_of_child;
+
+      let { title, unit_price } = selectedFP;
+
+      let food_plan_price =
+        unit_price * no_of_adult + (unit_price * no_of_child) / 2;
+
+      return {
+        meal: "------",
+        meal_name: title,
+        food_plan_price: food_plan_price,
+        breakfast: selectedFP.breakfast ? total_members : 0,
+        lunch: selectedFP.lunch ? total_members : 0,
+        dinner: selectedFP.dinner ? total_members : 0,
+      };
+    },
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
@@ -880,14 +908,10 @@ export default {
         food_plan_price: this.payload.food_plan_price,
         no_of_adult: this.payload.no_of_adult,
         no_of_child: this.payload.no_of_child,
-
-        breakfast: this.bookingResponse.breakfast,
-        lunch: this.bookingResponse.lunch,
-        dinner: this.bookingResponse.dinner,
-
-        dinner: this.bookingResponse.dinner,
+        breakfast: this.payload.breakfast,
+        lunch: this.payload.lunch,
+        dinner: this.payload.dinner,
         customer_id: this.bookingResponse?.customer_id,
-
         room_orders: this.room_orders,
         old: this.old,
       };

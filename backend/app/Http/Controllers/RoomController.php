@@ -472,7 +472,7 @@ class RoomController extends Controller
                 $query->whereDate('check_out', $todayDate)
                     ->orWhereDate('check_in', $todayDate);
             })
-            ->where('booking_status', 2)
+            ->whereIn('booking_status', [1,2])
             ->selectRaw("
             SUM(CASE WHEN DATE(check_out) = ? THEN breakfast ELSE 0 END) as expected_breakfast,
             SUM(CASE WHEN DATE(check_out) = ? THEN lunch ELSE 0 END) as expected_lunch,

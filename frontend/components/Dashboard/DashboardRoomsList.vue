@@ -183,6 +183,7 @@
 
       <!-- New Booking room  -->
       <v-dialog v-model="NewBooking" persistent width="1000">
+        <AssetsIconClose left="990" @click="closeCheckInAndOpenGRC" />
         <BookingDirectCheckIn
           v-if="NewBooking"
           @close-dialog="closeCheckInAndOpenGRC"

@@ -2022,9 +2022,9 @@ class BookingController extends Controller
         $no_of_adult = $request->no_of_adult;
         $no_of_child = $request->no_of_child;
 
-        $breakfast = $request->breakfast;
-        $lunch = $request->lunch;
-        $dinner = $request->dinner;
+        $breakfast = $request->breakfast ?? 0;
+        $lunch = $request->lunch ?? 0;
+        $dinner = $request->dinner ?? 0;
 
         $food_plan_id = $request->food_plan_id;
         $food_plan_price = $request->food_plan_price ?? 0;

@@ -4,7 +4,6 @@
       <span>Individual Booking Information</span>
       <v-spacer></v-spacer>
       <SearchCustomer @foundCustomer="handleFoundCustomer" />
-      <AssetsButtonClose @close="$emit(`close-dialog`)" />
     </v-toolbar>
     <v-stepper v-model="e1">
       <v-stepper-header style="display: none">
@@ -305,7 +304,7 @@
             </v-col>
             <v-col cols="7">
               <AssetsButtonCancel @close="$emit(`close-dialog`)" />
-              &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+              &nbsp;
               <AssetsButtonSubmit @click="store" />
             </v-col>
           </v-row>
@@ -320,7 +319,7 @@
 //                   <CustomerHistory :customerId="customer.id" />
 //                 </v-card-text>
 //               </v-card>
-// 
+//
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
