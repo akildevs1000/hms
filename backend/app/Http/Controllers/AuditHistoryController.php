@@ -18,9 +18,9 @@ class AuditHistoryController extends Controller
         $cacheKey = "audit_report_{$companyId}_{$date}";
 
         // // Optional: Check if you want to delete the previous cache
-        // if ($request->has('delete_cache') && $request->delete_cache) {
-        //     Cache::forget($cacheKey);
-        // }
+        if ($request->has('delete_cache') && $request->delete_cache) {
+            Cache::forget($cacheKey);
+        }
 
         return Cache::rememberForever($cacheKey, function () use ($companyId, $date) {
             return AuditHistory::whereCompanyId($companyId)
