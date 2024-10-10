@@ -83,6 +83,14 @@ export default ({ app }, inject) => {
       let title = r.replace(/\b\w/g, (c) => c.toUpperCase());
       return title;
     },
+    open_external_link(link) {
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", link);
+      document.body.appendChild(element);
+      console.log(element);
+      element.click();
+    },
   });
 
   inject("dateFormat", {

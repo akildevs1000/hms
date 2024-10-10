@@ -1,5 +1,14 @@
 <template>
   <div v-if="can(`night_audit_access`)">
+    <style scoped>
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+    </style>
+
     <v-row>
       <v-col cols="6">
         <h3>{{ Model }}</h3>
@@ -44,8 +53,7 @@
           <v-card-text>
             <strong class="white--text">Online</strong>
             <div class="white--text">
-              {{ $auth.user.company.currency
-                }}{{ GrandTotalTodayOnline || 0 }}
+              {{ $auth.user.company.currency }}{{ GrandTotalTodayOnline || 0 }}
             </div>
           </v-card-text>
         </v-card>
@@ -94,7 +102,6 @@
           </v-card-text>
         </v-card>
       </v-col>
-
     </v-row>
     <v-row>
       <v-col md="2">
@@ -119,7 +126,7 @@
             ></v-text-field>
           </template>
           <v-date-picker
-           no-title
+            no-title
             v-model="from_date"
             @input="from_menu = false"
             @change="commonMethod"
@@ -153,14 +160,15 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr class="">
-                    <td v-for="(item, index) in incomeHeaders" :key="index">
+                    <td
+                      :class="`text-${item.align}`"
+                      v-for="(item, index) in headers"
+                      :key="index"
+                    >
                       <span v-html="item.text"></span>
                     </td>
                   </tr>
-                  <tr
-                    v-for="(item, index) in todayCheckIn"
-                    :key="index"
-                  >
+                  <tr v-for="(item, index) in todayCheckIn" :key="index">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
@@ -222,7 +230,17 @@
                     <td class="text-right">{{ totalUPI }}</td>
                     <td class="text-right">{{ totalBalance }}</td>
                     <td class="text-right"></td>
-
+                    <td class="text-center">
+                      {{ checkInFileGenerateDateTime }}
+                    </td>
+                    <td class="text-center">
+                      <v-icon
+                        small
+                        color="primary"
+                        @click="openExternalLink(checkInFilePath)"
+                        >mdi-file</v-icon
+                      >
+                    </td>
                   </tr>
                 </table>
               </v-card>
@@ -235,14 +253,11 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <td v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in headers" :key="index">
                       <span v-html="item.text"></span>
                     </td>
                   </tr>
-                  <tr
-                    v-for="(item, index) in continueRooms"
-                    :key="index"
-                  >
+                  <tr v-for="(item, index) in continueRooms" :key="index">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
@@ -282,6 +297,8 @@
                     <td>
                       {{ item.balance > 0 ? "Due" : "Paid" }}
                     </td>
+                    <td></td>
+                    <td></td>
                   </tr>
                   <tr class="text-right">
                     <td class="text-right" colspan="9">Total</td>
@@ -292,7 +309,17 @@
                     <td class="text-right">{{ continueTotalUPI }}</td>
                     <td class="text-right">{{ continueTotalBalance }}</td>
                     <td class="text-right"></td>
-
+                    <td class="text-center">
+                      {{ continueRoomsFileGenerateDateTime }}
+                    </td>
+                    <td class="text-center">
+                      <v-icon
+                        small
+                        color="primary"
+                        @click="openExternalLink(continueRoomsFilePath)"
+                        >mdi-file</v-icon
+                      >
+                    </td>
                   </tr>
                 </table>
               </v-card>
@@ -305,14 +332,11 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <td v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in headers" :key="index">
                       <span v-html="item.text"></span>
                     </td>
                   </tr>
-                  <tr
-                    v-for="(item, index) in todayCheckOut"
-                    :key="index"
-                  >
+                  <tr v-for="(item, index) in todayCheckOut" :key="index">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
@@ -365,6 +389,17 @@
                     <td class="text-right">{{ checkoutTotalUPI }}</td>
                     <td class="text-right">{{ checkoutTotalBalance }}</td>
                     <td class="text-right"></td>
+                    <td class="text-center">
+                      {{ todayCheckOutGenerateDateTime }}
+                    </td>
+                    <td class="text-center">
+                      <v-icon
+                        small
+                        color="primary"
+                        @click="openExternalLink(todayCheckOutPath)"
+                        >mdi-file</v-icon
+                      >
+                    </td>
                   </tr>
                 </table>
               </v-card>
@@ -377,14 +412,11 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <td v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in headers" :key="index">
                       <span v-html="item.text"></span>
                     </td>
                   </tr>
-                  <tr
-                    v-for="(item, index) in todayPayments"
-                    :key="index"
-                  >
+                  <tr v-for="(item, index) in todayPayments" :key="index">
                     <td>{{ ++index }}</td>
                     <td>
                       {{ item && item.customer && item.customer.first_name }}
@@ -437,6 +469,17 @@
                     <td class="text-right">{{ todayPaymentTotalUPI }}</td>
                     <td class="text-right">{{ todayPaymentTotalBalance }}</td>
                     <td></td>
+                    <td class="text-center">
+                      {{ todayPaymentsGenerateDateTime }}
+                    </td>
+                    <td class="text-center">
+                      <v-icon
+                        small
+                        color="primary"
+                        @click="openExternalLink(todayPaymentsPath)"
+                        >mdi-file</v-icon
+                      >
+                    </td>
                   </tr>
                 </table>
               </v-card>
@@ -449,7 +492,7 @@
               <v-card class="mb-5 rounded-md mt-3" elevation="0">
                 <table>
                   <tr>
-                    <td v-for="(item, index) in incomeHeaders" :key="index">
+                    <td v-for="(item, index) in headers" :key="index">
                       <span v-html="item.text"></span>
                     </td>
                   </tr>
@@ -509,6 +552,17 @@
                     <td class="text-right">{{ cityLedgerTotalUPI }}</td>
                     <td class="text-right">{{ cityLedgerTotalBalance }}</td>
                     <td></td>
+                    <td class="text-center">
+                      {{ cityLedgerGenerateDateTime }}
+                    </td>
+                    <td class="text-center">
+                      <v-icon
+                        small
+                        color="primary"
+                        @click="openExternalLink(cityLedgerPath)"
+                        >mdi-file</v-icon
+                      >
+                    </td>
                   </tr>
                 </table>
               </v-card>
@@ -528,6 +582,9 @@
                     <td>Cancel Time</td>
                     <td>Amount</td>
                     <td>Reason</td>
+                    <td>Reason</td>
+                    <td>File Generated Date Time</td>
+                    <td>PDF File</td>
                     <td>Action</td>
                     <td>Cancel By</td>
                     <td>Status</td>
@@ -558,8 +615,20 @@
                     <td class="text-right">{{ item && item.grand_total }}</td>
                     <td>{{ item && item.reason }}</td>
                     <td>{{ item && item.action }}</td>
+                    <td class="text-center">
+                      {{ cancelRoomsGenerateDateTime }}
+                    </td>
+                    <td class="text-center">
+                      <v-icon
+                        small
+                        color="primary"
+                        @click="openExternalLink(cancelRoomsPath)"
+                        >mdi-file</v-icon
+                      >
+                    </td>
                     <td>{{ item && item.user && item.user.name }}</td>
                     <td>{{ item && item.status_before_cancelation_msg }}</td>
+                   
                   </tr>
                 </table>
               </v-card>
@@ -694,6 +763,25 @@ export default {
     todayPayments: [],
     cityLedgerPaymentsAudit: [],
     cancelRooms: [],
+
+    checkInFileGenerateDateTime: null,
+    checkInFilePath: null,
+
+    continueRoomsFileGenerateDateTime: null,
+    continueRoomsFilePath: null,
+
+    todayCheckOutGenerateDateTime: null,
+    todayCheckOutPath: null,
+
+    todayPaymentsGenerateDateTime: null,
+    todayPaymentsPath: null,
+
+    cityLedgerGenerateDateTime: null,
+    cityLedgerPath: null,
+
+    cancelRoomsGenerateDateTime: null,
+    cancelRoomsPath: null,
+
     counts: [],
     loading: false,
     total: 0,
@@ -702,23 +790,25 @@ export default {
     vertical: false,
     activeTab: 0,
 
-    incomeHeaders: [
-      { text: "#" },
-      { text: "Guest" },
-      { text: "Rev. No" },
-      { text: "Rooms" },
-      { text: "Source" },
-      { text: "CheckIn" },
-      { text: "CheckOut" },
-      { text: "Tariff" },
-      { text: "Advance" },
-      { text: "Cash" },
-      { text: "Card" },
-      { text: "Online" },
-      { text: "Bank" },
-      { text: "UPI" },
-      { text: "Balance" },
-      { text: "Remark" },
+    headers: [
+      { align: "left", text: "#" },
+      { align: "left", text: "Guest" },
+      { align: "left", text: "Rev. No" },
+      { align: "left", text: "Rooms" },
+      { align: "left", text: "Source" },
+      { align: "left", text: "CheckIn" },
+      { align: "left", text: "CheckOut" },
+      { align: "left", text: "Tariff" },
+      { align: "left", text: "Advance" },
+      { align: "left", text: "Cash" },
+      { align: "left", text: "Card" },
+      { align: "left", text: "Online" },
+      { align: "left", text: "Bank" },
+      { align: "left", text: "UPI" },
+      { align: "left", text: "Balance" },
+      { align: "left", text: "Remark" },
+      { align: "center", text: "File Generated Date Time" },
+      { align: "center", text: "PDF File" },
     ],
     response: "",
     loss: "",
@@ -923,6 +1013,15 @@ export default {
   },
 
   methods: {
+    openExternalLink(path) {
+      let url = `${process.env.BACKEND_URL}get_audit_report_print?path=${path}`;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", url);
+      document.body.appendChild(element);
+      console.log(element);
+      element.click();
+    },
     onPageChange() {
       this.getExpenseData();
     },
@@ -1037,13 +1136,32 @@ export default {
         },
       };
       this.$axios.get(url, options).then(({ data }) => {
-        this.todayCheckIn = data.todayCheckIn;
-        this.continueRooms = data.continueRooms;
-        this.todayCheckOut = data.todayCheckOut;
-        this.todayPayments = data.todayPayments;
-        this.cityLedgerPaymentsAudit = data.cityLedgerPaymentsAudit;
-        this.cancelRooms = data.cancelRooms;
-        this.totExpense = data.totExpense;
+        this.todayCheckIn = data.check_in.data;
+        this.continueRooms = data.continue.data;
+        this.todayCheckOut = data.check_out.data;
+        this.todayPayments = data.payment.data;
+        this.cityLedgerPaymentsAudit = data.cityLedger.data;
+        this.cancelRooms = data.cancel.data;
+
+        this.checkInFileGenerateDateTime = data.check_in.dateTime;
+        this.checkInFilePath = data.check_in.file_path;
+
+        this.continueRoomsFileGenerateDateTime = data.continue.dateTime;
+        this.continueRoomsFilePath = data.continue.file_path;
+
+        this.todayCheckOutGenerateDateTime = data.check_out.dateTime;
+        this.todayCheckOutPath = data.check_out.file_path;
+
+        this.todayPaymentsGenerateDateTime = data.payment.dateTime;
+        this.todayPaymentsPath = data.payment.file_path;
+
+        this.cityLedgerGenerateDateTime = data.cityLedger.dateTime;
+        this.cityLedgerPath = data.cityLedger.file_path;
+
+        this.cancelRoomsGenerateDateTime = data.cancel.dateTime;
+        this.cancelRoomsPath = data.cancel.file_path;
+
+        this.totExpense = data.expense.data;
       });
     },
 
@@ -1060,18 +1178,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-
-</style>

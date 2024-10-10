@@ -54,103 +54,15 @@ class ReportGenerateController extends Controller
 
         $arr = [];
 
-        //if (count($todayCheckin) > 0)
-        ///Today Check-in Report
-        // {
-        $fileName = "Today Check-in Report";
-        $pdf = Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
-            ->setPaper('a4', 'landscape')->output();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        $arr = [
-            "type" => "check_in",
-            "file_name" => $fileName,
-            "file_path" => $file_path,
-            'data' => $todayCheckin,
-            'company_id' => $company_id,
-            'dateTime' => date("d M y h:i:s"),
-        ];
-        AuditHistory::create($arr);
-        Storage::disk('local')->put($file_path, $pdf);
-        //Continue Report
-        $fileName = "Continue Report";
-        $pdf = Pdf::loadView('report.audit.continue_report', ['data' => $continueRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
-            ->setPaper('a4', 'landscape')->output();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        $arr = [
-            "type" => "continue",
-            "file_name" => $fileName,
-            "file_path" => $file_path,
-            'data' => $continueRooms,
-            'company_id' => $company_id,
-            'dateTime' => date("d M y h:i:s"),
-        ];
-        AuditHistory::create($arr);
-        Storage::disk('local')->put($file_path, $pdf);
-        //Check-out Report
-        $fileName = "Check-out Report";
-        $pdf = Pdf::loadView('report.audit.check_out_report', ['data' => $todayCheckOut, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        $arr = [
-            $fileName => $file_path,
-        ];
-        Storage::disk('local')->put($file_path, $pdf);
-        //Today Booking Report
-        $fileName = "Today Booking Report";
-        $pdf = Pdf::loadView('report.audit.today_booking_report', ['data' => $todayPayments, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        $arr = [
-            "type" => "payment",
-            "file_name" => $fileName,
-            "file_path" => $file_path,
-            'data' => $todayPayments,
-            'company_id' => $company_id,
-            'dateTime' => date("d M y h:i:s"),
-        ];
-        AuditHistory::create($arr);
-        Storage::disk('local')->put($file_path, $pdf);
-        //City Ledger Report
-        $fileName = "City Ledger Report";
-        $pdf = Pdf::loadView('report.audit.city_ledger_report', ['data' => $cityLedgerPaymentsAudit, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        $arr = [
-            "type" => "cityLedger",
-            "file_name" => $fileName,
-            "file_path" => $file_path,
-            'data' => $cityLedgerPaymentsAudit,
-            'company_id' => $company_id,
-            'dateTime' => date("d M y h:i:s"),
-        ];
-        AuditHistory::create($arr);
-        Storage::disk('local')->put($file_path, $pdf);
-        //Cancel Rooms Report
-        $fileName = "Cancel Rooms Report";
-        $pdf = Pdf::loadView('report.audit.cancel_rooms', ['data' => $cancelRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        $arr = [
-            "type" => "cancel",
-            "file_name" => $fileName,
-            "file_path" => $file_path,
-            'data' => $cancelRooms,
-            'company_id' => $company_id,
-            'dateTime' => date("d M y h:i:s"),
-        ];
-        AuditHistory::create($arr);
-        Storage::disk('local')->put($file_path, $pdf);
-        //Food Order list
-        $fileName = "Food Order list";
-        $pdf = Pdf::loadView('report.audit.food_order_list', ['data' => $foodOrderList, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        $arr = [
-            "type" => "check_out",
-            "file_name" => $fileName,
-            "file_path" => $file_path,
-            'data' => $todayCheckOut,
-            'company_id' => $company_id,
-            'dateTime' => date("d M y h:i:s"),
-        ];
-        AuditHistory::create($arr);
+        AuditHistory::where("company_id", $company_id)->whereDate("created_at", $date)->delete();
 
-        Storage::disk('local')->put($file_path, $pdf);
+        $this->processPayload("check_in", "Today Check-in Report", $date, $company_id, $todayCheckin, "today_check_in");
+        $this->processPayload("continue", "Continue Report", $date, $company_id, $continueRooms, "continue_report");
+        $this->processPayload("check_out", "Check-out Report", $date, $company_id, $todayCheckOut, "check_out_report");
+        $this->processPayload("payment", "Today Booking Report", $date, $company_id, $todayPayments, "today_booking_report");
+        $this->processPayload("cityLedger", "City Ledger Report", $date, $company_id, $cityLedgerPaymentsAudit, "city_ledger_report");
+        $this->processPayload("cancel", "Cancel Rooms Report", $date, $company_id, $cancelRooms, "cancel_rooms");
+        $this->processPayload("food", "Food Order list", $date, $company_id, $foodOrderList, "food_order_list");
 
         $arr = [
             "type" => "expense",
@@ -160,12 +72,31 @@ class ReportGenerateController extends Controller
             'company_id' => $company_id,
             'dateTime' => date("d M y h:i:s"),
         ];
+
         AuditHistory::create($arr);
 
-        
+
         return 'Reports are  generated successfully ' . $company_id . '.\n';
     }
 
+    public function processPayload($type, $fileName, $date, $company_id, $data, $bladeView)
+    {
+
+        $pdf = Pdf::loadView('report.audit.' . $bladeView, ['data' => $data, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
+            ->setPaper('a4', 'landscape')->output();
+        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
+        $arr = [
+            "type" => $type,
+            "file_name" => $fileName,
+            "file_path" => $file_path,
+            'data' => $data,
+            'company_id' => $company_id,
+            'dateTime' => date("d M y h:i:s"),
+        ];
+
+        AuditHistory::create($arr);
+        Storage::disk('local')->put($file_path, $pdf);
+    }
     public function getNotificationCompanyIds()
     {
         return Company::orderBy('id', 'asc')->pluck("id");

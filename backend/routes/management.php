@@ -16,6 +16,7 @@ Route::get('get_source_rate_by_month', [ManagementController::class, 'getSourceR
 
 // Route::get('get_audit_report', [ManagementController::class, 'getAuditReport']);
 Route::get('get_audit_report', [AuditHistoryController::class, 'getAuditReport']);
+Route::get('get_audit_report_print', [AuditHistoryController::class, 'getAuditReportPrint']);
 Route::get('get_occupancy_rate_by_filter', [ManagementController::class, 'getOccupancyRateByFilter']);
 
 // Route::get('get_audit_report_pdf', [ManagementController::class, 'testcheckin']);
