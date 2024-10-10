@@ -158,90 +158,90 @@
           <v-tab-item>
             <v-container fluid>
               <table>
-                  <tr class="">
-                    <td
-                      :class="`text-${item.align}`"
-                      v-for="(item, index) in headers"
-                      :key="index"
+                <tr class="">
+                  <td
+                    :class="`text-${item.align}`"
+                    v-for="(item, index) in headers"
+                    :key="index"
+                  >
+                    <span v-html="item.text"></span>
+                  </td>
+                </tr>
+                <tr v-for="(item, index) in todayCheckIn" :key="index">
+                  <td>{{ ++index }}</td>
+                  <td>
+                    {{ item && item.customer && item.customer.first_name }}
+                  </td>
+                  <td>
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
                     >
-                      <span v-html="item.text"></span>
-                    </td>
-                  </tr>
-                  <tr v-for="(item, index) in todayCheckIn" :key="index">
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">
-                      {{ setAdvancePayment(item.advance_price) }}
-                    </td>
-                    <td class="text-right">
-                      {{ getPaymentMode(item, 1) }}
-                    </td>
-                    <td class="text-right">
-                      {{ getPaymentMode(item, 2) }}
-                    </td>
-                    <td class="text-right">
-                      {{ getPaymentMode(item, 3) }}
-                    </td>
-                    <td class="text-right">
-                      {{ getPaymentMode(item, 4) }}
-                    </td>
-                    <td class="text-right">
-                      {{ getPaymentMode(item, 5) }}
-                    </td>
+                      {{ item.reservation_no }}
+                    </span>
+                  </td>
+                  <td class="room-width">
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.rooms }}
+                    </span>
+                  </td>
+                  <td>{{ item && item.source }}</td>
+                  <td>{{ item && item.check_in }}</td>
+                  <td>{{ item && item.check_out }}</td>
+                  <td class="text-right">{{ item.total_price }}</td>
+                  <td class="text-right">
+                    {{ setAdvancePayment(item.advance_price) }}
+                  </td>
+                  <td class="text-right">
+                    {{ getPaymentMode(item, 1) }}
+                  </td>
+                  <td class="text-right">
+                    {{ getPaymentMode(item, 2) }}
+                  </td>
+                  <td class="text-right">
+                    {{ getPaymentMode(item, 3) }}
+                  </td>
+                  <td class="text-right">
+                    {{ getPaymentMode(item, 4) }}
+                  </td>
+                  <td class="text-right">
+                    {{ getPaymentMode(item, 5) }}
+                  </td>
 
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <td class="text-right" colspan="9">Total</td>
-                    <td class="text-right">{{ totalCash }}</td>
-                    <td class="text-right">{{ totalCard }}</td>
-                    <td class="text-right">{{ totalOnline }}</td>
-                    <td class="text-right">{{ totalBank }}</td>
-                    <td class="text-right">{{ totalUPI }}</td>
-                    <td class="text-right">{{ totalBalance }}</td>
-                    <td class="text-right"></td>
-                    <td class="text-center">
-                      {{ checkInFileGenerateDateTime }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        small
-                        color="primary"
-                        @click="openExternalLink(checkInFilePath)"
-                        >mdi-file</v-icon
-                      >
-                    </td>
-                  </tr>
-                </table>
+                  <td class="text-right">
+                    {{ item.balance }}
+                  </td>
+                  <td>
+                    {{ item.balance > 0 ? "Due" : "Paid" }}
+                  </td>
+                </tr>
+                <tr class="text-right">
+                  <td class="text-right" colspan="9">Total</td>
+                  <td class="text-right">{{ totalCash }}</td>
+                  <td class="text-right">{{ totalCard }}</td>
+                  <td class="text-right">{{ totalOnline }}</td>
+                  <td class="text-right">{{ totalBank }}</td>
+                  <td class="text-right">{{ totalUPI }}</td>
+                  <td class="text-right">{{ totalBalance }}</td>
+                  <td class="text-right"></td>
+                  <td class="text-center">
+                    {{ checkInFileGenerateDateTime }}
+                  </td>
+                  <td class="text-center">
+                    <v-icon
+                      small
+                      color="primary"
+                      @click="openExternalLink(checkInFilePath)"
+                      >mdi-file</v-icon
+                    >
+                  </td>
+                </tr>
+              </table>
             </v-container>
           </v-tab-item>
 
@@ -249,76 +249,76 @@
           <v-tab-item>
             <v-container fluid>
               <table>
-                  <tr>
-                    <td v-for="(item, index) in headers" :key="index">
-                      <span v-html="item.text"></span>
-                    </td>
-                  </tr>
-                  <tr v-for="(item, index) in continueRooms" :key="index">
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
+                <tr>
+                  <td v-for="(item, index) in headers" :key="index">
+                    <span v-html="item.text"></span>
+                  </td>
+                </tr>
+                <tr v-for="(item, index) in continueRooms" :key="index">
+                  <td>{{ ++index }}</td>
+                  <td>
+                    {{ item && item.customer && item.customer.first_name }}
+                  </td>
+                  <td>
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.reservation_no }}
+                    </span>
+                  </td>
+                  <td class="room-width">
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.rooms }}
+                    </span>
+                  </td>
 
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">{{ item.advance_price }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr class="text-right">
-                    <td class="text-right" colspan="9">Total</td>
-                    <td class="text-right">{{ continueTotalCash }}</td>
-                    <td class="text-right">{{ continueTotalCard }}</td>
-                    <td class="text-right">{{ continueTotalOnline }}</td>
-                    <td class="text-right">{{ continueTotalBank }}</td>
-                    <td class="text-right">{{ continueTotalUPI }}</td>
-                    <td class="text-right">{{ continueTotalBalance }}</td>
-                    <td class="text-right"></td>
-                    <td class="text-center">
-                      {{ continueRoomsFileGenerateDateTime }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        small
-                        color="primary"
-                        @click="openExternalLink(continueRoomsFilePath)"
-                        >mdi-file</v-icon
-                      >
-                    </td>
-                  </tr>
-                </table>
+                  <td>{{ item && item.source }}</td>
+                  <td>{{ item && item.check_in }}</td>
+                  <td>{{ item && item.check_out }}</td>
+                  <td class="text-right">{{ item.total_price }}</td>
+                  <td class="text-right">{{ item.advance_price }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
+                  <td class="text-right">
+                    {{ item.balance }}
+                  </td>
+                  <td>
+                    {{ item.balance > 0 ? "Due" : "Paid" }}
+                  </td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr class="text-right">
+                  <td class="text-right" colspan="9">Total</td>
+                  <td class="text-right">{{ continueTotalCash }}</td>
+                  <td class="text-right">{{ continueTotalCard }}</td>
+                  <td class="text-right">{{ continueTotalOnline }}</td>
+                  <td class="text-right">{{ continueTotalBank }}</td>
+                  <td class="text-right">{{ continueTotalUPI }}</td>
+                  <td class="text-right">{{ continueTotalBalance }}</td>
+                  <td class="text-right"></td>
+                  <td class="text-center">
+                    {{ continueRoomsFileGenerateDateTime }}
+                  </td>
+                  <td class="text-center">
+                    <v-icon
+                      small
+                      color="primary"
+                      @click="openExternalLink(continueRoomsFilePath)"
+                      >mdi-file</v-icon
+                    >
+                  </td>
+                </tr>
+              </table>
             </v-container>
           </v-tab-item>
 
@@ -326,158 +326,156 @@
           <v-tab-item>
             <v-container fluid>
               <table>
-                  <tr>
-                    <td v-for="(item, index) in headers" :key="index">
-                      <span v-html="item.text"></span>
-                    </td>
-                  </tr>
-                  <tr v-for="(item, index) in todayCheckOut" :key="index">
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
+                <tr>
+                  <td v-for="(item, index) in headers" :key="index">
+                    <span v-html="item.text"></span>
+                  </td>
+                </tr>
+                <tr v-for="(item, index) in todayCheckOut" :key="index">
+                  <td>{{ ++index }}</td>
+                  <td>
+                    {{ item && item.customer && item.customer.first_name }}
+                  </td>
+                  <td>
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.reservation_no }}
+                    </span>
+                  </td>
+                  <td class="room-width">
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.rooms }}
+                    </span>
+                  </td>
 
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">
-                      {{ setAdvancePayment(item.advance_price) }}
-                    </td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
+                  <td>{{ item && item.source }}</td>
+                  <td>{{ item && item.check_in }}</td>
+                  <td>{{ item && item.check_out }}</td>
+                  <td class="text-right">{{ item.total_price }}</td>
+                  <td class="text-right">
+                    {{ setAdvancePayment(item.advance_price) }}
+                  </td>
+                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
 
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <td class="text-right" colspan="9">Total</td>
-                    <td class="text-right">{{ checkoutTotalCash }}</td>
-                    <td class="text-right">{{ checkoutTotalCard }}</td>
-                    <td class="text-right">{{ checkoutTotalOnline }}</td>
-                    <td class="text-right">{{ checkoutTotalBank }}</td>
-                    <td class="text-right">{{ checkoutTotalUPI }}</td>
-                    <td class="text-right">{{ checkoutTotalBalance }}</td>
-                    <td class="text-right"></td>
-                    <td class="text-center">
-                      {{ todayCheckOutGenerateDateTime }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        small
-                        color="primary"
-                        @click="openExternalLink(todayCheckOutPath)"
-                        >mdi-file</v-icon
-                      >
-                    </td>
-                  </tr>
-                </table>
+                  <td class="text-right">
+                    {{ item.balance }}
+                  </td>
+                  <td>
+                    {{ item.balance > 0 ? "Due" : "Paid" }}
+                  </td>
+                </tr>
+                <tr class="text-right">
+                  <td class="text-right" colspan="9">Total</td>
+                  <td class="text-right">{{ checkoutTotalCash }}</td>
+                  <td class="text-right">{{ checkoutTotalCard }}</td>
+                  <td class="text-right">{{ checkoutTotalOnline }}</td>
+                  <td class="text-right">{{ checkoutTotalBank }}</td>
+                  <td class="text-right">{{ checkoutTotalUPI }}</td>
+                  <td class="text-right">{{ checkoutTotalBalance }}</td>
+                  <td class="text-right"></td>
+                  <td class="text-center">
+                    {{ todayCheckOutGenerateDateTime }}
+                  </td>
+                  <td class="text-center">
+                    <v-icon
+                      small
+                      color="primary"
+                      @click="openExternalLink(todayCheckOutPath)"
+                      >mdi-file</v-icon
+                    >
+                  </td>
+                </tr>
+              </table>
             </v-container>
           </v-tab-item>
 
           <!-- today payment -->
           <v-tab-item>
-            <v-card flat>
-              <v-card class="mb-5 rounded-md mt-3" elevation="0">
-                <table>
-                  <tr>
-                    <td v-for="(item, index) in headers" :key="index">
-                      <span v-html="item.text"></span>
-                    </td>
-                  </tr>
-                  <tr v-for="(item, index) in todayPayments" :key="index">
-                    <td>{{ ++index }}</td>
-                    <td>
-                      {{ item && item.customer && item.customer.first_name }}
-                    </td>
-                    <td>
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.reservation_no }}
-                      </span>
-                    </td>
-                    <td class="room-width">
-                      <span
-                        class="blue--text"
-                        @click="goToRevView(item)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.rooms }}
-                      </span>
-                    </td>
+            <v-container fluid>
+              <table>
+                <tr>
+                  <td v-for="(item, index) in headers" :key="index">
+                    <span v-html="item.text"></span>
+                  </td>
+                </tr>
+                <tr v-for="(item, index) in todayPayments" :key="index">
+                  <td>{{ ++index }}</td>
+                  <td>
+                    {{ item && item.customer && item.customer.first_name }}
+                  </td>
+                  <td>
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.reservation_no }}
+                    </span>
+                  </td>
+                  <td class="room-width">
+                    <span
+                      class="blue--text"
+                      @click="goToRevView(item)"
+                      style="cursor: pointer"
+                    >
+                      {{ item.rooms }}
+                    </span>
+                  </td>
 
-                    <td>{{ item && item.source }}</td>
-                    <td>{{ item && item.check_in }}</td>
-                    <td>{{ item && item.check_out }}</td>
-                    <td class="text-right">{{ item.total_price }}</td>
-                    <td class="text-right">
-                      {{ setAdvancePayment(item.advance_price) }}
-                    </td>
-                    <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                    <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
+                  <td>{{ item && item.source }}</td>
+                  <td>{{ item && item.check_in }}</td>
+                  <td>{{ item && item.check_out }}</td>
+                  <td class="text-right">{{ item.total_price }}</td>
+                  <td class="text-right">
+                    {{ setAdvancePayment(item.advance_price) }}
+                  </td>
+                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
+                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
 
-                    <td class="text-right">
-                      {{ item.balance }}
-                    </td>
-                    <td>
-                      {{ item.balance > 0 ? "Due" : "Paid" }}
-                    </td>
-                  </tr>
-                  <tr class="text-right">
-                    <td class="text-right" colspan="9">Total</td>
-                    <td class="text-right">{{ todayPaymentTotalCash }}</td>
-                    <td class="text-right">{{ todayPaymentTotalCard }}</td>
-                    <td class="text-right">{{ todayPaymentTotalOnline }}</td>
-                    <td class="text-right">{{ todayPaymentTotalBank }}</td>
-                    <td class="text-right">{{ todayPaymentTotalUPI }}</td>
-                    <td class="text-right">{{ todayPaymentTotalBalance }}</td>
-                    <td></td>
-                    <td class="text-center">
-                      {{ todayPaymentsGenerateDateTime }}
-                    </td>
-                    <td class="text-center">
-                      <v-icon
-                        small
-                        color="primary"
-                        @click="openExternalLink(todayPaymentsPath)"
-                        >mdi-file</v-icon
-                      >
-                    </td>
-                  </tr>
-                </table>
-              </v-card>
-            </v-card>
+                  <td class="text-right">
+                    {{ item.balance }}
+                  </td>
+                  <td>
+                    {{ item.balance > 0 ? "Due" : "Paid" }}
+                  </td>
+                </tr>
+                <tr class="text-right">
+                  <td class="text-right" colspan="9">Total</td>
+                  <td class="text-right">{{ todayPaymentTotalCash }}</td>
+                  <td class="text-right">{{ todayPaymentTotalCard }}</td>
+                  <td class="text-right">{{ todayPaymentTotalOnline }}</td>
+                  <td class="text-right">{{ todayPaymentTotalBank }}</td>
+                  <td class="text-right">{{ todayPaymentTotalUPI }}</td>
+                  <td class="text-right">{{ todayPaymentTotalBalance }}</td>
+                  <td></td>
+                  <td class="text-center">
+                    {{ todayPaymentsGenerateDateTime }}
+                  </td>
+                  <td class="text-center">
+                    <v-icon
+                      small
+                      color="primary"
+                      @click="openExternalLink(todayPaymentsPath)"
+                      >mdi-file</v-icon
+                    >
+                  </td>
+                </tr>
+              </table>
+            </v-container>
           </v-tab-item>
 
           <!-- today cityledger -->
@@ -624,6 +622,14 @@
 
           <v-tab-item>
             <v-container fluid>
+              <v-row class="text-right">
+                <v-col>
+                  <AssetsIcon
+                    icon="printer-outline"
+                    @click="openExternalLink(foodPath)"
+                  />
+                </v-col>
+              </v-row>
               <table
                 v-for="(item, index) in FoodData"
                 :key="index"
@@ -756,6 +762,9 @@ export default {
 
     cancelRoomsGenerateDateTime: null,
     cancelRoomsPath: null,
+
+    foodGenerateDateTime: null,
+    foodPath: null,
 
     counts: [],
     loading: false,
@@ -1135,6 +1144,9 @@ export default {
 
         this.cancelRoomsGenerateDateTime = data.cancel.dateTime;
         this.cancelRoomsPath = data.cancel.file_path;
+
+        this.foodGenerateDateTime = data.food.dateTime;
+        this.foodPath = data.food.file_path;
 
         this.totExpense = data.expense.data;
       });
