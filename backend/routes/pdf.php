@@ -65,3 +65,8 @@
     Route::get('revenue_customer_wise_report_download', [ReportController::class, 'revenueCustomerWiseReportDownload']);
     Route::get('statement-print/{id}/{statementType}/{from}/{to}', [CustomerController::class, 'statementPrint']);
     Route::get('statement-download/{id}/{statementType}/{from}/{to}', [CustomerController::class, 'statementDownload']);
+
+
+    Route::get('html-test', [ReportController::class, 'htmlTest']);
+
+    

@@ -949,4 +949,16 @@ class ReportController extends Controller
             "data" => $newData,
         ];
     }
+
+
+
+
+    public function htmlTest(Request $request)
+    {
+        $company_id = $request->company_id ?? 3;
+
+        return Pdf::loadView('report.html.test', ['data' => [], 'company' => Company::find($company_id)])
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
 }

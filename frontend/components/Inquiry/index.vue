@@ -263,97 +263,157 @@
       </v-card>
     </v-dialog>
 
-    <v-data-table
-      dense
-      :headers="headers"
-      :items="data"
-      :loading="loading"
-      :options.sync="options"
-      :footer-props="{
-        itemsPerPageOptions: [10, 50, 100],
-      }"
-      class="px-2"
-    >
-      <template v-slot:top>
-        <v-toolbar flat dense class="mb-5">
-          {{ Model }}
-          <v-icon color="primary white--text" right @click="getDataFromApi()"
-            >mdi-reload</v-icon
-          >
-          <v-spacer></v-spacer>
+    <v-col cols="12">
+      <v-card>
+        <v-container fluid>
+          <v-row>
+            <v-col v-for="(stat, index) in stats" :key="index">
+              <AssetsCard :options="stat" />
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-col>
 
-          <v-btn
-            v-if="can(`inquiry_create`)"
-            @click="inquiryDialog = true"
-            small
-            class="primary"
-          >
-            <v-icon color="white" small> mdi-plus </v-icon> {{ Model }}
-          </v-btn>
-        </v-toolbar>
-      </template>
+    <v-col cols="12">
+      <v-card>
+        <v-container fluid>
+          <v-row>
+            <v-col>
+              <v-data-table
+                dense
+                :headers="headers"
+                :items="data"
+                :loading="loading"
+                :options.sync="options"
+                :footer-props="{
+                  itemsPerPageOptions: [10, 50, 100],
+                }"
+                class="px-2"
+              >
+                <template v-slot:top>
+                  <v-toolbar flat dense class="mb-5">
+                    {{ Model }}
+                    <v-icon
+                      color="primary white--text"
+                      right
+                      @click="getDataFromApi()"
+                      >mdi-reload</v-icon
+                    >
+                    <v-spacer></v-spacer>
 
-      <template v-slot:item.first_name="{ item }">
-        {{ item.title }} {{ item.first_name }}
-        <br />
-        {{ item.email }}
-        <br />
-        {{ item.contact_no }}
-      </template>
+                    <v-btn
+                      v-if="can(`inquiry_create`)"
+                      @click="inquiryDialog = true"
+                      small
+                      class="primary"
+                    >
+                      <v-icon color="white" small> mdi-plus </v-icon>
+                      {{ Model }}
+                    </v-btn>
+                  </v-toolbar>
+                </template>
 
-      <template v-slot:item.quotation="{ item }">
-        <span
-          style="cursor: pointer"
-          v-if="item?.quotation?.book_date"
-          @click="openExternalWinodw(item)"
-          class="primary--text"
-          >{{ item?.quotation?.ref_no }}</span
-        >
-        <span v-else>---</span>
-      </template>
+                <template v-slot:item.first_name="{ item }">
+                  {{ item.title }} {{ item.first_name }}
+                  <br />
+                  {{ item.email }}
+                  <br />
+                  {{ item.contact_no }}
+                </template>
 
-      <template v-slot:item.options="{ item }">
-        <v-menu bottom left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
+                <template v-slot:item.quotation="{ item }">
+                  <span
+                    style="cursor: pointer"
+                    v-if="item?.quotation?.book_date"
+                    @click="openExternalWinodw(item)"
+                    class="primary--text"
+                    >{{ item?.quotation?.ref_no }}</span
+                  >
+                  <span v-else>---</span>
+                </template>
 
-          <v-list width="140" dense>
-            <v-list-item @click="editItem(item)">
-              <v-list-item-title style="cursor: pointer">
-                <v-icon color="secondary" small> mdi-pencil </v-icon>
-                Edit
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item v-if="item.inquiry_type == 'Room'">
-              <InquiryQuotationRoomCreate
-                :item="item"
-                :model="`Convert to Quotation`"
-                :endpoint="`quotation`"
-                @response="getDataFromApi"
-              />
-            </v-list-item>
+                <template v-slot:item.options="{ item }">
+                  <v-menu bottom left>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
 
-            <v-list-item v-else-if="item.inquiry_type == 'Hall'">
-              <InquiryQuotationHallCreate
-                :item="item"
-                :model="`Convert to Quotation`"
-                :endpoint="`quotation`"
-                @response="getDataFromApi"
-              />
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
-    </v-data-table>
+                    <v-list width="140" dense>
+                      <v-list-item @click="editItem(item)">
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="secondary" small> mdi-pencil </v-icon>
+                          Edit
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item v-if="item.inquiry_type == 'Room'">
+                        <InquiryQuotationRoomCreate
+                          :item="item"
+                          :model="`Convert to Quotation`"
+                          :endpoint="`quotation`"
+                          @response="getDataFromApi"
+                        />
+                      </v-list-item>
+
+                      <v-list-item v-else-if="item.inquiry_type == 'Hall'">
+                        <InquiryQuotationHallCreate
+                          :item="item"
+                          :model="`Convert to Quotation`"
+                          :endpoint="`quotation`"
+                          @response="getDataFromApi"
+                        />
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </template>
+              </v-data-table>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-col>
   </div>
   <NoAccess v-else />
 </template>
 <script>
 export default {
   data: () => ({
+    stats: [
+      {
+        color: "green",
+        icon: "mdi-walk", // Lost icon
+        label: "Walking",
+        value: "50",
+      },
+      {
+        color: "blue",
+        icon: "mdi-account-tie", // give me related icon
+        label: "Travel agent",
+        value: "50",
+        col: "6",
+      },
+      {
+        color: "orange",
+        icon: "mdi-domain", // give me related icon
+        label: "Corporate",
+        value: "50",
+        col: "6",
+      },
+      {
+        color: "purple",
+        icon: "mdi-bed", // give me related icon
+        label: "Room",
+        value: "50",
+      },
+      {
+        color: "red",
+        icon: "mdi-sofa", // give me related icon
+        label: "Hall",
+        value: "50",
+      },
+    ],
     pagination: {
       current: 1,
       total: 0,

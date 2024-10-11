@@ -3134,9 +3134,9 @@ class BookingController extends Controller
             ['status_id' => 3, 'color' => '#fb0103', "desc" => "checkedout/dirty"],
             ['status_id' => 4, 'color' => '#92d051', "desc" => "expected_arrival"],
             ['status_id' => 5, 'color' => '#92d051', "desc" => "avaialbe"],
-            ['status_id' => 6, 'color' => '#8faadd', "desc" => "booking done-nopayment"],
+            ['status_id' => 6, 'color' => '#71de36', "desc" => "booking done-nopayment"],
             ['status_id' => 7, 'color' => '#c55a12', "desc" => "expected checkout"],
-            ['status_id' => 8, 'color' => '#702fa5', "desc" => "checkedout but due payment"],
+            ['status_id' => 8, 'color' => '#ffc000', "desc" => "checkedout but due payment"],
 
 
 

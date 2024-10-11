@@ -4,18 +4,21 @@
       <div v-if="chartOptions.customTotalValue == 0" class="empty-doughnut1">
         0
       </div>
-      <apexchart
-        v-else
-        :key="key"
-        style="margin: 0 auto; text-align: left; margin-left: -35px"
-        :width="width ?? '170px'"
-        type="donut"
-        legend="false"
-        :options="chartOptions"
-        :series="series"
-      ></apexchart>
+      <div v-else>
+        <apexchart
+          :key="key"
+          style="margin: 0 auto; text-align: left; margin-left: -35px"
+          :width="width ?? '170px'"
+          :class="isCentered ? 'mx-auto' : ''"
+          type="donut"
+          legend="false"
+          :options="chartOptions"
+          :series="series"
+        ></apexchart>
+      </div>
     </v-col>
     <v-col
+      v-if="!hideTable"
       cols="7"
       style="padding-left: 0px; margin: auto; font-size: 11px"
       class="pt-0"
@@ -81,6 +84,8 @@ export default {
     "total",
     "width",
     "showPriceFormat",
+    "hideTable",
+    "isCentered",
   ],
 
   data: () => ({

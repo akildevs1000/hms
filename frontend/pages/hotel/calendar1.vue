@@ -10,6 +10,13 @@
       {{ checkData }}
     </pre> -->
 
+    <style scoped>
+      .my-extra-class{
+        height:24px !important;
+        margin-top:3px !important;
+      }
+    </style>
+
     <v-dialog v-model="confirmationDialog" persistent max-width="290">
       <v-card>
         <v-card-title class="text-h5"> Action </v-card-title>
@@ -417,7 +424,9 @@
           <v-card-text>
             <v-row flat>
               <v-col cols="2">
-                <h1 class="title">Calendar</h1>
+                <h1 class="title">
+                  Calendar <v-icon @click="getColorCodes">mdi-reload</v-icon>
+                </h1>
               </v-col>
 
               <v-col class="text-right">
@@ -785,20 +794,13 @@ export default {
       defaultDaysCount: 31,
 
       search: "",
-      BookingCalendarCompKey:1,
+      BookingCalendarCompKey: 1,
     };
   },
 
   created() {
-    let payload = {
-      params: {
-        company_id: this.$auth.user.company.id,
-      },
-    };
-    this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
-      this.calenderColorCodes = data;
-    });
     // console.log(this.calenderColorCodes);
+    this.getColorCodes();
     this.currentDate;
     this.currentDateForNow;
   },
@@ -915,6 +917,17 @@ export default {
     },
   },
   methods: {
+    getColorCodes() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
+        this.calenderColorCodes = data;
+        this.get_events();
+      });
+    },
     handleSuccess(message) {
       this.get_events();
       this.$swal("Success!", message, "success");
@@ -1041,6 +1054,7 @@ export default {
           ...this.calendarOptions,
           events: data.map((e) => ({
             ...e,
+            background: this.getRelatedColor(e),
             start: e.checkin_datetime_only,
             classNames: ["my-extra-class"], // Add your custom class here
             source: e.booking.source,
@@ -1058,10 +1072,8 @@ export default {
           // },
 
           eventContent: function (eventInfo) {
-            // console.log(eventInfo.event.extendedProps);
-            // console.log(eventInfo.event.title);
-            //console.log(eventInfo.event.extendedProps.source);
             let sourceColor = "#4285F4";
+
             let titlDisplay = eventInfo.event.extendedProps.type;
             let groupName = eventInfo.event.extendedProps.groupName
               ? "-" + eventInfo.event.extendedProps.groupName
@@ -1116,7 +1128,9 @@ export default {
                 sourceColor +
                 ";background: " +
                 sourceColor +
-                " !important;padding-top: 5px !important;padding-bottom:6px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>11</span><span title='" +
+                " !important;padding-top: " +
+                (groupName ? "5" : "4") +
+                "px !important;padding-bottom:4px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>1</span><span title='" +
                 titlDisplay +
                 " " +
                 groupName +
@@ -1294,7 +1308,7 @@ export default {
             return;
           }
 
-          this.$refs["BookingCalendarComp"].dialog = true
+          this.$refs["BookingCalendarComp"].dialog = true;
         });
     },
 
@@ -1497,7 +1511,19 @@ export default {
         })
         .catch((e) => console.log(e));
     },
+    getRelatedColor({ booking_status, booking }) {
+      let codes = {
+        1: "#71de36",
+        2: "#ffc000",
+        3: "#12532c",
+      };
 
+      if (booking.balance > 0 && booking_status == 3) {
+        return "#dc3545";
+      }
+
+      return codes[booking_status || ""];
+    },
     closeConfirmationDialog() {
       this.get_events();
       this.confirmationDialog = false;
@@ -1618,8 +1644,8 @@ export default {
 .fc-timeline-event-harness {
   /* margin-left: -6px;
   margin-right: -28px; */
-  margin-left: -25px;
-  margin-right: -40px;
+  margin-left: -20px;
+  margin-right: -20px;
 }
 
 .Hall {
@@ -1650,8 +1676,8 @@ export default {
   font-weight: 600 !important;
 }
 .eventBorderBoxSource {
-  width: 10px;
-  padding: 5px;
+  width: 5px;
+  padding: 1px;
   float: left;
 }
 /* .source-waling {

@@ -1,5 +1,5 @@
 <template>
-  <v-card rounded="lg" outlined class="pa-4">
+  <v-card rounded="lg" outlined class="pa-2">
     <!-- :style="{ borderColor: options.color }"   -->
     <v-row no-gutter>
       <v-col :cols="options.col || '4'" class="pt-5 text-left">
@@ -16,10 +16,10 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="text-center mt-3">
-        <h1 :class="`${options.color}--text`">
+      <v-col class="text-center mt-7">
+        <h3 :class="`${options.color}--text`">
           {{ options.value }}
-        </h1>
+        </h3>
       </v-col>
     </v-row>
   </v-card>
