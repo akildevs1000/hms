@@ -29,75 +29,27 @@ class LostAndFoundItemsController extends Controller
     }
     public function index(Request $request)
     {
-        //return $this->getDefaultModelSettings($request)->orderBy('id', 'DESC')->paginate($request->per_page ?? 100);
+        $search = $request->search;
 
         $data = $this->getDefaultModelSettings($request);
-        $data->when($request->filled('booking_id'), function ($q) use ($request) {
-            $q->where('booking_id', env("WILD_CARD") ?? 'ILIKE', "$request->booking_id%");
-        });
-        $data->when($request->filled('reservation_no'), function ($q) use ($request) {
-            $q->whereHas('booking', fn (Builder $query) => $query->where('reservation_no', env("WILD_CARD") ?? 'ILIKE', "$request->reservation_no%"));
-        });
-        $data->when($request->filled('bookings_rooms'), function ($q) use ($request) {
-            $q->whereHas('booking', fn (Builder $query) => $query->where('rooms', env("WILD_CARD") ?? 'ILIKE', "%$request->bookings_rooms%"));
-        });
-        $data->when($request->filled('customer_name'), function ($q) use ($request) {
-            $q->whereHas('booking.customer', fn (Builder $query) => $query->where('first_name', env("WILD_CARD") ?? 'ILIKE', "%$request->customer_name%"));
-        });
-        $data->when($request->filled('item_name'), function ($q) use ($request) {
-            $q->where('item_name', env("WILD_CARD") ?? 'ILIKE', "$request->item_name%");
-        });
-        $data->when($request->filled('status'), function ($q) use ($request) {
-            $q->where('status', $request->status);
-        });
-        $data->when($request->filled('returned_remarks'), function ($q) use ($request) {
-            $q->where('returned_remarks', env("WILD_CARD") ?? 'ILIKE', "$request->returned_remarks%");
-        });
-        $data->when($request->filled('found_datetime'), function ($q) use ($request) {
-            $q->whereDate('found_datetime', $request->found_datetime);
-        });
-        $data->when($request->filled('returned_datetime'), function ($q) use ($request) {
-            $q->whereDate('returned_datetime', $request->returned_datetime);
-        });
-        $data->when($request->filled('created'), function ($q) use ($request) {
-            $q->whereDate('created_at', $request->created);
-        });
-
-        $data->when($request->filled('missing_datetime'), function ($q) use ($request) {
-            $q->whereDate('missing_datetime', $request->created);
-        });
+        $data->where('booking_id', env("WILD_CARD") ?? 'ILIKE', "$search%");
 
 
+        if (($search)) {
+            $data->orWhere('item_name', env("WILD_CARD") ?? 'ILIKE', "$search%");
+            $data->orWhere('status', env("WILD_CARD") ?? 'ILIKE', "$search%");
+            $data->orWhereHas('booking.customer', function ($q) use ($search) {
+                $q->where('first_name', env("WILD_CARD") ?? 'ILIKE', "$search%");
+                $q->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
+            });
+        }
 
         if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
             $data->WhereDate('missing_datetime', '>=', $request->from);
             $data->whereDate('missing_datetime', '<=', $request->to);
         }
 
-
-
-        $sortDesc = $request->sortDesc === 'true' ? 'DESC' : 'ASC';
-
-        if ($request->filled('sortBy')) {
-            $sortBy = $request->sortBy;
-            if (strpos($sortBy, '.')) {
-
-                if ($request->sortBy == 'bookings.rooms') {
-                    $data->orderBy(Booking::select('rooms')->whereColumn('bookings.id', 'lost_and_found_items.booking_id'), $sortDesc);
-                } else if ($request->sortBy == 'booking.reservation_no') {
-                    $data->orderBy(Booking::select('reservation_no')->whereColumn('bookings.id', 'lost_and_found_items.booking_id'), $sortDesc);
-                } else if ($request->sortBy == 'customer.name') {
-                    // $data->orderBy(Booking::select('customer:first_name')->whereColumn('bookings.id', 'lost_and_found_items.booking_id'), $sortDesc);
-                }
-            } else {
-                $data->orderBy($sortBy, $sortDesc);
-            }
-        } else {
-            $data->orderBy('updated_at', 'DESC');
-        }
-
-        $data = $data->paginate($request->per_page ?? 100);
-        return $data;
+        return $data->paginate($request->per_page ?? 100);
     }
 
     public function getStaticstics(Request $request)
@@ -232,16 +184,29 @@ class LostAndFoundItemsController extends Controller
             $record = null;
             if ($request['update_type'] == "missing") {
                 $record = LostAndFoundItems::where('id', $id)->update([
-                    'item_name' => $request['item_name'], 'missing_datetime' => $request['missing_datetime'], 'missing_remarks' => $request['missing_remarks'], 'missing_notes' => $request['missing_notes'],
+                    'item_name' => $request['item_name'],
+                    'missing_datetime' => $request['missing_datetime'],
+                    'missing_remarks' => $request['missing_remarks'],
+                    'missing_notes' => $request['missing_notes'],
                 ]);
             } else if ($request['update_type'] == "found") {
                 $record = LostAndFoundItems::where('id', $id)->update([
-                    'found_datetime' => $request['found_datetime'], 'found_person_name' => $request['found_person_name'], 'found_location' => $request['found_location'], 'found_remarks' => $request['found_remarks'], 'found_notes' => $request['found_notes'], 'status' => 1,
+                    'found_datetime' => $request['found_datetime'],
+                    'found_person_name' => $request['found_person_name'],
+                    'found_location' => $request['found_location'],
+                    'found_remarks' => $request['found_remarks'],
+                    'found_notes' => $request['found_notes'],
+                    'status' => 1,
                 ]);
             } else if ($request['update_type'] == "return") {
 
                 $record = LostAndFoundItems::where('id', $id)->update([
-                    'returned_datetime' => $request['returned_datetime'], 'returned_person_name' => $request['returned_person_name'], 'returned_remarks' => $request['returned_remarks'], 'returned_notes' => $request['returned_notes'], 'approved_person_name' => $request['approved_person_name'], 'status' => 2,
+                    'returned_datetime' => $request['returned_datetime'],
+                    'returned_person_name' => $request['returned_person_name'],
+                    'returned_remarks' => $request['returned_remarks'],
+                    'returned_notes' => $request['returned_notes'],
+                    'approved_person_name' => $request['approved_person_name'],
+                    'status' => 2,
                 ]);
             }
 

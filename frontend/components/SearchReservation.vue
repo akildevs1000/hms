@@ -46,7 +46,7 @@
                 top: 0px;
                 position: absolute;
                 right: 1px;
-                height: 40px;
+                height: 31px;
               "
               class="primary white--text"
               :loading="checkLoader"

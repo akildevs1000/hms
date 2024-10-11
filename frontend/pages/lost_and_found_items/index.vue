@@ -741,13 +741,51 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-      <v-card>
-        <v-container fluid>
-          <v-row>
-            <v-col v-for="(stat, index) in stats" :key="index">
-              <AssetsCard :options="stat" />
-            </v-col>
-            <v-col cols="12">
+      <v-row>
+        <v-col cols="12">
+          <v-card>
+            <v-container fluid>
+              <v-row>
+                <v-col v-for="(stat, index) in stats" :key="index">
+                  <AssetsCard :options="stat" />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <v-card>
+            <v-container fluid>
+              <v-row>
+                <v-col>
+                  <v-btn color="primary" small @click="openNewRecord()">
+                    <v-icon color="white" small class="py-5">mdi-plus</v-icon>
+                    New
+                  </v-btn>
+                </v-col>
+                <v-col cols="2">
+                  <v-text-field
+                    class="global-search-textbox"
+                    append-icon="mdi-magnify"
+                    label="Search..."
+                    clearable
+                    dense
+                    outlined
+                    hide-details
+                    @input="searchIt"
+                    v-model="search"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="2">
+                  <FilterDateRange @filter-attr="filterAttr" />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <v-card>
+            <v-container fluid>
               <v-data-table
                 dense
                 :headers="headers_table"
@@ -761,26 +799,6 @@
                 :server-items-length="totalRowsCount"
                 @page-change="updateIndex"
               >
-                <template v-slot:top>
-                  <v-row no-gutter>
-                    <v-col cols="2">
-                      <FilterDateRange @filter-attr="filterAttr" />
-                    </v-col>
-                    <v-col class="text-right">
-                      <v-btn
-                        class="py-3"
-                        color="primary"
-                        x-small
-                        @click="openNewRecord()"
-                      >
-                        <v-icon color="white" small class="py-5"
-                          >mdi-plus</v-icon
-                        >
-                        New
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </template>
                 <template v-slot:item.sno="{ item, index }">
                   {{
                     currentPage
@@ -874,10 +892,10 @@
                   </v-menu>
                 </template>
               </v-data-table>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
+            </v-container>
+          </v-card>
+        </v-col>
+      </v-row>
     </div>
   </div>
   <NoAccess v-else />
@@ -1201,6 +1219,15 @@ export default {
       this.from_date = dates[0];
       this.to_date = dates[1];
       if (this.from_date && this.to_date) this.getDataFromApi();
+    },
+    searchIt() {
+      let search = this.search;
+      if (search && search.length > 2) {
+        this.getDataFromApi()
+        return;
+      }
+
+      this.getDataFromApi()
     },
     filterAttr(data) {
       this.from_date = data.from;
