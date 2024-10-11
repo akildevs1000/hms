@@ -1,14 +1,15 @@
 <template>
-  <date-picker
-    style="width: 100%; height: 50px"
-    value-type="format"
-    format="YYYY-MM-DD"
-    type="date"
-    v-model="time3"
-    @change="CustomFilter()"
-    range
-    :class="height ? 'small-text' : ''"
-  ></date-picker>
+  <div>
+    <date-picker
+      style="width: 100%"
+      value-type="format"
+      format="YYYY-MM-DD"
+      type="date"
+      v-model="time3"
+      @change="CustomFilter()"
+      range
+    ></date-picker>
+  </div>
 </template>
 
 <script>
@@ -88,16 +89,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.small-text .mx-input {
-  height: 30px !important;
-  border: 1px solid #9e9e9e !important;
-  color: black !important;
-}
-
-.mx-table-date td,
-.mx-table-date th {
-  text-align: center !important;
-}
-</style>

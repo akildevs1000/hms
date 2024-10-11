@@ -777,7 +777,7 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <FilterDateRange @filter-attr="filterAttr" />
+                  <FilterDateRange height="500" @filter-attr="filterAttr" />
                 </v-col>
               </v-row>
             </v-container>
@@ -1223,11 +1223,11 @@ export default {
     searchIt() {
       let search = this.search;
       if (search && search.length > 2) {
-        this.getDataFromApi()
+        this.getDataFromApi();
         return;
       }
 
-      this.getDataFromApi()
+      this.getDataFromApi();
     },
     filterAttr(data) {
       this.from_date = data.from;

@@ -193,7 +193,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .mx-input {
   height: 40px !important;
   border: 1px solid #9e9e9e !important;
