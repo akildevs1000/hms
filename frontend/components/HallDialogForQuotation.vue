@@ -2,8 +2,9 @@
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <AssetsIconClose left="390" @click="close" />
     <template v-slot:activator="{ on, attrs }">
-      <v-btn small elevation="0" v-bind="attrs" v-on="on">
-        <v-icon small color="primary">mdi-plus-circle</v-icon> Hall
+      <v-btn x-small elevation="0" v-bind="attrs" v-on="on">
+        <v-icon small color="primary">mdi-plus-circle</v-icon>
+        <span class="text-color">Hall</span>
       </v-btn>
     </template>
     <v-card>

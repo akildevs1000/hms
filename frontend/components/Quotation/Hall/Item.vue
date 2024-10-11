@@ -4,9 +4,9 @@
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
-          <v-btn v-bind="attrs" v-on="on" small elevation="0"
-            ><v-icon small color="primary">mdi-plus-circle</v-icon> New
-            Row</v-btn
+          <v-btn v-bind="attrs" v-on="on" x-small elevation="0"
+            ><v-icon small color="primary">mdi-plus-circle</v-icon>
+            <span class="text-color">New Row</span></v-btn
           >
         </span>
       </v-hover>

@@ -27,38 +27,33 @@
             :key="customerCompKey"
             @selectedCustomer="handleSelectedCustomer"
           />
+          <br />
+          <v-textarea
+            label="description"
+            dense
+            outlined
+            hide-details
+            rows="3"
+            v-model="description"
+          ></v-textarea>
           <br>
-          <table cellspacing="0" style="width: 100%">
-            <AssetsTableHeader :cols="headers" />
-            <tbody>
-              <tr v-for="(item, index) in priceListTableView" :key="index">
-                <td style="width: 50px" class="text-center py-2 border-bottom">
-                  {{ index + 1 }}
-                </td>
-                <td style="width: 420px" class="pa-1 border-bottom">
-                  <small>{{ item.description }}</small>
-                </td>
-                <td style="width: 120px" class="pa-1 border-bottom">
-                  <small>{{ item.qty }}</small>
-                </td>
-                <td style="width: 120px" class="pa-1 border-bottom">
-                  <small>{{ item.unit_price }}</small>
-                </td>
-                <td class="text-right py-2 border-bottom">
-                  <small class="pt-2 text-right">
-                    {{ $utils.currency_format(item.total_price) }}
-                  </small>
-                </td>
-                <td class="text-right py-2 border-bottom" style="width: 50px">
-                  <v-icon @click="deleteItem(index, item)" small color="red"
-                    >mdi-close</v-icon
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="mt-2">
+          <AssetsTable
+            :headers="require(`@/json/quotation_hall_headers.json`)"
+            :items="priceListTableView"
+          >
+            <template #unit_price="{ item }">
+              {{ $utils.currency_format(item.unit_price) }}
+            </template>
+            <template #total="{ item }">
+              {{ $utils.currency_format(item.total_price) }}
+            </template>
+            <template #action="{ item }">
+              <v-icon @click="deleteItem(item)" small color="red"
+                >mdi-close</v-icon
+              >
+            </template>
+          </AssetsTable>
+          <div>
             <HallDialogForQuotation @tableData="handleTableData" />
             &nbsp;
             <QuotationHallItem
@@ -77,25 +72,25 @@
                 <tr>
                   <td colspan="9"></td>
                   <td class="border-bottom">
-                    <small>Sub Total:</small>
+                    <span>Sub Total:</span>
                   </td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
-                    <small>{{ $utils.convert_decimal(subTotal()) }}</small>
+                    <span>{{ $utils.currency_format(subTotal()) }}</span>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="9"></td>
 
                   <td class="border-bottom">
-                    <small>Add:</small>
+                    <span>Add:</span>
                   </td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
                     <v-hover v-slot:default="{ hover, props }">
                       <div v-bind="props">
-                        <small>
+                        <span>
                           {{
-                            $utils.convert_decimal(room.room_extra_amount || 0)
-                          }}</small
+                            $utils.currency_format(room.room_extra_amount || 0)
+                          }}</span
                         >
                         <v-icon
                           v-if="hover"
@@ -122,15 +117,15 @@
                 <tr>
                   <td colspan="9"></td>
                   <td class="border-bottom">
-                    <small>Discount:</small>
+                    <span>Discount:</span>
                   </td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
                     <v-hover v-slot:default="{ hover, props }">
                       <div v-bind="props">
-                        <small>
+                        <span>
                           -{{
-                            $utils.convert_decimal(room.room_discount || 0)
-                          }}</small
+                            $utils.currency_format(room.room_discount || 0)
+                          }}</span
                         >
                         <v-icon
                           v-if="hover"
@@ -155,14 +150,14 @@
                 <tr>
                   <td colspan="9"></td>
                   <td border-bottom class="primary--text">
-                    <small>Total:</small>
+                    <span>Total:</span>
                   </td>
                   <td
                     colspan="10"
                     class="text-right pb-2 border-bottomprimary--text"
                   >
-                    <small>
-                      {{ $utils.currency_format(processCalculation()) }}</small
+                    <span>
+                      {{ $utils.currency_format(processCalculation()) }}</span
                     >
                   </td>
                 </tr>
@@ -287,6 +282,7 @@ export default {
   props: ["onlyButton"],
   data() {
     return {
+      description: null,
       CreateHallPopup: false,
       loading: false,
       advanceDialog: false,
@@ -332,28 +328,6 @@ export default {
       customer: {},
       errors: [],
       extraPayType: "",
-      headers: [
-        {
-          text: `#`,
-          align: "center",
-        },
-        {
-          text: `Description`,
-        },
-        {
-          text: `Qty`,
-        },
-        {
-          text: `Unit Price`,
-        },
-        {
-          text: `Total`,
-          align: "right",
-        },
-        {
-          text: ``,
-        },
-      ],
     };
   },
   async created() {
@@ -428,7 +402,8 @@ export default {
       this.selectedRooms = [];
       this.CreateHallPopup = false;
     },
-    deleteItem(index, item) {
+    deleteItem(item) {
+      const index = this.priceListTableView.findIndex((e) => e.id == item.id);
       this.priceListTableView.splice(index, 1);
       this.selectedRooms.splice(index, 1);
     },
@@ -483,7 +458,7 @@ export default {
       }
     },
 
-    convert_decimal(n) {
+    currency_format(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
@@ -598,6 +573,7 @@ export default {
         customer: this.customer,
         items: this.priceListTableView,
         company_id: this.$auth.user.company_id,
+        description: this.description,
         type: "hall",
       };
 

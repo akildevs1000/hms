@@ -21,40 +21,34 @@
             :key="customerCompKey"
             @selectedCustomer="handleSelectedCustomer"
           />
-
           <br>
+          <v-textarea
+            label="description"
+            dense
+            outlined
+            hide-details
+            rows="3"
+            v-model="description"
+          ></v-textarea>
+          <br />
 
-          <table cellspacing="0" style="width: 100%">
-            <AssetsTableHeader :cols="headers" />
-            <tbody>
-              <tr v-for="(item, index) in priceListTableView" :key="index">
-                <td style="width: 50px" class="text-center py-2 border-bottom">
-                  {{ index + 1 }}
-                </td>
-                <td style="width: 420px" class="pa-1 border-bottom">
-                  <small>{{ item.description }}</small>
-                </td>
-                <td style="width: 120px" class="pa-1 border-bottom">
-                  <small>{{ item.qty }}</small>
-                </td>
-                <td style="width: 120px" class="pa-1 border-bottom">
-                  <small>{{ item.unit_price }}</small>
-                </td>
-                <td class="text-right py-2 border-bottom">
-                  <small class="pt-2 text-right">
-                    {{ $utils.currency_format(item.total_price) }}
-                  </small>
-                </td>
-                <td class="text-right py-2 border-bottom" style="width: 50px">
-                  <v-icon @click="deleteItem(index, item)" small color="red"
-                    >mdi-close</v-icon
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="mt-2">
+          <AssetsTable
+            :headers="require(`@/json/quotation_hall_headers.json`)"
+            :items="priceListTableView"
+          >
+            <template #unit_price="{ item }">
+              {{ $utils.currency_format(item.unit_price) }}
+            </template>
+            <template #total="{ item }">
+              {{ $utils.currency_format(item.total_price) }}
+            </template>
+            <template #action="{ item }">
+              <v-icon @click="deleteItem(item)" small color="red"
+                >mdi-close</v-icon
+              >
+            </template>
+          </AssetsTable>
+          <div>
             <HallDialogForQuotation @tableData="handleTableData" />
             &nbsp;
             <QuotationHallItem
@@ -73,25 +67,25 @@
                 <tr>
                   <td colspan="9"></td>
                   <td class="border-bottom">
-                    <small>Sub Total:</small>
+                    <span>Sub Total:</span>
                   </td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
-                    <small>{{ $utils.convert_decimal(subTotal()) }}</small>
+                    <span>{{ $utils.convert_decimal(subTotal()) }}</span>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="9"></td>
 
                   <td class="border-bottom">
-                    <small>Add:</small>
+                    <span>Add:</span>
                   </td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
                     <v-hover v-slot:default="{ hover, props }">
                       <div v-bind="props">
-                        <small>
+                        <span>
                           {{
                             $utils.convert_decimal(room.room_extra_amount || 0)
-                          }}</small
+                          }}</span
                         >
                         <v-icon
                           v-if="hover"
@@ -118,15 +112,15 @@
                 <tr>
                   <td colspan="9"></td>
                   <td class="border-bottom">
-                    <small>Discount:</small>
+                    <span>Discount:</span>
                   </td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
                     <v-hover v-slot:default="{ hover, props }">
                       <div v-bind="props">
-                        <small>
+                        <span>
                           -{{
                             $utils.convert_decimal(room.room_discount || 0)
-                          }}</small
+                          }}</span
                         >
                         <v-icon
                           v-if="hover"
@@ -151,14 +145,14 @@
                 <tr>
                   <td colspan="9"></td>
                   <td border-bottom class="primary--text">
-                    <small>Total:</small>
+                    <span>Total:</span>
                   </td>
                   <td
                     colspan="10"
                     class="text-right pb-2 border-bottomprimary--text"
                   >
-                    <small>
-                      {{ $utils.currency_format(processCalculation()) }}</small
+                    <span>
+                      {{ $utils.currency_format(processCalculation()) }}</span
                     >
                   </td>
                 </tr>
@@ -337,29 +331,8 @@ export default {
       customer: {},
       errors: [],
       extraPayType: "",
-      headers: [
-        {
-          text: `#`,
-          align: "center",
-        },
-        {
-          text: `Description`,
-        },
-        {
-          text: `Qty`,
-        },
-        {
-          text: `Unit Price`,
-        },
-        {
-          text: `Total`,
-          align: "right",
-        },
-        {
-          text: ``,
-          align: "right",
-        },
-      ],
+      description: null,
+      useOldDates: true,
     };
   },
   async created() {
@@ -367,10 +340,12 @@ export default {
     this.customer = this.item.customer;
     this.room.room_discount = this.item.discount;
     this.room.sub_total = this.item.sub_total;
+    this.description = this.item.description;
     this.runAllFunctions();
   },
   methods: {
     handleTableData(payload) {
+      this.useOldDates = false;
       let isSelect = this.selectedRooms.find(
         (e) => e.room_id == payload.room_id
       );
@@ -430,7 +405,8 @@ export default {
     close() {
       this.dialog = false;
     },
-    deleteItem(index, item) {
+    deleteItem(item) {
+      const index = this.priceListTableView.findIndex((e) => e.id == item.id);
       this.priceListTableView.splice(index, 1);
     },
 
@@ -582,7 +558,7 @@ export default {
       let arrival_date = this.formatDate(new Date());
       let departure_date = this.formatDate(new Date());
 
-      if (this.selectedRooms.length) {
+      if (!this.useOldDates) {
         arrival_date = this.selectedRooms[0].check_in;
         departure_date =
           this.selectedRooms[this.selectedRooms.length - 1].check_out;
@@ -601,6 +577,7 @@ export default {
         total: this.processCalculation(),
         customer: this.customer,
         items: this.priceListTableView,
+        description: this.description,
         company_id: this.$auth.user.company_id,
         type: "hall",
       };

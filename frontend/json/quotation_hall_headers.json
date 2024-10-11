@@ -1,0 +1,24 @@
+[
+  {
+    "text": "Description",
+    "value": "description"
+  },
+  {
+    "text": "Qty",
+    "value": "qty"
+  },
+  {
+    "text": "Unit Price",
+    "value": "unit_price"
+  },
+  {
+    "text": "Total",
+    "align": "right",
+    "value": "total"
+  },
+  {
+    "text": "",
+    "align": "center",
+    "value": "action"
+  }
+]
