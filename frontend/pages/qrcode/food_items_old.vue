@@ -48,14 +48,14 @@
           >
             <v-col cols="5"> {{ items.name }} </v-col>
             <v-col cols="4" class="">
-              <v-select
+              <v-autocomplete
                 v-model="items.qty"
                 label="Qty"
                 :items="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20]"
                 dense
                 outlined
                 small
-              ></v-select>
+              ></v-autocomplete>
             </v-col>
             <v-col cols="3" class="pl-0 pr-0">
               <div style="font-size: 12px">
@@ -293,7 +293,7 @@
                           INR {{ item.amount }}
                         </v-col>
                         <v-col cols="3" style="text-align: right; padding: 0px">
-                          <v-select
+                          <v-autocomplete
                             v-model="cartSelectDropdown[item.id]"
                             label="Qty"
                             value="1"
@@ -301,7 +301,7 @@
                             dense
                             outlined
                             style="padding-top: 5px"
-                          ></v-select>
+                          ></v-autocomplete>
                         </v-col>
                         <v-col
                           cols="3"

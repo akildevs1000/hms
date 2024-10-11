@@ -48,21 +48,21 @@
                     v-model="search" hide-details></v-text-field>
             </v-col>
             <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select outlined v-model="type" :items="types" dense placeholder="Type" flat :hide-details="true"
-                    @change="getDataFromApi(endpoint)"></v-select>
+                <v-autocomplete outlined v-model="type" :items="types" dense placeholder="Type" flat :hide-details="true"
+                    @change="getDataFromApi(endpoint)"></v-autocomplete>
             </v-col>
 
             <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select v-model="source" :items="type == 'Online' ? sources : agentList" item-value="name"
+                <v-autocomplete v-model="source" :items="type == 'Online' ? sources : agentList" item-value="name"
                     item-text="name" placeholder="Sources" @change="getDataFromApi(endpoint)" dense outlined
-                    :hide-details="true"></v-select>
+                    :hide-details="true"></v-autocomplete>
 
 
 
             </v-col>
             <v-col xs="12" sm="12" md="2" cols="12">
-                <v-select v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']" dense outlined
-                    placeholder="Type" solo flat :hide-details="true" @change="reload()"></v-select>
+                <v-autocomplete v-model="guest_mode" :items="['Select All', 'Arrival', 'Departure']" dense outlined
+                    placeholder="Type" solo flat :hide-details="true" @change="reload()"></v-autocomplete>
             </v-col>
 
             <v-col md="4">

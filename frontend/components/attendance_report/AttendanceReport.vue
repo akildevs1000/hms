@@ -156,7 +156,7 @@
             </v-col>
             <v-col md="3">
               Report Type
-              <v-select
+              <v-autocomplete
                 @change="fetch_logs"
                 class="mt-2"
                 outlined
@@ -174,7 +174,7 @@
                 item-value="id"
                 item-text="name"
                 :hide-details="true"
-              ></v-select>
+              ></v-autocomplete>
             </v-col>
             <v-col md="3" v-if="isCompany">
               Departments

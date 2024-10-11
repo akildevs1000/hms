@@ -21,7 +21,7 @@
                 <label class="col-form-label"
                   >Type <span class="error--text">*</span></label
                 >
-                <v-select
+                <v-autocomplete
                   v-model="room.type"
                   :items="types"
                   dense
@@ -30,7 +30,7 @@
                   :hide-details="!errors.type"
                   :error="errors.type"
                   :error-messages="errors && errors.type ? errors.type[0] : ''"
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
               <v-col md="6" cols="12" sm="12" v-if="isAgent">
                 <label class="col-form-label">Agent Name</label>
@@ -48,7 +48,7 @@
               </v-col>
               <v-col md="6" sm="12" cols="12" dense v-if="isOnline">
                 <label class="col-form-label">Source </label>
-                <v-select
+                <v-autocomplete
                   v-model="room.source"
                   :items="sources"
                   dense
@@ -58,7 +58,7 @@
                   :error-messages="
                     errors && errors.source ? errors.source[0] : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
@@ -66,7 +66,7 @@
                 <label class="col-form-label"
                   >Room Type <span class="error--text">*</span></label
                 >
-                <v-select
+                <v-autocomplete
                   v-model="room.room_type"
                   :items="roomTypes"
                   item-text="name"
@@ -79,11 +79,11 @@
                   :error-messages="
                     errors && errors.room_type ? errors.room_type[0] : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
               <v-col md="6" sm="12" cols="12" dense>
                 <label class="col-form-label">Room No </label>
-                <v-select
+                <v-autocomplete
                   v-model="room.room_id"
                   :items="rooms"
                   item-text="room_no"
@@ -95,7 +95,7 @@
                   :error-messages="
                     errors && errors.room_id ? errors.room_id[0] : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
@@ -181,7 +181,7 @@
               </v-col>
               <v-col md="4" cols="12" sm="12">
                 <label class="col-form-label">Payment Mode</label>
-                <v-select
+                <v-autocomplete
                   v-model="room.payment_mode_id"
                   :items="[
                     { id: 1, name: 'Cash' },
@@ -203,7 +203,7 @@
                       ? errors.payment_mode_id[0]
                       : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
             </v-row>
           </v-col>
@@ -350,7 +350,7 @@
               </v-col>
               <v-col md="4" sm="12" cols="12" dense>
                 <label class="col-form-label">Adult </label>
-                <v-select
+                <v-autocomplete
                   v-model="customer.no_of_adult"
                   :items="member_numbers"
                   dense
@@ -361,35 +361,35 @@
                     errors && errors.no_of_adult ? errors.no_of_adult[0] : ''
                   "
                 >
-                </v-select>
+                </v-autocomplete>
               </v-col>
               <v-col md="4" sm="12" cols="12" dense>
                 <label class="col-form-label">Child </label>
-                <v-select
+                <v-autocomplete
                   v-model="customer.no_of_child"
                   :items="member_numbers"
                   :hide-details="true"
                   dense
                   outlined
                 >
-                </v-select>
+                </v-autocomplete>
               </v-col>
               <v-col md="4" sm="12" cols="12" dense>
                 <label class="col-form-label">Baby </label>
-                <v-select
+                <v-autocomplete
                   v-model="customer.no_of_baby"
                   :items="member_numbers"
                   dense
                   :hide-details="true"
                   outlined
                 >
-                </v-select>
+                </v-autocomplete>
               </v-col>
               <v-col md="3" sm="12" cols="12" dense>
                 <label class="col-form-label"
                   >ID Card Type <span class="error--text">*</span></label
                 >
-                <v-select
+                <v-autocomplete
                   v-model="customer.id_card_type_id"
                   :items="idCards"
                   dense
@@ -403,7 +403,7 @@
                       ? errors.id_card_type_id[0]
                       : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
               <v-col md="3" cols="12" sm="12">
                 <label class="col-form-label"

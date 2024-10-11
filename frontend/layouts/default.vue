@@ -765,6 +765,9 @@ small {
 .text-color {
   color: #8a8a8a;
 }
+.text-color-class {
+  background: #8a8a8a;
+}
 table {
   border-spacing: 0;
   border-collapse: collapse; /* To ensure borders are collapsed like the effect of cellspacing="0" */
@@ -856,12 +859,18 @@ input[type="number"] {
   text-align: center;
 }
 
-.global-search-textbox .v-input__slot {
+.v-input__slot {
   min-height: 30px !important;
 }
-.global-search-textbox .v-label {
+.v-input__slot .v-label {
   line-height: 11px !important;
+  font-size: 13px;
 }
+
+.v-select__slot .v-input__icon--append {
+  margin-top: -4px;
+}
+
 .global-search-textbox .v-input__icon {
   height: 17px !important;
 }
@@ -903,7 +912,7 @@ input[type="number"] {
   height: 17px !important;
 }
 
-.global-search-select .v-select__selections {
+.global-search-select .v-autocomplete__selections {
   padding: 0px !important;
 }
 

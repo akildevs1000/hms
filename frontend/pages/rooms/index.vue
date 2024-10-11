@@ -44,7 +44,7 @@
               </v-col>
               <v-col md="12" cols="12">
                 <label>Floor No</label>
-                <v-select
+                <v-autocomplete
                   v-model="editedItem.floor_no"
                   :disabled="viewMode"
                   outlined
@@ -53,14 +53,14 @@
                   :hide-details="true"
                   :items="floors"
                   placeholder="Select Floor"
-                ></v-select>
+                ></v-autocomplete>
                 <span v-if="errors && errors.floor_no" class="error--text">{{
                   errors.floor_no[0]
                 }}</span>
               </v-col>
               <v-col md="12" cols="12">
                 <label> Category</label>
-                <v-select
+                <v-autocomplete
                   :disabled="viewMode"
                   :items="roomTypesData"
                   v-model="editedItem.room_type_id"
@@ -72,7 +72,7 @@
                   item-value="id"
                   placeholder="Select Category"
                 >
-                </v-select>
+                </v-autocomplete>
                 <span
                   v-if="errors && errors.room_type_id"
                   class="error--text"
@@ -81,7 +81,7 @@
               </v-col>
               <v-col md="12" cols="12">
                 <label> Status</label>
-                <v-select
+                <v-autocomplete
                   :disabled="viewMode"
                   selected="0"
                   :items="[
@@ -100,7 +100,7 @@
                   item-value="id"
                   placeholder="Select status"
                 >
-                </v-select>
+                </v-autocomplete>
                 <span v-if="errors && errors.status" class="error--text">{{
                   errors.status[0]
                 }}</span>
@@ -252,7 +252,7 @@
                     item-value="id"
                   >
                   </v-autocomplete>
-                  <v-select
+                  <v-autocomplete
                     v-model="filters[header.key]"
                     v-if="
                       header.filterable &&
@@ -269,7 +269,7 @@
                     "
                     :hide-details="true"
                     @change="applyFilters()"
-                  ></v-select>
+                  ></v-autocomplete>
                 </td>
               </tr>
             </template>

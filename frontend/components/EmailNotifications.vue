@@ -74,7 +74,7 @@
                 >
               </v-col>
               <v-col cols="12">
-                <v-select
+                <v-autocomplete
                   label="Status"
                   :disabled="viewMode"
                   :items="[
@@ -93,7 +93,7 @@
                   item-value="id"
                   placeholder="Select status"
                 >
-                </v-select>
+                </v-autocomplete>
                 <span v-if="errors && errors.status" class="error--text">{{
                   errors.status[0]
                 }}</span>
@@ -259,7 +259,7 @@
                     item-value="id"
                   >
                   </v-autocomplete>
-                  <v-select
+                  <v-autocomplete
                     v-model="filters[header.key]"
                     v-if="
                       header.filterable &&
@@ -276,7 +276,7 @@
                     "
                     :hide-details="true"
                     @change="applyFilters()"
-                  ></v-select>
+                  ></v-autocomplete>
                 </td>
               </tr>
             </template>

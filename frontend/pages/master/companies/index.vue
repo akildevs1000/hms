@@ -21,14 +21,14 @@
       </v-row>
       <v-row>
         <v-col md="3">
-          <v-select
+          <v-autocomplete
             @change="getDataFromApi(endpoint)"
             outlined
             v-model="per_page"
             :items="[50, 100, 500, 1000]"
             dense
             placeholder="Per Page Records"
-          ></v-select>
+          ></v-autocomplete>
         </v-col>
 
         <v-col offset-md="6">

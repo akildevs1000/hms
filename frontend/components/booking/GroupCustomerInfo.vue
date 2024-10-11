@@ -45,7 +45,7 @@
         <v-col cols="12">
           <v-row no-gutters>
             <v-col class="ma-1" cols="2">
-              <v-select
+              <v-autocomplete
                 @change="submit"
                 v-model="customer.title"
                 :items="titleItems"
@@ -55,7 +55,7 @@
                 item-value="name"
                 hide-details
                 outlined
-              ></v-select>
+              ></v-autocomplete>
             </v-col>
             <v-col class="ma-1">
               <v-text-field

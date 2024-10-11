@@ -173,7 +173,7 @@
                       "
                     ></v-text-field>
                     <label class="col-form-label">Source </label>
-                    <v-select
+                    <v-autocomplete
                       v-model="source.type"
                       :items="sourceTypeList"
                       dense
@@ -183,7 +183,7 @@
                       :error-messages="
                         errors && errors.type ? errors.type[0] : ''
                       "
-                    ></v-select>
+                    ></v-autocomplete>
                     <div class="text-left mt-2">
                       <v-btn
                         class="my-2"

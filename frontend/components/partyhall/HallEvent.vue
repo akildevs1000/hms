@@ -23,26 +23,26 @@
                         </v-col>
                         <v-col md="4" cols="12">
 
-                            <v-select v-model="event.event_type" :items="event_type_names" item-text="name" item-value="id"
+                            <v-autocomplete v-model="event.event_type" :items="event_type_names" item-text="name" item-value="id"
                                 label="Type of Event *" append-icon="mdi-party-popper" dense flat outlined required
                                 :rules="nameRules">
-                            </v-select>
+                            </v-autocomplete>
                         </v-col>
                         <v-col md="4" cols="12">
                             <v-text-field dense label="Number of Pax" outlined type="number" v-model="event.pax" required
                                 :rules="nameRules" append-icon="mdi-account-details-outline"></v-text-field>
                         </v-col>
                         <v-col md="4" cols="12">
-                            <v-select v-model="event.start_time" :items="hours" item-text="name" item-value="id"
+                            <v-autocomplete v-model="event.start_time" :items="hours" item-text="name" item-value="id"
                                 label="Start Time" append-icon="mdi-clock-outline" dense flat outlined required
                                 :rules="nameRules">
-                            </v-select>
+                            </v-autocomplete>
                         </v-col>
                         <v-col md="4" cols="12">
-                            <v-select v-model="event.end_time" :items="hours" item-text="name" item-value="id" item
+                            <v-autocomplete v-model="event.end_time" :items="hours" item-text="name" item-value="id" item
                                 label="End Time" append-icon="mdi-clock-outline" :min="event.start_time" dense flat outlined
                                 required :rules="nameRules">
-                            </v-select>
+                            </v-autocomplete>
                         </v-col>
 
 
@@ -64,10 +64,10 @@
                                         <div> <strong class="error--text">No </strong></div>
                                     </template></v-radio>
                             </v-radio-group>
-                            <!-- <v-select v-model="event.audio_system" label="Audio System" :items="YesOrNO" item-text="name"
+                            <!-- <v-autocomplete v-model="event.audio_system" label="Audio System" :items="YesOrNO" item-text="name"
                                 item-value="id" dense flat outlined required :rules="nameRules"
                                 append-icon="mdi-surround-sound">
-                            </v-select> -->
+                            </v-autocomplete> -->
                         </v-col>
                         <v-col md="4" cols="12">
                             <h4> Projector</h4> <v-radio-group v-model="event.projector" lable="Test" outlined row>
@@ -82,9 +82,9 @@
                                     </template></v-radio>
                             </v-radio-group>
 
-                            <!-- <v-select v-model="event.projector" label="Projector" :items="YesOrNO" item-text="name"
+                            <!-- <v-autocomplete v-model="event.projector" label="Projector" :items="YesOrNO" item-text="name"
                                 item-value="id" append-icon="mdi-projector" dense flat outlined required :rules="nameRules">
-                            </v-select> -->
+                            </v-autocomplete> -->
                         </v-col>
                         <v-col md="4" cols="12">
                             <h4>Stage Decoration</h4> <v-radio-group v-model="event.stage_decoration" lable="Test" outlined
@@ -99,10 +99,10 @@
                                         <div> <strong class="error--text">No </strong></div>
                                     </template></v-radio>
                             </v-radio-group>
-                            <!-- <v-select v-model="event.stage_decoration" label="Stage Decoration" :items="YesOrNO"
+                            <!-- <v-autocomplete v-model="event.stage_decoration" label="Stage Decoration" :items="YesOrNO"
                                 item-text="name" append-icon="mdi-postage-stamp" item-value="id" dense flat outlined
                                 required :rules="nameRules">
-                            </v-select> -->
+                            </v-autocomplete> -->
                         </v-col>
 
 

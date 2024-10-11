@@ -4,15 +4,18 @@
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
-          <v-btn v-bind="attrs" v-on="on" small elevation="0"
-            ><v-icon small color="primary">mdi-plus-circle</v-icon>Room</v-btn
+          <v-btn v-bind="attrs" v-on="on" x-small elevation="0"
+            ><v-icon small color="primary">mdi-plus-circle</v-icon
+            ><span class="text-color">Room</span></v-btn
           >
         </span>
       </v-hover>
     </template>
     <v-card>
-      <v-alert flat class="grey lighten-3" dense> Room Information </v-alert>
-      <v-container>
+      <v-alert flat class="grey lighten-3" dense>
+        <span class="text-color">Room Information</span>
+      </v-alert>
+      <v-card-text>
         <v-row>
           <v-col cols="12">
             <v-menu
@@ -182,7 +185,7 @@
             />
           </v-col>
         </v-row>
-      </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>

@@ -51,7 +51,7 @@
                     >
                   </v-col>
                   <v-col md="12" cols="12">
-                    <v-select
+                    <v-autocomplete
                       label="Category*"
                       v-model="editedItem.category_id"
                       :disabled="viewMode"
@@ -63,7 +63,7 @@
                       item-text="name"
                       item-value="id"
                       placeholder="Select Category"
-                    ></v-select>
+                    ></v-autocomplete>
                     <span
                       v-if="errors && errors.category_id"
                       class="error--text"
@@ -71,7 +71,7 @@
                     >
                   </v-col>
                   <v-col md="12" cols="12">
-                    <v-select
+                    <v-autocomplete
                       multiple
                       label="Availalbe Time*"
                       v-model="editedItem.timing_id"
@@ -84,7 +84,7 @@
                       placeholder="Select Time"
                       item-text="name"
                       item-value="id"
-                    ></v-select>
+                    ></v-autocomplete>
                     <span
                       v-if="errors && errors.timing_id"
                       class="error--text"
@@ -92,7 +92,7 @@
                     >
                   </v-col>
                   <v-col md="12" cols="12">
-                    <v-select
+                    <v-autocomplete
                       label="Veg or Non-Veg*"
                       v-model="editedItem.is_non_veg"
                       :disabled="viewMode"
@@ -107,7 +107,7 @@
                       placeholder="Select Veg or Non-Veg"
                       item-text="name"
                       item-value="id"
-                    ></v-select>
+                    ></v-autocomplete>
                     <span
                       v-if="errors && errors.is_non_veg"
                       class="error--text"
@@ -169,7 +169,7 @@
                     >
                   </v-col>
                   <v-col md="12" cols="12">
-                    <v-select
+                    <v-autocomplete
                       label="Status*"
                       v-model="editedItem.status"
                       :disabled="viewMode"
@@ -184,7 +184,7 @@
                       placeholder="Select Veg or Non-Veg"
                       item-text="name"
                       item-value="id"
-                    ></v-select>
+                    ></v-autocomplete>
                     <span v-if="errors && errors.status" class="error--text">{{
                       errors.status[0]
                     }}</span>
@@ -422,7 +422,7 @@
                     item-value="id"
                   >
                   </v-autocomplete>
-                  <v-select
+                  <v-autocomplete
                     v-model="filters[header.key]"
                     v-if="
                       header.filterable &&
@@ -439,7 +439,7 @@
                     "
                     :hide-details="true"
                     @change="applyFilters()"
-                  ></v-select>
+                  ></v-autocomplete>
                 </td>
               </tr>
             </template>

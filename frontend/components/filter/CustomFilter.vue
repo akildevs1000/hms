@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col :cols="filterType == 5 ? '6' : ''">
-      <v-select
+      <v-autocomplete
         v-model="filterType"
         :items="[
           {
@@ -35,7 +35,7 @@
         :hide-details="true"
         item-text="name"
         item-value="id"
-      ></v-select>
+      ></v-autocomplete>
     </v-col>
     <v-col cols="6" v-if="filterType == 5">
       <date-picker

@@ -9,7 +9,7 @@
 
     <v-row>
       <v-col xs="12" sm="12" md="2" cols="12">
-        <v-select class="custom-text-box shadow-none" v-model="filterType" :items="[
+        <v-autocomplete class="custom-text-box shadow-none" v-model="filterType" :items="[
           {
             id: 1,
             name: 'Today',
@@ -31,7 +31,7 @@
             name: 'Custom',
           },
         ]" dense placeholder="Type" solo flat :hide-details="true" item-text="name" item-value="id"
-          @change="getDataFromApi()"></v-select>
+          @change="getDataFromApi()"></v-autocomplete>
       </v-col>
 
       <v-col md="3" v-if="filterType == 5">

@@ -33,8 +33,8 @@
         <v-row>
           <v-col md="4">
             <span>Select/Change the Role</span>
-            <v-select :rules="Rules" v-model="role_id" :items="roles" item-value="id" item-text="name"
-              placeholder="Select Role" outlined dense @change="getDataFromApi()"></v-select>
+            <v-autocomplete :rules="Rules" v-model="role_id" :items="roles" item-value="id" item-text="name"
+              placeholder="Select Role" outlined dense @change="getDataFromApi()"></v-autocomplete>
             <span v-if="errors && errors.role_id" class="red--text">
               {{ errors.role_id[0] }}
             </span>

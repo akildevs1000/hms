@@ -20,7 +20,7 @@
               <v-col md="8">
                 <v-row>
                   <v-col md="6" cols="12" sm="12">
-                    <v-select
+                    <v-autocomplete
                       v-model="editedItem.title"
                       :items="titleItems"
                       dense
@@ -32,10 +32,10 @@
                         errors && errors.title ? errors.title[0] : ''
                       "
                       outlined
-                    ></v-select>
+                    ></v-autocomplete>
                   </v-col>
                   <v-col md="6" cols="12">
-                    <v-select
+                    <v-autocomplete
                       :items="roles"
                       item-text="name"
                       item-value="id"
@@ -45,7 +45,7 @@
                       label="Role"
                       :hide-details="true"
                       dense
-                    ></v-select>
+                    ></v-autocomplete>
                     <span v-if="errors && errors.role_id" class="error--text">{{
                       errors.role_id[0]
                     }}</span>
@@ -141,7 +141,7 @@
                     >
                   </v-col>
                   <v-col md="6" cols="12">
-                    <v-select
+                    <v-autocomplete
                       label="Status"
                       v-model="editedItem.is_active"
                       :items="[
@@ -157,7 +157,7 @@
                         errors && errors.is_active ? errors.is_active[0] : ''
                       "
                       outlined
-                    ></v-select>
+                    ></v-autocomplete>
                     <span
                       v-if="errors && errors.is_active"
                       class="error--text"
@@ -165,7 +165,7 @@
                     >
                   </v-col>
                   <v-col md="6" cols="12">
-                    <v-select
+                    <v-autocomplete
                       label="OTP"
                       v-model="editedItem.enable_whatsapp_otp"
                       :items="[
@@ -183,7 +183,7 @@
                           : ''
                       "
                       outlined
-                    ></v-select>
+                    ></v-autocomplete>
                     <span
                       v-if="errors && errors.enable_whatsapp_otp"
                       class="error--text"
@@ -251,7 +251,7 @@
                   <v-col md="8">
                     <v-row>
                       <v-col md="6" cols="12" sm="12">
-                        <v-select
+                        <v-autocomplete
                           v-model="editedItem.title"
                           :items="titleItems"
                           dense
@@ -263,10 +263,10 @@
                             errors && errors.title ? errors.title[0] : ''
                           "
                           outlined
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                       <v-col md="6" cols="12">
-                        <v-select
+                        <v-autocomplete
                           :items="roles"
                           item-text="name"
                           item-value="id"
@@ -276,7 +276,7 @@
                           label="Role"
                           :hide-details="true"
                           dense
-                        ></v-select>
+                        ></v-autocomplete>
                         <span
                           v-if="errors && errors.role_id"
                           class="error--text"
@@ -380,7 +380,7 @@
                         >
                       </v-col>
                       <v-col md="6" cols="12">
-                        <v-select
+                        <v-autocomplete
                           label="Status"
                           v-model="editedItem.is_active"
                           :items="[
@@ -398,7 +398,7 @@
                               : ''
                           "
                           outlined
-                        ></v-select>
+                        ></v-autocomplete>
                         <span
                           v-if="errors && errors.is_active"
                           class="error--text"
@@ -406,7 +406,7 @@
                         >
                       </v-col>
                       <v-col md="6" cols="12">
-                        <v-select
+                        <v-autocomplete
                           label="OTP"
                           v-model="editedItem.enable_whatsapp_otp"
                           :items="[
@@ -424,7 +424,7 @@
                               : ''
                           "
                           outlined
-                        ></v-select>
+                        ></v-autocomplete>
                         <span
                           v-if="errors && errors.enable_whatsapp_otp"
                           class="error--text"

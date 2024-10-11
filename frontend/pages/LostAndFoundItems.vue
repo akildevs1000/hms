@@ -517,7 +517,7 @@
                                             v-if="header.filterable && !header.filterSpecial" v-model="filters[header.key]"
                                             :id="header.value" @input="applyFilters(header.key, $event)" outlined dense
                                             autocomplete="off"></v-text-field>
-                                        <v-select v-else-if="header.filterable && header.value == 'status'" clearable
+                                        <v-autocomplete v-else-if="header.filterable && header.value == 'status'" clearable
                                             @click:clear="filters[header.value] = ''; applyFilters()" :hide-details="true"
                                             @change="applyFilters('status', $event)" item-value="value" item-text="title"
                                             v-model="filters[header.value]" outlined dense :items="[
@@ -528,7 +528,7 @@
                                                     title: 'Found',
                                                 },
                                                 { value: '2', title: 'Closed' },
-                                            ]" placeholder="Status"></v-select>
+                                            ]" placeholder="Status"></v-autocomplete>
 
                                         <v-menu v-if="header.filterSpecial && header.value == 'found_datetime'"
                                             ref="from_menu_filter" v-model="from_menu_filter"

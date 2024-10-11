@@ -312,13 +312,13 @@
                             <label class="col-form-label">
                               Discount/Extra
                             </label>
-                            <v-select
+                            <v-autocomplete
                               v-model="extraPayType"
                               :items="['Discount', 'ExtraAmount']"
                               dense
                               :hide-details="true"
                               outlined
-                            ></v-select>
+                            ></v-autocomplete>
                           </v-col>
                           <v-col
                             md="4"

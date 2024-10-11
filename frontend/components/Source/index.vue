@@ -42,7 +42,7 @@
                 >
               </v-col>
               <!-- <v-col md="12" cols="12">
-                  <v-select
+                  <v-autocomplete
                     v-model="editedItem.type"
                     :items="sourceTypeList"
                     placeholder="Type"
@@ -52,7 +52,7 @@
                     item-value="value"
                     outlined
                     :hide-details="true"
-                  ></v-select>
+                  ></v-autocomplete>
                   <span v-if="errors && errors.type" class="error--text">{{
                     errors.type[0]
                   }}</span>

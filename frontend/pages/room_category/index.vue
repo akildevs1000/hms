@@ -76,7 +76,7 @@
                               >
                             </v-col>
                             <v-col md="4" cols="12">
-                              <v-select
+                              <v-autocomplete
                                 v-model="editedItem.adult"
                                 :items="[1, 2, 3, 4]"
                                 placeholder="Adult"
@@ -86,7 +86,7 @@
                                 item-value="value"
                                 outlined
                                 :hide-details="true"
-                              ></v-select>
+                              ></v-autocomplete>
                               <span
                                 v-if="errors && errors.adult"
                                 class="error--text"
@@ -95,7 +95,7 @@
                             </v-col>
 
                             <v-col md="4" cols="12">
-                              <v-select
+                              <v-autocomplete
                                 v-model="editedItem.child"
                                 :items="[1, 2, 3, 4]"
                                 placeholder="Child"
@@ -105,7 +105,7 @@
                                 item-value="value"
                                 outlined
                                 :hide-details="true"
-                              ></v-select>
+                              ></v-autocomplete>
                               <span
                                 v-if="errors && errors.child"
                                 class="error--text"
@@ -114,7 +114,7 @@
                             </v-col>
 
                             <v-col md="4" cols="12">
-                              <v-select
+                              <v-autocomplete
                                 v-model="editedItem.baby"
                                 :items="[1, 2, 3]"
                                 placeholder="Baby"
@@ -124,7 +124,7 @@
                                 item-value="value"
                                 outlined
                                 :hide-details="true"
-                              ></v-select>
+                              ></v-autocomplete>
                               <span
                                 v-if="errors && errors.baby"
                                 class="error--text"
@@ -132,7 +132,7 @@
                               >
                             </v-col>
                             <v-col cols="12">
-                              <v-select
+                              <v-autocomplete
                                 v-model="editedItem.tax"
                                 :items="[
                                   { value: 0, name: `Exempted %` },
@@ -148,7 +148,7 @@
                                 item-value="value"
                                 outlined
                                 :hide-details="true"
-                              ></v-select>
+                              ></v-autocomplete>
                               <span
                                 v-if="errors && errors.adult"
                                 class="error--text"

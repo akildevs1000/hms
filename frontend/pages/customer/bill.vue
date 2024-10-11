@@ -13,7 +13,7 @@
     </v-row>
     <v-row>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
+        <v-autocomplete
           class="custom-text-box shadow-none"
           @change="getDataFromApi(`booking_customers`)"
           v-model="pagination.per_page"
@@ -22,7 +22,7 @@
           solo
           flat
           :hide-details="true"
-        ></v-select>
+        ></v-autocomplete>
       </v-col>
       <!-- <v-col xs="12" sm="12" md="3" cols="12">
         <input

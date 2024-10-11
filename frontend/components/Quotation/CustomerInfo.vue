@@ -31,7 +31,7 @@
           <v-col md="12" cols="12" sm="12">
             <v-row>
               <v-col md="3" cols="12" sm="12">
-                <v-select
+                <v-autocomplete
                   v-model="customer.title"
                   :items="titleItems"
                   label="Title *"
@@ -40,10 +40,10 @@
                   item-value="name"
                   hide-details
                   outlined
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
               <v-col cols="9">
-                <v-row no-gutter>
+                <v-row>
                   <v-col>
                     <v-text-field
                       @blur="submit"

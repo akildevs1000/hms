@@ -16,7 +16,9 @@
       </template>
       <v-card>
         <AssetsHeadDialog>
-          <template #label>Quotation Information</template>
+          <template #label
+            ><span class="text-color">Quotation Information</span></template
+          >
           <template #search
             ><SearchCustomer @foundCustomer="handleFoundCustomer"
           /></template>
@@ -27,51 +29,39 @@
             :key="customerCompKey"
             @selectedCustomer="handleSelectedCustomer"
           />
-          <br>
-          <table cellspacing="0" style="width: 100%">
-            <AssetsTableHeader :cols="headers" />
-            <tbody>
-              <tr v-for="(item, index) in priceListTableView" :key="index">
-                <td style="width: 50px" class="text-center py-2 border-bottom">
-                  <small>{{ index + 1 }}</small>
-                </td>
-                <td style="width: 320px" class="text-center border-bottom">
-                  <small>{{ item.room_type }}</small>
-                </td>
-                <td style="width: 320px" class="text-center border-bottom">
-                  <small>{{ item.meal_name }}</small>
-                </td>
-                <td style="width: 120px" class="text-center border-bottom">
-                  <small>{{ item.no_of_adult }}</small>
-                </td>
-                <td style="width: 120px" class="text-right border-bottom">
-                  <small>{{ $utils.currency_format(item.price) }}</small>
-                </td>
-                <td style="width: 120px" class="text-center border-bottom">
-                  <small>{{ item.no_of_rooms }}</small>
-                </td>
-                <td style="width: 120px" class="text-center border-bottom">
-                  <small>{{ item.no_of_nights }}</small>
-                </td>
-                <td class="text-right py-2 border-bottom">
-                  <small class="pt-2 text-right">
-                    {{
-                      $utils.currency_format(
-                        item.price * item.no_of_rooms * item.no_of_nights
-                      )
-                    }}
-                  </small>
-                </td>
-                <td class="text-right py-2 border-bottom" style="width: 50px">
-                  <v-icon @click="deleteItem(index, item)" small color="red"
-                    >mdi-close</v-icon
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="mt-2">
+          <br />
+          <v-textarea
+            label="description"
+            dense
+            outlined
+            hide-details
+            rows="3"
+            v-model="description"
+          ></v-textarea>
+          <br />
+          <AssetsTable
+            :headers="require(`@/json/quotation_headers.json`)"
+            :items="priceListTableView"
+          >
+            <template #price="{ item }">
+              <span>{{ $utils.currency_format(item.price) }}</span>
+            </template>
+            <template #total="{ item }">
+              <span>
+                {{
+                  $utils.currency_format(
+                    item.price * item.no_of_rooms * item.no_of_nights
+                  )
+                }}
+              </span>
+            </template>
+            <template #action="{ item }">
+              <v-icon @click="deleteItem(item)" small color="red"
+                >mdi-close</v-icon
+              >
+            </template>
+          </AssetsTable>
+          <div>
             <RoomDialogForQuotation @tableData="handleTableData" />
             &nbsp;
             <QuotationRoomItem
@@ -89,27 +79,21 @@
               <table style="width: 100%">
                 <tr>
                   <td colspan="9"></td>
-                  <td class="border-bottom">
-                    <small>Sub Total:</small>
-                  </td>
+                  <td class="border-bottom">Sub Total:</td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
-                    <small>{{ $utils.convert_decimal(subTotal()) }}</small>
+                    {{ $utils.currency_format(subTotal()) }}
                   </td>
                 </tr>
                 <tr>
                   <td colspan="9"></td>
 
-                  <td class="border-bottom">
-                    <small>Add:</small>
-                  </td>
+                  <td class="border-bottom">Add:</td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
                     <v-hover v-slot:default="{ hover, props }">
                       <div v-bind="props">
-                        <small>
-                          {{
-                            $utils.convert_decimal(room.room_extra_amount || 0)
-                          }}</small
-                        >
+                        {{
+                          $utils.currency_format(room.room_extra_amount || 0)
+                        }}
                         <v-icon
                           v-if="hover"
                           small
@@ -134,17 +118,11 @@
                 </tr>
                 <tr>
                   <td colspan="9"></td>
-                  <td class="border-bottom">
-                    <small>Discount:</small>
-                  </td>
+                  <td class="border-bottom">Discount:</td>
                   <td colspan="10" class="text-right pb-2 border-bottom">
                     <v-hover v-slot:default="{ hover, props }">
                       <div v-bind="props">
-                        <small>
-                          -{{
-                            $utils.convert_decimal(room.room_discount || 0)
-                          }}</small
-                        >
+                        -{{ $utils.currency_format(room.room_discount || 0) }}
                         <v-icon
                           v-if="hover"
                           small
@@ -167,16 +145,12 @@
                 </tr>
                 <tr>
                   <td colspan="9"></td>
-                  <td border-bottom class="primary--text">
-                    <small>Total:</small>
-                  </td>
+                  <td border-bottom class="primary--text">Total:</td>
                   <td
                     colspan="10"
                     class="text-right pb-2 border-bottomprimary--text"
                   >
-                    <small>
-                      {{ $utils.currency_format(processCalculation()) }}</small
-                    >
+                    {{ $utils.currency_format(processCalculation()) }}
                   </td>
                 </tr>
               </table>
@@ -300,6 +274,7 @@ export default {
   props: ["onlyButton"],
   data() {
     return {
+      description: null,
       dialog: false,
       loading: false,
       advanceDialog: false,
@@ -346,43 +321,6 @@ export default {
       customer: {},
       errors: [],
       extraPayType: "",
-      headers: [
-        {
-          text: `#`,
-          align: "center",
-        },
-        {
-          text: `Room Type`,
-          align: "center",
-        },
-        {
-          text: `Food`,
-          align: "center",
-        },
-        {
-          text: `PAX`,
-          align: "center",
-        },
-        {
-          text: `Tarrif`,
-          align: "right",
-        },
-        {
-          text: `Rooms`,
-          align: "center",
-        },
-        {
-          text: `Nights`,
-          align: "center",
-        },
-        {
-          text: `Total`,
-          align: "right",
-        },
-        {
-          text: ``,
-        },
-      ],
     };
   },
   async created() {
@@ -473,7 +411,8 @@ export default {
       this.selectedRooms = [];
       this.dialog = false;
     },
-    deleteItem(index, item) {
+    deleteItem(item) {
+      const index = this.priceListTableView.findIndex((e) => e.id == item.id);
       this.priceListTableView.splice(index, 1);
       this.selectedRooms = this.selectedRooms.filter(
         (e) => e.room_type !== item.room_type
@@ -530,7 +469,7 @@ export default {
       }
     },
 
-    convert_decimal(n) {
+    currency_format(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
       } else {
@@ -645,6 +584,7 @@ export default {
         customer: this.customer,
         items: this.priceListTableView,
         company_id: this.$auth.user.company_id,
+        description: this.description,
         type: "room",
       };
 

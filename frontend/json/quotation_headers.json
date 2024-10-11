@@ -1,0 +1,42 @@
+[
+  {
+    "text": "Room Type",
+    "align": "center",
+    "value": "room_type"
+  },
+  {
+    "text": "Food",
+    "align": "center",
+    "value": "meal_name"
+  },
+  {
+    "text": "PAX",
+    "align": "center",
+    "value": "no_of_adult"
+  },
+  {
+    "text": "Tarrif",
+    "align": "right",
+    "value": "price"
+  },
+  {
+    "text": "Rooms",
+    "align": "center",
+    "value": "no_of_rooms"
+  },
+  {
+    "text": "Nights",
+    "align": "center",
+    "value": "no_of_nights"
+  },
+  {
+    "text": "Total",
+    "align": "right",
+    "value": "total"
+  },
+  {
+    "text": "",
+    "align": "center",
+    "value": "action"
+  }
+]

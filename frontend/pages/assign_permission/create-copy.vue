@@ -22,14 +22,14 @@
                 </div>
               </v-col>
               <v-col cols="12">
-                <v-select
+                <v-autocomplete
                   :rules="Rules"
                   v-model="role_id"
                   :items="roles"
                   item-value="id"
                   item-text="name"
                   label="Role*"
-                ></v-select>
+                ></v-autocomplete>
                 <span v-if="errors && errors.role_id" class="red--text">
                   {{ errors.role_id[0] }}
                 </span>

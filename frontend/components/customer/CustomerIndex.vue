@@ -23,12 +23,12 @@
         <v-container class="pa-5">
           <v-row>
             <v-col md="12" sm="12" cols="12" dense>
-              <v-select v-model="customer.id_card_type_id" :items="idCards" dense label="ID Card Type" outlined
+              <v-autocomplete v-model="customer.id_card_type_id" :items="idCards" dense label="ID Card Type" outlined
                 item-text="name" item-value="id" :hide-details="errors && !errors.id_card_type_id"
                 :error="errors && errors.id_card_type_id" :error-messages="errors && errors.id_card_type_id
                   ? errors.id_card_type_id[0]
                   : ''
-                  "></v-select>
+                  "></v-autocomplete>
             </v-col>
             <v-col md="12" cols="12" sm="12">
               <v-text-field dense label="ID Card" outlined type="text" v-model="customer.id_card_no"
@@ -153,10 +153,10 @@
                         ></v-text-field>
                       </v-col> -->
                       <v-col md="2" cols="12" sm="12">
-                        <v-select :disabled="!edit_mode" v-model="customer.title" :items="titleItems" label="Tittle *"
+                        <v-autocomplete :disabled="!edit_mode" v-model="customer.title" :items="titleItems" label="Tittle *"
                           dense item-text="name" item-value="name" :hide-details="errors && !errors.title"
                           :error="errors && errors.title" :error-messages="errors && errors.title ? errors.title[0] : ''
-                            " outlined></v-select>
+                            " outlined></v-autocomplete>
                       </v-col>
                       <v-col md="5" cols="12" sm="12">
                         <v-text-field :disabled="!edit_mode" label="First Name *" dense outlined type="text"
@@ -200,12 +200,12 @@
                 </v-row>
                 <v-row>
                   <v-col md="4" cols="12" sm="12">
-                    <v-select :disabled="!edit_mode" v-model="customer.nationality" :items="countryList"
+                    <v-autocomplete :disabled="!edit_mode" v-model="customer.nationality" :items="countryList"
                       label="Nationality" item-text="name" item-value="name" :hide-details="errors && !errors.nationality"
                       :error="errors && errors.nationality" :error-messages="errors && errors.nationality
                         ? errors.nationality[0]
                         : ''
-                        " dense outlined></v-select>
+                        " dense outlined></v-autocomplete>
                   </v-col>
                   <v-col md="4" cols="12" sm="12">
                     <v-menu v-model="customer.dob_menu" :close-on-content-click="false" :nudge-right="40"

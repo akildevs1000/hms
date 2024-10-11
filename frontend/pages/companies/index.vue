@@ -262,7 +262,7 @@
                         >
                       </v-col>
                       <v-col cols="6">
-                        <v-select
+                        <v-autocomplete
                           :items="[
                             {
                               id: `commercial_licenses`,
@@ -283,7 +283,7 @@
                           hide-details
                           v-model="company_trade_license.license_type"
                         >
-                        </v-select>
+                        </v-autocomplete>
                         <span
                           v-if="errors && errors.license_type"
                           class="error--text mt-2"
@@ -648,7 +648,7 @@
                       <v-col cols="4">
                         <v-row>
                           <v-col cols="12">
-                            <v-select
+                            <v-autocomplete
                               hide-details
                               outlined
                               dense
@@ -659,7 +659,7 @@
                                 { text: 'US $', value: '$' },
                               ]"
                             >
-                            </v-select>
+                            </v-autocomplete>
 
                             <span
                               v-if="errors && errors.currency"

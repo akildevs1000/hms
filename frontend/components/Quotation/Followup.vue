@@ -24,14 +24,14 @@
             ></v-textarea>
           </v-col>
           <v-col cols="12">
-            <v-select
+            <v-autocomplete
               outlined
               dense
               hide-details
               v-model="payload.status"
               :items="[`Open`, `Close`]"
               label="Status"
-            ></v-select>
+            ></v-autocomplete>
           </v-col>
 
           <v-col cols="12" v-if="errorResponse">

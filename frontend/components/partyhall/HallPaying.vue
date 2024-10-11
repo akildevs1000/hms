@@ -33,14 +33,14 @@
                 <span class="error--text">*</span>
               </th>
               <td>
-                <v-select v-model="BookingData.payment_mode_id" :items="[
+                <v-autocomplete v-model="BookingData.payment_mode_id" :items="[
                   { id: 1, name: 'Cash' },
                   { id: 2, name: 'Card' },
                   { id: 3, name: 'Online' },
                   { id: 4, name: 'Bank' },
                   { id: 5, name: 'UPI' },
                   { id: 6, name: 'Cheque' },
-                ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-select>
+                ]" item-text="name" item-value="id" dense outlined :hide-details="true" :height="1"></v-autocomplete>
               </td>
             </tr>
             <tr v-if="BookingData.payment_mode_id != 1">

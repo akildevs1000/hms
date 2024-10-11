@@ -9,8 +9,8 @@
 
     <v-row>
       <!-- <v-col md="3">
-        <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
-          @change="getReportByMonth(month)"></v-select>
+        <v-autocomplete :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
+          @change="getReportByMonth(month)"></v-autocomplete>
       </v-col> -->
       <!-- <v-col md="2">
         <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"

@@ -24,7 +24,7 @@
         >
           <v-col cols="5"> {{ items.name }} </v-col>
           <v-col cols="4" class="">
-            <v-select
+            <v-autocomplete
               @change="calculateTotal(items)"
               v-model="items.qty"
               label="Qty"
@@ -32,7 +32,7 @@
               dense
               outlined
               small
-            ></v-select>
+            ></v-autocomplete>
           </v-col>
           <v-col cols="3" class="pl-0 pr-0">
             <div style="font-size: 12px; text-align: right">

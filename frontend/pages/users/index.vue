@@ -25,11 +25,11 @@
                       <v-col md="8">
                         <v-row>
                           <v-col md="2" cols="12" sm="12">
-                            <v-select v-model="editedItem.title" :items="titleItems" dense item-text="name"
+                            <v-autocomplete v-model="editedItem.title" :items="titleItems" dense item-text="name"
                               item-value="name" :hide-details="errors && !errors.title" :error="errors && errors.title"
                               :error-messages="errors && errors.title ?
                                 errors.title[0] : ''
-                                " outlined></v-select>
+                                " outlined></v-autocomplete>
                           </v-col>
                           <v-col md="5" cols="12">
                             <v-text-field v-model="editedItem.name" placeholder="Name" label="Name" outlined
@@ -70,22 +70,22 @@
                             }}</span>
                           </v-col>
                           <v-col md="12" cols="12">
-                            <v-select :items="roles" item-text="name" item-value="id" v-model="editedItem.role_id"
-                              outlined placeholder="Select Role" label="Role" :hide-details="true" dense></v-select>
+                            <v-autocomplete :items="roles" item-text="name" item-value="id" v-model="editedItem.role_id"
+                              outlined placeholder="Select Role" label="Role" :hide-details="true" dense></v-autocomplete>
                             <span v-if="errors && errors.role_id" class="error--text">{{ errors.role_id[0] }}</span>
                           </v-col>
 
 
                           <v-col md="12" cols="12">
 
-                            <v-select label="Whatsapp OTP" v-model="editedItem.enable_whatsapp_otp" :items="[
+                            <v-autocomplete label="Whatsapp OTP" v-model="editedItem.enable_whatsapp_otp" :items="[
                               { name: 'Enable', value: 1 },
                               { name: 'Disable', value: 0 }
                             ]" dense item-text="name" item-value="value"
                               :hide-details="errors && !errors.enable_whatsapp_otp"
                               :error="errors && errors.enable_whatsapp_otp" :error-messages="errors && errors.enable_whatsapp_otp ?
                                 errors.enable_whatsapp_otp[0] : ''
-                                " outlined></v-select>
+                                " outlined></v-autocomplete>
                             <span v-if="errors && errors.enable_whatsapp_otp" class="error--text">{{
                               errors.enable_whatsapp_otp[0]
                             }}</span>
@@ -93,13 +93,13 @@
                           </v-col>
                           <v-col md="12" cols="12">
 
-                            <v-select label="Status" v-model="editedItem.is_active" :items="[
+                            <v-autocomplete label="Status" v-model="editedItem.is_active" :items="[
                               { name: 'Active', value: '1' },
                               { name: 'Inactive', value: '0' }
                             ]" dense item-text="name" item-value="value" :hide-details="errors && !errors.is_active"
                               :error="errors && errors.is_active" :error-messages="errors && errors.is_active ?
                                 errors.is_active[0] : ''
-                                " outlined></v-select>
+                                " outlined></v-autocomplete>
                             <span v-if="errors && errors.is_active" class="error--text">{{ errors.is_active[0]
                             }}</span>
 

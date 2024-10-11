@@ -45,7 +45,7 @@
                 }}</span>
               </v-col>
               <v-col md="12" cols="12">
-                <v-select
+                <v-autocomplete
                   label="Open Time*"
                   v-model="editedItem.start_hour"
                   :disabled="viewMode"
@@ -55,13 +55,13 @@
                   :hide-details="true"
                   :items="timings"
                   placeholder="Select Open Time"
-                ></v-select>
+                ></v-autocomplete>
                 <span v-if="errors && errors.start_time" class="error--text">{{
                   errors.start_time[0]
                 }}</span>
               </v-col>
               <v-col md="12" cols="12">
-                <v-select
+                <v-autocomplete
                   label="Close Time*"
                   v-model="editedItem.end_hour"
                   :disabled="viewMode"
@@ -71,7 +71,7 @@
                   :hide-details="true"
                   :items="timings"
                   placeholder="Select Close Time"
-                ></v-select>
+                ></v-autocomplete>
                 <span v-if="errors && errors.end_time" class="error--text">{{
                   errors.end_time[0]
                 }}</span>

@@ -29,8 +29,8 @@
               <v-col cols="12">
                 <v-row>
                   <v-col md="4">
-                    <v-select :rules="Rules" v-model="role_id" :items="roles" item-value="id" item-text="name"
-                      placeholder="Select Role" outlined dense></v-select>
+                    <v-autocomplete :rules="Rules" v-model="role_id" :items="roles" item-value="id" item-text="name"
+                      placeholder="Select Role" outlined dense></v-autocomplete>
                     <span v-if="errors && errors.role_id" class="red--text">
                       {{ errors.role_id[0] }}
                     </span>

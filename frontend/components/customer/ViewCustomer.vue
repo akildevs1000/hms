@@ -27,7 +27,7 @@
         <v-container class="pa-5">
           <v-row>
             <v-col md="12" sm="12" cols="12" dense>
-              <v-select
+              <v-autocomplete
                 v-model="customer.id_card_type_id"
                 :items="idCards"
                 dense
@@ -42,7 +42,7 @@
                     ? errors.id_card_type_id[0]
                     : ''
                 "
-              ></v-select>
+              ></v-autocomplete>
             </v-col>
             <v-col md="12" cols="12" sm="12">
               <v-text-field
@@ -196,7 +196,7 @@
                         ></v-text-field>
                       </v-col> -->
                   <v-col md="2" cols="12" sm="12">
-                    <v-select
+                    <v-autocomplete
                       v-model="customer.title"
                       :items="titleItems"
                       label="Tittle *"
@@ -209,7 +209,7 @@
                         errors && errors.title ? errors.title[0] : ''
                       "
                       outlined
-                    ></v-select>
+                    ></v-autocomplete>
                   </v-col>
                   <v-col md="5" cols="12" sm="12">
                     <v-text-field
@@ -294,7 +294,7 @@
             </v-row>
             <v-row>
               <v-col md="4" cols="12" sm="12">
-                <v-select
+                <v-autocomplete
                   v-model="customer.nationality"
                   :items="countryList"
                   label="Nationality"
@@ -307,7 +307,7 @@
                   "
                   dense
                   outlined
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
               <v-col md="4" cols="12" sm="12">
                 <v-menu

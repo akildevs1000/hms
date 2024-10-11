@@ -110,11 +110,11 @@
                                         :hide-details="true" :items="EmailTypesForSelectOptions" item-text="name"
                                         item-value="id">
                                     </v-autocomplete>
-                                    <v-select v-model="filters[header.key]"
+                                    <v-autocomplete v-model="filters[header.key]"
                                         v-if="header.filterable && header.filterSpecial && header.key == 'floor_no'"
                                         :items="floors" outlined dense clearable
                                         @click:clear="filters[header.kye] = ''; applyFilters();" :hide-details="true"
-                                        @change="applyFilters()"></v-select>
+                                        @change="applyFilters()"></v-autocomplete>
 
                                 </td>
                             </tr>

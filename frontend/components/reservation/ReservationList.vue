@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <!-- <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
+        <v-autocomplete
           class="form-control"
           @change="getDataFromApi(`reservation`)"
           v-model="pagination.per_page"
@@ -11,13 +11,13 @@
           solo
           hide-details
           flat
-        ></v-select>
+        ></v-autocomplete>
       </v-col> -->
 
       <v-col xs="12" sm="12" md="3" cols="12" class="mt-0">
-        <v-select class="form-control" @change="getDataFromApi(`reservation_list_dash`)" v-model="status"
+        <v-autocomplete class="form-control" @change="getDataFromApi(`reservation_list_dash`)" v-model="status"
           :items="reservationStatusList" item-text="name" item-value="id" placeholder="Display List" solo hide-details
-          flat dense></v-select>
+          flat dense></v-autocomplete>
       </v-col>
     </v-row>
     <v-card class="mb-5 rounded-md mt-3" elevation="0">

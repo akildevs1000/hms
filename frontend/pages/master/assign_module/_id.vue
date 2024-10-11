@@ -24,7 +24,7 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-select
+                <v-autocomplete
                   :rules="Rules"
                   v-model="company_id"
                   :items="companies"
@@ -32,7 +32,7 @@
                   item-text="name"
                   label="Company*"
                   readonly
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <v-col cols="12">

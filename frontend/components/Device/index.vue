@@ -83,7 +83,7 @@
                 ></v-autocomplete
               ></v-col>
               <v-col cols="6">
-                <v-select
+                <v-autocomplete
                   :disabled="viewMode"
                   :items="roomList"
                   v-model="editedItem.room_id"
@@ -95,7 +95,7 @@
                   item-value="table_id"
                   label="Assign Room"
                 >
-                </v-select>
+                </v-autocomplete>
                 <span v-if="errors && errors.room_id" class="error--text">{{
                   errors.room_id[0]
                 }}</span>

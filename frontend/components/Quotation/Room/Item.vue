@@ -4,20 +4,22 @@
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
-          <v-btn v-bind="attrs" v-on="on" small elevation="0"
-            ><v-icon small color="primary">mdi-plus-circle</v-icon> New
-            Row</v-btn
+          <v-btn v-bind="attrs" v-on="on" x-small elevation="0"
+            ><v-icon small color="primary">mdi-plus-circle</v-icon>
+            <span class="text-color">New Row</span></v-btn
           >
         </span>
       </v-hover>
     </template>
     <v-card>
-      <v-alert flat class="grey lighten-3" dense> Item Information</v-alert>
+      <v-alert flat class="grey lighten-3" dense>
+        <span class="text-color">Item Information</span></v-alert
+      >
       <v-card-text>
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Room Type"
+              label="Description"
               dense
               outlined
               v-model="item.room_type"

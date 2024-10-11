@@ -98,7 +98,7 @@
                     ></v-text-field>
                   </v-col>
                   <v-col md="12" cols="12" sm="12">
-                    <v-select
+                    <v-autocomplete
                       v-model="user.role"
                       :items="[
                         { id: 1, name: 'Admin' },
@@ -114,7 +114,7 @@
                       "
                       dense
                       outlined
-                    ></v-select>
+                    ></v-autocomplete>
                   </v-col>
                 </v-row>
               </v-col>

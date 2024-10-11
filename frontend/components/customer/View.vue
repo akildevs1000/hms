@@ -68,7 +68,7 @@
                 <v-col md="9" cols="12">
                   <v-row>
                     <v-col md="3" cols="12" sm="12">
-                      <v-select
+                      <v-autocomplete
                         v-model="customer.title"
                         :items="titleItems"
                         label="Title *"
@@ -77,7 +77,7 @@
                         item-value="name"
                         hide-details
                         outlined
-                      ></v-select>
+                      ></v-autocomplete>
                     </v-col>
                     <v-col md="9" cols="12" sm="12">
                       <v-row>

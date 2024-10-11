@@ -239,14 +239,14 @@
 
               <v-row class="mt-3">
                 <v-col md="2" sm="12" cols="12" dense>
-                  <v-select
+                  <v-autocomplete
                     label="Discount/Extra"
                     v-model="extraPayType"
                     :items="['Discount', 'ExtraAmount']"
                     dense
                     :hide-details="true"
                     outlined
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col
                   md="4"

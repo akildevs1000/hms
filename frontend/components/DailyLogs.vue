@@ -9,7 +9,7 @@
           </b>
         </h5>
         <v-spacer />
-        <v-select
+        <v-autocomplete
           @change="getRecords"
           v-model="number_of_records"
           outlined
@@ -18,7 +18,7 @@
           placeholder="Select Number of Records"
           :items="[10, 20, 50, 100]"
           style="max-width: 200px !important;"
-        ></v-select>
+        ></v-autocomplete>
       </v-toolbar>
       <v-slide-group class="px-4 pb-3" active-class="success" show-arrows>
         <div></div>

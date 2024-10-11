@@ -5,7 +5,7 @@
         <AssetsPickerMonthly @months="CustomFilter" />
       </v-col>
       <v-col cols="4">
-        <v-select
+        <v-autocomplete
           hide-details
           outlined
           dense
@@ -13,7 +13,7 @@
           label="Select Status"
           v-model="statement_type"
           @change="CustomFilter"
-        ></v-select>
+        ></v-autocomplete>
       </v-col>
       <v-col cols="4" class="text-right">
         <AssetsIcon

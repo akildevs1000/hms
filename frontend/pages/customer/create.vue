@@ -31,7 +31,7 @@
                 <label class="col-form-label"
                   >Title <span class="error--text">*</span></label
                 >
-                <v-select
+                <v-autocomplete
                   v-model="payload.title"
                   :items="titleItems"
                   :hide-details="!errors.title"
@@ -41,7 +41,7 @@
                   "
                   dense
                   outlined
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <v-col md="6" sm="12" cols="12" dense>
@@ -204,7 +204,7 @@
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label">Roles </label>
 
-                <v-select
+                <v-autocomplete
                   dense
                   outlined
                   :rules="Rules"
@@ -217,7 +217,7 @@
                   :error-messages="
                     errors && errors.role_id ? errors.role_id[0] : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
             </v-row>
 
@@ -454,7 +454,7 @@
                 <label class="col-form-label"
                   >Department <span class="error--text">*</span></label
                 >
-                <v-select
+                <v-autocomplete
                   v-model="other.department_id"
                   @change="getMultiple(other.department_id)"
                   :items="departments"
@@ -469,14 +469,14 @@
                       ? errors.department_id[0]
                       : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label"
                   >Designation <span class="error--text">*</span></label
                 >
-                <v-select
+                <v-autocomplete
                   v-model="other.designation_id"
                   :items="designations"
                   dense
@@ -490,12 +490,12 @@
                       ? errors.designation_id[0]
                       : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label">Sub Department </label>
-                <v-select
+                <v-autocomplete
                   v-model="other.sub_department_id"
                   :items="subDepartments"
                   dense
@@ -509,12 +509,12 @@
                       ? errors.sub_department_id[0]
                       : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label">Grade </label>
-                <v-select
+                <v-autocomplete
                   v-model="other.grade"
                   :items="['A', 'B', 'C']"
                   dense
@@ -524,7 +524,7 @@
                   :error-messages="
                     errors && errors.grade ? errors.grade[0] : ''
                   "
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <v-col md="6" cols="12" sm="12" dense>
@@ -546,7 +546,7 @@
 
               <v-col md="6" cols="12" sm="12" dense>
                 <label class="col-form-label">Type </label>
-                <v-select
+                <v-autocomplete
                   v-model="other.type"
                   :items="['limit', 'test']"
                   dense
@@ -554,7 +554,7 @@
                   :hide-details="!errors.type"
                   :error="errors.type"
                   :error-messages="errors && errors.type ? errors.type[0] : ''"
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>

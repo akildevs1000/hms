@@ -45,7 +45,7 @@
                           </v-col>
 
                           <v-col md="6" cols="12">
-                            <v-select
+                            <v-autocomplete
                               v-model="editedItem.tax"
                               :items="[
                                 { value: 0, name: `Exempted %` },
@@ -61,7 +61,7 @@
                               item-value="value"
                               outlined
                               :hide-details="true"
-                            ></v-select>
+                            ></v-autocomplete>
                             <span
                               v-if="errors && errors.adult"
                               class="error--text"

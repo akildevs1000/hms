@@ -29,7 +29,7 @@
     <v-row>
       <!-- <v-col md="2">
 
-        <v-select v-model="filterType" :items="[
+        <v-autocomplete v-model="filterType" :items="[
           {
             id: 1,
             name: 'Today',
@@ -52,7 +52,7 @@
           },
         ]
           " dense placeholder="Type" outlined :hide-details="true" item-text="name" item-value="id"
-          @change="commonMethod"></v-select>
+          @change="commonMethod"></v-autocomplete>
 
       </v-col>
       <v-col md="2" class="p-2 text-center" v-if="filterType == 5">
@@ -94,8 +94,8 @@
       <v-col md="3" v-if="userList.length > 0">
         <div class="ml-4">Users</div>
         <v-col cols="12" sm="12" md="12">
-          <v-select @change="getPaymentReportsByUser()" v-model="user_id" :items="userList" item-text="name"
-            item-value="id" outlined dense placeholder="User List" :hide-details="true" flat></v-select>
+          <v-autocomplete @change="getPaymentReportsByUser()" v-model="user_id" :items="userList" item-text="name"
+            item-value="id" outlined dense placeholder="User List" :hide-details="true" flat></v-autocomplete>
         </v-col>
       </v-col>
     </v-row>

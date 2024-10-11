@@ -147,7 +147,7 @@
                   item-value="id"
                 >
                 </v-autocomplete>
-                <v-select
+                <v-autocomplete
                   v-model="filters[header.key]"
                   v-if="
                     header.filterable &&
@@ -164,7 +164,7 @@
                   "
                   :hide-details="true"
                   @change="applyFilters()"
-                ></v-select>
+                ></v-autocomplete>
               </td>
             </tr>
           </template>

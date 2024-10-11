@@ -24,7 +24,7 @@
           <v-container>
             <v-row>
               <v-col cols="4">
-                <v-select
+                <v-autocomplete
                   :rules="Rules"
                   v-model="role_id"
                   :items="roles"
@@ -33,7 +33,7 @@
                   placeholder="Role*"
                   outlined
                   dense
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <table>

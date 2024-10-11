@@ -44,7 +44,7 @@
           <v-container class="mt-5">
             <v-row>
               <v-col md="12" cols="12">
-                <v-select
+                <v-autocomplete
                   label="Floor No"
                   v-model="editedItem.floor_no"
                   :disabled="viewMode"
@@ -54,7 +54,7 @@
                   :hide-details="true"
                   :items="floors"
                   placeholder="Select Floor"
-                ></v-select>
+                ></v-autocomplete>
                 <span v-if="errors && errors.floor_no" class="error--text">{{
                   errors.floor_no[0]
                 }}</span>
@@ -78,7 +78,7 @@
                 >
               </v-col>
               <v-col md="6" cols="12">
-                <v-select
+                <v-autocomplete
                   label="Category"
                   :disabled="viewMode"
                   :items="roomTypesData"
@@ -91,7 +91,7 @@
                   item-value="id"
                   placeholder="Select Category"
                 >
-                </v-select>
+                </v-autocomplete>
                 <span
                   v-if="errors && errors.room_type_id"
                   class="error--text"
@@ -99,7 +99,7 @@
                 >
               </v-col>
               <v-col md="12" cols="12">
-                <v-select
+                <v-autocomplete
                   label="Available Online Booking?"
                   :disabled="viewMode"
                   selected="0"
@@ -119,14 +119,14 @@
                   item-value="id"
                   placeholder="Select status"
                 >
-                </v-select>
+                </v-autocomplete>
                 <span v-if="errors && errors.status" class="error--text">{{
                   errors.status[0]
                 }}</span>
               </v-col>
               <v-col md="12" cols="12">
                 <label> </label>
-                <v-select
+                <v-autocomplete
                 label="Status"
                   :disabled="viewMode"
                   selected="0"
@@ -146,7 +146,7 @@
                   item-value="id"
                   placeholder="Select status"
                 >
-                </v-select>
+                </v-autocomplete>
                 <span v-if="errors && errors.status" class="error--text">{{
                   errors.status[0]
                 }}</span>
@@ -304,7 +304,7 @@
                     item-value="id"
                   >
                   </v-autocomplete>
-                  <v-select
+                  <v-autocomplete
                     v-model="filters[header.key]"
                     v-if="
                       header.filterable &&
@@ -321,7 +321,7 @@
                     "
                     :hide-details="true"
                     @change="applyFilters()"
-                  ></v-select>
+                  ></v-autocomplete>
                 </td>
               </tr>
             </template>

@@ -4,11 +4,11 @@
     <v-row>
 
       <!-- <v-col md="2">
-        <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
+        <v-autocomplete :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-autocomplete>
       </v-col>
       <v-col md="2">
-        <v-select :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
-          @change="getDataFromApi()"></v-select>
+        <v-autocomplete :items="months" label="Select Month" outlined dense item-value="id" item-text="name" v-model="month"
+          @change="getDataFromApi()"></v-autocomplete>
       </v-col> -->
       <v-col md="2">
         <v-menu ref="menu_from_filter" v-model="menu_from_filter" :close-on-content-click="false"

@@ -4,7 +4,7 @@
     <v-row>
 
       <!-- <v-col md="2">
-        <v-select :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-select>
+        <v-autocomplete :items="years" label="Select Year" outlined dense v-model="year" @change="getDataFromApi()"></v-autocomplete>
       </v-col> -->
 
 

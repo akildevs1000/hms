@@ -30,7 +30,7 @@
               <v-container class="pa-5">
                 <v-row>
                   <v-col md="12" sm="12" cols="12" dense>
-                    <v-select
+                    <v-autocomplete
                       v-model="customer.id_card_type_id"
                       :items="idCards"
                       dense
@@ -44,7 +44,7 @@
                           ? errors.id_card_type_id[0]
                           : ''
                       "
-                    ></v-select>
+                    ></v-autocomplete>
                   </v-col>
                   <v-col md="12" cols="12" sm="12">
                     <v-text-field
@@ -197,7 +197,7 @@
                             </v-btn>
                           </v-col>
                           <v-col md="3" cols="12" sm="12">
-                            <v-select
+                            <v-autocomplete
                               v-model="customer.title"
                               :items="titleItems"
                               label="Title *"
@@ -209,7 +209,7 @@
                                 errors && errors.title ? errors.title[0] : ''
                               "
                               outlined
-                            ></v-select>
+                            ></v-autocomplete>
                           </v-col>
 
                           <v-col md="3" dense>
@@ -329,7 +329,7 @@
                     </v-row>
                     <v-row>
                       <v-col md="3" cols="12" sm="12">
-                        <v-select
+                        <v-autocomplete
                           v-model="customer.nationality"
                           :items="countryList"
                           label="Nationality"
@@ -343,18 +343,18 @@
                           "
                           dense
                           outlined
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
 
                       <v-col md="3">
-                        <v-select
+                        <v-autocomplete
                           label="Purpose"
                           v-model="room.purpose"
                           :items="purposes"
                           dense
                           :hide-details="true"
                           outlined
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <v-text-field
@@ -385,7 +385,7 @@
 
                     <v-row>
                       <v-col md="3" sm="12" cols="12" dense>
-                        <v-select
+                        <v-autocomplete
                           v-model="customer.id_card_type_id"
                           :items="idCards"
                           dense
@@ -399,7 +399,7 @@
                               ? errors.id_card_type_id[0]
                               : ''
                           "
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                       <v-col md="3" cols="12" sm="12">
                         <v-text-field
@@ -440,7 +440,7 @@
                     </v-row>
                     <v-row>
                       <v-col md="3" sm="12" cols="12" dense>
-                        <v-select
+                        <v-autocomplete
                           v-model="room.type"
                           label="Source Type *"
                           :items="types"
@@ -451,10 +451,10 @@
                           :error-messages="
                             errors && errors.type ? errors.type[0] : ''
                           "
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                       <v-col md="3" cols="12" sm="12" v-if="isAgent">
-                        <v-select
+                        <v-autocomplete
                           dense
                           label="Agent Name"
                           outlined
@@ -468,10 +468,10 @@
                           :error-messages="
                             errors && errors.source ? errors.source[0] : ''
                           "
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                       <v-col md="3" sm="12" cols="12" dense v-if="isOnline">
-                        <v-select
+                        <v-autocomplete
                           v-model="room.source"
                           label="Source"
                           :items="sources"
@@ -484,10 +484,10 @@
                           :error-messages="
                             errors && errors.source ? errors.source[0] : ''
                           "
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                       <v-col md="3" sm="12" cols="12" dense v-if="isCorporate">
-                        <v-select
+                        <v-autocomplete
                           v-model="room.source"
                           label="Corporate"
                           :items="CorporateList"
@@ -500,7 +500,7 @@
                           :error-messages="
                             errors && errors.source ? errors.source[0] : ''
                           "
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                       <v-col
                         md="3"
@@ -529,7 +529,7 @@
                         dense
                         v-if="isAgent || isOnline || isCorporate"
                       >
-                        <v-select
+                        <v-autocomplete
                           v-model="room.paid_by"
                           label="Paid Type"
                           :items="[
@@ -544,7 +544,7 @@
                           :error-messages="
                             errors && errors.paid_by ? errors.paid_by[0] : ''
                           "
-                        ></v-select>
+                        ></v-autocomplete>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -710,14 +710,14 @@
                                 <v-divider color="#4390FC"></v-divider>
                               </v-col>
                               <v-col md="3" sm="12" cols="12" dense>
-                                <v-select
+                                <v-autocomplete
                                   label="Discount/Extra"
                                   v-model="extraPayType"
                                   :items="['Discount', 'ExtraAmount']"
                                   dense
                                   :hide-details="true"
                                   outlined
-                                ></v-select>
+                                ></v-autocomplete>
                               </v-col>
                               <v-col
                                 md="4"

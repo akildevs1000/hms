@@ -31,7 +31,7 @@
             <v-col md="10" cols="12">
               <v-row>
                 <v-col md="3" cols="12" sm="12">
-                  <v-select
+                  <v-autocomplete
                     v-model="inquiry.title"
                     :items="titleItems"
                     label="Tittle"
@@ -44,7 +44,7 @@
                       errors && errors.title ? errors.title[0] : ''
                     "
                     outlined
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col md="3" cols="12" sm="12">
                   <v-text-field
@@ -71,7 +71,7 @@
                   ></v-text-field>
                 </v-col>
                 <v-col md="3" dense>
-                  <v-select
+                  <v-autocomplete
                     label="Type"
                     v-model="inquiry.inquiry_type"
                     :items="['Room', 'Hall']"
@@ -85,7 +85,7 @@
                         ? errors.inquiry_type[0]
                         : ''
                     "
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col md="4" cols="12" sm="12">
                   <v-text-field
@@ -131,7 +131,7 @@
                   ></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12" sm="12">
-                  <v-select
+                  <v-autocomplete
                     v-model="inquiry.rooms_type"
                     :items="roomTypes"
                     label="Room Type"
@@ -144,17 +144,17 @@
                     "
                     dense
                     outlined
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col md="6">
-                  <v-select
+                  <v-autocomplete
                     label="Purpose"
                     v-model="inquiry.purpose"
                     :items="purposes"
                     dense
                     :hide-details="true"
                     outlined
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col md="3" cols="12" sm="12">
                   <v-menu
@@ -211,24 +211,24 @@
                   </v-menu>
                 </v-col>
                 <v-col md="3" cols="12" sm="12">
-                  <v-select
+                  <v-autocomplete
                     v-model="inquiry.number_of_rooms"
                     :items="[1, 2, 3, 4, 5, 6, 7, 8]"
                     label="Number of Rooms"
                     :hide-details="true"
                     dense
                     outlined
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col md="3" cols="12" sm="12">
-                  <v-select
+                  <v-autocomplete
                     v-model="inquiry.days"
                     :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
                     label="Number of Days"
                     :hide-details="true"
                     dense
                     outlined
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col md="6" cols="12" sm="12">
                   <v-textarea

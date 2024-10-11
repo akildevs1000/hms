@@ -44,6 +44,9 @@ class ValidationRequest extends FormRequest
             'extra_reason' => 'nullable',
             'company_id' => 'nullable',
             'inquiry_id' => 'nullable',
+
+            'description' => 'nullable',
+
         ];
     }
 }

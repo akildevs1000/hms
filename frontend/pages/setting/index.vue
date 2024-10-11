@@ -87,11 +87,11 @@
                         <div class="form-group">
                           <label class="col-form-label">Currency</label>
                           <span class="error--text">*</span>
-                          <v-select outlined dense small v-model="company_payload.currency" :items="[
+                          <v-autocomplete outlined dense small v-model="company_payload.currency" :items="[
                             { text: 'INR ₹', value: '₹' },
                             { text: 'US $', value: '$' },
                           ]">
-                          </v-select>
+                          </v-autocomplete>
 
                           <span v-if="errors && errors.currency" class="error--text mt-2">{{ errors.p_o_box_no[0]
                           }}</span>

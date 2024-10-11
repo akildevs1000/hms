@@ -42,29 +42,26 @@
       </v-dialog>
 
       <v-dialog v-model="ArrivalReportDialog" persistent max-width="900px">
+        <AssetsIconClose @click="ArrivalReportDialog = false" />
         <v-card>
           <v-alert color="grey lighten-3" dense flat>
             <v-row no-gutter>
-              <v-col>
-                <small>Arrival</small>
-              </v-col>
+              <v-col class="text-color"> Arrival </v-col>
               <v-col class="text-right">
                 <v-btn
                   text
                   small
-                  :color="isActiveTab == 1 ? 'primary' : ''"
+                  :color="isActiveTab == 1 ? 'primary' : '#8a8a8a'"
                   @click="isActiveTab = 1"
-                  ><small>Pending</small></v-btn
+                  >Pending</v-btn
                 >
                 <v-btn
                   text
                   small
-                  :color="isActiveTab == 2 ? 'primary' : ''"
+                  :color="isActiveTab == 2 ? 'primary' : '#8a8a8a'"
                   @click="isActiveTab = 2"
-                  ><small>Arrived</small></v-btn
+                  >Arrived</v-btn
                 >
-
-                <AssetsButtonClose @close="ArrivalReportDialog = false" />
               </v-col>
             </v-row>
           </v-alert>
@@ -86,28 +83,26 @@
       </v-dialog>
 
       <v-dialog v-model="CheckOutReportDialog" persistent max-width="900px">
+        <AssetsIconClose @click="CheckOutReportDialog = false" />
         <v-card>
           <v-alert color="grey lighten-3" dense flat>
             <v-row no-gutter>
-              <v-col>
-                <small>Checkout</small>
-              </v-col>
+              <v-col class="text-color"> Checkout </v-col>
               <v-col class="text-right">
                 <v-btn
                   text
                   small
-                  :color="isActiveTab == 1 ? 'primary' : ''"
+                  :color="isActiveTab == 1 ? 'primary' : '#8a8a8a'"
                   @click="isActiveTab = 1"
-                  ><small>Pending</small></v-btn
+                  >Pending</v-btn
                 >
                 <v-btn
                   text
                   small
-                  :color="isActiveTab == 2 ? 'primary' : ''"
+                  :color="isActiveTab == 2 ? 'primary' : '#8a8a8a'"
                   @click="isActiveTab = 2"
-                  ><small>Checked Out</small></v-btn
+                  >Checked Out</v-btn
                 >
-                <AssetsButtonClose @close="CheckOutReportDialog = false" />
               </v-col>
             </v-row>
           </v-alert>
@@ -129,16 +124,10 @@
       </v-dialog>
 
       <v-dialog v-model="InHouseDialog" persistent max-width="900px">
+        <AssetsIconClose @click="InHouseDialog = false" />
         <v-card>
           <v-alert color="grey lighten-3" dense flat>
-            <v-row no-gutter>
-              <v-col>
-                <small>In House</small>
-              </v-col>
-              <v-col class="text-right">
-                <AssetsButtonClose @close="InHouseDialog = false" />
-              </v-col>
-            </v-row>
+            <span class="text-color">In House</span>
           </v-alert>
           <v-container class="pt-0 mt-0">
             <InHouseReport
@@ -151,16 +140,10 @@
       </v-dialog>
 
       <v-dialog v-model="FoodDialog" persistent max-width="900px">
+        <AssetsIconClose @click="FoodDialog = false" />
         <v-card>
-          <v-alert color="grey lighten-3" dense flat>
-            <v-row no-gutter>
-              <v-col>
-                <small>Food Order</small>
-              </v-col>
-              <v-col class="text-right">
-                <AssetsButtonClose @close="FoodDialog = false" />
-              </v-col>
-            </v-row>
+          <v-alert color="grey lighten-3 " dense flat>
+            <span class="text-color">Food Order</span>
           </v-alert>
           <v-container class="pt-0 mt-0">
             <FoodOrderReport

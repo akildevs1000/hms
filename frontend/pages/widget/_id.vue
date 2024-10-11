@@ -51,8 +51,8 @@
                             <v-col md="4" class="text-right"> <span>Rooms</span></v-col>
                             <v-col md="8">
 
-                                <!-- <v-select label="Guests" dense small outlined append-icon=" mdi-account" variant="outlined"
-                            :items="rooms"></v-select> -->
+                                <!-- <v-autocomplete label="Guests" dense small outlined append-icon=" mdi-account" variant="outlined"
+                            :items="rooms"></v-autocomplete> -->
                                 <v-menu v-model="guest_menu" :close-on-content-click="false" :nudge-right="40"
                                     transition="scale-transition" offset-y min-width="auto">
                                     <template v-slot:activator="{ on, attrs }">
@@ -76,8 +76,8 @@
                         <v-row>
                             <v-col md="4" class="text-right"> <span>Adult</span></v-col>
                             <v-col md="8">
-                                <!-- <v-select label="Total Rooms" :items="rooms" dense small outlined append-icon="mdi-bed"
-                            variant="outlined"></v-select> -->
+                                <!-- <v-autocomplete label="Total Rooms" :items="rooms" dense small outlined append-icon="mdi-bed"
+                            variant="outlined"></v-autocomplete> -->
                                 <v-menu v-model="adult_menu" :close-on-content-click="false" :nudge-right="40"
                                     transition="scale-transition" offset-y min-width="auto">
                                     <template v-slot:activator="{ on, attrs }">

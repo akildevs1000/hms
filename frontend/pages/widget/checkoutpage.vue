@@ -73,19 +73,19 @@
 
 
                                                         <v-col md="12" dense>
-                                                            <v-select label="Type" v-model="customer.customer_type"
+                                                            <v-autocomplete label="Type" v-model="customer.customer_type"
                                                                 :items="['Company', 'Regular', 'Corporate']" dense
                                                                 item-text="name" item-value="id" outlined
-                                                                :hide-details="true"></v-select>
+                                                                :hide-details="true"></v-autocomplete>
                                                         </v-col>
                                                         <v-col md="12" cols="12" sm="12">
 
-                                                            <v-select :rules="[rules.required]" required
+                                                            <v-autocomplete :rules="[rules.required]" required
                                                                 v-model="customer.title" :items="titleItems" label="Title *"
                                                                 dense item-text="name" item-value="name"
                                                                 :hide-details="errors && !errors.title"
                                                                 :error="errors && errors.title" :error-messages="errors && errors.title ? errors.title[0] : ''
-                                                                    " outlined></v-select>
+                                                                    " outlined></v-autocomplete>
                                                         </v-col>
                                                         <v-col md="12" cols="12" sm="12">
                                                             <v-text-field :rules="[rules.required]" label="First Name *"
@@ -136,13 +136,13 @@
                                                 </v-col>
                                                 <v-col md="4" cols="12">
                                                     <v-col md="12" cols="12" sm="12">
-                                                        <v-select :rules="[rules.required]" v-model="customer.nationality"
+                                                        <v-autocomplete :rules="[rules.required]" v-model="customer.nationality"
                                                             :items="countryList" label="Nationality" item-text="name"
                                                             item-value="name" :hide-details="errors && !errors.nationality"
                                                             :error="errors && errors.nationality" :error-messages="errors && errors.nationality
                                                                 ? errors.nationality[0]
                                                                 : ''
-                                                                " dense outlined></v-select>
+                                                                " dense outlined></v-autocomplete>
                                                     </v-col>
                                                     <v-col md="12" cols="12" sm="12">
                                                         <v-menu :rules="[rules.required]" v-model="customer.dob_menu"
@@ -159,20 +159,20 @@
                                                         </v-menu>
                                                     </v-col>
                                                     <v-col md="12">
-                                                        <v-select :rules="[rules.required]" label="Purpose"
+                                                        <v-autocomplete :rules="[rules.required]" label="Purpose"
                                                             v-model="room.purpose" :items="purposes" dense
-                                                            :hide-details="true" outlined></v-select>
+                                                            :hide-details="true" outlined></v-autocomplete>
                                                     </v-col>
 
                                                     <v-col md="12" sm="12" cols="12" dense>
-                                                        <v-select :rules="[rules.required]"
+                                                        <v-autocomplete :rules="[rules.required]"
                                                             v-model="customer.id_card_type_id" :items="idCards" dense
                                                             label="ID Card Type" outlined item-text="name" item-value="id"
                                                             :hide-details="errors && !errors.id_card_type_id"
                                                             :error="errors && errors.id_card_type_id" :error-messages="errors && errors.id_card_type_id
                                                                 ? errors.id_card_type_id[0]
                                                                 : ''
-                                                                "></v-select>
+                                                                "></v-autocomplete>
                                                     </v-col>
                                                     <v-col md="12" cols="12" sm="12">
                                                         <v-text-field :rules="[rules.required]" dense label="ID Card"
@@ -460,9 +460,9 @@
                                                         <label class="col-form-label">
                                                             Discount/Extra
                                                         </label>
-                                                        <v-select v-model="extraPayType"
+                                                        <v-autocomplete v-model="extraPayType"
                                                             :items="['Discount', 'ExtraAmount']" dense :hide-details="true"
-                                                            outlined></v-select>
+                                                            outlined></v-autocomplete>
                                                     </v-col>
                                                     <v-col md="4" sm="12" cols="12" dense v-if="extraPayType == 'Discount'">
                                                         <label class="col-form-label">

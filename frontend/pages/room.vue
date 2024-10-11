@@ -15,7 +15,7 @@
 
     <v-row>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
+        <v-autocomplete
           class="form-control"
           @change="getDataFromApi(`room`)"
           v-model="pagination.per_page"
@@ -24,10 +24,10 @@
           solo
           hide-details
           flat
-        ></v-select>
+        ></v-autocomplete>
       </v-col>
       <v-col xs="12" sm="12" md="3" cols="12">
-        <v-select
+        <v-autocomplete
           class="form-control"
           @change="getDataFromApi(`room`)"
           v-model="pagination.status"
@@ -45,7 +45,7 @@
           solo
           hide-details
           flat
-        ></v-select>
+        ></v-autocomplete>
       </v-col>
       <v-col xs="12" sm="12" md="3" cols="12">
         <v-text-field
