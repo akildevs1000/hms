@@ -17,11 +17,6 @@
     </v-row> -->
 
     <v-container fluid>
-      <v-row class="">
-        <v-col v-for="(item, index) in stats" :key="index" cols="12" md="2">
-          <AssetsCard :options="item" />
-        </v-col>
-      </v-row>
       <v-row>
         <v-col>
           <AssetsIcon
@@ -737,6 +732,8 @@ export default {
           color: "teal", // For service/people (Travel Agent)
         },
       ];
+
+      this.$emit("response", this.stats);
     },
   },
 };

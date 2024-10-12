@@ -741,158 +741,153 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-      <v-row>
-        <v-col cols="12">
-          <v-card>
-            <v-container fluid>
-              <v-row>
-                <v-col v-for="(stat, index) in stats" :key="index">
-                  <AssetsCard :options="stat" />
-                </v-col>
-              </v-row>
-            </v-container>
+      <v-row no-gutters>
+        <v-col cols="12" class="mb-5">
+          <v-card class="px-2">
+            <v-row>
+              <v-col v-for="(stat, index) in stats" :key="index">
+                <AssetsCard :options="stat" />
+              </v-col>
+            </v-row>
           </v-card>
         </v-col>
-        <v-col cols="12">
-          <v-card>
-            <v-container fluid>
-              <v-row>
-                <v-col>
-                  <v-btn color="primary" small @click="openNewRecord()">
-                    <v-icon color="white" small class="py-5">mdi-plus</v-icon>
-                    New
-                  </v-btn>
-                </v-col>
-                <v-col cols="2">
-                  <v-text-field
-                    class="global-search-textbox"
-                    append-icon="mdi-magnify"
-                    label="Search..."
-                    clearable
-                    dense
-                    outlined
-                    hide-details
-                    @input="searchIt"
-                    v-model="search"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="2">
-                  <FilterDateRange height="500" @filter-attr="filterAttr" />
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-col>
-        <v-col cols="12">
-          <v-card>
-            <v-container fluid>
-              <v-data-table
-                dense
-                :headers="headers_table"
-                :items="data"
-                :loading="loading"
-                :options.sync="options"
-                :footer-props="{
-                  itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
-                }"
-                class="elevation-0"
-                :server-items-length="totalRowsCount"
-                @page-change="updateIndex"
+
+        <v-col cols="12" class="mb-2">
+          <v-card class="px-2">
+            <v-row no-gutters class="pa-2">
+              <v-col style="margin-top:3px; ">
+                <v-btn color="primary" small @click="openNewRecord()">
+                  <v-icon color="white" small>mdi-plus</v-icon>
+                  New
+                </v-btn></v-col
               >
-                <template v-slot:item.sno="{ item, index }">
-                  {{
-                    currentPage
-                      ? (currentPage - 1) * perPage +
-                        (cumulativeIndex + itemIndex(item))
-                      : ""
-                  }}
-                </template>
-                <template v-slot:item.booking.reservation_no="{ item }">
-                  {{ item.booking.reservation_no }}
-                </template>
-                <template v-slot:item.bookings.rooms="{ item }">
-                  {{ item.booking.rooms }}
-                </template>
+              <v-col cols="2" class="mr-1" style="margin-top:1px; ">
+                <v-text-field
+                  class="global-search-textbox"
+                  append-icon="mdi-magnify"
+                  label="Search..."
+                  clearable
+                  dense
+                  outlined
+                  hide-details
+                  @input="searchIt"
+                  v-model="search"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="2">
+                <FilterDateRange @filter-attr="filterAttr" />
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+        <v-col cols="12" class="mb-2">
+          <v-card class="pa-2">
+            <v-data-table
+              dense
+              :headers="headers_table"
+              :items="data"
+              :loading="loading"
+              :options.sync="options"
+              :footer-props="{
+                itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+              }"
+              class="elevation-0"
+              :server-items-length="totalRowsCount"
+              @page-change="updateIndex"
+            >
+              <template v-slot:item.sno="{ item, index }">
+                {{
+                  currentPage
+                    ? (currentPage - 1) * perPage +
+                      (cumulativeIndex + itemIndex(item))
+                    : ""
+                }}
+              </template>
+              <template v-slot:item.booking.reservation_no="{ item }">
+                {{ item.booking.reservation_no }}
+              </template>
+              <template v-slot:item.bookings.rooms="{ item }">
+                {{ item.booking.rooms }}
+              </template>
 
-                <template v-slot:item.customer.name="{ item }">
-                  {{ item.booking.customer.title }}
-                  {{ item.booking.customer.first_name }}
-                  {{ item.booking.customer.last_name }}
-                </template>
-                <template v-slot:item.missing_datetime="{ item }">
-                  {{ formatDateTime(item.missing_datetime) }}
-                </template>
-                <template v-slot:item.found_datetime="{ item }">
-                  {{ item.found_datetime }}
-                </template>
-                <template v-slot:item.returned_datetime="{ item }">
-                  {{ item.returned_datetime }}
-                </template>
-                <template v-slot:item.returned_remarks="{ item }">
-                  {{ item.returned_remarks }}
-                </template>
-                <template v-slot:item.created_at="{ item }">
-                  {{ formatDateTime(item.created_at) }}
-                </template>
+              <template v-slot:item.customer.name="{ item }">
+                {{ item.booking.customer.title }}
+                {{ item.booking.customer.first_name }}
+                {{ item.booking.customer.last_name }}
+              </template>
+              <template v-slot:item.missing_datetime="{ item }">
+                {{ formatDateTime(item.missing_datetime) }}
+              </template>
+              <template v-slot:item.found_datetime="{ item }">
+                {{ item.found_datetime }}
+              </template>
+              <template v-slot:item.returned_datetime="{ item }">
+                {{ item.returned_datetime }}
+              </template>
+              <template v-slot:item.returned_remarks="{ item }">
+                {{ item.returned_remarks }}
+              </template>
+              <template v-slot:item.created_at="{ item }">
+                {{ formatDateTime(item.created_at) }}
+              </template>
 
-                <template v-slot:item.status="{ item }">
-                  <span> {{ getStatus(item.status) }}</span>
-                  <!-- <v-icon title="Item Not Found yet" v-if="item.status == 0" color="red" dark
+              <template v-slot:item.status="{ item }">
+                <span> {{ getStatus(item.status) }}</span>
+                <!-- <v-icon title="Item Not Found yet" v-if="item.status == 0" color="red" dark
                                     white>mdi-minus-circle</v-icon>
                                 <v-icon title="Item Found and Not Returned yet" v-if="item.status == 1" color="yellow" dark
                                     white>mdi-plus-circle</v-icon>
                                 <v-icon title="Item Found and Returned to Guest" v-if="item.status == 2" color="green" dark
                                     white>mdi-emoticon-happy</v-icon> -->
-                </template>
+              </template>
 
-                <template v-slot:item.options="{ item }">
-                  <v-menu
-                    bottom
-                    left
-                    v-if="
-                      can('lost_and_found_create') ||
-                      can('lost_and_found_edit') ||
-                      can('lost_and_found_delete')
-                    "
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list width="120" dense>
-                      <v-list-item
-                        v-if="can('lost_and_found_edit')"
-                        @click="editItem(item, true)"
-                      >
-                        <v-list-item-title style="cursor: pointer">
-                          <v-icon color="primary" small> mdi-eye </v-icon>
-                          View
-                        </v-list-item-title>
-                      </v-list-item>
-                      <v-list-item
-                        v-if="can('lost_and_found_edit')"
-                        @click="editItem(item, false)"
-                      >
-                        <v-list-item-title style="cursor: pointer">
-                          <v-icon color="secondary" small> mdi-pencil </v-icon>
-                          Edit
-                        </v-list-item-title>
-                      </v-list-item>
-                      <v-list-item
-                        v-if="can('lost_and_found_delete')"
-                        @click="deleteItem(item)"
-                      >
-                        <v-list-item-title style="cursor: pointer">
-                          <v-icon color="error" small> mdi-delete </v-icon>
-                          Delete
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </template>
-              </v-data-table>
-            </v-container>
+              <template v-slot:item.options="{ item }">
+                <v-menu
+                  bottom
+                  left
+                  v-if="
+                    can('lost_and_found_create') ||
+                    can('lost_and_found_edit') ||
+                    can('lost_and_found_delete')
+                  "
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list width="120" dense>
+                    <v-list-item
+                      v-if="can('lost_and_found_edit')"
+                      @click="editItem(item, true)"
+                    >
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="primary" small> mdi-eye </v-icon>
+                        View
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item
+                      v-if="can('lost_and_found_edit')"
+                      @click="editItem(item, false)"
+                    >
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="secondary" small> mdi-pencil </v-icon>
+                        Edit
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item
+                      v-if="can('lost_and_found_delete')"
+                      @click="deleteItem(item)"
+                    >
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="error" small> mdi-delete </v-icon>
+                        Delete
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </template>
+            </v-data-table>
           </v-card>
         </v-col>
       </v-row>

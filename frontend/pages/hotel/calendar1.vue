@@ -11,9 +11,9 @@
     </pre> -->
 
     <style scoped>
-      .my-extra-class{
-        height:24px !important;
-        margin-top:3px !important;
+      .my-extra-class {
+        height: 24px !important;
+        margin-top: 3px !important;
       }
     </style>
 
@@ -425,7 +425,7 @@
             <v-row flat>
               <v-col cols="2">
                 <h1 class="title">
-                  Calendar <v-icon @click="getColorCodes">mdi-reload</v-icon>
+                  Calendar 
                 </h1>
               </v-col>
 
@@ -531,7 +531,6 @@ export default {
 
     return {
       isHall: false,
-      calenderColorCodes: [],
       durationDays: 15,
       from_date: null,
       to_date: endDate.toISOString().slice(0, 10),
@@ -799,8 +798,6 @@ export default {
   },
 
   created() {
-    // console.log(this.calenderColorCodes);
-    this.getColorCodes();
     this.currentDate;
     this.currentDateForNow;
   },
@@ -917,17 +914,6 @@ export default {
     },
   },
   methods: {
-    getColorCodes() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
-        this.calenderColorCodes = data;
-        this.get_events();
-      });
-    },
     handleSuccess(message) {
       this.get_events();
       this.$swal("Success!", message, "success");
@@ -1059,9 +1045,8 @@ export default {
             classNames: ["my-extra-class"], // Add your custom class here
             source: e.booking.source,
             type: e.booking.type,
-            title: e.title,
+            title: (e.title.split(" ")[0] || e.title),
             bookingStatus: e.booking_status,
-            calenderColorCodes: this.calenderColorCodes,
             groupName: e.booking.group_name,
           })),
           // eventContent: function (info) {
@@ -1071,89 +1056,56 @@ export default {
           //   };
           // },
 
-          eventContent: function (eventInfo) {
-            let sourceColor = "#4285F4";
+          eventContent: function ({ event }) {
+            let props = event.extendedProps;
+            let title = event.title;
+            let titlDisplay = props.type;
+            let groupName = props.groupName;
 
-            let titlDisplay = eventInfo.event.extendedProps.type;
-            let groupName = eventInfo.event.extendedProps.groupName
-              ? "-" + eventInfo.event.extendedProps.groupName
-              : "";
-            let groupNameIcon = eventInfo.event.extendedProps.groupName
-              ? "<span style='color:black'   class='mdi mdi-account-group  '></span> "
-              : "";
-            let calenderColorCodes =
-              eventInfo.event.extendedProps.calenderColorCodes;
-            if (calenderColorCodes) {
-              if (eventInfo.event.extendedProps.type == "Walking") {
-                sourceColor =
-                  calenderColorCodes.filter((e) => e.status_id == 12)[0]
-                    ?.color || "--";
-                // sourceColor = "#DB4437";
-              } else if (
-                eventInfo.event.extendedProps.type == "Complimentary"
-              ) {
-                sourceColor =
-                  calenderColorCodes.filter((e) => e.status_id == 14)[0]
-                    ?.color || "--";
-                //sourceColor = "#F4B400";
-              } else if (eventInfo.event.extendedProps.type == "Online") {
-                sourceColor =
-                  calenderColorCodes.filter((e) => e.status_id == 11)[0]
-                    ?.color || "--";
-                //sourceColor = "#0F9D58";
-              } else if (
-                eventInfo.event.extendedProps.type == "Travel Agency"
-              ) {
-                sourceColor =
-                  calenderColorCodes.filter((e) => e.status_id == 13)[0]
-                    ?.color || "--";
-                //sourceColor = "#FF5A5F";
-              } else if (eventInfo.event.extendedProps.type == "Corporate") {
-                sourceColor =
-                  calenderColorCodes.filter((e) => e.status_id == 15)[0]
-                    ?.color || "--";
-                //sourceColor = "#00A699";
-              }
-            }
+            let icon = groupName ? "mdi-account-group" : "";
+
+            let sourceColorCodes = {
+              Walking: "#010002",
+              Complimentary: "#FF5A5F",
+              Online: "#0F9D58",
+              "Travel Agency": "#F4B400 ",
+              Corporate: "#7551e5",
+            };
+
+            let sourceColor = sourceColorCodes[titlDisplay || "#4285F4"];
 
             return {
-              html:
-                "<span title='" +
-                titlDisplay +
-                "-" +
-                groupName +
-                "' class='eventBorderboxSource " +
-                eventInfo.event.extendedProps.source +
-                "' style=' color:" +
-                sourceColor +
-                ";background: " +
-                sourceColor +
-                " !important;padding-top: " +
-                (groupName ? "5" : "4") +
-                "px !important;padding-bottom:4px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>1</span><span title='" +
-                titlDisplay +
-                " " +
-                groupName +
-                "' >  " +
-                groupNameIcon +
-                "" +
-                eventInfo.event.title +
-                "</span>",
+              html: `<span title="${titlDisplay}"
+                      style="
+                      color: ${sourceColor}; 
+                      background: ${sourceColor}; 
+                      padding-top:${groupName ? "5" : "4"}px; 
+                      padding-bottom:${groupName ? "4" : "5"}px; 
+                      border-radius: 2px; margin-left: -2px">1</span>
+                     <span title="${titlDisplay}">${title} <span class='mdi ${icon}'></span></span>`,
+              // html:
+              //   "<span title='" +
+              //   titlDisplay +
+              //   "' class='eventBorderboxSource " +
+              //   props.source +
+              //   "' style=' color:" +
+              //   sourceColor +
+              //   ";background: " +
+              //   sourceColor +
+              //   " !important;padding-top: " +
+              //   (groupName ? "5" : "4") +
+              //   "px !important;padding-bottom:4px !important;  border-radius: 2px !important;  margin-left: -2px !important;'>1</span><span title='" +
+              //   titlDisplay +
+              //   " " +
+              //   groupName +
+              //   "' >  " +
+              //   "" +
+              //   title +
+              //   " " + groupIcon
+              //   +"</span>",
             };
-            // return {
-            //   html:
-            //     eventInfo.event.title +
-            //     "<br> " +
-            //     eventInfo.event.extendedProps.places +
-            //     " Places",
-            // };
           },
 
-          // eventRender: function (info) {
-          //   info.el.querySelectorAll(".fc-title")[0].innerHTML =
-          //     "<span>1111</span>" +
-          //     info.el.querySelectorAll(".fc-title")[0].innerText;
-          // },
           initialDate: this.from_date,
           views: {
             resourceTimelineYear: {
@@ -1518,11 +1470,8 @@ export default {
         3: "#12532c",
       };
 
-      if (booking.balance > 0 && booking_status == 3) {
-        return "#dc3545";
-      }
-
-      return codes[booking_status || ""];
+      if (booking.balance > 0 && booking_status == 3) return "#dc3545";
+      return codes[booking_status] || "#a6a6a6";
     },
     closeConfirmationDialog() {
       this.get_events();

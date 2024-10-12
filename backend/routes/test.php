@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ChartController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\RecalculateTaxController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\WhatsappController;
@@ -177,3 +179,8 @@ Route::get('truncate', function () {
 
 Route::post('whatsapp-otp', [WhatsappController::class, 'sentWhatsappOtp']);
 Route::post('whatsapp-test', [WhatsappController::class, 'sentNotificationTest']);
+
+Route::get('chart-test', [ChartController::class, 'index']);
+Route::get('callView', [ChartController::class, 'callView']);
+
+
