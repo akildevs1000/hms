@@ -1053,7 +1053,7 @@ class ReportController extends Controller
 
         // Create the directory if it doesn't exist
         if (!file_exists($outputDir)) {
-            mkdir($outputDir, 0755, true);  // Create the directory recursively
+            mkdir($outputDir, 777, true);  // Create the directory recursively
         }
 
         $this->mergePdfFiles($pdfFiles, $outputPath);
