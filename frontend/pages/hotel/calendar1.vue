@@ -345,7 +345,7 @@
               </v-list-item>
             </div>
 
-            <v-list-item
+            <!-- <v-list-item
               link
               v-if="
                 bookingStatus <= 2 &&
@@ -358,11 +358,12 @@
                   v-if="bookingId"
                   @close="get_events()"
                   :key="evenIid"
-                  :BookedRoomId="evenIid"
-                  :booking_id="bookingId"
+                  :noLabel="true"
+                  :BookingId="bookingId"
+                  :roomData="checkData"
                 />
               </v-list-item-title>
-            </v-list-item>
+            </v-list-item> -->
 
             <v-list-item
               link
@@ -424,9 +425,7 @@
           <v-card-text>
             <v-row flat>
               <v-col cols="2">
-                <h1 class="title">
-                  Calendar 
-                </h1>
+                <h1 class="title">Calendar</h1>
               </v-col>
 
               <v-col class="text-right">
@@ -1045,7 +1044,7 @@ export default {
             classNames: ["my-extra-class"], // Add your custom class here
             source: e.booking.source,
             type: e.booking.type,
-            title: (e.title.split(" ")[0] || e.title),
+            title: e.title.split(" ")[0] || e.title,
             bookingStatus: e.booking_status,
             groupName: e.booking.group_name,
           })),

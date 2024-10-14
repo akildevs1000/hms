@@ -8,88 +8,7 @@
         padding: 8px;
       }
     </style>
-
-    <v-card>
-      <v-card-text>
-        <v-row>
-          <v-col v-for="n in stats" :key="n">
-            <fieldset style="border-radius: 15px; border: #e0e0e0 1px solid">
-              <legend class="ml-5"></legend>
-              <v-card flat class="ma-2">
-                <v-card-text>
-                  <Donut
-                    name="margin"
-                    size="100%"
-                    :total="'100'"
-                     :colors="n.colors"
-                    :labels="[
-                      { text: `Check In`, value: 50 },
-                      { text: `Continue`, value: 50 },
-                      { text: `Day use`, value: 50 },
-                      { text: `Comp Room`, value: 50 },
-                      { text: `Check Out`, value: 50 },
-                      { text: `Closing`, value: 50 },
-                    ]"
-                  ></Donut>
-                </v-card-text>
-              </v-card>
-            </fieldset>
-          </v-col>
-
-          <v-col cols="2">
-            <fieldset style="border-radius: 15px; border: #e0e0e0 1px solid">
-              <legend class="ml-5">Personalia:</legend>
-              <v-card
-                flat
-                class="ma-2"
-                style="min-height: 150px; max-width: 100px"
-              >
-                <v-card-text>
-                  <Donut
-                    :hideTable="true"
-                    :isCentered="true"
-                    name="margin"
-                    :total="'100'"
-                    :colors="[`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`]"
-                    :labels="[
-                      { color: `#139c4a`, text: `Available`, value: 50 },
-                      { color: `#71de36`, text: `Reserved`, value: 50 },
-                      { color: `#ffc000`, text: `CheckIn`, value: 50 },
-                      { color: `#dc3545`, text: `Dirty`, value: 50 },
-                    ]"
-                  ></Donut>
-                </v-card-text>
-              </v-card>
-            </fieldset>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <fieldset style="border-radius: 15px; border: #e0e0e0 1px solid">
-              <legend class="ml-5">Personalia:</legend>
-              <v-card flat class="ma-2">
-                <v-card-text>
-                  <Donut
-                    name="margin"
-                    size="100%"
-                    :total="'100'"
-                    :colors="[`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`]"
-                    :labels="[
-                      { color: `#139c4a`, text: `Available`, value: 50 },
-                      { color: `#71de36`, text: `Reserved`, value: 50 },
-                      { color: `#ffc000`, text: `CheckIn`, value: 50 },
-                      { color: `#dc3545`, text: `Dirty`, value: 50 },
-                    ]"
-                  ></Donut>
-                </v-card-text>
-              </v-card>
-            </fieldset>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-
-    <!-- <v-row>
+    <v-row>
       <v-col cols="3">
         <v-card style="background-color: #800000" dark>
           <v-card-text>
@@ -177,8 +96,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-    </v-row> -->
-    <!--     
+    </v-row>
     <v-row>
       <v-col md="2">
         <v-menu
@@ -209,7 +127,7 @@
           ></v-date-picker>
         </v-menu>
       </v-col>
-    </v-row> -->
+    </v-row>
 
     <div>
       <v-card class="mb-5 rounded-md mt-3" elevation="0">

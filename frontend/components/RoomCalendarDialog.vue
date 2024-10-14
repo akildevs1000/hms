@@ -1,23 +1,13 @@
 <template>
-  <v-dialog persistent v-model="RoomDrawer" max-width="400">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        small
-        color="primary"
-        class="white--text"
-        dark
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-icon color="white" small> mdi-plus </v-icon> {{ label }}
-      </v-btn>
-    </template>
+  <div>
+    <v-dialog persistent v-model="RoomDrawer" max-width="400">
+    <AssetsIconClose left="390" @click="close" />
     <v-card>
-      <v-toolbar flat class="primary white--text" dense>
-        Calendar Booking <v-spacer></v-spacer
-        ><AssetsButtonClose @close="close" /></v-toolbar
+      <v-alert flat class="grey lighten-3 white--text" dense>
+        <span class="text-color">Calendar Booking</span>
+        </v-alert
       >
-      <v-container>
+      <v-card-text>
         <v-row>
           <v-col cols="12">
             <v-menu
@@ -185,22 +175,27 @@
             </v-checkbox>
           </v-col>
 
-          <v-col cols="12">
-            <v-btn block @click="add_room(temp)" color="primary" small>
-              Confirm Room
-            </v-btn>
+          <v-col cols="12" class="text-center">
+            <AssetsButton
+              :options="{
+                label: `Confirm Room`,
+                color: `blue`,
+              }"
+              @click="add_room(temp)"
+            />
           </v-col>
         </v-row>
-      </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
+  </div>
 </template>
 <script>
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["label", "reservation"],
+  props: ["label", "reservation", "Independent"],
   data() {
     return {
       Model: "Reservation",

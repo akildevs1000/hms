@@ -19,7 +19,7 @@ export default {
   components: {
     DatePicker,
   },
-  props: ["defaultFilterType", "height"],
+  props: ["defaultFilterType", "height", "defaultDates"],
   data() {
     return {
       // -------------------end chart ----------------
@@ -32,7 +32,6 @@ export default {
       loading: false,
       showTimePanel: false,
       filterType: 1,
-      search: "",
     };
   },
 
@@ -54,6 +53,10 @@ export default {
     this.to_date = to_date.toISOString().slice(0, 10);
 
     this.time3 = [this.from_date, this.to_date];
+
+    if (this.defaultDates) {
+      this.CustomFilter();
+    }
   },
 
   methods: {
@@ -65,26 +68,10 @@ export default {
           from: this.from_date,
           to: this.to_date,
           type: this.filterType,
-          search: this.search,
         };
 
         this.$emit("filter-attr", data);
       }
-    },
-
-    formatDate(date) {
-      var day = date.getDate();
-      var month = date.getMonth() + 1; // Months are zero-based
-      var year = date.getFullYear();
-      return (
-        year +
-        "-" +
-        (month < 10 ? "0" : "") +
-        month +
-        "-" +
-        (day < 10 ? "0" : "") +
-        day
-      );
     },
   },
 };
