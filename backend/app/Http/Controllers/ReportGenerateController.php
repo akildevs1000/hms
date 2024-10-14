@@ -10,6 +10,7 @@ use App\Models\CancelRoom;
 use App\Models\Company;
 use App\Models\Expense;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ReportGenerateController extends Controller
@@ -27,7 +28,7 @@ class ReportGenerateController extends Controller
 
         return true;
     }
-    public function processData($company_id, $model, $date, $fileName = "", $reportType)
+    public function processData($company_id, $date)
     {
 
         $request = array(
@@ -36,13 +37,11 @@ class ReportGenerateController extends Controller
         );
         $request = (object) $request;
 
-        $model = Booking::query();
-
-        $todayCheckin = $this->todayCheckinAudit($model, $request);
-        $continueRooms = $this->continueAudit($model, $request);
-        $todayCheckOut = $this->todayCheckOutAudit($model, $request);
-        $todayPayments = $this->todayPaymentsAudit($model, $request);
-        $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($model, $request);
+        $todayCheckin = $this->todayCheckinAudit($request);
+        $continueRooms = $this->continueAudit($request);
+        $todayCheckOut = $this->todayCheckOutAudit($request);
+        $todayPayments = $this->todayPaymentsAudit($request);
+        $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($request);
         $cancelRooms = $this->cancelRooms($request);
 
         $foodOrderList = $this->getFoodOrderList($request);
@@ -102,70 +101,11 @@ class ReportGenerateController extends Controller
         return Company::orderBy('id', 'asc')->pluck("id");
     }
 
-    private function getFoodOrderList($request)
-    {
-        $model = BookedRoom::query();
-        $model->whereCompanyId($request->company_id);
-        $model->whereDate('check_in', $request->date);
-        $model->where(function ($q) {
-            $q->where('tot_adult_food', '>', 0);
-            $q->orWhere('tot_child_food', '>', 0);
-        });
-        $model->without('booking');
-        $model->whereHas('booking', function ($q) use ($request) {
-            $q->where('booking_status', 2);
-            $q->whereCompanyId($request->company_id);
-            $q->whereDate('check_in', $request->date);
-        });
-        $bookedRooms = $model->get();
-
-        $tem = [];
-
-        foreach ($bookedRooms as $bookedRoom) {
-
-            $breakfast = explode('|', $bookedRoom->meal)[0];
-            $lunch = explode('|', $bookedRoom->meal)[1];
-            $dinner = explode('|', $bookedRoom->meal)[2];
-
-            // if ($breakfast == '--- ' && $lunch == ' --- ' && $dinner == ' ---') {
-            //     continue;
-            // }
-
-            if ($breakfast != '--- ') {
-                $bookedRoom['breakfast'] = [
-                    'title' => 'BreakFast',
-                    'no_of_adult' => $bookedRoom->no_of_adult,
-                    'no_of_child' => $bookedRoom->no_of_child,
-                    'no_of_baby' => $bookedRoom->no_of_baby,
-                ];
-            }
-            if ($lunch != ' --- ') {
-                $bookedRoom['lunch'] = [
-                    'title' => 'Lunch',
-                    'no_of_adult' => $bookedRoom->no_of_adult,
-                    'no_of_child' => $bookedRoom->no_of_child,
-                    'no_of_baby' => $bookedRoom->no_of_baby,
-                ];
-            }
-
-            if ($dinner != ' ---') {
-                $bookedRoom['dinner'] = [
-                    'title' => 'Dinner',
-                    'no_of_adult' => $bookedRoom->no_of_adult,
-                    'no_of_child' => $bookedRoom->no_of_child,
-                    'no_of_baby' => $bookedRoom->no_of_baby,
-                ];
-            }
-
-            $tem[] = $bookedRoom;
-        }
-        return ($tem);
-    }
-    private function todayCheckinAudit($model, $request)
+    private function todayCheckinAudit($request)
     {
         $company_id = $request->company_id;
-        return $model
-            ->where(function ($q) use ($company_id, $request) {
+        return
+            Booking::where(function ($q) use ($company_id, $request) {
                 $q->where('booking_status', '!=', 0);
                 $q->where('booking_status', '!=', -1);
                 $q->where('booking_status', '=', 2);
@@ -182,19 +122,18 @@ class ReportGenerateController extends Controller
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
-            })->get();
+            });
     }
 
-    private function continueAudit($model, $request)
+    private function continueAudit($request)
     {
         $company_id = $request->company_id;
-        return $continueRooms = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
-                $q->where('booking_status', '!=', -1);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_in', '<', $request->date);
-            })
+        return Booking::where(function ($q) use ($company_id, $request) {
+            $q->where('booking_status', '!=', -1);
+            $q->where('booking_status', '=', 2);
+            $q->where('company_id', $company_id);
+            $q->whereDate('check_in', '<', $request->date);
+        })
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')->with('customer:id,first_name')
@@ -205,19 +144,18 @@ class ReportGenerateController extends Controller
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
-            })->get();
+            });
     }
 
-    private function todayCheckOutAudit($model, $request)
+    private function todayCheckOutAudit($request)
     {
         $company_id = $request->company_id;
-        return $todayCheckOut = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [0, 3, 4]);
-                $q->where('booking_status', '!=', -1);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $request->date);
-            })
+        return Booking::where(function ($q) use ($company_id, $request) {
+            $q->whereIn('booking_status', [0, 3, 4]);
+            $q->where('booking_status', '!=', -1);
+            $q->where('company_id', $company_id);
+            $q->whereDate('check_out', $request->date);
+        })
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             }], 'credit')
@@ -229,19 +167,18 @@ class ReportGenerateController extends Controller
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
-            })->get();
+            });
     }
 
-    private function todayPaymentsAudit($model, $request)
+    private function todayPaymentsAudit($request)
     {
         $company_id = $request->company_id;
-        return $todayPayments = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [1]);
-                $q->where('booking_status', '!=', -1);
-                $q->where('paid_amounts', '>', 0);
-                $q->where('company_id', $company_id);
-            })
+        return Booking::where(function ($q) use ($company_id, $request) {
+            $q->whereIn('booking_status', [1]);
+            $q->where('booking_status', '!=', -1);
+            $q->where('paid_amounts', '>', 0);
+            $q->where('company_id', $company_id);
+        })
             ->whereHas('transactions', function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
                 // $q->where('credit', '>', 0);
@@ -258,7 +195,7 @@ class ReportGenerateController extends Controller
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
-            })->get();
+            });
     }
 
     private function cancelRooms($request)
@@ -268,22 +205,21 @@ class ReportGenerateController extends Controller
             ->with('user')
             ->whereDate('created_at', $request->date)
             ->where('company_id', $company_id)
-            ->with('booking:id,reservation_no,created_at')
-            ->get(['booking_id', 'room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in', 'status_before_cancelation', 'status_before_cancelation_msg']);
+            ->with('booking:id,reservation_no,created_at');
+        //->get(['booking_id', 'room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in', 'status_before_cancelation', 'status_before_cancelation_msg']);
     }
 
-    private function cityLedgerPaymentsAudit($model, $request)
+    private function cityLedgerPaymentsAudit($request)
     {
         $company_id = $request->company_id;
-        return $todayPayments = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [0]);
-                $q->where('booking_status', '!=', -1);
-                $q->where('paid_amounts', '>', 0);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', '<', $request->date);
-                // $q->whereDate('check_out', '!=', $request->date);
-            })
+        return Booking::where(function ($q) use ($company_id, $request) {
+            $q->whereIn('booking_status', [0]);
+            $q->where('booking_status', '!=', -1);
+            $q->where('paid_amounts', '>', 0);
+            $q->where('company_id', $company_id);
+            $q->whereDate('check_out', '<', $request->date);
+            // $q->whereDate('check_out', '!=', $request->date);
+        })
             ->whereHas('transactions', function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
                 // $q->where('credit', '>', 0);
@@ -297,7 +233,57 @@ class ReportGenerateController extends Controller
                 $q->where('payment_method_id', '!=', 7);
                 $q->where('company_id', $request->company_id)
                     ->with('paymentMode');
-            })
-            ->get();
+            });
+    }
+
+
+    public function processSummaryData($company_id, $date)
+    {
+
+        $request = array(
+            'company_id' => $company_id,
+            'date' => $date,
+        );
+        $request = (object) $request;
+
+
+        $todayCheckin = $this->todayCheckinAudit($request);
+        $continueRooms = $this->continueAudit($request);
+        $todayCheckOut = $this->todayCheckOutAudit($request);
+        $todayPayments = $this->todayPaymentsAudit($request);
+        $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($request);
+        $cancelRooms = $this->cancelRooms($request);
+
+        return $found = DB::table('booked_rooms')
+        ->where("company_id", $company_id)
+        ->where(function ($query) use ($date) {
+            $query->whereDate('check_out', $date)
+                ->orWhereDate('check_in', $date);
+        })
+        ->selectRaw('SUM(breakfast * no_of_adult) as breakfast, SUM(lunch) as lunch, SUM(dinner) as dinner')
+        ->first();
+
+    return [
+        "breakfast" => $found->breakfast ?? 0,
+        "lunch" => $found->lunch ??  0,
+        "dinner" => $found->dinner ??  0
+    ];
+
+        return $foodOrderList = (new FoodController)->index($request);
+
+        $totExpense = Expense::whereCompanyId($request->company_id)
+            ->where('is_management', 0)
+            ->whereDate('created_at', $date)
+            ->sum('total');
+
+        return  [
+            'todayCheckin' => $todayCheckin->count(),
+            'continueRooms' => $continueRooms->count(),
+            'todayCheckOut' => $todayCheckOut->count(),
+            'todayPayments' => $todayPayments->count(),
+            'cityLedgerPaymentsAudit' => $cityLedgerPaymentsAudit->count(),
+            'cancelRooms' => $cancelRooms->count(),
+
+        ];
     }
 }

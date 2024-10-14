@@ -73,6 +73,10 @@ class FoodPlanController extends Controller
     {
         $found = DB::table('booked_rooms')
             ->where("company_id", request("company_id", 0))
+            ->where(function ($query) {
+                $query->whereDate('check_out', date("Y-m-d"))
+                    ->orWhereDate('check_in', date("Y-m-d"));
+            })
             ->selectRaw('SUM(breakfast) as breakfast, SUM(lunch) as lunch, SUM(dinner) as dinner')
             ->first();
 
