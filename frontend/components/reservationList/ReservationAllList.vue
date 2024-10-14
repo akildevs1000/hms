@@ -16,6 +16,7 @@
     </v-dialog>
     <v-container fluid>
       <v-data-table
+        style="min-height: 500px; max-height: 500px; overflow-y: scroll"
         dense
         small
         :headers="headers_table"
@@ -579,8 +580,8 @@ export default {
         this.getDataFromApi();
       }
     },
-    calculateStates(customers) {
-      const countResult = customers.reduce((acc, { type }) => {
+    calculateStates(data) {
+      const countResult = data.reduce((acc, { type }) => {
         acc[type] = (acc[type] || 0) + 1;
         return acc;
       }, {});
@@ -643,7 +644,54 @@ export default {
         },
       ];
 
-      this.$emit("response", this.stats);
+      const totals = data.reduce(
+        (acc, e) => {
+          acc.total_price += e.total_price || 0;
+          acc.total_posting_amount += e.total_posting_amount || 0;
+          acc.paid_amounts += e.paid_amounts || 0;
+          acc.balance += e.balance || 0;
+          return acc;
+        },
+        {
+          total_price: 0,
+          total_posting_amount: 0,
+          paid_amounts: 0,
+          balance: 0,
+        }
+      );
+
+      let totalStats = [
+        {
+          icon: "",
+          value: this.$utils.currency_format(totals.total_price),
+          label: "Room",
+          col: 7,
+          color: "teal",
+        },
+        {
+          icon: "",
+          value: this.$utils.currency_format(totals.total_posting_amount),
+          label: "Posting",
+          col: 7,
+          color: "orange",
+        },
+        {
+          icon: "",
+          value: this.$utils.currency_format(totals.paid_amounts),
+          label: "Paid",
+          col: 7,
+          color: "purple",
+        },
+        {
+          icon: "",
+          value: this.$utils.currency_format(totals.balance),
+          label: "Balance",
+          col: 7,
+          color: "red",
+        },
+      ];
+
+      this.$emit("response", { totalStats, stats: this.stats });
     },
   },
 };

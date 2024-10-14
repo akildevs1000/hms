@@ -109,6 +109,14 @@
         @response="handleResponse"
       />
     </v-card>
+
+    <v-card class="mt-5 px-2">
+      <v-row>
+        <v-col v-for="(stat, index) in totalStats" :key="index">
+          <AssetsCardBottom :key="amountStats + index" :options="stat" />
+        </v-col>
+      </v-row>
+    </v-card>
   </div>
 </template>
 
@@ -117,8 +125,10 @@ export default {
   data: () => ({
     endpoint: null,
     currentTabId: 1,
+    amountStats: 1,
     activeTab: 0,
     stats: [],
+    totalStats: [],
     statsForInHouse: [],
     statsForCheckOut: [],
     statsForReservation: [],
@@ -149,7 +159,8 @@ export default {
       }
     },
     handleResponse(e) {
-      this.stats = e;
+      this.stats = e.stats;
+      this.totalStats = e.totalStats;
     },
     setCurrentTab(id) {
       this.currentTabId = id; // Update the currentTabId to the clicked tab's ID
