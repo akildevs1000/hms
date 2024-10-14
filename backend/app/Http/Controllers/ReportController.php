@@ -1046,7 +1046,15 @@ class ReportController extends Controller
             storage_path("app/pdf/$date/$company_id/Food Order list.pdf"),
         ];
 
+        $outputDir = storage_path('app/pdf/2024-10-14/3');
+        $outputPath = $outputDir . '/summary.pdf';
+
         $outputPath = storage_path("app/pdf/$date/$company_id/merged_file.pdf");
+
+        // Create the directory if it doesn't exist
+        if (!file_exists($outputDir)) {
+            mkdir($outputDir, 0755, true);  // Create the directory recursively
+        }
 
         $this->mergePdfFiles($pdfFiles, $outputPath);
 
