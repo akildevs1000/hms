@@ -1,6 +1,7 @@
 <template>
   <div v-if="can('calendar_create')">
-    <v-dialog v-model="dialog" width="1000">
+    <v-dialog v-model="dialog" width="800">
+      <AssetsIconClose left="790" @click="close" />
       <template v-slot:activator="{ on, attrs }">
         <div style="text-align: center">
           <v-btn
@@ -22,18 +23,12 @@
         </div>
       </template>
       <v-card>
-        <v-toolbar small class="rounded-md" color="grey lighten-3" dense flat>
-          <span>Hall Booking Information</span>
-          <v-spacer></v-spacer>
-          <SearchCustomer @foundCustomer="handleFoundCustomer" />
-          <v-hover v-slot:default="{ hover, props }">
-            <span v-bind="props">
-              <v-icon @click="close" :outlined="!hover" color="primary">
-                {{ hover ? `mdi-close-circle` : `mdi-close-circle-outline` }}
-              </v-icon>
-            </span>
-          </v-hover>
-        </v-toolbar>
+        <AssetsHeadDialog>
+          <template #label>Hall Booking Information</template>
+          <template #search>
+            <SearchCustomer @foundCustomer="handleFoundCustomer"
+          /></template>
+        </AssetsHeadDialog>
         <v-stepper v-model="e1">
           <v-stepper-header style="display: none">
             <v-stepper-step :complete="e1 > 1" step="1">
@@ -79,59 +74,59 @@
                       :key="index"
                     >
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>
+                        
                           {{ $dateFormat.dmy(item.date) }} <br />
                           {{ item.day }}
-                        </small>
+
                       </td>
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>
+                        
                           {{ item.room_type }}
-                        </small>
+
                       </td>
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>
+                        
                           {{ item.day_type }}
-                        </small>
+
                       </td>
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>{{ item.no_of_adult }}</small>
+                        {{ item.no_of_adult }}  
                       </td>
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>{{ item.no_of_child }}</small>
+                        {{ item.no_of_child }}  
                       </td>
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>{{ item.meal_name }}</small>
+                        {{ item.meal_name }}  
                       </td>
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>{{ $utils.currency_format(item.price) }}</small>
+                        {{ $utils.currency_format(item.price) }}  
                       </td>
                       <td
-                        class="text-center py-2"
+                        class="text-center py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>{{
+                        {{
                           $utils.currency_format(
                             parseFloat(item.cleaning) +
                               parseFloat(item.electricity) +
@@ -139,16 +134,15 @@
                               parseFloat(item.extra_booking_hours_charges) +
                               parseFloat(item.projector)
                           )
-                        }}</small>
+                        }}  
                       </td>
 
                       <td
-                        class="text-right py-2"
+                        class="text-right py-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0; width: 50px"
                       >
-                        <small>
-                          {{ $utils.currency_format(item.total_price) }}</small
-                        >
+                        
+                          {{ $utils.currency_format(item.total_price) }}
                       </td>
                       <td style="border-bottom: 1px solid #e0e0e0; width: 5px">
                         <v-menu
@@ -211,36 +205,35 @@
                   <table style="width: 100%">
                     <tr>
                       <td colspan="9"></td>
-                      <td style="border-bottom: 1px solid #e0e0e0">
-                        <small>Sub Total:</small>
+                      <td class="text-color" style="border-bottom: 1px solid #e0e0e0">
+                        Sub Total:  
                       </td>
                       <td
                         colspan="10"
-                        class="text-right pb-2"
+                        class="text-right pb-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>{{ $utils.convert_decimal(subTotal()) }}</small>
+                        {{ $utils.convert_decimal(subTotal()) }}  
                       </td>
                     </tr>
                     <tr>
                       <td colspan="9"></td>
-                      <td style="border-bottom: 1px solid #e0e0e0">
-                        <small>Add:</small>
+                      <td class="text-color" style="border-bottom: 1px solid #e0e0e0">
+                        Add:  
                       </td>
                       <td
                         colspan="10"
-                        class="text-right pb-2"
+                        class="text-right pb-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
                         <v-hover v-slot:default="{ hover, props }">
                           <div v-bind="props">
-                            <small>
+                            
                               {{
                                 $utils.convert_decimal(
                                   room.room_extra_amount || 0
                                 )
-                              }}</small
-                            >
+                              }}
                             <v-icon
                               v-if="hover"
                               small
@@ -267,21 +260,20 @@
                     </tr>
                     <tr>
                       <td colspan="9"></td>
-                      <td style="border-bottom: 1px solid #e0e0e0">
-                        <small>Discount:</small>
+                      <td class="text-color" style="border-bottom: 1px solid #e0e0e0">
+                        Discount: 
                       </td>
                       <td
                         colspan="10"
-                        class="text-right pb-2"
+                        class="text-right pb-2 text-color"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
                         <v-hover v-slot:default="{ hover, props }">
                           <div v-bind="props">
-                            <small>
+                            
                               -{{
                                 $utils.convert_decimal(room.room_discount || 0)
-                              }}</small
-                            >
+                              }}
                             <v-icon
                               v-if="hover"
                               small
@@ -306,22 +298,21 @@
                     </tr>
                     <tr>
                       <td colspan="9"></td>
-                      <td
+                      <td 
                         style="border-bottom: 1px solid #e0e0e0"
-                        class="primary--text"
+                        class="primary--text text-color"
                       >
-                        <small>Total:</small>
+                        Total:  
                       </td>
                       <td
                         colspan="10"
                         class="text-right pb-2 primary--text"
                         style="border-bottom: 1px solid #e0e0e0"
                       >
-                        <small>
+                        
                           {{
                             $utils.currency_format(processCalculation())
-                          }}</small
-                        >
+                          }}
                       </td>
                     </tr>
                   </table>
@@ -384,7 +375,6 @@
   <NoAccess v-else />
 </template>
 <script>
-
 import ImagePreview from "../../components/images/ImagePreview.vue";
 const today = new Date();
 const tomorrow = new Date(today);

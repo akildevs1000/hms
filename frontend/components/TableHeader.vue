@@ -7,7 +7,7 @@
         class="primary--text"
         :class="isRightAligned(col) ? 'text-right' : 'text-center'"
       >
-        <small>{{ col }}</small>
+        {{ col }}
       </td>
     </tr>
   </thead>

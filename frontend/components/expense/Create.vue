@@ -262,12 +262,12 @@
                     </table>
                   </v-col>
                   <v-col cols="12">
-                  <span class="primary--text">
-                    <UploadMultipleAttachments
-                      @files-selected="handleMultipleFileSelection($event)"
-                    />
-                  </span>
-                </v-col>
+                    <span class="primary--text">
+                      <UploadMultipleAttachments
+                        @files-selected="handleMultipleFileSelection($event)"
+                      />
+                    </span>
+                  </v-col>
                   <v-col cols="12" v-if="errorResponse">
                     <span class="red--text">{{ errorResponse }}</span>
                   </v-col>
@@ -350,12 +350,13 @@ export default {
       vendorEditItem: null,
       lastThreeRecords: [],
       emptyRowLength: 3,
-      ReceiptNumber:null,
+      ReceiptNumber: null,
     };
   },
   computed: {
     detailContainerHeight() {
       const minHeight = {
+        Personal: "450px",
         Company: "515px",
         default: "450px",
       };
@@ -445,13 +446,14 @@ export default {
     },
     async submit() {
       this.errorResponse = null;
-      if(!this.payload.items.length) {
+      if (!this.payload.items.length) {
         alert(`Item is not added.`);
         return;
       }
       this.loading = true;
       try {
         this.payload.is_admin_expense = this.is_admin_expense;
+        this.payload.company_id = this.$auth.user.company_id;
         await this.$axios.post(this.endpoint, this.payload);
         this.close();
         this.$emit("response", "Record has been inserted");
