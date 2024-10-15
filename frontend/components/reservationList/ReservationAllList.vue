@@ -16,7 +16,7 @@
     </v-dialog>
     <v-container fluid>
       <v-data-table
-        style="min-height: 500px; max-height: 500px; overflow-y: scroll"
+        style="min-height: 370px; max-height: 370px; overflow-y: scroll"
         dense
         small
         :headers="headers_table"
@@ -39,59 +39,59 @@
             "
           />
         </template>
-        <template v-slot:item.res_number="item">
+        <template v-slot:item.res_number="{item}">
           <span
             class="blue--text"
-            @click="goToRevView(item.item)"
+            @click="goToRevView(item)"
             style="cursor: pointer"
           >
-            <AssetsTextLabel :label="item.item.reservation_no || `---`" />
+            <AssetsTextLabel :label="item.reservation_no || `---`" />
           </span>
         </template>
-        <template v-slot:item.source="item">
-          <AssetsTextLabel :label="item.item.source || `---`" />
+        <template v-slot:item.source="{item}">
+          <AssetsTextLabel :label="item.source || `---`" />
         </template>
-        <template v-slot:item.rooms="item">
-          <span v-for="(room, index) in item.item.booked_rooms" :key="index">
+        <template v-slot:item.rooms="{item}">
+          <span v-for="(room, index) in item.booked_rooms" :key="index">
             <AssetsTextLabel :label="room.room_no" />
             <AssetsTextLabel
-              :label="item.item.booked_rooms.length - 1 == index ? `` : `,`"
+              :label="item.booked_rooms.length - 1 == index ? `` : `,`"
             />
           </span>
         </template>
-        <template v-slot:item.reference="item">
-          <AssetsTextLabel :label="item.item.reference_no || `---`" />
+        <template v-slot:item.reference="{item}">
+          <AssetsTextLabel :label="item.reference_no || `---`" />
         </template>
-        <template v-slot:item.guest="item">
-          <AssetsTextLabel :label="item.item.customer.first_name || `---`" />
+        <template v-slot:item.guest="{item}">
+          <AssetsTextLabel :label="item.customer.first_name || `---`" />
         </template>
-        <template v-slot:item.check_in="item">
-          <AssetsTextLabel :label="convert_date_format(item.item.check_in)" />
+        <template v-slot:item.check_in="{item}">
+          <AssetsTextLabel :label="convert_date_format(item.check_in)" />
         </template>
-        <template v-slot:item.check_out="item">
-          <AssetsTextLabel :label="convert_date_format(item.item.check_out)" />
+        <template v-slot:item.check_out="{item}">
+          <AssetsTextLabel :label="convert_date_format(item.check_out)" />
         </template>
-        <template v-slot:item.total="item">
+        <template v-slot:item.total="{item}">
           <AssetsTextLabel
-            :label="$utils.currency_format(item.item.total_price)"
+            :label="$utils.currency_format(item.total_price)"
           />
         </template>
-        <template v-slot:item.posting="item">
+        <template v-slot:item.posting="{item}">
           <AssetsTextLabel
-            :label="$utils.currency_format(item.item.total_posting_amount)"
+            :label="$utils.currency_format(item.total_posting_amount)"
           />
         </template>
-        <template v-slot:item.paid="item">
+        <template v-slot:item.paid="{item}">
           <AssetsTextLabel
-            :label="$utils.currency_format(item.item.paid_amounts)"
+            :label="$utils.currency_format(item.paid_amounts)"
           />
         </template>
         <template v-slot:item.balance="item">
           <AssetsTextLabel :label="$utils.currency_format(item.item.balance)" />
         </template>
-        <template v-slot:item.res_date="item">
+        <template v-slot:item.res_date="{item}">
           <AssetsTextLabel
-            :label="convert_date_format(item.item.booking_date)"
+            :label="convert_date_format(item.booking_date)"
           />
         </template>
         <template v-slot:item.options="{ item }">
