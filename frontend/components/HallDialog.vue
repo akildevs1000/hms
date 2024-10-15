@@ -1,5 +1,6 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
+    <AssetsIconClose left="390" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
         <span v-bind="props">
@@ -18,11 +19,11 @@
       </v-hover>
     </template>
     <v-card>
-      <v-toolbar flat class="grey lighten-3" dense>
+      <v-alert flat class="grey lighten-3" dense>
         Hall Booking <v-spacer></v-spacer
-        ><AssetsButtonClose @close="close" /></v-toolbar
+        ></v-alert
       >
-      <v-container>
+      <v-card-text>
         <v-row>
           <v-col cols="8">
             <v-row>
@@ -169,7 +170,7 @@
               style="
                 margin-top: -10px;
                 overflow: hidden;
-                height: 115px;
+                height: 100px;
                 border-radius: 14px;
                 padding-top: 25px;
                 padding-left: 8px;
@@ -221,17 +222,25 @@
                 >
                 </v-autocomplete>
               </v-col> -->
-          <v-col cols="6">
+          <v-col cols="12">
             <v-text-field
-              label="Adult Per Room"
+              label="No of Pax"
               dense
               outlined
               v-model.number="temp.no_of_adult"
               :hide-details="true"
               type="number"
             ></v-text-field>
+            <!-- <v-text-field
+              label="Adult Per Room"
+              dense
+              outlined
+              v-model.number="temp.no_of_adult"
+              :hide-details="true"
+              type="number"
+            ></v-text-field> -->
           </v-col>
-          <v-col cols="6">
+          <!-- <v-col cols="6">
             <v-text-field
               label="Child Per Room"
               dense
@@ -240,7 +249,7 @@
               :hide-details="true"
               type="number"
             ></v-text-field>
-          </v-col>
+          </v-col> -->
           <v-col cols="12">
             <v-autocomplete
               label="Food Plan"
@@ -306,7 +315,7 @@
             <AssetsButtonSubmit @click="selectRoom"/>
           </v-col>
         </v-row>
-      </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
