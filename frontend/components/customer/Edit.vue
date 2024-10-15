@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="NewCustomerDialog" max-width="750px">
-    <AssetsIconClose left="740"  @click="close" />
+    <AssetsIconClose left="740" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         <v-icon x-small color="primary">mdi-pencil</v-icon>
@@ -313,25 +313,7 @@ export default {
   },
   methods: {
     close() {
-      this.customer = {
-        customer_type: null,
-        title: "Mr",
-        whatsapp: "",
-        nationality: "",
-        first_name: "",
-        last_name: "",
-        contact_no: "",
-        email: "",
-        image: "",
-        dob: null,
-        country: null,
-        state: null,
-        city: null,
-        zip_code: null,
-      };
-
       this.NewCustomerDialog = false;
-
       this.$emit("close-dialog");
     },
     getStates(country) {

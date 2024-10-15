@@ -1,6 +1,6 @@
 <template>
-  <v-dialog persistent v-model="NewCustomerDialog" max-width="900px">
-    <AssetsIconClose left="890"  @click="close" />
+  <v-dialog v-model="NewCustomerDialog" max-width="750px">
+    <AssetsIconClose left="740" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         <v-icon x-small color="primary">mdi-eye</v-icon>
@@ -8,230 +8,211 @@
       </span>
     </template>
 
-    <v-card v-if="customer && customer.id">
-      <v-tabs background-color="grey lighten-3" align-with-title>
-        <div class="pa-3">
-          <span> Guest Details</span>
-        </div>
-        <v-spacer></v-spacer>
-        <v-tab>Overview</v-tab>
-        <v-tab>Transactions</v-tab>
-        <v-tab>Analytics</v-tab>
-        <v-tab>Statement</v-tab>
-        <v-tab-item>
-          <v-container>
-            <span>
-              <v-row>
-                <v-col md="3" cols="12">
-                  <v-row no-gutters class="pa-2">
-                    <v-col cols="12" class="text-center">
-                      <v-avatar tile size="120">
-                        <v-card>
-                          <img
-                            class="zoom-on-hover"
-                            style="z-index: 1; width: 100%"
-                            :src="
-                              customer?.captured_photo ||
-                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
-                            "
-                          />
-                          <!-- <div class="text-right pa-2">
+    <v-card>
+      <v-alert class="rounded" color="grey lighten-3" dense flat>
+        <span>View Customer</span>
+      </v-alert>
+      <v-card-text>
+        <v-container v-if="customer && customer.id">
+          <span>
+            <v-row>
+              <v-col md="3" cols="12">
+                <v-row no-gutters class="pa-2">
+                  <v-col cols="12" class="text-center">
+                    <v-avatar tile size="120">
+                      <v-card>
+                        <img
+                          class="zoom-on-hover"
+                          style="z-index: 1; width: 100%"
+                          :src="
+                            customer?.captured_photo ||
+                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
+                          "
+                        />
+                        <!-- <div class="text-right pa-2">
                               <v-icon
                                 color="white"
                                
                                 >mdi-eye</v-icon
                               >
                             </div> -->
-                        </v-card>
-                      </v-avatar>
-                    </v-col>
-                    <v-col cols="6" class="text-center">
-                      <v-img
-                        :src="
-                          (customer && customer.captured_photo) || '/idf.png'
-                        "
-                        style="margin: 0 auto; width: 50px; height: 50px"
-                        contain
-                      ></v-img>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-img
-                        :src="
-                          (customer && customer.captured_photo) || '/idb.png'
-                        "
-                        style="margin: 0 auto; width: 50px; height: 50px"
-                        contain
-                      ></v-img>
-                    </v-col>
-                  </v-row>
-                </v-col>
-                <v-col md="9" cols="12">
-                  <v-row>
-                    <v-col md="3" cols="12" sm="12">
-                      <v-autocomplete
-                        v-model="customer.title"
-                        :items="titleItems"
-                        label="Title *"
-                        dense
-                        item-text="name"
-                        item-value="name"
-                        hide-details
-                        outlined
-                      ></v-autocomplete>
-                    </v-col>
-                    <v-col md="9" cols="12" sm="12">
-                      <v-row>
-                        <v-col>
-                          <v-text-field
-                            label="First Name *"
-                            dense
-                            outlined
-                            type="text"
-                            v-model="customer.first_name"
-                            hide-details
-                          ></v-text-field>
-                        </v-col>
-                        <v-col>
-                          <v-text-field
-                            label="Last Name"
-                            dense
-                            hide-details
-                            outlined
-                            type="text"
-                            v-model="customer.last_name"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-col>
+                      </v-card>
+                    </v-avatar>
+                  </v-col>
+                  <v-col cols="6" class="text-center">
+                    <v-img
+                      :src="(customer && customer.captured_photo) || '/idf.png'"
+                      style="margin: 0 auto; width: 50px; height: 50px"
+                      contain
+                    ></v-img>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-img
+                      :src="(customer && customer.captured_photo) || '/idb.png'"
+                      style="margin: 0 auto; width: 50px; height: 50px"
+                      contain
+                    ></v-img>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col md="9" cols="12">
+                <v-row>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-autocomplete
+                      v-model="customer.title"
+                      :items="titleItems"
+                      label="Title *"
+                      dense
+                      item-text="name"
+                      item-value="name"
+                      hide-details
+                      outlined
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col md="9" cols="12" sm="12">
+                    <v-row>
+                      <v-col>
+                        <v-text-field
+                          label="First Name *"
+                          dense
+                          outlined
+                          type="text"
+                          v-model="customer.first_name"
+                          hide-details
+                        ></v-text-field>
+                      </v-col>
+                      <v-col>
+                        <v-text-field
+                          label="Last Name"
+                          dense
+                          hide-details
+                          outlined
+                          type="text"
+                          v-model="customer.last_name"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-col>
 
-                    <v-col cols="6">
-                      <v-text-field
-                        dense
-                        label="Email *"
-                        outlined
-                        type="email"
-                        v-model="customer.email"
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-menu
-                        v-model="dob_menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="customer.dob"
-                            readonly
-                            label="DOB"
-                            v-on="on"
-                            v-bind="attrs"
-                            hide-details
-                            dense
-                            outlined
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          no-title
+                  <v-col cols="6">
+                    <v-text-field
+                      dense
+                      label="Email *"
+                      outlined
+                      type="email"
+                      v-model="customer.email"
+                      hide-details
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-menu
+                      v-model="dob_menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
                           v-model="customer.dob"
-                          @input="dob_menu = false"
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        dense
-                        label="Contact No *"
-                        outlined
-                        max="1111111111111"
-                        type="number"
-                        v-model="customer.contact_no"
-                        hide-details
-                        @keyup="mergeContact"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        dense
-                        label="Whatsapp No"
-                        outlined
-                        max="1111111111111"
-                        type="number"
-                        v-model="customer.whatsapp"
-                        hide-details
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-col>
-                <v-col md="3" cols="12" sm="12">
-                  <v-autocomplete
-                    :items="countries"
-                    item-text="name"
-                    item-value="name"
-                    label="Country"
-                    v-model="customer.country"
-                    outlined
-                    hide-details
-                    dense
-                    @change="getStates(customer.country)"
-                  ></v-autocomplete>
-                </v-col>
-                <v-col md="3" cols="12" sm="12">
-                  <v-autocomplete
-                    :items="states"
-                    item-text="name"
-                    item-value="name"
-                    label="State"
-                    v-model="customer.state"
-                    outlined
-                    hide-details
-                    dense
-                    @change="getCities"
-                  ></v-autocomplete>
-                </v-col>
-                <v-col md="3" cols="12" sm="12">
-                  <v-autocomplete
-                    :items="cities"
-                    label="City"
-                    v-model="customer.city"
-                    outlined
-                    hide-details
-                    dense
-                  ></v-autocomplete>
-                </v-col>
-                <v-col md="3" cols="12" sm="12">
-                  <v-text-field
-                    label="Zip Code"
-                    v-model="customer.zip_code"
-                    outlined
-                    hide-details
-                    dense
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </span>
-          </v-container>
-        </v-tab-item>
-        <v-tab-item>
-          <v-container>
-            <CustomerHistory :customerId="customer.id"></CustomerHistory>
-          </v-container>
-        </v-tab-item>
-        <v-tab-item>
-          <v-container>
-            <CustomerAnalytics :customerId="customer.id"></CustomerAnalytics>
-          </v-container>
-        </v-tab-item>
-        <v-tab-item>
-          <v-container>
-            <CustomerStatement :customerId="customer.id"></CustomerStatement>
-          </v-container>
-        </v-tab-item>
-      </v-tabs>
+                          readonly
+                          label="DOB"
+                          v-on="on"
+                          v-bind="attrs"
+                          hide-details
+                          dense
+                          outlined
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        no-title
+                        v-model="customer.dob"
+                        @input="dob_menu = false"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      dense
+                      label="Contact No *"
+                      outlined
+                      max="1111111111111"
+                      type="number"
+                      v-model="customer.contact_no"
+                      hide-details
+                      @keyup="mergeContact"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      dense
+                      label="Whatsapp No"
+                      outlined
+                      max="1111111111111"
+                      type="number"
+                      v-model="customer.whatsapp"
+                      hide-details
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col md="3" cols="12" sm="12">
+                <v-autocomplete
+                  :items="countries"
+                  item-text="name"
+                  item-value="name"
+                  label="Country"
+                  v-model="customer.country"
+                  outlined
+                  hide-details
+                  dense
+                  @change="getStates(customer.country)"
+                ></v-autocomplete>
+              </v-col>
+              <v-col md="3" cols="12" sm="12">
+                <v-autocomplete
+                  :items="states"
+                  item-text="name"
+                  item-value="name"
+                  label="State"
+                  v-model="customer.state"
+                  outlined
+                  hide-details
+                  dense
+                  @change="getCities"
+                ></v-autocomplete>
+              </v-col>
+              <v-col md="3" cols="12" sm="12">
+                <v-autocomplete
+                  :items="cities"
+                  label="City"
+                  v-model="customer.city"
+                  outlined
+                  hide-details
+                  dense
+                ></v-autocomplete>
+              </v-col>
+              <v-col md="3" cols="12" sm="12">
+                <v-text-field
+                  label="Zip Code"
+                  v-model="customer.zip_code"
+                  outlined
+                  hide-details
+                  dense
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <!-- <v-row>
+              <v-col cols="12" class="text-right">
+                <AssetsButtonCancel @close="close" />
+                &nbsp;&nbsp;
+                <AssetsButtonSubmit @click="submit" />
+              </v-col>
+            </v-row> -->
+          </span>
+        </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
@@ -256,7 +237,6 @@ export default {
   //   },
   data() {
     return {
-      activeTab: 1,
       NewCustomerDialog: false,
       countries: require("@/json/countries.json"),
       states: [],
@@ -334,6 +314,7 @@ export default {
   methods: {
     close() {
       this.NewCustomerDialog = false;
+      this.$emit("close-dialog");
     },
     getStates(country) {
       // Find the country object from the countries array

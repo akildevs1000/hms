@@ -54,6 +54,10 @@ class Booking extends Model
     {
         return $this->belongsTo(HallBookings::class, 'id', 'booking_id');
     }
+    public function payment_mode()
+    {
+        return $this->belongsTo(PaymentMode::class);
+    }
     public function bookedRooms()
     {
         return $this->hasMany(BookedRoom::class);
@@ -138,7 +142,7 @@ class Booking extends Model
         return $this->belongsTo(Customer::class)->withDefault([
             "name" => "---",
         ])
-        ->with("sub_customers");
+            ->with("sub_customers");
     }
 
     // public function SetCheckInAttribute($value)

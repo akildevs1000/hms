@@ -43,4 +43,8 @@ class Source extends Model
             $builder->orderBy('id', 'desc');
         });
     }
+
+    public function booking(){
+        $this->hasMany(Booking::class,"");
+    };
 }

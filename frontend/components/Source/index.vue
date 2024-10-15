@@ -5,43 +5,48 @@
         {{ response }}
       </v-snackbar>
     </div>
-    <v-dialog v-model="agentDialog" max-width="500">
-      <AssetsIconClose left="490"  @click="agentDialog = false" />
+    <v-dialog
+      v-model="agentDialog"
+      :max-width="action == 'Details' ? 900 : 500"
+    >
+      <AssetsIconClose
+        :left="action == 'Details' ? 890 : 490"
+        @click="agentDialog = false"
+      />
       <v-card>
         <v-alert class="rounded" color="grey lighten-3" dense flat>
-          <span>{{ formTitle }} {{ Model }}</span>
+          <span>{{ action }} {{ Model }}</span>
         </v-alert>
         <v-card-text>
+          <!-- <pre>{{ editedItem }}</pre> -->
           <v-row>
-              <v-col md="6" cols="12">
-                <v-text-field
-                  v-model="editedItem.name"
-                  placeholder="Company"
-                  :hide-details="true"
-                  outlined
-                  label="Company"
-                  dense
-                ></v-text-field>
-                <span v-if="errors && errors.name" class="error--text">{{
-                  errors.name[0]
-                }}</span>
-              </v-col>
-              <v-col md="6" cols="12">
-                <v-text-field
-                  v-model="editedItem.contact_name"
-                  placeholder="Name"
-                  label="Name"
-                  outlined
-                  :hide-details="true"
-                  dense
-                ></v-text-field>
-                <span
-                  v-if="errors && errors.contact_name"
-                  class="error--text"
-                  >{{ errors.contact_name[0] }}</span
-                >
-              </v-col>
-              <!-- <v-col md="12" cols="12">
+            <v-col md="6" cols="12">
+              <v-text-field
+                v-model="editedItem.name"
+                placeholder="Company"
+                :hide-details="true"
+                outlined
+                label="Company"
+                dense
+              ></v-text-field>
+              <span v-if="errors && errors.name" class="error--text">{{
+                errors.name[0]
+              }}</span>
+            </v-col>
+            <v-col md="6" cols="12">
+              <v-text-field
+                v-model="editedItem.contact_name"
+                placeholder="Name"
+                label="Name"
+                outlined
+                :hide-details="true"
+                dense
+              ></v-text-field>
+              <span v-if="errors && errors.contact_name" class="error--text">{{
+                errors.contact_name[0]
+              }}</span>
+            </v-col>
+            <!-- <v-col md="12" cols="12">
                   <v-autocomplete
                     v-model="editedItem.type"
                     :items="sourceTypeList"
@@ -57,80 +62,80 @@
                     errors.type[0]
                   }}</span>
                 </v-col> -->
-              <v-col md="6" cols="6">
-                <v-text-field
-                  v-model="editedItem.mobile"
-                  placeholder="Mobile"
-                  label="Mobile"
-                  outlined
-                  dense
-                  :hide-details="true"
-                  type="number"
-                ></v-text-field>
-                <span v-if="errors && errors.mobile" class="error--text">{{
-                  errors.mobile[0]
-                }}</span>
-              </v-col>
-              <v-col md="6" cols="12">
-                <v-text-field
-                  v-model="editedItem.landline"
-                  placeholder="Landline"
-                  outlined
-                  label="Landline"
-                  dense
-                  :hide-details="true"
-                  type="number"
-                ></v-text-field>
-                <span v-if="errors && errors.mobile" class="error--text">{{
-                  errors.mobile[0]
-                }}</span>
-              </v-col>
-              <v-col md="6" cols="12">
-                <v-text-field
-                  v-model="editedItem.email"
-                  placeholder="Email"
-                  outlined
-                  label="Email"
-                  dense
-                  :hide-details="true"
-                  type="email"
-                ></v-text-field>
-                <span v-if="errors && errors.email" class="error--text">{{
-                  errors.email[0]
-                }}</span>
-              </v-col>
-              <v-col md="6" cols="12">
-                <v-text-field
-                  v-model="editedItem.gst"
-                  placeholder="GST"
-                  label="GST"
-                  :hide-details="true"
-                  outlined
-                  dense
-                ></v-text-field>
-                <span v-if="errors && errors.gst" class="error--text">{{
-                  errors.gst[0]
-                }}</span>
-              </v-col>
-              <v-col md="12" cols="12">
-                <v-text-field
-                  v-model="editedItem.address"
-                  placeholder="Address"
-                  outlined
-                  label="Address"
-                  textarea
-                  hide-details
-                ></v-text-field>
-                <span v-if="errors && errors.address" class="error--text">{{
-                  errors.gst[0]
-                }}</span>
-              </v-col>
-              <v-col cols="12" class="text-right">
-                <AssetsButtonCancel @click="agentDialog = false" />
-                &nbsp; &nbsp;
-                <AssetsButtonSubmit @click="save" />
-              </v-col>
-            </v-row>
+            <v-col md="6" cols="6">
+              <v-text-field
+                v-model="editedItem.mobile"
+                placeholder="Mobile"
+                label="Mobile"
+                outlined
+                dense
+                :hide-details="true"
+                type="number"
+              ></v-text-field>
+              <span v-if="errors && errors.mobile" class="error--text">{{
+                errors.mobile[0]
+              }}</span>
+            </v-col>
+            <v-col md="6" cols="12">
+              <v-text-field
+                v-model="editedItem.landline"
+                placeholder="Landline"
+                outlined
+                label="Landline"
+                dense
+                :hide-details="true"
+                type="number"
+              ></v-text-field>
+              <span v-if="errors && errors.mobile" class="error--text">{{
+                errors.mobile[0]
+              }}</span>
+            </v-col>
+            <v-col md="6" cols="12">
+              <v-text-field
+                v-model="editedItem.email"
+                placeholder="Email"
+                outlined
+                label="Email"
+                dense
+                :hide-details="true"
+                type="email"
+              ></v-text-field>
+              <span v-if="errors && errors.email" class="error--text">{{
+                errors.email[0]
+              }}</span>
+            </v-col>
+            <v-col md="6" cols="12">
+              <v-text-field
+                v-model="editedItem.gst"
+                placeholder="GST"
+                label="GST"
+                :hide-details="true"
+                outlined
+                dense
+              ></v-text-field>
+              <span v-if="errors && errors.gst" class="error--text">{{
+                errors.gst[0]
+              }}</span>
+            </v-col>
+            <v-col md="12" cols="12">
+              <v-text-field
+                v-model="editedItem.address"
+                placeholder="Address"
+                outlined
+                label="Address"
+                textarea
+                hide-details
+              ></v-text-field>
+              <span v-if="errors && errors.address" class="error--text">{{
+                errors.gst[0]
+              }}</span>
+            </v-col>
+            <v-col v-if="action !== 'View'" cols="12" class="text-right">
+              <AssetsButtonCancel @click="agentDialog = false" />
+              &nbsp; &nbsp;
+              <AssetsButtonSubmit @click="save" />
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -152,7 +157,12 @@
         <v-btn
           v-if="can('source_create')"
           class="py-3"
-          @click="agentDialog = true"
+          @click="
+            () => {
+              agentDialog = true;
+              action = 'Create';
+            }
+          "
           x-small
           color="primary"
         >
@@ -212,8 +222,20 @@
           <v-list width="120" dense>
             <v-list-item v-if="can('source_edit')" @click="editItem(item)">
               <v-list-item-title style="cursor: pointer">
-                <v-icon color="secondary" small> mdi-pencil </v-icon>
-                Edit
+                <v-icon color="secondary" x-small> mdi-pencil </v-icon>
+                <AssetsTextLabel color="text-color" label="Edit" />
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item v-if="can('source_edit')" @click="viewItem(item)">
+              <v-list-item-title style="cursor: pointer">
+                <v-icon color="primary" x-small> mdi-eye </v-icon>
+                <AssetsTextLabel color="text-color" label="View" />
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item v-if="can('source_edit')" @click="detailsItem(item)">
+              <v-list-item-title style="cursor: pointer">
+                <v-icon color="primary" x-small> mdi-file </v-icon>
+                <AssetsTextLabel color="text-color" label="Details" />
               </v-list-item-title>
             </v-list-item>
             <v-list-item v-if="type == 'corporate'">
@@ -229,8 +251,8 @@
               </v-list-item> -->
             <v-list-item v-if="can('source_delete')" @click="deleteItem(item)">
               <v-list-item-title style="cursor: pointer">
-                <v-icon color="error" small> mdi-delete </v-icon>
-                Delete
+                <v-icon color="error" x-small> mdi-delete </v-icon>
+                <AssetsTextLabel color="text-color" label="Delete" />
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -244,6 +266,7 @@
 export default {
   props: ["type"],
   data: () => ({
+    action: null,
     headers: [
       { text: "Name", value: "name" },
       { text: "Company", value: "company" },
@@ -370,6 +393,20 @@ export default {
       });
     },
     editItem(item) {
+      this.action = "Edit";
+      this.editedIndex = this.data.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.agentDialog = true;
+    },
+    viewItem(item) {
+      this.action = "View";
+      this.editedIndex = this.data.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.agentDialog = true;
+    },
+
+    detailsItem(item) {
+      this.action = "Details";
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.agentDialog = true;

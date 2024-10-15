@@ -132,6 +132,11 @@
                 <CustomerView :item="item" />
               </v-list-item-title>
             </v-list-item>
+            <v-list-item>
+              <v-list-item-title style="cursor: pointer">
+                <CustomerDetails :item="item" />
+              </v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
       </template>

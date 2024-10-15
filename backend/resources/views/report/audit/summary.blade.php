@@ -274,11 +274,11 @@
                 <td class="text-center border-none col-4 uppercase">
                     <div>NIGHT AUDIT REPORT</div>
                     <div class="border-top border-bottom" style="margin: auto; width: 100px">
-                        12 AUG 2024
+                        {{ date('d M Y') }}
                     </div>
                 </td>
                 <td class="text-right border-none col-4">
-                    <h5 class="reds">sdfsdf</h5>
+                    <h5 class="reds">sdfsdfdsfsdf</h5>
                     <div class="greens" style="line-height: 1">
                         P.O.Box: <small>sdfsdf</small>
                     </div>
@@ -306,42 +306,16 @@
                         <div style="float: right;  width:50%;padding-top: 10px; padding-bottom:10px; padding-right:15px;"
                             class="">
                             <table>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Check In</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Continue</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Day use</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Comp Room</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Check Out</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Closing</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
+                                @foreach ($data['room'] as $roomName => $roomValue)
+                                    <tr>
+                                        <td class="text-left border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">{{ ucfirst($roomName) }}</td>
+                                        <td class="text-right border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">{{ $roomValue }} </td>
+
+                                    </tr>
+                                @endforeach
+
                             </table>
                         </div>
                         <div style="clear: both;"></div>
@@ -358,48 +332,21 @@
                             <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
                                 class="logo" />
                         </div>
-                        <div style="float: right;  width:50%;padding-top: 10px; padding-bottom:10px; padding-right:15px;"
+                        <div style="float: right;  width:50%;padding-top: 15px; padding-bottom:10px; padding-right:15px;"
                             class="">
                             <table>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Break fast
-                                    </td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Lunch</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Dinner</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Jasmin Hall
-                                    </td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Thalam Hall
-                                    </td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Total</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
+                                @foreach ($data['guest'] as $mealName => $mealValue)
+                                    <tr>
+                                        <td class="text-left border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">
+                                            {{ ucfirst($mealName) }} <!-- Capitalize the meal name -->
+                                        </td>
+                                        <td class="text-right border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">
+                                            {{ $mealValue }}
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </table>
                         </div>
                         <div style="clear: both;"></div>
@@ -457,8 +404,8 @@
                     <legend>Occupied</legend>
                     <div
                         style="width: 135px; margin: auto; padding-top: 10px; padding-bottom: 10px; padding-right: 2px; text-align: center;">
-                        <img style="width: 100%;  margin: auto;" src="../public/charts/donutChart.png"
-                            alt="Hotel Logo" class="logo" />
+                        <img style="width: 100%;  margin: auto;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                            class="logo" />
                     </div>
                 </fieldset>
 
@@ -485,127 +432,34 @@
                             class="">
                             <table>
                                 <tr>
-                                    <th class="text-left">Detail</th>
-                                    <th class="text-right">Room rent</th>
-                                    <th class="text-right">Hall rent</th>
-                                    <th class="text-right">CL Recv</th>
-                                    <th class="text-right">Advance</th>
-                                    <th class="text-right">Total</th>
+                                    <td class="text-left" style="font-size: 10px; padding: 2px;">Detail</td>
+                                    <td class="text-right">Room rent</td>
+                                    <td class="text-right">Hall rent</td>
+                                    <td class="text-right">CL Recv</td>
+                                    <td class="text-right">Advance</td>
+                                    <td class="text-right">Total</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Cash</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        2500.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        1000.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        1000.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        4500.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Card</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        15000.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        250.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        15000.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">UPI</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        1000.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        1000.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        10.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        2010.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Bank</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        100.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        100.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Online</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        7250.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        250.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        1000.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        8500.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Total</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        7250.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        250.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        0.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        1000.00</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        8500.00</td>
-                                </tr>
+                                @foreach ($data['income'] as $incomeKey => $incomeValue)
+                                    <tr>
+                                        <td class="text-left border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">{{ $incomeValue['details'] }}</td>
+                                        <td
+                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $incomeValue['room_rent'] }}</td>
+                                        <td
+                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $incomeValue['hall_rent'] }}</td>
+                                        <td
+                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $incomeValue['city_ledger'] }}</td>
+                                        <td
+                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $incomeValue['advance_price'] }}</td>
+                                        <td
+                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $incomeValue['total'] }}</td>
+                                    </tr>
+                                @endforeach
                             </table>
                         </div>
                         <div style="clear: both;"></div>
@@ -618,95 +472,37 @@
                     <legend>Expenses</legend>
                     <div class="card-inner-container">
                         <div style="height: 300px;width:300px;"
-                            style="float: left; width:30%; padding-top: 20px; padding-bottom:10px; padding-right:10px;">
+                            style="float: left; width:40%; padding-top: 20px; padding-bottom:10px; padding-right:50px;">
                             <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
                                 class="logo" />
                         </div>
-                        <div style="float: right; width:70%; padding-top: 10px; padding-bottom:10px; padding-right:15px;"
+                        <div style="float: right; width:60%; padding-top:20px; padding-bottom:10px; padding-right:15px;"
                             class="">
                             <table>
                                 <tr>
-                                    <th class="text-left">Category</th>
-                                    <th class="text-right">Detail</th>
-                                    <th class="text-right">Mode</th>
-                                    <th class="text-right">Amount</th>
+                                    <td class="text-left border-bottom small-font" style="padding: 2px;">Category</td>
+                                    <td class="text-left border-bottom small-font" style="padding: 2px;">Detail</td>
+                                    <td class="text-left border-bottom small-font" style="padding: 2px;">Mode</td>
+                                    <td class="text-right border-bottom small-font" style="padding: 2px;">Amount</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Food</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Provision For Kitchen
-                                    </td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Cash</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        10.00
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Misc</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Masking Tape
-
-                                    </td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Card</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        250.00
-
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Food</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Tea
-
-                                    </td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Cash</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        500,00
-
-
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Food</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Food purchase for R 105
-
-
-                                    </td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        Credit</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        1600.00
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td colspan="3" class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Total</td>
-                                    <td
-                                        class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                        7250.00</td>
-                                </tr>
-
+                                @foreach ($data['expense'] as $expenseKey => $expenseValue)
+                                    <tr>
+                                        <td class="text-left border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">{{ $expenseValue['category'] }}
+                                        </td>
+                                        <td
+                                            class="text-left border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $expenseValue['description'] }}
+                                        </td>
+                                        <td
+                                            class="text-left border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $expenseValue['payment_mode'] }}</td>
+                                        <td
+                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
+                                            {{ $expenseValue['amount'] }}
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </table>
                         </div>
                         <div style="clear: both;"></div>
@@ -714,25 +510,23 @@
                     </div>
                 </fieldset>
             </td>
-
-            {{-- <td class="text-center" style="width: 20%">
-                <fieldset class="card">
-                    <legend>Guest</legend>
-                    <div class="card-inner-container">
-                        <div style="width: 100%" class="text-center">
-                            <img src="../public/charts/donutChart.png" alt="Hotel Logo" class="logo" />
-                        </div>
-                    </div>
-                </fieldset>
-            </td> --}}
         </tr>
     </table>
     <br />
     <br>
+    <table>
+        <tr class="red">
+            @foreach ($data['calculateBookingsBySource'] as $expenseKey => $expenseValue)
+                <td style="padding:5px 0px;height:20px;min-width:50px;width:{{ $expenseValue['percentage'] }};color:black;background:{{ $expenseValue['color'] }};"
+                    class="text-center">{{ $expenseValue['label'] }} {{ $expenseValue['value'] }}</td>
+            @endforeach
+        </tr>
+    </table>
+    <br>
     <table border="1">
 
         <tbody>
-            <tr style="background: #858585;color:white;">
+            <tr style="background: grey;color:white;">
                 <td class="text-center" style="color: black">Income ( cash )
                 </td>
                 <td class="text-center" style="color: black">Income ( others )
@@ -765,19 +559,6 @@
                 </td>
             </tr>
         </tbody>
-    </table>
-    <br>
-    <table>
-        <tr>
-            <td style="height:30px;width: 25%;color:black;background:green;" class="text-center">Walk 10</td>
-            <td style="height:30px;width: 15%;color:black;background:rgb(119, 228, 119);" class="text-center">Travel 8
-            </td>
-            <td style="height:30px;width: 8%;color:black;background:orange;" class="text-center">Corp 6
-            </td>
-            <td style="height:30px;width: 7%;color:black;background:rgb(0, 217, 255);" class="text-center">OTA 6
-            </td>
-            <td style="height:30px;width: 40%;color:black;background:grey;" class="text-center">Walk 10</td>
-        </tr>
     </table>
 </body>
 

@@ -3,6 +3,7 @@
    use App\Http\Controllers\CustomerController;
    use App\Http\Controllers\GRCController;
    use App\Http\Controllers\ReportController;
+   use App\Http\Controllers\ReportGenerateController;
    use Illuminate\Support\Facades\Route;
 
    // Route::get('report', [CustomerController::class, 'index']);
@@ -68,7 +69,7 @@
 
 
    Route::get('html-test', [ReportController::class, 'htmlTest']);
-   Route::get('generate-night-audit-summary', [ReportController::class, 'nightAuditSummary']);
+   Route::get('generate-night-audit-report/{id}/{data}', [ReportGenerateController::class, 'processData']);
 
 
    Route::get('download-merged-pdf', [ReportController::class, 'downloadMergedPdf']);

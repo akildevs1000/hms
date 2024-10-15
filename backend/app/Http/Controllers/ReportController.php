@@ -962,44 +962,6 @@ class ReportController extends Controller
             ->stream();
     }
 
-    public function nightAuditSummary()
-    {
-        $company_id = 3;
-        $date = date("Y-m-d");
-        $fileName = "summary";
-
-        return (new ReportGenerateController)->processSummaryData($company_id, $date);
-
-        $pdf = PDF::loadView("report.audit.summary")->stream();
-        $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        Storage::disk('local')->put($file_path, $pdf);
-        return $pdf;
-    }
-
-
-
-    // public function mergePdfFiles(array $pdfFiles, $outputPath)
-    // {
-    //     // Initialize FPDI
-    //     $pdf = new FPDI();
-
-    //     // Loop through each PDF file
-    //     foreach ($pdfFiles as $file) {
-    //         $pageCount = $pdf->setSourceFile($file);
-
-    //         // Add each page from the source PDF to the final output
-    //         for ($i = 1; $i <= $pageCount; $i++) {
-    //             $tplId = $pdf->importPage($i);
-    //             $pdf->AddPage();
-    //             $pdf->useTemplate($tplId);
-    //         }
-    //     }
-
-    //     // Output the merged PDF (you can save it to a file or download it)
-    //     $pdf->Output($outputPath, 'F');  // 'F' for saving to file, 'I' for inline, 'D' for download
-
-    //     return response()->download($outputPath);
-    // }
     public function mergePdfFiles(array $pdfFiles, $outputPath)
     {
         // Initialize FPDI
