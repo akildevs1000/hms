@@ -2,12 +2,12 @@
   <v-row>
     <v-col>
       <v-autocomplete
-        v-model="sourceType.type"
+        v-model="sourceType.source_type"
         label="Source Type *"
         :items="types"
         dense
         outlined
-        @change="getType(sourceType.type)"
+        @change="getType(sourceType.source_type)"
         hide-details
       ></v-autocomplete>
     </v-col>
@@ -179,8 +179,24 @@
                       hide-details
                     ></v-autocomplete>
                   </v-col>
-                  <v-col cols="12" class="text-right">
-                    <v-btn small color="primary" @click="submit">Submit</v-btn>
+                  <v-col cols="12" class="text-center">
+                    <AssetsButton
+                      :options="{
+                        icon: ``,
+                        label: `Cancel`,
+                        color: `red`,
+                      }"
+                      @click="close"
+                    ></AssetsButton>
+                    &nbsp;
+                    <AssetsButton
+                      :options="{
+                        icon: ``,
+                        label: `Submit`,
+                        color: `blue`,
+                      }"
+                      @click="submit"
+                    ></AssetsButton>
                   </v-col>
                 </v-row>
               </v-col>
@@ -197,7 +213,7 @@ export default {
     defaultSource: {
       type: Object,
       default: () => ({
-        type: null,
+        source_type: "Walking",
         source: null,
         reference_no: null,
         paid_by: null,
@@ -222,7 +238,12 @@ export default {
       gst: null,
       address: null,
     },
-    sourceType: {},
+    sourceType: {
+      source_type: "Walking",
+      source: null,
+      reference_no: null,
+      paid_by: null,
+    },
     isOnline: false,
     isCorporate: false,
     isAgent: false,
@@ -230,12 +251,12 @@ export default {
   }),
   async created() {
     if (this.isOverride) {
-      this.sourceType.type = this.defaultSource.type;
+      this.sourceType.source_type = this.defaultSource.source_type;
       this.displayObject.name = this.defaultSource.source;
       this.$emit("sourceObject", this.defaultSource);
       return;
     }
-    this.defaultSource.type = this.defaultSource.type;
+    this.defaultSource.source_type = this.defaultSource.source_type;
     this.displayObject.name = this.defaultSource.source;
     this.$emit("sourceObject", this.defaultSource);
     this.get_agents();
@@ -245,10 +266,11 @@ export default {
   methods: {
     submit() {
       let payload = {
-        type: this.sourceType.type,
+        source_type: this.sourceType.source_type,
         source: this.response.name,
         reference_no: this.sourceType.reference_no,
         paid_by: this.sourceType.paid_by,
+        source_id: this.response.source_id || 0,
       };
 
       this.$emit("sourceObject", payload);
@@ -257,11 +279,6 @@ export default {
     },
     close() {
       this.sourceDialog = false;
-      //   this.sourceType = this.defaultSourceType;
-      //   this.isOnline = false;
-      //   this.isCorporate = false;
-      //   this.isAgent = false;
-      //   this.gst_number = null;
     },
     get_gst(item, type) {
       switch (type) {
@@ -311,7 +328,7 @@ export default {
     getType(val) {
       if (val == "Walking" || val == "Complimentary") {
         let payload = {
-          type: this.sourceType.type,
+          source_type: this.sourceType.source_type,
           source: "---",
           reference_no: "---",
           paid_by: "---",
@@ -359,8 +376,8 @@ export default {
       }
 
       let result = items.find(({ name }) => name && name.includes(search));
-
       this.response = {
+        source_id: result.id,
         name: result.name,
         type: result.type,
         mobile: result.mobile,

@@ -29,15 +29,26 @@ class SourceController extends Controller
                 $q->orWhere('gst', env("WILD_CARD") ?? 'ILIKE', "%$request->search%");
             });
         }
+
+        $model->with("customers");
+
         return $model->paginate(10 ?? $request->perPage);
-        return response()->json(['sources' => $model->paginate(10 ?? $request->perPage), null, 'status' => true]);
+    }
+
+    public function getSourceType(Request $request)
+    {
+        $model = Source::query();
+        $model->where('company_id', $request->company_id);
+        $model->where('type', $request->source_type);
+        $model->orderBy('name', 'asc');
+        return $model->get();
     }
 
     public function getOnline(Request $request)
     {
         $model = Source::query();
         $model->where('company_id', $request->company_id);
-        $model->where('type', 'online');
+        $model->where('type', 'Online');
         $model->orderBy('name', 'asc');
         return $model->get();
     }
@@ -45,7 +56,7 @@ class SourceController extends Controller
     {
         $model = Source::query();
         $model->where('company_id', $request->company_id);
-        $model->where('type', 'agent');
+        $model->where('type', 'Travel Agency');
         $model->orderBy('name', 'asc');
         return $model->get();
     }
@@ -53,7 +64,7 @@ class SourceController extends Controller
     {
         $model = Source::query();
         $model->where('company_id', $request->company_id);
-        $model->where('type', 'corporate');
+        $model->where('type', 'Corporate');
         $model->orderBy('name', 'asc');
         return $model->get();
     }

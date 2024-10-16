@@ -64,9 +64,6 @@
 
   Route::post('check_out_room', [BookingController::class, 'check_out_room']);
 
-  Route::post('change_room_by_drag', [BookingController::class, 'changeRoomByDrag']);
-  Route::post('change_date_by_drag', [BookingController::class, 'changeDateByDrag']);
-
   Route::post('modify_hall', [BookingController::class, 'modifyHall']);
 
 
@@ -123,3 +120,4 @@
   Route::get('get-reservation-number/{id}', [BookingController::class, 'getReservationNumber']);
 
   Route::get('ten-days-forcast/{id}', [BookingController::class, 'getTenDaysForecast']);
+  Route::get('get-bookings-source-type', [BookingController::class,"bookingStatsBySourceType"]);

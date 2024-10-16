@@ -37,7 +37,7 @@
             <v-col md="4" dense>
               <v-autocomplete
                 label="Business Source"
-                v-model="customer.customer_type"
+                v-model="booking.type"
                 :items="business_sources"
                 dense
                 item-text="name"
@@ -141,7 +141,7 @@
             </v-col>
             <v-col md="4" cols="12" sm="12">
               <v-menu
-                v-model="customer.dob_menu"
+                v-model="dob_menu"
                 :close-on-content-click="false"
                 :nudge-right="40"
                 transition="scale-transition"
@@ -163,7 +163,7 @@
                 <v-date-picker
                   no-title
                   v-model="customer.dob"
-                  @input="customer.dob_menu = false"
+                  @input="dob_menu = false"
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -320,6 +320,7 @@ export default {
         "Party/Functions",
         "Friend Visit",
         "Marriage",
+        "Other",
       ],
       response: "",
       preloader: false,
@@ -335,7 +336,7 @@ export default {
       booking: {
         purpose: null,
         request: null,
-        type: "Walking",
+        type: null,
         reference_no: null,
         paid_by: null,
       },
@@ -347,8 +348,9 @@ export default {
         { id: 4, name: "Ms" },
         { id: 5, name: "Dr" },
       ],
+      dob_menu: false,
       customer: {
-        customer_type: null,
+        customer_type: "Walking",
         title: "Mr",
         whatsapp: "",
         nationality: "",
@@ -357,13 +359,9 @@ export default {
         contact_no: "",
         email: "",
         car_no: "",
-        no_of_adult: 0,
-        no_of_child: 0,
-        no_of_baby: 0,
         address: "",
         image: "",
         company_id: this.$auth.user.company.id,
-        dob_menu: false,
         dob: null,
         country: null,
         state: null,
@@ -376,6 +374,32 @@ export default {
   },
   async created() {
     this.preloader = false;
+
+    if (process.env.LOCAL_IP) {
+      this.customer = {
+        customer_type: "Walking",
+        title: "Mr",
+        first_name: "test",
+        last_name: "user",
+        email: "test@gmail.com",
+        contact_no: "678567467",
+        whatsapp: "678567467",
+        nationality: "India",
+        car_no: "23123",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob: null,
+        country: "International",
+        state: null,
+        city: null,
+        zip_code: null,
+      };
+      this.booking = {
+        purpose: "Other",
+        request: "booking request",
+        type: "Walking",
+      };
+    }
 
     if (this.defaultCustomer && this.defaultCustomer.id) {
       this.canOverride = true;
@@ -433,7 +457,12 @@ export default {
       }
     },
     handleSource(e) {
-      this.booking = e;
+      this.customer.customer_type = e.source_type;
+      this.customer.source_id = e.source_id;
+      this.booking = {
+        ...this.booking,
+        ...e,
+      };
     },
     async get_business_sources() {
       let config = {
@@ -451,6 +480,7 @@ export default {
         let payload = {
           customer: this.customer,
           booking: { ...this.booking, group_name: this.group_name },
+          customer_type: this.booking.source_type || "Walking",
         };
         this.$emit(`selectedCustomer`, payload);
       }

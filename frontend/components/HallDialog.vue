@@ -1072,38 +1072,6 @@ export default {
         this.agentList = data;
       });
     },
-    get_Corporate() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_corporate`, payload).then(({ data }) => {
-        this.CorporateList = data;
-      });
-    },
-
-    get_online() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_online`, payload).then(({ data }) => {
-        this.sources = data;
-      });
-    },
-
-    get_id_cards() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_id_cards`, payload).then(({ data }) => {
-        this.idCards = data;
-      });
-    },
 
     get_cs_gst(amount) {
       let gst = parseFloat(amount) / 2;

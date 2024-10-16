@@ -545,6 +545,9 @@ export default {
           selected_food_plan.food_plan_price,
       }));
 
+      console.log("🚀 ~ priceList:", priceList)
+      // return;
+
       let payload = {
         ...this.temp,
         ...selected_food_plan,

@@ -131,6 +131,8 @@ Route::get('source/search/{key}', [SourceController::class, 'search']);
 Route::get('get_online', [SourceController::class, 'getOnline']);
 Route::get('get_agent', [SourceController::class, 'getAgent']);
 Route::get('get_corporate', [SourceController::class, 'getCorporate']);
+Route::get('get_source_type', [SourceController::class, 'getSourceType']);
+
 
 // // Missing
 // Route::resource('missing', MissingController::class);

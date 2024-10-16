@@ -6,12 +6,12 @@
       </v-snackbar>
     </div>
     <v-dialog
-      v-model="agentDialog"
+      v-model="sourceDialogBox"
       :max-width="action == 'Details' ? 900 : 500"
     >
       <AssetsIconClose
         :left="action == 'Details' ? 890 : 490"
-        @click="agentDialog = false"
+        @click="sourceDialogBox = false"
       />
       <v-card>
         <v-alert class="rounded" color="grey lighten-3" dense flat>
@@ -46,22 +46,6 @@
                 errors.contact_name[0]
               }}</span>
             </v-col>
-            <!-- <v-col md="12" cols="12">
-                  <v-autocomplete
-                    v-model="editedItem.type"
-                    :items="sourceTypeList"
-                    placeholder="Type"
-                    dense
-                    label="Type"
-                    item-text="name"
-                    item-value="value"
-                    outlined
-                    :hide-details="true"
-                  ></v-autocomplete>
-                  <span v-if="errors && errors.type" class="error--text">{{
-                    errors.type[0]
-                  }}</span>
-                </v-col> -->
             <v-col md="6" cols="6">
               <v-text-field
                 v-model="editedItem.mobile"
@@ -131,7 +115,7 @@
               }}</span>
             </v-col>
             <v-col v-if="action !== 'View'" cols="12" class="text-right">
-              <AssetsButtonCancel @click="agentDialog = false" />
+              <AssetsButtonCancel @click="sourceDialogBox = false" />
               &nbsp; &nbsp;
               <AssetsButtonSubmit @click="save" />
             </v-col>
@@ -159,7 +143,7 @@
           class="py-3"
           @click="
             () => {
-              agentDialog = true;
+              sourceDialogBox = true;
               action = 'Create';
             }
           "
@@ -232,15 +216,14 @@
                 <AssetsTextLabel color="text-color" label="View" />
               </v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="can('source_edit')" @click="detailsItem(item)">
+            <v-list-item>
               <v-list-item-title style="cursor: pointer">
-                <v-icon color="primary" x-small> mdi-file </v-icon>
-                <AssetsTextLabel color="text-color" label="Details" />
+                <SourceGuestList :item="item" :customer_type="item.type" @close-dialog="$emit(`response`)" />
               </v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="type == 'corporate'">
+            <v-list-item v-if="type == 'Corporate'">
               <v-list-item-title style="cursor: pointer">
-                <SourceGuestCreate />
+                <SourceGuestCreate :source_id="item.id" @close-dialog="$emit(`response`)" />
               </v-list-item-title>
             </v-list-item>
             <!-- <v-list-item v-if="can('source_edit')" @click="editItem(item)">
@@ -276,6 +259,7 @@ export default {
       { text: "Email", value: "email" },
       { text: "GST", value: "gst" },
       { text: "Address", value: "address" },
+      { text: "Total Customer", value: "bookings_count" },
       { text: "created_at", value: "created_at" },
       { text: "Action", value: "action" },
     ],
@@ -290,7 +274,7 @@ export default {
     search: "",
     snackbar: false,
     dialog: false,
-    agentDialog: false,
+    sourceDialogBox: false,
     ids: [],
     loading: false,
     total: 0,
@@ -318,20 +302,6 @@ export default {
     },
     response: "",
     data: [],
-    sourceTypeList: [
-      {
-        name: "Online",
-        value: "Online",
-      },
-      {
-        name: "Travel Agent",
-        value: "Agent",
-      },
-      {
-        name: "Corporate",
-        value: "corporate",
-      },
-    ],
     errors: [],
   }),
 
@@ -342,7 +312,7 @@ export default {
   },
 
   watch: {
-    agentDialog(val) {
+    sourceDialogBox(val) {
       val || this.close();
       this.errors = [];
       this.search = "";
@@ -396,20 +366,20 @@ export default {
       this.action = "Edit";
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.agentDialog = true;
+      this.sourceDialogBox = true;
     },
     viewItem(item) {
       this.action = "View";
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.agentDialog = true;
+      this.sourceDialogBox = true;
     },
 
     detailsItem(item) {
       this.action = "Details";
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.agentDialog = true;
+      this.sourceDialogBox = true;
     },
 
     delteteSelectedRecords() {
@@ -450,7 +420,7 @@ export default {
     },
 
     close() {
-      this.agentDialog = false;
+      this.sourceDialogBox = false;
 
       // setTimeout(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
@@ -481,6 +451,7 @@ export default {
                 (item) => item.id == this.editedItem.id
               );
               this.getDataFromApi();
+              this.$emit("response");
               this.snackbar = data.status;
               this.response = data.message;
               this.close();
@@ -495,6 +466,7 @@ export default {
               this.errors = data.errors;
             } else {
               this.getDataFromApi();
+              this.$emit("response");
               this.snackbar = data.status;
               this.response = data.message;
               this.close();

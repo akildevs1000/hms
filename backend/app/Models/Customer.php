@@ -147,16 +147,13 @@ class Customer extends Model
             'whatsapp',
             'nationality',
             'gst_number',
-
             'id_frontend_side',
             'id_backend_side',
-
-
             'country',
             'state',
             'city',
             'zip_code',
-
+            'source_id',
         ];
     }
 

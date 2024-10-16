@@ -166,10 +166,18 @@ export default {
         filterable: false,
       },
       {
-        text: "Contact",
+        text: "Customer",
         value: "first_name",
         align: "left",
         key: "first_name",
+        sortable: true,
+        filterable: true,
+      },
+      {
+        text: "Source Type",
+        value: "customer_type",
+        align: "left",
+        key: "customer_type",
         sortable: true,
         filterable: true,
       },
@@ -301,6 +309,7 @@ export default {
     },
 
     closeDialogs() {
+      this.$emit("response");
       this.getDataFromApi();
       this.viewCustomerDialog = false;
     },

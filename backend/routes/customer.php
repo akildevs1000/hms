@@ -24,8 +24,11 @@
     Route::get('/get_customer_by_id/{id}', [CustomerController::class, 'getCustomerById']);
 
     Route::get('/get_customer_history/{id}', [CustomerController::class, 'getCustomerHistory']);
+    Route::get('/get_source_transactions/{id}', [CustomerController::class, 'getSourceTransactions']);
+
     Route::get('/get_customer_analytics/{id}', [CustomerController::class, 'getCustomerAnalytics']);
     Route::get('/get_customer_statement/{id}', [CustomerController::class, 'getCustomerStatement']);
+    Route::get('/get_source_statement/{id}', [CustomerController::class, 'getSourceStatement']);
 
     Route::get('/get_countries', function () {
         $countries = DB::table('countries')->get();

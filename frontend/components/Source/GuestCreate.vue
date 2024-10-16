@@ -1,30 +1,22 @@
 <template>
   <v-dialog v-model="NewCustomerDialog" max-width="750px">
+    <AssetsIconClose left="740" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on" small>
-        <v-icon small color="black">mdi-plus</v-icon> Guest
+        <v-icon x-small color="black">mdi-plus</v-icon>
+        <AssetsTextLabel color="text-color" label="Guest" />
       </span>
     </template>
 
     <v-card>
-      <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-        <span>Create Guest </span>
-        <v-spacer></v-spacer>
-        <SearchCustomer @foundCustomer="handleFoundCustomer" />
-        <AssetsButtonClose @close="close" />
-      </v-toolbar>
-
-      <!-- <v-alert class="rounded-md" color="grey lighten-3" dense flat>
-        <v-row no-gutter>
-          <v-col>
-            <span>Create Guest</span>
-          </v-col>
-          <v-col class="text-right">
-            <SearchCustomer @foundCustomer="handleFoundCustomer" />
-            <AssetsButtonClose @close="close" />
-          </v-col>
-        </v-row>
-      </v-alert> -->
+      <AssetsHeadDialog>
+        <template #label>
+          <span>Create Guest</span>
+        </template>
+        <template #search>
+          <SearchCustomer @foundCustomer="handleFoundCustomer" />
+        </template>
+      </AssetsHeadDialog>
       <v-card-text>
         <v-container>
           <span>
@@ -168,52 +160,52 @@
                       hide-details
                     ></v-text-field>
                   </v-col>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-autocomplete
+                      :items="countries"
+                      item-text="name"
+                      item-value="name"
+                      label="Country"
+                      v-model="customer.country"
+                      outlined
+                      hide-details
+                      dense
+                      @change="getStates(customer.country)"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-autocomplete
+                      :items="states"
+                      item-text="name"
+                      item-value="name"
+                      label="State"
+                      v-model="customer.state"
+                      outlined
+                      hide-details
+                      dense
+                      @change="getCities"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-autocomplete
+                      :items="cities"
+                      label="City"
+                      v-model="customer.city"
+                      outlined
+                      hide-details
+                      dense
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col md="3" cols="12" sm="12">
+                    <v-text-field
+                      label="Zip Code"
+                      v-model="customer.zip_code"
+                      outlined
+                      hide-details
+                      dense
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
-              </v-col>
-              <v-col md="3" cols="12" sm="12">
-                <v-autocomplete
-                  :items="countries"
-                  item-text="name"
-                  item-value="name"
-                  label="Country"
-                  v-model="customer.country"
-                  outlined
-                  hide-details
-                  dense
-                  @change="getStates(customer.country)"
-                ></v-autocomplete>
-              </v-col>
-              <v-col md="3" cols="12" sm="12">
-                <v-autocomplete
-                  :items="states"
-                  item-text="name"
-                  item-value="name"
-                  label="State"
-                  v-model="customer.state"
-                  outlined
-                  hide-details
-                  dense
-                  @change="getCities"
-                ></v-autocomplete>
-              </v-col>
-              <v-col md="3" cols="12" sm="12">
-                <v-autocomplete
-                  :items="cities"
-                  label="City"
-                  v-model="customer.city"
-                  outlined
-                  hide-details
-                  dense
-                ></v-autocomplete>
-              </v-col>
-              <v-col md="3" cols="12" sm="12">
-                <v-text-field
-                  label="Zip Code"
-                  v-model="customer.zip_code"
-                  outlined
-                  hide-details
-                  dense
-                ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -234,7 +226,6 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["defaultCustomer"],
   props: {
     defaultCustomer: {
       type: Object,
@@ -246,6 +237,10 @@ export default {
     initialImage: {
       type: Boolean,
       default: () => true,
+    },
+    source_id: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
@@ -275,7 +270,6 @@ export default {
       imgView: false,
 
       isDiff: false,
-      sourceCompKey: 1,
       group_name: null,
       booking: {
         purpose: null,
@@ -295,7 +289,7 @@ export default {
       dob_menu: false,
 
       customer: {
-        customer_type: null,
+        customer_type: "Corporate",
         title: "Mr",
         whatsapp: "",
         nationality: "",
@@ -322,20 +316,6 @@ export default {
       this.customer = this.defaultCustomer;
       this.getStates(this.customer.country);
       this.getCities(this.customer.state);
-
-      if (this.customer.latest_booking) {
-        let latest_booking = this.customer.latest_booking;
-
-        this.booking = {
-          type: latest_booking.type,
-          source: latest_booking.source,
-          purpose: latest_booking.purpose,
-          request: latest_booking.request,
-          reference_no: latest_booking.reference_no,
-          paid_by: latest_booking.paid_by,
-        };
-      }
-      this.sourceCompKey += 1;
     }
     await this.get_business_sources();
   },
@@ -348,7 +328,7 @@ export default {
     },
     close() {
       this.customer = {
-        customer_type: null,
+        customer_type: "Corporate",
         title: "Mr",
         whatsapp: "",
         nationality: "",
@@ -409,38 +389,10 @@ export default {
       let { data } = await this.$axios.get("business-source-list", config);
       this.business_sources = data;
     },
-    nextTab() {
-      if (!this.customer.customer_type) {
-        this.$swal("Warning", "Select Business Source", "error");
-        return;
-      }
-      if (!this.customer.title) {
-        this.$swal("Warning", "Customer title is required", "error");
-        return;
-      }
-
-      if (!this.customer.first_name) {
-        this.$swal("Warning", "Customer first name is required", "error");
-        return;
-      }
-
-      if (!this.customer.last_name) {
-        this.$swal("Warning", "Customer last name is required", "error");
-        return;
-      }
-
-      if (!this.customer.contact_no) {
-        this.$swal("Warning", "Customer Contact no is required", "error");
-        return;
-      }
-
-      if (!this.customer.nationality) {
-        this.$swal("Warning", "Customer Nationality is required", "error");
-        return;
-      }
-    },
     submit() {
       this.customer.company_id = this.$auth.user.company.id;
+
+      this.customer.source_id = this.source_id;
 
       this.$axios
         .post("/store_customer", this.customer)

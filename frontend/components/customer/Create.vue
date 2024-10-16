@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="NewCustomerDialog" max-width="750px">
-    <AssetsIconClose left="740"  @click="close" />
+    <AssetsIconClose left="740" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         v-bind="attrs"
@@ -288,7 +288,7 @@ export default {
       dob_menu: false,
 
       customer: {
-        customer_type: null,
+        customer_type: "Walking",
         title: "Mr",
         whatsapp: "",
         nationality: "",
@@ -335,7 +335,7 @@ export default {
   methods: {
     close() {
       this.customer = {
-        customer_type: null,
+        customer_type: "Walking",
         title: "Mr",
         whatsapp: "",
         nationality: "",
@@ -395,36 +395,6 @@ export default {
       };
       let { data } = await this.$axios.get("business-source-list", config);
       this.business_sources = data;
-    },
-    nextTab() {
-      if (!this.customer.customer_type) {
-        this.$swal("Warning", "Select Business Source", "error");
-        return;
-      }
-      if (!this.customer.title) {
-        this.$swal("Warning", "Customer title is required", "error");
-        return;
-      }
-
-      if (!this.customer.first_name) {
-        this.$swal("Warning", "Customer first name is required", "error");
-        return;
-      }
-
-      if (!this.customer.last_name) {
-        this.$swal("Warning", "Customer last name is required", "error");
-        return;
-      }
-
-      if (!this.customer.contact_no) {
-        this.$swal("Warning", "Customer Contact no is required", "error");
-        return;
-      }
-
-      if (!this.customer.nationality) {
-        this.$swal("Warning", "Customer Nationality is required", "error");
-        return;
-      }
     },
     submit() {
       this.customer.company_id = this.$auth.user.company.id;

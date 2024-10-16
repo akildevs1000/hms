@@ -284,7 +284,7 @@ class Booking extends Model
             "paid_by",
             "purpose",
             "gst_number",
-
+            "source_type",
         ];
     }
 
@@ -296,6 +296,11 @@ class Booking extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, "id");
     }
 
     // protected static function boot()

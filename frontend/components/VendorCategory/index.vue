@@ -63,7 +63,7 @@
 <script>
 export default {
   data: () => ({
-    Model: "Vendor Category",
+    Model: "Category",
     endpoint: "vendor-category",
     filters: {},
     options: {},

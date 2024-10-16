@@ -201,25 +201,6 @@ export default {
     data: [],
     loading: false,
     total: 0,
-    headers: [
-      { text: "#" },
-      { text: "Rev. No" },
-      { text: "Rooms" },
-      { text: "Source" },
-      { text: "Reference" },
-      { text: "Guest" },
-      { text: "C/In" },
-      { text: "C/Out" },
-      { text: "Total" },
-      { text: "Posting" },
-      { text: "Paid" },
-      { text: "Balance" },
-      { text: "Rev. Date" },
-      // { text: "Reservation Status" },
-      { text: "View" },
-      { text: "Payment" },
-      { text: "Invoice" },
-    ],
 
     headers_table: [
       {
@@ -246,6 +227,14 @@ export default {
         key: "employee_id",
         filterable: true,
         value: "rooms",
+      },
+      {
+        text: "Source Type",
+        align: "left",
+        sortable: false,
+        key: "employee_id",
+        filterable: true,
+        value: "source_type",
       },
       {
         text: "Source",
@@ -581,8 +570,8 @@ export default {
       }
     },
     calculateStates(data) {
-      const countResult = data.reduce((acc, { type }) => {
-        acc[type] = (acc[type] || 0) + 1;
+      const countResult = data.reduce((acc, { source_type }) => {
+        acc[source_type] = (acc[source_type] || 0) + 1;
         return acc;
       }, {});
 

@@ -44,7 +44,13 @@ class Source extends Model
         });
     }
 
-    public function booking(){
-        $this->hasMany(Booking::class,"");
-    };
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, "source_type", "type");
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class);
+    }
 }

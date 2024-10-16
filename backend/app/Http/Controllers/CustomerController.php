@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Customer\StoreRequest;
 use App\Http\Requests\Customer\UpdateRequest;
 use App\Models\Booking;
+use App\Models\Company;
 use App\Models\Customer;
 use App\Models\IdCardType;
 use App\Models\Payment;
@@ -28,6 +29,14 @@ class CustomerController extends Controller
 
         $model->where('company_id', $request->company_id);
         $model->with('idCardType');
+
+        if ($request->filled('customer_type') && $request->customer_type) {
+            $model->where('customer_type', $request->customer_type);
+        }
+
+        if ($request->filled('source_id') && $request->source_id) {
+            $model->where('source_id', $request->source_id);
+        }
 
         if ($request->filled('sortBy')) {
             $sortDesc = $request->sortDesc == 'true' ? 'DESC' : 'ASC';
@@ -223,6 +232,17 @@ class CustomerController extends Controller
         return response()->json(['data' => $customer, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
     }
 
+    public function getSourceTransactions($id)
+    {
+        $customerIds = Customer::where("source_id", $id)->pluck("id");
+        $bookings = Booking::with('cityLedgerPayments', 'withOutCityLedgerPayments', "bookedRooms")->whereIn("customer_id", $customerIds)->get()->toArray();
+        $bookingIds = array_column($bookings, 'id');
+        $total_days = array_sum(array_column($bookings, 'total_days'));
+        $revenue = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
+        $city_ledger = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 1)->sum('amount');
+        return response()->json(['bookings' => $bookings, 'total_days' => $total_days, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
+    }
+
     public function getCustomerStatement(Request $request, $id)
     {
         $statement_type = $request->statement_type;
@@ -273,7 +293,63 @@ class CustomerController extends Controller
         ]);
     }
 
+    public function getSourceStatement(Request $request, $id)
+    {
+        $statement_type = $request->statement_type;
+        $customer_id = $request->customer_id ?? 0;
+        $company_id = $request->company_id ?? 0;
 
+        $model = Customer::query();
+
+        $model->where("source_id", $id);
+
+        if ($customer_id) {
+            $model->where('id', $customer_id);
+        }
+
+        $customerIds =  $model->pluck("id");
+
+        $res = Booking::with('cityLedgerPayments', 'withOutCityLedgerPayments', "bookedRooms")->whereIn("customer_id", $customerIds)->get()->toArray();
+        $bookingIds = array_column($res, 'id');
+
+        $payments = Payment::with("booking")->whereIn('booking_id', $bookingIds)
+            // ->where('is_city_ledger', 0)
+            ->whereDate('date', ">=", $request->from_date)
+            ->whereDate('date', "<=", $request->to_date);
+
+
+        $openBalancePayment = Payment::with("booking")
+            ->whereIn('booking_id', $bookingIds)
+            ->where('is_city_ledger', 1)
+            ->whereDate('date', "<", $request->from_date)
+            ->sum('amount');
+
+        if ($statement_type !== "All") {
+            $payments->where('is_city_ledger', 1);
+        }
+
+        $paymentData = $payments->get()->toArray();
+
+        $arr = [
+            "isOpeningBalance" => true,
+            "date" => "---",
+            "transaction" => "***Openning Balance***",
+            "description" => "---",
+            "amount" => 0,
+            "payment" => 0,
+            "balance" => $openBalancePayment,
+        ];
+
+
+        array_unshift($paymentData, $arr);
+
+        return response()->json([
+            'company' => Company::find($company_id),
+            'statementSum' => $payments->sum('amount'),
+            'statementList' => $paymentData,
+            'status' => true
+        ]);
+    }
 
     public function getCustomerAnalytics(Request $request, $id)
     {

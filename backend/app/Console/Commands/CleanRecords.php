@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Posting;
+use App\Models\Source;
 use App\Models\SubCustomer;
 use App\Models\Transaction;
 use Illuminate\Console\Command;
@@ -44,6 +45,7 @@ class CleanRecords extends Command
             "sub_customer" => SubCustomer::truncate(),
             "payments" => Payment::truncate(),
             "postings" => Posting::truncate(),
+            "source" => Source::truncate(),
         ];
 
         $this->info(json_encode(implode(",", array_keys($arr)), JSON_PRETTY_PRINT));

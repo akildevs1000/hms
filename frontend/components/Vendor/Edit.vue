@@ -18,7 +18,7 @@
           <v-col cols="6">
             <v-autocomplete
               clearable
-              label="Select Vendor Category"
+              label="Select Category"
               dense
               outlined
               v-model="payload.vendor_category_id"
