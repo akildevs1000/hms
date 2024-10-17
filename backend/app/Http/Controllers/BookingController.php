@@ -2833,7 +2833,7 @@ class BookingController extends Controller
 
         $sourceCount = Source::whereCompanyId($company_id)
             ->select('id', 'type', DB::raw('COUNT(*) as count'))
-            ->groupBy('type')
+            ->groupBy('id', 'type')
             ->pluck("count", "type");
 
         return [
