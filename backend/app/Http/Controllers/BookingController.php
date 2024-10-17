@@ -2831,16 +2831,19 @@ class BookingController extends Controller
 
         $CustomerCount = Customer::whereCompanyId($company_id)->count();
 
-        $sourceCount = Source::whereCompanyId($company_id)
-            ->select('id', 'type', DB::raw('COUNT(*) as count'))
-            ->groupBy('id', 'type')
-            ->pluck("count", "type",'id');
+        $sourceCounts = Source::whereCompanyId($company_id)->get()->groupBy('type');
+
+        $sourceCountArray = [];
+        foreach ($sourceCounts as $key => $sourceCount) {
+            $sourceCountArray[$key] = count($sourceCount->toArray());
+        }
+
 
         return [
             [
                 'icon' => 'mdi-laptop',
-                'value' => isset($sourceCount['Online'])
-                    ? str_pad($sourceCount['Online'], 2, '0', STR_PAD_LEFT)
+                'value' => isset($sourceCountArray['Online'])
+                    ? str_pad($sourceCountArray['Online'], 2, '0', STR_PAD_LEFT)
                     : '00',
                 'label' => 'OTA',
                 'col' => 7,
@@ -2848,8 +2851,8 @@ class BookingController extends Controller
             ],
             [
                 'icon' => 'mdi-account-tie',
-                'value' => isset($sourceCount['Corporate'])
-                    ? str_pad($sourceCount['Corporate'], 2, '0', STR_PAD_LEFT)
+                'value' => isset($sourceCountArray['Corporate'])
+                    ? str_pad($sourceCountArray['Corporate'], 2, '0', STR_PAD_LEFT)
                     : '00',
                 'label' => 'Corporate',
                 'col' => 7,
@@ -2857,8 +2860,8 @@ class BookingController extends Controller
             ],
             [
                 'icon' => 'mdi-account-tie-outline',
-                'value' => isset($sourceCount['Travel Agency'])
-                    ? str_pad($sourceCount['Travel Agency'], 2, '0', STR_PAD_LEFT)
+                'value' => isset($sourceCountArray['Travel Agency'])
+                    ? str_pad($sourceCountArray['Travel Agency'], 2, '0', STR_PAD_LEFT)
                     : '00',
                 'label' => 'Travel Agent',
                 'col' => 7,
