@@ -431,7 +431,7 @@
                 >
                   {{
                     room?.room_type?.type == "hall"
-                      ? "mdi-human-male-board"
+                      ? "mdi-sofa"
                       : "mdi-bed"
                   }}
                 </v-icon>
@@ -673,7 +673,7 @@
               >
                 {{
                   room?.room_type?.type == "hall"
-                    ? "mdi-human-male-board"
+                    ? "mdi-sofa"
                     : "mdi-bed"
                 }}
               </v-icon>
@@ -925,7 +925,7 @@ export default {
   methods: {
     getRelatedIcon({ booking_type, group_name }) {
       if (booking_type == "hall") {
-        return "mdi-human-male-board";
+        return "mdi-sofa";
       } else if (group_name == "yes") {
         return "mdi-account-group";
       } else {

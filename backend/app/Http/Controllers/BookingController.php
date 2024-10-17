@@ -17,6 +17,7 @@ use App\Models\Payment;
 use App\Models\PostingPayment;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Models\Source;
 use App\Models\SubCustomer;
 use App\Models\SubCustomerRoomHistory;
 use App\Models\TaxSlabs;
@@ -1952,7 +1953,7 @@ class BookingController extends Controller
         $company_id = $request->company_id;
 
         $booking_total_price = $request->booking_total_price;
-        
+
         $credit = Transaction::where("booking_id", $booking_id)->sum("credit");
 
         $debit = $booking_total_price - $request->old['booking_total_price'];
@@ -2826,26 +2827,20 @@ class BookingController extends Controller
     }
     public function bookingStatsBySourceType(Request $request)
     {
-        $request->company_id;
+        $company_id = $request->company_id;
 
-        $data = Customer::select('customer_type', DB::raw('COUNT(*) as count'))
-            ->groupBy('customer_type')
-            ->pluck("count", "customer_type");
+        $CustomerCount = Customer::whereCompanyId($company_id)->count();
+
+        $sourceCount = Source::whereCompanyId($company_id)
+            ->select('type', DB::raw('COUNT(*) as count'))
+            ->groupBy('type')
+            ->pluck("count", "type");
 
         return [
             [
-                'icon' => 'mdi-walk',
-                'value' => isset($data['Walking'])
-                    ? str_pad($data['Walking'], 2, '0', STR_PAD_LEFT)
-                    : '00',
-                'label' => 'WALKING',
-                'col' => 7,
-                'color' => 'green', // For activity (Walking)
-            ],
-            [
                 'icon' => 'mdi-laptop',
-                'value' => isset($data['Online'])
-                    ? str_pad($data['Online'], 2, '0', STR_PAD_LEFT)
+                'value' => isset($sourceCount['Online'])
+                    ? str_pad($sourceCount['Online'], 2, '0', STR_PAD_LEFT)
                     : '00',
                 'label' => 'OTA',
                 'col' => 7,
@@ -2853,21 +2848,28 @@ class BookingController extends Controller
             ],
             [
                 'icon' => 'mdi-account-tie',
-                'value' => isset($data['Corporate'])
-                    ? str_pad($data['Corporate'], 2, '0', STR_PAD_LEFT)
+                'value' => isset($sourceCount['Corporate'])
+                    ? str_pad($sourceCount['Corporate'], 2, '0', STR_PAD_LEFT)
                     : '00',
                 'label' => 'Corporate',
                 'col' => 7,
                 'color' => 'orange', // For business (Corporate)
             ],
             [
-                'icon' => 'mdi-account-outline',
-                'value' => isset($data['Travel Agency'])
-                    ? str_pad($data['Travel Agency'], 2, '0', STR_PAD_LEFT)
+                'icon' => 'mdi-account-tie-outline',
+                'value' => isset($sourceCount['Travel Agency'])
+                    ? str_pad($sourceCount['Travel Agency'], 2, '0', STR_PAD_LEFT)
                     : '00',
                 'label' => 'Travel Agent',
                 'col' => 7,
                 'color' => 'teal', // For service/people (Travel Agent)
+            ],
+            [
+                'icon' => 'mdi-account-outline',
+                'value' => str_pad($CustomerCount, 2, '0', STR_PAD_LEFT),
+                'label' => 'Customers',
+                'col' => 7,
+                'color' => 'purple', // For activity (Walking)
             ],
         ];
     }
