@@ -306,12 +306,20 @@
                         <div style="float: right;  width:50%;padding-top: 10px; padding-bottom:10px; padding-right:15px;"
                             class="">
                             <table>
-                                @foreach ($data['room'] as $roomName => $roomValue)
+                                @foreach ($data['room'] as $roomValue)
                                     <tr>
                                         <td class="text-left border-bottom small-font"
-                                            style="font-size: 10px; padding: 2px;">{{ ucfirst($roomName) }}</td>
+                                            style="font-size: 10px; padding: 2px;">
+                                            <div
+                                                style="background:{{ $roomValue['color'] }}; width: 5px; height: 5px; display: inline-block;">
+                                            </div>
+
+                                            <span style="margin-top: 1px">
+                                                {{ $roomValue['label'] }}
+                                            </span>
+                                        </td>
                                         <td class="text-right border-bottom small-font"
-                                            style="font-size: 10px; padding: 2px;">{{ $roomValue }} </td>
+                                            style="font-size: 10px; padding: 2px;">{{ $roomValue['value'] }}</td>
 
                                     </tr>
                                 @endforeach
@@ -325,7 +333,7 @@
             </td>
             <td class="text-center">
                 <fieldset class="card">
-                    <legend>Guest</legend>
+                    <legend>Food</legend>
 
                     <div class="card-inner-container">
                         <div style="float: left; width:50%;padding-top: 10px; padding-bottom:10px; padding-right:2px;">
@@ -335,16 +343,21 @@
                         <div style="float: right;  width:50%;padding-top: 30px; padding-bottom:10px; padding-right:15px;"
                             class="">
                             <table>
-                                @foreach ($data['guest'] as $mealName => $mealValue)
+                                @foreach ($data['guest'] as $roomValue)
                                     <tr>
                                         <td class="text-left border-bottom small-font"
                                             style="font-size: 10px; padding: 2px;">
-                                            {{ ucfirst($mealName) }} <!-- Capitalize the meal name -->
+                                            <div
+                                                style="background:{{ $roomValue['color'] }}; width: 5px; height: 5px; display: inline-block;">
+                                            </div>
+
+                                            <span style="margin-top: 1px">
+                                                {{ $roomValue['label'] }}
+                                            </span>
                                         </td>
                                         <td class="text-right border-bottom small-font"
-                                            style="font-size: 10px; padding: 2px;">
-                                            {{ $mealValue }}
-                                        </td>
+                                            style="font-size: 10px; padding: 2px;">{{ $roomValue['value'] }}</td>
+
                                     </tr>
                                 @endforeach
                             </table>
@@ -365,32 +378,23 @@
                         <div style="float: right;  width:50%;padding-top: 30px; padding-bottom:10px; padding-right:15px;"
                             class="">
                             <table>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Break fast
-                                    </td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Lunch</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Dinner</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
+                                @foreach ($data['guest'] as $roomValue)
+                                    <tr>
+                                        <td class="text-left border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">
+                                            <div
+                                                style="background:{{ $roomValue['color'] }}; width: 5px; height: 5px; display: inline-block;">
+                                            </div>
 
-                                <tr>
-                                    <td class="text-left border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">Total</td>
-                                    <td class="text-right border-bottom small-font"
-                                        style="font-size: 10px; padding: 2px;">1</td>
-                                </tr>
+                                            <span style="margin-top: 1px">
+                                                {{ $roomValue['label'] }}
+                                            </span>
+                                        </td>
+                                        <td class="text-right border-bottom small-font"
+                                            style="font-size: 10px; padding: 2px;">{{ $roomValue['value'] }}</td>
+
+                                    </tr>
+                                @endforeach
                             </table>
                         </div>
                         <div style="clear: both;"></div>
@@ -398,9 +402,6 @@
                     </div>
                 </fieldset>
             </td>
-
-
-
         </tr>
     </table>
 
@@ -420,13 +421,24 @@
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
                                 <table style="width: 100%;">
-                                    @foreach ($data['income'] as $incomeKey => $incomeValue)
-                                        <tr>
-                                            <td class="text-left border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
-                                            <td class="text-right border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
-                                        </tr>
+                                    @foreach ($data['income'] as $roomValue)
+                                        @if (!isset($roomValue['hide']))
+                                            <tr>
+                                                <td class="text-left border-bottom small-font"
+                                                    style="font-size: 10px; padding: 2px;">
+                                                    <div
+                                                        style="background:{{ $roomValue['color'] }}; width: 5px; height: 5px; display: inline-block;">
+                                                    </div>
+
+                                                    <span style="margin-top: 1px">
+                                                        {{ $roomValue['label'] }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-right border-bottom small-font"
+                                                    style="font-size: 10px; padding: 2px;">{{ $roomValue['value'] }}
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </table>
                             </td>
@@ -445,12 +457,21 @@
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
                                 <table style="width: 100%;">
-                                    @foreach ($data['expense'] as $incomeKey => $incomeValue)
+                                    @foreach ($data['expense'] as $roomValue)
                                         <tr>
                                             <td class="text-left border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
+                                                style="font-size: 10px; padding: 2px;">
+                                                <div
+                                                    style="background:{{ $roomValue['color'] }}; width: 5px; height: 5px; display: inline-block;">
+                                                </div>
+
+                                                <span style="margin-top: 1px">
+                                                    {{ $roomValue['label'] }}
+                                                </span>
+                                            </td>
                                             <td class="text-right border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
+                                                style="font-size: 10px; padding: 2px;">{{ $roomValue['value'] }}</td>
+
                                         </tr>
                                     @endforeach
                                 </table>
@@ -471,12 +492,21 @@
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
                                 <table style="width: 100%;">
-                                    @foreach ($data['managementExpense'] as $incomeKey => $incomeValue)
+                                    @foreach ($data['managementExpense'] as $roomValue)
                                         <tr>
                                             <td class="text-left border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
+                                                style="font-size: 10px; padding: 2px;">
+                                                <div
+                                                    style="background:{{ $roomValue['color'] }}; width: 5px; height: 5px; display: inline-block;">
+                                                </div>
+
+                                                <span style="margin-top: 1px">
+                                                    {{ $roomValue['label'] }}
+                                                </span>
+                                            </td>
                                             <td class="text-right border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
+                                                style="font-size: 10px; padding: 2px;">{{ $roomValue['value'] }}</td>
+
                                         </tr>
                                     @endforeach
                                 </table>
@@ -496,14 +526,24 @@
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
                                 <table style="width: 100%;">
-                                    @foreach ($data['profit_loss'] as $incomeKey => $incomeValue)
+                                    @foreach ($data['profit_loss'] as $roomValue)
                                         <tr>
                                             <td class="text-left border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
+                                                style="font-size: 10px; padding: 2px;">
+                                                <div
+                                                    style="background:{{ $roomValue['color'] }}; width: 5px; height: 5px; display: inline-block;">
+                                                </div>
+
+                                                <span style="margin-top: 1px">
+                                                    {{ $roomValue['label'] }}
+                                                </span>
+                                            </td>
                                             <td class="text-right border-bottom small-font"
-                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
+                                                style="font-size: 10px; padding: 2px;">{{ $roomValue['value'] }}</td>
+
                                         </tr>
                                     @endforeach
+
                                 </table>
                             </td>
                         </tr>

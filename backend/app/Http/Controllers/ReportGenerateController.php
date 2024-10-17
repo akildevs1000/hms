@@ -50,19 +50,64 @@ class ReportGenerateController extends Controller
         $cancelRooms = $this->cancelRooms($request);
 
         $guestArray = [
-            'checkin' => $todayCheckin->count(),
-            'continue' => $continueRooms->count(),
-            'dayuse' => $todayCheckOut->count(),
-            'complementary' => $todayCheckOut->count(),
-            'checkout' => $todayCheckOut->count(),
-            'closing' => 0,
+            [
+                "label" => "Checkin",
+                "value" => $this->currency_format($todayCheckin->count()),
+                "color" => "#ffc000",
+            ],
+            [
+                "label" => "Continue",
+                "value" => $this->currency_format($continueRooms->count()),
+                "color" => "#03c1ec",
+            ],
+            [
+                "label" => "Day Use",
+                "value" => $this->currency_format($todayCheckOut->count()),
+                "color" => "#71de36",
+            ],
+            [
+                "label" => "Complementary",
+                "value" => $this->currency_format($todayCheckOut->count()),
+                "color" => "#800080",
+            ],
+            [
+                "label" => "Checkout",
+                "value" => $this->currency_format($todayCheckOut->count()),
+                "color" => "#dc3545",
+            ],
+            [
+                "label" => "Closing",
+                "value" => $this->currency_format(0),
+                "color" => "#a6a6a6",
+            ],
+        ];
+        $foodOrders = $this->processFoodOrderList($this->foodAudit($request)->get()->toArray());
+
+        $foodOrdersArray = [
+            [
+                "label" => "Breakfast",
+                "value" => $foodOrders->breakfast ?? 0,
+                "color" => "green",
+            ],
+            [
+                "label" => "Lunch",
+                "value" => $foodOrders->lunch ?? 0,
+                "color" => "purple",
+            ],
+            [
+                "label" => "Dinner",
+                "value" => $foodOrders->dinner ?? 0,
+                "color" => "orange",
+            ],
         ];
 
         // $guestArray["total"] = array_sum(array_values($guestArray));
 
+
+
         $summary = [
             'room' => $guestArray,
-            'guest' => $this->processFoodOrderList($this->foodAudit($request)->get()->toArray()),
+            'guest' => $foodOrdersArray,
             'occupied' => $this->getOccupied($request)->count(),
             'income' => $this->getIncome($request),
             'expense' => $this->getExpense($request),
@@ -72,21 +117,28 @@ class ReportGenerateController extends Controller
 
         $arr = [];
 
-        $combinedExpenses = $summary["expense"]["Total"] + $summary["managementExpense"]["Total"];
+        $combinedExpenses = $this->getValueFromList($summary["expense"]) + $this->getValueFromList($summary["managementExpense"]);
 
-        $summary["profit"] = $summary["income"]["Total"] + $combinedExpenses;
-
-        $profit = $summary["income"]["Total"] - $combinedExpenses;
-        $loss = $summary["income"]["Total"] - $combinedExpenses;
+        $profit = $this->getValueFromList($summary["income"]) - $combinedExpenses;
+        $loss = $this->getValueFromList($summary["income"]) - $combinedExpenses;
 
         $summary["profit_loss"] = [
-            "lost" => $loss > 0 ? 0 : $loss,
-            "profit" => $profit < 0 ? 0 : $profit,
-            "CityLedger" => $summary["income"]["CityLedger"]
+            [
+                "label" => "Loss",
+                "value" => $this->currency_format($loss > 0 ? 0 : $loss),
+                "color" => "red"
+            ],
+            [
+                "label" => "Profit",
+                "value" => $this->currency_format($profit < 0 ? 0 : $profit),
+                "color" => "green"
+            ],
+            [
+                "label" => "City Ledger",
+                "value" => $this->getValueFromList($summary["income"], "City Ledger"),
+                "color" => "orange"
+            ]
         ];
-
-
-
         // $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
 
         return $pdf = Pdf::loadView('report.audit.' . "summary", ['data' => $summary, 'company' => Company::find($company_id), 'fileName' => "Summary", 'date' => $date])
@@ -106,7 +158,7 @@ class ReportGenerateController extends Controller
             "type" => "expense",
             "file_name" => "---",
             "file_path" => "---",
-            'data' => number_format($this->getExpense($request)["total"], 2, '.', ''),
+            'data' => $this->currency_format($combinedExpenses),
             'company_id' => $company_id,
             'dateTime' => date("d M y h:i:s"),
         ];
@@ -363,38 +415,81 @@ class ReportGenerateController extends Controller
 
     public function getIncome($request)
     {
-        $modes = PaymentMode::pluck("name")->map(fn($mode) => str_replace(' ', '', $mode))->toArray();
-        $stats = [];
+        // Mapping payment types to their constants
+        $modes = [
+            'Cash' => AdminExpense::CASH,
+            'Card' => AdminExpense::CARD,
+            'Online' => AdminExpense::ONLINE,
+            'Bank' => AdminExpense::BANK,
+            'UPI' => AdminExpense::UPI,
+            'Cheque' => AdminExpense::CHEQUE,
+            'City Ledger' => AdminExpense::CITYLEDGER,
+        ];
 
-        foreach ($modes as $mode) {
-            $stats[$mode] = 0;
-        }
+        // Initialize stats for each mode
+        $stats = array_fill_keys($modes, 0);
 
-        $data =   Payment::query()
+        // Fetch payments for the given company and date
+        $data = Payment::query()
             ->where('company_id', $request->company_id)
             ->whereDate('date', $request->date)
             ->get();
 
         foreach ($data as $item) {
+            $payment_type = $item->payment_type;
+            $paymentTypeName = $payment_type->name ?? null;
 
-            $payment_type =  $item->payment_type;
-
-            $paymentTypeName = str_replace(' ', '', $payment_type->name ?? "") ?? "";
-
-            foreach ($modes as $mode) {
-                $item[$mode] = 0;
-            }
-
-            if ($payment_type && $paymentTypeName  && in_array($paymentTypeName, $modes)) {
-                $item[$paymentTypeName] = $item->amount;
+            if ($paymentTypeName && array_key_exists($paymentTypeName, $modes)) {
+                // Accumulate the amount for the respective payment type
                 $stats[$paymentTypeName] += $item->amount;
             }
         }
 
-        $stats["Total"] = array_sum($stats) - $stats["CityLedger"];
-
-        return $stats;
+        return [
+            [
+                "label" => AdminExpense::CASH,
+                "value" => $this->currency_format($stats[AdminExpense::CASH] ?? 0),
+                "color" => "green",
+            ],
+            [
+                "label" => AdminExpense::CARD,
+                "value" => $this->currency_format($stats[AdminExpense::CARD] ?? 0),
+                "color" => "purple",
+            ],
+            [
+                "label" => AdminExpense::ONLINE,
+                "value" => $this->currency_format($stats[AdminExpense::ONLINE] ?? 0),
+                "color" => "orange",
+            ],
+            [
+                "label" => AdminExpense::BANK,
+                "value" => $this->currency_format($stats[AdminExpense::BANK] ?? 0),
+                "color" => "red",
+            ],
+            [
+                "label" => AdminExpense::UPI,
+                "value" => $this->currency_format($stats[AdminExpense::UPI] ?? 0),
+                "color" => "teal",
+            ],
+            [
+                "label" => AdminExpense::CHEQUE,
+                "value" => $this->currency_format($stats[AdminExpense::CHEQUE] ?? 0),
+                "color" => "blue",
+            ],
+            [
+                "label" => "Total",
+                "value" => $this->currency_format(array_sum($stats) - $stats['City Ledger'] ?? 0),
+                "color" => "grey",
+            ],
+            [
+                "label" => "City Ledger",
+                "value" => $stats['City Ledger'] ?? 0,
+                "color" => "grey",
+                "hide" => true
+            ],
+        ];
     }
+
 
 
     public function getExpense($request, $is_admin_expense = 0)
@@ -426,7 +521,43 @@ class ReportGenerateController extends Controller
                 ->where('is_admin_expense', $is_admin_expense);
         })->sum('total');
 
-        return $stats;
+        return [
+            [
+                "label" => AdminExpense::CASH,
+                "value" => $this->currency_format($stats[AdminExpense::CASH] ?? 0),
+                "color" => "green",
+            ],
+            [
+                "label" => AdminExpense::CARD,
+                "value" => $this->currency_format($stats[AdminExpense::CARD] ?? 0),
+                "color" => "purple",
+            ],
+            [
+                "label" => AdminExpense::ONLINE,
+                "value" => $this->currency_format($stats[AdminExpense::ONLINE] ?? 0),
+                "color" => "orange",
+            ],
+            [
+                "label" => AdminExpense::BANK,
+                "value" => $this->currency_format($stats[AdminExpense::BANK] ?? 0),
+                "color" => "red",
+            ],
+            [
+                "label" => AdminExpense::UPI,
+                "value" => $this->currency_format($stats[AdminExpense::UPI] ?? 0),
+                "color" => "teal",
+            ],
+            [
+                "label" => AdminExpense::CHEQUE,
+                "value" => $this->currency_format($stats[AdminExpense::CHEQUE] ?? 0),
+                "color" => "blue",
+            ],
+            [
+                "label" => "Total",
+                "value" => $this->currency_format($stats["Total"] ?? 0),
+                "color" => "grey",
+            ],
+        ];
     }
 
 
@@ -537,5 +668,14 @@ class ReportGenerateController extends Controller
     function currency_format($amount)
     {
         return number_format($amount, 2);
+    }
+
+    public function getValueFromList($data, $column = "Total")
+    {
+        $totalItem = array_filter($data, fn($item) => $item['label'] === $column);
+
+        $totalValue = reset($totalItem)['value'];
+
+        return $totalValue;
     }
 }
