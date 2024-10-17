@@ -2832,9 +2832,8 @@ class BookingController extends Controller
         $CustomerCount = Customer::whereCompanyId($company_id)->count();
 
         $sourceCount = Source::whereCompanyId($company_id)
-            ->select('type', DB::raw('COUNT(*) as count'))
+            ->select('id', 'type', DB::raw('COUNT(*) as count'))
             ->groupBy('type')
-            ->orderByRaw('') // Removes any default sorting
             ->pluck("count", "type");
 
         return [
