@@ -65,11 +65,26 @@ class ReportGenerateController extends Controller
             'guest' => $this->processFoodOrderList($this->foodAudit($request)->get()->toArray()),
             'occupied' => $this->getOccupied($request)->count(),
             'income' => $this->getIncome($request),
-            'expense' => $this->getExpense($request)["data"],
-            "calculateBookingsBySource" => $this->calculateBookingsBySource($request)
+            'expense' => $this->getExpense($request),
+            'managementExpense' => $this->getExpense($request, AdminExpense::ManagementExpense),
+            "calculateBookingsBySource" => $this->calculateBookingsBySource($request),
         ];
 
         $arr = [];
+
+        $combinedExpenses = $summary["expense"]["Total"] + $summary["managementExpense"]["Total"];
+
+        $summary["profit"] = $summary["income"]["Total"] + $combinedExpenses;
+
+        $profit = $summary["income"]["Total"] - $combinedExpenses;
+        $loss = $summary["income"]["Total"] - $combinedExpenses;
+
+        $summary["profit_loss"] = [
+            "lost" => $loss > 0 ? 0 : $loss,
+            "profit" => $profit < 0 ? 0 : $profit,
+            "CityLedger" => $summary["income"]["CityLedger"]
+        ];
+
 
 
         // $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
@@ -348,84 +363,70 @@ class ReportGenerateController extends Controller
 
     public function getIncome($request)
     {
-        $company_id = $request->company_id;
-        $date = $request->date;
-        $items = [];
+        $modes = PaymentMode::pluck("name")->map(fn($mode) => str_replace(' ', '', $mode))->toArray();
+        $stats = [];
 
-        $data = Booking::query()
-            ->where('company_id', $company_id)
-            ->whereDate('booking_date', $date)
-            ->with("payment_mode")->get();
+        foreach ($modes as $mode) {
+            $stats[$mode] = 0;
+        }
+
+        $data =   Payment::query()
+            ->where('company_id', $request->company_id)
+            ->whereDate('date', $request->date)
+            ->get();
 
         foreach ($data as $item) {
 
-            $payment_type =  $item->payment_mode;
+            $payment_type =  $item->payment_type;
 
-            $items[] = [
-                "color" => "green",
-                "booking_id" => $item->id,
-                "details" => str_replace(' ', '', $payment_type->name ?? "") ?? "",
-                "room_rent" => $item->booking_type == "room" ? $item->total_price : 0,
-                "hall_rent" => $item->booking_type == "hall" ? $item->total_price : 0,
-                "city_ledger" => $item->remaining_price,
-                "advance_price" => $item->advance_price,
-                "total" => $item->total_price,
-            ];
+            $paymentTypeName = str_replace(' ', '', $payment_type->name ?? "") ?? "";
+
+            foreach ($modes as $mode) {
+                $item[$mode] = 0;
+            }
+
+            if ($payment_type && $paymentTypeName  && in_array($paymentTypeName, $modes)) {
+                $item[$paymentTypeName] = $item->amount;
+                $stats[$paymentTypeName] += $item->amount;
+            }
         }
 
-        // $stats["total"] = ;
+        $stats["Total"] = array_sum($stats) - $stats["CityLedger"];
 
-
-        $items[] = [
-            "booking_id" => 0,
-            "color" => "",
-            "important" => true,
-            "details" => "Total",
-            "room_rent" => "",
-            "hall_rent" => "",
-            "city_ledger" => "",
-            "advance_price" => "",
-            "total" => array_sum(array_column($items, "total")),
-        ];
-
-        return $items;
+        return $stats;
     }
 
 
-    public function getExpense($request)
+    public function getExpense($request, $is_admin_expense = 0)
     {
         $company_id = $request->company_id;
         $date = $request->date;
-
-        $data = AdminExpense::with(["vendor", "payment"])
-            ->where("company_id", $company_id)
-            ->where('is_admin_expense', AdminExpense::NonManagementExpense)
-            ->whereDate("created_at", $date)
-            ->get();
-
-        $items = [];
-
-        foreach ($data as $item) {
-            $items[] = [
-                "category" => $item->vendor->vendor_category->name,
-                "description" => $item->notes,
-                "payment_mode" => $item->payment->payment_mode ?? "---",
-                "amount" => number_format($item->total, 2, '.', ''),
-            ];
-        }
-
-        $total = number_format(array_reduce($items, fn($carry, $item) => $carry + $item['amount'], 0), 2, '.', '');
-
-        $arr = [
-            "category" => "Total",
-            "description" => "---",
-            "payment_mode" => "---",
-            "amount" => $total,
+        $expenseModes = [
+            'Cash' => AdminExpense::CASH,
+            'Card' => AdminExpense::CARD,
+            'Online' => AdminExpense::ONLINE,
+            'Bank' => AdminExpense::BANK,
+            'UPI' => AdminExpense::UPI,
+            'Cheque' => AdminExpense::CHEQUE,
         ];
 
-        array_push($items, $arr);
+        $stats = collect($expenseModes)->mapWithKeys(function ($mode, $key) use ($is_admin_expense, $company_id, $date) {
+            return [
+                $key => AdminExpense::whereHas('payment', function ($q) use ($mode, $is_admin_expense, $company_id, $date) {
+                    $q->whereDate('created_at', $date);
+                    $q->where('payment_mode', $mode);
+                    $q->where('is_admin_expense', $is_admin_expense);
+                    $q->where('company_id', $company_id);
+                })->sum('total'),
+            ];
+        })->toArray();
 
-        return ["data" => $items, "total" => $total];
+        $stats['Total'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense) {
+            $q->where('payment_mode', '!=', AdminExpense::CITYLEDGER)
+                ->where('is_admin_expense', $is_admin_expense);
+        })->sum('total');
+
+        return $stats;
     }
 
 
@@ -533,7 +534,6 @@ class ReportGenerateController extends Controller
         return $stats;
     }
 
-    // Helper function for currency formatting
     function currency_format($amount)
     {
         return number_format($amount, 2);

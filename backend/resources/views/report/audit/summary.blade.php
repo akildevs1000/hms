@@ -332,7 +332,7 @@
                             <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
                                 class="logo" />
                         </div>
-                        <div style="float: right;  width:50%;padding-top: 15px; padding-bottom:10px; padding-right:15px;"
+                        <div style="float: right;  width:50%;padding-top: 30px; padding-bottom:10px; padding-right:15px;"
                             class="">
                             <table>
                                 @foreach ($data['guest'] as $mealName => $mealValue)
@@ -399,17 +399,7 @@
                 </fieldset>
             </td>
 
-            <td class="text-center">
-                <fieldset class="card">
-                    <legend>Occupied</legend>
-                    <div
-                        style="width: 135px; margin: auto; padding-top: 10px; padding-bottom: 10px; padding-right: 2px; text-align: center;">
-                        <img style="width: 100%;  margin: auto;" src="../public/charts/donutChart.png" alt="Hotel Logo"
-                            class="logo" />
-                    </div>
-                </fieldset>
 
-            </td>
 
         </tr>
     </table>
@@ -422,92 +412,102 @@
             <td class="text-center">
                 <fieldset class="card">
                     <legend>Income</legend>
-                    <div class="card-inner-container">
-                        <div style="height: 300px;width:300px;"
-                            style="float: left; width:40%; padding-top: 10px; padding-bottom:10px; padding-right:5px;">
-                            <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
-                                class="logo" />
-                        </div>
-                        <div style="float: right; width:60%; padding-top: 10px; padding-bottom:10px; padding-right:15px;"
-                            class="">
-                            <table>
-                                <tr>
-                                    <td class="text-left" style="font-size: 10px; padding: 2px;">Detail</td>
-                                    <td class="text-right">Room rent</td>
-                                    <td class="text-right">Hall rent</td>
-                                    <td class="text-right">CL Recv</td>
-                                    <td class="text-right">Advance</td>
-                                    <td class="text-right">Total</td>
-                                </tr>
-                                @foreach ($data['income'] as $incomeKey => $incomeValue)
-                                    <tr>
-                                        <td class="text-left border-bottom small-font"
-                                            style="font-size: 10px; padding: 2px;">{{ $incomeValue['details'] }}</td>
-                                        <td
-                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $incomeValue['room_rent'] }}</td>
-                                        <td
-                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $incomeValue['hall_rent'] }}</td>
-                                        <td
-                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $incomeValue['city_ledger'] }}</td>
-                                        <td
-                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $incomeValue['advance_price'] }}</td>
-                                        <td
-                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $incomeValue['total'] }}</td>
-                                    </tr>
-                                @endforeach
-                            </table>
-                        </div>
-                        <div style="clear: both;"></div>
-
-                    </div>
+                    <table style="height: 160px; width: 100%;">
+                        <tr style="height: 100%;">
+                            <td style="width: 50%; vertical-align: middle; text-align: center;">
+                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                    class="logo" />
+                            </td>
+                            <td style="width: 50%; vertical-align: middle; padding: 10px;">
+                                <table style="width: 100%;">
+                                    @foreach ($data['income'] as $incomeKey => $incomeValue)
+                                        <tr>
+                                            <td class="text-left border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
+                                            <td class="text-right border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
                 </fieldset>
             </td>
             <td class="text-center">
-                <fieldset class="card" style="min-height: 145px">
+                <fieldset class="card">
                     <legend>Expenses</legend>
-                    <div class="card-inner-container">
-                        <div style="height: 300px;width:300px;"
-                            style="float: left; width:40%; padding-top: 20px; padding-bottom:10px; padding-right:50px;">
-                            <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
-                                class="logo" />
-                        </div>
-                        <div style="float: right; width:60%; padding-top:20px; padding-bottom:10px; padding-right:15px;"
-                            class="">
-                            <table>
-                                <tr>
-                                    <td class="text-left border-bottom small-font" style="padding: 2px;">Category</td>
-                                    <td class="text-left border-bottom small-font" style="padding: 2px;">Detail</td>
-                                    <td class="text-left border-bottom small-font" style="padding: 2px;">Mode</td>
-                                    <td class="text-right border-bottom small-font" style="padding: 2px;">Amount</td>
-                                </tr>
-                                @foreach ($data['expense'] as $expenseKey => $expenseValue)
-                                    <tr>
-                                        <td class="text-left border-bottom small-font"
-                                            style="font-size: 10px; padding: 2px;">{{ $expenseValue['category'] }}
-                                        </td>
-                                        <td
-                                            class="text-left border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $expenseValue['description'] }}
-                                        </td>
-                                        <td
-                                            class="text-left border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $expenseValue['payment_mode'] }}</td>
-                                        <td
-                                            class="text-right border-bottom small-font"style="font-size: 10px; padding: 2px;">
-                                            {{ $expenseValue['amount'] }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </table>
-                        </div>
-                        <div style="clear: both;"></div>
-
-                    </div>
+                    <table style="height: 160px; width: 100%;">
+                        <tr style="height: 100%;">
+                            <td style="width: 50%; vertical-align: middle; text-align: center;">
+                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                    class="logo" />
+                            </td>
+                            <td style="width: 50%; vertical-align: middle; padding: 10px;">
+                                <table style="width: 100%;">
+                                    @foreach ($data['expense'] as $incomeKey => $incomeValue)
+                                        <tr>
+                                            <td class="text-left border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
+                                            <td class="text-right border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+            <td class="text-center">
+                <fieldset class="card">
+                    <legend>Management Expenses
+                    </legend>
+                    <table style="height: 160px; width: 100%;">
+                        <tr style="height: 100%;">
+                            <td style="width: 50%; vertical-align: middle; text-align: center;">
+                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                    class="logo" />
+                            </td>
+                            <td style="width: 50%; vertical-align: middle; padding: 10px;">
+                                <table style="width: 100%;">
+                                    @foreach ($data['managementExpense'] as $incomeKey => $incomeValue)
+                                        <tr>
+                                            <td class="text-left border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
+                                            <td class="text-right border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+            <td class="text-center">
+                <fieldset class="card">
+                    <legend>Profit and Loss </legend>
+                    <table style="height: 140px; width: 100%;padding-top:20px;">
+                        <tr style="height: 100%;">
+                            <td style="width: 50%; vertical-align: middle; text-align: center;">
+                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                    class="logo" />
+                            </td>
+                            <td style="width: 50%; vertical-align: middle; padding: 10px;">
+                                <table style="width: 100%;">
+                                    @foreach ($data['profit_loss'] as $incomeKey => $incomeValue)
+                                        <tr>
+                                            <td class="text-left border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeKey }}</td>
+                                            <td class="text-right border-bottom small-font"
+                                                style="font-size: 10px; padding: 2px;">{{ $incomeValue }}</td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
                 </fieldset>
             </td>
         </tr>
