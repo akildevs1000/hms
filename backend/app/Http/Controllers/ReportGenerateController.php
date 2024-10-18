@@ -164,7 +164,8 @@ class ReportGenerateController extends Controller
 
         // return $summary;
 
-        $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
+        return $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
+        
         $this->processPayload("check_in", "Today Check-in Report", $date, $company_id, $todayCheckin->get(), "today_check_in");
         $this->processPayload("continue", "Continue Report", $date, $company_id, $continueRooms->get(), "continue_report");
         $this->processPayload("check_out", "Check-out Report", $date, $company_id, $todayCheckOut->get(), "check_out_report");
