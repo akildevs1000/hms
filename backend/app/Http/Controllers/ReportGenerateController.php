@@ -100,16 +100,18 @@ class ReportGenerateController extends Controller
 
         $arr = [];
 
-        $CashIncome = (int)$this->getValueFromList($summary["income"], "Cash");
-        $TotalIncome = (int)$this->getValueFromList($summary["income"]);
+        $CashIncome = $this->getValueFromList($summary["income"], "Cash");
+        $TotalIncome = $this->getValueFromList($summary["income"]);
 
-        $CashExpense = (int)$this->getValueFromList($summary["expense"], "Cash");
-        $TotalExpense = (int)($this->getValueFromList($summary["expense"]) ?? 0) + ($this->getValueFromList($summary["managementExpense"]) ?? 0);
+        $CashExpense = $this->getValueFromList($summary["expense"], "Cash");
+        $TotalExpense = ($this->getValueFromList($summary["expense"]) ?? 0) + ($this->getValueFromList($summary["managementExpense"]) ?? 0);
 
         $OtherIncome = $TotalIncome - $CashIncome;
         $OtherExpense = $TotalExpense - $CashExpense;
         $CashInHand = $CashIncome - $CashExpense;
         $finalStatement = $TotalIncome - $TotalExpense;
+
+
 
         $summary["profit_loss"] = [
             [
@@ -128,6 +130,7 @@ class ReportGenerateController extends Controller
                 "color" => "orange"
             ]
         ];
+
 
         $summary["balance_sheet"] = [
             "labels" => [
@@ -160,13 +163,8 @@ class ReportGenerateController extends Controller
         ];
 
         // return $summary;
+
         $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
-
-        // $pdf = Pdf::loadView('report.audit.' . "summary", ['data' => $summary, 'company' => Company::find($company_id), 'fileName' => "Summary", 'date' => $date])
-        //     ->setPaper('a4', 'landscape')->stream();
-
-        AuditHistory::where("company_id", $company_id)->whereDate("created_at", $date)->delete();
-
         $this->processPayload("check_in", "Today Check-in Report", $date, $company_id, $todayCheckin->get(), "today_check_in");
         $this->processPayload("continue", "Continue Report", $date, $company_id, $continueRooms->get(), "continue_report");
         $this->processPayload("check_out", "Check-out Report", $date, $company_id, $todayCheckOut->get(), "check_out_report");
@@ -183,11 +181,10 @@ class ReportGenerateController extends Controller
             'company_id' => $company_id,
             'dateTime' => date("d M y h:i:s"),
         ];
-
+        AuditHistory::where("company_id", $company_id)->whereDate("created_at", $date)->delete();
         AuditHistory::create($arr);
 
-
-        return 'Reports are generated successfully';
+        return $this->mergeAndGeneratePDFFiles($company_id, $date);
     }
 
     public function processPayload($type, $fileName, $date, $company_id, $data, $bladeView)
@@ -196,6 +193,8 @@ class ReportGenerateController extends Controller
         $pdf = Pdf::loadView('report.audit.' . $bladeView, ['data' => $data, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
             ->setPaper('a4', 'landscape')->output();
         $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
+        // $pdf = Pdf::loadView('report.audit.' . "summary", ['data' => $data, 'company' => Company::find($company_id), 'fileName' => "Summary", 'date' => $date])
+        // ->setPaper('a4', 'landscape')->stream();
         $arr = [
             "type" => $type,
             "file_name" => $fileName,
@@ -687,7 +686,7 @@ class ReportGenerateController extends Controller
 
     function currency($amount)
     {
-        return $amount;
+        return (int) $amount;
         return number_format($amount, 2);
     }
 
@@ -697,6 +696,66 @@ class ReportGenerateController extends Controller
 
         $totalValue = reset($totalItem)['value'];
 
-        return $totalValue;
+        return (int)$totalValue;
+    }
+
+    public function mergeAndGeneratePDFFiles($company_id, $date)
+    {
+        try {
+            $pdfFiles = [
+                storage_path("app/pdf/$date/$company_id/Summary.pdf"),
+                storage_path("app/pdf/$date/$company_id/Today Check-in Report.pdf"),
+                storage_path("app/pdf/$date/$company_id/Continue Report.pdf"),
+                storage_path("app/pdf/$date/$company_id/Check-out Report.pdf"),
+                storage_path("app/pdf/$date/$company_id/Today Booking Report.pdf"),
+                storage_path("app/pdf/$date/$company_id/Cancel Rooms Report.pdf"),
+                storage_path("app/pdf/$date/$company_id/City Ledger Report.pdf"),
+                storage_path("app/pdf/$date/$company_id/Food Order list.pdf"),
+            ];
+
+            $outputDir = storage_path("app/pdf/$date/$company_id");
+            $outputPath = storage_path("app/pdf/$date/$company_id/merged_file.pdf");
+
+            // Create the directory if it doesn't exist
+            if (!file_exists($outputDir)) {
+                mkdir($outputDir, 777, true);  // Create the directory recursively
+            }
+
+            $this->mergePdfFiles($pdfFiles, $outputPath);
+
+            return response()->json(['message' => 'PDF merged and stored successfully.', 'path' => $outputPath]);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function mergePdfFiles(array $pdfFiles, $outputPath)
+    {
+        // Initialize FPDI
+        $pdf = new \setasign\Fpdi\Fpdi();
+
+        // Loop through each PDF file
+        foreach ($pdfFiles as $file) {
+            $pageCount = $pdf->setSourceFile($file);
+
+            // Add each page from the source PDF to the final output
+            for ($i = 1; $i <= $pageCount; $i++) {
+                $tplId = $pdf->importPage($i);
+                $size = $pdf->getTemplateSize($tplId);  // Get the page size of the imported PDF
+
+                // Adjust orientation based on the original page's width and height
+                $orientation = ($size['width'] > $size['height']) ? 'L' : 'P';  // Auto-detect orientation
+
+                // Add a new page with the detected orientation
+                $pdf->AddPage($orientation, [$size['width'], $size['height']]);
+                $pdf->useTemplate($tplId);
+            }
+        }
+        // Save the merged PDF to the specified output path
+        $pdf->Output($outputPath, 'F');  // 'F' for saving to file
+
+        return $outputPath;  // Return the path to the saved file
+        // Stream the merged PDF directly to the browser
+        return response($pdf->Output($outputFileName, 'I'))->header('Content-Type', 'application/pdf');
     }
 }
