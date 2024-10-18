@@ -14,7 +14,7 @@ class SendAuditReportEmail extends Command
      *
      * @var string
      */
-    protected $signature = 'task:audit_report';
+    protected $signature = 'send:audit_report';
 
     /**
      * The console command description.
