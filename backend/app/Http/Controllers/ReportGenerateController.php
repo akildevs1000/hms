@@ -190,11 +190,10 @@ class ReportGenerateController extends Controller
     public function processPayload($type, $fileName, $date, $company_id, $data, $bladeView)
     {
 
-        $pdf = Pdf::loadView('report.audit.' . $bladeView, ['data' => $data, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
-            ->setPaper('a4', 'landscape')->output();
+       return $pdf = Pdf::loadView('report.audit.' . $bladeView, ['data' => $data, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
+            ->setPaper('a4', 'landscape')->stream();
         $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-        // $pdf = Pdf::loadView('report.audit.' . "summary", ['data' => $data, 'company' => Company::find($company_id), 'fileName' => "Summary", 'date' => $date])
-        // ->setPaper('a4', 'landscape')->stream();
+       
         $arr = [
             "type" => $type,
             "file_name" => $fileName,
