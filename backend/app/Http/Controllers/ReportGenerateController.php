@@ -164,8 +164,8 @@ class ReportGenerateController extends Controller
 
         // return $summary;
 
-        return $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
-        
+        $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
+
         $this->processPayload("check_in", "Today Check-in Report", $date, $company_id, $todayCheckin->get(), "today_check_in");
         $this->processPayload("continue", "Continue Report", $date, $company_id, $continueRooms->get(), "continue_report");
         $this->processPayload("check_out", "Check-out Report", $date, $company_id, $todayCheckOut->get(), "check_out_report");
@@ -191,10 +191,10 @@ class ReportGenerateController extends Controller
     public function processPayload($type, $fileName, $date, $company_id, $data, $bladeView)
     {
 
-       return $pdf = Pdf::loadView('report.audit.' . $bladeView, ['data' => $data, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
-            ->setPaper('a4', 'landscape')->stream();
+        $pdf = Pdf::loadView('report.audit.' . $bladeView, ['data' => $data, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
+            ->setPaper('a4', 'landscape')->output();
         $file_path  = "pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf';
-       
+
         $arr = [
             "type" => $type,
             "file_name" => $fileName,
