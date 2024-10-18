@@ -36,7 +36,8 @@ class GenerateReports extends Command
         $data = EmailNotifications::where("status", 1)->get(["company_id", "email", "whatsapp_number"]);
 
         foreach ($data as $value) {
-            // $result .= (new ReportGenerateController)->processData($value->company_id, $date) . "\n";
+            echo (new ReportGenerateController)->processData($value->company_id, $date) . "\n";
+            die;
             GenerateReportForCompany::dispatch($value->company_id, $date);
         }
 

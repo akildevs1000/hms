@@ -100,11 +100,11 @@ class ReportGenerateController extends Controller
 
         $arr = [];
 
-        $CashIncome = $this->getValueFromList($summary["income"], "Cash");
-        $TotalIncome = $this->getValueFromList($summary["income"]);
+        $CashIncome = (int)$this->getValueFromList($summary["income"], "Cash");
+        $TotalIncome = (int)$this->getValueFromList($summary["income"]);
 
-        $CashExpense = $this->getValueFromList($summary["expense"], "Cash");
-        $TotalExpense = $this->getValueFromList($summary["expense"]) + $this->getValueFromList($summary["managementExpense"]);
+        $CashExpense = (int)$this->getValueFromList($summary["expense"], "Cash");
+        $TotalExpense = (int)($this->getValueFromList($summary["expense"]) ?? 0) + ($this->getValueFromList($summary["managementExpense"]) ?? 0);
 
         $OtherIncome = $TotalIncome - $CashIncome;
         $OtherExpense = $TotalExpense - $CashExpense;
@@ -687,6 +687,7 @@ class ReportGenerateController extends Controller
 
     function currency($amount)
     {
+        return $amount;
         return number_format($amount, 2);
     }
 

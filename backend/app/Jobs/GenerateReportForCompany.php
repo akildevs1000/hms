@@ -35,6 +35,6 @@ class GenerateReportForCompany implements ShouldQueue
      */
     public function handle()
     {
-        (new ReportGenerateController)->processData($this->company_id, $this->date);
+        return (new ReportGenerateController)->processData($this->company_id, $this->date);
     }
 }
