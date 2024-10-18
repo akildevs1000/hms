@@ -30,8 +30,8 @@ class Kernel extends ConsoleKernel
 
         $schedule
             ->command('send:audit_report')
-            ->everyFiveMinutes()
-            // ->dailyAt('9:00')
+            // ->everyFiveMinutes()
+            ->dailyAt('9:00')
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
     }
 
