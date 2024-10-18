@@ -28,8 +28,14 @@ class Kernel extends ConsoleKernel
 
         $schedule
             ->command('task:generate_reports')
+            // ->everyFiveMinutes()
+            ->dailyAt('1:00')
+            ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+
+        $schedule
+            ->command('task:audit_report')
             ->everyFiveMinutes()
-            // ->dailyAt('1:00')
+            // ->dailyAt('9:00')
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
         // // PDF
