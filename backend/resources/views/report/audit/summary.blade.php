@@ -191,7 +191,7 @@
                     <legend>Room</legend>
                     <div class="card-inner-container">
                         <div style="float: left; width:50%;padding-top: 10px; padding-bottom:10px; padding-right:2px;">
-                            <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                            <img style="width:100%;" src="{{ asset('charts/donutChart.png') }}" alt="Hotel Logo"
                                 class="logo" />
                         </div>
                         <div style="float: right;  width:50%;padding-top: 10px; padding-bottom:10px; padding-right:15px;"
@@ -228,7 +228,7 @@
 
                     <div class="card-inner-container">
                         <div style="float: left; width:50%;padding-top: 10px; padding-bottom:10px; padding-right:2px;">
-                            <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                            <img style="width:100%;" src="{{ asset('charts/donutChart.png') }}" alt="Hotel Logo"
                                 class="logo" />
                         </div>
                         <div style="float: right;  width:50%;padding-top: 30px; padding-bottom:10px; padding-right:15px;"
@@ -263,7 +263,7 @@
                     <legend>Staff</legend>
                     <div class="card-inner-container">
                         <div style="float: left; width:50%;padding-top: 10px; padding-bottom:10px; padding-right:2px;">
-                            <img style="width:100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                            <img style="width:100%;" src="{{ asset('charts/donutChart.png') }}" alt="Hotel Logo"
                                 class="logo" />
                         </div>
                         <div style="float: right;  width:50%;padding-top: 30px; padding-bottom:10px; padding-right:15px;"
@@ -307,7 +307,7 @@
                     <table style="height: 160px; width: 100%;">
                         <tr style="height: 100%;">
                             <td style="width: 50%; vertical-align: middle; text-align: center;">
-                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                <img style="width: 100%;" src="{{ asset('charts/donutChart.png') }}" alt="Hotel Logo"
                                     class="logo" />
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
@@ -343,7 +343,7 @@
                     <table style="height: 160px; width: 100%;">
                         <tr style="height: 100%;">
                             <td style="width: 50%; vertical-align: middle; text-align: center;">
-                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                <img style="width: 100%;" src="{{ asset('charts/donutChart.png') }}" alt="Hotel Logo"
                                     class="logo" />
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
@@ -378,7 +378,7 @@
                     <table style="height: 160px; width: 100%;">
                         <tr style="height: 100%;">
                             <td style="width: 50%; vertical-align: middle; text-align: center;">
-                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                <img style="width: 100%;" src="{{ asset('charts/donutChart.png') }}" alt="Hotel Logo"
                                     class="logo" />
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
@@ -412,7 +412,7 @@
                     <table style="height: 140px; width: 100%;padding-top:20px;">
                         <tr style="height: 100%;">
                             <td style="width: 50%; vertical-align: middle; text-align: center;">
-                                <img style="width: 100%;" src="../public/charts/donutChart.png" alt="Hotel Logo"
+                                <img style="width: 100%;" src="{{ asset('charts/donutChart.png') }}" alt="Hotel Logo"
                                     class="logo" />
                             </td>
                             <td style="width: 50%; vertical-align: middle; padding: 10px;">
