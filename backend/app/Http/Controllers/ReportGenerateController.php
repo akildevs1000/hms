@@ -20,22 +20,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ReportGenerateController extends Controller
 {
-    public function generateAuditReport()
-    {
-        $company_ids = $this->getNotificationCompanyIds();
-        $date = date('Y-m-d', strtotime('yesterday')); // Use yesterday's date
-        //$date = date('Y-07-01');
-
-        foreach ($company_ids as $company_id) {
-            $model = Booking::query();
-            echo $this->processData($company_id, $model, $date, 'Today Checkin Report', 1);
-        }
-
-        return true;
-    }
     public function processData($company_id, $date)
     {
-
         $request = array(
             'company_id' => $company_id,
             'date' => $date,
@@ -52,32 +38,32 @@ class ReportGenerateController extends Controller
         $guestArray = [
             [
                 "label" => "Checkin",
-                "value" => $this->currency_format($todayCheckin->count()),
+                "value" => $this->currency($todayCheckin->count()),
                 "color" => "#ffc000",
             ],
             [
                 "label" => "Continue",
-                "value" => $this->currency_format($continueRooms->count()),
+                "value" => $this->currency($continueRooms->count()),
                 "color" => "#03c1ec",
             ],
             [
                 "label" => "Day Use",
-                "value" => $this->currency_format($todayCheckOut->count()),
+                "value" => $this->currency($todayCheckOut->count()),
                 "color" => "#71de36",
             ],
             [
                 "label" => "Complementary",
-                "value" => $this->currency_format($todayCheckOut->count()),
+                "value" => $this->currency($todayCheckOut->count()),
                 "color" => "#800080",
             ],
             [
                 "label" => "Checkout",
-                "value" => $this->currency_format($todayCheckOut->count()),
+                "value" => $this->currency($todayCheckOut->count()),
                 "color" => "#dc3545",
             ],
             [
                 "label" => "Closing",
-                "value" => $this->currency_format(0),
+                "value" => $this->currency(0),
                 "color" => "#a6a6a6",
             ],
         ];
@@ -101,9 +87,6 @@ class ReportGenerateController extends Controller
             ],
         ];
 
-        // $guestArray["total"] = array_sum(array_values($guestArray));
-
-
 
         $summary = [
             'room' => $guestArray,
@@ -117,20 +100,26 @@ class ReportGenerateController extends Controller
 
         $arr = [];
 
-        $combinedExpenses = $this->getValueFromList($summary["expense"]) + $this->getValueFromList($summary["managementExpense"]);
+        $CashIncome = $this->getValueFromList($summary["income"], "Cash");
+        $TotalIncome = $this->getValueFromList($summary["income"]);
 
-        $profit = $this->getValueFromList($summary["income"]) - $combinedExpenses;
-        $loss = $this->getValueFromList($summary["income"]) - $combinedExpenses;
+        $CashExpense = $this->getValueFromList($summary["expense"], "Cash");
+        $TotalExpense = $this->getValueFromList($summary["expense"]) + $this->getValueFromList($summary["managementExpense"]);
+
+        $OtherIncome = $TotalIncome - $CashIncome;
+        $OtherExpense = $TotalExpense - $CashExpense;
+        $CashInHand = $CashIncome - $CashExpense;
+        $finalStatement = $TotalIncome - $TotalExpense;
 
         $summary["profit_loss"] = [
             [
                 "label" => "Loss",
-                "value" => $this->currency_format($loss > 0 ? 0 : $loss),
+                "value" => $this->currency($finalStatement > 0 ? 0 : $finalStatement),
                 "color" => "red"
             ],
             [
                 "label" => "Profit",
-                "value" => $this->currency_format($profit < 0 ? 0 : $profit),
+                "value" => $this->currency($finalStatement < 0 ? 0 : $finalStatement),
                 "color" => "green"
             ],
             [
@@ -139,26 +128,58 @@ class ReportGenerateController extends Controller
                 "color" => "orange"
             ]
         ];
-        // $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
 
-        return $pdf = Pdf::loadView('report.audit.' . "summary", ['data' => $summary, 'company' => Company::find($company_id), 'fileName' => "Summary", 'date' => $date])
-            ->setPaper('a4', 'landscape')->stream();
+        $summary["balance_sheet"] = [
+            "labels" => [
+                "Income (Cash)",
+                "Income (Other)",
+                "Expense (Cash)",
+                "Expense (Other)",
+                ""
+            ],
 
-        // AuditHistory::where("company_id", $company_id)->whereDate("created_at", $date)->delete();
+            "values" => [
+                ["value" => $this->currency($CashIncome)],
+                ["value" => $this->currency($OtherIncome)],
+                ["value" => $this->currency($CashExpense)],
+                ["value" => $this->currency($OtherExpense)],
+                [
+                    "value" => "Cash in Hand (" . $this->currency($CashInHand) . ")",
+                    "color" => "green"
+                ],
+            ],
 
-        // $this->processPayload("check_in", "Today Check-in Report", $date, $company_id, $todayCheckin->get(), "today_check_in");
-        // $this->processPayload("continue", "Continue Report", $date, $company_id, $continueRooms->get(), "continue_report");
-        // $this->processPayload("check_out", "Check-out Report", $date, $company_id, $todayCheckOut->get(), "check_out_report");
-        // $this->processPayload("payment", "Today Booking Report", $date, $company_id, $todayPayments->get(), "today_booking_report");
-        // $this->processPayload("cityLedger", "City Ledger Report", $date, $company_id, $cityLedgerPaymentsAudit->get(), "city_ledger_report");
-        // $this->processPayload("cancel", "Cancel Rooms Report", $date, $company_id, $cancelRooms->get(), "cancel_rooms");
-        // $this->processPayload("food", "Food Order list", $date, $company_id, $this->foodAudit($request)->get(), "food_order_list");
+            "totals" => [
+                ["value" => $this->currency($TotalIncome), "colspan" => 2],
+                ["value" => $this->currency($TotalExpense), "colspan" => 2],
+                [
+                    "value" => "Profit/Loss (" . $this->currency($finalStatement) . ")",
+                    "color" => $finalStatement < 0 ? "red" : "green"
+                ],
+            ],
+        ];
+
+        // return $summary;
+        $this->processPayload("summary", "Summary", $date, $company_id, $summary, "summary");
+
+        // $pdf = Pdf::loadView('report.audit.' . "summary", ['data' => $summary, 'company' => Company::find($company_id), 'fileName' => "Summary", 'date' => $date])
+        //     ->setPaper('a4', 'landscape')->stream();
+
+        AuditHistory::where("company_id", $company_id)->whereDate("created_at", $date)->delete();
+
+        $this->processPayload("check_in", "Today Check-in Report", $date, $company_id, $todayCheckin->get(), "today_check_in");
+        $this->processPayload("continue", "Continue Report", $date, $company_id, $continueRooms->get(), "continue_report");
+        $this->processPayload("check_out", "Check-out Report", $date, $company_id, $todayCheckOut->get(), "check_out_report");
+        $this->processPayload("payment", "Today Booking Report", $date, $company_id, $todayPayments->get(), "today_booking_report");
+        $this->processPayload("cityLedger", "City Ledger Report", $date, $company_id, $cityLedgerPaymentsAudit->get(), "city_ledger_report");
+        $this->processPayload("cancel", "Cancel Rooms Report", $date, $company_id, $cancelRooms->get(), "cancel_rooms");
+        $this->processPayload("food", "Food Order list", $date, $company_id, $this->foodAudit($request)->get(), "food_order_list");
 
         $arr = [
             "type" => "expense",
             "file_name" => "---",
             "file_path" => "---",
-            'data' => $this->currency_format($combinedExpenses),
+            'data' => $this->currency($TotalExpense),
             'company_id' => $company_id,
             'dateTime' => date("d M y h:i:s"),
         ];
@@ -166,7 +187,7 @@ class ReportGenerateController extends Controller
         AuditHistory::create($arr);
 
 
-        return 'Reports are  generated successfully ' . $company_id . '.\n';
+        return 'Reports are generated successfully';
     }
 
     public function processPayload($type, $fileName, $date, $company_id, $data, $bladeView)
@@ -186,10 +207,6 @@ class ReportGenerateController extends Controller
 
         AuditHistory::create($arr);
         Storage::disk('local')->put($file_path, $pdf);
-    }
-    public function getNotificationCompanyIds()
-    {
-        return Company::orderBy('id', 'asc')->pluck("id");
     }
 
     private function todayCheckinAudit($request)
@@ -448,37 +465,37 @@ class ReportGenerateController extends Controller
         return [
             [
                 "label" => AdminExpense::CASH,
-                "value" => $this->currency_format($stats[AdminExpense::CASH] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::CASH] ?? 0),
                 "color" => "green",
             ],
             [
                 "label" => AdminExpense::CARD,
-                "value" => $this->currency_format($stats[AdminExpense::CARD] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::CARD] ?? 0),
                 "color" => "purple",
             ],
             [
                 "label" => AdminExpense::ONLINE,
-                "value" => $this->currency_format($stats[AdminExpense::ONLINE] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::ONLINE] ?? 0),
                 "color" => "orange",
             ],
             [
                 "label" => AdminExpense::BANK,
-                "value" => $this->currency_format($stats[AdminExpense::BANK] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::BANK] ?? 0),
                 "color" => "red",
             ],
             [
                 "label" => AdminExpense::UPI,
-                "value" => $this->currency_format($stats[AdminExpense::UPI] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::UPI] ?? 0),
                 "color" => "teal",
             ],
             [
                 "label" => AdminExpense::CHEQUE,
-                "value" => $this->currency_format($stats[AdminExpense::CHEQUE] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::CHEQUE] ?? 0),
                 "color" => "blue",
             ],
             [
                 "label" => "Total",
-                "value" => $this->currency_format(array_sum($stats) - $stats['City Ledger'] ?? 0),
+                "value" => $this->currency(array_sum($stats) - $stats['City Ledger'] ?? 0),
                 "color" => "grey",
             ],
             [
@@ -516,7 +533,8 @@ class ReportGenerateController extends Controller
             ];
         })->toArray();
 
-        $stats['Total'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense) {
+        $stats['Total'] = AdminExpense::whereHas('payment', function ($q) use ($is_admin_expense, $date) {
+            $q->whereDate('created_at', $date);
             $q->where('payment_mode', '!=', AdminExpense::CITYLEDGER)
                 ->where('is_admin_expense', $is_admin_expense);
         })->sum('total');
@@ -524,37 +542,37 @@ class ReportGenerateController extends Controller
         return [
             [
                 "label" => AdminExpense::CASH,
-                "value" => $this->currency_format($stats[AdminExpense::CASH] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::CASH] ?? 0),
                 "color" => "green",
             ],
             [
                 "label" => AdminExpense::CARD,
-                "value" => $this->currency_format($stats[AdminExpense::CARD] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::CARD] ?? 0),
                 "color" => "purple",
             ],
             [
                 "label" => AdminExpense::ONLINE,
-                "value" => $this->currency_format($stats[AdminExpense::ONLINE] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::ONLINE] ?? 0),
                 "color" => "orange",
             ],
             [
                 "label" => AdminExpense::BANK,
-                "value" => $this->currency_format($stats[AdminExpense::BANK] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::BANK] ?? 0),
                 "color" => "red",
             ],
             [
                 "label" => AdminExpense::UPI,
-                "value" => $this->currency_format($stats[AdminExpense::UPI] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::UPI] ?? 0),
                 "color" => "teal",
             ],
             [
                 "label" => AdminExpense::CHEQUE,
-                "value" => $this->currency_format($stats[AdminExpense::CHEQUE] ?? 0),
+                "value" => $this->currency($stats[AdminExpense::CHEQUE] ?? 0),
                 "color" => "blue",
             ],
             [
                 "label" => "Total",
-                "value" => $this->currency_format($stats["Total"] ?? 0),
+                "value" => $this->currency($stats["Total"] ?? 0),
                 "color" => "grey",
             ],
         ];
@@ -570,6 +588,8 @@ class ReportGenerateController extends Controller
         $model->where('booking_status', '=', 1);
 
         $model->where('company_id', $request->company_id);
+
+        $model->whereDate('booking_date', date("Y-m-d"));
 
         $data = $model->get();
 
@@ -665,7 +685,7 @@ class ReportGenerateController extends Controller
         return $stats;
     }
 
-    function currency_format($amount)
+    function currency($amount)
     {
         return number_format($amount, 2);
     }

@@ -996,9 +996,8 @@ class ReportController extends Controller
         $company_id = 3;
         $date = date("Y-m-d");
 
-
         $pdfFiles = [
-            storage_path("app/pdf/$date/$company_id/summary.pdf"),
+            storage_path("app/pdf/$date/$company_id/Summary.pdf"),
             storage_path("app/pdf/$date/$company_id/Today Check-in Report.pdf"),
             storage_path("app/pdf/$date/$company_id/Continue Report.pdf"),
             storage_path("app/pdf/$date/$company_id/Check-out Report.pdf"),
@@ -1008,9 +1007,37 @@ class ReportController extends Controller
             storage_path("app/pdf/$date/$company_id/Food Order list.pdf"),
         ];
 
-        $outputDir = storage_path('app/pdf/2024-10-14/3');
-        $outputPath = $outputDir . '/summary.pdf';
+        $outputDir = storage_path("app/pdf/$date/$company_id");
+        $outputPath = storage_path("app/pdf/$date/$company_id/merged_file.pdf");
 
+        // Create the directory if it doesn't exist
+        if (!file_exists($outputDir)) {
+            mkdir($outputDir, 777, true);  // Create the directory recursively
+        }
+
+        $this->mergePdfFiles($pdfFiles, $outputPath);
+
+        return response()->json(['message' => 'PDF merged and stored successfully.', 'path' => $outputPath]);
+    }
+
+
+    public function mergeAndGeneratePDFFiles($company_id, $date)
+    {
+        $company_id = 3;
+        $date = date("Y-m-d");
+
+        $pdfFiles = [
+            storage_path("app/pdf/$date/$company_id/Summary.pdf"),
+            storage_path("app/pdf/$date/$company_id/Today Check-in Report.pdf"),
+            storage_path("app/pdf/$date/$company_id/Continue Report.pdf"),
+            storage_path("app/pdf/$date/$company_id/Check-out Report.pdf"),
+            storage_path("app/pdf/$date/$company_id/Today Booking Report.pdf"),
+            storage_path("app/pdf/$date/$company_id/Cancel Rooms Report.pdf"),
+            storage_path("app/pdf/$date/$company_id/City Ledger Report.pdf"),
+            storage_path("app/pdf/$date/$company_id/Food Order list.pdf"),
+        ];
+
+        $outputDir = storage_path("app/pdf/$date/$company_id");
         $outputPath = storage_path("app/pdf/$date/$company_id/merged_file.pdf");
 
         // Create the directory if it doesn't exist

@@ -34,23 +34,6 @@
             text-align: left;
         }
 
-        .text-left {
-            text-align: left;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .logo {
-            max-width: 150px;
-            height: auto;
-        }
-
         .my-blue {
             background-color: #408dfb !important;
         }
@@ -67,26 +50,6 @@
             background-color: #e04e4f !important;
         }
 
-        .col-1 {
-            width: 8.3%;
-        }
-
-        .col-2 {
-            width: 16.6%;
-        }
-
-        .col-3 {
-            width: 24.9%;
-        }
-
-        .col-4 {
-            width: 33.2%;
-        }
-
-        .col-6 {
-            width: 50%;
-        }
-
         .uppercase {
             text-transform: uppercase;
         }
@@ -101,63 +64,12 @@
             /* Add top border */
         }
 
-        .border-none {
-            border: none;
-            /* Add top border */
-        }
-
-        .mt-1 {
-            margin-top: 5px;
-            /* Add top border */
-        }
-
-        .mt-2 {
-            margin-top: 10px;
-            /* Add top border */
-        }
-
-        .mt-3 {
-            margin-top: 15px;
-            /* Add top border */
-        }
-
-        .mt-4 {
-            margin-top: 20px;
-            /* Add top border */
-        }
-
-        .mt-5 {
-            margin-top: 25px;
-            /* Add top border */
-        }
-
         .page-break {
             /* page-break-after: always; */
             page-break-before: always !important;
         }
 
-        .circle-container {
-            text-align: left;
-        }
 
-        .circle-container img {
-            border-radius: 50%;
-            max-width: 100%;
-            vertical-align: middle;
-            /* Adjust as needed for spacing */
-        }
-
-        .width-100 {
-            width: 100%;
-        }
-
-        .width-50 {
-            width: 50%;
-        }
-
-        .text-white {
-            color: #fff;
-        }
 
         .footer {
             position: fixed;
@@ -166,56 +78,14 @@
             right: 10mm;
             text-align: center;
             font-size: 12px;
+            text-align: right;
+            margin-top: 20px;
         }
 
         .page-number:after {
             content: counter(page);
         }
 
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 10px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            width: 100px;
-            margin-right: 15px;
-        }
-
-        .hotel-info {
-            text-align: right;
-            /* Align the hotel name and tagline to the right */
-        }
-
-        .guest-info {
-            margin: 20px 0;
-            background-color: #f7f7f7;
-            padding: 15px;
-            border-radius: 8px;
-            width: 100%;
-        }
-
-        .guest-info p {
-            margin: 0;
-            padding: 2px 0;
-        }
-
-        .quotation-header {
-            text-align: center;
-            margin: 20px 0;
-            font-size: 18px;
-        }
 
         .info-container {
             display: flex;
@@ -235,9 +105,38 @@
             font-weight: bold;
         }
 
-        .footer {
+        .small-font {
+            font-size: 11px
+        }
+
+        legend {
+            padding-top: 2px
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
             text-align: right;
-            margin-top: 20px;
+        }
+
+        .logo {
+
+            max-width: 150px;
+            width: 100px;
+            height: auto;
         }
 
         .card {
@@ -248,14 +147,6 @@
             text-align: left;
         }
 
-        .small-font {
-            font-size: 11px
-        }
-
-        legend {
-            padding-top: 2px
-        }
-
         .card-inner-container {
             padding: 0px;
         }
@@ -264,28 +155,28 @@
 
 <body>
     <div class="header">
-        <table class="">
+        <table>
             <tr>
-                <td class="text-left border-none col-4">
+                <td class="text-left">
                     <div class="logo pt">
                         <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Hotel Logo" class="logo" />
                     </div>
                 </td>
-                <td class="text-center border-none col-4 uppercase">
+                <td class="text-center uppercase">
                     <div>NIGHT AUDIT REPORT</div>
                     <div class="border-top border-bottom" style="margin: auto; width: 100px">
                         {{ date('d M Y') }}
                     </div>
                 </td>
-                <td class="text-right border-none col-4">
-                    <h5 class="reds">sdfsdfdsfsdf</h5>
-                    <div class="greens" style="line-height: 1">
+                <td class="text-right">
+                    <h5>sdfsdfdsfsdf</h5>
+                    <div style="line-height: 1">
                         P.O.Box: <small>sdfsdf</small>
                     </div>
-                    <div class="greens" style="line-height: 1">
+                    <div style="line-height: 1">
                         <small>sdfsdfsd</small>
                     </div>
-                    <div class="greens" style="line-height: 1">
+                    <div style="line-height: 1">
                         <small>sdfdsfsdf</small>
                     </div>
                 </td>
@@ -564,39 +455,25 @@
     </table>
     <br>
     <table border="1">
-
         <tbody>
-            <tr style="background: grey;color:white;">
-                <td class="text-center" style="color: black">Income ( cash )
-                </td>
-                <td class="text-center" style="color: black">Income ( others )
-                </td>
-                <td class="text-center" style="color: black">Expenses ( cash )
-                </td>
-                <td class="text-center" style="color: black">Expanses ( Others )
-                </td>
-                <td class="text-center" style="color: black">Cash in Hand
-                </td>
+            <tr style="background: rgb(224, 224, 224);color:white;">
+                @foreach ($data['balance_sheet']['labels'] as $label)
+                    <td class="text-center" style="color: black">{{ $label }}</td>
+                @endforeach
             </tr>
             <tr>
-                <td style="color: black" class="text-center">2500.00
-                </td>
-                <td class="text-center" style="color: black">7500.00</td>
-                <td class="text-center" style="color: black">750.00
-                </td>
-                <td style="color: black" class="text-center">500.00
-                </td>
-                <td style="color: green" class="text-center">1750.00
-                </td>
+                @foreach ($data['balance_sheet']['values'] as $value)
+                    <td style="color: {{ $value['color'] ?? 'black' }}" class="text-center">{{ $value['value'] }}
+                    </td>
+                @endforeach
             </tr>
-            <tr>
-                <td colspan="2" style="color: black" class="text-center">2500.00
-                </td>
 
-                <td colspan="2" style="color: black" class="text-center">500.00
-                </td>
-                <td style="color: green" class="text-center">1750.00
-                </td>
+            <tr>
+                @foreach ($data['balance_sheet']['totals'] as $value)
+                    <td colspan="{{ $value['colspan'] ?? '1' }}" style="color: {{ $value['color'] ?? 'black' }}"
+                        class="text-center">{{ $value['value'] }}
+                    </td>
+                @endforeach
             </tr>
         </tbody>
     </table>

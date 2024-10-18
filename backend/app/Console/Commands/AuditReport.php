@@ -37,20 +37,14 @@ class AuditReport extends Command
 
         $script_name = "GenerateAuditReport";
 
-        $date = date("Y-m-d H:i:s");
-
         try {
-            $reportGenerate = new ReportGenerateController();
-
-            if (!$reportGenerate->generateAuditReport()) {
-                echo "[" . $date . "] Cron: $script_name. cannot generated.\n";
-                return;
-            }
-
+            
             $company_ids = Company::orderBy('id', 'asc')->pluck("id");
+            $date = date('Y-m-d', strtotime('yesterday')); // Use yesterday's date
+
             //$company_ids = [1, 2];
             foreach ($company_ids as $company_id) {
-                $date = date('Y-m-d');
+
                 $folderPath = storage_path("app/pdf/$date/$company_id");
                 $pdfFiles = glob("$folderPath/*.pdf");
                 //return $pdfFiles;
