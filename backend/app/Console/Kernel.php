@@ -18,35 +18,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // //Backup
         $schedule
             ->command('task:db_backup')
             ->dailyAt('3:00')
-            // ->everyMinute()
-            ->appendOutputTo("db_backup.log")
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
         $schedule
             ->command('task:generate_reports')
-            // ->everyFiveMinutes()
             ->dailyAt('1:00')
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
         $schedule
-            ->command('task:audit_report')
+            ->command('send:audit_report')
             ->everyFiveMinutes()
             // ->dailyAt('9:00')
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
-
-        // // PDF
-        // $schedule
-        //     ->command('task:generate_audit_report')
-        //     // ->everyMinute()
-        //     // ->everyThirtyMinutes()
-        //     ->dailyAt('1:00')
-        //     //->hourly()
-        //     ->appendOutputTo(storage_path("logs/pdf.log"))
-        //     ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
     }
 
     /**
