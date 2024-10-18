@@ -7,7 +7,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: "",
-    title: "EZHMS",
+    title: "MyHotel",
     meta: [
       {
         charset: "utf-8",
@@ -31,7 +31,7 @@ export default {
       {
         rel: "icon",
         type: "image/x-icon",
-        href: "/favicon.ico",
+        href: "/favicon.png",
       },
 
       // {
@@ -156,7 +156,7 @@ export default {
       lang: "en",
     },
     icon: {
-      fileName: "/favicon.ico",
+      fileName: "/favicon.png",
     },
   },
 

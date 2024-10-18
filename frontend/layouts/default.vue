@@ -328,6 +328,13 @@ export default {
           menu: "dashboard",
         },
         {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          title: "Night Audit",
+          to: "/management/report/night_audit",
+          menu: "night_audit_access",
+        },
+        {
           topMenu: "dashboard",
           icon: "mdi-bed",
           title: "History",

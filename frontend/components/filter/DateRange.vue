@@ -1,15 +1,13 @@
 <template>
-  <div>
-    <date-picker
-      style="width: 100%"
-      value-type="format"
-      format="YYYY-MM-DD"
-      type="date"
-      v-model="time3"
-      @change="CustomFilter()"
-      range
-    ></date-picker>
-  </div>
+  <date-picker
+    style="width: 100%"
+    value-type="format"
+    format="YYYY-MM-DD"
+    type="date"
+    v-model="time3"
+    @change="CustomFilter()"
+    range
+  ></date-picker>
 </template>
 
 <script>
