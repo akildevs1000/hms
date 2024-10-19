@@ -27,7 +27,7 @@
                   Bank: $utils.currency_format(income.Bank),
                   UPI: $utils.currency_format(income.UPI),
                   Cheque: $utils.currency_format(income.Cheque),
-                  CityLedger: $utils.currency_format(CityLedger),
+                  CityLedger: $utils.currency_format(income.CityLedger),
                 },
               ]"
             />
@@ -113,6 +113,7 @@
         <v-card-text>
           <v-container>
             <AssetsTable
+              v-if="statement"
               :headers="[
                 { text: `Profit`, value: `Profit`, align: `center` },
                 { text: `Loss`, value: `Loss`, align: `center` },
@@ -122,7 +123,7 @@
                 {
                   Profit: $utils.currency_format(profit),
                   Loss: $utils.currency_format(loss),
-                  CityLedger: $utils.currency_format(CityLedger),
+                  CityLedger: $utils.currency_format(income.CityLedger),
                 },
               ]"
             />
@@ -134,6 +135,7 @@
     <v-row dense>
       <v-col cols="3">
         <v-card
+          v-if="income"
           @click="IncomeCardDialog = true"
           class="elevation-2"
           style="height: 230px"
@@ -152,8 +154,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
-              :key="key"
-              v-if="income"
+              :key="key + 1"
               :width="'200px'"
               showPriceFormat="true"
               name="margin"
@@ -170,16 +171,16 @@
                 {
                   color: `#010002`,
                   text: `CityLedger`,
-                  value: CityLedger,
+                  value: income.CityLedger,
                 },
               ]"
             />
-            <div v-else>Loading...</div>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="3">
         <v-card
+          v-if="expense"
           @click="ExpenseCardDialog = true"
           class="elevation-2"
           style="height: 230px"
@@ -198,8 +199,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
-              :key="key"
-              v-if="expense"
+              :key="key + 2"
               :width="'200px'"
               showPriceFormat="true"
               name="margin"
@@ -215,12 +215,12 @@
                 { color: `#010002`, text: `Cheque`, value: expense.Cheque },
               ]"
             />
-            <div v-else>Loading...</div>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="3">
         <v-card
+          v-if="managementExpense"
           @click="ManagementCardDialog = true"
           class="elevation-2"
           style="height: 230px"
@@ -239,8 +239,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
-              :key="key"
-              v-if="managementExpense"
+              :key="key + 3"
               :width="'200px'"
               showPriceFormat="true"
               name="margin"
@@ -276,7 +275,6 @@
                 },
               ]"
             />
-            <div v-else>Loading...</div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -300,8 +298,8 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
-              :key="key"
-              v-if="income"
+              v-if="third"
+              :key="key + 4"
               :width="'200px'"
               showPriceFormat="true"
               name="margin"
@@ -310,15 +308,18 @@
               :colors="colors"
               :labels="[
                 { color: `#4caf50`, text: `Profit`, value: profit },
-                { color: `#538234`, text: `Loss`, value: loss },
+                {
+                  color: `#538234`,
+                  text: `Loss`,
+                  value: loss,
+                },
                 {
                   color: `#0f642b`,
                   text: `City Ledger`,
-                  value: CityLedger,
+                  value: income.CityLedger,
                 },
               ]"
             />
-            <div v-else>Loading...</div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -342,16 +343,16 @@
         @click="currentTabId = 3"
         >ManagementExpense</v-btn
       >
-      <Income v-show="currentTabId == 1" @stats="(e) => (income = e)" />
+      <Income v-show="currentTabId == 1" @stats="handleIncome" />
       <ExpenseDashboard
         :is_admin_expense="0"
         v-show="currentTabId == 2"
-        @stats="(e) => (expense = e)"
+        @stats="handleNonMagementExpense"
       />
       <ExpenseDashboard
         :is_admin_expense="1"
         v-show="currentTabId == 3"
-        @stats="(e) => (managementExpense = e)"
+        @stats="handleMagementExpense"
       />
     </v-card>
   </div>
@@ -386,6 +387,14 @@ export default {
     managementExpense: null,
 
     loading: false,
+    statement: false,
+
+    first: null,
+    second: null,
+    third: null,
+
+    loss: 100,
+    profit: 200,
   }),
   created() {
     this.loading = true;
@@ -429,31 +438,55 @@ export default {
   //     this.key += 1;
   //   },
   // },
-  computed: {
-    loss() {
-      if (this.income && this.expense && this.managementExpense) {
-        let combinedExpense = this.expense.total + this.managementExpense.total;
 
-        let result = this.income.total - combinedExpense;
-
-        return result > 0 ? 0 : result;
-      } else return 0;
-    },
-
-    profit() {
-      if (this.income && this.expense && this.managementExpense) {
-        let combinedExpense = this.expense.total + this.managementExpense.total;
-
-        let result = this.income.total - combinedExpense;
-
-        return result < 0 ? 0 : result;
-      } else return 0;
-    },
-    CityLedger() {
-      return this.income?.CityLedger > 0 ? this.income.CityLedger : 0;
-    },
-  },
   methods: {
+    handleIncome(e) {
+      this.income = e;
+      this.first = true;
+      if (this.first) {
+        this.second = true;
+      }
+    },
+    handleNonMagementExpense(e) {
+      this.expense = e;
+      if (this.second) {
+        this.third = true;
+      }
+    },
+    handleMagementExpense(e) {
+      this.managementExpense = e;
+
+      if (this.third) {
+        // this.calculateStatement();
+      }
+    },
+
+    calculateStatement() {
+      const { income, expense, managementExpense } = this;
+
+      let mExpense = 0;
+      let nmExpense = 0;
+
+      let statementIncome = 0;
+      if (expense && expense.total) {
+        nmExpense = expense.total;
+      }
+
+      if (managementExpense && managementExpense.total) {
+        mExpense = managementExpense.total;
+      }
+
+      if (income && income.total) {
+        statementIncome = income.total;
+        CityLedger = income.CityLedger;
+      }
+
+      let combinedExpense = nmExpense + mExpense;
+      let total = statementIncome - combinedExpense;
+
+      this.loss = total < 0 ? total : 0;
+      this.profit = total > 0 ? total : 0;
+    },
     can(per) {
       let u = this.$auth.user;
       return (

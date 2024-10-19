@@ -1,476 +1,591 @@
 <template>
-  <div v-if="can('management_income_access') && can('management_income_view')">
-    <v-dialog v-model="IncomeCardDialog" persistent max-width="700px">
-      <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Income </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="IncomeCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
-        </v-alert>
-        <v-card-text>
-          <v-container>
-            <table v-if="income">
-              <tr>
-                <td>Cash</td>
-                <td>Card</td>
-                <td>Online</td>
-                <td>Bank</td>
-                <td>UPI</td>
-                <td>Cheque</td>
-                <td>CityLedger</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(income.Cash) }}</td>
-                <td>{{ convert_decimal(income.Card) }}</td>
-                <td>{{ convert_decimal(income.Online) }}</td>
-                <td>{{ convert_decimal(income.Bank) }}</td>
-                <td>{{ convert_decimal(income.UPI) }}</td>
-                <td>{{ convert_decimal(income.Cheque) }}</td>
-                <td>{{ convert_decimal(income.CityLedger) }}</td>
-              </tr>
-            </table>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+  <div v-if="can(`night_audit_access`)">
+    <style scoped>
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+    </style>
+    <v-card class="px-2">
+      <v-row>
+        <v-col v-for="(stat, index) in stats" :key="index">
+          <AssetsCard :key="index" :options="stat" />
+        </v-col>
+      </v-row>
+    </v-card>
+    <v-card class="mt-5 px-2">
+      <v-row class="text-left">
+        <v-col cols="10"></v-col>
+        <v-col cols="2">
+          <v-menu
+            v-model="from_menu"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="from_date"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                dense
+                :hide-details="true"
+                outlined
+                label="Date"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              no-title
+              v-model="from_date"
+              @input="from_menu = false"
+              @change="commonMethod"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+      </v-row>
+    </v-card>
 
-    <v-dialog v-model="ExpenseCardDialog" persistent max-width="700px">
-      <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Expense </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="ExpenseCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
-        </v-alert>
-        <v-card-text>
-          <v-container>
-            <table v-if="expense">
-              <tr>
-                <td>Cash</td>
-                <td>Card</td>
-                <td>Online</td>
-                <td>Bank</td>
-                <td>UPI</td>
-                <td>Cheque</td>
-                <td>CityLedger</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(expense.Cash) }}</td>
-                <td>{{ convert_decimal(expense.Card) }}</td>
-                <td>{{ convert_decimal(expense.Online) }}</td>
-                <td>{{ convert_decimal(expense.Bank) }}</td>
-                <td>{{ convert_decimal(expense.UPI) }}</td>
-                <td>{{ convert_decimal(expense.Cheque) }}</td>
-                <td>{{ convert_decimal(expense.CityLedger) }}</td>
-              </tr>
-            </table>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="ManagementCardDialog" persistent max-width="700px">
-      <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Management Expenses </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="ManagementCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
-        </v-alert>
-        <v-card-text>
-          <v-container>
-            <table v-if="managementExpense">
-              <tr>
-                <td>Cash</td>
-                <td>Card</td>
-                <td>Online</td>
-                <td>Bank</td>
-                <td>UPI</td>
-                <td>Cheque</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(managementExpense.Cash) }}</td>
-                <td>{{ convert_decimal(managementExpense.Card) }}</td>
-                <td>{{ convert_decimal(managementExpense.Online) }}</td>
-                <td>{{ convert_decimal(managementExpense.Bank) }}</td>
-                <td>{{ convert_decimal(managementExpense.UPI) }}</td>
-                <td>{{ convert_decimal(managementExpense.Cheque) }}</td>
-              </tr>
-            </table>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="ProfitLossCardDialog" persistent max-width="700px">
-      <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Profit & Loss </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="ProfitLossCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
-        </v-alert>
-        <v-card-text>
-          <v-container>
-            <table>
-              <tr>
-                <td>Profit</td>
-                <td>Loss</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(profit) }}</td>
-                <td>{{ convert_decimal(loss) }}</td>
-              </tr>
-            </table>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
-    <v-row dense>
-      <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Income
-              </v-col>
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="IncomeCardDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              :key="key"
-              v-if="income"
-              :width="'200px'"
-              showPriceFormat="true"
-              name="margin"
-              size="100%"
-              :total="'100'"
-              :colors="colors"
-              :labels="[
-                { color: `#4caf50`, text: `Cash`, value: income.Cash },
-                { color: `#538234`, text: `Card`, value: income.Card },
-                { color: `#0f642b`, text: `Online`, value: income.Online },
-                { color: `#010002`, text: `Bank`, value: income.Bank },
-                { color: `#010002`, text: `UPI`, value: income.UPI },
-                { color: `#010002`, text: `Cheque`, value: income.Cheque },
-                {
-                  color: `#010002`,
-                  text: `CityLedger`,
-                  value: income.CityLedger,
-                },
-              ]"
-            />
-            <div v-else>Loading...</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Expenses
-              </v-col>
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="ExpenseCardDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              :key="key"
-              v-if="expense"
-              :width="'200px'"
-              showPriceFormat="true"
-              name="margin"
-              size="100%"
-              :total="'100'"
-              :colors="colors"
-              :labels="[
-                { color: `#4caf50`, text: `Cash`, value: expense.Cash },
-                { color: `#538234`, text: `Card`, value: expense.Card },
-                { color: `#0f642b`, text: `Online`, value: expense.Online },
-                { color: `#010002`, text: `Bank`, value: expense.Bank },
-                { color: `#010002`, text: `UPI`, value: expense.UPI },
-                { color: `#010002`, text: `Cheque`, value: expense.Cheque },
-              ]"
-            />
-            <div v-else>Loading...</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Management Expenses
-              </v-col>
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="ManagementCardDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              :key="key"
-              v-if="managementExpense"
-              :width="'200px'"
-              showPriceFormat="true"
-              name="margin"
-              size="100%"
-              :total="'100'"
-              :colors="colors"
-              :labels="[
-                {
-                  color: `#4caf50`,
-                  text: `Cash`,
-                  value: managementExpense.Cash,
-                },
-                {
-                  color: `#538234`,
-                  text: `Card`,
-                  value: managementExpense.Card,
-                },
-                {
-                  color: `#0f642b`,
-                  text: `Online`,
-                  value: managementExpense.Online,
-                },
-                {
-                  color: `#010002`,
-                  text: `Bank`,
-                  value: managementExpense.Bank,
-                },
-                { color: `#010002`, text: `UPI`, value: managementExpense.UPI },
-                {
-                  color: `#010002`,
-                  text: `Cheque`,
-                  value: managementExpense.Cheque,
-                },
-              ]"
-            />
-            <div v-else>Loading...</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
-          <v-card-text>
-            <v-row style="margin-top: -12px"
-              ><v-col cols="8" style="color: black; font-size: 12px"
-                >Profit and Loss
-              </v-col>
-
-              <v-col cols="4" class="text-right align-right"
-                ><img
-                  @click="ProfitLossCardDialog = true"
-                  src="/dashboard-arrow.png"
-                  style="width: 18px; padding-top: 5px"
-              /></v-col>
-            </v-row>
-            <v-divider color="#DDD" style="margin-bottom: 10px" />
-            <Donut
-              :key="key"
-              v-if="income"
-              :width="'200px'"
-              showPriceFormat="true"
-              name="margin"
-              size="100%"
-              :total="'100'"
-              :colors="colors"
-              :labels="[
-                { color: `#4caf50`, text: `Profit`, value: profit },
-                { color: `#538234`, text: `Loss`, value: loss },
-                {
-                  color: `#0f642b`,
-                  text: `City Ledger`,
-                  value: income.CityLedger,
-                },
-              ]"
-            />
-            <div v-else>Loading...</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-card class="my-2 text-right">
-      <v-btn
-        :color="currentTabId === 1 ? `primary` : ''"
-        text
-        @click="currentTabId = 1"
-        >Income</v-btn
-      >
-      <v-btn
-        :color="currentTabId === 2 ? `primary` : ''"
-        text
-        @click="currentTabId = 2"
-        >Expense</v-btn
-      >
-      <v-btn
-        :color="currentTabId === 3 ? `primary` : ''"
-        text
-        @click="currentTabId = 3"
-        >ManagementExpense</v-btn
-      >
-      <Income v-show="currentTabId == 1" @stats="(e) => (income = e)" />
-      <IncomeExpenseNonManagement
-        v-show="currentTabId == 2"
-        @stats="(e) => (expense = e)"
-      />
-      <IncomeExpenseManagement
-        v-show="currentTabId == 3"
-        @stats="(e) => (managementExpense = e)"
-      />
+    <v-card class="mt-5 px-2">
+      <v-row>
+        <v-col md="12" class="text-right">
+          <AssetsTable
+            :headers="[
+              { text: `#`, value: `serial`, align: `center` },
+              { text: `Sent To`, value: `sent_to`, align: `center` },
+              { text: `Date Time`, value: `created_at`, align: `center` },
+              { text: `File`, value: `file`, align: `center` },
+            ]"
+            :items="[
+              {
+                serial: 1,
+                file: 1,
+                sent_to: `demo@gmail.com`,
+                created_at: new Date(),
+              },
+              {
+                serial: 2,
+                file: 2,
+                sent_to: `demo@gmail.com`,
+                created_at: new Date(),
+              },
+              {
+                serial: 3,
+                file: 3,
+                sent_to: `demo@gmail.com`,
+                created_at: new Date(),
+              },
+              {
+                serial: 4,
+                file: 4,
+                sent_to: `demo@gmail.com`,
+                created_at: new Date(),
+              },
+            ]"
+          />
+        </v-col>
+      </v-row>
     </v-card>
   </div>
   <NoAccess v-else />
 </template>
 
 <script>
+import CheckinAudit from "../../../components/audit/CheckinAudit.vue";
 export default {
+  components: {
+    CheckinAudit,
+  },
   data: () => ({
-    IncomeCardDialog: false,
-    ExpenseCardDialog: false,
-    ManagementCardDialog: false,
-    ProfitLossCardDialog: false,
-
-    currentTabId: 1,
-    key: 1,
-    colors: [
-      "#92d050",
-      "#ff0000",
-      "#ffc000",
-      "#0D652D",
-      "#174EA6",
-      "#2E3945",
-      "#2ECC71",
-      "#CE0E2D",
-      "#0077B5",
+    stats: [
+      {
+        icon: "mdi-door-open", // Represents Checkin
+        value: 11,
+        label: "Checkin",
+        col: 7,
+        color: "green", // For activity (Walking)
+      },
+      {
+        icon: "mdi-clock-outline", // Represents Continue (ongoing activity)
+        value: 11,
+        label: "Continue",
+        col: 7,
+        color: "blue", // For online/technology (OTA)
+      },
+      {
+        icon: "mdi-door-closed", // Represents CheckOut
+        value: 11,
+        label: "CheckOut",
+        col: 7,
+        color: "orange", // For business (Corporate)
+      },
+      {
+        icon: "mdi-calendar-check", // Represents Booking
+        value: 11,
+        label: "Booking",
+        col: 7,
+        color: "purple", // For cloud/web (Website)
+      },
+      {
+        icon: "mdi-cash-multiple", // Represents City Ledger (accounts, payments)
+        value: 11,
+        label: "City Ledger",
+        col: 7,
+        color: "pink", // For gifts (Complimentary)
+      },
+      {
+        icon: "mdi-cancel", // Represents Cancel Rooms
+        value: 11,
+        label: "Cancel Rooms",
+        col: 7,
+        color: "grey", // For service/people (Travel Agent)
+      },
+      {
+        icon: "mdi-silverware-fork-knife", // Represents Food Order
+        value: 11,
+        label: "Food Order",
+        col: 7,
+        color: "teal", // For service/people (Travel Agent)
+      },
     ],
-    Model: "Expense",
-    activeTab: 0,
-    income: null,
-    expense: null,
-    managementExpense: null,
 
+    Model: "Audit Report",
+    // from_date: new Date().toJSON().slice(0, 10),
+    from_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
+    from_menu: false,
+    options: {},
+    endpoint: "expense",
+    search: "",
+    snackbar: false,
+    dialog: false,
+    todayCheckIn: [],
+    todayCheckOut: [],
+    continueRooms: [],
+    todayPayments: [],
+    cityLedgerPaymentsAudit: [],
+    cancelRooms: [],
+
+    checkInFileGenerateDateTime: null,
+    checkInFilePath: null,
+
+    continueRoomsFileGenerateDateTime: null,
+    continueRoomsFilePath: null,
+
+    todayCheckOutGenerateDateTime: null,
+    todayCheckOutPath: null,
+
+    todayPaymentsGenerateDateTime: null,
+    todayPaymentsPath: null,
+
+    cityLedgerGenerateDateTime: null,
+    cityLedgerPath: null,
+
+    cancelRoomsGenerateDateTime: null,
+    cancelRoomsPath: null,
+
+    foodGenerateDateTime: null,
+    foodPath: null,
+
+    counts: [],
     loading: false,
+    total: 0,
+    totExpense: 0,
+
+    vertical: false,
+    activeTab: 0,
+
+    headers: [
+      { align: "left", text: "#" },
+      { align: "left", text: "Guest" },
+      { align: "left", text: "Rev. No" },
+      { align: "left", text: "Rooms" },
+      { align: "left", text: "Source" },
+      { align: "left", text: "CheckIn" },
+      { align: "left", text: "CheckOut" },
+      { align: "left", text: "Tariff" },
+      { align: "left", text: "Advance" },
+      { align: "left", text: "Cash" },
+      { align: "left", text: "Card" },
+      { align: "left", text: "Online" },
+      { align: "left", text: "Bank" },
+      { align: "left", text: "UPI" },
+      { align: "left", text: "Balance" },
+      { align: "left", text: "Remark" },
+      { align: "center", text: "File Generated Date Time" },
+      { align: "center", text: "PDF File" },
+    ],
+    response: "",
+    loss: "",
+    profit: "",
+    errors: [],
+    FoodData: [],
+    editedItem: {
+      item: null,
+      amount: null,
+      payment_modes: "CASH",
+    },
+    totalExpenses: {},
   }),
+
   created() {
+    let filters = this.$store.getters.getDataToSend;
+    if (filters.date) {
+      this.from_date = filters.date;
+    }
+
     this.loading = true;
-    // this.setCount();
-    // setTimeout(() => {
-    if (this.income) this.activeTab = 1;
-    else
-      setTimeout(() => {
-        this.activeTab = 0;
-      }, 1000);
-    // }, 1000);
-    // setTimeout(() => {
-    if (this.expense) this.activeTab = 2;
-    else
-      setTimeout(() => {
-        this.activeTab = 0;
-      }, 2000);
-    // }, 2000);
-    // setTimeout(() => {
-    if (this.managementExpense) this.activeTab = 0;
-    else
-      setTimeout(() => {
-        this.activeTab = 0;
-      }, 1000);
-    // }, 3000);
+    this.getdata();
+    this.get_food_order_list();
   },
-  // watch: {
-  //   income() {
-  //     if (this.income) this.activeTab = 1;
-  //   },
-  //   expense() {
-  //     if (this.expense) this.activeTab = 2;
-  //   },
-  //   managementExpense() {
-  //     if (this.managementExpense) this.activeTab = 0;
-  //   },
-  //   loss() {
-  //     this.key += 1;
-  //   },
-  //   profit() {
-  //     this.key += 1;
-  //   },
-  // },
+
   computed: {
-    loss() {
-      if (this.income && this.expense && this.managementExpense) {
-        let combinedExpense = this.expense.total + this.managementExpense.total;
-
-        let result = this.income.total - combinedExpense;
-
-        return result > 0 ? 0 : result;
-      } else return 0;
+    totalBalance() {
+      let sum = 0;
+      this.todayCheckIn.map((e) => (sum += parseFloat(e.balance)));
+      return sum.toFixed(2);
+    },
+    totalCash() {
+      return this.getSum(this.todayCheckIn, 1);
+    },
+    totalCard() {
+      return this.getSum(this.todayCheckIn, 2);
+    },
+    totalBank() {
+      return this.getSum(this.todayCheckIn, 4);
+    },
+    totalOnline() {
+      return this.getSum(this.todayCheckIn, 3);
+    },
+    totalUPI() {
+      return this.getSum(this.todayCheckIn, 5);
     },
 
-    profit() {
-      if (this.income && this.expense && this.managementExpense) {
-        let combinedExpense = this.expense.total + this.managementExpense.total;
+    continueTotalBalance() {
+      let sum = 0;
+      this.continueRooms.map((e) => (sum += parseFloat(e.balance)));
+      return sum.toFixed(2);
+    },
+    continueTotalCash() {
+      return this.getSum(this.continueRooms, 1);
+    },
+    continueTotalCard() {
+      return this.getSum(this.continueRooms, 2);
+    },
+    continueTotalBank() {
+      return this.getSum(this.continueRooms, 4);
+    },
+    continueTotalOnline() {
+      return this.getSum(this.continueRooms, 3);
+    },
+    continueTotalUPI() {
+      return this.getSum(this.continueRooms, 5);
+    },
 
-        let result = this.income.total - combinedExpense;
+    checkoutTotalBalance() {
+      let sum = 0;
+      this.todayCheckOut.map((e) => (sum += parseFloat(e.balance)));
+      return sum.toFixed(2);
+    },
+    checkoutTotalCash() {
+      return this.getSum(this.todayCheckOut, 1);
+    },
+    checkoutTotalCard() {
+      return this.getSum(this.todayCheckOut, 2);
+    },
+    checkoutTotalBank() {
+      return this.getSum(this.todayCheckOut, 4);
+    },
+    checkoutTotalOnline() {
+      return this.getSum(this.todayCheckOut, 3);
+    },
+    checkoutTotalUPI() {
+      return this.getSum(this.todayCheckOut, 5);
+    },
 
-        return result < 0 ? 0 : result;
-      } else return 0;
+    todayPaymentTotalBalance() {
+      let sum = 0;
+      this.todayPayments.map((e) => (sum += parseFloat(e.balance)));
+      return sum.toFixed(2);
+    },
+    todayPaymentTotalCash() {
+      return this.getSum(this.todayPayments, 1);
+    },
+    todayPaymentTotalCard() {
+      return this.getSum(this.todayPayments, 2);
+    },
+    todayPaymentTotalBank() {
+      return this.getSum(this.todayPayments, 4);
+    },
+    todayPaymentTotalOnline() {
+      return this.getSum(this.todayPayments, 3);
+    },
+    todayPaymentTotalUPI() {
+      return this.getSum(this.todayPayments, 5);
+    },
+
+    cityLedgerTotalBalance() {
+      let sum = 0;
+      this.cityLedgerPaymentsAudit.map((e) => (sum += parseFloat(e.balance)));
+      return sum.toFixed(2);
+    },
+    cityLedgerTotalCash() {
+      return this.getSum(this.cityLedgerPaymentsAudit, 1);
+    },
+    cityLedgerTotalCard() {
+      return this.getSum(this.cityLedgerPaymentsAudit, 2);
+    },
+    cityLedgerTotalBank() {
+      return this.getSum(this.cityLedgerPaymentsAudit, 4);
+    },
+    cityLedgerTotalOnline() {
+      return this.getSum(this.cityLedgerPaymentsAudit, 3);
+    },
+    cityLedgerTotalUPI() {
+      return this.getSum(this.cityLedgerPaymentsAudit, 5);
+    },
+
+    GrandTotal() {
+      let tot =
+        parseFloat(this.GrandTotalCash) +
+        parseFloat(this.GrandTotalCard) +
+        parseFloat(this.GrandTotalBank) +
+        parseFloat(this.GrandTotalTodayOnline) +
+        parseFloat(this.GrandTotalTodayUPI);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalCash() {
+      let tot =
+        parseFloat(this.cityLedgerTotalCash) +
+        parseFloat(this.totalCash) +
+        // parseFloat(this.totalUPI) +
+        parseFloat(this.checkoutTotalCash) +
+        parseFloat(this.continueTotalCash) +
+        parseFloat(this.todayPaymentTotalCash);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalCard() {
+      let tot =
+        parseFloat(this.totalCard) +
+        parseFloat(this.checkoutTotalCard) +
+        parseFloat(this.continueTotalCard) +
+        parseFloat(this.todayPaymentTotalCard);
+      parseFloat(this.cityLedgerTotalCard);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalBank() {
+      let tot =
+        parseFloat(this.continueTotalBank) +
+        parseFloat(this.todayPaymentTotalBank) +
+        parseFloat(this.checkoutTotalBank) +
+        parseFloat(this.cityLedgerTotalBank) +
+        parseFloat(this.totalBank);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalTodayOnline() {
+      let tot =
+        parseFloat(this.continueTotalOnline) +
+        parseFloat(this.todayPaymentTotalOnline) +
+        parseFloat(this.checkoutTotalOnline) +
+        parseFloat(this.cityLedgerTotalOnline) +
+        parseFloat(this.totalOnline);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalTodayUPI() {
+      let tot =
+        parseFloat(this.continueTotalUPI) +
+        parseFloat(this.todayPaymentTotalUPI) +
+        parseFloat(this.checkoutTotalUPI) +
+        parseFloat(this.cityLedgerTotalUPI) +
+        parseFloat(this.totalUPI);
+      return tot.toFixed(2);
+    },
+
+    GrandTotalBalance() {
+      let tot =
+        parseFloat(this.totalBalance) +
+        parseFloat(this.continueTotalBalance) +
+        parseFloat(this.checkoutTotalBalance) +
+        parseFloat(this.cityLedgerTotalBalance) +
+        parseFloat(this.todayPaymentTotalBalance);
+      return tot.toFixed(2);
     },
   },
+
   methods: {
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00".replace(".00.00", ".00");
-      }
+    openExternalLink(path) {
+      let url = `${process.env.BACKEND_URL}get_audit_report_print?path=${path}`;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", url);
+      document.body.appendChild(element);
+      console.log(element);
+      element.click();
     },
-    getPriceFormat(price) {
-      return (
-        this.$auth.user.company.currency +
-        " " +
-        parseFloat(price).toLocaleString("en-IN", {
-          maximumFractionDigits: 2,
-        })
-      );
+    onPageChange() {
+      this.getExpenseData();
     },
     can(per) {
       let u = this.$auth.user;
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
+    },
+    caps(str) {
+      if (str == "" || str == null) {
+        return "---";
+      } else {
+        let res = str.toString();
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+    },
+
+    convert_decimal(n) {
+      if (n === +n && n !== (n | 0)) {
+        return n.toFixed(2);
+      } else {
+        return n + ".00";
+      }
+    },
+
+    goToRevView(item) {
+      this.$router.push(`/customer/details/${item.id}`);
+    },
+
+    goToRevViewFromCancel(item) {
+      this.$router.push(`/customer/details/${item.booking_id}`);
+    },
+
+    getTimeFromCheckIn(date) {
+      const dateObj = new Date(date);
+      const hours = dateObj.getHours().toString().padStart(2, "0");
+      const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+      return `${hours}:${minutes}`;
+    },
+
+    getSum(item, type) {
+      let sum = 0;
+      item.map((e) => {
+        e.transactions.map((e) =>
+          e.payment_method_id == type ? (sum += parseFloat(e.credit)) : 0
+        );
+      });
+      return sum.toFixed(2);
+    },
+
+    setAdvancePayment(amt) {
+      return amt > 0 ? amt : 0;
+    },
+
+    process(type) {
+      alert("coming soon, developing");
+      return;
+      let comId = this.$auth.user.company.id; //company id
+      let from = this.from_date;
+      let to = this.to_date;
+      let url =
+        process.env.BACKEND_URL +
+        `${type}?company_id=${comId}&from=${from}&to=${to}`;
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", `${url}`);
+      document.body.appendChild(element);
+      element.click();
+    },
+
+    getPaymentMode(item, mode) {
+      // let creditTrans = item.transactions.filter((e) => e.credit > 0);
+      let creditTrans = item.transactions;
+      switch (mode) {
+        case 1:
+          return this.getPaySum(creditTrans, 1);
+        case 2:
+          return this.getPaySum(creditTrans, 2);
+        case 3:
+          return this.getPaySum(creditTrans, 3);
+        case 4:
+          return this.getPaySum(creditTrans, 4);
+        case 5:
+          return this.getPaySum(creditTrans, 5);
+        default:
+          break;
+      }
+    },
+
+    getPaySum(payload, mode) {
+      let sum = 0;
+      payload.map((e) => {
+        if (e.payment_method_id == mode) {
+          sum += parseFloat(e.credit);
+        }
+      });
+      return sum.toFixed(2);
+    },
+
+    commonMethod() {
+      this.getdata();
+    },
+
+    getdata(url = "get_audit_report") {
+      this.loading = true;
+      let options = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          // date: "2023-04-10",
+          date: this.from_date,
+        },
+      };
+      this.$axios.get(url, options).then(({ data }) => {
+        this.todayCheckIn = data.check_in.data;
+        this.continueRooms = data.continue.data;
+        this.todayCheckOut = data.check_out.data;
+        this.todayPayments = data.payment.data;
+        this.cityLedgerPaymentsAudit = data.cityLedger.data;
+        this.cancelRooms = data.cancel.data;
+
+        this.checkInFileGenerateDateTime = data.check_in.dateTime;
+        this.checkInFilePath = data.check_in.file_path;
+
+        this.continueRoomsFileGenerateDateTime = data.continue.dateTime;
+        this.continueRoomsFilePath = data.continue.file_path;
+
+        this.todayCheckOutGenerateDateTime = data.check_out.dateTime;
+        this.todayCheckOutPath = data.check_out.file_path;
+
+        this.todayPaymentsGenerateDateTime = data.payment.dateTime;
+        this.todayPaymentsPath = data.payment.file_path;
+
+        this.cityLedgerGenerateDateTime = data.cityLedger.dateTime;
+        this.cityLedgerPath = data.cityLedger.file_path;
+
+        this.cancelRoomsGenerateDateTime = data.cancel.dateTime;
+        this.cancelRoomsPath = data.cancel.file_path;
+
+        this.foodGenerateDateTime = data.food.dateTime;
+        this.foodPath = data.food.file_path;
+
+        this.totExpense = data.expense.data;
+      });
+    },
+
+    get_food_order_list() {
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`food/`, payload).then(({ data }) => {
+        this.FoodData = data;
+      });
     },
   },
 };
