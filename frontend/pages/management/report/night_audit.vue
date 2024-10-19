@@ -1,13 +1,5 @@
 <template>
   <div v-if="can(`night_audit_access`)">
-    <style scoped>
-      td,
-      th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-      }
-    </style>
     <v-card class="px-2">
       <v-row>
         <v-col v-for="(stat, index) in stats" :key="index">
@@ -19,32 +11,7 @@
       <v-row class="text-left">
         <v-col cols="10"></v-col>
         <v-col cols="2">
-          <v-menu
-            v-model="from_menu"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="from_date"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                dense
-                :hide-details="true"
-                outlined
-                label="Date"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              no-title
-              v-model="from_date"
-              @input="from_menu = false"
-              @change="commonMethod"
-            ></v-date-picker>
-          </v-menu>
+          <FilterDateRange @filter-attr="filterAttr" />
         </v-col>
       </v-row>
     </v-card>
@@ -52,40 +19,7 @@
     <v-card class="mt-5 px-2">
       <v-row>
         <v-col md="12" class="text-right">
-          <AssetsTable
-            :headers="[
-              { text: `#`, value: `serial`, align: `center` },
-              { text: `Sent To`, value: `sent_to`, align: `center` },
-              { text: `Date Time`, value: `created_at`, align: `center` },
-              { text: `File`, value: `file`, align: `center` },
-            ]"
-            :items="[
-              {
-                serial: 1,
-                file: 1,
-                sent_to: `demo@gmail.com`,
-                created_at: new Date(),
-              },
-              {
-                serial: 2,
-                file: 2,
-                sent_to: `demo@gmail.com`,
-                created_at: new Date(),
-              },
-              {
-                serial: 3,
-                file: 3,
-                sent_to: `demo@gmail.com`,
-                created_at: new Date(),
-              },
-              {
-                serial: 4,
-                file: 4,
-                sent_to: `demo@gmail.com`,
-                created_at: new Date(),
-              },
-            ]"
-          />
+          <AssetsTable height="500" :headers="headers" :items="items" />
         </v-col>
       </v-row>
     </v-card>
@@ -198,32 +132,207 @@ export default {
 
     vertical: false,
     activeTab: 0,
-
+    items: [
+      {
+        date: "2024-10-15",
+        checkin: "2024-10-14T14:00",
+        checkout: "2024-10-15T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 500,
+        income: 1500,
+        expense: 200,
+        cash_in_hand: 300,
+      },
+      {
+        date: "2024-10-16",
+        checkin: "2024-10-15T14:00",
+        checkout: "2024-10-16T11:00",
+        dayuse: true,
+        continue: false,
+        closed: true,
+        booked: false,
+        cancel: true,
+        breakfast: false,
+        ledger: 300,
+        income: 1000,
+        expense: 300,
+        cash_in_hand: 400,
+      },
+      {
+        date: "2024-10-17",
+        checkin: "2024-10-16T14:00",
+        checkout: "2024-10-17T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 600,
+        income: 2000,
+        expense: 500,
+        cash_in_hand: 500,
+      },
+      {
+        date: "2024-10-15",
+        checkin: "2024-10-14T14:00",
+        checkout: "2024-10-15T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 500,
+        income: 1500,
+        expense: 200,
+        cash_in_hand: 300,
+      },
+      {
+        date: "2024-10-16",
+        checkin: "2024-10-15T14:00",
+        checkout: "2024-10-16T11:00",
+        dayuse: true,
+        continue: false,
+        closed: true,
+        booked: false,
+        cancel: true,
+        breakfast: false,
+        ledger: 300,
+        income: 1000,
+        expense: 300,
+        cash_in_hand: 400,
+      },
+      {
+        date: "2024-10-17",
+        checkin: "2024-10-16T14:00",
+        checkout: "2024-10-17T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 600,
+        income: 2000,
+        expense: 500,
+        cash_in_hand: 500,
+      },
+      {
+        date: "2024-10-15",
+        checkin: "2024-10-14T14:00",
+        checkout: "2024-10-15T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 500,
+        income: 1500,
+        expense: 200,
+        cash_in_hand: 300,
+      },
+      {
+        date: "2024-10-16",
+        checkin: "2024-10-15T14:00",
+        checkout: "2024-10-16T11:00",
+        dayuse: true,
+        continue: false,
+        closed: true,
+        booked: false,
+        cancel: true,
+        breakfast: false,
+        ledger: 300,
+        income: 1000,
+        expense: 300,
+        cash_in_hand: 400,
+      },
+      {
+        date: "2024-10-17",
+        checkin: "2024-10-16T14:00",
+        checkout: "2024-10-17T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 600,
+        income: 2000,
+        expense: 500,
+        cash_in_hand: 500,
+      },
+      {
+        date: "2024-10-15",
+        checkin: "2024-10-14T14:00",
+        checkout: "2024-10-15T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 500,
+        income: 1500,
+        expense: 200,
+        cash_in_hand: 300,
+      },
+      {
+        date: "2024-10-16",
+        checkin: "2024-10-15T14:00",
+        checkout: "2024-10-16T11:00",
+        dayuse: true,
+        continue: false,
+        closed: true,
+        booked: false,
+        cancel: true,
+        breakfast: false,
+        ledger: 300,
+        income: 1000,
+        expense: 300,
+        cash_in_hand: 400,
+      },
+      {
+        date: "2024-10-17",
+        checkin: "2024-10-16T14:00",
+        checkout: "2024-10-17T11:00",
+        dayuse: false,
+        continue: true,
+        closed: false,
+        booked: true,
+        cancel: false,
+        breakfast: true,
+        ledger: 600,
+        income: 2000,
+        expense: 500,
+        cash_in_hand: 500,
+      },
+    ],
     headers: [
-      { align: "left", text: "#" },
-      { align: "left", text: "Guest" },
-      { align: "left", text: "Rev. No" },
-      { align: "left", text: "Rooms" },
-      { align: "left", text: "Source" },
-      { align: "left", text: "CheckIn" },
-      { align: "left", text: "CheckOut" },
-      { align: "left", text: "Tariff" },
-      { align: "left", text: "Advance" },
-      { align: "left", text: "Cash" },
-      { align: "left", text: "Card" },
-      { align: "left", text: "Online" },
-      { align: "left", text: "Bank" },
-      { align: "left", text: "UPI" },
-      { align: "left", text: "Balance" },
-      { align: "left", text: "Remark" },
-      { align: "center", text: "File Generated Date Time" },
-      { align: "center", text: "PDF File" },
+      { align: "center", text: "Date", value: "date" },
+      { align: "center", text: "Check In", value: "checkin" },
+      { align: "center", text: "Check Out", value: "checkout" },
+      { align: "center", text: "Day Use", value: "dayuse" },
+      { align: "center", text: "Continue", value: "continue" },
+      { align: "center", text: "Closed", value: "closed" },
+      { align: "center", text: "Booked", value: "booked" },
+      { align: "center", text: "Cancel", value: "cancel" },
+      { align: "center", text: "Breakfast", value: "breakfast" },
+      { align: "center", text: "Ledger", value: "ledger" },
+      { align: "center", text: "Income", value: "income" },
+      { align: "center", text: "Expense", value: "expense" },
+      { align: "center", text: "Cash In Hand", value: "cash_in_hand" },
     ],
     response: "",
     loss: "",
     profit: "",
     errors: [],
-    FoodData: [],
     editedItem: {
       item: null,
       amount: null,
@@ -240,188 +349,18 @@ export default {
 
     this.loading = true;
     this.getdata();
-    this.get_food_order_list();
-  },
-
-  computed: {
-    totalBalance() {
-      let sum = 0;
-      this.todayCheckIn.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    totalCash() {
-      return this.getSum(this.todayCheckIn, 1);
-    },
-    totalCard() {
-      return this.getSum(this.todayCheckIn, 2);
-    },
-    totalBank() {
-      return this.getSum(this.todayCheckIn, 4);
-    },
-    totalOnline() {
-      return this.getSum(this.todayCheckIn, 3);
-    },
-    totalUPI() {
-      return this.getSum(this.todayCheckIn, 5);
-    },
-
-    continueTotalBalance() {
-      let sum = 0;
-      this.continueRooms.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    continueTotalCash() {
-      return this.getSum(this.continueRooms, 1);
-    },
-    continueTotalCard() {
-      return this.getSum(this.continueRooms, 2);
-    },
-    continueTotalBank() {
-      return this.getSum(this.continueRooms, 4);
-    },
-    continueTotalOnline() {
-      return this.getSum(this.continueRooms, 3);
-    },
-    continueTotalUPI() {
-      return this.getSum(this.continueRooms, 5);
-    },
-
-    checkoutTotalBalance() {
-      let sum = 0;
-      this.todayCheckOut.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    checkoutTotalCash() {
-      return this.getSum(this.todayCheckOut, 1);
-    },
-    checkoutTotalCard() {
-      return this.getSum(this.todayCheckOut, 2);
-    },
-    checkoutTotalBank() {
-      return this.getSum(this.todayCheckOut, 4);
-    },
-    checkoutTotalOnline() {
-      return this.getSum(this.todayCheckOut, 3);
-    },
-    checkoutTotalUPI() {
-      return this.getSum(this.todayCheckOut, 5);
-    },
-
-    todayPaymentTotalBalance() {
-      let sum = 0;
-      this.todayPayments.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    todayPaymentTotalCash() {
-      return this.getSum(this.todayPayments, 1);
-    },
-    todayPaymentTotalCard() {
-      return this.getSum(this.todayPayments, 2);
-    },
-    todayPaymentTotalBank() {
-      return this.getSum(this.todayPayments, 4);
-    },
-    todayPaymentTotalOnline() {
-      return this.getSum(this.todayPayments, 3);
-    },
-    todayPaymentTotalUPI() {
-      return this.getSum(this.todayPayments, 5);
-    },
-
-    cityLedgerTotalBalance() {
-      let sum = 0;
-      this.cityLedgerPaymentsAudit.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    cityLedgerTotalCash() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 1);
-    },
-    cityLedgerTotalCard() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 2);
-    },
-    cityLedgerTotalBank() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 4);
-    },
-    cityLedgerTotalOnline() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 3);
-    },
-    cityLedgerTotalUPI() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 5);
-    },
-
-    GrandTotal() {
-      let tot =
-        parseFloat(this.GrandTotalCash) +
-        parseFloat(this.GrandTotalCard) +
-        parseFloat(this.GrandTotalBank) +
-        parseFloat(this.GrandTotalTodayOnline) +
-        parseFloat(this.GrandTotalTodayUPI);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalCash() {
-      let tot =
-        parseFloat(this.cityLedgerTotalCash) +
-        parseFloat(this.totalCash) +
-        // parseFloat(this.totalUPI) +
-        parseFloat(this.checkoutTotalCash) +
-        parseFloat(this.continueTotalCash) +
-        parseFloat(this.todayPaymentTotalCash);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalCard() {
-      let tot =
-        parseFloat(this.totalCard) +
-        parseFloat(this.checkoutTotalCard) +
-        parseFloat(this.continueTotalCard) +
-        parseFloat(this.todayPaymentTotalCard);
-      parseFloat(this.cityLedgerTotalCard);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalBank() {
-      let tot =
-        parseFloat(this.continueTotalBank) +
-        parseFloat(this.todayPaymentTotalBank) +
-        parseFloat(this.checkoutTotalBank) +
-        parseFloat(this.cityLedgerTotalBank) +
-        parseFloat(this.totalBank);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalTodayOnline() {
-      let tot =
-        parseFloat(this.continueTotalOnline) +
-        parseFloat(this.todayPaymentTotalOnline) +
-        parseFloat(this.checkoutTotalOnline) +
-        parseFloat(this.cityLedgerTotalOnline) +
-        parseFloat(this.totalOnline);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalTodayUPI() {
-      let tot =
-        parseFloat(this.continueTotalUPI) +
-        parseFloat(this.todayPaymentTotalUPI) +
-        parseFloat(this.checkoutTotalUPI) +
-        parseFloat(this.cityLedgerTotalUPI) +
-        parseFloat(this.totalUPI);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalBalance() {
-      let tot =
-        parseFloat(this.totalBalance) +
-        parseFloat(this.continueTotalBalance) +
-        parseFloat(this.checkoutTotalBalance) +
-        parseFloat(this.cityLedgerTotalBalance) +
-        parseFloat(this.todayPaymentTotalBalance);
-      return tot.toFixed(2);
-    },
   },
 
   methods: {
+    filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      this.filterType = data.type;
+      //this.search = data.search;
+      if (this.from_date && this.to_date) {
+        this.getdata();
+      }
+    },
     openExternalLink(path) {
       let url = `${process.env.BACKEND_URL}get_audit_report_print?path=${path}`;
       let element = document.createElement("a");
@@ -430,9 +369,6 @@ export default {
       document.body.appendChild(element);
       console.log(element);
       element.click();
-    },
-    onPageChange() {
-      this.getExpenseData();
     },
     can(per) {
       let u = this.$auth.user;
@@ -449,29 +385,6 @@ export default {
       }
     },
 
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00";
-      }
-    },
-
-    goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
-    },
-
-    goToRevViewFromCancel(item) {
-      this.$router.push(`/customer/details/${item.booking_id}`);
-    },
-
-    getTimeFromCheckIn(date) {
-      const dateObj = new Date(date);
-      const hours = dateObj.getHours().toString().padStart(2, "0");
-      const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}`;
-    },
-
     getSum(item, type) {
       let sum = 0;
       item.map((e) => {
@@ -480,59 +393,6 @@ export default {
         );
       });
       return sum.toFixed(2);
-    },
-
-    setAdvancePayment(amt) {
-      return amt > 0 ? amt : 0;
-    },
-
-    process(type) {
-      alert("coming soon, developing");
-      return;
-      let comId = this.$auth.user.company.id; //company id
-      let from = this.from_date;
-      let to = this.to_date;
-      let url =
-        process.env.BACKEND_URL +
-        `${type}?company_id=${comId}&from=${from}&to=${to}`;
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${url}`);
-      document.body.appendChild(element);
-      element.click();
-    },
-
-    getPaymentMode(item, mode) {
-      // let creditTrans = item.transactions.filter((e) => e.credit > 0);
-      let creditTrans = item.transactions;
-      switch (mode) {
-        case 1:
-          return this.getPaySum(creditTrans, 1);
-        case 2:
-          return this.getPaySum(creditTrans, 2);
-        case 3:
-          return this.getPaySum(creditTrans, 3);
-        case 4:
-          return this.getPaySum(creditTrans, 4);
-        case 5:
-          return this.getPaySum(creditTrans, 5);
-        default:
-          break;
-      }
-    },
-
-    getPaySum(payload, mode) {
-      let sum = 0;
-      payload.map((e) => {
-        if (e.payment_method_id == mode) {
-          sum += parseFloat(e.credit);
-        }
-      });
-      return sum.toFixed(2);
-    },
-
-    commonMethod() {
-      this.getdata();
     },
 
     getdata(url = "get_audit_report") {
@@ -544,6 +404,25 @@ export default {
           date: this.from_date,
         },
       };
+
+      this.items.map((e) => ({
+        date: e.date,
+        checkout: e.checkin,
+        checkout: e.checkout,
+        dayuse: e.dayuse,
+        continue: e.continue,
+        closed: e.closed,
+        booked: e.booked,
+        cancel: e.cancel,
+        breakfast: e.breakfast,
+        ledger: e.ledger,
+        income: e.income,
+        expense: e.expense,
+        cash_in_hand: e.cash_in_hand,
+      }));
+
+      return;
+
       this.$axios.get(url, options).then(({ data }) => {
         this.todayCheckIn = data.check_in.data;
         this.continueRooms = data.continue.data;
@@ -574,17 +453,6 @@ export default {
         this.foodPath = data.food.file_path;
 
         this.totExpense = data.expense.data;
-      });
-    },
-
-    get_food_order_list() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`food/`, payload).then(({ data }) => {
-        this.FoodData = data;
       });
     },
   },
