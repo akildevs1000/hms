@@ -1,144 +1,133 @@
 <template>
   <div v-if="can('management_income_access') && can('management_income_view')">
     <v-dialog v-model="IncomeCardDialog" persistent max-width="700px">
+      <AssetsIconClose left="690" @click="IncomeCardDialog = false" />
       <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Income </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="IncomeCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
+        <v-alert class="grey lighten-3" dense>
+          <span class="text-color">Income</span>
         </v-alert>
         <v-card-text>
           <v-container>
-            <table v-if="income">
-              <tr>
-                <td>Cash</td>
-                <td>Card</td>
-                <td>Online</td>
-                <td>Bank</td>
-                <td>UPI</td>
-                <td>Cheque</td>
-                <td>CityLedger</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(income.Cash) }}</td>
-                <td>{{ convert_decimal(income.Card) }}</td>
-                <td>{{ convert_decimal(income.Online) }}</td>
-                <td>{{ convert_decimal(income.Bank) }}</td>
-                <td>{{ convert_decimal(income.UPI) }}</td>
-                <td>{{ convert_decimal(income.Cheque) }}</td>
-                <td>{{ convert_decimal(income.CityLedger) }}</td>
-              </tr>
-            </table>
+            <AssetsTable
+              v-if="income"
+              :headers="[
+                { text: `Cash`, value: `Cash`, align: `center` },
+                { text: `Card`, value: `Card`, align: `center` },
+                { text: `Online`, value: `Online`, align: `center` },
+                { text: `Bank`, value: `Bank`, align: `center` },
+                { text: `UPI`, value: `UPI`, align: `center` },
+                { text: `Cheque`, value: `Cheque`, align: `center` },
+                { text: `CityLedger`, value: `CityLedger`, align: `center` },
+              ]"
+              :items="[
+                {
+                  Cash: $utils.currency_format(income.Cash),
+                  Card: $utils.currency_format(income.Card),
+                  Online: $utils.currency_format(income.Online),
+                  Bank: $utils.currency_format(income.Bank),
+                  UPI: $utils.currency_format(income.UPI),
+                  Cheque: $utils.currency_format(income.Cheque),
+                  CityLedger: $utils.currency_format(income.CityLedger),
+                },
+              ]"
+            />
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <v-dialog v-model="ExpenseCardDialog" persistent max-width="700px">
+      <AssetsIconClose left="690" @click="ExpenseCardDialog = false" />
       <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Expense </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="ExpenseCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
+        <v-alert class="grey lighten-3" dense>
+          <span class="text-color">Expense</span>
         </v-alert>
         <v-card-text>
           <v-container>
-            <table v-if="expense">
-              <tr>
-                <td>Cash</td>
-                <td>Card</td>
-                <td>Online</td>
-                <td>Bank</td>
-                <td>UPI</td>
-                <td>Cheque</td>
-                <td>CityLedger</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(expense.Cash) }}</td>
-                <td>{{ convert_decimal(expense.Card) }}</td>
-                <td>{{ convert_decimal(expense.Online) }}</td>
-                <td>{{ convert_decimal(expense.Bank) }}</td>
-                <td>{{ convert_decimal(expense.UPI) }}</td>
-                <td>{{ convert_decimal(expense.Cheque) }}</td>
-                <td>{{ convert_decimal(expense.CityLedger) }}</td>
-              </tr>
-            </table>
+            <AssetsTable
+              v-if="expense"
+              :headers="[
+                { text: `Cash`, value: `Cash`, align: `center` },
+                { text: `Card`, value: `Card`, align: `center` },
+                { text: `Online`, value: `Online`, align: `center` },
+                { text: `Bank`, value: `Bank`, align: `center` },
+                { text: `UPI`, value: `UPI`, align: `center` },
+                { text: `Cheque`, value: `Cheque`, align: `center` },
+                { text: `CityLedger`, value: `CityLedger`, align: `center` },
+              ]"
+              :items="[
+                {
+                  Cash: $utils.currency_format(expense.Cash),
+                  Card: $utils.currency_format(expense.Card),
+                  Online: $utils.currency_format(expense.Online),
+                  Bank: $utils.currency_format(expense.Bank),
+                  UPI: $utils.currency_format(expense.UPI),
+                  Cheque: $utils.currency_format(expense.Cheque),
+                  CityLedger: $utils.currency_format(expense.CityLedger),
+                },
+              ]"
+            />
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <v-dialog v-model="ManagementCardDialog" persistent max-width="700px">
+      <AssetsIconClose left="690" @click="ManagementCardDialog = false" />
       <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Management Expenses </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="ManagementCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
+        <v-alert class="grey lighten-3" dense>
+          <span class="text-color">Management Expense</span>
         </v-alert>
         <v-card-text>
           <v-container>
-            <table v-if="managementExpense">
-              <tr>
-                <td>Cash</td>
-                <td>Card</td>
-                <td>Online</td>
-                <td>Bank</td>
-                <td>UPI</td>
-                <td>Cheque</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(managementExpense.Cash) }}</td>
-                <td>{{ convert_decimal(managementExpense.Card) }}</td>
-                <td>{{ convert_decimal(managementExpense.Online) }}</td>
-                <td>{{ convert_decimal(managementExpense.Bank) }}</td>
-                <td>{{ convert_decimal(managementExpense.UPI) }}</td>
-                <td>{{ convert_decimal(managementExpense.Cheque) }}</td>
-              </tr>
-            </table>
+            <AssetsTable
+              v-if="managementExpense"
+              :headers="[
+                { text: `Cash`, value: `Cash`, align: `center` },
+                { text: `Card`, value: `Card`, align: `center` },
+                { text: `Online`, value: `Online`, align: `center` },
+                { text: `Bank`, value: `Bank`, align: `center` },
+                { text: `UPI`, value: `UPI`, align: `center` },
+                { text: `Cheque`, value: `Cheque`, align: `center` },
+              ]"
+              :items="[
+                {
+                  Cash: $utils.currency_format(managementExpense.Cash),
+                  Card: $utils.currency_format(managementExpense.Card),
+                  Online: $utils.currency_format(managementExpense.Online),
+                  Bank: $utils.currency_format(managementExpense.Bank),
+                  UPI: $utils.currency_format(managementExpense.UPI),
+                  Cheque: $utils.currency_format(managementExpense.Cheque),
+                },
+              ]"
+            />
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <v-dialog v-model="ProfitLossCardDialog" persistent max-width="700px">
+      <AssetsIconClose left="690" @click="ProfitLossCardDialog = false" />
       <v-card>
-        <v-alert class="primary" dense dark>
-          <v-row>
-            <v-col> Profit & Loss </v-col>
-            <v-col>
-              <div class="text-right">
-                <v-icon @click="ProfitLossCardDialog = false">mdi-close</v-icon>
-              </div>
-            </v-col>
-          </v-row>
+        <v-alert class="grey lighten-3" dense>
+          <span class="text-color">Profit & Loss</span>
         </v-alert>
         <v-card-text>
           <v-container>
-            <table>
-              <tr>
-                <td>Profit</td>
-                <td>Loss</td>
-              </tr>
-              <tr>
-                <td>{{ convert_decimal(profit) }}</td>
-                <td>{{ convert_decimal(loss) }}</td>
-              </tr>
-            </table>
+            <AssetsTable
+              :headers="[
+                { text: `Profit`, value: `Profit`, align: `center` },
+                { text: `Loss`, value: `Loss`, align: `center` },
+                { text: `City Ledger`, value: `City Ledger`, align: `center` },
+              ]"
+              :items="[
+                {
+                  Profit: $utils.currency_format(profit),
+                  Loss: $utils.currency_format(loss),
+                  CityLedger: income.CityLedger,
+                },
+              ]"
+            />
           </v-container>
         </v-card-text>
       </v-card>
@@ -146,7 +135,11 @@
 
     <v-row dense>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
+        <v-card
+          @click="IncomeCardDialog = true"
+          class="elevation-2"
+          style="height: 230px"
+        >
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -155,7 +148,6 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="IncomeCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -189,7 +181,11 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
+        <v-card
+          @click="ExpenseCardDialog = true"
+          class="elevation-2"
+          style="height: 230px"
+        >
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -198,7 +194,6 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="ExpenseCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -227,7 +222,11 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
+        <v-card
+          @click="ManagementCardDialog = true"
+          class="elevation-2"
+          style="height: 230px"
+        >
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -236,7 +235,6 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="ManagementCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -285,7 +283,11 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <v-card class="elevation-2" style="height: 230px">
+        <v-card
+          @click="ProfitLossCardDialog = true"
+          class="elevation-2"
+          style="height: 230px"
+        >
           <v-card-text>
             <v-row style="margin-top: -12px"
               ><v-col cols="8" style="color: black; font-size: 12px"
@@ -294,7 +296,6 @@
 
               <v-col cols="4" class="text-right align-right"
                 ><img
-                  @click="ProfitLossCardDialog = true"
                   src="/dashboard-arrow.png"
                   style="width: 18px; padding-top: 5px"
               /></v-col>
@@ -344,11 +345,13 @@
         >ManagementExpense</v-btn
       >
       <Income v-show="currentTabId == 1" @stats="(e) => (income = e)" />
-      <IncomeExpenseNonManagement
+      <ExpenseDashboard
+        :is_admin_expense="0"
         v-show="currentTabId == 2"
         @stats="(e) => (expense = e)"
       />
-      <IncomeExpenseManagement
+      <ExpenseDashboard
+        :is_admin_expense="1"
         v-show="currentTabId == 3"
         @stats="(e) => (managementExpense = e)"
       />
@@ -450,22 +453,6 @@ export default {
     },
   },
   methods: {
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00".replace(".00.00", ".00");
-      }
-    },
-    getPriceFormat(price) {
-      return (
-        this.$auth.user.company.currency +
-        " " +
-        parseFloat(price).toLocaleString("en-IN", {
-          maximumFractionDigits: 2,
-        })
-      );
-    },
     can(per) {
       let u = this.$auth.user;
       return (

@@ -1,5 +1,6 @@
 <template>
   <v-dialog v-model="viewPostingDialog" persistent max-width="900px">
+    <AssetsIconClose left="890" @click="viewPostingDialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> View Posting </span>
     </template>
@@ -7,7 +8,7 @@
       <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
         <span>View Posting</span>
         <v-spacer></v-spacer>
-        <AssetsButtonClose @close="viewPostingDialog = false" />
+        
       </v-toolbar>
       <v-card-text>
         <v-container>

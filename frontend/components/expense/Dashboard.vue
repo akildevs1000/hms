@@ -64,68 +64,72 @@
             <AssetsTableHeader :cols="incomeHeaders" />
 
             <tbody>
-  <tr v-for="(item, index) in expenseData" :key="index">
-    <td class="text-center py-2 border-bottom"><small>{{ ++index }}</small></td>
-    <td class="text-center py-2 border-bottom">
-      <small>{{ item.expense.datetime }}</small>
-    </td>
-    <td class="text-center py-2 border-bottom">
-      <small>{{ item?.expense?.vendor?.first_name }}</small>
-    </td>
-    <td class="text-center py-2 border-bottom">
-      <small>{{ item?.expense?.vendor?.vendor_category?.name }}</small>
-    </td>
+              <tr v-for="(item, index) in expenseData" :key="index">
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ ++index }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ item.expense.datetime }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ item?.expense?.vendor?.first_name }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>{{
+                    item?.expense?.vendor?.vendor_category?.name
+                  }}</small>
+                </td>
 
-    <td class="text-center py-2 border-bottom">
-      <small>{{ item.detail }}</small>
-    </td>
-    <td class="text-center py-2 border-bottom">
-      <small>{{ item.qty }}</small>
-    </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ item.detail }}</small>
+                </td>
+                <td class="text-center py-2 border-bottom">
+                  <small>{{ item.qty }}</small>
+                </td>
 
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(item.Cash) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(item.Card) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(item.Online) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(item.Bank) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(item.UPI) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(item.Cheque) }}</small>
-    </td>
-  </tr>
-  <tr>
-    <td class="text-right py-2 border-bottom" colspan="6"><small>Total</small></td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(stats.Cash) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(stats.Card) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(stats.Online) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(stats.Bank) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(stats.UPI) }}</small>
-    </td>
-    <td class="text-right py-2 border-bottom">
-      <small>{{ $utils.currency_format(stats.Cheque) }}</small>
-    </td>
-  </tr>
-</tbody>
-
-           
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Cash) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Card) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Online) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Bank) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.UPI) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(item.Cheque) }}</small>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-right py-2 border-bottom" colspan="6">
+                  <small>Total</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(stats.Cash) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(stats.Card) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(stats.Online) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(stats.Bank) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(stats.UPI) }}</small>
+                </td>
+                <td class="text-right py-2 border-bottom">
+                  <small>{{ $utils.currency_format(stats.Cheque) }}</small>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </v-col>
       </v-row>
@@ -135,6 +139,7 @@
 
 <script>
 export default {
+  props: ["is_admin_expense"],
   data: () => ({
     Model: "Expense",
     vertical: false,
@@ -261,6 +266,7 @@ export default {
           from_date: this.from_date,
           to_date: this.to_date,
           search: this.search,
+          is_admin_expense: this.is_admin_expense,
         },
       };
       this.$axios.get(this.endpoint, options).then(({ data }) => {
