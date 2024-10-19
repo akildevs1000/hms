@@ -27,7 +27,7 @@
                   Bank: $utils.currency_format(income.Bank),
                   UPI: $utils.currency_format(income.UPI),
                   Cheque: $utils.currency_format(income.Cheque),
-                  CityLedger: $utils.currency_format(income.CityLedger),
+                  CityLedger: $utils.currency_format(CityLedger),
                 },
               ]"
             />
@@ -53,7 +53,6 @@
                 { text: `Bank`, value: `Bank`, align: `center` },
                 { text: `UPI`, value: `UPI`, align: `center` },
                 { text: `Cheque`, value: `Cheque`, align: `center` },
-                { text: `CityLedger`, value: `CityLedger`, align: `center` },
               ]"
               :items="[
                 {
@@ -63,7 +62,6 @@
                   Bank: $utils.currency_format(expense.Bank),
                   UPI: $utils.currency_format(expense.UPI),
                   Cheque: $utils.currency_format(expense.Cheque),
-                  CityLedger: $utils.currency_format(expense.CityLedger),
                 },
               ]"
             />
@@ -118,13 +116,13 @@
               :headers="[
                 { text: `Profit`, value: `Profit`, align: `center` },
                 { text: `Loss`, value: `Loss`, align: `center` },
-                { text: `City Ledger`, value: `City Ledger`, align: `center` },
+                { text: `City Ledger`, value: `CityLedger`, align: `center` },
               ]"
               :items="[
                 {
                   Profit: $utils.currency_format(profit),
                   Loss: $utils.currency_format(loss),
-                  CityLedger: income.CityLedger,
+                  CityLedger: $utils.currency_format(CityLedger),
                 },
               ]"
             />
@@ -172,7 +170,7 @@
                 {
                   color: `#010002`,
                   text: `CityLedger`,
-                  value: income.CityLedger,
+                  value: CityLedger,
                 },
               ]"
             />
@@ -316,7 +314,7 @@
                 {
                   color: `#0f642b`,
                   text: `City Ledger`,
-                  value: income.CityLedger,
+                  value: CityLedger,
                 },
               ]"
             />
@@ -450,6 +448,9 @@ export default {
 
         return result < 0 ? 0 : result;
       } else return 0;
+    },
+    CityLedger() {
+      return this.income?.CityLedger > 0 ? this.income.CityLedger : 0;
     },
   },
   methods: {

@@ -84,7 +84,7 @@
                     </span>
                   </small>
                 </td>
-                <td class="text-center   py-2 border-bottom">
+                <td class="text-center py-2 border-bottom">
                   <small>{{ item.room || "---" }}</small>
                 </td>
                 <td class="text-center py-2 border-bottom">
