@@ -420,13 +420,7 @@ export default {
           to: "/vendors",
           menu: "accounts_posting_access",
         },
-        {
-          topMenu: "dashboard",
-          icon: "mdi mdi-file-chart-outline",
-          title: "Night Audit",
-          to: "/management/report/audit",
-          menu: "night_audit_access",
-        },
+
         {
           topMenu: "dashboard",
           icon: "mdi-home-search-outline",
@@ -540,22 +534,6 @@ export default {
     this.filteredMenu = this.items;
     this.$router.push(this.filteredMenu[0].to ?? "/");
 
-    setInterval(() => {
-      const now = new Date();
-      // Get the day, month, year, and day of the week
-      var day = now.getDate();
-      var month = now.getMonth() + 1; // Month is zero-based, so add 1
-      var year = now.getFullYear();
-
-      day = (day < 10 ? "0" : "") + day;
-      month = (month < 10 ? "0" : "") + month;
-      const formattedDateTime = month + "-" + day + "-" + year;
-
-      this.currentTime = now.toLocaleTimeString([], { hour12: false });
-      this.todayDate =
-        this.$dateFormat.format_date_with_dayname(formattedDateTime);
-    }, 1000);
-
     this.setActive({
       label: "Dashboard",
       name: "dashboard",
@@ -564,44 +542,27 @@ export default {
 
   mounted() {
     document.addEventListener("mousemove", this.updateMouseLocation);
-    // setInterval(() => {
-    //   const now = new Date();
-    //   this.currentTime = now.toLocaleTimeString();
-    // }, 1000);
-
     setInterval(() => {
-      const now = new Date();
-      this.currentTime = now.toLocaleTimeString([], { hour12: false });
+      this.currentTime = new Date().toLocaleTimeString([], { hour12: false });
     }, 1000);
+
+    const now = new Date();
+
+    // Format day, month, year, and day of the week
+    const dayName = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+    }).format(now);
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1
+    const year = now.getFullYear();
+
+    // Construct the final date string
+    this.todayDate = `${day}-${month}-${year}, ${dayName}`;
   },
 
   computed: {
     changeColor() {
       return this.$store.state.color;
-    },
-
-    currentDate() {
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-
-      const now = new Date();
-      const day = now.getDate();
-      const monthIndex = now.getMonth();
-      const year = now.getFullYear();
-      const formattedDate = `${day} ${months[monthIndex]} ${year}`;
-      return formattedDate;
     },
 
     getUser() {
