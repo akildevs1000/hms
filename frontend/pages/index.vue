@@ -270,12 +270,12 @@
                     {
                       color: `#dc3545`,
                       text: `CheckOut`,
-                      value: `${dirtyRoomsList.length}`,
+                      value: dirtyRoomsList.length,
                     },
                     {
                       color: `#ffc000`,
                       text: `Pending`,
-                      value: `${Occupied.length + expectCheckOut.length}`,
+                      value: expectCheckOut.length,
                     },
                   ]"
                 />
