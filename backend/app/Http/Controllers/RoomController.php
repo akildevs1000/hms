@@ -349,6 +349,21 @@ class RoomController extends Controller
             }])
             ->get();
 
+        $continueRooms = Room::with('device')
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+                $query->where('company_id', $company_id);
+                $query->whereDate('check_out', '!=', $todayDate);
+                $query->where('booking_status', 2);
+            })
+
+            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
+                $q->with("customer");
+                $q->where('company_id', $company_id);
+                $q->whereDate('check_out', $todayDate);
+                $q->where("booking_status", ">", 0);
+            }])
+            ->get();
+
         $reservedWithoutAdvance = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
             $q->whereNotNull('room_id');
             $q->where('company_id', $company_id);
@@ -503,10 +518,13 @@ class RoomController extends Controller
         ];
 
         return [
+            'allRooms' => $AvailableRooms,
             'availableRooms' => $AvailableRooms,
             'reservedWithoutAdvance' => $reservedWithoutAdvance,
+            'bookedRooms' => $reservedWithoutAdvance,
             'checkIn' => $Occupied,
             'expectCheckOut' => $expectCheckOut,
+            'continueRooms' => $continueRooms,
             'dirtyRoomsList' => $dirtyRooms,
             'blockedRooms' => $BlockedRooms,
             'checkOut' => $checkOut,
