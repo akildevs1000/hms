@@ -38,3 +38,6 @@ include 'vendor.php';
 include 'business_source.php';
 include 'telegram.php';
 include 'posting_payment.php';
+
+
+include 'payment.php';

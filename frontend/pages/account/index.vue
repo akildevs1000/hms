@@ -113,7 +113,7 @@
         <v-card-text>
           <v-container>
             <AssetsTable
-              v-if="statement"
+              v-if="ProfilLoss"
               :headers="[
                 { text: `Profit`, value: `Profit`, align: `center` },
                 { text: `Loss`, value: `Loss`, align: `center` },
@@ -121,9 +121,9 @@
               ]"
               :items="[
                 {
-                  Profit: $utils.currency_format(profit),
-                  Loss: $utils.currency_format(loss),
-                  CityLedger: $utils.currency_format(income.CityLedger),
+                  Profit: $utils.currency_format(ProfilLoss.profit),
+                  Loss: $utils.currency_format(ProfilLoss.loss),
+                  CityLedger: $utils.currency_format(ProfilLoss.cityLedger),
                 },
               ]"
             />
@@ -298,7 +298,7 @@
             </v-row>
             <v-divider color="#DDD" style="margin-bottom: 10px" />
             <Donut
-              v-if="third"
+              v-if="ProfilLoss"
               :key="key + 4"
               :width="'200px'"
               showPriceFormat="true"
@@ -307,54 +307,84 @@
               :total="'100'"
               :colors="colors"
               :labels="[
-                { color: `#4caf50`, text: `Profit`, value: profit },
+                { color: `#4caf50`, text: `Profit`, value: ProfilLoss.profit },
                 {
                   color: `#538234`,
                   text: `Loss`,
-                  value: loss,
+                  value: ProfilLoss.loss,
                 },
                 {
                   color: `#0f642b`,
                   text: `City Ledger`,
-                  value: income.CityLedger,
+                  value: ProfilLoss.cityLedger,
                 },
               ]"
             />
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col cols="12">
+        <v-card class="my-2">
+          <div
+            style="display: flex; justify-content: right; align-items: right"
+            class="pa-2"
+          >
+            <v-btn
+              :color="currentTabId === 1 ? `primary` : ''"
+              text
+              @click="currentTabId = 1"
+              >Income</v-btn
+            >
+            <v-btn
+              :color="currentTabId === 2 ? `primary` : ''"
+              text
+              @click="currentTabId = 2"
+              >Expense</v-btn
+            >
+            <v-btn
+              :color="currentTabId === 3 ? `primary` : ''"
+              text
+              @click="currentTabId = 3"
+              >ManagementExpense</v-btn
+            >
+            <div style="padding-top: 1px">
+              <v-text-field
+                label="Search..."
+                dense
+                outlined
+                flat
+                append-icon="mdi-magnify"
+                v-model="search"
+                @input="searchIt"
+                hide-details
+                style="max-width: 200px"
+              ></v-text-field>
+            </div>
+            &nbsp;
+            <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+          </div>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <Income
+          v-show="currentTabId == 1"
+          :filters="filters"
+          @stats="handleIncome"
+        />
+        <ExpenseDashboard
+          :is_admin_expense="0"
+          v-show="currentTabId == 2"
+          :filters="filters"
+          @stats="handleNonMagementExpense"
+        />
+        <ExpenseDashboard
+          :is_admin_expense="1"
+          v-show="currentTabId == 3"
+          :filters="filters"
+          @stats="handleMagementExpense"
+        />
+      </v-col>
     </v-row>
-    <v-card class="my-2 text-right">
-      <v-btn
-        :color="currentTabId === 1 ? `primary` : ''"
-        text
-        @click="currentTabId = 1"
-        >Income</v-btn
-      >
-      <v-btn
-        :color="currentTabId === 2 ? `primary` : ''"
-        text
-        @click="currentTabId = 2"
-        >Expense</v-btn
-      >
-      <v-btn
-        :color="currentTabId === 3 ? `primary` : ''"
-        text
-        @click="currentTabId = 3"
-        >ManagementExpense</v-btn
-      >
-      <Income v-show="currentTabId == 1" @stats="handleIncome" />
-      <ExpenseDashboard
-        :is_admin_expense="0"
-        v-show="currentTabId == 2"
-        @stats="handleNonMagementExpense"
-      />
-      <ExpenseDashboard
-        :is_admin_expense="1"
-        v-show="currentTabId == 3"
-        @stats="handleMagementExpense"
-      />
-    </v-card>
   </div>
   <NoAccess v-else />
 </template>
@@ -362,6 +392,8 @@
 <script>
 export default {
   data: () => ({
+    search: null,
+    filters: null,
     IncomeCardDialog: false,
     ExpenseCardDialog: false,
     ManagementCardDialog: false,
@@ -380,118 +412,66 @@ export default {
       "#CE0E2D",
       "#0077B5",
     ],
-    Model: "Expense",
     activeTab: 0,
     income: null,
     expense: null,
     managementExpense: null,
-
     loading: false,
-    statement: false,
-
-    first: null,
-    second: null,
-    third: null,
-
-    loss: 100,
-    profit: 200,
+    ProfilLoss: null,
   }),
-  created() {
+  async created() {
     this.loading = true;
-    // this.setCount();
-    // setTimeout(() => {
-    if (this.income) this.activeTab = 1;
-    else
-      setTimeout(() => {
-        this.activeTab = 0;
-      }, 1000);
-    // }, 1000);
-    // setTimeout(() => {
-    if (this.expense) this.activeTab = 2;
-    else
-      setTimeout(() => {
-        this.activeTab = 0;
-      }, 2000);
-    // }, 2000);
-    // setTimeout(() => {
-    if (this.managementExpense) this.activeTab = 0;
-    else
-      setTimeout(() => {
-        this.activeTab = 0;
-      }, 1000);
-    // }, 3000);
+    await this.getProfitLoss();
   },
-  // watch: {
-  //   income() {
-  //     if (this.income) this.activeTab = 1;
-  //   },
-  //   expense() {
-  //     if (this.expense) this.activeTab = 2;
-  //   },
-  //   managementExpense() {
-  //     if (this.managementExpense) this.activeTab = 0;
-  //   },
-  //   loss() {
-  //     this.key += 1;
-  //   },
-  //   profit() {
-  //     this.key += 1;
-  //   },
-  // },
 
   methods: {
     handleIncome(e) {
       this.income = e;
-      this.first = true;
-      if (this.first) {
-        this.second = true;
-      }
     },
     handleNonMagementExpense(e) {
       this.expense = e;
-      if (this.second) {
-        this.third = true;
-      }
     },
     handleMagementExpense(e) {
       this.managementExpense = e;
-
-      if (this.third) {
-        // this.calculateStatement();
-      }
-    },
-
-    calculateStatement() {
-      const { income, expense, managementExpense } = this;
-
-      let mExpense = 0;
-      let nmExpense = 0;
-
-      let statementIncome = 0;
-      if (expense && expense.total) {
-        nmExpense = expense.total;
-      }
-
-      if (managementExpense && managementExpense.total) {
-        mExpense = managementExpense.total;
-      }
-
-      if (income && income.total) {
-        statementIncome = income.total;
-        CityLedger = income.CityLedger;
-      }
-
-      let combinedExpense = nmExpense + mExpense;
-      let total = statementIncome - combinedExpense;
-
-      this.loss = total < 0 ? total : 0;
-      this.profit = total > 0 ? total : 0;
     },
     can(per) {
       let u = this.$auth.user;
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
+    },
+    filterAttr(data) {
+      this.filters = {
+        from: data.from,
+        to: data.to,
+        search: this.search,
+      };
+    },
+    searchIt() {
+      if (this.search.length == 0) {
+        this.filters = {
+          ...this.filters,
+          search: this.search,
+        };
+      } else if (this.search.length > 2) {
+        this.filters = {
+          ...this.filters,
+          search: this.search,
+        };
+      }
+    },
+    async getProfitLoss() {
+      let config = {
+        params: {
+          company_id: 3,
+          from_date: `2024-10-22`,
+          to_date: `2024-10-22`,
+        },
+      };
+
+      let { data } = await this.$axios.get(`profit-loss`, config);
+
+      this.ProfilLoss = data;
     },
   },
 };

@@ -43,22 +43,6 @@
                </v-toolbar> -->
     <v-container fluid>
       <v-row dense>
-        <v-col cols="8"></v-col>
-        <v-col cols="2">
-          <v-text-field
-            class="global-search-textbox"
-            label="Search..."
-            clearable
-            dense
-            outlined
-            hide-details
-            v-model="search"
-            @input="getBySearch"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="2" class="text-right">
-          <FilterDateRange height="30" @filter-attr="filterAttr" />
-        </v-col>
         <v-col>
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="incomeHeaders" />
@@ -139,7 +123,7 @@
 
 <script>
 export default {
-  props: ["is_admin_expense"],
+  props: ["is_admin_expense","filters"],
   data: () => ({
     Model: "Expense",
     vertical: false,
@@ -195,53 +179,23 @@ export default {
   created() {
     this.getExpenseData();
   },
+  watch: {
+    filters: {
+      deep: true, // Deep watch for object changes
+      handler(data) {
+        this.from_date = data.from;
+        this.to_date = data.to;
+        this.search = data.search;
+        if (this.from_date && this.to_date) {
+          this.getExpenseData();
+        }
+      },
+    },
+  },
   computed: {},
   methods: {
-    getBySearch() {
-      if (
-        !this.search ||
-        this.search === null ||
-        this.search.length === 0 ||
-        this.search.length > 3
-      ) {
-        this.getExpenseData();
-      }
-    },
-    filterAttr(data) {
-      this.from_date = data.from;
-      this.to_date = data.to;
-      this.filterType = data.type;
-      //this.search = data.search;
-      if (this.from_date && this.to_date) {
-        this.getExpenseData();
-      }
-    },
-    getPriceFormat(price) {
-      return (
-        this.$auth.user.company.currency +
-        " " +
-        parseFloat(price).toLocaleString("en-IN", {
-          maximumFractionDigits: 2,
-        })
-      );
-    },
-    caps(str) {
-      if (str == "" || str == null) {
-        return "---";
-      } else {
-        let res = str.toString();
-        return res.replace(/\b\w/g, (c) => c.toUpperCase());
-      }
-    },
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00";
-      }
-    },
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.booking.id}`);
+      // this.$router.push(`/customer/details/${item.booking.id}`);
     },
     process(type) {
       let comId = this.$auth.user.company.id; //company id

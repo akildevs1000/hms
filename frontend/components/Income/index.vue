@@ -43,113 +43,85 @@
                   </v-toolbar> -->
     <v-container fluid>
       <v-row dense>
-        <v-col cols="8"></v-col>
-        <v-col cols="2">
-          <v-text-field
-            class="global-search-textbox"
-            label="Search..."
-            clearable
-            dense
-            outlined
-            hide-details
-            v-model="search"
-            @input="getBySearch"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="2" class="text-right">
-          <FilterDateRange height="30" @filter-attr="filterAttr" />
-        </v-col>
-        <v-col>
+        <v-col cols="12">
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="incomeHeaders" />
             <tbody>
               <tr v-for="(item, index) in incomeData" :key="index">
                 <td class="text-center py-2 border-bottom">
-                  <small>{{ ++index }}</small>
+                  {{ index + 1 }}
                 </td>
                 <td class="text-center py-2 border-bottom">
-                  <small>{{ item.date }}</small>
+                  {{ item.date }}
                 </td>
                 <td class="text-center py-2 border-bottom">
-                  <small>{{ item.time }}</small>
+                  {{ item.time }}
                 </td>
                 <td class="text-center py-2 border-bottom">
-                  <small>
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.booking.reservation_no || "---" }}
-                    </span>
-                  </small>
+                  <span @click="goToRevView(item)" style="cursor: pointer">
+                    {{ item.booking.reservation_no || "---" }}
+                  </span>
                 </td>
                 <td class="text-center py-2 border-bottom">
-                  <small>{{ item.room || "---" }}</small>
+                  {{ item.room || "---" }}
                 </td>
                 <td class="text-center py-2 border-bottom">
-                  <small>
-                    {{
-                      item &&
-                      item.booking &&
-                      item.booking.customer &&
-                      item.booking.customer.first_name
-                    }}
-                  </small>
+                  {{
+                    item &&
+                    item.booking &&
+                    item.booking.customer &&
+                    item.booking.customer.first_name
+                  }}
                 </td>
                 <td class="text-left py-2 border-bottom">
-                  <small>{{ item.description }}</small>
+                  {{ item.description }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  <small>{{ $utils.currency_format(item.Cash) }}</small>
+                  {{ $utils.currency_format(item.Cash) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  <small>{{ $utils.currency_format(item.Card) }}</small>
+                  {{ $utils.currency_format(item.Card) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  <small>{{ $utils.currency_format(item.Online) }}</small>
+                  {{ $utils.currency_format(item.Online) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  <small>{{ $utils.currency_format(item.Bank) }}</small>
+                  {{ $utils.currency_format(item.Bank) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  <small>{{ $utils.currency_format(item.UPI) }}</small>
+                  {{ $utils.currency_format(item.UPI) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  <small>{{ $utils.currency_format(item.Cheque) }}</small>
+                  {{ $utils.currency_format(item.Cheque) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  <small>{{ $utils.currency_format(item.CityLedger) }}</small>
+                  {{ $utils.currency_format(item.CityLedger) }}
                 </td>
               </tr>
             </tbody>
 
             <tr>
-              <td colspan="7" class="py-2 border-bottom">
-                <small>Total</small>
+              <td colspan="7" class="py-2 border-bottom">Total</td>
+              <td class="text-right py-2 border-bottom">
+                {{ $utils.currency_format(incomeStats.Cash) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                <small>{{ $utils.currency_format(incomeStats.Cash) }}</small>
+                {{ $utils.currency_format(incomeStats.Card) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                <small>{{ $utils.currency_format(incomeStats.Card) }}</small>
+                {{ $utils.currency_format(incomeStats.Online) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                <small>{{ $utils.currency_format(incomeStats.Online) }}</small>
+                {{ $utils.currency_format(incomeStats.Bank) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                <small>{{ $utils.currency_format(incomeStats.Bank) }}</small>
+                {{ $utils.currency_format(incomeStats.UPI) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                <small>{{ $utils.currency_format(incomeStats.UPI) }}</small>
+                {{ $utils.currency_format(incomeStats.Cheque) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                <small>{{ $utils.currency_format(incomeStats.Cheque) }}</small>
-              </td>
-              <td class="text-right py-2 border-bottom">
-                <small>{{
-                  $utils.currency_format(incomeStats.CityLedger)
-                }}</small>
+                {{ $utils.currency_format(incomeStats.CityLedger) }}
               </td>
             </tr>
           </table>
@@ -161,6 +133,7 @@
 
 <script>
 export default {
+  props: ["filters"],
   data: () => ({
     Model: "Expense",
     vertical: false,
@@ -181,7 +154,6 @@ export default {
     },
     options: {},
     endpoint: "payments",
-    filterType: 1,
     search: "",
     snackbar: false,
     dialog: false,
@@ -228,38 +200,23 @@ export default {
     },
   }),
   created() {
-    this.getIncomeData();
+    this.getData();
+  },
+  watch: {
+    filters: {
+      deep: true, // Deep watch for object changes
+      handler(data) {
+        this.from_date = data.from;
+        this.to_date = data.to;
+        this.search = data.search;
+        if (this.from_date && this.to_date) {
+          this.getData();
+        }
+      },
+    },
   },
   computed: {},
   methods: {
-    getBySearch() {
-      if (
-        !this.search ||
-        this.search === null ||
-        this.search.length === 0 ||
-        this.search.length > 3
-      ) {
-        this.getIncomeData();
-      }
-    },
-    filterAttr(data) {
-      this.from_date = data.from;
-      this.to_date = data.to;
-      this.filterType = data.type;
-      //this.search = data.search;
-      if (this.from_date && this.to_date) {
-        this.getIncomeData();
-      }
-    },
-    getPriceFormat(price) {
-      return (
-        this.$auth.user.company.currency +
-        " " +
-        parseFloat(price).toLocaleString("en-IN", {
-          maximumFractionDigits: 2,
-        })
-      );
-    },
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -268,15 +225,8 @@ export default {
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00".replace(".00.00", ".00");
-      }
-    },
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.booking.id}`);
+      // this.$router.push(`/customer/details/${item.booking.id}`);
     },
     process(type) {
       let comId = this.$auth.user.company.id; //company id
@@ -292,7 +242,7 @@ export default {
       document.body.appendChild(element);
       element.click();
     },
-    getIncomeData() {
+    getData() {
       if (this.loading) return false;
       this.loading = true;
       let options = {

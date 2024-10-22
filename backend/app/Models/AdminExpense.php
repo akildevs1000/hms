@@ -18,13 +18,16 @@ class AdminExpense extends Model
     const CHEQUE = "Cheque";
     const CITYLEDGER = "City Ledger";
 
+    const PAYMENT_STATUS_PAID = 'Paid';
+    const PAYMENT_STATUS_PENDING = null;
+
 
     use HasFactory;
 
     protected $guarded = [];
 
 
-    protected $appends = ["date","time","datetime"];
+    protected $appends = ["date", "time", "datetime"];
 
     protected $casts = [
         "created_at" => "datetime:d-M-y"
@@ -72,7 +75,7 @@ class AdminExpense extends Model
 
     public function payments()
     {
-        return $this->hasMany(PaymentMode::class,"name","payment_mode");
+        return $this->hasMany(PaymentMode::class, "name", "payment_mode");
     }
 
     public function getDateAttribute()

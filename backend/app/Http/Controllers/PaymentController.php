@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminExpense;
 use App\Models\Payment;
 use App\Models\PaymentMode;
 use Illuminate\Database\Eloquent\Builder;
@@ -92,5 +93,40 @@ class PaymentController extends Controller
             ])
             ->orderByDesc('id')
             ->get();
+    }
+
+    public function ProfitLoss(Request $request)
+    {
+        $companyId = $request->company_id;
+        $fromDate = $request->from_date ?? date("Y-m-d");
+        $toDate = $request->to_date ?? $fromDate;
+
+        // Single query to calculate income and city ledger totals
+        $paymentTotals = Payment::query()
+            ->selectRaw('
+            SUM(CASE WHEN is_city_ledger = 0 THEN amount ELSE 0 END) as income,
+            SUM(CASE WHEN is_city_ledger = 1 THEN amount ELSE 0 END) as cityLedger
+        ')
+            ->where('company_id', $companyId)
+            ->whereBetween('date', [$fromDate, $toDate])
+            ->first() ?? (object)['income' => 0, 'cityLedger' => 0]; // Handle no records case
+
+        // Calculate total expenses
+        $expenseTotals = AdminExpense::query()
+            ->where('company_id', $companyId)
+            ->where('status', AdminExpense::PAYMENT_STATUS_PAID)
+            ->whereBetween('bill_date', [$fromDate, $toDate])
+            ->sum('total') ?? 0;
+        // Calculate profit or loss
+
+        $finalTotal = $paymentTotals->income - $expenseTotals;
+
+        return [
+            'income' => $paymentTotals->income,
+            'cityLedger' => $paymentTotals->cityLedger,
+            'expense' => $expenseTotals,
+            'profit' => max($finalTotal, 0),  // Profit if positive
+            'loss' => min($finalTotal, 0),    // Loss if negative
+        ];
     }
 }
