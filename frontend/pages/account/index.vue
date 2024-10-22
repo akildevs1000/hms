@@ -393,7 +393,10 @@
 export default {
   data: () => ({
     search: null,
-    filters: null,
+    filters: {
+      from: new Date().toJSON().slice(0, 10),
+      to: new Date().toJSON().slice(0, 10),
+    },
     IncomeCardDialog: false,
     ExpenseCardDialog: false,
     ManagementCardDialog: false,
@@ -463,9 +466,9 @@ export default {
     async getProfitLoss() {
       let config = {
         params: {
-          company_id: 3,
-          from_date: `2024-10-22`,
-          to_date: `2024-10-22`,
+          company_id: this.$auth.user.company_id,
+          from_date: this.filters.from,
+          to_date: this.filters.to,
         },
       };
 
