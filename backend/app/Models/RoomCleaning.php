@@ -33,4 +33,16 @@ class RoomCleaning extends Model
     {
         return $this->belongsTo(Company::class, "company_id");
     }
+
+    public function getBeforeAttachmentAttribute($value)
+    {
+        if (!$value) return null;
+        return asset('before_attachments/' . $value);
+    }
+
+    public function getAfterAttachmentAttribute($value)
+    {
+        if (!$value) return null;
+        return asset('after_attachments/' . $value);
+    }
 }

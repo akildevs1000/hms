@@ -66,19 +66,34 @@ class RoomCleaningController extends Controller
     {
         $validatedData = $request->validated();
 
-        // $found = RoomCleaning::whereDate("created_at", date("Y-m-d"))
-        //     ->where("room_id", $validatedData["room_id"])
-        //     ->first();
+        if (request()->has('before_attachment')) {
+            $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('before_attachment')));
+            $imageName = request('before_attachment_name');
+            $publicDirectory = public_path("before_attachments");
+            if (!file_exists($publicDirectory)) {
+                mkdir($publicDirectory);
+            }
+            file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+            $validatedData["before_attachment"] = $imageName;
+        }
+
+        // if (request()->has('voice_note')) {
+        //     $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('voice_note')));
+        //     $imageName = request('voice_note_name');
+        //     $publicDirectory = public_path("voice_notes");
+        //     if (!file_exists($publicDirectory)) {
+        //         mkdir($publicDirectory);
+        //     }
+        //     file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+        //     $validatedData["voice_note"] = $imageName;
+        // }
 
         if (request("can_change_status") && $validatedData["status"] == RoomCleaning::CLEANED) {
             BookedRoom::where('room_id', $validatedData["room_id"])
                 ->update(['booking_status' => BookedRoom::AVAILABLE]);
         }
-
-        // if ($found) {
-        //     $found->update($validatedData);
-        //     return $found;
-        // }
 
         return RoomCleaning::create($validatedData);
     }
