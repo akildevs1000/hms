@@ -562,7 +562,7 @@ class RoomController extends Controller
         $roomIds = $model
             ->whereDate('check_in', '<=', $checkIn)
             ->whereDate('check_out', '>=', $checkOut)
-            ->whereDate('booking_status', '!=', 0)
+            ->where('booking_status', '!=', 0)
             ->pluck('room_id');
 
         return Room::whereNotIn('id', $roomIds)
