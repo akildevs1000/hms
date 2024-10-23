@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('longtext_in_room_cleanings', function (Blueprint $table) {
+        Schema::table('room_cleanings', function (Blueprint $table) {
             $table->longText('before_attachment')->change();
             $table->longText('after_attachment')->change();
             $table->longText('voice_note')->change();
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('longtext_in_room_cleanings', function (Blueprint $table) {
+        Schema::table('room_cleanings', function (Blueprint $table) {
             $table->string('before_attachment')->nullable()->change();
             $table->string('after_attachment')->nullable()->change();
             $table->string('voice_note')->nullable()->change();
