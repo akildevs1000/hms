@@ -394,7 +394,7 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $BlockedRooms = Room::with('device',"is_cleaned")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
+        $BlockedRooms = Room::with('device', "is_cleaned")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
 
         $Occupied = Room::with('device', 'is_cleaned')
             // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
@@ -562,11 +562,7 @@ class RoomController extends Controller
         $roomIds = $model
             ->whereDate('check_in', '<=', $checkIn)
             ->whereDate('check_out', '>=', $checkOut)
-            // ->WhereDate('check_out', '>=', date('Y-m-d', strtotime($checkOut . " +1 day")))
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('company_id', $company_id);
-            })
+            ->whereDate('booking_status', '!=', 0)
             ->pluck('room_id');
 
         return Room::whereNotIn('id', $roomIds)
