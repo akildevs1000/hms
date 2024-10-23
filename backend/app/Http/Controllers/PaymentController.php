@@ -122,9 +122,9 @@ class PaymentController extends Controller
         $finalTotal = $paymentTotals->income - $expenseTotals;
 
         return [
-            'income' => $paymentTotals->income,
-            'cityLedger' => $paymentTotals->cityLedger,
-            'expense' => $expenseTotals,
+            'income' => $paymentTotals->income ?? 0,
+            'cityLedger' => $paymentTotals->cityLedger ?? 0,
+            'expense' => $expenseTotals ?? 0,
             'profit' => max($finalTotal, 0),  // Profit if positive
             'loss' => min($finalTotal, 0),    // Loss if negative
         ];
