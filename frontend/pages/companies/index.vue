@@ -28,6 +28,7 @@
 
               <v-tab> Night Audit Email </v-tab>
               <v-tab> Verfication </v-tab>
+              <v-tab> House Keeping </v-tab>
 
               <v-tab-item>
                 <v-container fluid>
@@ -228,13 +229,13 @@
 
                         <v-col cols="12" class="text-right">
                           <AssetsButton
-                              :options="{
-                                icon: `mdi-cloud-upload`,
-                                label: `Submit`,
-                                color: `green`,
-                              }"
-                               @click="update_company"
-                            />
+                            :options="{
+                              icon: `mdi-cloud-upload`,
+                              label: `Submit`,
+                              color: `green`,
+                            }"
+                            @click="update_company"
+                          />
                         </v-col>
                       </v-row>
                     </v-col>
@@ -702,6 +703,10 @@
                     </v-avatar>
                   </v-card-text>
                 </v-card>
+              </v-tab-item>
+
+              <v-tab-item>
+                <HouseKeeping />
               </v-tab-item>
             </v-tabs>
           </v-card>

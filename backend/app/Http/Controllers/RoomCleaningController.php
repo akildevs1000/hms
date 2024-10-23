@@ -14,6 +14,28 @@ class RoomCleaningController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function data()
+    {
+        $query = RoomCleaning::query();
+
+        $query->where('company_id', request('company_id', 0));
+
+        if (request()->has('from_date') && request()->has('to_date')) {
+            $query->whereBetween('created_at', [request('from_date'), request('to_date')]);
+        }
+
+        if (request()->has('date')) {
+            $query->whereDate('created_at', request('date'));
+        }
+
+        if (request()->has('room_ids')) {
+            $query->whereIn('room_id', request('room_ids'));
+        }
+
+        return $query->with("room", "cleaned_by_user", "response_by_user")->paginate(request("per_page", 1000));
+    }
+
     public function index()
     {
         $query = RoomCleaning::query();
@@ -44,19 +66,19 @@ class RoomCleaningController extends Controller
     {
         $validatedData = $request->validated();
 
-        $found = RoomCleaning::whereDate("created_at", date("Y-m-d"))
-            ->where("room_id", $validatedData["room_id"])
-            ->first();
+        // $found = RoomCleaning::whereDate("created_at", date("Y-m-d"))
+        //     ->where("room_id", $validatedData["room_id"])
+        //     ->first();
 
         if (request("can_change_status") && $validatedData["status"] == RoomCleaning::CLEANED) {
             BookedRoom::where('room_id', $validatedData["room_id"])
                 ->update(['booking_status' => BookedRoom::AVAILABLE]);
         }
 
-        if ($found) {
-            $found->update($validatedData);
-            return $found;
-        }
+        // if ($found) {
+        //     $found->update($validatedData);
+        //     return $found;
+        // }
 
         return RoomCleaning::create($validatedData);
     }

@@ -112,7 +112,7 @@ class Room extends Model
 
     public function is_cleaned()
     {
-        return $this->hasOne(RoomCleaning::class)
+        return $this->hasMany(RoomCleaning::class)
             ->whereDate("created_at", date("Y-m-d"))
             ->where("status", RoomCleaning::CLEANED);
     }

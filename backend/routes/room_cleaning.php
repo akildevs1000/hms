@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('room-cleaning', RoomCleaningController::class);
 Route::get('room-cleaning-event/{id}', [RoomCleaningController::class, "getNewEvent"]);
+Route::get('room-data', [RoomCleaningController::class, "data"]);
 
 
 // {
