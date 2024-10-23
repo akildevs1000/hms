@@ -2356,13 +2356,9 @@ class BookingController extends Controller
 
         $bookedRoomsCount = BookedRoom::whereDate('check_in', '<=', $request->check_in)
             ->WhereDate('check_out', '>=', $request->check_out)
-            ->whereHas('booking', function ($q) use ($request) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('company_id', $request->company_id);
-                $q->where('room_id', $request->selectedRooms[0]['room_id']);
-            })->count();
-
-
+            ->where('booking_status', '!=', 0)
+            ->where('room_id', $request->selectedRooms[0]['room_id'])
+            ->count();
 
         if ($bookedRoomsCount > 0) {
             return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
@@ -2578,13 +2574,9 @@ class BookingController extends Controller
 
         $bookedRoomsCount = BookedRoom::whereDate('check_in', '<=', $request->check_in)
             ->WhereDate('check_out', '>=', $request->check_out)
-            ->whereHas('booking', function ($q) use ($request) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('company_id', $request->company_id);
-                $q->where('room_id', $request->selectedRooms[0]['room_id']);
-            })->count();
-
-
+            ->where('booking_status', '!=', 0)
+            ->where('room_id', $request->selectedRooms[0]['room_id'])
+            ->count();
 
         if ($bookedRoomsCount > 0) {
             return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
