@@ -7,7 +7,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: "",
-    title: "MyHotel",
+    title: "MyHotel2Cloud",
     meta: [
       {
         charset: "utf-8",
@@ -151,12 +151,23 @@ export default {
   // serverMiddleware: ['~middleware/verify.js'],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
+  // pwa: {
+  //   manifest: {
+  //     lang: "en",
+  //   },
+  //   icon: {
+  //     fileName: "/favicon.png",
+  //   },
+  // },
+
   pwa: {
     manifest: {
+      name: "MyHotel2Cloud",
+      short_name: "MyHotel2Cloud",
       lang: "en",
     },
     icon: {
-      fileName: "/favicon.png",
+      source: "static/favicon.png", // Path to your app icon
     },
   },
 
