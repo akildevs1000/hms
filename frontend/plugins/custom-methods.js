@@ -412,4 +412,26 @@ export default ({ app }, inject) => {
       );
     },
   });
+
+  const setLocalStorageItem = (key, value) => {
+    localStorage.setItem(key, value);
+  };
+
+  // Function to get an item from local storage
+  const getLocalStorageItem = (key) => {
+    return localStorage.getItem(key);
+  };
+
+  // Function to remove an item from local storage
+  const removeLocalStorageItem = (key) => {
+    localStorage.removeItem(key);
+  };
+
+  // Inject the functions into the context as $localStorage
+  inject('localStorage', {
+    set: setLocalStorageItem,
+    get: getLocalStorageItem,
+    remove: removeLocalStorageItem,
+  });
+
 };

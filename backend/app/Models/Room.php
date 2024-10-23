@@ -110,6 +110,13 @@ class Room extends Model
         return $startDate->diffInDays($endDate);
     }
 
+    public function is_cleaned()
+    {
+        return $this->hasOne(RoomCleaning::class)
+            ->whereDate("created_at", date("Y-m-d"))
+            ->where("status", RoomCleaning::CLEANED);
+    }
+
     // public function isBookedForPeriod(Carbon $startDate, Carbon $endDate)
     // {
     //     return $this->bookings()

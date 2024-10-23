@@ -332,7 +332,7 @@ class RoomController extends Controller
             $todayDate = date('Y-m-d');
         }
 
-        $AvailableRooms = Room::where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
+        $AvailableRooms = Room::with("is_cleaned")->where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
 
         $expectCheckOut = Room::with('device')
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
@@ -377,7 +377,7 @@ class RoomController extends Controller
                     ->where('booking_status', '!=', 0); // Exclude non-active bookings
             });
         })
-            ->with(['device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
+            ->with(['is_cleaned', 'device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
 
                 $q->whereNotNull('room_id');
                 $q->where('company_id', $company_id);
@@ -394,9 +394,9 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $BlockedRooms = Room::with('device')->where("status", Room::Blocked)->where('company_id', $company_id)->get();
+        $BlockedRooms = Room::with('device',"is_cleaned")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
 
-        $Occupied = Room::with('device')
+        $Occupied = Room::with('device', 'is_cleaned')
             // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', $todayDate);
@@ -433,7 +433,7 @@ class RoomController extends Controller
 
 
 
-        $dirtyRooms = Room::with(['device', 'bookedRoom'])
+        $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned"])
             ->whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
                 $q->where('company_id', $company_id)
                     ->where(function ($query) use ($todayDate) {

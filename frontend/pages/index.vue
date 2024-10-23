@@ -165,7 +165,9 @@
               <v-card-text>
                 <v-row style="margin-top: -12px"
                   ><v-col cols="8"
-                    ><span class="text-color">Room Status</span></v-col
+                    ><span class="text-color"
+                      >Room Status</span
+                    ></v-col
                   >
 
                   <v-col cols="4" class="text-right align-right"
@@ -650,7 +652,6 @@ export default {
       filterDate: "2024-08-15",
       menu2: false,
       colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
-      key: 1,
       reservation: [],
       rightClickRoomId: "",
       selected_booked_room_id: "",
@@ -774,6 +775,8 @@ export default {
       keyTabcompliment: 15,
       keyTabdirty: 16,
       keyTabOccupied: 17,
+
+      roomCleaningEventCount: 0,
     };
   },
   watch: {
@@ -826,9 +829,8 @@ export default {
     this.first_login_auth = this.$auth.user.first_login;
 
     setInterval(() => {
-      this.room_list();
-      this.key = this.key + 1;
-    }, 1000 * 60 * 2);
+      this.checkRoomCleaningNewEvent();
+    }, 1000 * 10);
 
     let payload = {
       params: {
@@ -838,13 +840,21 @@ export default {
     this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
       this.calenderColorCodes = data;
     });
-
-    setTimeout(() => {
-      this.key += 1;
-    }, 1000);
   },
 
   methods: {
+    async checkRoomCleaningNewEvent() {
+      let company_id = this.$auth.user.company_id;
+      let { data } = await this.$axios.get(`room-cleaning-event/${company_id}`);
+      if (data != this.roomCleaningEventCount) {
+        this.roomCleaningEventCount = this.$localStorage.get(
+          "roomCleaningEventCount"
+        );
+        console.log("🚀 ~ checkRoomCleaningNewEvent ~ data:", data);
+        this.refreshRoomList();
+        this.$localStorage.set("roomCleaningEventCount", data);
+      }
+    },
     handleSuccess(message) {
       this.room_list();
       this.alert("Success!", message, "success");
