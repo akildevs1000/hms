@@ -1,31 +1,11 @@
 <template>
   <v-dialog persistent v-model="RoomDrawer" max-width="400">
     <AssetsIconClose left="390" @click="close"/>
-    <template v-slot:activator="{ on, attrs }">
-      <v-hover v-slot:default="{ hover, props }">
-        <span v-bind="props">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-            x-small
-            :outlined="!hover"
-            :class="hover ? `white--text` : `primary--text`"
-            rounded
-            color="primary"
-            ><v-icon :color="hover ? `white` : `primary`" small>mdi-pencil</v-icon
-            >{{ label }}</v-btn
-          >
-        </span>
-      </v-hover>
-    </template>
     <v-card>
       <v-alert flat class="grey lighten-3" dense>
         Room Booking <v-spacer></v-spacer>
-        
       </v-alert>
-
       <v-container>
-        <!-- <pre>{{ reservation }}</pre> -->
         <v-row>
           <v-col cols="12">
             <v-row>
