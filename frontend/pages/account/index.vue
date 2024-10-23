@@ -449,6 +449,8 @@ export default {
         to: data.to,
         search: this.search,
       };
+
+      this.getProfitLoss();
     },
     searchIt() {
       if (this.search.length == 0) {
