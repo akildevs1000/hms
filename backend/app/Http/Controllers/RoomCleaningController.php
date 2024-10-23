@@ -78,17 +78,17 @@ class RoomCleaningController extends Controller
             $validatedData["before_attachment"] = $imageName;
         }
 
-        // if (request()->has('voice_note')) {
-        //     $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('voice_note')));
-        //     $imageName = request('voice_note_name');
-        //     $publicDirectory = public_path("voice_notes");
-        //     if (!file_exists($publicDirectory)) {
-        //         mkdir($publicDirectory);
-        //     }
-        //     file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+        if (request()->has('voice_note')) {
+            $base64VoiceNote  = base64_decode(preg_replace('#^data:audio/\w+;base64,#i', '', request('voice_note')));
+            $voiceNoteName  = request('voice_note_name');
+            $publicDirectory = public_path("voice_notes");
+            if (!file_exists($publicDirectory)) {
+                mkdir($publicDirectory);
+            }
+            file_put_contents($publicDirectory . '/' . $voiceNoteName , $base64VoiceNote );
 
-        //     $validatedData["voice_note"] = $imageName;
-        // }
+            $validatedData["voice_note"] = $voiceNoteName ;
+        }
 
         if (request("can_change_status") && $validatedData["status"] == RoomCleaning::CLEANED) {
             BookedRoom::where('room_id', $validatedData["room_id"])
