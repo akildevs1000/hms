@@ -33,7 +33,11 @@ class RoomCleaningController extends Controller
             $query->whereIn('room_id', request('room_ids'));
         }
 
-        return $query->with("room", "cleaned_by_user", "response_by_user")->paginate(request("per_page", 1000));
+        $query->orderBy("id", "desc");
+
+        $query->with("room", "cleaned_by_user", "response_by_user");
+
+        return $query->paginate(request("per_page", 1000));
     }
 
     public function index()
@@ -85,9 +89,9 @@ class RoomCleaningController extends Controller
             if (!file_exists($publicDirectory)) {
                 mkdir($publicDirectory);
             }
-            file_put_contents($publicDirectory . '/' . $voiceNoteName , $base64VoiceNote );
+            file_put_contents($publicDirectory . '/' . $voiceNoteName, $base64VoiceNote);
 
-            $validatedData["voice_note"] = $voiceNoteName ;
+            $validatedData["voice_note"] = $voiceNoteName;
         }
 
         if (request("can_change_status") && $validatedData["status"] == RoomCleaning::CLEANED) {
