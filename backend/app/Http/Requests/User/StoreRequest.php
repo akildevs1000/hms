@@ -48,7 +48,7 @@ class StoreRequest extends FormRequest
             'is_active' => 'nullable',
             'last_name' => 'required',
             'enable_whatsapp_otp' => 'required',
-            'user_type' => 'required',
+            'user_type' => 'nullable',
         ];
     }
 
