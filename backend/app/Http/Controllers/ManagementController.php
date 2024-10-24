@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ManagementController extends Controller
@@ -194,11 +195,138 @@ class ManagementController extends Controller
     public function getAuditReport(Request $request)
     {
 
-        $model = Booking::query();
 
-        $todayCheckin = $this->todayCheckinAudit($model, $request);
+
+        $company_id = $request->company_id;
+
+        $startDate = Carbon::parse($request->from_date);
+        $endDate = Carbon::parse($request->to_date);
+
+        $dates = [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
+
+        $bookingCounts = Booking::query()
+            ->where('company_id', $company_id)
+            ->whereBetween('booking_date', $dates) // Apply the date filter here
+            ->get(["id", "booking_date", "check_in", "check_out"]);
+
+        $arr = [];
+
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            $check_in_counter = 0;
+            $check_out_counter = 0;
+            $continue_counter = 0;
+            $closed_counter = 0;
+            $booked_counter = 0;
+
+            $arr[$date->format("Y-m-d")] = [
+                "date" => $date->format("Y-m-d"),
+                "check_in" => 0,
+                "check_out" => 0,
+                "day_use" => 0,
+                "continue" => 0,
+                "closed" => 0,
+                "cancel" => 0,
+                "booked" => 0,
+                "breakfast" => 0,
+                "ledger" => 0,
+                "income" => 0,
+                "expense" => 0,
+                "cash_in_hand" => 0,
+            ];
+
+            foreach ($bookingCounts as $booking) {
+
+                if ($date->format("Y-m-d") == $booking->check_in) {
+                    $arr[$date->format("Y-m-d")]["check_in"] = ++$check_in_counter;
+                    $arr[$date->format("Y-m-d")]["closed"] = ++$closed_counter;
+                }
+                if ($date->format("Y-m-d") == $booking->check_out) {
+                    $arr[$date->format("Y-m-d")]["check_out"] = ++$check_out_counter;
+                }
+                if ($date->format("Y-m-d") > $booking->booking_date) {
+                    $arr[$date->format("Y-m-d")]["continue"] = ++$continue_counter;
+                }
+
+                if ($date->format("Y-m-d") == $booking->booking_date) {
+                    $arr[$date->format("Y-m-d")]["booked"] = ++$booked_counter;
+                }
+            }
+        }
+
+        $headers = [
+            ["align" => "center", "text" =>  "Date", "value" => "date"],
+            ["align" => "center", "text" =>  "Check In", "value" => "check_in"],
+            ["align" => "center", "text" =>  "Check Out", "value" => "check_out"],
+            ["align" => "center", "text" =>  "Day Use", "value" => "day_use"],
+            ["align" => "center", "text" =>  "Continue", "value" => "continue"],
+            ["align" => "center", "text" =>  "Closed", "value" => "closed"],
+            ["align" => "center", "text" =>  "Booked", "value" => "booked"],
+            ["align" => "center", "text" =>  "Cancel", "value" => "cancel"],
+            ["align" => "center", "text" =>  "Breakfast", "value" => "breakfast"],
+            ["align" => "center", "text" =>  "Ledger", "value" => "ledger"],
+            ["align" => "center", "text" =>  "Income", "value" => "income"],
+            ["align" => "center", "text" =>  "Expenses", "value" => "expense"],
+            ["align" => "center", "text" =>  "Cash In Hand", "value" => "cash_in_hand"],
+        ];
+
+        $data = array_values($arr);
+
+        return [
+            "stats" => [
+                [
+                    "icon" => "mdi-door-open",
+                    "value" => array_sum(array_column($data, "check_in")),
+                    "label" => "Checkin",
+                    "col" => 7,
+                    "color" => "green",
+                ],
+                [
+                    "icon" => "mdi-clock-outline",
+                    "value" => 0,
+                    "label" => "Continue",
+                    "col" => 7,
+                    "color" => "blue",
+                ],
+                [
+                    "icon" => "mdi-door-closed",
+                    "value" => array_sum(array_column($data, "check_out")),
+                    "label" => "CheckOut",
+                    "col" => 7,
+                    "color" => "orange",
+                ],
+                [
+                    "icon" => "mdi-calendar-check",
+                    "value" => 0,
+                    "label" => "Booking",
+                    "col" => 7,
+                    "color" => "purple",
+                ],
+                [
+                    "icon" => "mdi-cash-multiple",
+                    "value" => 0,
+                    "label" => "City Ledger",
+                    "col" => 7,
+                    "color" => "pink",
+                ],
+                [
+                    "icon" => "mdi-cancel",
+                    "value" => array_sum(array_column($data, "cancel")),
+                    "label" => "Cancel Rooms",
+                    "col" => 7,
+                    "color" => "grey",
+                ],
+                [
+                    "icon" => "mdi-silverware-fork-knife",
+                    "value" => 0,
+                    "label" => "Food Order",
+                    "col" => 7,
+                    "color" => "teal",
+                ]
+            ],
+            "headers" => $headers,
+            "data" => $data
+        ];
         $continueRooms = $this->continueAudit($model, $request);
-        $todayCheckOut = $this->todayCheckOutAudit($model, $request);
         $todayPayments = $this->todayPaymentsAudit($model, $request);
         $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($model, $request);
         $cancelRooms = $this->cancelRooms($request);
@@ -220,28 +348,17 @@ class ManagementController extends Controller
         ];
     }
 
-    private function todayCheckinAudit($model, $request)
+    private function todayCheckinAudit($company_id, $dates = [])
     {
-        $company_id = $request->company_id;
-        return $model
-            ->where(function ($q) use ($company_id, $request) {
-                $q->where('booking_status', '!=', 0);
-                $q->where('booking_status', '!=', -1);
-                $q->where('booking_status', '=', 2);
+        return Booking::query()
+            ->where(function ($q) use ($company_id, $dates) {
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_in', $request->date);
+                $q->whereBetween('check_out', $dates);
             })
-            ->with('customer:id,first_name')
-            ->withSum(['transactions' => function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-            }], 'credit')->with('transactions', function ($q) use ($request) {
-                $q->where('is_posting', 0);
-                // $q->where('credit', '>', 0);
-                $q->whereDate('date', $request->date);
-                $q->where('payment_method_id', '!=', 7);
-                $q->where('company_id', $request->company_id)
-                    ->with('paymentMode');
-            })->get();
+            // ->with('customer:id,first_name')
+            ->get()
+            ->groupBy("check_in")
+            ->map(fn($group) => $group->count());
     }
 
     private function continueAudit($model, $request)
@@ -267,28 +384,17 @@ class ManagementController extends Controller
             })->get();
     }
 
-    private function todayCheckOutAudit($model, $request)
+    private function todayCheckOutAudit($company_id, $dates = [])
     {
-        $company_id = $request->company_id;
-        return $todayCheckOut = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [0, 3, 4]);
-                $q->where('booking_status', '!=', -1);
+        return Booking::query()
+            ->where(function ($q) use ($company_id, $dates) {
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $request->date);
+                $q->whereBetween('check_out', $dates);
             })
-            ->withSum(['transactions' => function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-            }], 'credit')
-            ->with('customer:id,first_name')
-            ->with('transactions', function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-                // $q->where('credit', '>', 0);
-                $q->where('is_posting', 0);
-                $q->where('payment_method_id', '!=', 7);
-                $q->where('company_id', $request->company_id)
-                    ->with('paymentMode');
-            })->get();
+            // ->with('customer:id,first_name')
+            ->get()
+            ->groupBy("check_out")
+            ->map(fn($group) => $group->count());
     }
 
     private function todayPaymentsAudit($model, $request)
@@ -544,7 +650,18 @@ class ManagementController extends Controller
         $year = $request->year;
 
         $monthArray = [
-            ["value" => "01", "text" => "Jan", "color" => "#3366CC"], ["value" => "02", "text" => "Feb", "color" => "#FF69B4"], ["value" => "03", "text" => "Mar", "color" => "#00FF00"], ["value" => "04", "text" => "Apr", "color" => "#FFD700"], ["value" => "05", "text" => "May", "color" => "#FF4500"], ["value" => "06", "text" => "Jun", "color" => "#800080"], ["value" => "07", "text" => "Jul", "color" => "#FF6347"], ["value" => "08", "text" => "Aug", "color" => "#008080"], ["value" => "09", "text" => "Sep", "color" => "#FFA500"], ["value" => "10", "text" => "Oct", "color" => "#DC143C"], ["value" => "11", "text" => "Nov", "color" => "#7CFC00"], ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
+            ["value" => "01", "text" => "Jan", "color" => "#3366CC"],
+            ["value" => "02", "text" => "Feb", "color" => "#FF69B4"],
+            ["value" => "03", "text" => "Mar", "color" => "#00FF00"],
+            ["value" => "04", "text" => "Apr", "color" => "#FFD700"],
+            ["value" => "05", "text" => "May", "color" => "#FF4500"],
+            ["value" => "06", "text" => "Jun", "color" => "#800080"],
+            ["value" => "07", "text" => "Jul", "color" => "#FF6347"],
+            ["value" => "08", "text" => "Aug", "color" => "#008080"],
+            ["value" => "09", "text" => "Sep", "color" => "#FFA500"],
+            ["value" => "10", "text" => "Oct", "color" => "#DC143C"],
+            ["value" => "11", "text" => "Nov", "color" => "#7CFC00"],
+            ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
         ];
 
         $soldArray = Report::selectRaw("EXTRACT(MONTH FROM date) as month")
@@ -707,7 +824,18 @@ class ManagementController extends Controller
         $year = $request->year;
 
         $monthArray = [
-            ["value" => "01", "text" => "Jan", "color" => "#3366CC"], ["value" => "02", "text" => "Feb", "color" => "#FF69B4"], ["value" => "03", "text" => "Mar", "color" => "#00FF00"], ["value" => "04", "text" => "Apr", "color" => "#FFD700"], ["value" => "05", "text" => "May", "color" => "#FF4500"], ["value" => "06", "text" => "Jun", "color" => "#800080"], ["value" => "07", "text" => "Jul", "color" => "#FF6347"], ["value" => "08", "text" => "Aug", "color" => "#008080"], ["value" => "09", "text" => "Sep", "color" => "#FFA500"], ["value" => "10", "text" => "Oct", "color" => "#DC143C"], ["value" => "11", "text" => "Nov", "color" => "#7CFC00"], ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
+            ["value" => "01", "text" => "Jan", "color" => "#3366CC"],
+            ["value" => "02", "text" => "Feb", "color" => "#FF69B4"],
+            ["value" => "03", "text" => "Mar", "color" => "#00FF00"],
+            ["value" => "04", "text" => "Apr", "color" => "#FFD700"],
+            ["value" => "05", "text" => "May", "color" => "#FF4500"],
+            ["value" => "06", "text" => "Jun", "color" => "#800080"],
+            ["value" => "07", "text" => "Jul", "color" => "#FF6347"],
+            ["value" => "08", "text" => "Aug", "color" => "#008080"],
+            ["value" => "09", "text" => "Sep", "color" => "#FFA500"],
+            ["value" => "10", "text" => "Oct", "color" => "#DC143C"],
+            ["value" => "11", "text" => "Nov", "color" => "#7CFC00"],
+            ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
         ];
 
         $totalRooms = 0;
@@ -844,21 +972,22 @@ class ManagementController extends Controller
         //     ->sum('amount');
 
         $colorsArray = [
-            ["value" => "01", "text" => "Jan", "color" => "#3366CC"], ["value" => "02", "text" => "Feb", "color" => "#FF69B4"], ["value" => "03", "text" => "Mar", "color" => "#00FF00"], ["value" => "04", "text" => "Apr", "color" => "#FFD700"], ["value" => "05", "text" => "May", "color" => "#FF4500"], ["value" => "06", "text" => "Jun", "color" => "#800080"], ["value" => "07", "text" => "Jul", "color" => "#FF6347"], ["value" => "08", "text" => "Aug", "color" => "#008080"], ["value" => "09", "text" => "Sep", "color" => "#FFA500"], ["value" => "10", "text" => "Oct", "color" => "#DC143C"], ["value" => "11", "text" => "Nov", "color" => "#7CFC00"], ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
+            ["value" => "01", "text" => "Jan", "color" => "#3366CC"],
+            ["value" => "02", "text" => "Feb", "color" => "#FF69B4"],
+            ["value" => "03", "text" => "Mar", "color" => "#00FF00"],
+            ["value" => "04", "text" => "Apr", "color" => "#FFD700"],
+            ["value" => "05", "text" => "May", "color" => "#FF4500"],
+            ["value" => "06", "text" => "Jun", "color" => "#800080"],
+            ["value" => "07", "text" => "Jul", "color" => "#FF6347"],
+            ["value" => "08", "text" => "Aug", "color" => "#008080"],
+            ["value" => "09", "text" => "Sep", "color" => "#FFA500"],
+            ["value" => "10", "text" => "Oct", "color" => "#DC143C"],
+            ["value" => "11", "text" => "Nov", "color" => "#7CFC00"],
+            ["value" => "12", "text" => "Dec", "color" => "#4169E1"]
         ];
         return ["data" => $bookings, "colors" => $colorsArray];
     }
 
-    public function testcheckin(Request $request)
-    {
-        $model = Booking::query();
-
-        $todayCheckin = $this->todayCheckinAudit($model, $request);
-
-        return Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find(1)])
-            ->setPaper('a4', 'landscape')
-            ->stream();
-    }
     public function getReportDailyWiseGroup(Request $request)
     {
 
