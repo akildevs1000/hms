@@ -3,28 +3,13 @@
     <v-data-table
       dense
       :headers="headers"
-      :items="company_documents"
+      :items="data"
       :loading="loading"
       :options.sync="options"
       :footer-props="{
         itemsPerPageOptions: [100, 500, 1000],
       }"
     >
-      <!-- <template v-slot:top>
-      <v-toolbar flat dense class="mb-5">
-        {{ Model }}
-        <v-icon color="primary" right @click="getDataFromApi()"
-          >mdi-reload</v-icon
-        >
-        <v-spacer></v-spacer>
-        <CompanyDocumentCreate
-          :model="Model"
-          :endpoint="endpoint"
-          @response="getDataFromApi"
-        />
-      </v-toolbar>
-    </template> -->
-
       <template v-slot:item.date_time="{ item }">
         <v-container class="pa-1">
           <div class="d-flex align-center">
@@ -66,49 +51,6 @@
           <!-- <v-icon v-else class="placeholder-icon">mdi-microphone-off</v-icon> -->
         </v-container>
       </template>
-
-      <!-- <template v-slot:item.options="{ item }">
-      <v-menu bottom left>
-        <template v-slot:activator="{ on, attrs }">
-          <div class="text-center">
-            <v-btn dark-2 icon v-bind="attrs" v-on="on">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </div>
-        </template>
-        <v-list width="120" dense>
-          <v-list-item>
-            <v-list-item-title>
-              <CompanyDocumentView
-                :model="Model"
-                :endpoint="endpoint"
-                :item="item"
-                @response="getDataFromApi"
-              />
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-title>
-              <CompanyDocumentEdit
-                :model="Model"
-                :endpoint="endpoint"
-                :item="item"
-                @response="getDataFromApi"
-              />
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-title>
-              <CompanyDocumentDelete
-                :id="item.id"
-                :endpoint="endpoint"
-                @response="getDataFromApi"
-              />
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </template> -->
     </v-data-table>
   </v-container>
 </template>
@@ -130,7 +72,7 @@ export default {
     options: {},
     loading: false,
     response: "",
-    company_documents: [],
+    data: [],
     errors: [],
     headers: [
       {
@@ -204,7 +146,7 @@ export default {
       let { data } = await this.$axios.get(this.endpoint, config);
       this.loading = false;
 
-      this.company_documents = data.data;
+      this.data = data.data;
     },
   },
 };
