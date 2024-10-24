@@ -22,7 +22,7 @@ class UserController extends Controller
 
         $model->where('company_id', $request->company_id);
         $model->where('is_master', 0);
-        $model->where('user_type', $request->user_type);
+        $model->where('user_type', $request->user_type ?? "employee");
 
         if ($request->filled('name') && $request->has('name')) {
             $model->Where('name', env("WILD_CARD") ?? 'ILIKE', '%' . $request->name . '%');
