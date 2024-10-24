@@ -22,8 +22,7 @@ class UserController extends Controller
 
         $model->where('company_id', $request->company_id);
         $model->where('is_master', 0);
-
-        // $model->when()
+        $model->where('user_type', $request->user_type);
 
         if ($request->filled('name') && $request->has('name')) {
             $model->Where('name', env("WILD_CARD") ?? 'ILIKE', '%' . $request->name . '%');
@@ -55,11 +54,9 @@ class UserController extends Controller
                 if ($request->sortBy == 'role.name') {
                     $model->orderBy(Role::select('name')->whereColumn('roles.id', 'users.role_id'), $sortDesc);
                 }
-
             } else {
                 $model->orderBy($sortBy, $sortDesc);
             }
-
         } else {
             $model->orderBy('name', 'ASC');
         }
@@ -67,7 +64,6 @@ class UserController extends Controller
         $desserts = $model->paginate($itemsPerPage);
 
         return $desserts;
-
     }
 
     public function store(User $model, StoreRequest $request)

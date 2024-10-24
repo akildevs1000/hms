@@ -44,6 +44,8 @@ class User extends Authenticatable
         'telegram_chat_id',
         'telegram_otp',
         'telegram_otp_expires_at',
+
+        "user_type"
     ];
 
     protected $appends = [
