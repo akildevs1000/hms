@@ -25,6 +25,22 @@
       </v-toolbar>
     </template> -->
 
+      <template v-slot:item.date_time="{ item }">
+        <v-container class="pa-1">
+          <div class="d-flex align-center">
+            <v-icon class="mr-2">mdi-clock-outline</v-icon>
+            <div>
+              <small class="d-block" style="line-height: 1.1">
+                {{ $dateFormat.dmy(item.created_at) }} {{ item.start_time }}
+              </small>
+              <small class="d-block">
+                {{ $dateFormat.dmy(item.created_at) }} {{ item.end_time }}
+              </small>
+            </div>
+          </div>
+        </v-container>
+      </template>
+
       <template v-slot:item.before_attachment="{ item }">
         <ImageView
           v-if="item.before_attachment"
@@ -36,6 +52,19 @@
       <template v-slot:item.after_attachment="{ item }">
         <ImageView v-if="item.after_attachment" :src="item.after_attachment" />
         <span v-else>---</span>
+      </template>
+      <template v-slot:item.voice_note="{ item }">
+        <v-container class="pa-1">
+          <audio
+            v-if="item.voice_note"
+            controls
+            style="width: 250px; height: 40px"
+          >
+            <source :src="item.voice_note" />
+          </audio>
+          <span v-else>---</span>
+          <!-- <v-icon v-else class="placeholder-icon">mdi-microphone-off</v-icon> -->
+        </v-container>
       </template>
 
       <!-- <template v-slot:item.options="{ item }">
@@ -108,29 +137,24 @@ export default {
         text: "Room",
         value: "room.room_no",
       },
+
       {
-        text: "Status",
-        value: "status",
-      },
-      {
-        text: "Start Time",
-        value: "start_time",
-      },
-      {
-        text: "End Time",
-        value: "end_time",
-      },
-      {
-        text: "Total Time",
-        value: "total_time",
+        text: "Date/Time",
+        value: "date_time",
+        align: "center",
       },
       {
         text: "Before Attachment",
         value: "before_attachment",
       },
       {
-        text: "after Attachment",
+        text: "After Attachment",
         value: "after_attachment",
+      },
+      {
+        text: "Voice Note",
+        value: "voice_note",
+        align: "center",
       },
       {
         text: "Clean By",
@@ -139,6 +163,10 @@ export default {
       {
         text: "Response by",
         value: "response_by_user.name",
+      },
+      {
+        text: "Status",
+        value: "status",
       },
       //   {
       //     text: "Action",
