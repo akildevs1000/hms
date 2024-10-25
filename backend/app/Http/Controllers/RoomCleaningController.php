@@ -42,9 +42,9 @@ class RoomCleaningController extends Controller
 
     public function index()
     {
-        $query = RoomCleaning::query();
-
-        $query->where('company_id', request('company_id', 0));
+        // Initial query to filter by company_id and dates
+        $query = RoomCleaning::query()
+            ->where('company_id', request('company_id', 0));
 
         if (request()->has('from_date') && request()->has('to_date')) {
             $query->whereBetween('created_at', [request('from_date'), request('to_date')]);
@@ -54,15 +54,19 @@ class RoomCleaningController extends Controller
             $query->whereDate('created_at', request('date'));
         }
 
-        $latestRoomIds = $query->whereIn('room_id', request('room_ids', []))->groupBy('room_id');
+        // Get the latest `id` for each `room_id` by selecting the max `created_at` for each room
+        $latestRoomIds = $query->whereIn('room_id', request('room_ids', []))
+            ->selectRaw('MAX(id) as id')
+            ->groupBy('room_id');
 
-        // Main query to get data for the latest room cleaning records
+        // Main query to fetch the full data of the latest cleaning records
         $query = RoomCleaning::whereIn('id', $latestRoomIds->pluck('id'))
             ->with("room", "cleaned_by_user", "response_by_user")
             ->orderBy("id", "desc");
 
         return $query->paginate(request("per_page", 1000));
     }
+
 
     /**
      * Store a newly created resource in storage.
