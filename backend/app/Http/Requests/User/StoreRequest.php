@@ -25,12 +25,11 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $arr = [
             'title' => 'required',
             'name' => 'required|min:3|max:100',
             'email' => 'required|min:3|max:191|unique:users',
             'password' => [
-                // 'required',
                 'string',
                 'confirmed',
                 'min:6', // must be at least 10 characters in length
@@ -40,16 +39,27 @@ class StoreRequest extends FormRequest
                 'regex:/[0-9]/', // must contain at least one digit
                 'regex:/[@$!%*#?&]/', // must contain a special character
             ],
-            'role_id' => 'required',
-            'employee_role_id' => 'nullable',
+            // 'role_id' => 'required',
+            // 'employee_role_id' => 'nullable',
             'company_id' => 'required',
             'mobile' => 'nullable',
             'image' => 'nullable',
             'is_active' => 'nullable',
             'last_name' => 'required',
             'enable_whatsapp_otp' => 'required',
-            'user_type' => 'nullable',
         ];
+
+        if ($this->user_type == "employee") {
+            $arr["role_id"][] = "required";
+            $arr["employee_role_id"][] = "nullable";
+        }
+
+        if ($this->user_type == "employee" || $this->user_type == "house_keeping" || $this->user_type == "maintenance") {
+            $arr["password"][] = "required";
+            $arr["user_type"][] = "required"; //employee,house_keeping,maintenance
+        }
+
+        return $arr;
     }
 
     public function messages()

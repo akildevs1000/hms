@@ -16,7 +16,7 @@
             <v-row>
               <v-col md="8">
                 <v-row>
-                  <v-col md="6" cols="12" sm="12">
+                  <v-col :cols="isUserTypeEmployee ? '6' : '4'">
                     <v-autocomplete
                       v-model="editedItem.title"
                       :items="titleItems"
@@ -24,14 +24,16 @@
                       item-text="name"
                       item-value="name"
                       :hide-details="errors && !errors.title"
-                      :error="errors && errors.title"
                       :error-messages="
                         errors && errors.title ? errors.title[0] : ''
                       "
                       outlined
                     ></v-autocomplete>
                   </v-col>
-                  <v-col md="6" cols="12">
+                  <v-col
+                    v-if="isUserTypeEmployee"
+                    :cols="isUserTypeEmployee ? '6' : '4'"
+                  >
                     <v-autocomplete
                       :items="roles"
                       item-text="name"
@@ -47,7 +49,7 @@
                       errors.role_id[0]
                     }}</span>
                   </v-col>
-                  <v-col md="6" cols="12">
+                  <v-col :cols="isUserTypeEmployee ? '6' : '4'">
                     <v-text-field
                       v-model="editedItem.name"
                       placeholder="Name"
@@ -60,7 +62,7 @@
                       errors.name[0]
                     }}</span>
                   </v-col>
-                  <v-col md="6" cols="12">
+                  <v-col :cols="isUserTypeEmployee ? '6' : '4'">
                     <v-text-field
                       v-model="editedItem.last_name"
                       placeholder="Last Name"
@@ -149,7 +151,6 @@
                       item-text="name"
                       item-value="value"
                       :hide-details="errors && !errors.is_active"
-                      :error="errors && errors.is_active"
                       :error-messages="
                         errors && errors.is_active ? errors.is_active[0] : ''
                       "
@@ -173,7 +174,6 @@
                       item-text="name"
                       item-value="value"
                       :hide-details="errors && !errors.enable_whatsapp_otp"
-                      :error="errors && errors.enable_whatsapp_otp"
                       :error-messages="
                         errors && errors.enable_whatsapp_otp
                           ? errors.enable_whatsapp_otp[0]
@@ -263,7 +263,6 @@
                           item-text="name"
                           item-value="name"
                           :hide-details="errors && !errors.title"
-                          :error="errors && errors.title"
                           :error-messages="
                             errors && errors.title ? errors.title[0] : ''
                           "
@@ -396,7 +395,6 @@
                           item-text="name"
                           item-value="value"
                           :hide-details="errors && !errors.is_active"
-                          :error="errors && errors.is_active"
                           :error-messages="
                             errors && errors.is_active
                               ? errors.is_active[0]
@@ -422,7 +420,6 @@
                           item-text="name"
                           item-value="value"
                           :hide-details="errors && !errors.enable_whatsapp_otp"
-                          :error="errors && errors.enable_whatsapp_otp"
                           :error-messages="
                             errors && errors.enable_whatsapp_otp
                               ? errors.enable_whatsapp_otp[0]
@@ -522,8 +519,6 @@
           class="primary"
           dark
           small
-          v-bind="attrs"
-          v-on="on"
           @click="addNewItem"
         >
           <v-icon small center>mdi-plus</v-icon> New
@@ -660,27 +655,29 @@ export default {
       ],
       editedIndex: -1,
       editedItem: {
-        title: "Mr",
+        role_id: 0,
+        title: 1,
         name: "",
+        last_name: "",
         password: "",
         password_confirmation: "",
         email: "",
         mobile: "",
         is_active: 1,
-        enable_whatsapp_otp: 1,
-        last_name: "",
+        enable_whatsapp_otp: 0,
       },
 
       defaultItem: {
+        role_id: 0,
         title: 1,
         name: "",
+        last_name: "",
         password: "",
         password_confirmation: "",
         email: "",
         mobile: "",
         is_active: 1,
-        enable_whatsapp_otp: 1,
-        last_name: "",
+        enable_whatsapp_otp: 0,
       },
 
       upload: {
@@ -713,6 +710,9 @@ export default {
   },
 
   computed: {
+    isUserTypeEmployee() {
+      return this.user_type == "employee";
+    },
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
     },
@@ -768,8 +768,14 @@ export default {
       this.userDialog = true;
     },
 
-    deleteItem() {
-      console.log("deleteItem");
+    deleteItem(item) {
+      confirm("Are you sure you wish to delete?") &&
+        this.$axios
+          .delete(`users/${item.id}`)
+          .then(({ data }) => {
+            this.getDataFromApi();
+          })
+          .catch((err) => console.log(err));
     },
 
     onpick_attachment() {
@@ -861,8 +867,7 @@ export default {
         );
       }
       if (this.editedItem.role_id) {
-        payload.append("role_id", this.editedItem.role_id);
-        //payload.append("employee_role_id", this.editedItem.role_id);
+        payload.append("role_id", this.editedItem.role_id || 0);
       }
       if (this.editedItem.title) payload.append("title", this.editedItem.title);
       payload.append("name", this.editedItem.name);

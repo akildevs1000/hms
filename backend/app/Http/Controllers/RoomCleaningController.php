@@ -54,8 +54,12 @@ class RoomCleaningController extends Controller
             $query->whereDate('created_at', request('date'));
         }
 
-        $query->whereIn('room_id', request('room_ids', []));
+        $latestRoomIds = $query->whereIn('room_id', request('room_ids', []))->groupBy('room_id');
 
+        // Main query to get data for the latest room cleaning records
+        $query = RoomCleaning::whereIn('id', $latestRoomIds->pluck('id'))
+            ->with("room", "cleaned_by_user", "response_by_user")
+            ->orderBy("id", "desc");
 
         return $query->paginate(request("per_page", 1000));
     }
