@@ -1,5 +1,3 @@
-# hms
-
 booked status = 1,
 booked check in status = 2
 booked check out status = 3
