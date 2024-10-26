@@ -1038,7 +1038,7 @@ export default {
     },
 
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      // this.$router.push(`/customer/details/${item.id}`);
     },
 
     goToRevViewFromCancel(item) {

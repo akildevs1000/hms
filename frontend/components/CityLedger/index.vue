@@ -441,7 +441,7 @@ export default {
     },
 
     viewCustomerBilling(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      // this.$router.push(`/customer/details/${item.id}`);
     },
 
     commonMethod() {
@@ -449,7 +449,7 @@ export default {
     },
 
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      // this.$router.push(`/customer/details/${item.id}`);
     },
 
     get_agents() {

@@ -130,7 +130,7 @@ export default {
   methods: {
 
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      // this.$router.push(`/customer/details/${item.id}`);
     },
 
     getPaymentMode(item, mode) {

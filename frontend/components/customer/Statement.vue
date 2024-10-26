@@ -117,7 +117,7 @@ export default {
       this.get_customer_history();
     },
     goToRevView(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      // this.$router.push(`/customer/details/${item.id}`);
     },
 
     get_customer_history() {

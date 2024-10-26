@@ -419,6 +419,15 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <component
+      :noLabel="true"
+      :key="bookingId"
+      :BookingId="bookingId"
+      :is="currentComponent"
+      v-if="currentComponent"
+    ></component>
+
     <v-row>
       <v-col cols="12">
         <v-card>
@@ -529,6 +538,7 @@ export default {
     ); // Calculate start date 7 days ago
 
     return {
+      currentComponent: null,
       isHall: false,
       durationDays: 15,
       from_date: null,
@@ -680,9 +690,8 @@ export default {
           // });
 
           arg.el.addEventListener("dblclick", (jsEvent) => {
-            this.evenIid = eventId;
-            this.isDbCLick = true;
-            this.get_data();
+            this.bookingId = arg.event.extendedProps.booking_id;
+            this.currentComponent = "BookingSingle";
           });
 
           arg.el.addEventListener("mouseleave", (jsEvent) => {
@@ -1076,10 +1085,10 @@ export default {
             return {
               html: `<span title="${titlDisplay}"
                       style="
-                      color: ${sourceColor}; 
-                      background: ${sourceColor}; 
-                      padding-top:${groupName ? "5" : "4"}px; 
-                      padding-bottom:${groupName ? "4" : "5"}px; 
+                      color: ${sourceColor};
+                      background: ${sourceColor};
+                      padding-top:${groupName ? "5" : "4"}px;
+                      padding-bottom:${groupName ? "4" : "5"}px;
                       border-radius: 2px; margin-left: -2px">1</span>
                      <span title="${titlDisplay}">${title} <span class='mdi ${icon}'></span></span>`,
               // html:
@@ -1173,9 +1182,6 @@ export default {
         this.checkInDate = data.check_in;
         this.customerId = data.customer_id;
         this.show_context_menu(jsEvent);
-        if (this.isDbCLick) {
-          this.get_event_by_db_click();
-        }
       });
     },
 
@@ -1187,10 +1193,6 @@ export default {
         this.showTooltip = true;
       });
       this.get_data();
-    },
-
-    get_event_by_db_click() {
-      this.$router.push(`/customer/details/${this.bookingId}`);
     },
 
     create_reservation(e, obj) {

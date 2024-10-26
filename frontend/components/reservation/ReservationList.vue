@@ -286,7 +286,7 @@ export default {
     },
 
     viewCustomerBilling(item) {
-      this.$router.push(`/customer/details/${item.id}`);
+      // this.$router.push(`/customer/details/${item.id}`);
     },
 
     redirect_to_invoice(id) {
