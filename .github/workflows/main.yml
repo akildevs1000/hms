@@ -59,4 +59,4 @@ jobs:
           '
 
           # Upload new build files
-          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r .nuxt/* "$SSH_USERNAME@$SERVER_IP:/var/www/myhotel2cloud/frontend/.nuxt/"
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r frontend/.nuxt/* "$SSH_USERNAME@$SERVER_IP:/var/www/myhotel2cloud/frontend/.nuxt/"
