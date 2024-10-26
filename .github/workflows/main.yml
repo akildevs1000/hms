@@ -1,0 +1,59 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - v1 # Trigger deployment on push to v1 branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18" # Adjust based on your project requirements
+
+      - name: Install dependencies
+        run: npm install # Install dependencies
+
+      - name: Create Build
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+        run: npm run build # Use `generate` if you're using Nuxt.js or another static site generator
+
+      - name: Install SSH client
+        run: sudo apt-get install -y sshpass
+
+      - name: Deploy to DigitalOcean Cleaning App
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          # Install SSH client and sshpass if necessary
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+          # Backup and deploy commands
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" '
+            # Backup existing app if it exists
+            if [ -d /var/www/myhotel2cloud/frontend/.nuxt ]; then
+              TIMESTAMP=$(date +"%Y%m%d%H%M%S");
+              cp -r /var/www/myhotel2cloud/frontend/.nuxt /var/www/myhotel2cloud/frontend/.nuxt-version-$TIMESTAMP;
+            fi
+
+            # Pull the latest changes
+            cd /var/www/myhotel2cloud
+            git pull origin main  # Adjust branch name if necessary
+
+            # Reload the PM2 process
+            pm2 reload 0
+          '
+
+          # Upload new build files
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r .nuxt/* "$SSH_USERNAME@$SERVER_IP:/var/www/myhotel2cloud/frontend/.nuxt/"
