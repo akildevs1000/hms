@@ -1475,6 +1475,7 @@ export default {
     },
 
     closeCheckInAndOpenGRC() {
+      this.$store.dispatch("customer/setCustomer", {});
       this.$emit("call_room_list");
       this.room_list();
       this.checkInDialog = false;
