@@ -32,7 +32,7 @@ jobs:
       - name: Install SSH client
         run: sudo apt-get install -y sshpass
 
-      - name: Deploy to DigitalOcean Cleaning App
+      - name: Deploy to DigitalOcean
         env:
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
@@ -52,7 +52,7 @@ jobs:
 
             # Pull the latest changes
             cd /var/www/myhotel2cloud
-            git pull origin main  # Adjust branch name if necessary
+            git stash && git pull origin v1  # Adjust branch name if necessary
 
             # Reload the PM2 process
             pm2 reload 0
