@@ -345,26 +345,6 @@
               </v-list-item>
             </div>
 
-            <!-- <v-list-item
-              link
-              v-if="
-                bookingStatus <= 2 &&
-                bookingStatus != 0 &&
-                checkData.paid_by != 2
-              "
-            >
-              <v-list-item-title>
-                <BookingSingle
-                  v-if="bookingId"
-                  @close="get_events()"
-                  :key="evenIid"
-                  :noLabel="true"
-                  :BookingId="bookingId"
-                  :roomData="checkData"
-                />
-              </v-list-item-title>
-            </v-list-item> -->
-
             <v-list-item
               link
               v-if="
@@ -427,6 +407,7 @@
       :BookingId="bookingId"
       :is="currentComponent"
       v-if="currentComponent"
+      :roomData="roomData"
     ></component>
 
     <v-row>
@@ -540,6 +521,7 @@ export default {
 
     return {
       timeout: null,
+      roomData: null,
       currentComponentKey: 1,
       currentComponent: null,
       isHall: false,
@@ -671,7 +653,6 @@ export default {
 
         eventDidMount: (arg) => {
           const eventId = arg.event.id;
-          const bookingStatus = arg.event.extendedProps.status;
           if (arg.event.extendedProps.background) {
             arg.el.style.background = arg.event.extendedProps.background;
           }
@@ -693,14 +674,7 @@ export default {
           // });
 
           arg.el.addEventListener("dblclick", (jsEvent) => {
-            clearTimeout(this.timeout);
-            this.timeout = setTimeout(() => {
-              this.bookingId = arg.event.extendedProps.booking_id;
-              this.currentComponentKey += 1;
-              this.currentComponent = "BookingSingle";
-
-              console.log(this.currentComponent);
-            }, 200); // Adjust the delay as needed
+            this.get_booked_room_date(eventId);
           });
 
           arg.el.addEventListener("mouseleave", (jsEvent) => {
@@ -1191,6 +1165,22 @@ export default {
         this.checkInDate = data.check_in;
         this.customerId = data.customer_id;
         this.show_context_menu(jsEvent);
+      });
+    },
+
+    get_booked_room_date(evenIid) {
+      if (evenIid == false) return false;
+      let payload = {
+        params: {
+          id: evenIid,
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`get_booked_room`, payload).then(({ data }) => {
+        this.roomData = data;
+        this.bookingId = data.booking.id;
+        this.currentComponentKey += 1;
+        this.currentComponent = "BookingSingle";
       });
     },
 

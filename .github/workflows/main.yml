@@ -58,5 +58,7 @@ jobs:
           # Upload new build files
           sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r frontend/.nuxt/* "$SSH_USERNAME@$SERVER_IP:/var/www/myhotel2cloud/frontend/.nuxt/"
 
-          # Reload the PM2 process
-            pm2 reload 0
+          # Reload the PM2 process on the server
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" '
+          pm2 reload 0
+          '
