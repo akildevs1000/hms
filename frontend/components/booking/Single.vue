@@ -992,7 +992,7 @@
 </template>
 <script>
 export default {
-  props: ["BookingId", "noLabel", "roomData"],
+  props: ["BookingId", "noLabel", "roomData", "isAutoLoad"],
   data: () => ({
     payment: {},
     customerScreen: true,
@@ -1106,6 +1106,9 @@ export default {
     },
   },
   created() {
+    if (this.isAutoLoad) {
+      this.ViewBookingDialog = true;
+    }
     this.loading = true;
     this.getData();
   },

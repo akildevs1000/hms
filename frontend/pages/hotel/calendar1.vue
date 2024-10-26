@@ -421,8 +421,9 @@
     </v-dialog>
 
     <component
+      :isAutoLoad="true"
       :noLabel="true"
-      :key="bookingId"
+      :key="currentComponentKey"
       :BookingId="bookingId"
       :is="currentComponent"
       v-if="currentComponent"
@@ -538,6 +539,8 @@ export default {
     ); // Calculate start date 7 days ago
 
     return {
+      timeout: null,
+      currentComponentKey: 1,
       currentComponent: null,
       isHall: false,
       durationDays: 15,
@@ -690,8 +693,14 @@ export default {
           // });
 
           arg.el.addEventListener("dblclick", (jsEvent) => {
-            this.bookingId = arg.event.extendedProps.booking_id;
-            this.currentComponent = "BookingSingle";
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+              this.bookingId = arg.event.extendedProps.booking_id;
+              this.currentComponentKey += 1;
+              this.currentComponent = "BookingSingle";
+
+              console.log(this.currentComponent);
+            }, 200); // Adjust the delay as needed
           });
 
           arg.el.addEventListener("mouseleave", (jsEvent) => {

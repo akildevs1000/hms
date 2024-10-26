@@ -53,10 +53,10 @@ jobs:
             # Pull the latest changes
             cd /var/www/myhotel2cloud
             git stash && git pull origin v1  # Adjust branch name if necessary
-
-            # Reload the PM2 process
-            pm2 reload 0
           '
 
           # Upload new build files
           sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r frontend/.nuxt/* "$SSH_USERNAME@$SERVER_IP:/var/www/myhotel2cloud/frontend/.nuxt/"
+
+          # Reload the PM2 process
+            pm2 reload 0
