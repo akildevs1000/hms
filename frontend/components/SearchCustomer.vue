@@ -2,18 +2,18 @@
   <v-dialog v-model="searchDialog" width="350">
     <template v-slot:activator="{ on, attrs }">
       <v-hover v-slot:default="{ hover, props }">
-          <span v-bind="props">
-            <v-icon
-              class="zoom-on-hover"
-              v-bind="attrs"
-              v-on="on"
-              :outlined="!hover"
-              :color="hover ? `` : `primary`"
-              :style="{ color: hover ? '#6946dd' : '' }"
-              >mdi-magnify</v-icon
-            >
-          </span>
-        </v-hover>
+        <span v-bind="props">
+          <v-icon
+            class="zoom-on-hover"
+            v-bind="attrs"
+            v-on="on"
+            :outlined="!hover"
+            :color="hover ? `` : `primary`"
+            :style="{ color: hover ? '#6946dd' : '' }"
+            >mdi-magnify</v-icon
+          >
+        </span>
+      </v-hover>
     </template>
     <v-card>
       <v-container>
@@ -76,10 +76,17 @@ export default {
             alert("Customer not found");
             this.searchDialog = false;
             this.contact_no = null;
+            this.$store.dispatch("customer/setCustomer", {});
             return;
           }
 
-          this.$emit(`foundCustomer`, {
+          // this.$emit(`foundCustomer`, {
+          //   ...data.data,
+          //   customer_id: data.data.id,
+          // });
+
+          // Instead of emitting, dispatch the Vuex action
+          this.$store.dispatch("customer/setCustomer", {
             ...data.data,
             customer_id: data.data.id,
           });

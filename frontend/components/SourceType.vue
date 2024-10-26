@@ -224,6 +224,24 @@ export default {
       default: () => false,
     },
   },
+  customerStore: {
+    immediate: true,
+    handler(newValue) {
+      if (newValue && newValue.id && newValue.latest_booking) {
+        let latest_booking = newValue.latest_booking;
+        this.sourceType.source_type = latest_booking.type;
+        this.displayObject.name = latest_booking.source;
+        this.defaultSource.source_type = latest_booking.type;
+        this.$emit("sourceObject", latest_booking);
+      }
+    },
+  },
+
+  computed: {
+    customerStore() {
+      return this.$store.getters["customer/getCustomer"];
+    },
+  },
   data: () => ({
     types: ["Online", "Walking", "Travel Agency", "Complimentary", "Corporate"],
     filteredSearch: [],
@@ -250,15 +268,6 @@ export default {
     gst_number: null,
   }),
   async created() {
-    if (this.isOverride) {
-      this.sourceType.source_type = this.defaultSource.source_type;
-      this.displayObject.name = this.defaultSource.source;
-      this.$emit("sourceObject", this.defaultSource);
-      return;
-    }
-    this.defaultSource.source_type = this.defaultSource.source_type;
-    this.displayObject.name = this.defaultSource.source;
-    this.$emit("sourceObject", this.defaultSource);
     this.get_agents();
     this.get_online();
     this.get_Corporate();

@@ -23,7 +23,7 @@
         <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Quick Check In</span>
           <v-spacer></v-spacer>
-          <SearchBooking @foundCustomer="handleFoundCustomer" />
+          <SearchBooking />
           <AssetsButtonClose @close="closeDialog" />
         </v-toolbar>
         <v-stepper v-model="e1">
@@ -416,6 +416,7 @@ export default {
       this.e1 = 2;
     },
     closeDialog() {
+      this.e1 = 1;
       this.customerCompKey += 1;
       this.customer = {};
       this.room = {
@@ -495,6 +496,7 @@ export default {
       await this.$axios.post(`quick_check_in_room`, payload);
       this.dialog = false;
       this.$swal("Success!", "Checked In Successfull", "success").then(() => {
+        this.closeDialog();
         this.$emit("success");
       });
     },

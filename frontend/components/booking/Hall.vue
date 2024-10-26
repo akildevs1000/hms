@@ -438,6 +438,8 @@ export default {
       this.e1 = 2;
     },
     close() {
+      this.$store.dispatch("customer/setCustomer", {});
+      this.e1 = 1;
       this.customerCompKey += 1;
       this.customer = {};
       this.room = {

@@ -27,7 +27,7 @@
         <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
           <span>Individual Booking Information </span>
           <v-spacer></v-spacer>
-          <SearchCustomer @foundCustomer="handleFoundCustomer" />
+          <SearchCustomer />
         </v-toolbar>
         <v-stepper v-model="e1">
           <v-stepper-header style="display: none">
@@ -383,6 +383,8 @@ export default {
       this.e1 = 2;
     },
     closeDialog() {
+      this.$store.dispatch("customer/setCustomer", {});
+      this.e1 = 1;
       this.customerCompKey += 1;
       this.customer = {};
       this.room = {
@@ -478,7 +480,7 @@ export default {
             this.selectedRooms = [];
             this.priceListTableView = [];
             this.$emit(`success`);
-            this.dialog = false;
+            this.closeDialog();
           }
         })
         .catch((e) => console.log(e));

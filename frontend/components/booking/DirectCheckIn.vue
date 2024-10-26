@@ -390,6 +390,8 @@ export default {
       this.e1 = 2;
     },
     closeDialog() {
+      this.e1 = 1;
+      this.$store.dispatch("customer/setCustomer", {});
       this.customerCompKey += 1;
       this.customer = {};
       this.room = {
@@ -500,6 +502,7 @@ export default {
       });
 
       this.$swal("Success!", "Checked In Successfull", "success").then(() => {
+        this.closeDialog();
         this.$emit(`close-dialog`);
       });
     },

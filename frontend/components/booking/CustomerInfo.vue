@@ -340,6 +340,13 @@ export default {
         reference_no: null,
         paid_by: null,
       },
+      defaultBookingPayload: {
+        purpose: null,
+        request: null,
+        type: null,
+        reference_no: null,
+        paid_by: null,
+      },
       countryList: [],
       titleItems: [
         { id: 1, name: "Mr" },
@@ -368,6 +375,26 @@ export default {
         city: null,
         zip_code: null,
       },
+
+      defaultCustomerPayload: {
+        customer_type: "Walking",
+        title: "Mr",
+        whatsapp: "",
+        nationality: "",
+        first_name: "",
+        last_name: "",
+        contact_no: "",
+        email: "",
+        car_no: "",
+        address: "",
+        image: "",
+        company_id: this.$auth.user.company.id,
+        dob: null,
+        country: null,
+        state: null,
+        city: null,
+        zip_code: null,
+      },
       business_sources: [],
       canOverride: false,
     };
@@ -375,69 +402,83 @@ export default {
   async created() {
     this.preloader = false;
 
-    if (process.env.LOCAL_IP) {
-      this.customer = {
-        customer_type: "Walking",
-        title: "Mr",
-        first_name: "test",
-        last_name: "user",
-        email: "test@gmail.com",
-        contact_no: "678567467",
-        whatsapp: "678567467",
-        nationality: "India",
-        car_no: "23123",
-        image: "",
-        company_id: this.$auth.user.company.id,
-        dob: null,
-        country: "International",
-        state: null,
-        city: null,
-        zip_code: null,
-      };
-      this.booking = {
-        purpose: "Other",
-        request: "booking request",
-        type: "Walking",
-      };
-    }
-
-    if (this.defaultCustomer && this.defaultCustomer.id) {
-      this.canOverride = true;
-      this.customer = this.defaultCustomer;
-      this.getStates(this.customer.country);
-      this.getCities(this.customer.state);
-
-      if (this.customer.latest_booking) {
-        let latest_booking = this.customer.latest_booking;
-
-        this.booking = {
-          type: latest_booking.type,
-          source: latest_booking.source,
-          purpose: latest_booking.purpose,
-          request: latest_booking.request,
-          reference_no: latest_booking.reference_no,
-          paid_by: latest_booking.paid_by,
-        };
-      }
-      this.sourceCompKey += 1;
-    }
+    // if (process.env.LOCAL_IP) {
+    //   this.customer = {
+    //     customer_type: "Walking",
+    //     title: "Mr",
+    //     first_name: "test",
+    //     last_name: "user",
+    //     email: "test@gmail.com",
+    //     contact_no: "678567467",
+    //     whatsapp: "678567467",
+    //     nationality: "India",
+    //     car_no: "23123",
+    //     image: "",
+    //     company_id: this.$auth.user.company.id,
+    //     dob: null,
+    //     country: "International",
+    //     state: null,
+    //     city: null,
+    //     zip_code: null,
+    //   };
+    //   this.booking = {
+    //     purpose: "Other",
+    //     request: "booking request",
+    //     type: "Walking",
+    //   };
+    // }
     await this.get_business_sources();
+  },
+  watch: {
+    customerStore: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue && newValue.id) {
+          this.customer = {
+            ...newValue,
+          };
+          this.getStates(newValue.country);
+          this.getCities(newValue.state);
+
+          this.canOverride = true;
+
+          if (newValue.latest_booking) {
+            let latest_booking = newValue.latest_booking;
+
+            this.booking = {
+              type: latest_booking.type,
+              source: latest_booking.source,
+              purpose: latest_booking.purpose,
+              request: latest_booking.request,
+              reference_no: latest_booking.reference_no,
+              paid_by: latest_booking.paid_by,
+            };
+          }
+        } else {
+          this.customer = this.defaultCustomerPayload;
+          this.booking = this.defaultBookingPayload;
+        }
+      },
+    },
+  },
+  computed: {
+    customerStore() {
+      return this.$store.getters["customer/getCustomer"];
+    },
   },
   methods: {
     getStates(country) {
       // Find the country object from the countries array
       const countryObj = this.countries.find((e) => e.name === country);
-
       // Check if the country object exists
       if (countryObj) {
-        // Set the states array from the found country object
         this.states = countryObj.states || [];
-        this.customer.state = null;
-        this.customer.city = null;
-        this.customer.zip_code = null;
       } else {
         // If country not found, clear the states array and handle error
         this.states = [];
+        this.customer.state = null;
+        this.customer.city = null;
+        this.customer.zip_code = null;
         console.warn(`Country with slug "${country}" not found.`);
       }
     },
