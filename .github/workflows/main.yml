@@ -19,12 +19,16 @@ jobs:
           node-version: "18" # Adjust based on your project requirements
 
       - name: Install dependencies
-        run: npm install # Install dependencies
+        run: |
+          cd frontend  # Change to the frontend directory
+          npm install  # Install dependencies
 
       - name: Create Build
         env:
           BACKEND_URL: ${{ secrets.BACKEND_URL }}
-        run: npm run build # Use `generate` if you're using Nuxt.js or another static site generator
+        run: |
+          cd frontend  # Change to the frontend directory
+          run: npm run build # Use `generate` if you're using Nuxt.js or another static site generator
 
       - name: Install SSH client
         run: sudo apt-get install -y sshpass
