@@ -114,4 +114,37 @@ class RoomCleaningController extends Controller
     {
         return RoomCleaning::where('company_id', $company)->whereDate("created_at", date("Y-m-d"))->count();
     }
+
+    public function uploadAttachment()
+    {
+        if (request()->has('attachment')) {
+            $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('attachment')));
+            $imageName = request('attachment_name');
+            $publicDirectory = public_path("after_attachments");
+            if (!file_exists($publicDirectory)) {
+                mkdir($publicDirectory);
+            }
+            file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+            return RoomCleaning::where("id", request('id'))->update(["after_attachment" => $imageName]);
+        }
+    }
+
+    public function uploadVoiceNote()
+    {
+        if (request()->has('attachment')) {
+            $base64Image  = base64_decode(preg_replace('#^data:audio/\w+;base64,#i', '', request('attachment')));
+            $imageName = request('attachment_name');
+            $publicDirectory = public_path("maintenance_voice_notes");
+            if (!file_exists($publicDirectory)) {
+                mkdir($publicDirectory);
+            }
+            file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+
+            return RoomCleaning::where("id", request('id'))->update(["maintenance_voice_note" => $imageName]);
+        }
+    }
+
+
+    
 }

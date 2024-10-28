@@ -51,4 +51,10 @@ class RoomCleaning extends Model
         if (!$value) return null;
         return asset('voice_notes/' . $value);
     }
+
+    public function getMaintenanceVoiceNoteAttribute($value)
+    {
+        if (!$value) return null;
+        return asset('maintenance_voice_notes/' . $value);
+    }
 }

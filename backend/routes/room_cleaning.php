@@ -7,6 +7,11 @@ Route::apiResource('room-cleaning', RoomCleaningController::class);
 Route::get('room-cleaning-event/{id}', [RoomCleaningController::class, "getNewEvent"]);
 Route::get('room-data', [RoomCleaningController::class, "data"]);
 
+Route::post('upload-after-attachment', [RoomCleaningController::class, "uploadAttachment"]);
+Route::post('upload-voice-note', [RoomCleaningController::class, "uploadVoiceNote"]);
+
+
+
 
 // {
 //     "room_id": 101,
