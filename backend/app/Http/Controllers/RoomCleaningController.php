@@ -144,7 +144,4 @@ class RoomCleaningController extends Controller
             return RoomCleaning::where("id", request('id'))->update(["maintenance_voice_note" => $imageName]);
         }
     }
-
-
-    
 }
