@@ -31,6 +31,6 @@ jobs:
           # Backup and deploy commands
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" '
             # Pull the latest changes
-            cd /var/www/myhotel2cloud
-            git stash && git pull origin v1  # Adjust branch name if necessary
+            cd /var/www/myhotel2cloud/backend
+            git stash && git pull origin v1 && php artisan migrate --force  # Adjust branch name if necessary
           '
