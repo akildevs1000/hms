@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - v1 # Trigger deployment on push to v1 branch
+    paths:
+      - frontend/** # Only trigger deployment when changes are made in the frontend directory
 
 jobs:
   deploy:
