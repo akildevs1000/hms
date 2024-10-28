@@ -1,0 +1,36 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - v1 # Trigger deployment on push to v1 branch
+    paths:
+      - backend/** # Only trigger deployment when changes are made in the backend directory
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install SSH client
+        run: sudo apt-get install -y sshpass
+
+      - name: Deploy to DigitalOcean
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          # Install SSH client and sshpass if necessary
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+          # Backup and deploy commands
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" '
+            # Pull the latest changes
+            cd /var/www/myhotel2cloud
+            git stash && git pull origin v1  # Adjust branch name if necessary
+          '
