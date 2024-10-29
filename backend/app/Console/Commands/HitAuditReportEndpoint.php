@@ -32,13 +32,11 @@ class HitAuditReportEndpoint extends Command
     {
         $companyId = $this->argument('company_id');
 
-        $date = Carbon::yesterday()->format('Y-m-31');
-
-        // return;
+        $date = Carbon::yesterday()->format('Y-m-d');
 
         $bookingCounts = Booking::query()
             ->where('company_id', $companyId)
-            ->where('booking_date', Carbon::yesterday()->format('Y-m-d'))
+            ->where('booking_date', $date)
             ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
 
         $payload = [
@@ -49,11 +47,11 @@ class HitAuditReportEndpoint extends Command
             "continue" => 0,
             "cancel" => 0,
             "booked" => 0,
-            "breakfast" => $this->getBreakfast($date),
-            "ledger" => $this->getCityLedger($date),
-            "income" => $this->getIncome($date),
-            "expense" => $this->getExpense($date),
-            "cash_in_hand" => $this->getCashInHand($date),
+            "breakfast" => $this->getBreakfast($date, $companyId),
+            "ledger" => $this->getCityLedger($date, $companyId),
+            "income" => $this->getIncome($date, $companyId),
+            "expense" => $this->getExpense($date, $companyId),
+            "cash_in_hand" => $this->getCashInHand($date, $companyId),
             "file" => "file",
             "company_id" => $companyId,
         ];
@@ -109,10 +107,10 @@ class HitAuditReportEndpoint extends Command
         }
     }
 
-    public function getBreakfast($date)
+    public function getBreakfast($date, $companyId)
     {
-        $FoodOrder = BookedRoom::where('company_id', request("company_id"))
-            ->where(function ($query) use ($date) {
+        $FoodOrder = BookedRoom::where('company_id', $companyId)
+            ->where(function ($query) use ($date, $companyId) {
                 $query->whereDate('check_out', $date)
                     ->orWhereDate('check_in', $date);
             })
@@ -139,20 +137,20 @@ class HitAuditReportEndpoint extends Command
         return $startDate->diff($endDate)->days;
     }
 
-    public function getCityLedger($date)
+    public function getCityLedger($date, $companyId)
     {
         return Payment::query()
             ->where('is_city_ledger', 1)
-            ->where('company_id', request("company_id"))
+            ->where('company_id', $companyId)
             ->whereDate('date', $date)
             ->sum("amount") ?? 0;
     }
 
-    public function getIncome($date)
+    public function getIncome($date, $companyId)
     {
         return Payment::query()
             ->where('is_city_ledger', 0)
-            ->where('company_id', request("company_id"))
+            ->where('company_id', $companyId)
             ->whereDate('date', $date)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
@@ -161,11 +159,11 @@ class HitAuditReportEndpoint extends Command
             ->sum("amount") ?? 0;
     }
 
-    public function getCashInHand($date)
+    public function getCashInHand($date, $companyId)
     {
         return Payment::query()
             ->where('is_city_ledger', 0)
-            ->where('company_id', request("company_id"))
+            ->where('company_id', $companyId)
             ->whereDate('date', $date)
             ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
@@ -174,12 +172,12 @@ class HitAuditReportEndpoint extends Command
             ->sum("amount") ?? 0;
     }
 
-    public function getExpense($date)
+    public function getExpense($date, $companyId)
     {
         return AdminExpense::query()
             ->where('is_admin_expense', AdminExpense::NonManagementExpense)
-            ->where('company_id', request("company_id"))
-            ->whereDate('date', $date)
+            ->where('company_id', $companyId)
+            ->whereDate('bill_date', $date ?? date("Y-m-d"))
             ->sum("total") ?? 0;
     }
 }

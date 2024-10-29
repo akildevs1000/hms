@@ -200,9 +200,9 @@ class ManagementController extends Controller
     {
 
         $data = AuditFreeze::query()
-            // ->where('company_id', $request->company_id)
-            // ->whereBetween('date', [$request->from_date, $request->to_date])
-            ->orderBy("date","asc")
+            ->where('company_id', $request->company_id)
+            ->whereBetween('date', [$request->from_date, $request->to_date])
+            ->orderBy("date", "asc")
             ->get()->toArray();
 
         $headers = [
