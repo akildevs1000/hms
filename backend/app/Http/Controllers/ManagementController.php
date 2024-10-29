@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminExpense;
+use App\Models\AuditFreeze;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
@@ -197,80 +198,12 @@ class ManagementController extends Controller
 
     public function getAuditReport(Request $request)
     {
-        $company_id = $request->company_id;
 
-        $startDate = Carbon::parse($request->from_date);
-        $endDate = Carbon::parse($request->to_date);
-
-        $dates = [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
-
-        $bookingCounts = Booking::query()
-            ->where('company_id', $company_id)
-            ->whereBetween('booking_date', $dates) // Apply the date filter here
-            ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
-
-
-        $arr = [];
-        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-            $check_in_counter = 0;
-            $check_out_counter = 0;
-            $day_use_counter = 0;
-            $continue_counter = 0;
-            $closed_counter = 0;
-            $booked_counter = 0;
-            $cancel_counter = 0;
-
-
-            $arr[$date->format("Y-m-d")] = [
-                "date" => $date->format("Y-m-d"),
-                "check_in" => 0,
-                "check_out" => 0,
-                "day_use" => 0,
-                "continue" => 0,
-                "closed" => 0,
-                "cancel" => 0,
-                "booked" => 0,
-                "breakfast" => $this->getBreakfast($date->format("Y-m-d")),
-                "ledger" => $this->getCityLedger($date->format("Y-m-d")),
-                "income" => $this->getIncome($date->format("Y-m-d")),
-                "expense" => $this->getExpense($date->format("Y-m-d")),
-                "cash_in_hand" => $this->getCashInHand($date->format("Y-m-d")),
-            ];
-
-            foreach ($bookingCounts as $booking) {
-
-                $formattedDate = $date->format("Y-m-d");
-
-                if ($formattedDate == $booking->check_in && $booking->booking_status != -1) {
-                    $arr[$formattedDate]["check_in"] = ++$check_in_counter;
-                    $arr[$formattedDate]["closed"] = ++$closed_counter;
-                }
-                if ($formattedDate == $booking->check_in && $booking->booking_status == 3) {
-                    $arr[$formattedDate]["day_use"] = ++$day_use_counter;
-                }
-                if ($formattedDate == $booking->check_out && $booking->booking_status != -1) {
-                    $arr[$formattedDate]["check_out"] = ++$check_out_counter;
-                }
-
-                if ($formattedDate == $booking->booking_date && $this->calculateDays([$booking->check_in, $booking->check_out]) > 1 && $booking->booking_status != -1) {
-                    $arr[$formattedDate]["continue"] = ++$continue_counter;
-                }
-
-                if ($formattedDate == $booking->booking_date && $booking->booking_status != -1) {
-                    $arr[$formattedDate]["booked"] = ++$booked_counter;
-                }
-
-                if ($formattedDate == $booking->booking_date && $booking->booking_status == -1) {
-                    $arr[$formattedDate]["cancel"] = ++$cancel_counter;
-                }
-
-                // return $arr[$formattedDate]["continue"];
-            }
-
-            // if ($isSingleDay) {
-            //     break;
-            // }
-        }
+        $data = AuditFreeze::query()
+            // ->where('company_id', $request->company_id)
+            // ->whereBetween('date', [$request->from_date, $request->to_date])
+            ->orderBy("date","asc")
+            ->get()->toArray();
 
         $headers = [
             ["align" => "center", "text" =>  "Date", "value" => "date"],
@@ -279,16 +212,13 @@ class ManagementController extends Controller
             ["align" => "center", "text" =>  "Check Out", "value" => "check_out"],
             ["align" => "center", "text" =>  "Booked", "value" => "booked"],
             ["align" => "center", "text" =>  "Day Use", "value" => "day_use"],
-            // ["align" => "center", "text" =>  "Closed", "value" => "closed"],
             ["align" => "center", "text" =>  "Cancel", "value" => "cancel"],
             ["align" => "center", "text" =>  "Breakfast", "value" => "breakfast"],
-            // ["align" => "center", "text" =>  "Ledger", "value" => "ledger"],
-            // ["align" => "center", "text" =>  "Income", "value" => "income"],
-            // ["align" => "center", "text" =>  "Expenses", "value" => "expense"],
-            // ["align" => "center", "text" =>  "Cash In Hand", "value" => "cash_in_hand"],
+            ["align" => "center", "text" =>  "Ledger", "value" => "ledger"],
+            ["align" => "center", "text" =>  "Income", "value" => "income"],
+            ["align" => "center", "text" =>  "Expenses", "value" => "expense"],
+            ["align" => "center", "text" =>  "Cash In Hand", "value" => "cash_in_hand"],
         ];
-
-        $data = array_values($arr);
 
         $result = [
             "stats" => [
@@ -348,81 +278,6 @@ class ManagementController extends Controller
 
         return $result;
     }
-
-    public function calculateDays($dates)
-    {
-        $startDate = new DateTime($dates[0]);
-        $endDate = new DateTime($dates[1]);
-        return $startDate->diff($endDate)->days;
-    }
-
-    public function getBreakfast($date)
-    {
-        $FoodOrder = BookedRoom::where('company_id', request("company_id"))
-            ->where(function ($query) use ($date) {
-                $query->whereDate('check_out', $date)
-                    ->orWhereDate('check_in', $date);
-            })
-            ->whereIn('booking_status', [1, 2])
-            ->selectRaw(
-                "
-            SUM(CASE WHEN DATE(check_out) = ? THEN breakfast ELSE 0 END) as expected_breakfast,
-            SUM(CASE WHEN DATE(check_in) = ? THEN breakfast ELSE 0 END) as occupied_breakfast",
-                [$date, $date]
-            )
-            ->first();
-
-        $expectedBreakfast = $FoodOrder->expected_breakfast ?? 0;
-
-        $occupiedBreakfast = $FoodOrder->occupied_breakfast ?? 0;
-
-        return $expectedBreakfast + $occupiedBreakfast;
-    }
-
-    public function getCityLedger($date)
-    {
-        return Payment::query()
-            ->where('is_city_ledger', 1)
-            ->where('company_id', request("company_id"))
-            ->whereDate('date', $date)
-            ->sum("amount") ?? 0;
-    }
-
-    public function getIncome($date)
-    {
-        return Payment::query()
-            ->where('is_city_ledger', 0)
-            ->where('company_id', request("company_id"))
-            ->whereDate('date', $date)
-            ->whereHas('booking', function ($q) {
-                $q->where('booking_status', '!=', -1);
-            })
-            ->whereHas('paymentMode', fn($q) => $q->where('id', "!=", PaymentMode::CITYLEDGER))
-            ->sum("amount") ?? 0;
-    }
-
-    public function getCashInHand($date)
-    {
-        return Payment::query()
-            ->where('is_city_ledger', 0)
-            ->where('company_id', request("company_id"))
-            ->whereDate('date', $date)
-            ->whereHas('booking', function ($q) {
-                $q->where('booking_status', '!=', -1);
-            })
-            ->whereHas('paymentMode', fn($q) => $q->where('id', PaymentMode::CASH))
-            ->sum("amount") ?? 0;
-    }
-
-    public function getExpense($date)
-    {
-        return AdminExpense::query()
-            ->where('is_admin_expense', AdminExpense::NonManagementExpense)
-            ->where('company_id', request("company_id"))
-            ->whereDate('date', $date)
-            ->sum("total") ?? 0;
-    }
-
     public function getReportMonthlyWiseGroup(Request $request)
     {
         // session(['isMonthReport' => ])
