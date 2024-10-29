@@ -420,7 +420,7 @@ class ManagementController extends Controller
             ->where('is_admin_expense', AdminExpense::NonManagementExpense)
             ->where('company_id', request("company_id"))
             ->whereDate('date', $date)
-            ->sum("amount") ?? 0;
+            ->sum("total") ?? 0;
     }
 
     public function getReportMonthlyWiseGroup(Request $request)
