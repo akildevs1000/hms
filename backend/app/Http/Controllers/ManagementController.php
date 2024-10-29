@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
 use App\Models\Company;
@@ -222,6 +223,7 @@ class ManagementController extends Controller
             $booked_counter = 0;
             $cancel_counter = 0;
 
+
             $arr[$date->format("Y-m-d")] = [
                 "date" => $date->format("Y-m-d"),
                 "check_in" => 0,
@@ -231,7 +233,7 @@ class ManagementController extends Controller
                 "closed" => 0,
                 "cancel" => 0,
                 "booked" => 0,
-                "breakfast" => 0,
+                "breakfast" => $this->getBreakfast($date->format("Y-m-d")),
                 "ledger" => 0,
                 "income" => 0,
                 "expense" => 0,
@@ -339,7 +341,7 @@ class ManagementController extends Controller
                 ],
                 [
                     "icon" => "mdi-silverware-fork-knife",
-                    "value" => 0,
+                    "value" => array_sum(array_column($data, "breakfast")),
                     "label" => "Food Order",
                     "col" => 7,
                     "color" => "teal",
@@ -357,6 +359,29 @@ class ManagementController extends Controller
         $startDate = new DateTime($dates[0]);
         $endDate = new DateTime($dates[1]);
         return $startDate->diff($endDate)->days;
+    }
+
+    public function getBreakfast($date)
+    {
+        $FoodOrder = BookedRoom::where('company_id', request("company_id"))
+            ->where(function ($query) use ($date) {
+                $query->whereDate('check_out', $date)
+                    ->orWhereDate('check_in', $date);
+            })
+            ->whereIn('booking_status', [1, 2])
+            ->selectRaw(
+                "
+            SUM(CASE WHEN DATE(check_out) = ? THEN breakfast ELSE 0 END) as expected_breakfast,
+            SUM(CASE WHEN DATE(check_in) = ? THEN breakfast ELSE 0 END) as occupied_breakfast",
+                [$date, $date]
+            )
+            ->first();
+
+        $expectedBreakfast = $FoodOrder->expected_breakfast ?? 0;
+
+        $occupiedBreakfast = $FoodOrder->occupied_breakfast ?? 0;
+
+        return $expectedBreakfast + $occupiedBreakfast;
     }
 
     private function todayCheckinAudit($company_id, $dates = [])
