@@ -194,9 +194,6 @@ class ManagementController extends Controller
 
     public function getAuditReport(Request $request)
     {
-
-
-
         $company_id = $request->company_id;
 
         $startDate = Carbon::parse($request->from_date);
@@ -207,16 +204,18 @@ class ManagementController extends Controller
         $bookingCounts = Booking::query()
             ->where('company_id', $company_id)
             ->whereBetween('booking_date', $dates) // Apply the date filter here
-            ->get(["id", "booking_date", "check_in", "check_out"]);
+            ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
+
 
         $arr = [];
-
         for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
             $check_in_counter = 0;
             $check_out_counter = 0;
+            $day_use_counter = 0;
             $continue_counter = 0;
             $closed_counter = 0;
             $booked_counter = 0;
+            $cancel_counter = 0;
 
             $arr[$date->format("Y-m-d")] = [
                 "date" => $date->format("Y-m-d"),
@@ -234,23 +233,41 @@ class ManagementController extends Controller
                 "cash_in_hand" => 0,
             ];
 
+
+
             foreach ($bookingCounts as $booking) {
 
-                if ($date->format("Y-m-d") == $booking->check_in) {
-                    $arr[$date->format("Y-m-d")]["check_in"] = ++$check_in_counter;
-                    $arr[$date->format("Y-m-d")]["closed"] = ++$closed_counter;
+                $formattedDate = $date->format("Y-m-d");
+
+                if ($formattedDate == $booking->check_in && $booking->booking_status != -1) {
+                    $arr[$formattedDate]["check_in"] = ++$check_in_counter;
+                    $arr[$formattedDate]["closed"] = ++$closed_counter;
                 }
-                if ($date->format("Y-m-d") == $booking->check_out) {
-                    $arr[$date->format("Y-m-d")]["check_out"] = ++$check_out_counter;
+                if ($formattedDate == $booking->check_in && $booking->booking_status == 3) {
+                    $arr[$formattedDate]["day_use"] = ++$day_use_counter;
                 }
-                if ($date->format("Y-m-d") > $booking->booking_date) {
-                    $arr[$date->format("Y-m-d")]["continue"] = ++$continue_counter;
+                if ($formattedDate == $booking->check_out && $booking->booking_status != -1) {
+                    $arr[$formattedDate]["check_out"] = ++$check_out_counter;
                 }
 
-                if ($date->format("Y-m-d") == $booking->booking_date) {
-                    $arr[$date->format("Y-m-d")]["booked"] = ++$booked_counter;
+                if ($formattedDate == $booking->booking_date && $this->calculateDays([$booking->check_in, $booking->check_out]) > 1 && $booking->booking_status != -1) {
+                    $arr[$formattedDate]["continue"] = ++$continue_counter;
                 }
+
+                if ($formattedDate == $booking->booking_date && $booking->booking_status != -1) {
+                    $arr[$formattedDate]["booked"] = ++$booked_counter;
+                }
+
+                if ($formattedDate == $booking->booking_date && $booking->booking_status == -1) {
+                    $arr[$formattedDate]["cancel"] = ++$cancel_counter;
+                }
+
+                // return $arr[$formattedDate]["continue"];
             }
+
+            // if ($isSingleDay) {
+            //     break;
+            // }
         }
 
         $headers = [
@@ -259,7 +276,7 @@ class ManagementController extends Controller
             ["align" => "center", "text" =>  "Check Out", "value" => "check_out"],
             ["align" => "center", "text" =>  "Day Use", "value" => "day_use"],
             ["align" => "center", "text" =>  "Continue", "value" => "continue"],
-            ["align" => "center", "text" =>  "Closed", "value" => "closed"],
+            // ["align" => "center", "text" =>  "Closed", "value" => "closed"],
             ["align" => "center", "text" =>  "Booked", "value" => "booked"],
             ["align" => "center", "text" =>  "Cancel", "value" => "cancel"],
             ["align" => "center", "text" =>  "Breakfast", "value" => "breakfast"],
@@ -271,7 +288,7 @@ class ManagementController extends Controller
 
         $data = array_values($arr);
 
-        return [
+        $result = [
             "stats" => [
                 [
                     "icon" => "mdi-door-open",
@@ -282,7 +299,7 @@ class ManagementController extends Controller
                 ],
                 [
                     "icon" => "mdi-clock-outline",
-                    "value" => 0,
+                    "value" => array_sum(array_column($data, "continue")),
                     "label" => "Continue",
                     "col" => 7,
                     "color" => "blue",
@@ -296,7 +313,7 @@ class ManagementController extends Controller
                 ],
                 [
                     "icon" => "mdi-calendar-check",
-                    "value" => 0,
+                    "value" => array_sum(array_column($data, "booked")),
                     "label" => "Booking",
                     "col" => 7,
                     "color" => "purple",
@@ -326,26 +343,15 @@ class ManagementController extends Controller
             "headers" => $headers,
             "data" => $data
         ];
-        $continueRooms = $this->continueAudit($model, $request);
-        $todayPayments = $this->todayPaymentsAudit($model, $request);
-        $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($model, $request);
-        $cancelRooms = $this->cancelRooms($request);
 
-        $totExpense = Expense::whereCompanyId($request->company_id)
-            ->where('is_management', 0)
-            ->whereDate('created_at', $request->date)
-            ->sum('total');
+        return $result;
+    }
 
-        return [
-            'cityLedgerPaymentsAudit' => $cityLedgerPaymentsAudit,
-            'todayCheckIn' => $todayCheckin,
-            'todayCheckOut' => $todayCheckOut,
-            'continueRooms' => $continueRooms,
-            'todayPayments' => $todayPayments,
-            'cancelRooms' => $cancelRooms,
-
-            'totExpense' => number_format($totExpense, 2, '.', ''),
-        ];
+    public function calculateDays($dates)
+    {
+        $startDate = new DateTime($dates[0]);
+        $endDate = new DateTime($dates[1]);
+        return $startDate->diff($endDate)->days;
     }
 
     private function todayCheckinAudit($company_id, $dates = [])
