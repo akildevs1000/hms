@@ -19,13 +19,18 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule
-            ->command('task:db_backup')
-            ->dailyAt('3:00')
+            ->command('app:process-audit-freeze')
+            ->dailyAt('00:30')
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
         $schedule
             ->command('task:generate_reports')
             ->dailyAt('1:00')
+            ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+
+        $schedule
+            ->command('task:db_backup')
+            ->dailyAt('3:00')
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
         $schedule

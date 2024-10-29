@@ -6,18 +6,17 @@ use App\Models\AdminExpense;
 use App\Models\AuditFreeze;
 use App\Models\BookedRoom;
 use App\Models\Booking;
+use App\Models\Company;
 use App\Models\Payment;
 use App\Models\PaymentMode;
 use Illuminate\Console\Command;
 use GuzzleHttp\Exception\RequestException;
-use Carbon\Carbon; // Import Carbon for date manipulation
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
-class HitAuditReportEndpoint extends Command
+class ProcessAuditFreeze extends Command
 {
     // The name and signature of the console command.
-    protected $signature = 'audit:report {company_id}';
+    protected $signature = 'app:process-audit-freeze';
 
     // The console command description.
     protected $description = 'Hit the audit report API endpoint and retrieve data.';
@@ -30,80 +29,78 @@ class HitAuditReportEndpoint extends Command
     // Execute the console command.
     public function handle()
     {
-        $companyId = $this->argument('company_id');
+        $companyIds = Company::pluck("id");
 
-        $date = Carbon::yesterday()->format('Y-m-d');
+        foreach ($companyIds as $companyId) {
+            $date = Carbon::yesterday()->format('Y-m-d');
 
-        $bookingCounts = Booking::query()
-            ->where('company_id', $companyId)
-            ->where('booking_date', $date)
-            ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
+            $bookingCounts = Booking::query()
+                ->where('company_id', $companyId)
+                ->where('booking_date', $date)
+                ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
+            $payload = [
+                "date" => $date,
+                "check_in" => 0,
+                "check_out" => 0,
+                "day_use" => 0,
+                "continue" => 0,
+                "cancel" => 0,
+                "booked" => 0,
+                "breakfast" => $this->getBreakfast($date, $companyId),
+                "ledger" => $this->getCityLedger($date, $companyId),
+                "income" => $this->getIncome($date, $companyId),
+                "expense" => $this->getExpense($date, $companyId),
+                "cash_in_hand" => $this->getCashInHand($date, $companyId),
+                "file" => "file",
+                "company_id" => $companyId,
+            ];
 
-        $payload = [
-            "date" => $date,
-            "check_in" => 0,
-            "check_out" => 0,
-            "day_use" => 0,
-            "continue" => 0,
-            "cancel" => 0,
-            "booked" => 0,
-            "breakfast" => $this->getBreakfast($date, $companyId),
-            "ledger" => $this->getCityLedger($date, $companyId),
-            "income" => $this->getIncome($date, $companyId),
-            "expense" => $this->getExpense($date, $companyId),
-            "cash_in_hand" => $this->getCashInHand($date, $companyId),
-            "file" => "file",
-            "company_id" => $companyId,
-        ];
+            foreach ($bookingCounts as $booking) {
+                if ($date == $booking->check_in && $booking->booking_status != -1) {
+                    ++$payload["check_in"];
+                }
+                if ($date == $booking->check_in && $booking->booking_status == 3) {
+                    ++$payload["day_use"];
+                }
+                if ($date == $booking->check_out && $booking->booking_status != -1) {
+                    ++$payload["check_out"];
+                }
 
-        foreach ($bookingCounts as $booking) {
-            if ($date == $booking->check_in && $booking->booking_status != -1) {
-                ++$payload["check_in"];
+                if ($date == $booking->booking_date && $this->calculateDays([$booking->check_in, $booking->check_out]) > 1 && $booking->booking_status != -1) {
+                    ++$payload["continue"];
+                }
+
+                if ($date == $booking->booking_date && $booking->booking_status != -1) {
+                    ++$payload["booked"];
+                }
+
+                if ($date == $booking->booking_date && $booking->booking_status == -1) {
+                    ++$payload["cancel"];
+                }
             }
-            if ($date == $booking->check_in && $booking->booking_status == 3) {
-                ++$payload["day_use"];
-            }
-            if ($date == $booking->check_out && $booking->booking_status != -1) {
-                ++$payload["check_out"];
-            }
+            $found = AuditFreeze::where("date", $date)->whereCompanyId($companyId)->first();
 
-            if ($date == $booking->booking_date && $this->calculateDays([$booking->check_in, $booking->check_out]) > 1 && $booking->booking_status != -1) {
-                ++$payload["continue"];
+            if ($found) {
+                $found->update($payload);
+                $this->info("Data for Audit History has been created");
             }
 
-            if ($date == $booking->booking_date && $booking->booking_status != -1) {
-                ++$payload["booked"];
+            try {
+
+                AuditFreeze::create($payload);
+
+                $this->info("Data for Audit History has been created");
+
+                // create json file
+                // $filePath = storage_path('app/audit_report_' . $companyId . '_' . $fromDate . '_' . $toDate . '.json');
+                // file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
+
+                // Notify the user that the file has been created
+                // $this->info('The data has been saved to: ' . $filePath);
+            } catch (RequestException $e) {
+                // Handle the exception
+                $this->error('Error fetching data: ' . $e->getMessage());
             }
-
-            if ($date == $booking->booking_date && $booking->booking_status == -1) {
-                ++$payload["cancel"];
-            }
-        }
-
-        // AuditFreeze::truncate();
-
-        $found = AuditFreeze::where("date", $date)->whereCompanyId($companyId)->first();
-
-        if ($found) {
-            $found->update($payload);
-            $this->info("Data for Audit History has been created");
-        }
-
-        try {
-
-            AuditFreeze::create($payload);
-
-            $this->info("Data for Audit History has been created");
-
-            // create json file
-            // $filePath = storage_path('app/audit_report_' . $companyId . '_' . $fromDate . '_' . $toDate . '.json');
-            // file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
-
-            // Notify the user that the file has been created
-            // $this->info('The data has been saved to: ' . $filePath);
-        } catch (RequestException $e) {
-            // Handle the exception
-            $this->error('Error fetching data: ' . $e->getMessage());
         }
     }
 
