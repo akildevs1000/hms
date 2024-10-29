@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminExpense;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
@@ -9,6 +10,7 @@ use App\Models\Company;
 use App\Models\Expense;
 use App\Models\OrderRoom;
 use App\Models\Payment;
+use App\Models\PaymentMode;
 use App\Models\Report;
 use App\Models\Room;
 use App\Models\Transaction;
@@ -205,11 +207,6 @@ class ManagementController extends Controller
         $bookingCounts = Booking::query()
             ->where('company_id', $company_id)
             ->whereBetween('booking_date', $dates) // Apply the date filter here
-            // ->where(function ($query) use ($startDate, $endDate) {
-            //     $query->whereDate('check_in', $startDate->format('Y-m-d'))
-            //         ->orWhereDate('check_out', $endDate->format('Y-m-d'));
-            // })
-            // ->count();
             ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
 
 
@@ -234,13 +231,11 @@ class ManagementController extends Controller
                 "cancel" => 0,
                 "booked" => 0,
                 "breakfast" => $this->getBreakfast($date->format("Y-m-d")),
-                "ledger" => 0,
-                "income" => 0,
-                "expense" => 0,
-                "cash_in_hand" => 0,
+                "ledger" => $this->getCityLedger($date->format("Y-m-d")),
+                "income" => $this->getIncome($date->format("Y-m-d")),
+                "expense" => $this->getExpense($date->format("Y-m-d")),
+                "cash_in_hand" => $this->getCashInHand($date->format("Y-m-d")),
             ];
-
-
 
             foreach ($bookingCounts as $booking) {
 
@@ -327,7 +322,7 @@ class ManagementController extends Controller
                 ],
                 [
                     "icon" => "mdi-cash-multiple",
-                   "value" => array_sum(array_column($data, "day_use")),
+                    "value" => array_sum(array_column($data, "day_use")),
                     "label" => "Day Use",
                     "col" => 7,
                     "color" => "pink",
@@ -384,123 +379,50 @@ class ManagementController extends Controller
         return $expectedBreakfast + $occupiedBreakfast;
     }
 
-    private function todayCheckinAudit($company_id, $dates = [])
+    public function getCityLedger($date)
     {
-        return Booking::query()
-            ->where(function ($q) use ($company_id, $dates) {
-                $q->where('company_id', $company_id);
-                $q->whereBetween('check_out', $dates);
-            })
-            // ->with('customer:id,first_name')
-            ->get()
-            ->groupBy("check_in")
-            ->map(fn($group) => $group->count());
+        return Payment::query()
+            ->where('is_city_ledger', 1)
+            ->where('company_id', request("company_id"))
+            ->whereDate('date', $date)
+            ->sum("amount") ?? 0;
     }
 
-    private function continueAudit($model, $request)
+    public function getIncome($date)
     {
-        $company_id = $request->company_id;
-        return $continueRooms = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
+        return Payment::query()
+            ->where('is_city_ledger', 0)
+            ->where('company_id', request("company_id"))
+            ->whereDate('date', $date)
+            ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
-                $q->where('booking_status', '=', 2);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_in', '<', $request->date);
             })
-            ->withSum(['transactions' => function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-            }], 'credit')->with('customer:id,first_name')
-            ->with('transactions', function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-                // $q->where('credit', '>', 0);
-                $q->where('is_posting', 0);
-                $q->where('payment_method_id', '!=', 7);
-                $q->where('company_id', $request->company_id)
-                    ->with('paymentMode');
-            })->get();
+            ->whereHas('paymentMode', fn($q) => $q->where('id', "!=", PaymentMode::CITYLEDGER))
+            ->sum("amount") ?? 0;
     }
 
-    private function todayCheckOutAudit($company_id, $dates = [])
+    public function getCashInHand($date)
     {
-        return Booking::query()
-            ->where(function ($q) use ($company_id, $dates) {
-                $q->where('company_id', $company_id);
-                $q->whereBetween('check_out', $dates);
-            })
-            // ->with('customer:id,first_name')
-            ->get()
-            ->groupBy("check_out")
-            ->map(fn($group) => $group->count());
-    }
-
-    private function todayPaymentsAudit($model, $request)
-    {
-        $company_id = $request->company_id;
-        return $todayPayments = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [1]);
+        return Payment::query()
+            ->where('is_city_ledger', 0)
+            ->where('company_id', request("company_id"))
+            ->whereDate('date', $date)
+            ->whereHas('booking', function ($q) {
                 $q->where('booking_status', '!=', -1);
-                $q->where('paid_amounts', '>', 0);
-                $q->where('company_id', $company_id);
             })
-            ->whereHas('transactions', function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-                // $q->where('credit', '>', 0);
-                $q->where('payment_method_id', '!=', 7);
-            })
-            ->withSum(['transactions' => function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-            }], 'credit')
-            ->with('customer:id,first_name')
-            ->with('transactions', function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-                $q->where('credit', '>', 0);
-                $q->where('is_posting', 0);
-                $q->where('payment_method_id', '!=', 7);
-                $q->where('company_id', $request->company_id)
-                    ->with('paymentMode');
-            })->get();
+            ->whereHas('paymentMode', fn($q) => $q->where('id', PaymentMode::CASH))
+            ->sum("amount") ?? 0;
     }
 
-    private function cancelRooms($request)
+    public function getExpense($date)
     {
-        $company_id = $request->company_id;
-        return CancelRoom::query()
-            ->with('user')
-            ->whereDate('created_at', $request->date)
-            ->where('company_id', $company_id)
-            ->with('booking:id,reservation_no,created_at')
-            ->get(['booking_id', 'room_no', 'room_type', 'grand_total', 'reason', 'cancel_by', 'created_at', 'action', 'check_in', 'status_before_cancelation', 'status_before_cancelation_msg']);
+        return AdminExpense::query()
+            ->where('is_admin_expense', AdminExpense::NonManagementExpense)
+            ->where('company_id', request("company_id"))
+            ->whereDate('date', $date)
+            ->sum("amount") ?? 0;
     }
 
-    private function cityLedgerPaymentsAudit($model, $request)
-    {
-        $company_id = $request->company_id;
-        return $todayPayments = Booking::query()
-            ->where(function ($q) use ($company_id, $request) {
-                $q->whereIn('booking_status', [0]);
-                $q->where('booking_status', '!=', -1);
-                $q->where('paid_amounts', '>', 0);
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', '<', $request->date);
-                // $q->whereDate('check_out', '!=', $request->date);
-            })
-            ->whereHas('transactions', function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-                // $q->where('credit', '>', 0);
-                $q->where('payment_method_id', '!=', 7);
-            })
-            ->with('customer:id,first_name')
-            ->with('transactions', function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
-                $q->where('credit', '>', 0);
-                $q->where('is_posting', 0);
-                $q->where('payment_method_id', '!=', 7);
-                $q->where('company_id', $request->company_id)
-                    ->with('paymentMode');
-            })
-            ->get();
-    }
     public function getReportMonthlyWiseGroup(Request $request)
     {
         // session(['isMonthReport' => ])

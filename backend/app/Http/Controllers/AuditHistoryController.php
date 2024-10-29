@@ -5,12 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\AuditHistory;
 use App\Models\Company;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class AuditHistoryController extends Controller
 {
+    public function index(Request $request)
+    {
+        $company_id = $request->company_id;
+
+        $startDate = Carbon::parse($request->from_date);
+        $endDate = Carbon::parse($request->to_date);
+
+        $dates = [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
+
+        return AuditHistory::whereCompanyId($company_id)
+            ->whereBetween('created_at', $dates)
+            ->get();
+        // ->groupBy('type')
+        // ->map(fn($items) => $items->first());
+    }
+
     public function getAuditReport(Request $request)
     {
         $companyId = $request->company_id ?? 0;
