@@ -280,17 +280,17 @@ class ManagementController extends Controller
         $headers = [
             ["align" => "center", "text" =>  "Date", "value" => "date"],
             ["align" => "center", "text" =>  "Check In", "value" => "check_in"],
-            ["align" => "center", "text" =>  "Check Out", "value" => "check_out"],
-            ["align" => "center", "text" =>  "Day Use", "value" => "day_use"],
             ["align" => "center", "text" =>  "Continue", "value" => "continue"],
-            // ["align" => "center", "text" =>  "Closed", "value" => "closed"],
+            ["align" => "center", "text" =>  "Check Out", "value" => "check_out"],
             ["align" => "center", "text" =>  "Booked", "value" => "booked"],
+            ["align" => "center", "text" =>  "Day Use", "value" => "day_use"],
+            // ["align" => "center", "text" =>  "Closed", "value" => "closed"],
             ["align" => "center", "text" =>  "Cancel", "value" => "cancel"],
             ["align" => "center", "text" =>  "Breakfast", "value" => "breakfast"],
-            ["align" => "center", "text" =>  "Ledger", "value" => "ledger"],
-            ["align" => "center", "text" =>  "Income", "value" => "income"],
-            ["align" => "center", "text" =>  "Expenses", "value" => "expense"],
-            ["align" => "center", "text" =>  "Cash In Hand", "value" => "cash_in_hand"],
+            // ["align" => "center", "text" =>  "Ledger", "value" => "ledger"],
+            // ["align" => "center", "text" =>  "Income", "value" => "income"],
+            // ["align" => "center", "text" =>  "Expenses", "value" => "expense"],
+            // ["align" => "center", "text" =>  "Cash In Hand", "value" => "cash_in_hand"],
         ];
 
         $data = array_values($arr);
@@ -327,8 +327,8 @@ class ManagementController extends Controller
                 ],
                 [
                     "icon" => "mdi-cash-multiple",
-                    "value" => 0,
-                    "label" => "City Ledger",
+                   "value" => array_sum(array_column($data, "day_use")),
+                    "label" => "Day Use",
                     "col" => 7,
                     "color" => "pink",
                 ],
