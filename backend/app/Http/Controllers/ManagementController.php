@@ -203,13 +203,13 @@ class ManagementController extends Controller
 
         $bookingCounts = Booking::query()
             ->where('company_id', $company_id)
-            // ->whereBetween('booking_date', $dates) // Apply the date filter here
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->whereDate('check_in', $startDate->format('Y-m-d'))
-                    ->orWhereDate('check_out', $endDate->format('Y-m-d'));
-            })
+            ->whereBetween('booking_date', $dates) // Apply the date filter here
+            // ->where(function ($query) use ($startDate, $endDate) {
+            //     $query->whereDate('check_in', $startDate->format('Y-m-d'))
+            //         ->orWhereDate('check_out', $endDate->format('Y-m-d'));
+            // })
             // ->count();
-        ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
+            ->get(["id", "booking_date", "check_in", "check_out", "booking_status"]);
 
 
         $arr = [];
