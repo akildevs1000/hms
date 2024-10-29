@@ -83,6 +83,21 @@ class Booking extends Model
         return date('Y-m-d 11:00', strtotime($this->check_out));
     }
 
+    public function getCheckInAttribute($val)
+    {
+        return date('Y-m-d', strtotime($val));
+    }
+
+    public function getCheckOutAttribute($val)
+    {
+        return date('Y-m-d', strtotime($val));
+    }
+
+    // public function getCheckOutAttribute()
+    // {
+    //     return date('Y-m-d', strtotime($this->check_out));
+    // }
+
     public function getHallCheckInDateAttribute()
     {
         return $this->check_in;
