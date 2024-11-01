@@ -15,3 +15,6 @@ Route::get('/hotel_orders_customer_menu', [QrcodeapiController::class, "getCusto
 Route::post('/hotel_orders_add_food_items', [QrcodeapiController::class, "addFoodOrderItems"]);
 Route::get('/hotel_orders_get_food_items', [QrcodeapiController::class, "getFoodOrderItems"]);
 Route::post('/hotel_orders_cancel_food_item', [QrcodeapiController::class, "cancelFoodOrderItem"]);
+
+
+Route::get('get_checkin_customer_data_test', [QrcodeapiController::class, 'getCheckInCustomerDetailsTest']);

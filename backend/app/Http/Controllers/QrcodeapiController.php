@@ -35,7 +35,7 @@ class QrcodeapiController extends Controller
         //     ->get()->first();
 
         $bookedRoomIds = $model
-            ->where('booking_status', 2)
+            // ->where('booking_status', 2)
             ->where('company_id', $request->company_id)
             ->where('room_id', $request->room_id)
             ->orderBy('created_at', 'desc') // Replace 'created_at' with the appropriate timestamp column
