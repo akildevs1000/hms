@@ -3,44 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookedRoom;
-use App\Models\Booking;
 use App\Models\Company;
-use App\Models\Holiday;
 use App\Models\HotelFoodItems;
 use App\Models\HotelFoodTimings;
 use App\Models\HotelOrdersFood;
-use App\Models\Room;
-use App\Models\RoomType;
-use App\Models\TaxSlabs;
-use App\Models\Weekend;
-use Carbon\CarbonPeriod;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class QrcodeapiController extends Controller
 {
-
-
     public function getCheckInCustomerDetails(Request $request)
     {
+        // $this->testEvent();
+        // return;
         $date = date('Y-m-d'); //$request->date;
-        if (date('H') <= 11) {
-            $date = date('Y-m-d', strtotime($request->date, '-1 day'));
+        if (date('H') < 11) {
+            $date = date('Y-m-d', strtotime($request->date ?? $date, '-1 day'));
         }
 
 
         $model = BookedRoom::with(["customer"]);
+        // $bookedRoomIds = $model
+        //     // ->where('check_in', '<=', $date . ' ' . date('H:i:s'))
+        //     // ->Where('check_out', '>=', $date . ' ' . date('H:i:s'))
+        //     // ->whereHas('booking', function ($q) use ($request) {
+        //     //     $q->where('booking_status', 2);
+        //     //     $q->where('company_id', $request->company_id);
+        //     // })
+        //     ->where('booking_status', 2)
+        //     ->where('company_id', $request->company_id)
+        //     ->Where('room_id',   $request->room_id)
+        //     ->get()->first();
+
         $bookedRoomIds = $model
-            ->where('check_in', '<=', $date . ' ' . date('H:i:s'))
-            ->Where('check_out', '>=', $date . ' ' . date('H:i:s'))
-            // ->whereHas('booking', function ($q) use ($request) {
-            //     $q->where('booking_status', 2);
-            //     $q->where('company_id', $request->company_id);
-            // })
             ->where('booking_status', 2)
             ->where('company_id', $request->company_id)
-            ->Where('room_id',   $request->room_id)
-            ->get()->first();
+            ->where('room_id', $request->room_id)
+            ->orderBy('created_at', 'desc') // Replace 'created_at' with the appropriate timestamp column
+            ->first();
+
 
         if ($bookedRoomIds) {
             if ($request->filled("otp")) {

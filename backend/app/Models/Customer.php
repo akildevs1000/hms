@@ -46,6 +46,11 @@ class Customer extends Model
         return $this->hasMany(OrderRoom::class);
     }
 
+    public function latest_booked_room()
+    {
+        return $this->hasOne(OrderRoom::class)->latest();
+    }
+
     public function sub_customers()
     {
         return $this->hasMany(SubCustomer::class);

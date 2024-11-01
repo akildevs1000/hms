@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyIfLogsDoesNotGenerate;
 
 Route::redirect('/', 'api/test');
+
+Route::get('/send-signal', [Controller::class, "sendSignal"]);
 
 
 Route::get('/notifyFailure', function () {

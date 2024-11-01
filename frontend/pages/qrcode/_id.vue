@@ -267,12 +267,13 @@ export default {
       this.$axios.get(`get_checkin_customer_data`, options).then(({ data }) => {
         this.otp_sent = true;
 
-        console.log("data", data);
+        console.log("data", data.record.whatsapp_otp);
         if (data.status == true) {
           this.$store.commit("hotelQrcodeRequestId", this.id);
           this.$store.commit("hotelQrcodeCompanyId", company_id);
           this.$store.commit("hotelQrcodeRoomNumber", roomNo);
           this.$store.commit("hotelQrcodeRoomId", roomId);
+          this.$store.commit("customer_id", data.record.customer.id);
           this.$store.commit(
             "hotelQrcodeWhatsappNumber",
             data.record.customer.whatsapp
@@ -283,6 +284,7 @@ export default {
           localStorage.setItem("hotelQrcodeRoomNumber", roomNo);
           localStorage.setItem("hotelQrcodeRoomId", roomId);
           localStorage.setItem("hotelQrcodeBookingId", data.record.booking_id);
+          localStorage.setItem("customer_id", data.record.customer.id);
 
           this.whatsapp_number = data.record.customer.whatsapp;
           this.profilePic = data.record.customer.image;

@@ -61,50 +61,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-container class="qrcodecontainer">
-      <div>
-        <div class="guestinfo" style="height: 70px">
-          <span style="width: 20%; float: left">
-            <v-app-bar-nav-icon
-              style="color: #fff"
-              @click.stop="drawer = !drawer"
-            ></v-app-bar-nav-icon>
-          </span>
-          <span style="width: 80%; float: left; color: #fff">
-            Hi
-            <span
-              ><h3>{{ guest_name }}</h3></span
-            >
-          </span>
-          <!-- <span style="width: 20%; float: left">
-            <img src="../assets/logo.png" style="height: 40px" />
-          </span>
-
-          <span style="width: 60%; float: right; font-size: 10px">
-            <span style="float: right" class="pr-3"
-              >Check-in: {{ dateFormatDisplay(guest_check_in_time) }}</span
-            >
-            <span style="float: right" class="pr-3"
-              >Check-out: {{ dateFormatDisplay(guest_check_out_time) }}</span
-            >
-          </span> -->
-        </div>
-        <!-- <div
-          style="
-            height: 30px;
-            background-color: #fff;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-          "
-        >
-          <div style="width: 100%">
-            <span>Welcome   {{ guest_name }} </span>
-            <span style="float: right" class="pr-3"
-              >Room No: {{ guest_room_number }}
-            </span>
-          </div>
-        </div> -->
-      </div>
+    <v-container>
       <div class="header-bottom-image"></div>
       <div>
         <nuxt />
@@ -158,6 +115,16 @@
           <v-icon style="color: #1cae81 !important"
             >mdi mdi-airplane-takeoff</v-icon
           ></v-avatar
+        >
+      </v-btn>
+
+      <v-btn
+        @click="$router.push(`/customer/chat`)"
+        style="border-right: 0px solid #ddd"
+      >
+        <!-- <span class="qrcode-color">Check-out</span> -->
+        <v-avatar size="40" class="qrcode-bgcolor1">
+          <v-icon style="color: #1cae81 !important">mdi-chat</v-icon></v-avatar
         >
       </v-btn>
       <!-- <v-btn @click="goToPage('home')" style="border-right: 0px solid #ddd">
@@ -218,7 +185,7 @@ export default {
         } catch (e) {}
       }
 
-      let IdArray = this.id.split("-");
+      let IdArray = this.id.split("-") || [3, 92, 108];
 
       if (IdArray.length == 3) {
         this.getGuestDetails(IdArray[0], IdArray[2], IdArray[1]);

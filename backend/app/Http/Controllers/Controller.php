@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Mail\ActionMail;
 use App\Mail\ActionMarkdownMail;
 use App\Models\Booking;
@@ -154,12 +155,12 @@ class Controller extends BaseController
 
         return [
             'expense' => [
-                'Cash'         => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 1))->sum('total'),
-                'Card'         => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 2))->sum('total'),
-                'Online'       => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 3))->sum('total'),
-                'Bank'         => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 4))->sum('total'),
-                'UPI'          => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 5))->sum('total'),
-                'Cheque'       => $expense->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', 6))->sum('total'),
+                'Cash'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 1))->sum('total'),
+                'Card'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 2))->sum('total'),
+                'Online'       => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 3))->sum('total'),
+                'Bank'         => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 4))->sum('total'),
+                'UPI'          => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 5))->sum('total'),
+                'Cheque'       => $expense->clone()->whereHas('paymentMode', fn($q) => $q->where('id', 6))->sum('total'),
                 'OverallTotal' => $expense->clone()->sum('total'),
             ],
             'income'  => [
@@ -183,7 +184,7 @@ class Controller extends BaseController
 
     public function getSum($model, $id)
     {
-        return $model->clone()->whereHas('paymentMode', fn ($q) => $q->where('id', $id))->sum('amount');
+        return $model->clone()->whereHas('paymentMode', fn($q) => $q->where('id', $id))->sum('amount');
     }
 
     public function getAmountFormat($amt = 0)
@@ -223,7 +224,7 @@ class Controller extends BaseController
     {
         info("whatsapp sent");
         return "whatsapp sent";
-        
+
         // $response = Http::withoutVerifying()->get('https://ezwhat.com/api/send.php', [
         //     'number' => "971554501483",
         //     'type' => 'text',
@@ -267,6 +268,27 @@ class Controller extends BaseController
             // Mail::to($record->email)->send(new ActionMarkdownMail($body, $subject));
             info("whatsapp sent");
             return "whatsapp sent";
+        }
+    }
+
+    public function sendSignal($id)
+    {
+        try {
+            $response = Http::withoutVerifying()
+                ->withHeaders([
+                    'X-Access-Key' => env("PUSHER_APP_KEY"),
+                ])->post(env("SOCKET_SERVER_URL"), [
+                    'id' => $id,
+                ]);
+
+            if ($response->successful()) {
+                return $response->json();
+                // Process the data as needed
+            } else {
+                return $response->body();
+            }
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 }

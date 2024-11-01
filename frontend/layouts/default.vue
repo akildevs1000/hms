@@ -356,6 +356,13 @@ export default {
           menu: "source_access",
         },
         {
+          topMenu: "customer",
+          icon: "mdi-chat",
+          title: "Chat",
+          to: "/chat",
+          menu: "chat_access",
+        },
+        {
           topMenu: "account",
           icon: "mdi-bank-transfer",
           title: "Income",

@@ -20,6 +20,7 @@ export const state = () => ({
   hotelQRCodeOTPverified: false,
   hotelQrcodeRequestId: "",
   hotelQrcodeCompanyId: "",
+  customer_id: "",
   hotelQrcodeRoomId: "",
   hotelQrcodeRoomNumber: "",
   hotelQrcodeWhatsappNumber: "",
@@ -50,6 +51,9 @@ export const mutations = {
   },
   hotelQrcodeCompanyId(state, value) {
     state.hotelQrcodeCompanyId = value;
+  },
+  customer_id(state, value) {
+    state.customer_id = value;
   },
   hotelQrcodeRoomId(state, value) {
     state.hotelQrcodeRoomId = value;

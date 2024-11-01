@@ -42,3 +42,6 @@ include 'posting_payment.php';
 
 include 'payment.php';
 include 'room_cleaning.php';
+
+
+include 'chat.php';

@@ -94,6 +94,13 @@ export default ({ app }, inject) => {
   });
 
   inject("dateFormat", {
+    hm(date) {
+      const modifiedDate = new Date(date); // Current date and time
+      const hours = String(modifiedDate.getHours()).padStart(2, '0');
+      const minutes = String(modifiedDate.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    },
+
     dmyhm() {
       const date = new Date(); // Current date and time
       const day = String(date.getDate()).padStart(2, '0');

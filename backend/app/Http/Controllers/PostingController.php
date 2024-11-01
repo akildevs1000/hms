@@ -230,4 +230,13 @@ class PostingController extends Controller
         // Get the last posting based on bill_no
         return Posting::orderBy('bill_no', 'desc')->value("bill_no") + 1 ?? 1000;
     }
+
+    public function getPostingByBookingIdAncRoomId()
+    {
+        // Get the last posting based on bill_no
+        return Posting::orderBy('id', 'desc')
+            ->where("booking_id", request("booking_id", 0))
+            ->where("room_id", request("room_id", 0))
+            ->get();
+    }
 }
