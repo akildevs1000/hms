@@ -18,7 +18,7 @@ class MessageController extends Controller
         // event(new MessageSent("hello world"));
         // return;
 
-        $sender_id = request("sender_id", 0); // Get authenticated user ID
+        $sender_id = request("sender_id", 7); // Get authenticated user ID
         $receiverId = request("receiver_id", 4); // Get authenticated user ID
 
         return Message::with('sender', 'receiver', "chat_photos")
