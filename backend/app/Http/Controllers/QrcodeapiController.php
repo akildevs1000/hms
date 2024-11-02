@@ -13,58 +13,51 @@ class QrcodeapiController extends Controller
 {
     public function getCheckInCustomerDetails(Request $request)
     {
-        // $this->testEvent();
-        // return;
-        $date = date('Y-m-d'); //$request->date;
+        // Determine the date based on the current time
+        $date = date('Y-m-d');
         if (date('H') < 11) {
-            $date = date('Y-m-d', strtotime($request->date ?? $date, '-1 day'));
+            $date = date('Y-m-d', strtotime($request->date ?? $date . ' -1 day'));
         }
 
+        // Initialize the model with relationships
+        $model = BookedRoom::with(['customer']);
 
-        $model = BookedRoom::with(["customer"]);
-        // $bookedRoomIds = $model
-        //     // ->where('check_in', '<=', $date . ' ' . date('H:i:s'))
-        //     // ->Where('check_out', '>=', $date . ' ' . date('H:i:s'))
-        //     // ->whereHas('booking', function ($q) use ($request) {
-        //     //     $q->where('booking_status', 2);
-        //     //     $q->where('company_id', $request->company_id);
-        //     // })
-        //     ->where('booking_status', 2)
-        //     ->where('company_id', $request->company_id)
-        //     ->Where('room_id',   $request->room_id)
-        //     ->get()->first();
-
-        $bookedRoomIds = $model
+        // Find the latest booking for the room, based on request parameters
+        $bookedRoom = $model
             ->where('booking_status', 2)
+            // ->where('check_in', '<=', $date . ' ' . date('H:i:s'))
+            // ->Where('check_out', '>=', $date . ' ' . date('H:i:s'))
             ->where('company_id', $request->company_id ?? 0)
             ->where('room_id', $request->room_id ?? 0)
-            ->orderBy('created_at', 'desc') // Replace 'created_at' with the appropriate timestamp column
+            ->orderBy('created_at', 'desc') // Adjust if another date column is more appropriate
             ->first();
 
-
-        if ($bookedRoomIds) {
-            if ($request->filled("otp")) {
-
-                if ($request->otp === "1") {
-
-
-                    $opt = rand(1000, 9999);
-                    $opt = $opt;
-                    $bookedRoomIds['whatsapp_otp'] = $opt;
-                    $model->update(["whatsapp_otp" => $opt]);
-
-                    $data_otp['mobile'] = $bookedRoomIds->customer['whatsapp'];
-                    $data_otp['otp'] = $opt;
-                    $data_otp['name'] = $bookedRoomIds->customer['title'];
-                    if (env("APP_ENV") == "production") (new WhatsappNotificationController)->hotelMenuOTP($data_otp, $request->company_id);
-                }
-            }
-        }
-        if (!isset($bookedRoomIds['id'])) {
+        // Check if a valid booking was found
+        if (!$bookedRoom) {
             return $this->response('Check-in Details are not Found. Please try again', null, false);
         }
-        return $this->response('Success', $bookedRoomIds, true);
+
+        // Generate and send OTP if requested
+        if ($request->filled('otp') && $request->otp === "1") {
+            $otp = rand(1000, 9999);
+            $bookedRoom->update(['whatsapp_otp' => $otp]);
+
+            $dataOtp = [
+                'mobile' => $bookedRoom->customer['whatsapp'],
+                'otp' => $otp,
+                'name' => $bookedRoom->customer['title']
+            ];
+
+            // Send OTP notification if in production environment
+            if (env('APP_ENV') == 'production') {
+                (new WhatsappNotificationController)->hotelMenuOTP($dataOtp, $request->company_id);
+            }
+        }
+
+        // Return response with booking details
+        return $this->response('Success', $bookedRoom, true);
     }
+
 
     public function getCustomerMenu(Request $request)
     {
