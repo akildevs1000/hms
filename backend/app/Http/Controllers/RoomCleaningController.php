@@ -102,10 +102,10 @@ class RoomCleaningController extends Controller
             $validatedData["voice_note"] = $voiceNoteName;
         }
 
-        if (request("can_change_status") && $validatedData["status"] == RoomCleaning::CLEANED) {
-            BookedRoom::where('room_id', $validatedData["room_id"])
-                ->update(['booking_status' => BookedRoom::AVAILABLE]);
-        }
+        // if (request("can_change_status") && $validatedData["status"] == RoomCleaning::CLEANED) {
+        //     BookedRoom::where('room_id', $validatedData["room_id"])
+        //         ->update(['booking_status' => BookedRoom::AVAILABLE]);
+        // }
 
         return RoomCleaning::create($validatedData);
     }
