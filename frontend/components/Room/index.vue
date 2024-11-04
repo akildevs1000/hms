@@ -127,7 +127,7 @@
               <v-col md="12" cols="12">
                 <label> </label>
                 <v-autocomplete
-                label="Status"
+                  label="Status"
                   :disabled="viewMode"
                   selected="0"
                   :items="[
@@ -152,10 +152,17 @@
                 }}</span>
               </v-col>
               <v-col cols="12" class="text-right">
-                <v-btn small @click="newItemDialog = false" dark filled color="grey white--text"
-                >Cancel</v-btn
-              >
-              <v-btn small @click="save()" dark filled color="primary">Save</v-btn>
+                <v-btn
+                  small
+                  @click="newItemDialog = false"
+                  dark
+                  filled
+                  color="grey white--text"
+                  >Cancel</v-btn
+                >
+                <v-btn small @click="save()" dark filled color="primary"
+                  >Save</v-btn
+                >
               </v-col>
             </v-row>
           </v-container>
@@ -587,7 +594,7 @@ export default {
           element.room_no +
           "-" +
           element.id;
-        element.qrURL = url;
+        element.qrURL = `http://localhost:3005/?company_id=3&room_id=92&room_no=208&otp=1`;
         element.qrImage = await this.$qrcode.generate(url, {
           width: 100,
         });

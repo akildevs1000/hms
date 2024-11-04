@@ -7,6 +7,7 @@
             position: 'absolute',
             zIndex: 1,
             left: `${left}px`,
+            left: computedLeft,
             top: `${top}px`,
           }"
         >
@@ -33,6 +34,13 @@ export default {
     },
     top: {
       default: -13,
+    },
+  },
+  computed: {
+    computedLeft() {
+      return typeof this.left === 'string' && this.left.includes('%')
+        ? this.left // Use as is if it's a percentage
+        : `${this.left}px`; // Convert to px if it's a number
     },
   },
   methods: {

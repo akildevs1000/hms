@@ -165,9 +165,7 @@
               <v-card-text>
                 <v-row style="margin-top: -12px"
                   ><v-col cols="8"
-                    ><span class="text-color"
-                      >Room Status</span
-                    ></v-col
+                    ><span class="text-color">Room Status</span></v-col
                   >
 
                   <v-col cols="4" class="text-right align-right"
@@ -354,7 +352,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" class="pt-0">
-            <v-card style="min-height: 395px">
+            <v-card style="min-height: 410px">
               <v-tabs hide-slider right v-model="tab" color="#0d652d">
                 <v-tab style="font-weight: bold">All</v-tab>
                 <v-tab style="font-weight: bold">Occupied</v-tab>
@@ -575,6 +573,7 @@
         </v-row>
       </v-col>
     </v-row>
+    <ChatDialog />
   </div>
   <Preloader v-else />
 </template>

@@ -250,7 +250,7 @@
                 <v-card flat>
                   <v-card-text>
                     <client-only>
-                      <roomsComponent :key="componentKey" />
+                      <Room :key="componentKey" />
                     </client-only>
                   </v-card-text>
                 </v-card>

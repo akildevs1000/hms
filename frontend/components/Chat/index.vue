@@ -5,95 +5,72 @@
         {{ response }}
       </v-snackbar>
     </div>
-
-    <v-row class="px-2 pb-2">
-      <v-col cols="2">
-        <v-text-field
-          class="global-search-textbox"
-          append-icon="mdi-magnify"
-          label="Search..."
-          clearable
-          dense
-          outlined
-          hide-details
-          @input="searchIt"
-          v-model="search"
-        ></v-text-field>
-      </v-col>
-    </v-row>
-
-    <v-data-table
-      dense
-      :headers="headers_table"
-      :items="data"
-      :loading="loading"
-      :options.sync="options"
-      :footer-props="{
-        itemsPerPageOptions: [20, 50, 100, 500, 1000],
-      }"
-      class="px-2"
-      :server-items-length="totalTableRowsCount"
-    >
-      <template v-slot:item.sno="{ item, index }">
-        <small class="text-color">{{
-          currentPage
-            ? (currentPage - 1) * perPage + (cumulativeIndex + itemIndex(item))
-            : ""
-        }}</small>
-      </template>
-      <template v-slot:item.first_name="{ item }">
-        <small class="text-color">{{ item.full_name }}</small>
-      </template>
-      <template v-slot:item.email="{ item }">
-        <small class="text-color"> {{ item.email || "---" }}</small>
-      </template>
-      <template v-slot:item.contact_no="{ item }">
-        <small class="text-color">{{ item.contact_no || "---" }}</small>
-      </template>
-      <template v-slot:item.whatsapp="{ item }">
-        <small class="text-color">{{ item.whatsapp || "---" }}</small>
-      </template>
-      <template v-slot:item.address="{ item }">
-        <!-- {{ item.city }},{{ item.state }},{{ item.zip_code }} ,{{
-                item.country
-              }} -->
-        <small class="text-color">
-          <span v-if="item.city">{{ item.city }}</span>
-          <span v-if="item.city && item.state">, </span>
-          <span v-if="item.state">{{ item.state }}</span>
-          <span v-if="item.state && item.zip_code"> {{ item.zip_code }}</span>
-          <span
-            v-if="(item.city || item.state || item.zip_code) && item.country"
-            >,
-          </span>
-          <span v-if="item.country">{{ item.country }}</span>
-        </small>
-        <!-- <small
-                v-if="
-                  !item.city && !item.state && !item.zip_code && !item.country
-                "
-                class="text-color"
+    <div>
+      <v-row>
+        <v-col cols="3">
+          <v-card style="min-height: 598px">
+            <div dense flat class="text-color">
+              <v-container> Customers </v-container>
+            </div>
+            <div class="mx-3">
+              <v-text-field
+                class="global-search-textbox"
+                append-icon="mdi-magnify"
+                label="Search..."
+                clearable
+                dense
+                outlined
+                hide-details
+                @input="searchIt"
+                v-model="search"
+              ></v-text-field>
+            </div>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in data"
+                :key="index"
+                @click="selectCustomer(item)"
               >
-                ---</small
-              > -->
-      </template>
-      <template v-slot:item.options="{ item }">
-        <v-menu bottom left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn dark-2 icon v-bind="attrs" v-on="on">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-          <v-list width="80" dense>
-            <v-list-item>
-              <v-list-item-title style="cursor: pointer">
-                <CustomerChat :id="item.id" />
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
-    </v-data-table>
+                <v-avatar
+                  v-if="item.captured_photo"
+                  class="mr-2"
+                  color="purple"
+                  size="30"
+                >
+                  <v-img :src="item.captured_photo"></v-img>
+                </v-avatar>
+                <v-avatar v-else class="mr-2" color="purple" size="30">
+                  <span class="white--text">C</span>
+                </v-avatar>
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.full_name }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    item.whatsapp
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="9">
+          <v-card style="min-height: 598px">
+            <div dense flat class="grey lighten-3">
+              <v-container>
+                {{ selectedCustomer?.full_name || "Customer" }}
+              </v-container>
+            </div>
+
+            <v-card-text>
+              <CustomerChat
+                v-if="selectedCustomer && selectedCustomer.id"
+                :key="selectedCustomer.id"
+                :id="selectedCustomer.id"
+              />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
   </div>
   <NoAccess v-else />
 </template>
@@ -110,71 +87,6 @@ export default {
     isFilter: false,
     data: [],
     loading: false,
-    headers_table: [
-      {
-        text: "#",
-        value: "sno",
-        align: "left",
-        sortable: false,
-        filterable: false,
-      },
-      {
-        text: "Customer",
-        value: "first_name",
-        align: "left",
-        key: "first_name",
-        sortable: true,
-        filterable: true,
-      },
-      {
-        text: "Source Type",
-        value: "customer_type",
-        align: "left",
-        key: "customer_type",
-        sortable: true,
-        filterable: true,
-      },
-      {
-        text: "Email",
-        value: "email",
-        align: "left",
-        sortable: true,
-        key: "email",
-        filterable: true,
-        filterSpecial: false,
-      },
-      {
-        text: "Contact",
-        value: "contact_no",
-        key: "contact_no",
-        align: "left",
-        sortable: true,
-        filterable: true,
-        filterSpecial: true,
-        width: "150px",
-      },
-      {
-        text: "Whatsapp",
-        value: "whatsapp",
-        key: "whatsapp",
-        align: "left",
-        sortable: true,
-        filterable: true,
-        filterSpecial: true,
-        width: "150px",
-      },
-      {
-        text: "Address",
-        value: "address",
-        key: "address",
-        align: "left",
-        sortable: true,
-        filterable: true,
-        filterSpecial: true,
-        width: "150px",
-      },
-      { text: "Options", value: "options", align: "left", sortable: false },
-    ],
 
     pagination: {
       current: 1,
@@ -192,45 +104,13 @@ export default {
     loading: false,
     customer_id: "",
     total: 0,
-    headers: [
-      {
-        text: "#",
-      },
-      {
-        text: "Name",
-      },
-      {
-        text: "Contact",
-      },
-
-      {
-        text: "Email",
-      },
-      {
-        text: "Id Card Type",
-      },
-      {
-        text: "Id Card",
-      },
-      {
-        text: "Car No.",
-      },
-      {
-        text: "GST",
-      },
-      {
-        text: "Address",
-      },
-      {
-        text: "Action",
-      },
-    ],
     editedIndex: -1,
     editedItem: { name: "" },
     defaultItem: { name: "" },
     response: "",
     data: [],
     errors: [],
+    selectedCustomer: null,
   }),
 
   computed: {
@@ -254,6 +134,9 @@ export default {
   },
 
   methods: {
+    selectCustomer(item) {
+      this.selectedCustomer = item;
+    },
     handleSelectedCustomer({ customer }) {
       this.customer = customer;
     },
