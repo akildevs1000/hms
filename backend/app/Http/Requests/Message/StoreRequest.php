@@ -23,7 +23,7 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $arr = [
             'sender_id' => 'required',
             'receiver_id' => 'required',
             'message' => [
@@ -37,5 +37,10 @@ class StoreRequest extends FormRequest
 
             'voice_note' => 'nullable',
         ];
+        if ($this->voice_note) {
+            $arr["message"] = "nullable";
+        }
+
+        return $arr;
     }
 }
