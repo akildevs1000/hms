@@ -8,7 +8,7 @@
     <div>
       <v-row>
         <v-col cols="3">
-          <v-card style="min-height: 598px">
+          <v-card style="min-height: 598px;max-height: 598px">
             <div dense flat class="text-color">
               <v-container> Customers </v-container>
             </div>
@@ -25,7 +25,7 @@
                 v-model="search"
               ></v-text-field>
             </div>
-            <v-list>
+            <v-list dense style="min-height: 500px; overflow-y: scroll;max-height: 500px; overflow-y: scroll;">
               <v-list-item
                 v-for="(item, index) in data"
                 :key="index"
@@ -53,7 +53,7 @@
           </v-card>
         </v-col>
         <v-col cols="9">
-          <v-card style="min-height: 598px">
+          <v-card style="min-height: 598px;max-height: 598px">
             <div dense flat class="grey lighten-3">
               <v-container>
                 {{ selectedCustomer?.full_name || "Customer" }}
@@ -198,7 +198,7 @@ export default {
         },
       };
 
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+      this.$axios.get(`https://backend.myhotel2cloud.com/api/customer?page=undefined&sortBy=&sortDesc=&company_id=3`).then(({ data }) => {
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;

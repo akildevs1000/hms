@@ -48,6 +48,14 @@
               "
               class="text-right"
             >
+              <audio
+                v-if="message.voice_note"
+                controls
+                style="width: 200px; height: 32px; margin-top: -6px"
+              >
+                <source :src="message.voice_note" />
+              </audio>
+
               <div>
                 <v-avatar
                   class="mr-1 my-2"
@@ -107,6 +115,13 @@
               "
               class="mt-3"
             >
+              <audio
+                v-if="message.voice_note"
+                controls
+                style="width: 200px; height: 32px; margin-top: -12px"
+              >
+                <source :src="message.voice_note" />
+              </audio>
               <div>
                 <v-avatar
                   v-for="(chat_photo, index) in message.chat_photos"
@@ -178,16 +193,23 @@
             style="width: 100%"
           >
             <template v-slot:append>
-              <UploadMultiplePhotos
-                @files-selected="handleMultipleFileSelection($event)"
-              /> </template
-          ></v-text-field>
+              <span>
+                <UploadMultiplePhotos
+                  @files-selected="handleMultipleFileSelection($event)"
+                />
+              </span>
+              <span style="margin-right: 18px !important; margin-top: -4px">
+                <WidgetsVoice
+                  @voice-note="handleVoiceNote($event, `${Date.now()}.mp3`)"
+              /></span>
+            </template>
+          </v-text-field>
         </div>
         <div class="ml-2">
           <v-icon
             color="primary"
             @click="sendMessage"
-            style="cursor: pointer; flex-grow: 1; margin-top: 8px"
+            style="cursor: pointer; flex-grow: 1; margin-top: 3px"
           >
             mdi-send
           </v-icon>
@@ -197,18 +219,26 @@
   </v-container>
 </template>
 <script>
+import Pusher from "pusher-js";
 export default {
   props: ["id"],
   data: () => ({
     newMessage: "",
     messages: [],
     previewImages: [],
+    voice: null,
   }),
   async created() {
-    let { data } = await this.$axios.get(`chat-by-customer-id/${this.id}`);
-    this.messages = data;
+    await this.getMessages();
+    await this.checkForNewMessageCount();
   },
   methods: {
+    handleVoiceNote(e, name) {
+      this.voice = {
+        voice_note: e,
+        voice_note_name: name,
+      };
+    },
     handleMultipleFileSelection(e) {
       this.previewImages = e;
     },
@@ -249,6 +279,8 @@ export default {
           receiver_id: this.id,
           chat_photos: this.previewImages,
           company_id: this.$auth.user.company_id,
+
+          ...this.voice,
         };
 
         await this.$axios.post(`chat`, payload);
@@ -256,6 +288,21 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    async checkForNewMessageCount() {
+      Pusher.logToConsole = true;
+      const pusher = new Pusher("b042e1aebc809a6212dd", {
+        cluster: "ap2",
+      });
+
+      // Subscribe to the channel and bind to the event
+      const channel = pusher.subscribe(
+        "my-channel" + this.$auth.user.company_id
+      );
+      channel.bind("my-event", async (data) => {
+        await this.getMessages();
+      });
     },
   },
 };
