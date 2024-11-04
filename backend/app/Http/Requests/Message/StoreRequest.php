@@ -34,6 +34,8 @@ class StoreRequest extends FormRequest
             'company_id' => 'required',
             'service' => 'nullable',
             'status' => 'nullable',
+
+            'voice_note' => 'nullable',
         ];
     }
 }

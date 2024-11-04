@@ -66,6 +66,19 @@ class MessageController extends Controller
 
         try {
             // Create the message
+
+            if (request()->has('voice_note')) {
+                $base64VoiceNote  = base64_decode(preg_replace('#^data:audio/\w+;base64,#i', '', request('voice_note')));
+                $voiceNoteName  = request('voice_note_name');
+                $publicDirectory = public_path("voice_notes");
+                if (!file_exists($publicDirectory)) {
+                    mkdir($publicDirectory);
+                }
+                file_put_contents($publicDirectory . '/' . $voiceNoteName, $base64VoiceNote);
+
+                $validatedData["voice_note"] = $voiceNoteName;
+            }
+
             $message = Message::create($validatedData);
 
             // Check if there are any chat photos

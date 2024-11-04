@@ -51,4 +51,10 @@ class Message extends Model
             Cache::forget($cacheKey);
         });
     }
+
+    public function getVoiceNoteAttribute($value)
+    {
+        if (!$value) return null;
+        return asset('voice_notes/' . $value);
+    }
 }
