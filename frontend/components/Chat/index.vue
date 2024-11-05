@@ -65,7 +65,7 @@
             <div dense flat class="grey lighten-3">
               <v-container>
                 <v-avatar
-                  v-if="selectedCustomer.captured_photo"
+                  v-if="selectedCustomer && selectedCustomer.captured_photo"
                   class="mr-2"
                   color="purple"
                   size="30"
