@@ -101,7 +101,12 @@
           vertical
         >
           <div>
-            <v-icon>{{ i.icon }}</v-icon>
+            <v-icon v-if="i.icon">{{ i.icon }}</v-icon>
+            <span v-else>
+              <v-avatar>
+                <img :src="i.image" />
+              </v-avatar>
+            </span>
           </div>
           <div class="text-center p-2">
             {{ i.title }}
@@ -287,6 +292,10 @@ export default {
           label: "Setting",
           name: "setting",
         },
+        {
+          label: "House Keeping",
+          name: "house_keeping",
+        },
       ],
       pendingNotificationsCount: 0,
       menuName: "",
@@ -306,6 +315,13 @@ export default {
       fixed: false,
       order_count: "",
       menus: [
+        {
+          topMenu: "house_keeping",
+          image: "/cleaner.png",
+          title: "House Keeping",
+          to: "/house_keeping",
+          menu: "settings_permissions_access",
+        },
         {
           topMenu: "dashboard",
           icon: "mdi-home",

@@ -28,7 +28,6 @@
 
               <v-tab> Night Audit Email </v-tab>
               <v-tab> Verfication </v-tab>
-              <v-tab> House Keeping </v-tab>
 
               <v-tab-item>
                 <v-container fluid>
@@ -703,10 +702,6 @@
                     </v-avatar>
                   </v-card-text>
                 </v-card>
-              </v-tab-item>
-
-              <v-tab-item>
-                <HouseKeeping />
               </v-tab-item>
             </v-tabs>
           </v-card>
