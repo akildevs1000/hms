@@ -215,9 +215,7 @@
               <v-list-item v-if="currentDate == filterDate">
                 <v-list-item-title>
                   <BookingCheckIn
-                    :key="`${evenIid}1${checkData.id}_${Math.floor(
-                      Math.random() * 1000
-                    )}`"
+                    :key="`${evenIid}1${checkData.id}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -228,9 +226,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingPayAdvance
-                    :key="`${evenIid}2${checkData.id}_${Math.floor(
-                      Math.random() * 1000
-                    )}`"
+                    :key="`${evenIid}2${checkData.id}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -242,17 +238,13 @@
                 <v-list-item-title
                   ><BookingModifyRoom
                     v-if="true"
-                    :key="`${evenIid}3${checkData.id}_${Math.floor(
-                      Math.random() * 1000
-                    )}`"
+                    :key="`${evenIid}3${checkData.id}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                   <BookingModifyHall
                     v-if="false"
-                    :key="`${evenIid}3${checkData.id}_${Math.floor(
-                      Math.random() * 1000
-                    )}`"
+                    :key="`${evenIid}3${checkData.id}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
@@ -261,9 +253,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingSingle
-                    :key="`${evenIid}4${checkData.id}_${Math.floor(
-                      Math.random() * 1000
-                    )}`"
+                    :key="`${evenIid}4${checkData.id}`"
                     :BookingId="checkData.id"
                   />
                 </v-list-item-title>
@@ -271,9 +261,7 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingCancel
-                    :key="`${evenIid}5${checkData.id}_${Math.floor(
-                      Math.random() * 1000
-                    )}`"
+                    :key="`${evenIid}5${checkData.id}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     :evenIid="evenIid"
@@ -287,16 +275,14 @@
               v-else-if="bookingStatus == 2 && checkData && checkData.id"
             >
               <v-list-item
-                v-for="(component, index) in getComponentsForCheckedIn()"
+                v-for="(component, index) in getComponentsForCheckedIn(2)"
                 :key="component.key"
               >
                 <v-list-item-title>
                   <!-- Dynamically render components based on the configuration -->
                   <component
                     :is="component.name"
-                    :key="`${evenIid}${index + 1}${checkData.id}_${Math.floor(
-                      Math.random() * 1000
-                    )}`"
+                    :key="`${evenIid}${index + 1}${checkData.id}`"
                     v-bind="component.props"
                     @close-dialog="closeCheckInAndOpenGRC"
                     @close-calender-room="closeCheckInAndOpenGRC"
@@ -883,10 +869,10 @@ export default {
   },
 
   methods: {
-    getComponentsForCheckedIn() {
+    getComponentsForCheckedIn(order) {
       return [
         {
-          key: `${this.evenIid}1`,
+          key: `${this.evenIid}_${order}_1`,
           name: "BookingCheckOut",
           props: {
             BookingData: this.checkData,
@@ -894,7 +880,7 @@ export default {
           },
         },
         {
-          key: `${this.evenIid}2`,
+          key: `${this.evenIid}_${order}_2`,
           name: "BookingPosting",
           props: {
             BookingData: this.checkData,
@@ -902,7 +888,7 @@ export default {
           },
         },
         {
-          key: `${this.evenIid}3`,
+          key: `${this.evenIid}_${order}_3`,
           name: "BookingPayAdvance",
           props: {
             BookingData: this.checkData,
@@ -910,14 +896,14 @@ export default {
           },
         },
         {
-          key: `${this.evenIid}4`,
+          key: `${this.evenIid}_${order}_4`,
           name: "BookingViewPosting",
           props: {
             evenIid: this.evenIid,
           },
         },
         {
-          key: `${this.evenIid}5`,
+          key: `${this.evenIid}_${order}_5`,
           name: "BookingModifyRoom",
           props: {
             BookedRoomId: this.evenIid,
@@ -926,7 +912,7 @@ export default {
           condition: true, // For example, conditionally render if `true`
         },
         {
-          key: `${this.evenIid}6`,
+          key: `${this.evenIid}_${order}_6`,
           name: "BookingSingle",
           props: {
             BookingId: this.checkData.id,
