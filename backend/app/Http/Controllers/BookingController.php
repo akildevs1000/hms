@@ -1100,6 +1100,7 @@ class BookingController extends Controller
                     ->update(
                         [
                             "booking_status" => 3,
+                            "is_dirty" => 1,
                             // "check_out" => date('Y-m-d')
                         ]
                     );
@@ -1233,6 +1234,7 @@ class BookingController extends Controller
                 BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
                     [
                         "booking_status" => 3,
+                        "is_dirty" => 1,
                         // "check_out" => date('Y-m-d')
                     ]
                 );

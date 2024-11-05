@@ -41,6 +41,7 @@
   Route::get('get_food_prices', [RoomController::class, 'getFoodPrices']);
 
   Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);
+  Route::get('room_list_grid_for_house_keeping', [RoomController::class, 'roomListForGridViewForHouseKeepingApp']);
 
   Route::get('get_room_price_by_meal_plan', [RoomController::class, 'get_room_price_by_meal_plan']);
 
