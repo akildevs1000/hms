@@ -184,36 +184,6 @@
                     <Heading label="Edit Booking" />
                   </v-col>
                   <v-col cols="6">
-                    <!-- <tr>
-                <th>Early Check In</th>
-                <td>
-                  <v-checkbox
-                    v-model="is_early_check_in"
-                    :label="`Early Check In (${early_check_in})`"
-                    :hide-details="true"
-                    dense
-                  ></v-checkbox>
-                </td>
-              </tr> -->
-                    <!-- <tr>
-                <th>Late Check Out</th>
-                <td>
-                  <v-checkbox
-                    v-model="is_late_check_out"
-                    :label="`Early Check In (${late_check_out})`"
-                    :hide-details="true"
-                    dense
-                    @change="
-                      () => {
-                        late_check_out = is_late_check_out
-                          ? payload.late_check_out
-                          : 0;
-                      }
-                    "
-                  ></v-checkbox>
-                </td>
-              </tr> -->
-
                     <v-menu
                       v-model="checkin_menu"
                       :close-on-content-click="false"
@@ -316,6 +286,7 @@
                       v-model="payload.extra_bed_qty"
                       hide-details
                       required
+                      @change="getPricesByRoomId(payload.room_id)"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="6">
@@ -358,23 +329,24 @@
                       @change="getPricesByRoomId(payload.room_id)"
                     ></v-autocomplete>
                   </v-col>
-
                   <v-col cols="12">
                     <v-row justify="center">
-                      <v-col cols="4" class="d-flex justify-center">
+                      <v-col cols="6" class="d-flex justify-center">
                         <v-checkbox
-                          readonly
-                          label="Early C/I"
+                          label="Early Check In"
                           hide-details
                           dense
+                          v-model="is_early_check_in"
+                          @change="getPricesByRoomId(payload.room_id)"
                         ></v-checkbox>
                       </v-col>
-                      <v-col cols="4" class="d-flex justify-center">
+                      <v-col cols="6" class="d-flex justify-center">
                         <v-checkbox
-                          readonly
-                          label="Late C/O"
+                          label="Late Check Out"
                           hide-details
                           dense
+                          v-model="is_late_check_out"
+                          @change="getPricesByRoomId(payload.room_id)"
                         ></v-checkbox>
                       </v-col>
                     </v-row>
@@ -502,6 +474,7 @@ export default {
 
       early_check_in: 0,
       late_check_out: 0,
+
       foodplans: [],
       checkin_menu: false,
       checkout_menu: false,
@@ -565,8 +538,6 @@ export default {
     await this.get_additional_charges();
 
     await this.get_room_types();
-
-    await this.adjust_bed_charges();
   },
 
   mounted() {},
@@ -599,18 +570,6 @@ export default {
   },
 
   methods: {
-    set_additional_charges() {
-      // this.temp.early_check_in = this.is_early_check_in
-      //   ? this.additional_charges.early_check_in
-      //   : 0;
-      // this.temp.late_check_out = this.is_late_check_out
-      //   ? this.additional_charges.late_check_out
-      //   : 0;
-
-      this.payload.bed_amount = this.payload.extra_bed_qty
-        ? this.payload.extra_bed_qty * this.additional_charges.extra_bed
-        : 0;
-    },
     async get_additional_charges() {
       let { data } = await this.$axios.get(`additional_charges`, {
         params: {
@@ -625,21 +584,6 @@ export default {
       let { unit_price } = this.foodplans.find((e) => e.id == id);
 
       return unit_price;
-    },
-
-    async adjust_bed_charges() {
-      // this.temp.early_check_in = this.is_early_check_in
-      //   ? this.additional_charges.early_check_in || 0
-      //   : 0;
-      // this.temp.late_check_out = this.is_late_check_out
-      //   ? this.additional_charges.late_check_out || 0
-      //   : 0;
-
-      this.payload.bed_amount = this.payload.extra_bed_qty
-        ? this.payload.extra_bed_qty * (this.additional_charges.extra_bed || 0)
-        : 0;
-
-      this.getPricesByRoomId(this.payload.room_id);
     },
 
     async get_food_plans() {
@@ -724,10 +668,29 @@ export default {
           let new_room_price_single_day = data.total_price / total_days;
           let room_price_with_meal = unit_price + new_room_price_single_day;
 
+          let bed_amount = this.payload.extra_bed_qty
+            ? this.payload.extra_bed_qty *
+              (this.additional_charges.extra_bed || 0)
+            : 0;
+
+          let early_check_in = this.is_early_check_in
+            ? this.additional_charges.early_check_in || 0
+            : 0;
+          let late_check_out = this.is_late_check_out
+            ? this.additional_charges.late_check_out || 0
+            : 0;
+
+          this.getPricesByRoomId(this.payload.room_id);
+
           this.payload = {
             ...this.payload,
             ...selected_food_plan,
             room_no: found.room_no,
+            bed_amount: bed_amount,
+
+            early_check_in: early_check_in,
+            late_check_out: late_check_out,
+
             room_type_id: data.room.room_type_id,
             room_id: data.room.id,
             total_days: total_days,
@@ -736,7 +699,9 @@ export default {
             total_tax: data.total_tax,
             room_tax: data.total_tax / total_days,
             booking_total_price:
-              parseFloat(this.payload.bed_amount) +
+              parseFloat(early_check_in) +
+              parseFloat(late_check_out) +
+              parseFloat(bed_amount) +
               parseFloat(data.total_price) +
               parseFloat(food_plan_price_for_all_days),
             booking_remaining_price:
@@ -813,11 +778,11 @@ export default {
           check_out: data.check_out,
         };
 
-        // this.early_check_in = data.early_check_in;
-        // this.late_check_out = data.late_check_out;
+        this.early_check_in = data.early_check_in;
+        this.late_check_out = data.late_check_out;
 
-        // this.is_early_check_in = this.early_check_in > 0 ? true : false;
-        // this.is_late_check_out = this.late_check_out > 0 ? true : false;
+        this.is_early_check_in = this.early_check_in > 0 ? true : false;
+        this.is_late_check_out = this.late_check_out > 0 ? true : false;
 
         this.payload = {
           id: data.id,
