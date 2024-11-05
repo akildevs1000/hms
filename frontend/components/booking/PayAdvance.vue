@@ -1,20 +1,15 @@
 <template>
   <v-dialog v-model="checkOutDialog" persistent max-width="850px">
+    <AssetsIconClose
+      left="840"
+      @click="checkOutDialog = false"
+    ></AssetsIconClose>
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> Payment </span>
     </template>
     <v-card>
-      <v-alert dense class="grey lighten-3 primary--text">
-        <v-row>
-          <v-col> <div style="font-size: 18px">Payment</div> </v-col>
-          <v-col>
-            <div class="text-right">
-              <v-icon @click="checkOutDialog = false" color="primary"
-                >mdi-close-circle</v-icon
-              >
-            </div>
-          </v-col>
-        </v-row>
+      <v-alert dense flat class="grey lighten-3 primary--text">
+        Payment
       </v-alert>
       <v-card-text>
         <v-row no-gutter v-if="BookingData && BookingData.id">
@@ -22,14 +17,6 @@
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <!-- <div class="text-right">
-              <v-icon
-                color="primary"
-                @click="$router.push(`customer/details/${BookingData.id}`)"
-                >mdi-eye</v-icon
-              >
-            </div> -->
-                  <!-- <pre>{{ roomData }}</pre> -->
                   <v-avatar size="150" class="mb-3">
                     <img
                       class="pa-2"
@@ -62,17 +49,6 @@
                     hide-details
                   ></v-text-field>
                 </v-col>
-                <!-- <v-col cols="12">
-            <v-textarea
-              rows="2"
-              v-model="customer_full_address"
-              readonly
-              label="Address"
-              outlined
-              dense
-              hide-details
-            ></v-textarea>
-          </v-col> -->
                 <v-col cols="12">
                   <v-text-field
                     rows="2"
@@ -630,7 +606,6 @@ export default {
           this.totalTransactionAmount = data.totalTransactionAmount;
           this.tempBalance = data.totalTransactionAmount;
           this.full_payment = data.totalTransactionAmount;
-
         });
     },
 

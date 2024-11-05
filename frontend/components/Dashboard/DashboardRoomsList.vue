@@ -215,7 +215,9 @@
               <v-list-item v-if="currentDate == filterDate">
                 <v-list-item-title>
                   <BookingCheckIn
-                    :key="`${evenIid}1${checkData.id}`"
+                    :key="`${evenIid}1${checkData.id}_${Math.floor(
+                      Math.random() * 1000
+                    )}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -226,7 +228,9 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingPayAdvance
-                    :key="`${evenIid}2${checkData.id}`"
+                    :key="`${evenIid}2${checkData.id}_${Math.floor(
+                      Math.random() * 1000
+                    )}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     @close-dialog="closeCheckInAndOpenGRC"
@@ -238,13 +242,17 @@
                 <v-list-item-title
                   ><BookingModifyRoom
                     v-if="true"
-                    :key="`${evenIid}3${checkData.id}`"
+                    :key="`${evenIid}3${checkData.id}_${Math.floor(
+                      Math.random() * 1000
+                    )}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                   <BookingModifyHall
                     v-if="false"
-                    :key="`${evenIid}3${checkData.id}`"
+                    :key="`${evenIid}3${checkData.id}_${Math.floor(
+                      Math.random() * 1000
+                    )}`"
                     :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
@@ -253,7 +261,9 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingSingle
-                    :key="`${evenIid}4${checkData.id}`"
+                    :key="`${evenIid}4${checkData.id}_${Math.floor(
+                      Math.random() * 1000
+                    )}`"
                     :BookingId="checkData.id"
                   />
                 </v-list-item-title>
@@ -261,7 +271,9 @@
               <v-list-item>
                 <v-list-item-title>
                   <BookingCancel
-                    :key="`${evenIid}5${checkData.id}`"
+                    :key="`${evenIid}5${checkData.id}_${Math.floor(
+                      Math.random() * 1000
+                    )}`"
                     :BookingData="checkData"
                     :roomData="roomData"
                     :evenIid="evenIid"
@@ -274,67 +286,22 @@
             <template
               v-else-if="bookingStatus == 2 && checkData && checkData.id"
             >
-              <v-list-item>
+              <v-list-item
+                v-for="(component, index) in getComponentsForCheckedIn()"
+                :key="component.key"
+              >
                 <v-list-item-title>
-                  <BookingCheckOut
-                    :key="`${evenIid}1${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
+                  <!-- Dynamically render components based on the configuration -->
+                  <component
+                    :is="component.name"
+                    :key="`${evenIid}${index + 1}${checkData.id}_${Math.floor(
+                      Math.random() * 1000
+                    )}`"
+                    v-bind="component.props"
                     @close-dialog="closeCheckInAndOpenGRC"
-                  />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>
-                  <BookingPosting
-                    :key="`${evenIid}2${checkData.id}`"
-                    :BookingData="checkData"
-                    :evenIid="evenIid"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>
-                  <BookingPayAdvance
-                    :key="`${evenIid}3${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingPayAdvance>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>
-                  <BookingViewPosting
-                    :key="`${evenIid}4${checkData.id}`"
-                    :evenIid="evenIid"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingViewPosting>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title
-                  ><BookingModifyRoom
-                    v-if="true"
-                    :key="`${evenIid}5${checkData.id}`"
-                    :BookedRoomId="evenIid"
-                    @close-calender-room="closeCheckInAndOpenGRC"
-                  />
-                  <BookingModifyRoom
-                    v-if="false"
-                    :key="`${evenIid}5${checkData.id}`"
-                    :BookedRoomId="evenIid"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                 </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title
-                  ><BookingSingle
-                    :key="`${evenIid}6${checkData.id}`"
-                    :BookingId="checkData.id"
-                /></v-list-item-title>
               </v-list-item>
               <v-list-item
                 @click="cancelCheckInDialog = true"
@@ -916,6 +883,57 @@ export default {
   },
 
   methods: {
+    getComponentsForCheckedIn() {
+      return [
+        {
+          key: `${this.evenIid}1`,
+          name: "BookingCheckOut",
+          props: {
+            BookingData: this.checkData,
+            roomData: this.roomData,
+          },
+        },
+        {
+          key: `${this.evenIid}2`,
+          name: "BookingPosting",
+          props: {
+            BookingData: this.checkData,
+            evenIid: this.evenIid,
+          },
+        },
+        {
+          key: `${this.evenIid}3`,
+          name: "BookingPayAdvance",
+          props: {
+            BookingData: this.checkData,
+            roomData: this.roomData,
+          },
+        },
+        {
+          key: `${this.evenIid}4`,
+          name: "BookingViewPosting",
+          props: {
+            evenIid: this.evenIid,
+          },
+        },
+        {
+          key: `${this.evenIid}5`,
+          name: "BookingModifyRoom",
+          props: {
+            BookedRoomId: this.evenIid,
+          },
+          conditionalRender: true, // Custom condition for rendering
+          condition: true, // For example, conditionally render if `true`
+        },
+        {
+          key: `${this.evenIid}6`,
+          name: "BookingSingle",
+          props: {
+            BookingId: this.checkData.id,
+          },
+        },
+      ];
+    },
     getRelatedIcon({ booking_type, group_name }) {
       if (booking_type == "hall") {
         return "mdi-sofa";
