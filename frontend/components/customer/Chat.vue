@@ -90,7 +90,7 @@
               >
             </div>
 
-            <v-avatar
+            <!-- <v-avatar
               :class="`purple lighten-1 ${
                 message && message.chat_photos.length > 0 ? 'mt-5' : 'mt-2'
               }`"
@@ -99,13 +99,13 @@
               <v-icon color="white" style="align-self: flex-start" small
                 >mdi-account</v-icon
               >
-            </v-avatar>
+            </v-avatar> -->
           </div>
 
           <div style="display: flex" v-else class="pb-1">
-            <v-avatar class="grey lighten-1" size="30">
+            <!-- <v-avatar class="grey lighten-1" size="30">
               <v-icon color="white" small>mdi-account</v-icon>
-            </v-avatar>
+            </v-avatar> -->
             <div
               style="
                 font-size: 13px;
