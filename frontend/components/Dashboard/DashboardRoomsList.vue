@@ -271,33 +271,6 @@
               </v-list-item>
             </template>
 
-            <!-- <template
-              v-else-if="bookingStatus == 2 && checkData && checkData.id"
-            >
-              <v-list-item
-                v-for="(component, index) in getComponentsForCheckedIn(2)"
-                :key="component.key"
-              >
-                <v-list-item-title>
-                  <component
-                    :is="component.name"
-                    :key="`${evenIid}${index + 1}${checkData.id}`"
-                    v-bind="component.props"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                    @close-calender-room="closeCheckInAndOpenGRC"
-                  />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                @click="cancelCheckInDialog = true"
-                v-if="$auth?.user?.role?.name.toLowerCase() == 'admin'"
-              >
-                <v-list-item-title color="red"
-                  >Cancel Check-in(admin)
-                </v-list-item-title>
-              </v-list-item>
-            </template> -->
-
             <template
               v-else-if="bookingStatus == 2 && checkData && checkData.id"
             >
@@ -943,57 +916,6 @@ export default {
   },
 
   methods: {
-    getComponentsForCheckedIn(order) {
-      return [
-        {
-          key: `${this.evenIid}_${order}_1`,
-          name: "BookingCheckOut",
-          props: {
-            BookingData: this.checkData,
-            roomData: this.roomData,
-          },
-        },
-        {
-          key: `${this.evenIid}_${order}_2`,
-          name: "BookingPosting",
-          props: {
-            BookingData: this.checkData,
-            evenIid: this.evenIid,
-          },
-        },
-        {
-          key: `${this.evenIid}_${order}_3`,
-          name: "BookingPayAdvance",
-          props: {
-            BookingData: this.checkData,
-            roomData: this.roomData,
-          },
-        },
-        {
-          key: `${this.evenIid}_${order}_4`,
-          name: "BookingViewPosting",
-          props: {
-            evenIid: this.evenIid,
-          },
-        },
-        {
-          key: `${this.evenIid}_${order}_5`,
-          name: "BookingModifyRoom",
-          props: {
-            BookedRoomId: this.evenIid,
-          },
-          conditionalRender: true, // Custom condition for rendering
-          condition: true, // For example, conditionally render if `true`
-        },
-        {
-          key: `${this.evenIid}_${order}_6`,
-          name: "BookingSingle",
-          props: {
-            BookingId: this.checkData.id,
-          },
-        },
-      ];
-    },
     getRelatedIcon({ booking_type, group_name }) {
       if (booking_type == "hall") {
         return "mdi-sofa";
