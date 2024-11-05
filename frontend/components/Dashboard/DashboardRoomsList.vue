@@ -271,7 +271,7 @@
               </v-list-item>
             </template>
 
-            <template
+            <!-- <template
               v-else-if="bookingStatus == 2 && checkData && checkData.id"
             >
               <v-list-item
@@ -279,7 +279,6 @@
                 :key="component.key"
               >
                 <v-list-item-title>
-                  <!-- Dynamically render components based on the configuration -->
                   <component
                     :is="component.name"
                     :key="`${evenIid}${index + 1}${checkData.id}`"
@@ -288,6 +287,81 @@
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                 </v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                @click="cancelCheckInDialog = true"
+                v-if="$auth?.user?.role?.name.toLowerCase() == 'admin'"
+              >
+                <v-list-item-title color="red"
+                  >Cancel Check-in(admin)
+                </v-list-item-title>
+              </v-list-item>
+            </template> -->
+
+            <template
+              v-else-if="bookingStatus == 2 && checkData && checkData.id"
+            >
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingCheckOut
+                    :key="`${evenIid}_2_1${checkData.id}`"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingPosting
+                    :key="`${evenIid}_2_2${checkData.id}`"
+                    :BookingData="checkData"
+                    :evenIid="evenIid"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingPayAdvance
+                    :key="`${evenIid}_2_3${checkData.id}`"
+                    :BookingData="checkData"
+                    :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingPayAdvance>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingViewPosting
+                    :key="`${evenIid}_2_4${checkData.id}`"
+                    :evenIid="evenIid"
+                    @close-dialog="closeCheckInAndOpenGRC"
+                  ></BookingViewPosting>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title
+                  ><BookingModifyRoom
+                    v-if="true"
+                    :key="`${evenIid}_2_5${checkData.id}`"
+                    :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC"
+                  />
+                  <BookingModifyRoom
+                    v-if="false"
+                    :key="`${evenIid}_2_5${checkData.id}`"
+                    :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC"
+                  />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title
+                  ><BookingSingle
+                    :key="`${evenIid}_2_6${checkData.id}`"
+                    :BookingId="checkData.id"
+                /></v-list-item-title>
               </v-list-item>
               <v-list-item
                 @click="cancelCheckInDialog = true"
