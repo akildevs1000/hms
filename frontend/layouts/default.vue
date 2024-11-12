@@ -956,4 +956,8 @@ input[type="number"] {
 .zoom-card {
   animation: zoomInOut 2s infinite ease-in-out; /* Adjust duration as needed */
 }
+
+.small-text {
+  font-size: 10px;
+}
 </style>
