@@ -68,7 +68,7 @@
                 }}</span>
               </v-col>
               <v-col cols="6">
-                {{ editedItem.utc_time_zone }}
+                <!-- {{ editedItem.utc_time_zone }} -->
                 <v-autocomplete
                   class="pb-0"
                   :hide-details="!editedItem.utc_time_zone"
@@ -282,6 +282,16 @@ export default {
         sortable: false,
         filterable: false,
       },
+
+      {
+        text: "Roo No",
+        value: "room.room_no",
+        align: "left",
+        sortable: true,
+        key: "room_id",
+        filterable: true,
+        filterSpecial: true,
+      },
       {
         text: "Serial Number",
         value: "serial_number",
@@ -295,15 +305,6 @@ export default {
         key: "name",
         align: "left",
         sortable: true,
-        filterable: true,
-        filterSpecial: true,
-      },
-      {
-        text: "Roo No",
-        value: "room.room_no",
-        align: "left",
-        sortable: true,
-        key: "room_id",
         filterable: true,
         filterSpecial: true,
       },
