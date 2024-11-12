@@ -313,6 +313,6 @@ class DeviceController extends Controller
 
     public function getDevicesList(Request $request)
     {
-        return Devices::query()->where("company_id", $request->company_id)->get();
+        return Devices::query()->with("room")->where("company_id", $request->company_id)->get();
     }
 }

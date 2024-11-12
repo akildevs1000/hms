@@ -21,14 +21,17 @@
           :default_date_from="date_from"
           :default_date_to="date_to"
           :defaultFilterType="1"
-          :height="'40px '"
+          :height="'30px '"
         />
       </v-col>
       <v-col cols="2">
         <v-autocomplete
           v-model="device_id"
-          :items="[{ serial_number: `All Rooms` }, ...devices_list]"
-          item-text="serial_number"
+          :items="[
+            { serial_number: `All Rooms`, room_no: 'All Rooms' },
+            ...devices_list,
+          ]"
+          item-text="room_no"
           item-value="serial_number"
           placeholder="Select Room"
           label="Room"
@@ -258,6 +261,14 @@ export default {
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
+    getRoomName(serial_number) {
+      console.log(serial_number);
+
+      return serial_number;
+
+      // let arr = this.devices_list.find((e) => e.serial_number == serial_number);
+      // return arr.length > 0 ? arr[0].room.room_no : "---";
+    },
     filterAttr(data) {
       this.date_from = data.from;
       this.date_to = data.to;
@@ -335,6 +346,18 @@ export default {
       let options = { params: { company_id: this.$auth.user.company.id } };
       this.$axios.get(`devices_list`, options).then(({ data }) => {
         this.devices_list = data;
+        this.devices_list = this.devices_list
+          .map((device) => ({
+            ...device,
+            room_no: device.room?.room_no || "---", // Add room_no directly
+          }))
+          .sort((a, b) => {
+            // Sort alphabetically or numerically, depending on room_no type
+            return a.room_no.localeCompare(b.room_no, undefined, {
+              numeric: true,
+            });
+          });
+
         //this.roomTypesForSelectOptions.unshift({ id: '', name: "All" });
       });
     },
