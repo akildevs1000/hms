@@ -25,8 +25,6 @@ class VerificationController extends Controller
             "sign" => $verification->sign,
         ];
 
-        $verification->delete();
-
         return $payload;
 
     }
