@@ -13,7 +13,7 @@ class VerificationController extends Controller
     {
         $found = Verification::where("company_id", $id)->orderBy("id", "desc")->first();
 
-        Verification::where("company_id", $id)->delete();
+        // Verification::where("company_id", $id)->delete();
 
         return $found;
     }
