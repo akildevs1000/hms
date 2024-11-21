@@ -174,11 +174,11 @@ class DeviceController extends Controller
         $device_room_number = $request->room_number;
         $status = $request->status;
 
-        if ($request->statu == 1) {
-            $status = 0;
-        } else if ($request->statu == 0) {
-            $status = 1;
-        }
+        // if ($request->status == 1) {
+        //     $status = 0;
+        // } else if ($request->status == 0) {
+        //     $status = 1;
+        // }
 
 
         $device = Device::where("serial_number", $device_room_number)->first();
@@ -216,7 +216,7 @@ class DeviceController extends Controller
                 $logs["booking_status_id"] = $bookingStatusId;
                 $logs["serial_number"] = $device_room_number;
                 $logs["status"] = $status;
-                $logs["raw_data"] = null; //json_encode($request->all());
+                $logs["raw_data"] =  json_encode($request->all());
 
                 $timeZone = 'Asia/Dubai';
 
@@ -262,7 +262,7 @@ class DeviceController extends Controller
 
                         $logs["duration_minutes"] = $minutes;
 
-
+                        $logs["raw_data"] = json_encode([($request->all()), json_decode($latestLog->raw_data)]);
 
                         DeviceLogs::where("id", $latestLog->id)->update($logs);
 
@@ -313,6 +313,6 @@ class DeviceController extends Controller
 
     public function getDevicesList(Request $request)
     {
-        return Devices::query()->where("company_id", $request->company_id)->get();
+        return Devices::query()->with("room")->where("company_id", $request->company_id)->get();
     }
 }
