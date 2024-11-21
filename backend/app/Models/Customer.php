@@ -154,6 +154,10 @@ class Customer extends Model
             'gst_number',
             'id_frontend_side',
             'id_backend_side',
+
+            'captured_photo',
+            'sign',
+
             'country',
             'state',
             'city',
