@@ -693,7 +693,7 @@ class BookingController extends Controller
                 $isExistCustomer->update($customer);
             } else {
 
-                if ($url = request('id_backend_side')) {
+                if ($url = request('id_frontend_side')) {
                     // Validate the URL
                     if (filter_var($url, FILTER_VALIDATE_URL)) {
                         try {
@@ -725,18 +725,103 @@ class BookingController extends Controller
                     }
                 }
 
+                if ($url = request('id_backend_side')) {
+                    // Validate the URL
+                    if (filter_var($url, FILTER_VALIDATE_URL)) {
+                        try {
+                            // Fetch the image from the URL
+                            $imageContents = file_get_contents($url);
 
-                if (request('id_backend_side')) {
-                    $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('id_backend_side')));
-                    $imageName = "id_backend_side-" . time() . ".png";
-                    $publicDirectory = public_path("customer_id_pic");
-                    if (!file_exists($publicDirectory)) {
-                        mkdir($publicDirectory);
+                            // Generate a unique image name
+                            $imageName = "id_backend_side-" . time() . ".png";
+
+                            // Define the storage path
+                            $publicDirectory = public_path("customer_id_pic");
+
+                            // Ensure the directory exists
+                            if (!file_exists($publicDirectory)) {
+                                mkdir($publicDirectory, 0777, true);
+                            }
+
+                            // Save the image
+                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
+
+                            // Store the image name in the database
+                            $customer['id_backend_side'] = $imageName;
+                        } catch (\Exception $e) {
+                            // Handle errors (e.g., invalid URL, failed download, etc.)
+                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
+                        }
+                    } else {
+                        return response()->json(['error' => 'Invalid URL provided.'], 400);
                     }
-                    file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
-
-                    $customer["id_backend_side"] = $imageName;
                 }
+
+                if ($url = request('captured_photo')) {
+                    // Validate the URL
+                    if (filter_var($url, FILTER_VALIDATE_URL)) {
+                        try {
+                            // Fetch the image from the URL
+                            $imageContents = file_get_contents($url);
+
+                            // Generate a unique image name
+                            $imageName = "captured_photo-" . time() . ".png";
+
+                            // Define the storage path
+                            $publicDirectory = public_path("customer_id_pic");
+
+                            // Ensure the directory exists
+                            if (!file_exists($publicDirectory)) {
+                                mkdir($publicDirectory, 0777, true);
+                            }
+
+                            // Save the image
+                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
+
+                            // Store the image name in the database
+                            $customer['captured_photo'] = $imageName;
+                        } catch (\Exception $e) {
+                            // Handle errors (e.g., invalid URL, failed download, etc.)
+                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
+                        }
+                    } else {
+                        return response()->json(['error' => 'Invalid URL provided.'], 400);
+                    }
+                }
+
+                if ($url = request('sign')) {
+                    // Validate the URL
+                    if (filter_var($url, FILTER_VALIDATE_URL)) {
+                        try {
+                            // Fetch the image from the URL
+                            $imageContents = file_get_contents($url);
+
+                            // Generate a unique image name
+                            $imageName = "sign-" . time() . ".png";
+
+                            // Define the storage path
+                            $publicDirectory = public_path("customer_id_pic");
+
+                            // Ensure the directory exists
+                            if (!file_exists($publicDirectory)) {
+                                mkdir($publicDirectory, 0777, true);
+                            }
+
+                            // Save the image
+                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
+
+                            // Store the image name in the database
+                            $customer['sign'] = $imageName;
+                        } catch (\Exception $e) {
+                            // Handle errors (e.g., invalid URL, failed download, etc.)
+                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
+                        }
+                    } else {
+                        return response()->json(['error' => 'Invalid URL provided.'], 400);
+                    }
+                }
+
+
 
                 $record = Customer::create($customer);
                 $id = $record->id ?? 0;
