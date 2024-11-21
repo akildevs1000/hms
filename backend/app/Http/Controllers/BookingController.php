@@ -693,17 +693,38 @@ class BookingController extends Controller
                 $isExistCustomer->update($customer);
             } else {
 
-                if (request('id_frontend_side')) {
-                    $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('id_frontend_side')));
-                    $imageName = "id_frontend_side-" . time() . ".png";
-                    $publicDirectory = public_path("customer_id_pic");
-                    if (!file_exists($publicDirectory)) {
-                        mkdir($publicDirectory);
-                    }
-                    file_put_contents($publicDirectory . '/' . $imageName, $base64Image);
+                if ($url = request('id_frontend_side_url')) {
+                    // Validate the URL
+                    if (filter_var($url, FILTER_VALIDATE_URL)) {
+                        try {
+                            // Fetch the image from the URL
+                            $imageContents = file_get_contents($url);
 
-                    $customer["id_frontend_side"] = $imageName;
+                            // Generate a unique image name
+                            $imageName = "id_frontend_side-" . time() . ".png";
+
+                            // Define the storage path
+                            $publicDirectory = public_path("customer_id_pic");
+
+                            // Ensure the directory exists
+                            if (!file_exists($publicDirectory)) {
+                                mkdir($publicDirectory, 0777, true);
+                            }
+
+                            // Save the image
+                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
+
+                            // Store the image name in the database
+                            $customer['id_frontend_side'] = $imageName;
+                        } catch (\Exception $e) {
+                            // Handle errors (e.g., invalid URL, failed download, etc.)
+                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
+                        }
+                    } else {
+                        return response()->json(['error' => 'Invalid URL provided.'], 400);
+                    }
                 }
+
 
                 if (request('id_backend_side')) {
                     $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', request('id_backend_side')));
