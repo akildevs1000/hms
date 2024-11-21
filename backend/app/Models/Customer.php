@@ -185,25 +185,24 @@ class Customer extends Model
     public function getIdFrontendSideAttribute($value)
     {
         if (!$value) return null;
-        // return "https://amcbackend.mytime2cloud.com/sign/" . $value;
-        return asset('id_frontend_side/' . $value);
+        return asset('customer_id_pic/' . $value);
     }
 
     public function getIdBackendSideAttribute($value)
     {
         if (!$value) return null;
-        return asset('id_backend_side/' . $value);
+        return asset('customer_id_pic/' . $value);
     }
 
     public function getCapturedPhotoAttribute($value)
     {
         if (!$value) return null;
-        return asset('captured_photo/' . $value);
+        return asset('customer_id_pic/' . $value);
     }
 
     public function getSignAttribute($value)
     {
         if (!$value) return null;
-        return asset('sign/' . $value);
+        return asset('customer_id_pic/' . $value);
     }
 }
