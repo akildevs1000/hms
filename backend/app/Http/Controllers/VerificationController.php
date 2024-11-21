@@ -14,10 +14,8 @@ class VerificationController extends Controller
         return Verification::where("company_id", $id)->first();
     }
 
-    public function verifyBooking(Request $request, $booking_id)
+    public function verifyBooking(Request $request)
     {
-        $customerId = Booking::where("id", $booking_id)->value("customer_id") ?? 0;
-
         $verification = Verification::where("company_id", $request->company_id)->first();
 
         $payload = [
@@ -27,15 +25,9 @@ class VerificationController extends Controller
             "sign" => $verification->sign,
         ];
 
-        $updated = Customer::where("id", $customerId)->update($payload);
-
-        if(!$updated) {
-            return 0;
-        }
-
         $verification->delete();
 
-        return 1;
+        return $payload;
 
     }
 

@@ -105,7 +105,7 @@
     Route::post('individual-booking', [BookingController::class, 'individualBooking']);
     Route::post('group-booking', [BookingController::class, 'groupBooking']);
     Route::post('hall-booking', [BookingController::class, 'hallBooking']);
-    Route::post('verify-customer/{id}', [VerificationController::class, 'verifyBooking']);
+    Route::post('verify-customer', [VerificationController::class, 'verifyBooking']);
 
     Route::apiResource('booking-source-type', BookingSourceTypeController::class);
 
