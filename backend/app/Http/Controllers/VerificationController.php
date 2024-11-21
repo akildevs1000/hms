@@ -16,7 +16,7 @@ class VerificationController extends Controller
 
     public function verifyBooking(Request $request)
     {
-        $verification = Verification::where("company_id", $request->company_id)->first();
+        $verification = Verification::where("company_id", $request->company_id)->orderBy("id", "desc")->first();
 
         $payload = [
             "captured_photo" => $verification->captured_photo,
@@ -26,7 +26,6 @@ class VerificationController extends Controller
         ];
 
         return $payload;
-
     }
 
     public function verifyCustomer()
