@@ -486,13 +486,7 @@ export default {
           to: "/manage",
           menu: "settings_room_price_access",
         },
-        {
-          topMenu: "setting",
-          icon: "mdi-cog",
-          title: "Setup",
-          to: "/setup",
-          menu: "settings_room_price_access",
-        },
+       
         {
           topMenu: "setting",
           icon: "mdi mdi-account-tie",

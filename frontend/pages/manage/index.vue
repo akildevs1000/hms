@@ -531,6 +531,9 @@
             <v-tab-item>
               <FoodPlan />
             </v-tab-item>
+            <v-tab-item>
+              <FoodPlanItems />
+            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -556,6 +559,7 @@ export default {
       "Holidays",
       "Additional Charges",
       "Food Plan",
+      "Food Items",
     ],
     Model: "Holidays Price",
     selectedWeekDays: [],

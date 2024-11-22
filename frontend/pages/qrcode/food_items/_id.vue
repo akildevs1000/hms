@@ -176,7 +176,7 @@
     </div>
 
     <div style="text-align: center" v-if="loading">
-      <img src="../../../static/loading.gif" width="200px" />
+      <img src="loading.gif" width="200px" />
     </div>
 
     <v-row style="width: 100%; text-align: center; margin: 0px; z-index: 10">

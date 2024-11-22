@@ -1,13 +1,8 @@
 <template>
   <v-dialog v-model="viewBoxDialog" max-width="900px">
+    <AssetsIconClose :left="890" @click="viewBoxDialog = false" />
     <v-card>
-      <v-card-title class="text-h5">
-        <v-spacer></v-spacer
-        ><v-icon @click="viewBoxDialog = false" color="primary"
-          >mdi-close</v-icon
-        ></v-card-title
-      >
-      <v-container>
+      <v-container v-if="customer && customer.id">
         <v-row>
           <!-- Profile Picture -->
           <v-col cols="7">
@@ -81,7 +76,7 @@
 
 <script>
 export default {
-  props: ["customer", "id"],
+  props: ["customer"],
   data: () => ({
     viewBoxDialog: false,
     GRCDialog: false,
@@ -92,7 +87,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `${process.env.BACKEND_URL}download_customer_attachments/${this.id}`
+        `${process.env.BACKEND_URL}download_customer_attachments/${this.customer.id}`
       );
       document.body.appendChild(element);
       element.click();
@@ -102,7 +97,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `${process.env.BACKEND_URL}${url}/${this.id}`
+        `${process.env.BACKEND_URL}${url}/${this.customer.id}`
       );
       document.body.appendChild(element);
       element.click();
