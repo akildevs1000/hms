@@ -16,7 +16,7 @@
     </v-dialog>
     <v-container fluid>
       <v-data-table
-        style="min-height: 370px; max-height: 370px; overflow-y: scroll"
+        style="min-height: 370px; max-height: 370px; overflow-y: auto"
         dense
         small
         :headers="headers_table"
@@ -39,7 +39,7 @@
             "
           />
         </template>
-        <template v-slot:item.res_number="{item}">
+        <template v-slot:item.res_number="{ item }">
           <span
             class="blue--text"
             @click="goToRevView(item)"
@@ -48,10 +48,10 @@
             <AssetsTextLabel :label="item.reservation_no || `---`" />
           </span>
         </template>
-        <template v-slot:item.source="{item}">
+        <template v-slot:item.source="{ item }">
           <AssetsTextLabel :label="item.source || `---`" />
         </template>
-        <template v-slot:item.rooms="{item}">
+        <template v-slot:item.rooms="{ item }">
           <span v-for="(room, index) in item.booked_rooms" :key="index">
             <AssetsTextLabel :label="room.room_no" />
             <AssetsTextLabel
@@ -59,40 +59,34 @@
             />
           </span>
         </template>
-        <template v-slot:item.reference="{item}">
+        <template v-slot:item.reference="{ item }">
           <AssetsTextLabel :label="item.reference_no || `---`" />
         </template>
-        <template v-slot:item.guest="{item}">
+        <template v-slot:item.guest="{ item }">
           <AssetsTextLabel :label="item.customer.first_name || `---`" />
         </template>
-        <template v-slot:item.check_in="{item}">
+        <template v-slot:item.check_in="{ item }">
           <AssetsTextLabel :label="convert_date_format(item.check_in)" />
         </template>
-        <template v-slot:item.check_out="{item}">
+        <template v-slot:item.check_out="{ item }">
           <AssetsTextLabel :label="convert_date_format(item.check_out)" />
         </template>
-        <template v-slot:item.total="{item}">
-          <AssetsTextLabel
-            :label="$utils.currency_format(item.total_price)"
-          />
+        <template v-slot:item.total="{ item }">
+          <AssetsTextLabel :label="$utils.currency_format(item.total_price)" />
         </template>
-        <template v-slot:item.posting="{item}">
+        <template v-slot:item.posting="{ item }">
           <AssetsTextLabel
             :label="$utils.currency_format(item.total_posting_amount)"
           />
         </template>
-        <template v-slot:item.paid="{item}">
-          <AssetsTextLabel
-            :label="$utils.currency_format(item.paid_amounts)"
-          />
+        <template v-slot:item.paid="{ item }">
+          <AssetsTextLabel :label="$utils.currency_format(item.paid_amounts)" />
         </template>
         <template v-slot:item.balance="item">
           <AssetsTextLabel :label="$utils.currency_format(item.item.balance)" />
         </template>
-        <template v-slot:item.res_date="{item}">
-          <AssetsTextLabel
-            :label="convert_date_format(item.booking_date)"
-          />
+        <template v-slot:item.res_date="{ item }">
+          <AssetsTextLabel :label="convert_date_format(item.booking_date)" />
         </template>
         <template v-slot:item.options="{ item }">
           <v-menu bottom left>
@@ -399,7 +393,7 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      let url = process.env.BACKEND_URL + "invoice";
+      let url = "https://backend.myhotel2cloud.com/api/invoice";
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}/${id}`);
@@ -479,9 +473,7 @@ export default {
 
       // http://192.168.2.210:8000/api/up_coming_reservation_list?page=1&per_page=30&company_id=2&search=&from=&to=&source=
 
-      let url =
-        process.env.BACKEND_URL +
-        `${type}?company_id=${comId}&from=${from}&to=${to}&search${search}&source${newSource}&r_type=${model}&guest_mode=${guest_mode}`;
+      let url = `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}&from=${from}&to=${to}&search${search}&source${newSource}&r_type=${model}&guest_mode=${guest_mode}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

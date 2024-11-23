@@ -1003,7 +1003,7 @@ export default {
 
   methods: {
     openExternalLink(path) {
-      let url = `${process.env.BACKEND_URL}get_audit_report_print?path=${path}`;
+      let url = `https://backend.myhotel2cloud.com/api/get_audit_report_print?path=${path}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
@@ -1073,7 +1073,7 @@ export default {
       let from = this.from_date;
       let to = this.to_date;
       let url =
-        process.env.BACKEND_URL +
+        "https://backend.myhotel2cloud.com/api/" +
         `${type}?company_id=${comId}&from=${from}&to=${to}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

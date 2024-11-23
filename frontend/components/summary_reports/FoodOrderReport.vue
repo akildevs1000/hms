@@ -70,7 +70,7 @@ export default {
       let comId = this.$auth.user.company.id;
       let date = new Date().toJSON().slice(0, 10);
       let url =
-        process.env.BACKEND_URL + `${type}?company_id=${comId}&date=${date}`;
+        `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}&date=${date}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}`);

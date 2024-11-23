@@ -290,7 +290,7 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      let url = process.env.BACKEND_URL + "invoice/" + id;
+      let url = "https://backend.myhotel2cloud.com/api/invoice/" + id;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

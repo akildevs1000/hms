@@ -119,7 +119,7 @@ export default {
       }
     },
     openExternalLink(path) {
-      let url = `${process.env.BACKEND_URL}get_audit_report_print?path=${path}`;
+      let url = `https://backend.myhotel2cloud.com/api/get_audit_report_print?path=${path}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

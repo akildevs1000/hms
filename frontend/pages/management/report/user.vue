@@ -465,7 +465,7 @@ export default {
       let comId = this.$auth.user.company.id; //company id
       let from = this.from_date;
       let to = this.to_date;
-      let url = process.env.BACKEND_URL +
+      let url = "https://backend.myhotel2cloud.com/api/" +
         `${type}?company_id=${comId}&from=${from}&to=${to}`;
       console.log(url);
       let element = document.createElement("a");

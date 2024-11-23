@@ -1127,7 +1127,7 @@ export default {
       }, 300);
     },
     pdfDownload() {
-      let path = process.env.BACKEND_URL + "/pdf";
+      let path = "https://backend.myhotel2cloud.com/api/pdf";
       let pdf = document.createElement("a");
       pdf.setAttribute("href", path);
       pdf.setAttribute("target", "_blank");
@@ -1158,7 +1158,7 @@ export default {
       let data = this.payload;
       let company_id = this.$auth.user.company.id;
       let { page, itemsPerPage } = this.options;
-      let path = process.env.BACKEND_URL + "/" + type;
+      let path = "https://backend.myhotel2cloud.com/api/" + type;
       let qs = `${path}?page=${page}&per_page=${itemsPerPage}&company_id=${company_id}&status=${status}&daily_date=${data.daily_date}&department_id=${data.department_id}&employee_id=${data.employee_id}`;
 
       let report = document.createElement("a");

@@ -2094,7 +2094,7 @@ export default {
                         this.alert("Success!", "Successfully room booking complated", "success");
                         // this.$router.push('/');
 
-                        let url = process.env.BACKEND_URL + "invoice";
+                        let url = "https://backend.myhotel2cloud.com/api/invoice";
                         let element = document.createElement("a");
                         element.setAttribute("target", "_blank");
                         element.setAttribute("href", `${url}/${booking_id}`);

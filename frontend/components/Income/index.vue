@@ -233,8 +233,7 @@ export default {
       let from = this.from_date;
       let to = this.to_date;
       let url =
-        process.env.BACKEND_URL +
-        `${type}?company_id=${comId}&from=${from}&to=${to}`;
+        `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}&from=${from}&to=${to}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

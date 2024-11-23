@@ -499,8 +499,7 @@ export default {
         process(type, model) {
 
             let url =
-                process.env.BACKEND_URL +
-                `${type}?company_id=${this.$auth.user.company.id}&filter_from_date=${this.filter_from_date}&filter_to_date=${this.filter_to_date}`;
+                `https://backend.myhotel2cloud.com/api/${type}?company_id=${this.$auth.user.company.id}&filter_from_date=${this.filter_from_date}&filter_to_date=${this.filter_to_date}`;
             console.log(url);
             let element = document.createElement("a");
             element.setAttribute("target", "_blank");
