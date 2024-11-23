@@ -87,7 +87,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `${process.env.BACKEND_URL}download_customer_attachments/${this.customer.id}`
+        `https://backend.myhotel2cloud.com/api/download_customer_attachments/${this.customer.id}`
       );
       document.body.appendChild(element);
       element.click();
@@ -97,7 +97,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `${process.env.BACKEND_URL}${url}/${this.customer.id}`
+        `https://backend.myhotel2cloud.com/api/${url}/${this.customer.id}`
       );
       document.body.appendChild(element);
       element.click();

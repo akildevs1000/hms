@@ -572,7 +572,7 @@ export default {
     redirect_to_invoice(id) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}invoice/${id}`);
+      element.setAttribute("href", `https://backend.myhotel2cloud.com/api/invoice/${id}`);
       document.body.appendChild(element);
       element.click();
     },

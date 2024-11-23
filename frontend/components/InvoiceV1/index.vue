@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     openExternalWinodwForInvoice(id, type) {
-      let url = `${process.env.BACKEND_URL}invoice-${type}/${id}`;
+      let url = `https://backend.myhotel2cloud.com/api/invoice-${type}/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

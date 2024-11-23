@@ -107,7 +107,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `${process.env.BACKEND_URL}${endpoint}/${this.customer.id}/${this.statement_type}/${this.months[0]}/${this.months[1]}`
+        `https://backend.myhotel2cloud.com/api/${endpoint}/${this.customer.id}/${this.statement_type}/${this.months[0]}/${this.months[1]}`
       );
       document.body.appendChild(element);
       element.click();

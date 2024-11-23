@@ -540,7 +540,7 @@ export default {
   methods: {
     openExternalWinodw({ inquiry_type, quotation: { id } }) {
       let type = inquiry_type.toLowerCase();
-      let url = `${process.env.BACKEND_URL}quotation-${type}/${id}`;
+      let url = `https://backend.myhotel2cloud.com/api/quotation-${type}/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
