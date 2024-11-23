@@ -145,3 +145,7 @@ Route::get('get_source_type', [SourceController::class, 'getSourceType']);
 
 Route::get('additional_charges', [AdditionalChargeController::class, 'index']);
 Route::post('additional_charges', [AdditionalChargeController::class, 'store']);
+
+Route::get('get_endpoint', function () {
+    return "https://backend.myhotel2cloud.com/api/";
+});
