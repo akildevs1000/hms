@@ -256,7 +256,7 @@ export default {
       }
     },
     openExternalWinodw(id) {
-      let url = `${process.env.BACKEND_URL}quotation-room/${id}`;
+      let url = `${process.env.BACKEND_URL}/quotation-room/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
@@ -264,7 +264,7 @@ export default {
       element.click();
     },
     openExternalWinodwForInvoice(id) {
-      let url = `${process.env.BACKEND_URL}invoice-room/${id}`;
+      let url = `${process.env.BACKEND_URL}/invoice-room/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
