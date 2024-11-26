@@ -11,11 +11,14 @@ class VerificationController extends Controller
 {
     public function getVerifyInfo($code = 0)
     {
-        $found = Verification::where("code", $code)->orderBy("id", "desc")->first();
+        try {
+            $found = Verification::where("code", $code)->orderBy("id", "desc")->first();
+            // Verification::where("company_id", $id)->delete();
 
-        // Verification::where("company_id", $id)->delete();
-
-        return $found;
+            return response($found) ?? response(null, 404);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     public function verifyBooking(Request $request)
