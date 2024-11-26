@@ -1,33 +1,55 @@
 <template>
   <span>
+    <ViewBox ref="ViewBox" :id="customer && customer.id" :customer="customer" />
     <v-row>
       <v-col md="2" cols="12">
-        <v-row no-gutters class="pa-2">
-          <v-col class="text-right">
-            <v-icon color="primary" small>mdi-eye</v-icon>
-            <!-- <BookingIDPreview v-if="initialImage" :BookingId="1" /> -->
+        <v-row dense justify="center">
+          <v-col class="d-flex justify-center">
+            <v-avatar size="100">
+              <img
+                class="zoom-on-hover"
+                :src="
+                  customer?.captured_photo ||
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
+                "
+                alt="Main Image"
+              />
+            </v-avatar>
           </v-col>
+        </v-row>
 
-          <v-col cols="12" class="mt-2">
+        <v-row dense justify="center" class="pa-1 mb-4">
+          <v-col cols="5">
             <v-img
-              :src="
-                (customer && customer.captured_photo) || '/no-profile-image.png'
-              "
+              class="zoom-on-hover"
+              aspect-ratio="1.5"
+              :src="customer?.id_frontend_side || '/idf.png'"
+              alt="Thumbnail"
             ></v-img>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="5">
             <v-img
-              :src="(customer && customer.captured_photo) || '/idf.png'"
-              style="margin: 0 auto; width: 50px; height: 50px"
-              contain
+              class="zoom-on-hover"
+              aspect-ratio="1.5"
+              :src="customer?.id_backend_side || '/idb.png'"
+              alt="Thumbnail"
             ></v-img>
           </v-col>
-          <v-col cols="6">
-            <v-img
-              :src="(customer && customer.captured_photo) || '/idb.png'"
-              style="margin: 0 auto; width: 50px; height: 50px"
-              contain
-            ></v-img>
+          <!-- <v-col cols="10">
+            <v-card outlined>
+              <v-img
+                class="zoom-on-hover"
+                aspect-ratio="2.5"
+                :src="customer?.sign || '/idb.png'"
+                alt="Thumbnail"
+              ></v-img>
+            </v-card>
+          </v-col> -->
+          <v-col cols="12" class="text-center pa-2">
+            <BookingIDPreview
+              v-if="!booking?.customer?.captured_photo"
+              @getCustomerDocs="handleCustomerDocs"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -397,6 +419,14 @@ export default {
       },
       business_sources: [],
       canOverride: false,
+
+      mainImage: "https://via.placeholder.com/300x200",
+      thumbnails: [
+        "https://via.placeholder.com/100x66",
+        "https://via.placeholder.com/100x66",
+        "https://via.placeholder.com/100x66",
+      ],
+      selectedThumbnail: null,
     };
   },
   async created() {
@@ -467,6 +497,16 @@ export default {
     },
   },
   methods: {
+    selectThumbnail(index) {
+      this.selectedThumbnail = index;
+      this.mainImage = this.thumbnails[index];
+    },
+    handleCustomerDocs(e) {
+      this.customer = {
+        ...this.customer,
+        ...e,
+      };
+    },
     getStates(country) {
       // Find the country object from the countries array
       const countryObj = this.countries.find((e) => e.name === country);
