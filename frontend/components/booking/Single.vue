@@ -7,11 +7,12 @@
     <template v-if="!noLabel" v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> View Billing </span>
     </template>
-    <ViewBox
+    <ViewBox v-if="customer && customer.id"
       ref="ViewBox"
       :id="$route.params.id"
       :customer="booking.customer"
     />
+   
     <div class="grey lighten-3 pa-2" style="overflow: hidden">
       <v-row>
         <v-col cols="3" v-if="isGroup">
@@ -230,54 +231,59 @@
                     <v-tab-item class="px-3 py-4">
                       <v-row v-if="customerScreen">
                         <v-col md="2" cols="12">
-                          <ViewBox
-                            ref="ViewBox"
-                            :id="$route.params.id"
-                            :customer="booking.customer"
-                          />
-                          <div>
-                            <v-img
-                              @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
-                              class="zoom-on-hover"
-                              style="z-index: 1; width: 100%"
-                              :src="
-                                booking?.customer?.captured_photo ||
-                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
-                              "
-                            />
-                          </div>
+                          <v-row dense justify="center">
+                            <v-col class="d-flex justify-center">
+                              <v-avatar size="100">
+                                <img
+                                  @click="
+                                    $refs[`ViewBox`][`viewBoxDialog`] = true
+                                  "
+                                  style="z-index: 1; width: 100%"
+                                  class="zoom-on-hover"
+                                  :src="
+                                    customer?.captured_photo ||
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
+                                  "
+                                  alt="Main Image"
+                                />
+                              </v-avatar>
+                            </v-col>
+                          </v-row>
+
+                          
+
+                          <v-row
+                            dense
+                            justify="center"
+                            class="mt-4"
+                            v-if="customer && customer.id"
+                          >
+                            <v-col cols="4">
+                              <v-img
+                                class="zoom-on-hover"
+                                @click="
+                                  $refs[`ViewBox`][`viewBoxDialog`] = true
+                                "
+                                :src="customer.id_frontend_side"
+                                aspect-ratio="1.5"
+                                alt="Thumbnail"
+                              ></v-img>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <v-img
+                                class="zoom-on-hover"
+                                @click="
+                                  $refs[`ViewBox`][`viewBoxDialog`] = true
+                                "
+                                :src="customer.id_backend_side"
+                                aspect-ratio="1.5"
+                                alt="Thumbnail"
+                              ></v-img>
+                            </v-col>
+                          </v-row>
 
                           <v-row>
-                            <v-col cols="6">
-                              <div style="height: 25px" class="py-1">
-                                <v-img
-                                  @click="
-                                    $refs[`ViewBox`][`viewBoxDialog`] = true
-                                  "
-                                  class="zoom-on-hover"
-                                  style="width: 100%"
-                                  :src="
-                                    booking?.customer?.id_frontend_side ||
-                                    '/idf.png'
-                                  "
-                                />
-                              </div>
-                            </v-col>
-                            <v-col cols="6">
-                              <div style="height: 25px" class="py-1">
-                                <v-img
-                                  @click="
-                                    $refs[`ViewBox`][`viewBoxDialog`] = true
-                                  "
-                                  class="zoom-on-hover"
-                                  style="width: 100%"
-                                  :src="
-                                    booking?.customer?.id_backend_side ||
-                                    '/idb.png'
-                                  "
-                                />
-                              </div>
-                            </v-col>
                             <v-col>
                               <table>
                                 <tr>
