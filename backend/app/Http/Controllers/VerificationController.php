@@ -86,6 +86,8 @@ class VerificationController extends Controller
             }
 
             $customer["company_id"] = request('company_id');
+            $customer["code"] = request('code');
+
 
             return Verification::create($customer);
         } catch (\Exception $e) {

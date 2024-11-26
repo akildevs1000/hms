@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("id_frontend_side")->nullable();
             $table->string("id_backend_side")->nullable();
             $table->string("sign")->nullable();
+            $table->integer("code");
             $table->unsignedBigInteger("company_id")->default(0);
             $table->timestamps();
         });
