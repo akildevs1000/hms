@@ -683,156 +683,78 @@ class BookingController extends Controller
     public function customerStore($customer)
     {
         try {
-            $isExistCustomer = false;
-            if (!is_null($customer['contact_no'])) {
-                $isExistCustomer = Customer::whereContactNo($customer['contact_no'])->whereCompanyId($customer['company_id'])->first();
+            $existingCustomer = $this->getExistingCustomer($customer);
+
+            if ($existingCustomer) {
+                $existingCustomer->update($customer);
+                return $existingCustomer->id;
             }
-            $id = "";
-            if ($isExistCustomer) {
-                $id = $isExistCustomer->id;
-                $isExistCustomer->update($customer);
-            } else {
 
-                if ($url = request('id_frontend_side')) {
-                    // Validate the URL
-                    if (filter_var($url, FILTER_VALIDATE_URL)) {
-                        try {
-                            // Fetch the image from the URL
-                            $imageContents = file_get_contents($url);
+            $customer = $this->handleFileUploads($customer);
 
-                            // Generate a unique image name
-                            $imageName = "id_frontend_side-" . time() . ".png";
+            $newCustomer = Customer::create($customer);
 
-                            // Define the storage path
-                            $publicDirectory = public_path("customer_id_pic");
-
-                            // Ensure the directory exists
-                            if (!file_exists($publicDirectory)) {
-                                mkdir($publicDirectory, 0777, true);
-                            }
-
-                            // Save the image
-                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
-
-                            // Store the image name in the database
-                            $customer['id_frontend_side'] = $imageName;
-                        } catch (\Exception $e) {
-                            // Handle errors (e.g., invalid URL, failed download, etc.)
-                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
-                        }
-                    } else {
-                        return response()->json(['error' => 'Invalid URL provided.'], 400);
-                    }
-                }
-
-                if ($url = request('id_backend_side')) {
-                    // Validate the URL
-                    if (filter_var($url, FILTER_VALIDATE_URL)) {
-                        try {
-                            // Fetch the image from the URL
-                            $imageContents = file_get_contents($url);
-
-                            // Generate a unique image name
-                            $imageName = "id_backend_side-" . time() . ".png";
-
-                            // Define the storage path
-                            $publicDirectory = public_path("customer_id_pic");
-
-                            // Ensure the directory exists
-                            if (!file_exists($publicDirectory)) {
-                                mkdir($publicDirectory, 0777, true);
-                            }
-
-                            // Save the image
-                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
-
-                            // Store the image name in the database
-                            $customer['id_backend_side'] = $imageName;
-                        } catch (\Exception $e) {
-                            // Handle errors (e.g., invalid URL, failed download, etc.)
-                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
-                        }
-                    } else {
-                        return response()->json(['error' => 'Invalid URL provided.'], 400);
-                    }
-                }
-
-                if ($url = request('captured_photo')) {
-                    // Validate the URL
-                    if (filter_var($url, FILTER_VALIDATE_URL)) {
-                        try {
-                            // Fetch the image from the URL
-                            $imageContents = file_get_contents($url);
-
-                            // Generate a unique image name
-                            $imageName = "captured_photo-" . time() . ".png";
-
-                            // Define the storage path
-                            $publicDirectory = public_path("customer_id_pic");
-
-                            // Ensure the directory exists
-                            if (!file_exists($publicDirectory)) {
-                                mkdir($publicDirectory, 0777, true);
-                            }
-
-                            // Save the image
-                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
-
-                            // Store the image name in the database
-                            $customer['captured_photo'] = $imageName;
-                        } catch (\Exception $e) {
-                            // Handle errors (e.g., invalid URL, failed download, etc.)
-                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
-                        }
-                    } else {
-                        return response()->json(['error' => 'Invalid URL provided.'], 400);
-                    }
-                }
-
-                if ($url = request('sign')) {
-                    // Validate the URL
-                    if (filter_var($url, FILTER_VALIDATE_URL)) {
-                        try {
-                            // Fetch the image from the URL
-                            $imageContents = file_get_contents($url);
-
-                            // Generate a unique image name
-                            $imageName = "sign-" . time() . ".png";
-
-                            // Define the storage path
-                            $publicDirectory = public_path("customer_id_pic");
-
-                            // Ensure the directory exists
-                            if (!file_exists($publicDirectory)) {
-                                mkdir($publicDirectory, 0777, true);
-                            }
-
-                            // Save the image
-                            file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
-
-                            // Store the image name in the database
-                            $customer['sign'] = $imageName;
-                        } catch (\Exception $e) {
-                            // Handle errors (e.g., invalid URL, failed download, etc.)
-                            return response()->json(['error' => 'Unable to process the image URL.'], 400);
-                        }
-                    } else {
-                        return response()->json(['error' => 'Invalid URL provided.'], 400);
-                    }
-                }
-
-
-
-                $record = Customer::create($customer);
-                $id = $record->id ?? 0;
-            }
-            return $id;
-            return $this->response('Customer successfully added.', $id, true);
+            return $newCustomer->id;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
 
+    private function getExistingCustomer($customer)
+    {
+        if (!empty($customer['contact_no'])) {
+            return Customer::where('contact_no', $customer['contact_no'])
+                ->where('company_id', $customer['company_id'])
+                ->first();
+        }
+
+        return null;
+    }
+
+    private function handleFileUploads($customer)
+    {
+        $fileKeys = ['id_frontend_side', 'id_backend_side', 'captured_photo', 'sign'];
+
+        foreach ($fileKeys as $key) {
+            if ($url = request($key)) {
+                $customer[$key] = $this->processFile($url, $key);
+            }
+        }
+
+        return $customer;
+    }
+
+    public function processFile($url, $prefix = 'file')
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            try {
+                // Fetch the image from the URL
+                $imageContents = file_get_contents($url);
+
+                // Generate a unique image name
+                $imageName = "$prefix-" . time() . ".png";
+
+                // Define the storage path
+                $publicDirectory = public_path("customer_id_pic");
+
+                // Ensure the directory exists
+                if (!file_exists($publicDirectory)) {
+                    mkdir($publicDirectory, 0777, true);
+                }
+
+                // Save the image
+                file_put_contents($publicDirectory . '/' . $imageName, $imageContents);
+
+                // Store the image name in the database
+                return $imageName;
+            } catch (\Exception $e) {
+                // Handle errors (e.g., invalid URL, failed download, etc.)
+                return response()->json(['error' => 'Unable to process the image URL.'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid URL provided.'], 400);
+        }
+    }
 
     public function check_in_room(Request $request)
     {
@@ -2454,9 +2376,9 @@ class BookingController extends Controller
     {
 
         $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
-        if ($diff_in_seconds < 0) {
-            return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
-        }
+        // if ($diff_in_seconds < 0) {
+        //     return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        // }
 
         $booking = null;
 
@@ -2475,8 +2397,7 @@ class BookingController extends Controller
 
         DB::beginTransaction();
         try {
-            $customer_id = $this->customerStore($request->only(Customer::customerAttributes()));
-            $request['customer_id'] = $customer_id;
+            $request['customer_id'] = $this->customerStore($request->only(Customer::customerAttributes()));
             //$booking = $this->storeBooking($request);
 
             $bookingArray = $this->storeGroupBooking($request);
