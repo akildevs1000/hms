@@ -13,11 +13,14 @@ class VerificationController extends Controller
     {
         try {
             $found = Verification::where("code", $code)->orderBy("id", "desc")->first();
-            // Verification::where("company_id", $id)->delete();
 
-            return response($found) ?? response(null, 404);
-        } catch (\Throwable $th) {
-            //throw $th;
+            if ($found) {
+                return $found;
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 
