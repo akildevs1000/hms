@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 
 class VerificationController extends Controller
 {
-    public function getVerifyInfo($id = 0)
+    public function getVerifyInfo($code = 0)
     {
-        $found = Verification::where("company_id", $id)->orderBy("id", "desc")->first();
+        $found = Verification::where("code", $code)->orderBy("id", "desc")->first();
 
         // Verification::where("company_id", $id)->delete();
 
@@ -87,7 +87,6 @@ class VerificationController extends Controller
 
             $customer["company_id"] = request('company_id');
             $customer["code"] = request('code');
-
 
             return Verification::create($customer);
         } catch (\Exception $e) {

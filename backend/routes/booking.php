@@ -15,7 +15,7 @@
     Route::get('room-color-codes', [BookingController::class, 'RoomColorCodes']);
 
     Route::post('update-pic-and-sign', [VerificationController::class, 'verifyCustomer']);
-    Route::get('get-verify-info/{booking_id}', [VerificationController::class, 'getVerifyInfo']);
+    Route::get('get-verify-info/{code}', [VerificationController::class, 'getVerifyInfo']);
 
     Route::post('store_bulk', [BookingController::class, 'storeBulk']);
     Route::post('booking_validate', [BookingController::class, 'booking_validate']);
