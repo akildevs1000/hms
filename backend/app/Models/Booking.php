@@ -19,6 +19,11 @@ class Booking extends Model
     const VERIFICATION_SLEEP = 0;
     const VERIFICATION_REQUIRED = 1;
     const VERIFICATION_COMPLETED = 2;
+    
+    const AVAILABLE = 0;
+    const BOOKED = 1;
+    const CHECKED_IN = 2;
+    const CHECKED_OUT = 3;
 
     const ROOM = "room";
     const HALL = "hall";
@@ -157,7 +162,7 @@ class Booking extends Model
         return $this->belongsTo(Customer::class)->withDefault([
             "name" => "---",
         ])
-            ->with("sub_customers");
+            ->with("sub_customers", "source");
     }
 
     // public function SetCheckInAttribute($value)

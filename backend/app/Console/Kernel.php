@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Mail\ReportNotificationMail;
+use App\Models\Company;
 use App\Models\ReportNotification;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -38,6 +39,25 @@ class Kernel extends ConsoleKernel
             // ->everyFiveMinutes()
             ->dailyAt('9:00')
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+
+
+        // generate records in background for report
+
+        $companyIds = Company::where("is_background_jobs", true)->pluck("id");
+
+        foreach ($companyIds as $companyId) {
+            $schedule
+                ->command("record:generate-daily-summary $companyId")
+                //->everyMinute()
+                ->dailyAt('13:05')
+                ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+
+            $schedule
+                ->command("record:generate-daily-cash $companyId")
+                //->everyMinute()
+                ->dailyAt('13:05')
+                ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+        }
     }
 
     /**
