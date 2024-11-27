@@ -27,6 +27,7 @@ class StoreRequest extends FormRequest
     {
         $arr = [
             'name'      => 'required',
+            'short_name'      => 'required|max:5',
             'type'      => 'required',
             'contact_name'      => 'nullable',
             'mobile'      => 'nullable',

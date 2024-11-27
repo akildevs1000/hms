@@ -35,6 +35,19 @@
             </v-col>
             <v-col md="6" cols="12">
               <v-text-field
+                v-model="editedItem.short_name"
+                placeholder="Company Short Name (5 charactor only)"
+                :hide-details="true"
+                outlined
+                label="Company Short Name (5 charactor only)"
+                dense
+              ></v-text-field>
+              <span v-if="errors && errors.short_name" class="error--text">{{
+                errors.short_name[0]
+              }}</span>
+            </v-col>
+            <v-col md="6" cols="12">
+              <v-text-field
                 v-model="editedItem.contact_name"
                 placeholder="Name"
                 label="Name"
@@ -101,7 +114,7 @@
                 errors.gst[0]
               }}</span>
             </v-col>
-            <v-col md="12" cols="12">
+            <v-col md="6" cols="6">
               <v-text-field
                 v-model="editedItem.address"
                 placeholder="Address"
@@ -286,6 +299,7 @@ export default {
       gst: "",
       mobile: "",
       name: "",
+      short_name:"",
       type: "",
       email: "",
       landline: "",
@@ -296,6 +310,7 @@ export default {
       gst: "",
       mobile: "",
       name: "",
+      short_name:"",
       type: "",
       email: "",
       landline: "",
@@ -431,6 +446,7 @@ export default {
     save() {
       let payload = {
         name: this.editedItem.name.toLowerCase(),
+        short_name: this.editedItem.short_name,
         type: this.type,
         gst: this.editedItem.gst,
         address: this.editedItem.address,

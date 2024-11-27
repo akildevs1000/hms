@@ -27,6 +27,7 @@ class UpdateRequest extends FormRequest
     {
         $arr = [
             'name'      => 'nullable',
+            'short_name'      => 'nullable|max:5',
             'type'      => 'nullable',
             'contact_name'      => 'nullable',
             'mobile'      => 'nullable',
