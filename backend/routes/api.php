@@ -47,3 +47,8 @@ include 'room_cleaning.php';
 include 'chat.php';
 
 include 'record.php';
+
+
+
+include 'external_urls.php';
+
