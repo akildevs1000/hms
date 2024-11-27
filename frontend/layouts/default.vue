@@ -385,13 +385,6 @@ export default {
           to: "/history",
           menu: "guest_access",
         },
-        // {
-        //   topMenu: "customer",
-        //   icon: "mdi mdi-account-tie",
-        //   title: "Guest",
-        //   to: "/customer/list",
-        //   menu: "guest_access",
-        // },
         {
           topMenu: "customer",
           icon: "mdi-ticket-account",
