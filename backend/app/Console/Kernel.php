@@ -48,14 +48,14 @@ class Kernel extends ConsoleKernel
         foreach ($companyIds as $companyId) {
             $schedule
                 ->command("record:generate-daily-summary $companyId")
-                ->everyFiveMinutes()
-                // ->dailyAt('13:05')
+                // ->everyFiveMinutes()
+                ->dailyAt('1:30')
                 ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
 
             $schedule
                 ->command("record:generate-daily-cash $companyId")
-                ->everyFiveMinutes()
-                // ->dailyAt('13:05')
+                // ->everyFiveMinutes()
+                ->dailyAt('1:45')
                 ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
         }
     }

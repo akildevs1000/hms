@@ -4,7 +4,6 @@ namespace App\Console\Commands\Record;
 
 use Illuminate\Console\Command;
 use App\Models\Booking;
-use App\Models\PaymentMode;
 use App\Models\Record;
 use Illuminate\Support\Facades\Log;
 
@@ -69,8 +68,6 @@ class GenerateCash extends Command
         $payload["company_id"] = $companyId;
         $payload["type"] = Record::CASH;
 
-        $this->info(json_encode($payload));
-
         try {
 
             $auditRecord = Record::where("date", $date)
@@ -79,16 +76,13 @@ class GenerateCash extends Command
 
             if ($auditRecord) {
                 $auditRecord->update($payload);
-                $this->info("Audit record updated for date: {$date}");
                 Log::info("Audit record updated for date: {$date}");
             } else {
                 Record::create($payload);
-                $this->info("Audit record created for date: {$date}");
                 Log::info("Audit record created for date: {$date}");
             }
         } catch (\Exception $e) {
             // Catch any exceptions and log an error message
-            $this->error("Error processing date {$date}: " . $e->getMessage());
             Log::error("Error processing date {$date}: " . $e->getMessage());
         }
     }
