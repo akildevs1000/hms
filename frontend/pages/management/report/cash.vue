@@ -94,7 +94,7 @@ export default {
 
     async getdata() {
       this.loading = true;
-      const url = "summary-report";
+      const url = "cash-report";
       this.payloadOptions.company_id = this.$auth.user.company_id;
 
       try {
@@ -103,7 +103,6 @@ export default {
         });
 
         const { data } = response;
-
         // Update headers and items
         this.headers = data.headers || [];
         this.items =
@@ -111,11 +110,18 @@ export default {
             return {
               id: e.id,
               date: e.date,
-              ...e.data.displayValues,
+              sold: e.data.displayValues.sold,
+              cash: e.data.displayValues.cash,
+              expense: e.data.displayValues.expense,
+              balance: e.data.displayValues.balance,
             };
           }) || [];
 
         this.summaryRow = data.summaryRow;
+
+        this.summaryRow.balance = this.$utils.currency_format(
+          data?.data?.reduce((acc, cur) => acc + cur.data.balance, 0)
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
         // Optionally show an error message to the user

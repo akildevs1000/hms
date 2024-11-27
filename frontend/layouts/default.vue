@@ -351,6 +351,34 @@ export default {
           menu: "night_audit_access",
         },
         {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          title: "Summary",
+          to: "/management/report/summary",
+          menu: "night_audit_access",
+        },
+        {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          title: "Cash Report",
+          to: "/management/report/cash",
+          menu: "night_audit_access",
+        },
+        {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          title: "OTA Report",
+          to: "/management/report/ota",
+          menu: "night_audit_access",
+        },
+        {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          title: "OTA TRN",
+          to: "/management/report/trn",
+          menu: "night_audit_access",
+        },
+        {
           topMenu: "dashboard",
           icon: "mdi-bed",
           title: "History",
@@ -486,7 +514,7 @@ export default {
           to: "/manage",
           menu: "settings_room_price_access",
         },
-       
+
         {
           topMenu: "setting",
           icon: "mdi mdi-account-tie",
