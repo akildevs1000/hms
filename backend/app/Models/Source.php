@@ -53,4 +53,9 @@ class Source extends Model
     {
         return $this->hasMany(Customer::class);
     }
+
+    public function source_bookings()
+    {
+        return $this->hasMany(Booking::class, "source", "name");
+    }
 }

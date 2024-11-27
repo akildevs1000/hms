@@ -33,6 +33,16 @@ class Customer extends Model
         return $this->hasOne(Booking::class);
     }
 
+    /**
+     * Get the booking that owns the Customer
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function source()
+    {
+        return $this->belongsTo(Source::class);
+    }
+
     public function latest_booking()
     {
         return $this->hasOne(Booking::class)->latest()
@@ -138,8 +148,6 @@ class Customer extends Model
             'last_name',
             'contact_no',
             'email',
-            'id_card_type_id',
-            'id_card_no',
             'car_no',
             'no_of_adult',
             'no_of_child',
@@ -154,10 +162,8 @@ class Customer extends Model
             'gst_number',
             'id_frontend_side',
             'id_backend_side',
-
             'captured_photo',
             'sign',
-
             'country',
             'state',
             'city',
