@@ -133,6 +133,9 @@ Route::get('get_agent', [SourceController::class, 'getAgent']);
 Route::get('get_corporate', [SourceController::class, 'getCorporate']);
 Route::get('get_source_type', [SourceController::class, 'getSourceType']);
 
+Route::get('source-list', [SourceController::class, 'sourceList']);
+
+
 
 // // Missing
 // Route::resource('missing', MissingController::class);

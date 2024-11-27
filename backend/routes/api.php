@@ -45,3 +45,5 @@ include 'room_cleaning.php';
 
 
 include 'chat.php';
+
+include 'record.php';

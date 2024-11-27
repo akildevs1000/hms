@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 class SourceController extends Controller
 {
 
+    public function  sourceList()
+    {
+        return Source::where("company_id", request("company_id"))->get();
+    }
+
     public function index(Request $request)
     {
         $request->company_id;
