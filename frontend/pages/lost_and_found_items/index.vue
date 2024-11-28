@@ -73,14 +73,16 @@
                       <v-col md="9" cols="12">
                         <v-row>
                           <v-col md="3" cols="12" sm="12">
-                            <v-text-field
-                              label="First Name *"
-                              dense
-                              outlined
-                              type="text"
+                            <v-autocomplete
                               v-model="bookingData.customer.title"
+                              :items="titleItems"
+                              label="Title *"
+                              dense
+                              item-text="name"
+                              item-value="name"
                               hide-details
-                            ></v-text-field>
+                              outlined
+                            ></v-autocomplete>
                           </v-col>
                           <v-col md="9" cols="12" sm="12">
                             <v-row>
@@ -755,13 +757,13 @@
         <v-col cols="12" class="mb-2">
           <v-card class="px-2">
             <v-row no-gutters class="pa-2">
-              <v-col style="margin-top:3px; ">
+              <v-col style="margin-top: 3px">
                 <v-btn color="primary" small @click="openNewRecord()">
                   <v-icon color="white" small>mdi-plus</v-icon>
                   New
                 </v-btn></v-col
               >
-              <v-col cols="2" class="mr-1" style="margin-top:1px; ">
+              <v-col cols="2" class="mr-1" style="margin-top: 1px">
                 <v-text-field
                   class="global-search-textbox"
                   append-icon="mdi-magnify"
@@ -902,6 +904,13 @@ export default {
     ItemLost,
   },
   data: () => ({
+    titleItems: [
+      { id: 1, name: "Mr" },
+      { id: 2, name: "Mrs" },
+      { id: 3, name: "Miss" },
+      { id: 4, name: "Ms" },
+      { id: 5, name: "Dr" },
+    ],
     viewDialog: false,
     snackbarColor: "black",
 
