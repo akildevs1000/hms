@@ -203,7 +203,7 @@
         absolute
         offset-y
       >
-        <v-list>
+        <v-list dense>
           <v-list-item-group v-model="selectedItem">
             <v-list-item>
               <v-list-item-title style="color: green"
@@ -366,7 +366,7 @@
         absolute
         offset-y
       >
-        <v-list>
+        <v-list dense>
           <v-list-item-group
             v-if="newBookingRoom && newBookingRoom.booked_room"
           >
