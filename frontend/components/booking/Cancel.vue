@@ -186,7 +186,7 @@
                   <v-autocomplete
                     readonly
                     label="Adult"
-                    :items="[0, 1, 2, 3]"
+                    :items="[1, 2, 3]"
                     dense
                     outlined
                     v-model="roomData.no_of_adult"

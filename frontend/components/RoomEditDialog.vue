@@ -113,7 +113,7 @@
           <v-col cols="4">
             <v-autocomplete
               label="Adult"
-              :items="[0, 1, 2, 3]"
+              :items="[1, 2, 3]"
               dense
               outlined
               v-model="temp.no_of_adult"
