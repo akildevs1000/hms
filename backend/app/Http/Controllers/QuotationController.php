@@ -70,7 +70,7 @@ class QuotationController extends Controller
     public function index(Request $request)
     {
         $model = Quotation::query();
-        $model->with(["customer", "followups", "status","invoice"]);
+        $model->with(["customer", "followups", "status", "invoice"]);
         $model->where("type", request("type", "room"));
 
         if ($request->filled('from_date') && $request->filled('to_date')) {
@@ -89,7 +89,7 @@ class QuotationController extends Controller
     {
         $query = Quotation::query();
 
-        $query->with(["customer", "followups", "status","invoice"]);
+        $query->with(["customer", "followups", "status", "invoice"]);
         // $query->where("type", request("type", "room"));
         $query->where(function ($q) use ($search) {
             $q->where("ref_no", env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
@@ -109,7 +109,7 @@ class QuotationController extends Controller
     {
         $query = Quotation::query();
 
-        $query->with(["customer", "followups", "status","invoice"]);
+        $query->with(["customer", "followups", "status", "invoice"]);
         $query->where("type", request("type", "hall"));
         $query->where(function ($q) use ($search) {
             $q->where("ref_no", env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%');
@@ -180,8 +180,17 @@ class QuotationController extends Controller
                 "email" => $quotation->customer->email,
                 "whatsapp" => $quotation->customer->whatsapp,
             ];
+            $quotation = Quotation::with("company", "customer")->where("type", "room")->find($quotation->id);
+            $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
+            $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
+            $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
 
-            $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
+            $pdf = Pdf::loadView('quotation.room', compact("quotation"))
+                // ->setPaper('a4', 'landscape')
+                ->setPaper('a4', 'portrait')
+                ->output();
+
+            $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields, $pdf);
             $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
 
             return $quotation;
