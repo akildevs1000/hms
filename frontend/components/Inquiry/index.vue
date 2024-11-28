@@ -99,7 +99,7 @@
                     :error-messages="
                       errors && errors.contact_no ? errors.contact_no[0] : ''
                     "
-                    @keyup="mergeContact()"
+                    @keyup="mergeContact"
                   ></v-text-field>
                 </v-col>
                 <v-col md="4" cols="12" sm="12">
@@ -446,7 +446,7 @@ export default {
       { id: 4, name: "Ms" },
       { id: 5, name: "Dr" },
     ],
-    inquiry: {},
+    inquiry: { contact_no: "", whatsapp: "" },
 
     check_in_menu: false,
     check_out_menu: false,
