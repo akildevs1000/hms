@@ -711,7 +711,7 @@ export default {
     },
 
     store() {
-      if (this.reason == "") {
+      if (this.reason == null) {
         alert("Enter reason");
         return;
       }
