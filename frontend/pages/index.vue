@@ -288,6 +288,17 @@
                 class="pt-6 px-2"
                 style="display: flex; justify-content: right; gap: 10px"
               >
+                <SearchReservationForDashboard
+                  @response="handleReservationResponse"
+                />
+
+                <BookingDetail
+                  :noLabel="true"
+                  ref="BookingSingleRef"
+                  :BookingId="reservationId"
+                  :key="reservationId"
+                />
+
                 <BookingHall
                   @success="handleSuccess(`Hall has been Booked`)"
                   :onlyButton="true"
@@ -734,6 +745,7 @@ export default {
       roomData: null,
       customerId: "",
       bookingId: "",
+      reservationId: null,
       document: null,
       lastTapTime: null,
       isDbCLick: false,
@@ -842,6 +854,18 @@ export default {
   },
 
   methods: {
+    handleReservationResponse(e) {
+      console.log("🚀 ~ handleReservationResponse ~ e:", e)
+      this.reservationId = e.id;
+      this.$nextTick(() => {
+        const bookingSingleComp = this.$refs["BookingSingleRef"];
+        if (bookingSingleComp) {
+          bookingSingleComp.ViewBookingDialog = true;
+        } else {
+          console.warn("BookingSingleComp ref is undefined");
+        }
+      });
+    },
     async checkRoomCleaningNewEvent() {
       let company_id = this.$auth.user.company_id;
       let { data } = await this.$axios.get(`room-cleaning-event/${company_id}`);
