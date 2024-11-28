@@ -7,12 +7,13 @@
     <template v-if="!noLabel" v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> View Billing </span>
     </template>
-    <ViewBox v-if="customer && customer.id"
+    <ViewBox
+      v-if="customer && customer.id"
       ref="ViewBox"
       :id="$route.params.id"
       :customer="booking.customer"
     />
-   
+
     <div class="grey lighten-3 pa-2" style="overflow: hidden">
       <v-row>
         <v-col cols="3" v-if="isGroup">
@@ -250,8 +251,6 @@
                             </v-col>
                           </v-row>
 
-                          
-
                           <v-row
                             dense
                             justify="center"
@@ -286,6 +285,16 @@
                           <v-row>
                             <v-col>
                               <table>
+                                <tr>
+                                  <td class="blue--text border-bottom">
+                                    <span> Reservation </span>
+                                  </td>
+                                  <td class="blue--text border-bottom text-right">
+                                    <span>
+                                      {{ booking.reservation_no }}
+                                    </span>
+                                  </td>
+                                </tr>
                                 <tr>
                                   <td
                                     class="text-left border-bottom"
