@@ -34,17 +34,18 @@ class ActionMarkdownMail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        $pdfContent = $this->generateRoomQuotationPDF($this->quotationId);
+        // $pdfContent = $this->generateRoomQuotationPDF($this->quotationId);
+        $pdf = Pdf::loadView('emails.quotation');
 
         return $this->subject($this->subject)
             ->view('emails.quotation')
-            // ->attachData($pdf->output(), 'example.pdf', [
-            //     'mime' => 'application/pdf',
-            // ]);
-
-            ->attachData($pdfContent, 'quotation.pdf', [
+            ->attachData($pdf->output(), 'example.pdf', [
                 'mime' => 'application/pdf',
             ]);
+
+        // ->attachData($pdfContent, 'quotation.pdf', [
+        //     'mime' => 'application/pdf',
+        // ]);
     }
 
     /**
