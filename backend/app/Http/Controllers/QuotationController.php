@@ -181,7 +181,7 @@ class QuotationController extends Controller
                 "whatsapp" => $quotation->customer->whatsapp,
             ];
 
-            $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
+            $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields, $quotation->id);
             $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
 
             return $quotation;

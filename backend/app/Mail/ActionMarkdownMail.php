@@ -15,32 +15,58 @@ class ActionMarkdownMail extends Mailable implements ShouldQueue
 
     public $body;
     public $subject;
-    private $pdf;
+    private $quotationId;
 
     /**
      * Create a new message instance.
      *
+     * @param string $body
+     * @param string $subject
+     * @param int $quotationId
      * @return void
      */
-    public function __construct($body, $subject, $pdf = null)
+    public function __construct($body, $subject, $quotationId)
     {
         $this->body = $body;
         $this->subject = $subject;
-        $this->pdf = $pdf; // Optional PDF attachment
+        $this->quotationId = $quotationId;
     }
 
     public function build()
     {
-        $email = $this->subject($this->subject)
+        // Generate PDF inside the build method
+
+        $result = $this->subject($this->subject)
             ->markdown('emails.action_mail') // Ensure this view exists
             ->with(['subject' => $this->subject, 'body' => $this->body]);
 
-        if ($this->pdf) {
-            $email->attachData($this->pdf, 'quotation.pdf', [
+        if ($this->quotationId) {
+            $pdfContent = $this->generateRoomQuotationPDF($this->quotationId);
+
+            $result->attachData($pdfContent, 'quotation.pdf', [
                 'mime' => 'application/pdf',
             ]);
         }
 
-        return $email;
+        return  $result;
+    }
+
+    /**
+     * Generate the PDF for the given quotation ID.
+     *
+     * @param int $id
+     * @return string
+     */
+    private function generateRoomQuotationPDF($id)
+    {
+        $quotation = Quotation::with("company", "customer")->where("type", "room")->findOrFail($id);
+        $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
+        $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
+        $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
+
+        // Generate and return PDF content
+        return Pdf::loadView('quotation.room', compact("quotation"))
+            ->setPaper('a4', 'portrait')
+            ->output();
     }
 }

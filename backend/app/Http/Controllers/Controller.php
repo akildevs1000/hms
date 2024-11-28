@@ -192,7 +192,7 @@ class Controller extends BaseController
         return number_format($amt, 2);
     }
 
-    public function sendMailIfRequired($action, $fields, $pdf = null)
+    public function sendMailIfRequired($action, $fields, $id = null)
     {
         $found = Template::where([
             "action_id" => $action,
@@ -214,7 +214,7 @@ class Controller extends BaseController
                 $found->body
             );
 
-            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject, $pdf));
+            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject, $id));
             info("mail sent");
             return "mail sent";
         }
