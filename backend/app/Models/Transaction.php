@@ -28,6 +28,21 @@ class Transaction extends Model
         return '';
     }
 
+    public function getDateAttribute()
+    {
+        if (isset($this->attributes['date'])) {
+            return date('d-M-Y H:i', strtotime($this->attributes['date']));
+        }
+        return '';
+    }
+    public function getCreatedAtAttribute()
+    {
+        if (isset($this->attributes['created_at'])) {
+            return date('d-M-Y H:i', strtotime($this->attributes['created_at']));
+        }
+        return '';
+    }
+    
     public function paymentMode()
     {
         return $this->belongsTo(PaymentMode::class, 'payment_method_id');
