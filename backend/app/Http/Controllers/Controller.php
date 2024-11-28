@@ -214,7 +214,7 @@ class Controller extends BaseController
                 $found->body
             );
 
-            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject, $id));
+            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject));
             info("mail sent");
             return "mail sent";
         }
