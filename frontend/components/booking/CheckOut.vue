@@ -116,7 +116,7 @@
                             {{
                               isGroupBooking
                                 ? "Group Booking"
-                                : $utils.currency_format(roomData.price)
+                                : $utils.currency_format(roomData.grand_total)
                             }}
                           </td>
                         </tr>
@@ -140,21 +140,6 @@
                         </tr>
                         <tr>
                           <td
-                            class="text-left border-bottom"
-                            style="width: 110px"
-                          >
-                            Total
-                          </td>
-                          <td
-                            class="text-right border-bottom"
-                            style="width: 110px"
-                          >
-                            {{ $utils.currency_format(roomData.grand_total) }}
-                          </td>
-                          <!-- <td colspan="2" class="text-center">Total Rs.</td> -->
-                        </tr>
-                        <tr>
-                          <td
                             class="text-left border-bottom red--text"
                             style="width: 110px"
                           >
@@ -172,7 +157,7 @@
                         </tr>
                       </table>
                     </v-col>
-                    <v-col class="pt-8">
+                    <v-col class="pt-5">
                       <table>
                         <tr>
                           <td class="text-center">Total Rs.</td>
@@ -182,7 +167,7 @@
                             <span style="font-size: 18px" class="blue--text">
                               {{
                                 $utils.currency_format(
-                                  parseFloat(roomData.grand_total)
+                                  parseFloat(roomData.grand_total) + parseFloat(BookingData.total_posting_amount)
                                 )
                               }}
                             </span>
@@ -494,6 +479,7 @@
                         </v-col>
                         <v-col cols="6">
                           <v-text-field
+                            readonly
                             v-model="tempBalance"
                             label="Balance"
                             outlined
@@ -867,7 +853,10 @@ export default {
     redirect_to_invoice(id) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `https://backend.myhotel2cloud.com/api/invoice/${id}`);
+      element.setAttribute(
+        "href",
+        `https://backend.myhotel2cloud.com/api/invoice/${id}`
+      );
       document.body.appendChild(element);
       element.click();
     },
