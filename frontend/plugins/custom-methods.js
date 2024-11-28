@@ -88,7 +88,6 @@ export default ({ app }, inject) => {
       element.setAttribute("target", "_blank");
       element.setAttribute("href", link);
       document.body.appendChild(element);
-      console.log(element);
       element.click();
     },
   });

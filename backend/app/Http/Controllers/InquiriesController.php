@@ -19,7 +19,9 @@ class InquiriesController extends Controller
     {
         $model = Inquiry::query()->filter($request->search);
         $model->where('company_id', $request->company_id);
-        return   $model->with("quotation")->paginate($request->per_page);;
+        return  $model->with("quotation")
+            ->orderBy("id", "desc")
+            ->paginate($request->per_page);;
     }
 
     /**

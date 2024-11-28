@@ -5,22 +5,37 @@
       <span v-bind="attrs" v-on="on"> View Posting </span>
     </template>
     <v-card>
-      <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-        <span>View Posting</span>
+      <v-alert class="rounded-md" color="grey lighten-3" dense flat>
+        <div class="d-flex text-color" style="font-size: 14px">
+          <span>View Posting</span>
+          <v-spacer></v-spacer>
+          <span class="blue--text">Reservation # {{ bookingId }}</span>
+        </div>
         <v-spacer></v-spacer>
-        
-      </v-toolbar>
+      </v-alert>
       <v-card-text>
-        <v-container>
-          <AssetsTable v-if="postings.length" :headers="headers" :items="postings" />
-        </v-container>
+        <div class="mb-1 text-right">
+          <AssetsIcon
+            icon="printer-outline"
+            @click="
+              $utils.open_external_link(
+                `https://backend.myhotel2cloud.com/api/posting-download/${evenIid}`
+              )
+            "
+          />
+        </div>
+        <AssetsTable
+          v-if="postings.length"
+          :headers="headers"
+          :items="postings"
+        />
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 <script>
 export default {
-  props: ["evenIid"],
+  props: ["evenIid", "bookingId"],
   data() {
     return {
       viewPostingDialog: false,
@@ -60,7 +75,7 @@ export default {
         item: e.item,
         qty: e.qty,
         amount: this.$utils.currency_format(e.amount_with_tax),
-        posting_date: this.$dateFormat.dmy(e.posting_date),
+        posting_date: this.$dateFormat.dmyhm(e.posting_date),
       }));
     },
   },

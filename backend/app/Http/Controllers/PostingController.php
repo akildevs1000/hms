@@ -178,6 +178,22 @@ class PostingController extends Controller
         return $model->whereBookedRoomId($id)->get();
     }
 
+    public function postingDownload(Request $request, $id)
+    {
+        $model = Posting::query();
+        $model->where('company_id', $request->company_id);
+
+        $model->with([
+            'bookedRoom',
+            'booking:id,customer_id,rooms' => [
+                'customer:id,email,first_name,last_name',
+                'room:id,room_type_id,room_no',
+            ],
+        ]);
+
+        return $model->whereBookedRoomId($id)->get();
+    }
+
     public function edit($id)
     {
         //

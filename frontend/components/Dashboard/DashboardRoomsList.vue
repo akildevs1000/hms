@@ -309,6 +309,7 @@
                   <BookingViewPosting
                     :key="`${evenIid}_2_4${checkData.id}`"
                     :evenIid="evenIid"
+                    :bookingId="bookingId"
                     @close-dialog="closeCheckInAndOpenGRC"
                   ></BookingViewPosting>
                 </v-list-item-title>
