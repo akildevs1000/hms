@@ -31,26 +31,26 @@ class SendTestEmailWithPDF extends Command
      */
     public function handle()
     {
-        // // Get the email address from the command argument
-        // $email = $this->argument('email');
-
-        // // Prepare data for the email
-        // $data = [
-        //     'name' => 'John Doe',
-        //     'message' => 'This is a sample message.',
-        // ];
-
-        // // Generate the PDF
-        // // $pdf = Pdf::loadView('emails.pdf_template', $data);
-
-        // // Send the email with PDF attachment
-        // Mail::to($email)->send(new BasicEmailWithPDF($data));
-
-        // // Output a success message to the console
-        // $this->info("Email with PDF sent to {$email}");
-        // return;
+        // Get the email address from the command argument
         $email = $this->argument('email');
         $quotationId = $this->argument('quotationId');
+
+
+        // Prepare data for the email
+        $data = [
+            'name' => 'John Doe',
+            'message' => 'This is a sample message.',
+        ];
+
+        // Generate the PDF
+        // $pdf = Pdf::loadView('emails.pdf_template', $data);
+
+        // Send the email with PDF attachment
+        Mail::to($email)->send(new BasicEmailWithPDF($data, $quotationId));
+
+        // Output a success message to the console
+        $this->info("Email with PDF sent to {$email}");
+        return;
 
         try {
             // Send the test email
