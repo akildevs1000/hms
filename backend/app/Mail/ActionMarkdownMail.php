@@ -64,6 +64,14 @@ class ActionMarkdownMail extends Mailable implements ShouldQueue
         $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
         $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
 
+
+        $pdf = Pdf::loadView('quotation.room', compact("quotation"))->setPaper('a4', 'portrait');
+
+        // Save the PDF locally for debugging
+        file_put_contents(storage_path('app/test_quotation.pdf'), $pdf->output());
+
+        return $pdf->output();
+
         // Generate and return PDF content
         return Pdf::loadView('quotation.room', compact("quotation"))
             ->setPaper('a4', 'portrait')
