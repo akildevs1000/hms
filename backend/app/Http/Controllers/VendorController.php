@@ -10,7 +10,7 @@ class VendorController extends Controller
 {
     public function dropDown()
     {
-        return Vendor::get();
+        return Vendor::where("company_id", request("company_id"))->get();
     }
     /**
      * Display a listing of the resource.
@@ -19,7 +19,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        return Vendor::with("vendor_category")->paginate(request("per_page", 50));
+        return Vendor::where("company_id", request("company_id"))->with("vendor_category")->paginate(request("per_page", 50));
     }
 
     /**
