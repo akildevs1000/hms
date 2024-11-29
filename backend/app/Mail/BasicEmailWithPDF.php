@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class BasicEmailWithPDF extends Mailable implements ShouldQueue
+class BasicEmailWithPDF extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -35,22 +35,23 @@ class BasicEmailWithPDF extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        $pdf = $this->generateRoomQuotationPDF($this->quotationId);
+        // $pdf = $this->generateRoomQuotationPDF($this->quotationId);
 
-        $result = $this->subject('Subject Here')
-
+        $result = $this
+            ->from("hydersparkthotel@gmail.com")
+            ->subject('Subject Here')
             ->markdown('emails.action_mail')
             ->with(['subject' => "test subject", 'body' => "dontsdlfkj"]);
-        $result->attachData($pdf->output(), 'quotation.pdf', [
-            'mime' => 'application/pdf',
-        ]);
+
+        // $result->attachData($pdf->output(), 'quotation.pdf', [
+        //     'mime' => 'application/pdf',
+        // ]);
 
         return $result;
     }
 
     private function generateRoomQuotationPDF($id)
     {
-
         $quotation = Quotation::with("company", "customer")->where("type", "room")->findOrFail($id);
         $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
         $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));

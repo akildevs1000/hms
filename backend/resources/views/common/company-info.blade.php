@@ -4,12 +4,11 @@
             <td class="text-left border-none col-4">
                 <div class="logo pt">
                     @if (env('APP_ENV') == 'production')
-                        <img src="{{ $logo }}" height="100px" width="100"
+                        <img src="https://backend.myhotel2cloud.com/upload/1673109140.jpg" height="100px" width="100"
                             style="margin-left: 50px;margin-top: 0px">
                     @else
                         <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Hotel Logo" class="logo" />
                     @endif
-
                 </div>
             </td>
             <td class="text-center border-none col-4 uppercase"></td>
