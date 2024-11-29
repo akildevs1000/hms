@@ -94,6 +94,7 @@ export default {
     async submit() {
       this.loading = true;
       try {
+        this.payload.company_id = this.$auth.user.company_id;
         await this.$axios.post(this.endpoint, this.payload);
         this.close();
         this.$emit("response", "Record has been inserted");
