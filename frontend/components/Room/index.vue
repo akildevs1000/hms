@@ -571,63 +571,37 @@ export default {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     ],
   }),
-  watch: {
-    options: {
-      handler() {
-        this.getDataFromApi();
-      },
-      deep: true,
-    },
-  },
+  // watch: {
+  //   options: {
+  //     handler() {
+  //       this.getDataFromApi();
+  //     },
+  //     deep: true,
+  //   },
+  // },
   created() {
     this.getDataFromApi();
     this.getRoomTypesData();
   },
   methods: {
     updateQRCode() {
-      this.data.forEach(async (element) => {
-        let url =
-          process.env.APP_URL +
-          "qrcode/" +
-          this.$auth.user.company.id +
-          "-" +
-          element.room_no +
-          "-" +
-          element.id;
-        element.qrURL = `http://localhost:3005/?company_id=3&room_id=92&room_no=208&otp=1`;
-        element.qrImage = await this.$qrcode.generate(url, {
+      this.data.forEach(async (e) => {
+        let url = `https://customer.myhotel2cloud.com/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
+
+        e.qrURL = url;
+        e.qrImage = await this.$qrcode.generate(url, {
           width: 100,
         });
       });
-      //let person = this.data.find((e) => e.id == item.id);
     },
 
-    // async updateQRCodeItem(item) {
-    //   let person = this.data.find(async (e) => e.id == item.id);
-    //   person.qrImage = await this.$qrcode.generate(url, {
-    //     width: 100,
-    //   });
-    // },
-
-    async viewQRCode(item) {
+    async viewQRCode(qrURL) {
       this.dialogQRcode = true;
-      // let url = process.env.APP_URL;
-
-      let url =
-        process.env.APP_URL +
-        "qrcode/" +
-        this.$auth.user.company.id +
-        "-" +
-        item.room_no +
-        "-" +
-        item.id;
-
-      await this.generateQRCode(url, 500);
+      await this.generateQRCode(qrURL, 500);
     },
 
     async generateQRCode(url, width) {
       try {
-        console.log(url);
         this.qrCodeImage = await this.$qrcode.generate(url, {
           width: width,
         });
@@ -637,19 +611,6 @@ export default {
         console.error("Error generating QR code:", error);
       }
     },
-    // async viewQRCode(url, width) {
-    //   try {
-    //     this.dialogQRcode = true;
-    //     let url = process.env.APP_URL;
-    //     console.log(url);
-    //     this.qrCodeImage = await this.$qrcode.generate(url, {
-    //       width: "500",
-    //     });
-    //     console.log(this.qrCodeImage);
-    //   } catch (error) {
-    //     console.error("Error generating QR code:", error);
-    //   }
-    // },
 
     changeRoomCloudStatus(item, status) {
       //console.log(roomId, status);
