@@ -17,7 +17,7 @@ class InvoiceController extends Controller
      */
     public function dropDown()
     {
-        return Invoice::get();
+        return Invoice::where("company_id", request("company_id"))->get();
     }
 
     /**
@@ -27,7 +27,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        return Invoice::with(["customer", "quotation"])->paginate(request("per_page", 50));
+        return Invoice::where("company_id", request("company_id"))->with(["customer", "quotation"])->paginate(request("per_page", 50));
     }
 
     /**
