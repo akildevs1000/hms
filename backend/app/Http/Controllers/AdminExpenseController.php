@@ -37,6 +37,7 @@ class AdminExpenseController extends Controller
             ]
         )
             ->where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
+            ->where("company_id", request("company_id"))
             ->paginate(request("per_page", 50));
     }
 
