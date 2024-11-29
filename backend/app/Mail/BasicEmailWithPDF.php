@@ -7,8 +7,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class BasicEmailWithPDF extends Mailable
+class BasicEmailWithPDF extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -36,11 +37,15 @@ class BasicEmailWithPDF extends Mailable
     {
         $pdf = $this->generateRoomQuotationPDF($this->quotationId);
 
-        return $this->subject('Subject Here')
-            ->view('emails.quotation')
-            ->attachData($pdf->output(), 'quotation.pdf', [
-                'mime' => 'application/pdf',
-            ]);
+        $result = $this->subject('Subject Here')
+
+            ->markdown('emails.action_mail')
+            ->with(['subject' => "test subject", 'body' => "dontsdlfkj"]);
+        $result->attachData($pdf->output(), 'quotation.pdf', [
+            'mime' => 'application/pdf',
+        ]);
+
+        return $result;
     }
 
     private function generateRoomQuotationPDF($id)
