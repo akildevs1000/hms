@@ -35,6 +35,11 @@ class SendTestEmailWithPDF extends Command
         $email = $this->argument('email');
         $quotationId = $this->argument('quotationId');
 
+        $quotation = \App\Models\Quotation::with("company", "customer")->where("type", "room")->findOrFail($quotationId);
+
+        $this->info($quotation->company->logo);
+
+        die;
 
         // Prepare data for the email
         $data = [
