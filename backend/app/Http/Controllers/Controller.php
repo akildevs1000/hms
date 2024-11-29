@@ -194,6 +194,7 @@ class Controller extends BaseController
 
     public function sendMailIfRequired($action, $fields, $id = null)
     {
+
         $found = Template::where([
             "action_id" => $action,
             "medium" => "email"
@@ -213,8 +214,7 @@ class Controller extends BaseController
                 ],
                 $found->body
             );
-
-            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject));
+            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject, $id));
             info("mail sent");
             return "mail sent";
         }

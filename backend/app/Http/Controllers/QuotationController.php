@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Quotation\ValidationRequest;
+use App\Mail\ActionMarkdownMail;
 use App\Models\Customer;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
@@ -10,6 +11,7 @@ use App\Models\Template;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class QuotationController extends Controller
 {
@@ -182,6 +184,7 @@ class QuotationController extends Controller
             ];
 
             $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields, $quotation->id);
+
             $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
 
             return $quotation;
