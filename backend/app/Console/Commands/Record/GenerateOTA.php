@@ -36,23 +36,28 @@ class GenerateOTA extends Command
         $date = date("Y-m-d");
 
         // Fetch bookings for the specified date range
-        $bookingsData = Booking::whereNotNull('source')
+        $bookingsGrouped = Booking::whereNotNull('source')
             ->whereDate('check_in', $date)
-            ->selectRaw('DATE(check_in) as booking_date, source, COUNT(*) as count, SUM(total_price) as total_sum')
-            ->groupBy('booking_date', 'source')
-            ->get();
-
-        $bookingsGrouped = $bookingsData
-            ->groupBy('booking_date')
-            ->map(function ($dayBookings) {
-                return $dayBookings->keyBy('source');
+            ->get(['source', 'total_price as sum']) // Ensure 'Total Price' is in the selected fields
+            ->groupBy('source')
+            ->map(function ($group) {
+                return [
+                    "total_sum" => $group->sum('sum')
+                ];
             });
+
+        // Output $bookingsGrouped for each source
+        foreach ($bookingsGrouped as $source => $sum) {
+            echo "Source: $source, Total Total Price: $sum\n";
+        }
+
+        return;
+
 
         $sourceData = [];
 
         $sources = Source::pluck("name")->toArray();
 
-        // Initialize source data with default values
         foreach ($sources as $source) {
             $sourceData[$source] = [
                 "total_sum" => '₹' . number_format(0, 2),
@@ -60,15 +65,16 @@ class GenerateOTA extends Command
             ];
         }
 
-        // Populate data for the given date if bookings exist
-        if ($bookingsGrouped->has($date)) {
-            foreach ($bookingsGrouped[$date] as $source => $booking) {
-                $sourceData[$source] = [
-                    "total_sum" => '₹' . number_format($booking->total_sum, 2),
-                    "count" => $booking->count,
-                ];
-            }
+        foreach ($bookingsGrouped as $source => $booking) {
+            $sourceData[$source] = [
+                "total_sum" => '₹' . number_format($booking->total_price, 2),
+                "count" => $booking->count,
+            ];
         }
+
+        echo json_encode($sourceData);
+
+        return;
 
         $payload = [];
 
