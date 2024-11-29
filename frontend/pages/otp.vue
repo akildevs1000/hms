@@ -1,6 +1,6 @@
 <template>
   <v-container fill-height>
-    <v-card class="mx-auto" width="1000">
+    <v-card class="mx-auto" width="1000" style="margin-top: 150px">
       <v-row no-gutters>
         <v-col>
           <v-card
@@ -38,12 +38,12 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" md="6" class="primary">
+        <v-col cols="12" md="6" class="purple">
           <v-card
             dark
             flat
             style="min-height: 500px; width: 100%"
-            class="white--text d-flex justify-center align-center primary pa-0 ma-0"
+            class="white--text d-flex justify-center align-center pa-0 ma-0"
           >
             <v-card-text class="white--text">
               <h5>MyHotel2Cloud THE RIGHT SOLUTION FOR YOU</h5>
@@ -73,16 +73,26 @@ export default {
   },
   methods: {
     async generateOTP() {
-      let botToken = `7356807670:AAGtb_m3juvOpUGZCBaMXK73oO7A0-iUPOg`;
-      let chatId = this.$auth.user.telegram_chat_id;
+      // let botToken = `7356807670:AAGtb_m3juvOpUGZCBaMXK73oO7A0-iUPOg`;
+      // let chatId = this.$auth.user.telegram_chat_id;
       let otp = Math.floor(100000 + Math.random() * 900000);
       const message = `Your OTP code is: ${otp}`;
-      let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}`;
-      try {
-        await this.$axios.get(url);
-        this.storeOTP(otp)
-      } catch (error) {
-        console.error("Error sending message:", error);
+      // let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}`;
+      console.log("🚀 ~ generateOTP ~ message:", message);
+      if (this.$auth.user.mobile) {
+        console.log(
+          "🚀 ~ generateOTP ~ this.$auth.user.mobile:",
+          this.$auth.user.mobile
+        );
+        try {
+          await this.$axios.post(`/send-message`, {
+            number: this.$auth.user.mobile,
+            message: message,
+          });
+          this.storeOTP(otp);
+        } catch (error) {
+          console.error("Error sending message:", error);
+        }
       }
     },
     async storeOTP(otp) {
@@ -103,7 +113,7 @@ export default {
       let user_id = this.$auth.user.id;
       let url = `/validate-telegram-otp/${user_id}`;
       let config = {
-        params: { otp:this.otp },
+        params: { otp: this.otp },
       };
       try {
         await this.$axios.get(url, config);
