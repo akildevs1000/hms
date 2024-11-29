@@ -25,6 +25,7 @@ class ValidationRequest extends FormRequest
     {
         return [
             "name" => "required",
+            "company_id" => "required",
             "description" => "nullable|min:5|max:255"
         ];
     }
