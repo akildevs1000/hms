@@ -50,11 +50,14 @@ class BasicEmailWithPDF extends Mailable implements ShouldQueue
 
     private function generateRoomQuotationPDF($id)
     {
+
         $quotation = Quotation::with("company", "customer")->where("type", "room")->findOrFail($id);
         $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
         $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
         $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
-        // Generate and return PDF content
+        $logoPath = urldecode($quotation->company->logo); // Replace with your dynamic URL
+        $logoData = base64_encode(file_get_contents($logoPath));
+        $quotation->company->logo = 'data:image/jpeg;base64,' . $logoData;
         return Pdf::loadView('quotation.room', compact("quotation"))
             ->setPaper('a4', 'portrait');
     }
