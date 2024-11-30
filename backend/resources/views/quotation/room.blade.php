@@ -315,7 +315,7 @@
                 </td>
                 <td class="text-left border-none col-3">
                     <h4>Nights</h4>
-                    <p>{{ $quotation->total_no_of_nights }}</p>
+                    <p>{{ $quotation->total_no_of_nights - 1 }}</p>
                 </td>
                 <td class="text-left border-none col-3">
                     <h4>Rooms</h4>
