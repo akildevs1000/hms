@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can('management_income_access') && can('management_income_view')">
+  <div v-if="can('income_access')">
     <v-dialog v-model="IncomeCardDialog" persistent max-width="700px">
       <AssetsIconClose left="690" @click="IncomeCardDialog = false" />
       <v-card>
@@ -341,7 +341,7 @@
               @click="currentTabId = 2"
               >Expense</v-btn
             >
-            <v-btn
+            <v-btn v-if="can(`management_expense_access`)"
               :color="currentTabId === 3 ? `primary` : ''"
               text
               @click="currentTabId = 3"

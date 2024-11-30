@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can('settings_rooms_access') && can('settings_rooms_view')">
+  <div>
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -127,7 +127,7 @@
               <v-col md="12" cols="12">
                 <label> </label>
                 <v-autocomplete
-                label="Status"
+                  label="Status"
                   :disabled="viewMode"
                   selected="0"
                   :items="[
@@ -152,10 +152,17 @@
                 }}</span>
               </v-col>
               <v-col cols="12" class="text-right">
-                <v-btn small @click="newItemDialog = false" dark filled color="grey white--text"
-                >Cancel</v-btn
-              >
-              <v-btn small @click="save()" dark filled color="primary">Save</v-btn>
+                <v-btn
+                  small
+                  @click="newItemDialog = false"
+                  dark
+                  filled
+                  color="grey white--text"
+                  >Cancel</v-btn
+                >
+                <v-btn small @click="save()" dark filled color="primary"
+                  >Save</v-btn
+                >
               </v-col>
             </v-row>
           </v-container>
@@ -435,7 +442,6 @@
       </v-row>
     </v-card>
   </div>
-  <NoAccess v-else />
 </template>
 <script>
 export default {
@@ -700,7 +706,7 @@ export default {
           sortBy: sortedBy,
           sortDesc: sortedDesc,
           per_page: itemsPerPage,
-          type:"hall",
+          type: "hall",
           company_id: this.$auth.user.company.id,
           ...this.filters,
         },
@@ -716,7 +722,9 @@ export default {
     },
 
     getRoomTypesData() {
-      let options = { params: { company_id: this.$auth.user.company.id,type:"hall" } };
+      let options = {
+        params: { company_id: this.$auth.user.company.id, type: "hall" },
+      };
       this.$axios.get(`get_room_type_list`, options).then(({ data }) => {
         this.roomTypesForSelectOptions = data.data;
         this.roomTypesData = data.data;
@@ -729,7 +737,9 @@ export default {
     editItem(item, viewMode = false) {
       this.viewMode = viewMode;
       this.editedItem = {};
-      let options = { params: { company_id: this.$auth.user.company.id,type:"hall" } };
+      let options = {
+        params: { company_id: this.$auth.user.company.id, type: "hall" },
+      };
       this.newItemDialog = true;
 
       this.$axios

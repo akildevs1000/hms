@@ -1,10 +1,5 @@
 <template>
-  <div
-    v-if="
-      can(`settings_rooms_category_access`) &&
-      can(`settings_rooms_category_view`)
-    "
-  >
+  <div>
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -172,7 +167,7 @@
               <v-btn
                 dark
                 class="blue"
-                v-if="can(`settings_rooms_category_create`)"
+                v-if="can(`hall_create`)"
                 small
                 @click="
                   roomTypeDialog = true;
@@ -199,8 +194,8 @@
                     bottom
                     left
                     v-if="
-                      can('settings_rooms_category_edit') ||
-                      can('settings_rooms_category_delete')
+                      can('hall_edit') ||
+                      can('hall_delete')
                     "
                   >
                     <template v-slot:activator="{ on, attrs }">
@@ -210,7 +205,7 @@
                     </template>
                     <v-list width="120" dense>
                       <v-list-item
-                        v-if="can('settings_rooms_category_edit')"
+                        v-if="can('hall_edit')"
                         @click="editItem(item)"
                       >
                         <v-list-item-title style="cursor: pointer">
@@ -219,7 +214,7 @@
                         </v-list-item-title>
                       </v-list-item>
                       <v-list-item
-                        v-if="can('settings_rooms_category_delete')"
+                        v-if="can('hall_delete')"
                         @click="deleteItem(item)"
                       >
                         <v-list-item-title style="cursor: pointer">
@@ -247,7 +242,6 @@
       </v-card-text>
     </v-card>
   </div>
-  <NoAccess v-else />
 </template>
 <script>
 // import roomsComponent from '../../components/roomsComponent.vue';

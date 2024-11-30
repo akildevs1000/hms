@@ -1,4 +1,5 @@
 <template>
+  <div v-if="can(`ota_trn_access`)">
   <v-card class="mt-2">
     <v-container fluid>
       <div class="pa-3">
@@ -44,6 +45,8 @@
       </div>
     </v-container>
   </v-card>
+</div>
+<NoAccess v-else/>
 </template>
 <script>
 export default {

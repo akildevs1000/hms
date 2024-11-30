@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="can(`accounts_gst_access`)" style="background: none">
+  <v-card v-if="can(`posting_access`)" style="background: none">
     <v-data-table
       dense
       :headers="headers"
@@ -101,6 +101,8 @@
       </template>
     </v-data-table>
   </v-card>
+  <NoAccess v-else/>
+
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can('settings_roles_access') && can('settings_roles_view')">
+  <div v-if="can('role_access')">
     <v-dialog persistent v-model="dialogNewRole" width="800">
       <AssetsIconClose left="790" @click="closeDialog" />
       <v-card>
@@ -110,7 +110,7 @@
                 <v-toolbar-items>
                   <v-col>
                     <v-btn
-                      v-if="can('settings_roles_create')"
+                      v-if="can('role_create')"
                       dark
                       dense
                       color="blue"
@@ -128,7 +128,7 @@
 
           <template v-slot:item.action="{ item }">
             <v-icon
-              v-if="can('settings_roles_edit')"
+              v-if="can('role_edit')"
               color="secondary"
               small
               class="mr-2"
@@ -137,7 +137,7 @@
               mdi-pencil
             </v-icon>
             <v-icon
-              v-if="can('settings_roles_delete')"
+              v-if="can('role_delete')"
               color="error"
               small
               @click="deleteItem(item)"

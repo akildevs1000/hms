@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="checkOutDialog" persistent max-width="900px">
-    <AssetsIconClose left="890" @click="checkOutDialog = false" />
+    <AssetsIconClose left="890" @click="close" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> Check Out </span>
     </template>
@@ -16,7 +16,7 @@
         </v-row>
       </v-alert>
       <v-card-text>
-        <v-row no-gutter v-if="BookingData && BookingData.id">
+        <v-row no-gutter v-if="allDataLoaded">
           <v-col cols="6" class="text-center">
             <v-row no-gutter>
               <v-col cols="12" class="text-center">
@@ -167,7 +167,8 @@
                             <span style="font-size: 18px" class="blue--text">
                               {{
                                 $utils.currency_format(
-                                  parseFloat(roomData.grand_total) + parseFloat(BookingData.total_posting_amount)
+                                  parseFloat(roomData.grand_total) +
+                                    parseFloat(BookingData.total_posting_amount)
                                 )
                               }}
                             </span>
@@ -477,27 +478,39 @@
                             hide-details
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="6">
-                          <v-text-field
-                            readonly
-                            v-model="tempBalance"
-                            label="Balance"
-                            outlined
-                            dense
-                            hide-details
-                            @keyup="setNewBalance(tempBalance, discount)"
-                          ></v-text-field>
+                        <v-col cols="12">
+                          <v-row class="pr-5">
+                            <v-col cols="5">
+                              <v-text-field
+                                readonly
+                                v-model="tempBalance"
+                                label="Balance"
+                                outlined
+                                dense
+                                hide-details
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="5">
+                              <v-text-field
+                                v-model="discount"
+                                label="Discount"
+                                outlined
+                                dense
+                                hide-details
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="1" class="pr-5">
+                              <v-btn
+                                class="primary"
+                                style="width: 100%"
+                                small
+                                @click="setPullPayment(tempBalance, discount)"
+                                >Apply</v-btn
+                              >
+                            </v-col>
+                          </v-row>
                         </v-col>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model="discount"
-                            label="Discount"
-                            outlined
-                            dense
-                            hide-details
-                            @keyup="setNewBalance(tempBalance, discount)"
-                          ></v-text-field>
-                        </v-col>
+
                         <v-col cols="12">
                           <v-text-field
                             v-model="full_payment"
@@ -508,9 +521,9 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="text-center mt-5">
-                          <AssetsButtonCancel @click="$emit(`close-dialog`)" />
+                          <AssetsButtonCancel @click="checkOutDialog = false" />
                           &nbsp; &nbsp;
-                          <AssetsButtonSubmit />
+                          <AssetsButtonSubmit @click="submitPayment" />
                         </v-col>
                       </v-row>
                     </v-container>
@@ -687,7 +700,6 @@ export default {
       isHall: false,
 
       exceedHoursCharges: 0,
-      actualCheckoutTime: formatTime(today),
       isDiscount: false,
       snackbar: false,
       checkLoader: false,
@@ -729,27 +741,13 @@ export default {
       errors: [],
 
       checkOutDialog: false,
+      allDataLoaded: false,
     };
-  },
-
-  watch: {
-    BookingData() {
-      this.discount = 0;
-      this.full_payment = 0;
-    },
   },
   created() {
     this.preloader = false;
     if (this.roomData && this.roomData.id) {
-      let { grand_remaining_price, remaining_price } = this.BookingData;
-      this.grand_remaining_price = grand_remaining_price;
-      this.remaining_price = remaining_price;
-      this.full_payment = remaining_price - this.discount;
-      this.after_discount_balance = grand_remaining_price;
-
-      this.actualCheckoutTime = this.roomData.check_out_time;
-
-      this.calculateHoursQty(this.actualCheckoutTime);
+      this.calculateHoursQty(this.roomData.check_out_time);
       this.get_transaction();
     }
   },
@@ -791,7 +789,48 @@ export default {
     },
   },
   methods: {
-    setNewBalance(tempBalance, discount) {
+    close() {
+      this.checkOutDialog = false;
+      this.allDataLoaded = false;
+    },
+    submitPayment() {
+      let after_discount =
+        parseFloat(this.tempBalance) - parseFloat(this.discount);
+
+      let payload = {
+        balance: parseFloat(this.full_payment) - after_discount,
+        after_discount: after_discount,
+        booking_id: this.BookingData.id,
+        grand_remaining_price: parseFloat(this.full_payment) - after_discount,
+        remaining_price: parseFloat(this.full_payment) - after_discount,
+        full_payment: parseFloat(this.full_payment),
+        payment_mode_id: this.payment_mode_id,
+        company_id: this.$auth.user.company.id,
+        reference_number: this.reference,
+        discount: this.discount,
+        user_id: this.$auth.user.id,
+        isHall: this.isHall,
+        exceedHoursCharges: this.exceedHoursCharges,
+        room_id: this.roomData.room_id,
+      };
+
+      this.loading = true;
+      this.$axios
+        .post("/process-payment", payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.errors = data.errors;
+            this.loading = false;
+          } else {
+            this.loading = false;
+            alert("Success!", "Payment has been done", "success");
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    setPullPayment(tempBalance, discount) {
       this.full_payment = parseFloat(tempBalance) - parseFloat(discount);
     },
     get_after_discount_balance(amt = 0) {
@@ -842,12 +881,6 @@ export default {
           }
         })
         .catch((e) => console.log(e));
-    },
-
-    closeDialog(payload) {
-      this.discount = 0;
-      this.full_payment = 0;
-      this.$emit("close-dialog", payload);
     },
 
     redirect_to_invoice(id) {
@@ -925,6 +958,7 @@ export default {
           this.totalTransactionAmount = data.totalTransactionAmount;
           this.tempBalance = data.totalTransactionAmount;
           this.full_payment = data.totalTransactionAmount;
+          this.allDataLoaded = true;
         });
     },
 

@@ -1,10 +1,5 @@
 <template>
-  <div
-    v-if="
-      can(`settings_rooms_category_access`) &&
-      can(`settings_rooms_category_view`)
-    "
-  >
+  <div v-if="can(`rooms_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -250,122 +245,118 @@
                 <v-card flat>
                   <v-card-text>
                     <client-only>
-                      <Room :key="componentKey" />
+                      <Room v-if="can(`rooms_access`)" :key="componentKey" />
+                      <NoAccess v-else />
                     </client-only>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
               <v-tab-item>
-                <v-col md="12" lg="12" class="pt-0">
-                  <v-col xs="12" sm="12" md="2" cols="12">
-                    <v-text-field
-                      class=""
-                      label="Search..."
-                      dense
-                      outlined
-                      flat
-                      append-icon="mdi-magnify"
-                      @input="searchIt"
-                      v-model="search"
-                      hide-details
-                    ></v-text-field>
-                  </v-col>
-                  <v-card>
-                    <v-toolbar class="mb-2 white--text" dense flat>
-                      <v-spacer></v-spacer>
-                      <v-tooltip v-if="can('settings_rooms_create')" top>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            dark
-                            class="blue"
-                            v-if="can(`settings_rooms_category_create`)"
-                            small
-                            v-bind="attrs"
-                            v-on="on"
-                            @click="
-                              roomTypeDialog = true;
-                              previewImage = null;
-                            "
-                          >
-                            <v-icon color="white" small>mdi-plus</v-icon> Room
-                            Category
-                          </v-btn>
-                        </template>
-                      </v-tooltip>
-                    </v-toolbar>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-data-table
-                          :headers="headersCategory"
-                          :items="data"
-                          :loading="loading"
-                          hide-default-footer
-                        >
-                          <template v-slot:item.photo="{ item }">
-                            <v-img
-                              :src="item.pic || '/noimage.png'"
-                              class="rounded-circle"
-                              height="100"
-                              width="100"
-                              style="margin: 0 auto"
-                            ></v-img>
-                          </template>
-
-                          <template v-slot:item.action="{ item }">
-                            <v-menu
-                              bottom
-                              left
-                              v-if="
-                                can('settings_rooms_category_edit') ||
-                                can('settings_rooms_category_delete')
+                <div v-if="can(`rooms_category_access`)">
+                  <v-col md="12" lg="12" class="pt-0">
+                    <v-col xs="12" sm="12" md="2" cols="12">
+                      <v-text-field
+                        class=""
+                        label="Search..."
+                        dense
+                        outlined
+                        flat
+                        append-icon="mdi-magnify"
+                        @input="searchIt"
+                        v-model="search"
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+                    <v-card>
+                      <v-toolbar class="mb-2 white--text" dense flat>
+                        <v-spacer></v-spacer>
+                        <v-tooltip v-if="can('rooms_create')" top>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              dark
+                              class="blue"
+                              small
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="
+                                roomTypeDialog = true;
+                                previewImage = null;
                               "
                             >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                                  <v-icon>mdi-dots-vertical</v-icon>
-                                </v-btn>
-                              </template>
-                              <v-list width="120" dense>
-                                <v-list-item
-                                  v-if="can('settings_rooms_category_edit')"
-                                  @click="editItem(item)"
-                                >
-                                  <v-list-item-title style="cursor: pointer">
-                                    <v-icon color="secondary" small
-                                      >mdi-pencil</v-icon
-                                    >
-                                    Edit
-                                  </v-list-item-title>
-                                </v-list-item>
-                                <v-list-item
-                                  v-if="can('settings_rooms_category_delete')"
-                                  @click="deleteItem(item)"
-                                >
-                                  <v-list-item-title style="cursor: pointer">
-                                    <v-icon color="error" small
-                                      >mdi-delete</v-icon
-                                    >
-                                    Delete
-                                  </v-list-item-title>
-                                </v-list-item>
-                              </v-list>
-                            </v-menu>
+                              <v-icon color="white" small>mdi-plus</v-icon> Room
+                              Category
+                            </v-btn>
                           </template>
-                        </v-data-table>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </v-col>
-                <v-col md="12" class="float-right">
-                  <div class="float-right">
-                    <v-pagination
-                      v-model="pagination.current"
-                      :length="pagination.total"
-                      @input="onPageChange"
-                      :total-visible="12"
-                    ></v-pagination>
-                  </div>
-                </v-col>
+                        </v-tooltip>
+                      </v-toolbar>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-data-table
+                            :headers="headersCategory"
+                            :items="data"
+                            :loading="loading"
+                            hide-default-footer
+                          >
+                            <template v-slot:item.photo="{ item }">
+                              <v-img
+                                :src="item.pic || '/noimage.png'"
+                                class="rounded-circle"
+                                height="100"
+                                width="100"
+                                style="margin: 0 auto"
+                              ></v-img>
+                            </template>
+
+                            <template v-slot:item.action="{ item }">
+                              <v-menu bottom left>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                  </v-btn>
+                                </template>
+                                <v-list width="120" dense>
+                                  <v-list-item
+                                    v-if="can('rooms_edit')"
+                                    @click="editItem(item)"
+                                  >
+                                    <v-list-item-title style="cursor: pointer">
+                                      <v-icon color="secondary" small
+                                        >mdi-pencil</v-icon
+                                      >
+                                      Edit
+                                    </v-list-item-title>
+                                  </v-list-item>
+                                  <v-list-item
+                                    v-if="can('rooms_delete')"
+                                    @click="deleteItem(item)"
+                                  >
+                                    <v-list-item-title style="cursor: pointer">
+                                      <v-icon color="error" small
+                                        >mdi-delete</v-icon
+                                      >
+                                      Delete
+                                    </v-list-item-title>
+                                  </v-list-item>
+                                </v-list>
+                              </v-menu>
+                            </template>
+                          </v-data-table>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-col>
+                  <v-col md="12" class="float-right">
+                    <div class="float-right">
+                      <v-pagination
+                        v-model="pagination.current"
+                        :length="pagination.total"
+                        @input="onPageChange"
+                        :total-visible="12"
+                      ></v-pagination>
+                    </div>
+                  </v-col>
+                </div>
+                <NoAccess v-else />
               </v-tab-item>
             </v-tabs>
           </v-col>

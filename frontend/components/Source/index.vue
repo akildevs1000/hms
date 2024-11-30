@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`source_access`)">
+  <span>
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -231,12 +231,19 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title style="cursor: pointer">
-                <SourceGuestList :item="item" :customer_type="item.type" @close-dialog="$emit(`response`)" />
+                <SourceGuestList
+                  :item="item"
+                  :customer_type="item.type"
+                  @close-dialog="$emit(`response`)"
+                />
               </v-list-item-title>
             </v-list-item>
             <v-list-item v-if="type == 'Corporate'">
               <v-list-item-title style="cursor: pointer">
-                <SourceGuestCreate :source_id="item.id" @close-dialog="$emit(`response`)" />
+                <SourceGuestCreate
+                  :source_id="item.id"
+                  @close-dialog="$emit(`response`)"
+                />
               </v-list-item-title>
             </v-list-item>
             <!-- <v-list-item v-if="can('source_edit')" @click="editItem(item)">
@@ -255,8 +262,7 @@
         </v-menu>
       </template>
     </v-data-table>
-  </div>
-  <NoAccess v-else />
+  </span>
 </template>
 <script>
 export default {
@@ -299,7 +305,7 @@ export default {
       gst: "",
       mobile: "",
       name: "",
-      short_name:"",
+      short_name: "",
       type: "",
       email: "",
       landline: "",
@@ -310,7 +316,7 @@ export default {
       gst: "",
       mobile: "",
       name: "",
-      short_name:"",
+      short_name: "",
       type: "",
       email: "",
       landline: "",

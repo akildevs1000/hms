@@ -384,7 +384,7 @@ export default {
           icon: "mdi-chart-areaspline",
           module: "ota_trn",
           title: "OTA TRN",
-          to: "/management/report/ota_trn",
+          to: "/management/report/trn",
           menu: "ota_trn_access",
         },
         {

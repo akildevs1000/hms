@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="can('settings_room_price_access') && can('settings_room_price_view')"
+    v-if="can('price_setup_access')"
   >
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
@@ -315,7 +315,7 @@
       </v-dialog>
 
       <v-col md="12" sm="12" class="float-right">
-        <v-card>
+        <v-card v-if="can(`price_setup_access`)">
           <v-tabs v-model="tab">
             <v-spacer></v-spacer>
             <v-tab v-for="item in items" :key="item">
@@ -350,7 +350,7 @@
                   </template>
 
                   <template v-slot:item.action="{ item }">
-                    <v-menu bottom left v-if="can('settings_room_price_edit')">
+                    <v-menu bottom left v-if="can('price_setup_edit')">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn dark-2 icon v-bind="attrs" v-on="on">
                           <v-icon>mdi-dots-vertical</v-icon>
@@ -358,7 +358,7 @@
                       </template>
                       <v-list width="120" dense>
                         <v-list-item
-                          v-if="can('settings_room_price_edit')"
+                          v-if="can('price_setup_edit')"
                           @click="weekendEditItem(item)"
                         >
                           <v-list-item-title style="cursor: pointer">
@@ -385,7 +385,7 @@
                     <v-icon right>mdi-magnify</v-icon>
                   </v-btn>
                   <v-btn
-                    v-if="can('settings_room_price_create')"
+                    v-if="can('price_setup_create')"
                     @click="holidayDialog = true"
                     small
                     class="pt-4 pb-4 elevation-0"
@@ -429,8 +429,8 @@
                       bottom
                       left
                       v-if="
-                        can('settings_room_price_edit') ||
-                        can('settings_room_price_delete')
+                        can('price_setup_edit') ||
+                        can('price_setup_delete')
                       "
                     >
                       <template v-slot:activator="{ on, attrs }">
@@ -440,7 +440,7 @@
                       </template>
                       <v-list width="120" dense>
                         <v-list-item
-                          v-if="can('settings_room_price_edit')"
+                          v-if="can('price_setup_edit')"
                           @click="editItem(item)"
                         >
                           <v-list-item-title style="cursor: pointer">
@@ -451,7 +451,7 @@
                           </v-list-item-title>
                         </v-list-item>
                         <v-list-item
-                          v-if="can('settings_room_price_delete')"
+                          v-if="can('price_setup_delete')"
                           @click="deleteItem(item)"
                         >
                           <v-list-item-title style="cursor: pointer">
@@ -536,6 +536,7 @@
             </v-tab-item>
           </v-tabs-items>
         </v-card>
+        <NoAccess v-else />
       </v-col>
     </v-row>
   </div>

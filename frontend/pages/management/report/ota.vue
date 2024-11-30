@@ -1,40 +1,41 @@
 <template>
-  <v-card class="mt-2">
-    <v-container fluid>
-      <div class="pa-3">
-        <div style="display: flex; justify-content: right">
-          <v-autocomplete
-            @change="getDataBySource"
-            :items="[{ id: null, name: `Select All` }, ...sources]"
-            item-text="name"
-            item-value="name"
-            label="Source"
-            dense
-            outlined
-            hide-details
-            style="margin-top: 1px; max-width: 200px"
-          ></v-autocomplete>
-          &nbsp;
-          <v-autocomplete
-            @change="getDataByStatus"
-            :items="[
-              { id: null, name: `Select All` },
-              { id: `Pending`, name: `Pending` },
-              {
-                id: `Received`,
-                name: `Received`,
-              },
-            ]"
-            item-text="name"
-            item-value="name"
-            label="Status"
-            dense
-            outlined
-            flat
-            hide-details
-            style="margin-top: 1px; max-width: 200px"
-          ></v-autocomplete>
-          <!-- <v-text-field
+  <div v-if="can(`ota_access`)">
+    <v-card class="mt-2">
+      <v-container fluid>
+        <div class="pa-3">
+          <div style="display: flex; justify-content: right">
+            <v-autocomplete
+              @change="getDataBySource"
+              :items="[{ id: null, name: `Select All` }, ...sources]"
+              item-text="name"
+              item-value="name"
+              label="Source"
+              dense
+              outlined
+              hide-details
+              style="margin-top: 1px; max-width: 200px"
+            ></v-autocomplete>
+            &nbsp;
+            <v-autocomplete
+              @change="getDataByStatus"
+              :items="[
+                { id: null, name: `Select All` },
+                { id: `Pending`, name: `Pending` },
+                {
+                  id: `Received`,
+                  name: `Received`,
+                },
+              ]"
+              item-text="name"
+              item-value="name"
+              label="Status"
+              dense
+              outlined
+              flat
+              hide-details
+              style="margin-top: 1px; max-width: 200px"
+            ></v-autocomplete>
+            <!-- <v-text-field
             label="Search..."
             dense
             outlined
@@ -45,92 +46,96 @@
             hide-details
             style="max-width: 200px"
           ></v-text-field> -->
-          &nbsp;
-          <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+            &nbsp;
+            <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+          </div>
         </div>
-      </div>
-      <div>
-        <v-data-table
-          style="min-height: 370px; max-height: 370px; overflow-y: auto"
-          dense
-          small
-          :headers="headers"
-          :items="data"
-          :loading="loading"
-          :options.sync="options"
-          :footer-props="{
-            itemsPerPageOptions: [50, 100, 500, 1000],
-          }"
-          class="elevation-0"
-          :server-items-length="totalRowsCount"
-        >
-          <template v-slot:item.sno="{ item, index }">
-            <AssetsTextLabel
-              :label="
-                currentPage
-                  ? (currentPage - 1) * perPage +
-                    (cumulativeIndex + itemIndex(item))
-                  : ''
-              "
-            />
-          </template>
-          <template v-slot:item.res_number="{ item }">
-            <span
-              class="blue--text"
-              @click="goToRevView(item)"
-              style="cursor: pointer"
-            >
-              <AssetsTextLabel :label="item.reservation_no || `---`" />
-            </span>
-          </template>
-          <template v-slot:item.source="{ item }">
-            <AssetsTextLabel :label="item.source || `---`" />
-          </template>
-          <template v-slot:item.rooms="{ item }">
-            <span v-for="(room, index) in item.booked_rooms" :key="index">
-              <AssetsTextLabel :label="room.room_no" />
+        <div>
+          <v-data-table
+            style="min-height: 370px; max-height: 370px; overflow-y: auto"
+            dense
+            small
+            :headers="headers"
+            :items="data"
+            :loading="loading"
+            :options.sync="options"
+            :footer-props="{
+              itemsPerPageOptions: [50, 100, 500, 1000],
+            }"
+            class="elevation-0"
+            :server-items-length="totalRowsCount"
+          >
+            <template v-slot:item.sno="{ item, index }">
               <AssetsTextLabel
-                :label="item.booked_rooms.length - 1 == index ? `` : `,`"
+                :label="
+                  currentPage
+                    ? (currentPage - 1) * perPage +
+                      (cumulativeIndex + itemIndex(item))
+                    : ''
+                "
               />
-            </span>
-          </template>
-          <template v-slot:item.reference="{ item }">
-            <AssetsTextLabel :label="item.reference_no || `---`" />
-          </template>
-          <template v-slot:item.guest="{ item }">
-            <AssetsTextLabel :label="item.customer.first_name || `---`" />
-          </template>
-          <template v-slot:item.check_in="{ item }">
-            <AssetsTextLabel :label="convert_date_format(item.check_in)" />
-          </template>
-          <template v-slot:item.check_out="{ item }">
-            <AssetsTextLabel :label="convert_date_format(item.check_out)" />
-          </template>
-          <template v-slot:item.total="{ item }">
-            <AssetsTextLabel
-              :label="$utils.currency_format(item.total_price)"
-            />
-          </template>
-          <template v-slot:item.posting="{ item }">
-            <AssetsTextLabel
-              :label="$utils.currency_format(item.total_posting_amount)"
-            />
-          </template>
-          <template v-slot:item.paid="{ item }">
-            <AssetsTextLabel
-              :label="item.balance > 0 ? `Pending` : `Received`"
-            />
-          </template>
-          <template v-slot:item.received_date="{ item }">
-            <AssetsTextLabel :label="`---`" />
-          </template>
-          <template v-slot:item.res_date="{ item }">
-            <AssetsTextLabel :label="convert_date_format(item.booking_date)" />
-          </template>
-        </v-data-table>
-      </div>
-    </v-container>
-  </v-card>
+            </template>
+            <template v-slot:item.res_number="{ item }">
+              <span
+                class="blue--text"
+                @click="goToRevView(item)"
+                style="cursor: pointer"
+              >
+                <AssetsTextLabel :label="item.reservation_no || `---`" />
+              </span>
+            </template>
+            <template v-slot:item.source="{ item }">
+              <AssetsTextLabel :label="item.source || `---`" />
+            </template>
+            <template v-slot:item.rooms="{ item }">
+              <span v-for="(room, index) in item.booked_rooms" :key="index">
+                <AssetsTextLabel :label="room.room_no" />
+                <AssetsTextLabel
+                  :label="item.booked_rooms.length - 1 == index ? `` : `,`"
+                />
+              </span>
+            </template>
+            <template v-slot:item.reference="{ item }">
+              <AssetsTextLabel :label="item.reference_no || `---`" />
+            </template>
+            <template v-slot:item.guest="{ item }">
+              <AssetsTextLabel :label="item.customer.first_name || `---`" />
+            </template>
+            <template v-slot:item.check_in="{ item }">
+              <AssetsTextLabel :label="convert_date_format(item.check_in)" />
+            </template>
+            <template v-slot:item.check_out="{ item }">
+              <AssetsTextLabel :label="convert_date_format(item.check_out)" />
+            </template>
+            <template v-slot:item.total="{ item }">
+              <AssetsTextLabel
+                :label="$utils.currency_format(item.total_price)"
+              />
+            </template>
+            <template v-slot:item.posting="{ item }">
+              <AssetsTextLabel
+                :label="$utils.currency_format(item.total_posting_amount)"
+              />
+            </template>
+            <template v-slot:item.paid="{ item }">
+              <AssetsTextLabel
+                :label="item.balance > 0 ? `Pending` : `Received`"
+              />
+            </template>
+            <template v-slot:item.received_date="{ item }">
+              <AssetsTextLabel :label="`---`" />
+            </template>
+            <template v-slot:item.res_date="{ item }">
+              <AssetsTextLabel
+                :label="convert_date_format(item.booking_date)"
+              />
+            </template>
+          </v-data-table>
+        </div>
+      </v-container>
+    </v-card>
+  </div>
+  <NoAccess v-else/>
 </template>
 <script>
 export default {

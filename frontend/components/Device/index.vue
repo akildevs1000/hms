@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can('devices_permissions_access') && can('devices_view')">
+  <div v-if="can('device_access')">
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -139,7 +139,7 @@
           <span>Reload</span>
         </v-tooltip>
         <v-spacer></v-spacer>
-        <v-tooltip v-if="can('devices_create')" top color="primary">
+        <v-tooltip v-if="can('device_create')" top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               small
@@ -197,9 +197,9 @@
             <template
               v-slot:item.options="{ item }"
               v-if="
-                can('devices_view') ||
-                can('devices_edit') ||
-                can('devices_delete')
+                can('device_view') ||
+                can('device_edit') ||
+                can('device_delete')
               "
             >
               <v-menu bottom left>
@@ -210,7 +210,7 @@
                 </template>
                 <v-list width="120" dense>
                   <v-list-item
-                    v-if="can('devices_view')"
+                    v-if="can('device_view')"
                     @click="editItem(item, true)"
                   >
                     <v-list-item-title style="cursor: pointer">
@@ -219,7 +219,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
-                    v-if="can('devices_view')"
+                    v-if="can('device_view')"
                     @click="viewStatusLogs(item)"
                   >
                     <v-list-item-title style="cursor: pointer">
@@ -230,7 +230,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
-                    v-if="can('devices_edit')"
+                    v-if="can('device_edit')"
                     @click="editItem(item, false)"
                   >
                     <v-list-item-title style="cursor: pointer">
@@ -239,7 +239,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item
-                    v-if="can('devices_delete')"
+                    v-if="can('device_delete')"
                     @click="deleteItem(item)"
                   >
                     <v-list-item-title style="cursor: pointer">
@@ -456,7 +456,7 @@ export default {
       this.editItem(item, true);
     },
     viewStatusLogs(item) {
-      this.$store.commit("devices_logs_id", item.serial_number);
+      this.$store.commit("device_logs_id", item.serial_number);
       this.DeviceLogDialog = true;
       this.DeviceLogCompKey++;
     },

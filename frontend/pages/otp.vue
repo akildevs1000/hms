@@ -104,7 +104,9 @@
                       "
                     >
                       <span> Did not revieved otp? </span>
-                      <span style="cursor:pointer;color: cornflowerblue" @click="generateOTP"
+                      <span
+                        style="cursor: pointer; color: cornflowerblue"
+                        @click="generateOTP"
                         >Click to Resend</span
                       >
                     </div>
@@ -163,6 +165,9 @@ export default {
       // let chatId = this.$auth.user.telegram_chat_id;
       let otp = Math.floor(100000 + Math.random() * 900000);
       const message = `Your OTP code is: ${otp}`;
+      this.storeOTP(otp);
+
+      alert(message);
       // let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}`;
       console.log("🚀 ~ generateOTP ~ message:", message);
       if (this.$auth.user.mobile) {
@@ -170,15 +175,15 @@ export default {
           "🚀 ~ generateOTP ~ this.$auth.user.mobile:",
           this.$auth.user.mobile
         );
-        try {
-          await this.$axios.post(`/send-message`, {
-            number: this.$auth.user.mobile,
-            message: message,
-          });
-          this.storeOTP(otp);
-        } catch (error) {
-          console.error("Error sending message:", error);
-        }
+        // try {
+        //   await this.$axios.post(`/send-message`, {
+        //     number: this.$auth.user.mobile,
+        //     message: message,
+        //   });
+        //   this.storeOTP(otp);
+        // } catch (error) {
+        //   console.error("Error sending message:", error);
+        // }
       }
     },
     async storeOTP(otp) {

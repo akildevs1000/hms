@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="can(`customers_access`)">
     <v-card class="px-2 mt-7">
       <v-row>
         <v-col v-for="(stat, index) in stats" :key="index">
@@ -28,8 +28,7 @@
       </v-tabs>
     </v-card>
   </div>
-
-  <!--  -->
+  <NoAccess v-else />
 </template>
 <script>
 export default {
@@ -48,6 +47,12 @@ export default {
       };
       let { data } = await this.$axios.get(`get-bookings-source-type`, config);
       this.stats = data;
+    },
+    can(per) {
+      let u = this.$auth.user;
+      return (
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
+      );
     },
   },
 };

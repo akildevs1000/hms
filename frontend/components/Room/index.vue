@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can('settings_rooms_access') && can('settings_rooms_view')">
+  <div>
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -442,7 +442,6 @@
       </v-row>
     </v-card>
   </div>
-  <NoAccess v-else />
 </template>
 <script>
 export default {

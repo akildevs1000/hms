@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`night_audit_access`)">
+  <div v-if="can(`cash_access`)">
     <v-card class="pa-5">
       <v-row>
         <v-col cols="10"></v-col>

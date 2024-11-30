@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`guest_access`)">
+  <span>
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -141,8 +141,7 @@
         </v-menu>
       </template>
     </v-data-table>
-  </div>
-  <NoAccess v-else />
+  </span>
 </template>
 <script>
 export default {
@@ -313,13 +312,7 @@ export default {
       this.getDataFromApi();
       this.viewCustomerDialog = false;
     },
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
-      );
-    },
-
+    
     viewCustomerBilling(item) {
       // this.$router.push(`/customer/history/${item.id}`);
       this.customer_id = item.id;

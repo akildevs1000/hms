@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can('settings_users_access') && can('settings_users_view')">
+  <div v-if="can('employee_access') && can('employee_view')">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -517,7 +517,7 @@
         <v-spacer></v-spacer>
 
         <v-btn
-          v-if="can('lost_and_found_create')"
+          v-if="can('employee_create')"
           class="primary"
           dark
           small
@@ -560,7 +560,7 @@
           <v-menu
             bottom
             left
-            v-if="can('settings_users_edit') || can('settings_users_delete')"
+            v-if="can('employee_edit') || can('employee_delete')"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn dark-2 icon v-bind="attrs" v-on="on">
@@ -570,7 +570,7 @@
 
             <v-list width="120" dense>
               <v-list-item
-                v-if="can('settings_users_edit')"
+                v-if="can('employee_edit')"
                 @click="editItem(item)"
               >
                 <v-list-item-title style="cursor: pointer">
@@ -579,7 +579,7 @@
                 </v-list-item-title>
               </v-list-item>
               <v-list-item
-                v-if="can('settings_users_delete')"
+                v-if="can('employee_delete')"
                 @click="deleteItem(item)"
               >
                 <v-list-item-title style="cursor: pointer">
