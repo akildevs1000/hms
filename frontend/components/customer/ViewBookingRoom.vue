@@ -1,22 +1,11 @@
 <template>
   <v-dialog v-model="PostingDialog" width="650">
-    <AssetsIconClose left="640" @click="PostingDialog = false" />
-    <style scoped>
-      .simple-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .simple-table td {
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-        padding: 5px;
-        text-align: center;
-      }
-    </style>
+    <AssetsIconClose left="640" @click="closeDialog" />
+
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
-        <v-icon small color="primary">mdi-eye</v-icon></span
-      >
+        <v-icon small color="primary">mdi-eye</v-icon>
+      </span>
     </template>
 
     <v-card>
@@ -26,7 +15,7 @@
 
       <v-card-text class="pa-3">
         <v-container>
-          <v-row class="">
+          <v-row>
             <v-col cols="4">
               <v-text-field
                 v-model="item.room_type"
@@ -35,7 +24,7 @@
                 dense
                 outlined
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="4">
               <v-text-field
@@ -45,7 +34,7 @@
                 dense
                 outlined
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="2">
               <v-text-field
@@ -55,7 +44,7 @@
                 dense
                 outlined
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="2">
               <v-text-field
@@ -65,7 +54,7 @@
                 dense
                 outlined
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
 
             <v-col cols="4">
@@ -76,7 +65,7 @@
                 dense
                 outlined
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="4">
               <v-text-field
@@ -86,7 +75,7 @@
                 dense
                 outlined
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="4">
               <v-text-field
@@ -96,85 +85,31 @@
                 dense
                 outlined
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
 
             <v-col cols="7">
               <table class="simple-table">
                 <tbody>
-                  <tr>
-                    <td class="text-left">Room</td>
+                  <tr v-for="(label, key) in breakdownItems" :key="key">
+                    <td class="text-left">{{ label }}</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(item.price) }}
+                      {{ $utils.currency_format(parseFloat(item[key] || 0)) }}
                     </td>
                   </tr>
-                  <tr>
-                    <td class="text-left">Meal</td>
-                    <td class="text-right">
-                      {{ $utils.currency_format(item.food_plan_price) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">Extra Bed</td>
-                    <td class="text-right">
-                      {{ $utils.currency_format(item.bed_amount) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">Early Check In</td>
-                    <td class="text-right">
-                      {{ $utils.currency_format(item.early_check_in) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">Late Check Out</td>
-                    <td class="text-right">
-                      {{ $utils.currency_format(item.late_check_out) }}
-                    </td>
-                  </tr>
-                  <!-- <tr>
-                    <td class="text-left">Discount</td>
-                    <td class="text-right">
-                      {{
-                        $utils.currency_format(item.room_discount)
-                      }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">Add</td>
-                    <td class="text-right">
-                      {{
-                        $utils.currency_format(item.room_extra_amount || 0)
-                      }}
-                    </td>
-                  </tr> -->
                 </tbody>
               </table>
             </v-col>
+
             <v-col cols="5" class="text-center">
               <v-card outlined>
                 <v-card-text>
-                  <div class="blue--text" style="font-size: 18px">
-                    {{ $dateFormat.dmy(item.date) || "---" }}
-                  </div>
-                  <div class="" style="font-size: 14px">
-                    {{ item.day || "---" }}
-                  </div>
-
-                  <div class="py-4" style="font-size: 14px">
-                    {{ item.tariff || "---" }}
-                  </div>
-                  <div style="font-size: 14px">Total Rs</div>
-                  <div class="blue--text" style="font-size: 18px">
-                    {{
-                      $utils.currency_format(
-                        parseFloat(item.price) +
-                          parseFloat(item.food_plan_price) +
-                          parseFloat(item.bed_amount) +
-                          parseFloat(item.early_check_in) +
-                          parseFloat(item.late_check_out)
-                      ) || "---"
-                    }}
+                  <div class="blue--text text-lg">{{ formattedDate }}</div>
+                  <div class="text-sm">{{ item.day || "---" }}</div>
+                  <div class="py-4 text-sm">{{ item.tariff || "---" }}</div>
+                  <div class="text-sm">Total Rs</div>
+                  <div class="blue--text text-lg">
+                    {{ totalPrice }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -185,24 +120,66 @@
     </v-card>
   </v-dialog>
 </template>
+
 <script>
 export default {
-  props: ["item", "booking"],
+  props: ["item", "booking", "roomData"],
   data() {
     return {
       PostingDialog: false,
-      items: [],
     };
   },
   computed: {
-    // fitleredItems() {
-    //   return this.items.filter((e) => e.bill_no == this.bill_no);
-    // },
+    formattedDate() {
+      return this.$dateFormat.dmy(this.item.date) || "---";
+    },
+    totalPrice() {
+      const keys = [
+        "price",
+        "food_plan_price",
+        "bed_amount",
+        "early_check_in",
+        "late_check_out",
+      ];
+      const total = keys.reduce(
+        (sum, key) => sum + parseFloat(this.item[key] || 0),
+        0
+      );
+      return this.$utils.currency_format(total) || "---";
+    },
+    breakdownItems() {
+      return {
+        price: "Room",
+        food_plan_price: "Meal",
+        bed_amount: "Extra Bed",
+        early_check_in: "Early Check In",
+        late_check_out: "Late Check Out",
+      };
+    },
   },
   methods: {
-    // getTotalAmount() {
-    //   return this.items.reduce((total, num) => total + num.amount_with_tax, 0);
-    // },
+    closeDialog() {
+      this.PostingDialog = false;
+    },
   },
 };
 </script>
+
+<style scoped>
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.simple-table td {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+.text-lg {
+  font-size: 18px;
+}
+.text-sm {
+  font-size: 14px;
+}
+</style>

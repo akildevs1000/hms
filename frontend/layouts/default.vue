@@ -60,14 +60,14 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item @click="goToReport()">
+            <!-- <v-list-item @click="goToReport()">
               <v-list-item-icon>
                 <v-icon>mdi mdi-text-account</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title class="grey--text">Report</v-list-item-title>
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
 
             <v-list-item @click="logout">
               <v-list-item-icon>
@@ -318,6 +318,7 @@ export default {
         {
           topMenu: "house_keeping",
           image: "/cleaner.png",
+          module: "house_keeping",
           title: "House Keeping",
           to: "/house_keeping",
           menu: "settings_permissions_access",
@@ -325,6 +326,7 @@ export default {
         {
           topMenu: "dashboard",
           icon: "mdi-home",
+          module: "home",
           title: "Home",
           to: "/",
           menu: "dashboard",
@@ -332,6 +334,7 @@ export default {
         {
           topMenu: "dashboard",
           icon: "mdi-calendar",
+          module: "calendar",
           title: "Calendar",
           to: "/hotel/calendar1",
           menu: "calendar_access",
@@ -339,6 +342,7 @@ export default {
         {
           topMenu: "reports",
           icon: "mdi-chart-areaspline",
+          module: "analytics",
           title: "Analytics",
           to: "/reports",
           menu: "dashboard",
@@ -346,6 +350,7 @@ export default {
         {
           topMenu: "reports",
           icon: "mdi-chart-areaspline",
+          module: "night_audit",
           title: "Night Audit",
           to: "/management/report/night_audit",
           menu: "night_audit_access",
@@ -353,41 +358,47 @@ export default {
         {
           topMenu: "reports",
           icon: "mdi-chart-areaspline",
+          module: "summary",
           title: "Summary",
           to: "/management/report/summary",
-          menu: "night_audit_access",
+          menu: "summary_access",
         },
         {
           topMenu: "reports",
           icon: "mdi-chart-areaspline",
+          module: "cash",
           title: "Cash Report",
           to: "/management/report/cash",
-          menu: "night_audit_access",
+          menu: "cash_access",
         },
         {
           topMenu: "reports",
           icon: "mdi-chart-areaspline",
+          module: "ota",
           title: "OTA Report",
           to: "/management/report/ota",
-          menu: "night_audit_access",
+          menu: "ota_access",
         },
         {
           topMenu: "reports",
           icon: "mdi-chart-areaspline",
+          module: "ota_trn",
           title: "OTA TRN",
-          to: "/management/report/trn",
-          menu: "night_audit_access",
+          to: "/management/report/ota_trn",
+          menu: "ota_trn_access",
         },
         {
           topMenu: "dashboard",
           icon: "mdi-bed",
+          module: "history",
           title: "History",
           to: "/history",
-          menu: "guest_access",
+          menu: "history_access",
         },
         {
           topMenu: "customer",
           icon: "mdi-ticket-account",
+          module: "customers",
           title: "Customers",
           to: "/source",
           menu: "source_access",
@@ -395,6 +406,7 @@ export default {
         {
           topMenu: "customer",
           icon: "mdi-chat",
+          module: "chat",
           title: "Chat",
           to: "/chat",
           menu: "chat_access",
@@ -402,6 +414,7 @@ export default {
         {
           topMenu: "account",
           icon: "mdi-bank-transfer",
+          module: "income",
           title: "Income",
           to: "/account",
           menu: "accounts_posting_access",
@@ -410,6 +423,7 @@ export default {
         {
           topMenu: "account",
           icon: "mdi-bank-transfer",
+          module: "city_ledger",
           title: "City Ledger",
           to: "/city_ledger",
           menu: "accounts_posting_access",
@@ -418,6 +432,7 @@ export default {
         {
           topMenu: "sales",
           icon: "mdi-cash",
+          module: "inquiry",
           title: "Inquiry",
           to: "/inquiry",
           menu: "accounts_posting_access",
@@ -425,6 +440,7 @@ export default {
         {
           topMenu: "sales",
           icon: "mdi-cash",
+          module: "quotation",
           title: "Quotation",
           to: "/sales",
           menu: "accounts_posting_access",
@@ -432,6 +448,7 @@ export default {
         {
           topMenu: "sales",
           icon: "mdi-cash",
+          module: "invoices",
           title: "Invoice",
           to: "/invoices",
           menu: "accounts_posting_access",
@@ -439,6 +456,7 @@ export default {
         {
           topMenu: "account",
           icon: "mdi mdi-food",
+          module: "posting",
           title: "Posting",
           to: "/posting",
           menu: "accounts_posting_access",
@@ -446,6 +464,7 @@ export default {
         {
           topMenu: "account",
           icon: "mdi mdi-bank-transfer-out",
+          module: "expense",
           title: "Expense",
           to: "/expense",
           menu: "accounts_expences_access",
@@ -453,6 +472,7 @@ export default {
         {
           topMenu: "account",
           icon: "mdi-cash",
+          module: "gst_bills",
           title: "GST Bills",
           to: "/taxable",
           menu: "accounts_gst_access",
@@ -460,6 +480,7 @@ export default {
         {
           topMenu: "account",
           icon: "mdi-account",
+          module: "vendors",
           title: "Vendor",
           to: "/vendors",
           menu: "accounts_posting_access",
@@ -468,6 +489,7 @@ export default {
         {
           topMenu: "dashboard",
           icon: "mdi-home-search-outline",
+          module: "lost_and_found_items",
           title: "Lost & Found  ",
           to: "/lost_and_found_items",
           menu: "lost_and_found_access",
@@ -475,6 +497,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi mdi-account-details",
+          module: "company",
           title: "Company",
           to: "/companies",
           menu: "settings_permissions_access",
@@ -482,6 +505,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi-email",
+          module: "automation",
           title: "Automation",
           to: "/template",
           menu: "settings_rooms_category_access",
@@ -489,6 +513,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi-bed",
+          module: "rooms",
           title: "Rooms",
           to: "/room_category",
           menu: "settings_rooms_category_access",
@@ -496,6 +521,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi-sofa", // give appropriate icon here
+          module: "hall",
           title: "Hall",
           to: "/hall",
           menu: "settings_rooms_category_access",
@@ -503,6 +529,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi-tools",
+          module: "price_setup",
           title: "Price Setup",
           to: "/manage",
           menu: "settings_room_price_access",
@@ -511,6 +538,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi mdi-account-tie",
+          module: "employee",
           title: "Employee",
           to: "/employee",
           menu: "settings_users_access",
@@ -518,6 +546,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi mdi-account-details",
+          module: "device",
           title: "Devices",
           to: "/devices",
           menu: "devices_permissions_access",
@@ -525,6 +554,7 @@ export default {
         {
           topMenu: "setting",
           icon: "mdi mdi-account-check-outline",
+          module: "role",
           title: "Roles",
           to: "/role",
           menu: "settings_roles_access",
@@ -559,15 +589,14 @@ export default {
     let permissions = user.permissions;
 
     this.menus.forEach((ele) => {
-      if (
-        permissions.includes(ele.menu) ||
-        this.$auth.user.user_type == "company"
-      ) {
-        this.items.push(ele);
-      }
+      this.items.push(ele);
+      // if (
+      //   permissions.includes(ele.menu) ||
+      //   this.$auth.user.user_type == "company"
+      // ) {
+      //   this.items.push(ele);
+      // }
     });
-
-    this.getCompanyDetails();
 
     this.filteredMenu = this.items;
     this.$router.push(this.filteredMenu[0].to ?? "/");
@@ -700,44 +729,16 @@ export default {
       this.sideBarcolor = color;
     },
 
-    caps(str) {
-      return str.replace(/\b\w/g, (c) => c.toUpperCase());
-    },
-
-    goToSetting() {
-      this.$router.push("/setting");
-    },
-
     goToCompany() {
       let u = this.$auth.user.user_type;
       // if(u){
       // this.$router.push(`/empl/${this.$auth.user?.company?.id}`);
       // }
-      this.$router.push(`/companies/${this.$auth.user?.company?.id}`);
+      this.$router.push(`/companies`);
     },
 
     goToReport() {
       this.$router.push(`/management/report/user`);
-    },
-
-    getCompanyDetails() {
-      let user = this.$auth.user;
-
-      this.$axios.get(`company/${user?.company?.id}`).then(({ data }) => {
-        let { modules } = data.record;
-
-        if (modules !== null) {
-          this.modules = {
-            module_ids: modules.module_ids || [],
-            module_names: modules.module_names.map((e) => ({
-              icon: "mdi-chart-bubble",
-              title: this.caps(e),
-              to: "/" + e + "_modules",
-              permission: true,
-            })),
-          };
-        }
-      });
     },
     can(per) {
       let user = this.$auth.user;

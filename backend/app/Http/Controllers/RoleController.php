@@ -68,16 +68,15 @@ class RoleController extends Controller
         }
     }
 
-    public function destroy(Role $Role)
+    public function destroy($id)
     {
+        $role = Role::find($id);
 
-        $record = $Role->delete();
+        if ($role) {
+            $role->delete();
+            AssignPermission::where('role_id', $role->id)->delete();
 
-        if ($record) {
-            $permissionModel = AssignPermission::where('company_id', $Role->company_id)->where('role_id', $Role->id)->first();
-            $permissionModel->delete();
-
-            return $this->response('Role and Permissions successfully deleted.', $record, true);
+            return $this->response('Role and Permissions successfully deleted.', $role, true);
         } else {
             return $this->response('Role cannot delete.', null, false);
         }

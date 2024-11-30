@@ -39,23 +39,24 @@
           )
         }}
       </template>
-      <template #total="{ item }">
-        {{ $utils.currency_format(item.total) }}
+      <template #total>
+        {{ $utils.currency_format(roomData && roomData.price) }}
       </template>
       <template #action="{ item }">
         <CustomerViewBookingHall
           v-if="booking.booking_type == 'hall'"
           :booking="booking"
           :item="item"
+          :roomData=roomData
         />
-        <CustomerViewBookingRoom v-else :booking="booking" :item="item" />
+        <CustomerViewBookingRoom v-else :booking="booking" :item="item" :roomData="roomData" />
       </template>
     </AssetsTable>
   </span>
 </template>
 <script>
 export default {
-  props: ["orderRooms", "booking", "room_no"],
+  props: ["orderRooms", "booking", "room_no","roomData"],
   data: () => ({
     headers: [],
     items: [],

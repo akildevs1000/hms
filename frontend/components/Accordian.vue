@@ -16,10 +16,7 @@
         </v-col>
       </v-row>
       <v-expand-transition>
-        <v-card-text
-          v-if="expandedIndex === index"
-          style="max-height: 250px; overflow-y: scroll"
-        >
+        <v-card-text v-if="expandedIndex === index">
           <table>
             <tr>
               <td style="width: 30%" class="border-bottom">
@@ -171,14 +168,44 @@ export default {
       expandedIndex: null, // Index of the currently expanded item
       permission_ids: [],
       topMenus: [
-        { label: "Dashboard", name: "dashboard" },
-        { label: "Customer", name: "customer" },
-        { label: "Account", name: "account" },
-        { label: "Sales", name: "sales" },
-        { label: "Reports", name: "reports" },
-        { label: "Setting", name: "setting" },
+        {
+          label: "Dashboard",
+          name: "dashboard",
+        },
+        {
+          label: "Customer",
+          name: "customer",
+        },
+        {
+          label: "Account",
+          name: "account",
+        },
+        {
+          label: "Sales",
+          name: "sales",
+        },
+        {
+          label: "Reports",
+          name: "reports",
+        },
+        {
+          label: "Setting",
+          name: "setting",
+        },
+        {
+          label: "House Keeping",
+          name: "house_keeping",
+        },
       ],
       menus: [
+        {
+          topMenu: "house_keeping",
+          image: "/cleaner.png",
+          module: "house_keeping",
+          title: "House Keeping",
+          to: "/house_keeping",
+          menu: "settings_permissions_access",
+        },
         {
           topMenu: "dashboard",
           icon: "mdi-home",
@@ -204,12 +231,52 @@ export default {
           menu: "dashboard",
         },
         {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          module: "night_audit",
+          title: "Night Audit",
+          to: "/management/report/night_audit",
+          menu: "night_audit_access",
+        },
+        {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          module: "summary",
+          title: "Summary",
+          to: "/management/report/summary",
+          menu: "summary_access",
+        },
+        {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          module: "cash",
+          title: "Cash Report",
+          to: "/management/report/cash",
+          menu: "cash_access",
+        },
+        {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          module: "ota",
+          title: "OTA Report",
+          to: "/management/report/ota",
+          menu: "ota_access",
+        },
+        {
+          topMenu: "reports",
+          icon: "mdi-chart-areaspline",
+          module: "ota_trn",
+          title: "OTA TRN",
+          to: "/management/report/ota_trn",
+          menu: "ota_trn_access",
+        },
+        {
           topMenu: "dashboard",
           icon: "mdi-bed",
           module: "history",
           title: "History",
           to: "/history",
-          menu: "guest_access",
+          menu: "history_access",
         },
         {
           topMenu: "customer",
@@ -218,6 +285,14 @@ export default {
           title: "Customers",
           to: "/source",
           menu: "source_access",
+        },
+        {
+          topMenu: "customer",
+          icon: "mdi-chat",
+          module: "chat",
+          title: "Chat",
+          to: "/chat",
+          menu: "chat_access",
         },
         {
           topMenu: "account",
@@ -293,14 +368,7 @@ export default {
           to: "/vendors",
           menu: "accounts_posting_access",
         },
-        {
-          topMenu: "dashboard",
-          icon: "mdi mdi-file-chart-outline",
-          module: "night_audit",
-          title: "Night Audit",
-          to: "/management/report/audit",
-          menu: "night_audit_access",
-        },
+
         {
           topMenu: "dashboard",
           icon: "mdi-home-search-outline",
@@ -349,14 +417,7 @@ export default {
           to: "/manage",
           menu: "settings_room_price_access",
         },
-        {
-          topMenu: "setting",
-          icon: "mdi-cog",
-          module: "setup",
-          title: "Setup",
-          to: "/setup",
-          menu: "settings_room_price_access",
-        },
+
         {
           topMenu: "setting",
           icon: "mdi mdi-account-tie",

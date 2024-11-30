@@ -435,27 +435,29 @@
                       </v-col>
 
                       <v-col cols="12" class="text-right">
-                        <v-btn
+                        <!-- <v-btn
                           small
                           class="grey white--text"
                           @click="userDialog = false"
                         >
                           Cancel
                         </v-btn>
-                        <v-btn small class="primary" @click="save">Save</v-btn>
-                        <AssetButton
+                        <v-btn small class="primary" @click="save">Save</v-btn> -->
+                        <AssetsButton
                           :options="{
                             label: `Cancel`,
                             icon: ``,
                             color: `grey white--text`,
                           }"
+                          @click="userDialog = false"
                         />
-                        <AssetButton
+                        <AssetsButton
                           :options="{
                             label: `Submit`,
                             icon: ``,
                             color: `blue`,
                           }"
+                          @click="save"
                         />
                       </v-col>
                     </v-row>

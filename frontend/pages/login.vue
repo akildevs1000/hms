@@ -307,7 +307,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .emailtext-field .v-input__slot {
   padding: 0 2px !important;
 }

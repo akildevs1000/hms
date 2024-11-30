@@ -306,13 +306,38 @@
                                     class="text-right border-bottom"
                                     style="font-size: 11px"
                                   >
+                                  {{roomData && $utils.currency_format(roomData.price)}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
+                                  >
+                                    Discount:
+                                  </td>
+                                  <td
+                                    class="text-right border-bottom red--text"
+                                    style="font-size: 11px"
+                                  >
+                                    -
                                     {{
-                                      transactionSummary &&
-                                      $utils.currency_format(
-                                        transactionSummary.sumDebit -
-                                          transactionSummary.tot_posting
-                                      )
+                                      $utils.currency_format(booking.discount)
                                     }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
+                                  >
+                                    After Discount:
+                                  </td>
+                                  <td
+                                    class="text-right border-bottom"
+                                    style="font-size: 11px"
+                                  >
+                                  {{roomData && $utils.currency_format(roomData.price - booking.discount)}}
                                   </td>
                                 </tr>
                                 <tr>
@@ -345,31 +370,10 @@
                                     class="text-right border-bottom"
                                     style="font-size: 11px"
                                   >
-                                    {{
-                                      transactionSummary &&
-                                      $utils.currency_format(
-                                        transactionSummary.sumDebit
-                                      )
-                                    }}
+                                  {{roomData && $utils.currency_format((roomData.price - booking.discount) + parseFloat( transactionSummary && transactionSummary.tot_posting))}}
                                   </td>
                                 </tr>
-                                <tr>
-                                  <td
-                                    class="text-left border-bottom"
-                                    style="font-size: 11px"
-                                  >
-                                    Discount:
-                                  </td>
-                                  <td
-                                    class="text-right border-bottom red--text"
-                                    style="font-size: 11px"
-                                  >
-                                    -
-                                    {{
-                                      $utils.currency_format(booking.discount)
-                                    }}
-                                  </td>
-                                </tr>
+                               
                                 <tr>
                                   <td
                                     class="text-left border-bottom"
@@ -388,6 +392,7 @@
                                     }}
                                   </td>
                                 </tr>
+                              
                                 <tr>
                                   <td
                                     class="text-left border-bottom"
@@ -896,6 +901,7 @@
                       <CustomerRooms
                         :booking="booking"
                         :orderRooms="orderRooms"
+                        :roomData="roomData"
                         :room_no="
                           !customerScreen ? roomData && roomData.room_no : 0
                         "

@@ -317,28 +317,6 @@ export default {
         });
     },
 
-    delteteSelectedRecords() {
-      let just_ids = this.ids.map((e) => e.id);
-      confirm(
-        "Are you sure you wish to delete selected records , to mitigate any inconvenience in future."
-      ) &&
-        this.$axios
-          .post(`${this.endpoint}/delete/selected`, {
-            ids: just_ids,
-          })
-          .then(({ data }) => {
-            if (!data.status) {
-              this.errors = data.errors;
-            } else {
-              this.getDataFromApi();
-              this.snackbar = data.status;
-              this.ids = [];
-              this.response = "Selected records has been deleted";
-            }
-          })
-          .catch((err) => console.log(err));
-    },
-
     deleteItem(item) {
       confirm(
         "Are you sure you wish to delete , to mitigate any inconvenience in future."
@@ -349,8 +327,6 @@ export default {
             if (!data.status) {
               this.errors = data.errors;
             } else {
-              this.deletePermission();
-
               this.getDataFromApi();
               this.snackbar = data.status;
               this.response = data.message;
@@ -421,16 +397,6 @@ export default {
           })
           .catch((res) => console.log(res));
       }
-    },
-    //permissions
-    deletePermission(id) {
-      this.$axios
-        .delete(this.endpoint + "/" + id)
-        .then(({ data }) => {
-          this.snackbar = data.status;
-          this.response = data.message;
-        })
-        .catch((err) => console.log(err));
     },
     updatePermission(role_id) {
       //alert(this.editPermissionId);
