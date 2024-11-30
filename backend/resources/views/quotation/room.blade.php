@@ -385,9 +385,9 @@
     <div>
         <p style="color:#0762e2;">Note:</p>
         <p><b>Early Check-In and Late Check-Out Policy</b></p>
-        <p><b>Early Check-In: ₹</b>1200.00 <b>*</b></p>
+        <p><b>Early Check-In: Rs. </b>1200.00 <b>*</b></p>
         <p>Guests are allowed to check in up to 2 hours before the standard check-in time of 11:00 AM.</p>
-        <p><b>Late Check-Out: ₹1200</b>1200.00 <b>*</b></p>
+        <p><b>Late Check-Out: Rs. 1200</b>1200.00 <b>*</b></p>
         <p> <b>*</b>Note: Early check-in and late check-out are subject to room availability</p>
     </div>
     <br>
