@@ -116,7 +116,46 @@
                             {{
                               isGroupBooking
                                 ? "Group Booking"
-                                : $utils.currency_format(roomData.grand_total)
+                                : roomData &&
+                                  $utils.currency_format(roomData.price)
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            class="text-left border-bottom"
+                            style="width: 110px"
+                          >
+                            Discount
+                          </td>
+                          <td
+                            class="text-right border-bottom red--text"
+                            style="width: 110px"
+                          >
+                            -{{
+                              BookingData &&
+                              $utils.currency_format(BookingData.discount)
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            class="text-left border-bottom"
+                            style="width: 110px"
+                          >
+                            After Discount
+                          </td>
+                          <td
+                            class="text-right border-bottom"
+                            style="width: 110px"
+                          >
+                            {{
+                              $utils.currency_format(
+                                parseFloat((roomData && roomData.price) || 0) -
+                                  parseFloat(
+                                    (BookingData && BookingData.discount) || 0
+                                  )
+                              )
                             }}
                           </td>
                         </tr>
@@ -140,16 +179,16 @@
                         </tr>
                         <tr>
                           <td
-                            class="text-left border-bottom red--text"
+                            class="text-left border-bottom"
                             style="width: 110px"
                           >
                             Paid
                           </td>
                           <td
-                            class="text-right border-bottom"
+                            class="text-right border-bottom red--text"
                             style="width: 110px"
                           >
-                            {{
+                            -{{
                               $utils.currency_format(BookingData.paid_amounts)
                             }}
                           </td>
@@ -157,19 +196,16 @@
                         </tr>
                       </table>
                     </v-col>
-                    <v-col class="pt-5">
+                    <v-col class="pt-10">
                       <table>
                         <tr>
-                          <td class="text-center">Total Rs.</td>
+                          <td class="text-center">Balance</td>
                         </tr>
                         <tr>
                           <td class="text-center">
                             <span style="font-size: 18px" class="blue--text">
                               {{
-                                $utils.currency_format(
-                                  parseFloat(roomData.grand_total) +
-                                    parseFloat(BookingData.total_posting_amount)
-                                )
+                                $utils.currency_format(parseFloat(tempBalance))
                               }}
                             </span>
                           </td>
@@ -343,80 +379,91 @@
               <v-row>
                 <v-col cols="12" v-if="!isGroupBooking">
                   <Heading class="mb-3" label="Transactions" />
-                  <table style="width: 100%">
-                    <tr style="font-size: 13px">
-                      <td
-                        class="text-center primary--text border-bottom"
-                        style="width: 110px"
-                      >
-                        Date
-                      </td>
-                      <td
-                        class="text-right primary--text border-bottom"
-                        style="width: 110px"
-                      >
-                        Debit
-                      </td>
-                      <td
-                        class="text-right primary--text border-bottom"
-                        style="width: 110px"
-                      >
-                        Credit
-                      </td>
-                      <td
-                        class="text-right primary--text border-bottom"
-                        style="width: 110px"
-                      >
-                        Balance
-                      </td>
-                    </tr>
+                  <div style="overflow: auto; max-height: 200px;" class="px-3">
+                    <table style="width: 100%">
+                      <tr style="font-size: 13px">
+                        <td
+                          class="text-center primary--text border-bottom"
+                          style="width: 110px"
+                        >
+                          Date
+                        </td>
+                        <td
+                          class="text-right primary--text border-bottom"
+                          style="width: 110px"
+                        >
+                          Debit
+                        </td>
+                        <td
+                          class="text-right primary--text border-bottom"
+                          style="width: 110px"
+                        >
+                          Credit
+                        </td>
+                        <td
+                          class="text-right primary--text border-bottom"
+                          style="width: 110px"
+                        >
+                          Balance
+                        </td>
+                      </tr>
 
-                    <tr
-                      style="font-size: 13px"
-                      v-for="(item, index) in transactions"
-                      :key="index"
-                    >
-                      <td
-                        class="text-center border-bottom"
-                        style="width: 110px"
+                      <tr
+                        style="font-size: 13px"
+                        v-for="(item, index) in transactions"
+                        :key="index"
                       >
-                        {{ item.created_at || "---" }}
-                      </td>
-                      <td class="text-right border-bottom" style="width: 110px">
-                        {{
-                          item && item.debit == 0
-                            ? "---"
-                            : $utils.currency_format(item.debit)
-                        }}
-                      </td>
-                      <td class="text-right border-bottom" style="width: 110px">
-                        {{
-                          item && item.credit == 0
-                            ? "---"
-                            : $utils.currency_format(item.credit)
-                        }}
-                      </td>
-                      <td class="text-right border-bottom" style="width: 110px">
-                        {{ $utils.currency_format(item.balance) || "---" }}
-                      </td>
-                    </tr>
+                        <td
+                          class="text-center border-bottom"
+                          style="width: 110px"
+                        >
+                          {{ item.created_at || "---" }}
+                        </td>
+                        <td
+                          class="text-right border-bottom"
+                          style="width: 110px"
+                        >
+                          {{
+                            item && item.debit == 0
+                              ? "---"
+                              : $utils.currency_format(item.debit)
+                          }}
+                        </td>
+                        <td
+                          class="text-right border-bottom"
+                          style="width: 110px"
+                        >
+                          {{
+                            item && item.credit == 0
+                              ? "---"
+                              : $utils.currency_format(item.credit)
+                          }}
+                        </td>
+                        <td
+                          class="text-right border-bottom"
+                          style="width: 110px"
+                        >
+                          {{ $utils.currency_format(item.balance) || "---" }}
+                        </td>
+                      </tr>
 
-                    <tr style="font-size: 13px">
-                      <td
-                        colspan="3"
-                        class="text-right primary--text"
-                        style="width: 110px"
-                      >
-                        Total Balance
-                      </td>
-                      <td
-                        class="text-right pl-3 primary--text"
-                        style="width: 110px"
-                      >
-                        {{ $utils.currency_format(totalTransactionAmount) }}
-                      </td>
-                    </tr>
-                  </table>
+                      <tr style="font-size: 13px">
+                        <td
+                          colspan="3"
+                          class="text-right primary--text"
+                          style="width: 110px"
+                        >
+                          Total Balance
+                        </td>
+                        <td
+                          class="text-right pl-3 primary--text"
+                          style="width: 110px"
+                        >
+                          {{ $utils.currency_format(totalTransactionAmount) }}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
                 </v-col>
                 <v-col v-else>
                   <Heading class="mb-3" label="Postings" />
@@ -803,7 +850,7 @@ export default {
         booking_id: this.BookingData.id,
         grand_remaining_price: parseFloat(this.full_payment) - after_discount,
         remaining_price: parseFloat(this.full_payment) - after_discount,
-        full_payment: parseFloat(this.full_payment),
+        new_advance: parseFloat(this.full_payment),
         payment_mode_id: this.payment_mode_id,
         company_id: this.$auth.user.company.id,
         reference_number: this.reference,
@@ -823,7 +870,12 @@ export default {
             this.loading = false;
           } else {
             this.loading = false;
-            alert("Success!", "Payment has been done", "success");
+
+            this.$swal("Success!", "Payment has been done", "success").then(
+              () => {
+                this.$emit("close-dialog");
+              }
+            );
           }
         })
         .catch((e) => {
