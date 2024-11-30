@@ -351,7 +351,7 @@
                     <td class="text-center">{{ $item['no_of_adult'] }}</td>
                     <td class="text-right">{{ number_format($item['price'], 2) }}</td>
                     <td class="text-center">{{ $item['no_of_rooms'] }}</td>
-                    <td class="text-center">{{ $item['no_of_nights'] }}</td>
+                    <td class="text-center">{{ $item['no_of_nights'] - 1 }}</td>
                     <td class="text-right">{{ number_format($item['price'] * $item['no_of_rooms'] * $item['no_of_nights'], 2) }}</td>
                 </tr>
             @endforeach
