@@ -296,7 +296,20 @@
                 <v-col cols="7">
                   <AssetsButtonCancel @close="closeDialog" />
                   &nbsp;
-                  <AssetsButtonSubmit @click="store" />
+                  <v-hover v-slot:default="{ hover, props }">
+                    <span v-bind="props">
+                      <v-btn
+                        :disabled="loading"
+                        x-small
+                        :outlined="!hover"
+                        rounded
+                        color="green"
+                        class="white--text"
+                        @click="store"
+                        >Submit</v-btn
+                      >
+                    </span>
+                  </v-hover>
                 </v-col>
               </v-row>
             </v-stepper-content>
@@ -337,7 +350,6 @@ export default {
       snackbar: false,
       checkLoader: false,
       response: "",
-      loading: false,
       search: { mobile: "" },
       availableRooms: [],
       selectedRooms: [],
@@ -459,6 +471,7 @@ export default {
     },
 
     store() {
+      this.loading = true;
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
@@ -483,7 +496,10 @@ export default {
             this.closeDialog();
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          console.log(e);
+          this.loading = false;
+        });
     },
   },
 };

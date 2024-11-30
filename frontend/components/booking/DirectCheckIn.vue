@@ -305,7 +305,20 @@
             <v-col cols="7">
               <AssetsButtonCancel @close="$emit(`close-dialog`)" />
               &nbsp;
-              <AssetsButtonSubmit @click="store" />
+              <v-hover v-slot:default="{ hover, props }">
+                <span v-bind="props">
+                  <v-btn
+                    :disabled="loading"
+                    x-small
+                    :outlined="!hover"
+                    rounded
+                    color="green"
+                    class="white--text"
+                    @click="store"
+                    >Submit</v-btn
+                  >
+                </span>
+              </v-hover>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -344,7 +357,6 @@ export default {
       snackbar: false,
       checkLoader: false,
       response: "",
-      loading: false,
       search: { mobile: "" },
       availableRooms: [],
       selectedRooms: [],
@@ -477,7 +489,7 @@ export default {
         user_id: this.$auth.user.id,
       };
 
-      this.subLoad = false;
+      this.loading = true;
 
       this.$axios
         .post("/group-booking", payload)
@@ -493,7 +505,10 @@ export default {
             this.dialog = false;
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          this.loading = false;
+          console.log(e);
+        });
     },
     async storeCheckIn(data) {
       await this.$axios.post(`direct_check_in_room`, {
@@ -502,6 +517,7 @@ export default {
       });
 
       this.$swal("Success!", "Checked In Successfull", "success").then(() => {
+        this.loading = false;
         this.closeDialog();
         this.$emit(`close-dialog`);
       });

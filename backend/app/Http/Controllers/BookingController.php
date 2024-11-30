@@ -1170,92 +1170,100 @@ class BookingController extends Controller
             $room_id = $request->room_id;
             $booking = Booking::where('company_id', $request->company_id)->find($booking_id);
             $customer = Customer::find($booking->customer_id);
-            if ($request->discount > 0) {
-                $this->updateTransaction($booking, $request, 'discount', 'debit', -abs($request->discount));
-                $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();
-                $bookedRoom->increment('room_discount', $request->discount);
+
+            if (!$request->isPaymentBeforeSubmitted) {
+
+                if ($request->discount > 0) {
+                    $this->updateTransaction($booking, $request, 'discount', 'debit', -abs($request->discount));
+                    $bookedRoom = BookedRoom::whereBookingId($booking_id)->first();
+                    $bookedRoom->increment('room_discount', $request->discount);
+                }
+
+                $transactionData = [
+                    'booking_id' => $booking->id,
+                    'customer_id' => $booking->customer_id ?? '',
+                    'date' => now(),
+                    'company_id' => $booking->company_id ?? '',
+                    'payment_method_id' => $request->payment_mode_id,
+                    'desc' => 'check out payment',
+                    'reference_number' => $request->reference_number,
+                    'user_id' => $request->user_id,
+                ];
+
+
+
+                $trans = new TransactionController();
+
+                if ($request->isHall && $request->exceedHoursCharges > 0) {
+                    $transactionData["desc"] = "additional hours charges";
+                    $trans->store($transactionData, $request->exceedHoursCharges ?? 0, 'debit');
+                }
+                // if ($request->full_payment > 0) {
+                $trans->store($transactionData, $request->full_payment ?? 0, 'credit');
+                // }
             }
 
-
-            $transactionData = [
-                'booking_id' => $booking->id,
-                'customer_id' => $booking->customer_id ?? '',
-                'date' => now(),
-                'company_id' => $booking->company_id ?? '',
-                'payment_method_id' => $request->payment_mode_id,
-                'desc' => 'check out payment',
-                'reference_number' => $request->reference_number,
-                'user_id' => $request->user_id,
-            ];
-
-
-
-            $trans = new TransactionController();
-
-            if ($request->isHall && $request->exceedHoursCharges > 0) {
-                $transactionData["desc"] = "additional hours charges";
-                $trans->store($transactionData, $request->exceedHoursCharges ?? 0, 'debit');
-            }
-            // if ($request->full_payment > 0) {
-            $trans->store($transactionData, $request->full_payment ?? 0, 'credit');
-            // }
 
             $booking = Booking::find($booking_id);
             if ($booking) {
                 $customer = Customer::find($booking->customer_id);
 
-                if ($booking->balance > 0) {
-                    $booking->payment_status = 0;
-                    $booking->remaining_price = (int) $booking->remaining_price - (int) $request->full_payment;
-                    $booking->grand_remaining_price = (int) $booking->remaining_price + (int) $booking->total_posting_amount;
+                if (!$request->isPaymentBeforeSubmitted) {
+                    if ($booking->balance > 0) {
+                        $booking->payment_status = 0;
+                        $booking->remaining_price = (int) $booking->remaining_price - (int) $request->full_payment;
+                        $booking->grand_remaining_price = (int) $booking->remaining_price + (int) $booking->total_posting_amount;
 
-                    $paymentsData = [
-                        'booking_id' => $booking_id,
-                        'payment_mode' => $request->payment_mode_id,
-                        'description' => 'checkout payment',
-                        'amount' => $request->full_payment,
-                        'type' => 'customer',
-                        'room' => $booking->rooms,
-                        'company_id' => $booking->company_id,
-                        'is_city_ledger' => 0,
-                        'created_at' => now(),
-                    ];
-                    $payment = Payment::whereBookingId($booking->id)
-                        ->where('company_id', $booking->company_id)->where('is_city_ledger', 1)
-                        ->first();
-                    if ($payment) {
-                        $payment->amount = (int) $booking->balance;
-                        $payment->save();
-                    }
-                    $payment = new PaymentController();
-                    $payment->store($paymentsData);
-                } else {
-                    $booking->payment_status = 1;
-                    $booking->full_payment = $booking->paid_amounts;
-                    $booking->remaining_price = 0;
-                    $booking->grand_remaining_price = 0;
-                    $booking->total_posting_amount = 0;
+                        $paymentsData = [
+                            'booking_id' => $booking_id,
+                            'payment_mode' => $request->payment_mode_id,
+                            'description' => 'checkout payment',
+                            'amount' => $request->full_payment,
+                            'type' => 'customer',
+                            'room' => $booking->rooms,
+                            'company_id' => $booking->company_id,
+                            'is_city_ledger' => 0,
+                            'created_at' => now(),
+                        ];
+                        $payment = Payment::whereBookingId($booking->id)
+                            ->where('company_id', $booking->company_id)->where('is_city_ledger', 1)
+                            ->first();
+                        if ($payment) {
+                            $payment->amount = (int) $booking->balance;
+                            $payment->save();
+                        }
+                        $payment = new PaymentController();
+                        $payment->store($paymentsData);
+                    } else {
+                        $booking->payment_status = 1;
+                        $booking->full_payment = $booking->paid_amounts;
+                        $booking->remaining_price = 0;
+                        $booking->grand_remaining_price = 0;
+                        $booking->total_posting_amount = 0;
 
-                    $paymentsData = [
-                        'booking_id' => $booking_id,
-                        'payment_mode' => $request->payment_mode_id,
-                        'description' => 'checkout payment',
-                        'amount' => $request->full_payment,
-                        'type' => 'customer',
-                        'room' => $booking->rooms,
-                        'company_id' => $booking->company_id,
-                        'is_city_ledger' => 0,
-                        'created_at' => now(),
-                    ];
-                    $payment = Payment::whereBookingId($booking->id)
-                        ->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
-                    if ($payment) {
-                        $payment->amount = (int) $booking->balance;
-                        $payment->save();
+                        $paymentsData = [
+                            'booking_id' => $booking_id,
+                            'payment_mode' => $request->payment_mode_id,
+                            'description' => 'checkout payment',
+                            'amount' => $request->full_payment,
+                            'type' => 'customer',
+                            'room' => $booking->rooms,
+                            'company_id' => $booking->company_id,
+                            'is_city_ledger' => 0,
+                            'created_at' => now(),
+                        ];
+                        $payment = Payment::whereBookingId($booking->id)
+                            ->where('company_id', $booking->company_id)->where('is_city_ledger', 1)->first();
+                        if ($payment) {
+                            $payment->amount = (int) $booking->balance;
+                            $payment->save();
+                        }
+                        $payment = new PaymentController();
+                        $payment->store($paymentsData);
                     }
-                    $payment = new PaymentController();
-                    $payment->store($paymentsData);
                 }
+
+
                 $booking->booking_status = 3;
                 $booking->save();
 

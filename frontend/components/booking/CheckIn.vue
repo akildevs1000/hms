@@ -237,13 +237,20 @@
                         }"
                         @click="$emit(`close-dialog`)"
                       />
-                      <AssetsButton
-                        :options="{
-                          color: `green`,
-                          label: `Submit`,
-                        }"
-                        @click="store"
-                      />
+                      <v-hover v-slot:default="{ hover, props }">
+                        <span v-bind="props">
+                          <v-btn
+                            :disabled="loading"
+                            x-small
+                            :outlined="!hover"
+                            rounded
+                            color="green"
+                            class="white--text"
+                            @click="store"
+                            >Submit</v-btn
+                          >
+                        </span>
+                      </v-hover>
                     </v-col>
                   </v-row>
 
@@ -682,7 +689,7 @@ export default {
         payload.guest = this.guest;
       }
 
-      // this.loading = true;
+      this.loading = true;
       this.$axios
         .post("/check_in_room", payload)
         .then(({ data }) => {
@@ -690,16 +697,18 @@ export default {
             this.errors = data.errors;
             this.loading = false;
           } else {
-            this.loading = false;
-
             this.$swal("Success!", "Room has been checked in", "success").then(
               () => {
                 this.$emit("close-dialog");
+                this.loading = false;
               }
             );
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          this.loading = false;
+          console.log(e)
+        });
     },
 
     closeDialog(payload) {
@@ -711,7 +720,10 @@ export default {
     redirect_to_invoice(id) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `https://backend.myhotel2cloud.com/api/invoice/${id}`);
+      element.setAttribute(
+        "href",
+        `https://backend.myhotel2cloud.com/api/invoice/${id}`
+      );
       document.body.appendChild(element);
       element.click();
     },

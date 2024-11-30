@@ -379,7 +379,7 @@
               <v-row>
                 <v-col cols="12" v-if="!isGroupBooking">
                   <Heading class="mb-3" label="Transactions" />
-                  <div style="overflow: auto; max-height: 200px;" class="px-3">
+                  <div style="overflow: auto; max-height: 200px" class="px-3">
                     <table style="width: 100%">
                       <tr style="font-size: 13px">
                         <td
@@ -570,7 +570,20 @@
                         <v-col cols="12" class="text-center mt-5">
                           <AssetsButtonCancel @click="checkOutDialog = false" />
                           &nbsp; &nbsp;
-                          <AssetsButtonSubmit @click="submitPayment" />
+                          <v-hover v-slot:default="{ hover, props }">
+                            <span v-bind="props">
+                              <v-btn
+                                :disabled="loading"
+                                x-small
+                                :outlined="!hover"
+                                rounded
+                                color="green"
+                                class="white--text"
+                                @click="submitPayment"
+                                >Submit</v-btn
+                              >
+                            </span>
+                          </v-hover>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -692,6 +705,7 @@
                       <v-hover v-slot:default="{ hover, props }">
                         <span v-bind="props">
                           <v-btn
+                            :disabled="loading"
                             block
                             small
                             :outlined="!hover"
@@ -789,6 +803,7 @@ export default {
 
       checkOutDialog: false,
       allDataLoaded: false,
+      isPaymentBeforeSubmitted: false,
     };
   },
   created() {
@@ -873,12 +888,13 @@ export default {
 
             this.$swal("Success!", "Payment has been done", "success").then(
               () => {
-                this.$emit("close-dialog");
+                this.isPaymentBeforeSubmitted = true;
               }
             );
           }
         })
         .catch((e) => {
+          this.loading = false;
           console.log(e);
         });
     },
@@ -911,9 +927,10 @@ export default {
         isHall: this.isHall,
         exceedHoursCharges: this.exceedHoursCharges,
         room_id: this.roomData.room_id,
+        isPaymentBeforeSubmitted: this.isPaymentBeforeSubmitted,
       };
 
-      // this.loading = true;
+      this.loading = true;
       this.$axios
         .post("/check_out_room", payload)
         .then(({ data }) => {
@@ -932,7 +949,10 @@ export default {
             );
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          this.loading = false;
+          console.log(e)
+        });
     },
 
     redirect_to_invoice(id) {
