@@ -690,7 +690,7 @@ class BookingController extends Controller
                 return $existingCustomer->id;
             }
 
-            $customer = $this->handleFileUploads($customer);
+            // $customer = $this->handleFileUploads($customer);
 
             $newCustomer = Customer::create($customer);
 
