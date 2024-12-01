@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ActionMarkdownMail;
+use App\Models\BookedRoom;
+use App\Models\Room;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class ExternalUrlController extends Controller
 {
@@ -46,5 +51,67 @@ class ExternalUrlController extends Controller
                 'message' => $response->body(),
             ], $response->status());
         }
+    }
+
+    function testPdf()
+    {
+        try {
+            // Send the test email
+
+            $email = "francisgill1000@gmail.com";
+
+            Mail::to($email)->send(new ActionMarkdownMail(
+                'This is the body text of the test email.',
+                'Test Email Subject',
+                49
+            ));
+
+            return 'Test email sent successfully to ' . $email;
+        } catch (\Exception $e) {
+            $this->error('Failed to send email: ' . $e->getMessage());
+        }
+    }
+
+    public function getTenDaysForecast($id = 0)
+    {
+        $AvailableRooms = Room::where('company_id', $id)->count();
+
+
+        $today = Carbon::today();
+        $dates = [];
+        for ($i = 0; $i < 10; $i++) {
+            $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
+            $dates[$date] = [
+                "label" => date("D", strtotime($date)),
+                "bookedCount" => 0,
+                "bookedPercent" => 0,
+                "availableCount" => $AvailableRooms,
+                "availablePercent" => 100,
+            ];
+            $bookedData = BookedRoom::without("booking", "postings")
+                ->orderBy("check_in")
+                ->whereDate('check_in', ">=",  $today)
+                ->orWhereDate('check_in', "<=",  $today)
+                ->where('booking_status', BookedRoom::BOOKED)
+                ->where('company_id', $id)
+                ->get(["check_in", "check_out"]);
+            $counter = 0;
+            foreach ($bookedData as $book) {
+                $check_in = $book->check_in;
+                $check_out = $book->check_out;
+                if ($date >= $check_in && $date <= $check_out) {
+                    ++$counter;
+                    $dates[$date] = [
+                        "label" => date("D", strtotime($date)),
+                        "bookedCount" => $counter,
+                        "bookedPercent" => round(($counter / $AvailableRooms) * 100, 2),
+                        "availableCount" => $AvailableRooms - $counter,
+                        "availablePercent" => round((($AvailableRooms - $counter) / $AvailableRooms) * 100, 2),
+                    ];
+                }
+            }
+        }
+
+        return array_values($dates);
     }
 }
