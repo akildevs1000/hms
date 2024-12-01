@@ -2808,8 +2808,10 @@ class BookingController extends Controller
             ];
             $bookedData = BookedRoom::without("booking", "postings")
                 ->orderBy("check_in")
-                ->whereDate('check_in', ">=",  $today)
-                ->orWhereDate('check_in', "<=",  $today)
+                ->where(function ($q) use ($today) {
+                    $q->whereDate('check_in', ">=",  $today)
+                        ->orWhereDate('check_in', "<=",  $today);
+                })
                 ->where('booking_status', BookedRoom::BOOKED)
                 ->where('company_id', $id)
                 ->get(["check_in", "check_out"]);
