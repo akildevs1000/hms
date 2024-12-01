@@ -411,7 +411,7 @@ class RoomController extends Controller
 
                 $q->where(function ($query) use ($todayDate) {
                     // Check if the check-in is before or equal to today, and check-out is after or equal to today
-                    $query->whereDate('check_in', '<=', $todayDate)
+                    $query->whereDate('check_in', '=', $todayDate)
                         ->whereDate('check_out', '>=', $todayDate)
                         ->where('booking_status', BookedRoom::CHECKED_IN)
                         ->where('booking_status', '!=', 0);
