@@ -195,7 +195,7 @@
                     {
                       color: `#ffc000`,
                       text: `CheckIn`,
-                      value: Occupied.length + expectCheckOut.length,
+                      value: Occupied.length,
                     },
                     {
                       color: `#dc3545`,
@@ -233,7 +233,7 @@
                     {
                       color: `#ffc000`,
                       text: `Arrived`,
-                      value: Occupied.length + expectCheckOut.length,
+                      value: Occupied.length,
                     },
                     {
                       color: `#71de36`,
