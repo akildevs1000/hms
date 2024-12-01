@@ -2811,6 +2811,7 @@ class BookingController extends Controller
                 ->whereDate('check_in', ">=",  $today)
                 ->orWhereDate('check_in', "<=",  $today)
                 ->where('booking_status', BookedRoom::BOOKED)
+                ->where('company_id', $id)
                 ->get(["check_in", "check_out"]);
             $counter = 0;
             foreach ($bookedData as $book) {
