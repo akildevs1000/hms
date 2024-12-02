@@ -68,6 +68,9 @@ class PaymentController extends Controller
 
         return Payment::query()
             ->where('company_id', $companyId)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            })
             ->when($searchKey, function ($query) use ($searchKey, $companyId) {
                 $query->whereHas('booking', function ($q) use ($searchKey, $companyId) {
                     $q->where('company_id', $companyId)
