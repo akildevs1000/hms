@@ -33,7 +33,7 @@ class GenerateOTA extends Command
     {
         $companyId = $this->argument("company_id");
 
-        $date = date("Y-m-d");
+        $date = date('Y-m-d', strtotime('yesterday')); // Use yesterday's date
 
         // Fetch bookings for the specified date range
         $bookingsGrouped = Booking::whereNotNull('source')
