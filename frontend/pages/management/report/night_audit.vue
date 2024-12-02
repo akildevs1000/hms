@@ -11,7 +11,7 @@
       <v-row class="text-left">
         <v-col cols="10"></v-col>
         <v-col cols="2">
-          <FilterDateRange @filter-attr="filterAttr" />
+          <FilterDateRange @filter-attr="filterAttr" :defaultDates="true" />
         </v-col>
       </v-row>
     </v-card>
