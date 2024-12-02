@@ -33,6 +33,7 @@ class GenerateCash extends Command
 
 
         $bookings = Booking::query()
+            ->where('booking_status', -1)
             ->where('company_id', $companyId)
             ->where('booking_status', Booking::CHECKED_IN)
             ->where('booking_date', $date)
