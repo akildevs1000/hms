@@ -30,7 +30,7 @@ class GenerateSummary extends Command
         // Record::truncate();
 
         $companyId = $this->argument("company_id", 0);
-        $date = date('Y-m-d'); // Directly using the passed date
+        $date = date('Y-m-d', strtotime('yesterday')); // Use yesterday's date
 
         $bookings = Booking::query()
             ->where('company_id', $companyId)
