@@ -1,5 +1,12 @@
 <template>
   <span>
+    <BookingSingle
+      :noLabel="true"
+      v-if="BookingId"
+      ref="BookingSingleComp"
+      :key="BookingId"
+      :BookingId="BookingId"
+    />
     <v-dialog v-model="payingDialog" persistent max-width="700">
       <AssetsIconClose left="690" @click="payingDialog = false" />
       <v-card>
@@ -96,20 +103,15 @@
               </v-btn>
             </template>
             <v-list dense>
-              <v-list-item>
+              <v-list-item @click="viewCustomerBilling(item.id)">
                 <v-list-item-title style="cursor: pointer">
-                  <v-icon
-                    @click="viewCustomerBilling(item)"
-                    x-small
-                    color="primary"
-                    class="mr-2"
-                  >
+                  <v-icon x-small color="primary" class="mr-2">
                     mdi-eye
                   </v-icon>
                   <AssetsTextLabel color="text-color" label="View" />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item>
+              <v-list-item @click="get_payment(item)">
                 <v-list-item-title style="cursor: pointer">
                   <v-icon
                     v-if="
@@ -117,7 +119,6 @@
                       can('in_house_edit') ||
                       can('checkout_edit')
                     "
-                    @click="get_payment(item)"
                     x-small
                     color="primary"
                     class="mr-2"
@@ -127,14 +128,9 @@
                   <AssetsTextLabel color="text-color" label="Pay" />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item>
+              <v-list-item @click="redirect_to_invoice(item.id)">
                 <v-list-item-title style="cursor: pointer">
-                  <v-icon
-                    @click="redirect_to_invoice(item.id)"
-                    x-small
-                    color="primary"
-                    class="mr-2"
-                  >
+                  <v-icon x-small color="primary" class="mr-2">
                     mdi-cash-multiple
                   </v-icon>
                   <AssetsTextLabel color="text-color" label="Invoice" />
@@ -157,6 +153,7 @@ export default {
     CustomFilter,
   },
   data: () => ({
+    BookingId:0,
     stats: [],
     cumulativeIndex: 1,
     perPage: 20,
@@ -356,8 +353,17 @@ export default {
       );
     },
 
-    viewCustomerBilling(item) {
-      // this.$router.push(`/customer/details/${item.id}`);
+    viewCustomerBilling(id) {
+      this.BookingId = id;
+
+      this.$nextTick(() => {
+        const bookingSingleComp = this.$refs["BookingSingleComp"];
+        if (bookingSingleComp) {
+          bookingSingleComp.ViewBookingDialog = true;
+        } else {
+          console.warn("BookingSingleComp ref is undefined");
+        }
+      });
     },
 
     commonMethod() {

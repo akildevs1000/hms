@@ -1,7 +1,14 @@
-export default ({ $axios }, inject) => {
-  inject("hello", (arg, options) => {
-    return $axios.$get(arg, options).then(({ data }) => {
-      return data;
-    });
+export default ({ $axios, store }, inject) => {
+  $axios.onRequest(async (config) => {
+    let user = store.state.auth.user;
+
+    if (user) {
+      config.params = {
+        ...config.params,
+        company_id: user.company_id,
+      };
+    }
+
+    return config; // Return the modified config
   });
 };
