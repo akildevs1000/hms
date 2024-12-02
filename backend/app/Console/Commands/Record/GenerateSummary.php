@@ -33,6 +33,7 @@ class GenerateSummary extends Command
         $date = date('Y-m-d', strtotime('yesterday')); // Use yesterday's date
 
         $bookings = Booking::query()
+            ->where('booking_status', -1)
             ->where('company_id', $companyId)
             ->where('booking_status', Booking::CHECKED_IN)
             ->where('booking_date', $date)

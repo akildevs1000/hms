@@ -37,21 +37,15 @@ class GenerateOTA extends Command
 
         // Fetch bookings for the specified date range
         $bookingsGrouped = Booking::whereNotNull('source')
+            ->where('booking_status', -1)
             ->whereDate('check_in', $date)
             ->get(['source', 'total_price as sum']) // Ensure 'Total Price' is in the selected fields
             ->groupBy('source')
             ->map(function ($group) {
                 return [
-                    "total_sum" => $group->sum('sum')
+                    "total_sum" => $group->sum('sum'),
                 ];
             });
-
-        // Output $bookingsGrouped for each source
-        foreach ($bookingsGrouped as $source => $sum) {
-            echo "Source: $source, Total Total Price: $sum\n";
-        }
-
-        return;
 
 
         $sourceData = [];
@@ -65,16 +59,13 @@ class GenerateOTA extends Command
             ];
         }
 
-        foreach ($bookingsGrouped as $source => $booking) {
+        // Output $bookingsGrouped for each source
+        foreach ($bookingsGrouped as $source => $sum) {
             $sourceData[$source] = [
-                "total_sum" => '₹' . number_format($booking->total_price, 2),
-                "count" => $booking->count,
+                "total_sum" => '₹' . number_format($sum['total_sum'], 2),
+                "count" => count($bookingsGrouped[$source]),
             ];
         }
-
-        echo json_encode($sourceData);
-
-        return;
 
         $payload = [];
 

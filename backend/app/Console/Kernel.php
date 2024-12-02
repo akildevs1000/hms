@@ -57,6 +57,12 @@ class Kernel extends ConsoleKernel
                 // ->everyFiveMinutes()
                 ->dailyAt('1:45')
                 ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+
+            $schedule
+                ->command("record:generate-daily-ota $companyId")
+                // ->everyFiveMinutes()
+                ->dailyAt('2:00')
+                ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
         }
     }
 
