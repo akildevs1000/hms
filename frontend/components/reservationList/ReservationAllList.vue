@@ -145,15 +145,13 @@
 </template>
 <script>
 import Paying from "../../components/booking/Paying.vue";
-import CustomFilter from "../filter/CustomFilter.vue";
 export default {
   props: ["endpoint", "Model", "filter"],
   components: {
     Paying,
-    CustomFilter,
   },
   data: () => ({
-    BookingId:0,
+    BookingId: 0,
     stats: [],
     cumulativeIndex: 1,
     perPage: 20,
@@ -633,10 +631,10 @@ export default {
 
       const totals = data.reduce(
         (acc, e) => {
-          acc.total_price += e.total_price || 0;
-          acc.total_posting_amount += e.total_posting_amount || 0;
-          acc.paid_amounts += e.paid_amounts || 0;
-          acc.balance += e.balance || 0;
+          acc.total_price += parseFloat(e.total_price)|| 0;
+          acc.total_posting_amount += parseFloat(e.total_posting_amount )|| 0;
+          acc.paid_amounts += parseFloat(e.paid_amounts) || 0;
+          acc.balance += parseFloat(e.balance) || 0;
           return acc;
         },
         {
