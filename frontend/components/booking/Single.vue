@@ -23,7 +23,7 @@
             }px`"
           >
             <v-card-text>
-              <v-row no-gutter v-if="roomData && booking && booking.id">
+              <v-row no-gutter v-if="booking && booking.id">
                 <v-col cols="12" class="pa-0 ma-0">
                   <v-row no-gutter>
                     <v-col cols="12">
@@ -132,7 +132,7 @@
                           </tr> -->
 
                           <tr>
-                            <td width="50%" class="border-bottom">Room</td>
+                            <td width="50%" class="border-bottom">Rooms</td>
                             <td width="50%" class="border-bottom">
                               {{ bookedRooms.length }}
                             </td>
@@ -155,38 +155,6 @@
                             <td width="50%" class="border-bottom">Check Out</td>
                             <td width="50%" class="border-bottom">
                               {{ booking.check_out }} 11:00 AM
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td width="50%" class="border-bottom">Extra Bed</td>
-                            <td width="50%" class="border-bottom">
-                              {{ roomData?.extra_bed_qty ? "yes" : "no" }}
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td width="50%" class="border-bottom">Food</td>
-                            <td width="50%" class="border-bottom">
-                              {{ roomData.food_plan || "No Food" }}
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td width="50%" class="border-bottom">
-                              Early Check In
-                            </td>
-                            <td width="50%" class="border-bottom">
-                              {{ roomData?.early_check_in ? "yes" : "no" }}
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td width="50%" class="border-bottom">
-                              Late Check Out
-                            </td>
-                            <td width="50%" class="border-bottom">
-                              {{ roomData?.late_check_out ? "yes" : "no" }}
                             </td>
                           </tr>
                         </table>
@@ -289,7 +257,9 @@
                                   <td class="blue--text border-bottom">
                                     <span> Reservation </span>
                                   </td>
-                                  <td class="blue--text border-bottom text-right">
+                                  <td
+                                    class="blue--text border-bottom text-right"
+                                  >
                                     <span>
                                       {{ booking.reservation_no }}
                                     </span>
@@ -300,13 +270,17 @@
                                     class="text-left border-bottom"
                                     style="font-size: 11px"
                                   >
-                                    Room:
+                                    Booking Price:
                                   </td>
                                   <td
                                     class="text-right border-bottom"
                                     style="font-size: 11px"
                                   >
-                                  {{roomData && $utils.currency_format(roomData.price)}}
+                                    {{
+                                      $utils.currency_format(
+                                        booking.total_price
+                                      )
+                                    }}
                                   </td>
                                 </tr>
                                 <tr>
@@ -337,7 +311,7 @@
                                     class="text-right border-bottom"
                                     style="font-size: 11px"
                                   >
-                                  {{roomData && $utils.currency_format(roomData.price - booking.discount)}}
+                                    {{ $utils.currency_format(after_discount) }}
                                   </td>
                                 </tr>
                                 <tr>
@@ -352,7 +326,6 @@
                                     style="font-size: 11px"
                                   >
                                     {{
-                                      transactionSummary &&
                                       $utils.currency_format(
                                         transactionSummary.tot_posting
                                       )
@@ -370,10 +343,10 @@
                                     class="text-right border-bottom"
                                     style="font-size: 11px"
                                   >
-                                  {{roomData && $utils.currency_format((roomData.price - booking.discount) + parseFloat( transactionSummary && transactionSummary.tot_posting))}}
+                                    {{ $utils.currency_format(total) }}
                                   </td>
                                 </tr>
-                               
+
                                 <tr>
                                   <td
                                     class="text-left border-bottom"
@@ -392,7 +365,7 @@
                                     }}
                                   </td>
                                 </tr>
-                              
+
                                 <tr>
                                   <td
                                     class="text-left border-bottom"
@@ -404,15 +377,7 @@
                                     class="text-right border-bottom primary--text"
                                     style="font-size: 11px"
                                   >
-                                    <!-- {{
-                                      $utils.currency_format(booking.balance)
-                                    }} -->
-                                    {{
-                                      transactionSummary &&
-                                      $utils.currency_format(
-                                        transactionSummary.balance
-                                      )
-                                    }}
+                                    {{ $utils.currency_format(balance) }}
                                   </td>
                                 </tr>
                               </table>
@@ -901,7 +866,6 @@
                       <CustomerRooms
                         :booking="booking"
                         :orderRooms="orderRooms"
-                        :roomData="roomData"
                         :room_no="
                           !customerScreen ? roomData && roomData.room_no : 0
                         "
@@ -1086,6 +1050,17 @@ export default {
   }),
 
   computed: {
+    after_discount() {
+      return (
+        parseFloat(this.booking.total_price) - parseFloat(this.booking.discount)
+      );
+    },
+    total() {
+      return this.after_discount + parseFloat(this.transactionSummary.tot_posting);
+    },
+    balance() {
+      return this.total - parseFloat(this.booking.paid_amounts);
+    },
     setInitialBalance() {
       if (!this.posting_payment) {
         return 0;

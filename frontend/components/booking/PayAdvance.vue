@@ -363,6 +363,7 @@
                           <v-hover v-slot:default="{ hover, props }">
                             <span v-bind="props">
                               <v-btn
+                                :disabled="loading"
                                 small
                                 :outlined="!hover"
                                 rounded
@@ -512,7 +513,7 @@ export default {
         user_id: this.$auth.user.id,
       };
 
-      // this.loading = true;
+      this.loading = true;
       this.$axios
         .post("/paying_advance", payload)
         .then(({ data }) => {
@@ -525,7 +526,10 @@ export default {
             this.$swal("Success!", "Payment has been done", "success");
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          this.loading = false;
+          console.log(e);
+        });
     },
 
     closeDialog(payload) {
@@ -537,7 +541,10 @@ export default {
     redirect_to_invoice(id) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `https://backend.myhotel2cloud.com/api/invoice/${id}`);
+      element.setAttribute(
+        "href",
+        `https://backend.myhotel2cloud.com/api/invoice/${id}`
+      );
       document.body.appendChild(element);
       element.click();
     },

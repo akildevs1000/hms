@@ -30,33 +30,36 @@
       <template #extras="{ item }">
         {{
           $utils.currency_format(
-            parseFloat(item.extra_booking_hours_charges) +
-              parseFloat(item.cleaning) +
-              parseFloat(item.electricity) +
-              parseFloat(item.generator) +
-              parseFloat(item.audio) +
-              parseFloat(item.projector)
+            parseFloat(item.extra_booking_hours_charges || 0) +
+              parseFloat(item.cleaning || 0) +
+              parseFloat(item.electricity || 0) +
+              parseFloat(item.generator || 0) +
+              parseFloat(item.audio || 0) +
+              parseFloat(item.projector || 0)
           )
         }}
       </template>
-      <template #total>
-        {{ $utils.currency_format(roomData && roomData.price) }}
+      <template #total="{ item }">
+        {{ item.price }}
       </template>
       <template #action="{ item }">
         <CustomerViewBookingHall
           v-if="booking.booking_type == 'hall'"
           :booking="booking"
           :item="item"
-          :roomData=roomData
         />
-        <CustomerViewBookingRoom v-else :booking="booking" :item="item" :roomData="roomData" />
+        <CustomerViewBookingRoom
+          v-else
+          :booking="booking"
+          :item="item"
+        />
       </template>
     </AssetsTable>
   </span>
 </template>
 <script>
 export default {
-  props: ["orderRooms", "booking", "room_no","roomData"],
+  props: ["orderRooms", "booking", "room_no"],
   data: () => ({
     headers: [],
     items: [],

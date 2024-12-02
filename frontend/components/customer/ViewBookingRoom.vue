@@ -123,7 +123,7 @@
 
 <script>
 export default {
-  props: ["item", "booking", "roomData"],
+  props: ["item", "booking"],
   data() {
     return {
       PostingDialog: false,
