@@ -878,6 +878,10 @@ class BookingController extends Controller
                     ["booking_status" => 2]
                 );
 
+                OrderRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
+                    ["check_in" => date("Y-m-d H:i:s")]
+                );
+
                 // if (app()->isProduction()) {
                 //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
                 // }
@@ -918,6 +922,12 @@ class BookingController extends Controller
                 ->where("room_id", $room_id)
                 ->update(['check_in' => date('Y-m-d'), 'booking_status' => $status_id]);
 
+            OrderRoom::where("booking_id", $id ?? 0)
+                ->whereIn("room_id", $room_id)
+                ->update(
+                    ["check_in" => date("Y-m-d H:i:s")]
+                );
+
             return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
         } catch (\Exception $e) {
 
@@ -939,6 +949,13 @@ class BookingController extends Controller
             BookedRoom::where("booking_id", $id ?? 0)
                 ->whereIn("room_id", $room_ids)
                 ->update(['check_in' => date('Y-m-d'), 'booking_status' => $status_id]);
+
+            OrderRoom::where("booking_id", $id ?? 0)
+                ->whereIn("room_id", $room_ids)
+                ->update(
+                    ["check_in" => date("Y-m-d H:i:s")]
+                );
+
 
             return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
         } catch (\Exception $e) {
@@ -1133,6 +1150,12 @@ class BookingController extends Controller
                         ]
                     );
 
+                    OrderRoom::where("booking_id", $id ?? 0)
+                    ->whereIn("room_id", $selectedRooms)
+                    ->update(
+                        ["check_out" => date("Y-m-d H:i:s")]
+                    );
+
                 // if (app()->isProduction()) {
                 //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
                 // }
@@ -1274,6 +1297,13 @@ class BookingController extends Controller
                         // "check_out" => date('Y-m-d')
                     ]
                 );
+
+                OrderRoom::where("booking_id", $id ?? 0)
+                ->whereIn("room_id", $room_id)
+                ->update(
+                    ["check_out" => date("Y-m-d H:i:s")]
+                );
+
 
                 // if (app()->isProduction()) {
                 //     (new WhatsappNotificationController())->checkOutNotification($booking, $customer);
@@ -2795,16 +2825,16 @@ class BookingController extends Controller
         $today = Carbon::today();
 
         $AvailableRooms = Room::with("is_cleaned")
-        ->where('company_id', $id)
-        ->whereNot("status", Room::Blocked)
-        ->whereDoesntHave("bookedRoom", function ($query) use ($today, $id) {
-            $query->where(function ($query) use ($today) {
-                $query->whereDate('check_in', ">=",  $today)
-                    ->orWhereDate('check_in', "<=",  $today);
+            ->where('company_id', $id)
+            ->whereNot("status", Room::Blocked)
+            ->whereDoesntHave("bookedRoom", function ($query) use ($today, $id) {
+                $query->where(function ($query) use ($today) {
+                    $query->whereDate('check_in', ">=",  $today)
+                        ->orWhereDate('check_in', "<=",  $today);
+                })
+                    ->where('company_id', $id);
             })
-                ->where('company_id', $id);
-        })
-        ->count();
+            ->count();
 
         $dates = [];
 
