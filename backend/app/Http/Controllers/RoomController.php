@@ -499,7 +499,7 @@ class RoomController extends Controller
 
         $foodOrdersCount = [
             "breakfast" => $occupiedBreakfast,
-            "lunch" => $$occupiedLunch,
+            "lunch" => $occupiedLunch,
             "dinner" => $occupiedDinner,
             "total" => $occupiedBreakfast + $$occupiedLunch + $occupiedDinner,
         ];
