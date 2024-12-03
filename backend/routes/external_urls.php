@@ -9,4 +9,4 @@ Route::post('/send-message', [ExternalUrlController::class, 'sendMessage']);
 
 Route::get('/test-email-pdf', [ExternalUrlController::class, 'testPdf']);
 
-Route::get('/sandbox', [ExternalUrlController::class, 'getTenDaysForecast']);
+Route::get('/sandbox', [ExternalUrlController::class, 'sandBox']);
