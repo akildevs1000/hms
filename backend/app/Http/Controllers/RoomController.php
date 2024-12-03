@@ -480,6 +480,7 @@ class RoomController extends Controller
             "total" => $totalAdult + $totalChild,
         ];
 
+        //
         $FoodOrder = BookedRoom::where('company_id', $company_id)
             ->where(function ($query) use ($todayDate) {
                 $query->whereDate('check_out', $todayDate)
