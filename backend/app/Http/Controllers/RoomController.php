@@ -501,7 +501,7 @@ class RoomController extends Controller
             "breakfast" => $occupiedBreakfast,
             "lunch" => $occupiedLunch,
             "dinner" => $occupiedDinner,
-            "total" => $occupiedBreakfast + $$occupiedLunch + $occupiedDinner,
+            "total" => $occupiedBreakfast + $occupiedLunch + $occupiedDinner,
         ];
 
         return [
