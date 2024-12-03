@@ -480,12 +480,13 @@ class RoomController extends Controller
             "total" => $totalAdult + $totalChild,
         ];
 
+        //
         $FoodOrder = BookedRoom::where('company_id', $company_id)
             ->where(function ($query) use ($todayDate) {
                 $query->whereDate('check_out', $todayDate)
                     ->orWhereDate('check_in', $todayDate);
             })
-            ->whereIn('booking_status', [1, 2])
+            ->whereIn('booking_status', [BookedRoom::CHECKED_IN])
             ->selectRaw("
             SUM(CASE WHEN DATE(check_in) = ? THEN breakfast ELSE 0 END) as occupied_breakfast,
             SUM(CASE WHEN DATE(check_in) = ? THEN lunch ELSE 0 END) as occupied_lunch,
