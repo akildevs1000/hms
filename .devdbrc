@@ -1,0 +1,6 @@
+[
+  {
+    "type": "sqlite",
+    "path": "d:\\Francis\\projects\\hms-v1\\backend\\database\\database.sqlite"
+  }
+]
