@@ -923,7 +923,7 @@ class BookingController extends Controller
                 ->update(['check_in' => date('Y-m-d'), 'booking_status' => $status_id]);
 
             OrderRoom::where("booking_id", $id ?? 0)
-                ->whereIn("room_id", $room_id)
+                ->where("room_id", $room_id)
                 ->update(
                     ["check_in" => date("Y-m-d H:i:s")]
                 );
@@ -1299,7 +1299,7 @@ class BookingController extends Controller
                 );
 
                 OrderRoom::where("booking_id", $id ?? 0)
-                ->whereIn("room_id", $room_id)
+                ->where("room_id", $room_id)
                 ->update(
                     ["check_out" => date("Y-m-d H:i:s")]
                 );
