@@ -2413,24 +2413,24 @@ class BookingController extends Controller
     public function groupBooking(Request $request)
     {
 
-        $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
-        // if ($diff_in_seconds < 0) {
-        //     return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        // $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
+        // // if ($diff_in_seconds < 0) {
+        // //     return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
+        // // }
+
+        // $booking = null;
+
+        // //verify is booking  availalbe with date and room number
+
+        // $bookedRoomsCount = BookedRoom::whereDate('check_in', '<=', $request->check_in)
+        //     ->WhereDate('check_out', '>=', $request->check_out)
+        //     ->where('booking_status', '!=', 0)
+        //     ->where('room_id', $request->selectedRooms[0]['room_id'])
+        //     ->count();
+
+        // if ($bookedRoomsCount > 0) {
+        //     return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
         // }
-
-        $booking = null;
-
-        //verify is booking  availalbe with date and room number
-
-        $bookedRoomsCount = BookedRoom::whereDate('check_in', '<=', $request->check_in)
-            ->WhereDate('check_out', '>=', $request->check_out)
-            ->where('booking_status', '!=', 0)
-            ->where('room_id', $request->selectedRooms[0]['room_id'])
-            ->count();
-
-        if ($bookedRoomsCount > 0) {
-            return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
-        }
 
 
         DB::beginTransaction();
@@ -2716,11 +2716,8 @@ class BookingController extends Controller
                 $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
                 $singleDayDiscount = ($room['room_discount'] / count($priceList));
                 $singleDayExtraAmount = ($room['room_extra_amount'] / count($priceList));
-                // $singleDayPrice = ($room['price'] / count($priceList));
 
                 foreach ($priceList as $list) {
-                    $singleDayPrice = $list['room_price'];
-                    // Recalculation start
                     $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
 
                     $price_adjusted_after_dsicount = $taxArray['basePrice'];
@@ -2733,7 +2730,7 @@ class BookingController extends Controller
                     $orderRooms['room_discount'] = $singleDayDiscount;
                     $orderRooms['after_discount'] = $list['price'] - $orderRooms['room_discount'] + $singleDayExtraAmount;
 
-                    $orderRooms['price'] = $singleDayPrice;
+                    $orderRooms['price'] = $list['price'];
 
                     $orderRooms['total_with_tax'] = $orderRooms['after_discount'];
 
