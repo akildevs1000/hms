@@ -315,15 +315,6 @@ class RoomController extends Controller
 
     public function roomListForGridView(Request $request)
     {
-
-        $company_id = $request->company_id;
-
-        if ($request->filled("filter_date")) {
-            $todayDate = $request->filter_date;
-        } else {
-            $todayDate = date('Y-m-d');
-        }
-
         $company_id = $request->company_id;
 
         if ($request->filled("filter_date")) {

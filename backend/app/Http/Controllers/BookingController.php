@@ -435,7 +435,7 @@ class BookingController extends Controller
 
                     $orderRooms['total_with_tax'] = $price;
 
-                    $orderRooms['price'] =  $price;
+                    $orderRooms['price'] =  $list['price'];
 
                     $orderRooms['days'] = 1;
                     $orderRooms['room_tax'] = $list['tax'];
@@ -2716,8 +2716,11 @@ class BookingController extends Controller
                 $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
                 $singleDayDiscount = ($room['room_discount'] / count($priceList));
                 $singleDayExtraAmount = ($room['room_extra_amount'] / count($priceList));
+                // $singleDayPrice = ($room['price'] / count($priceList));
 
                 foreach ($priceList as $list) {
+                    $singleDayPrice = $list['room_price'];
+                    // Recalculation start
                     $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
 
                     $price_adjusted_after_dsicount = $taxArray['basePrice'];
