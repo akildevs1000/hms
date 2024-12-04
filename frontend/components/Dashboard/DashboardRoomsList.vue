@@ -917,15 +917,16 @@ export default {
   },
 
   methods: {
-    getRelatedIcon({ booking_type, group_name }) {
-      if (booking_type == "hall") {
+    getRelatedIcon(item) {
+      if (item?.booking_type === "hall") {
         return "mdi-sofa";
-      } else if (group_name == "yes") {
-        return "mdi-account-group";
-      } else {
-        return "mdi-account";
       }
+      if (item?.group_name === "yes") {
+        return "mdi-account-group";
+      }
+      return "mdi-account";
     },
+
     filteredRooms(rooms) {
       if (!this.searchQuery) return rooms; // Early return for empty search
 

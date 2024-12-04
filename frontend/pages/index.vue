@@ -53,7 +53,7 @@
                   small
                   :color="isActiveTab == 1 ? 'primary' : '#8a8a8a'"
                   @click="isActiveTab = 1"
-                  >Pending</v-btn
+                  >Expected Arrival</v-btn
                 >
                 <v-btn
                   text
@@ -94,7 +94,7 @@
                   small
                   :color="isActiveTab == 1 ? 'primary' : '#8a8a8a'"
                   @click="isActiveTab = 1"
-                  >Pending</v-btn
+                  >Expected Checked Out</v-btn
                 >
                 <v-btn
                   text
