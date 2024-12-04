@@ -145,4 +145,14 @@ class OrderRoom extends Model
     {
         return $this->belongsTo(FoodPlan::class, "food_plan_id");
     }
+
+    public function GetCheckInAttribute()
+    {
+        return date('Y-m-d 12:00', strtotime($this->check_in));
+    }
+
+    public function GetCheckOutAttribute()
+    {
+        return date('Y-m-d 11:00', strtotime($this->check_out));
+    }
 }

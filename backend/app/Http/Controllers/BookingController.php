@@ -426,7 +426,7 @@ class BookingController extends Controller
                     $orderRooms['date'] = $list['date'];
 
                     $orderRooms['room_discount'] = $singleDayDiscount;
-                    $orderRooms['after_discount'] = $list['price'] - $orderRooms['room_discount'] + $singleDayExtraAmount;
+                    $orderRooms['after_discount'] = ($list['price'] - $orderRooms['room_discount']) + $singleDayExtraAmount;
 
                     $price = $orderRooms['after_discount'];
 
