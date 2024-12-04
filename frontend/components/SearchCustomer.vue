@@ -91,6 +91,7 @@ export default {
             customer_id: data.data.id,
           });
 
+          this.contact_no = null;
           this.searchDialog = false;
           this.checkLoader = false;
         });
