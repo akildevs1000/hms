@@ -409,8 +409,8 @@ class BookingController extends Controller
 
                 $bookedRoomId = BookedRoom::create($room);
                 $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
-                $singleDayDiscount = ($request->room_discount / count($priceList));
-                $singleDayExtraAmount = ($request->room_extra_amount / count($priceList));
+                $singleDayDiscount = ($request->room_discount / count($priceList) / count($rooms['selectedRooms']));
+                $singleDayExtraAmount = ($request->room_extra_amount / count($priceList)  / count($rooms['selectedRooms']));
                 // $singleDayPrice = ($room['price'] / count($priceList));
 
                 foreach ($priceList as $list) {
