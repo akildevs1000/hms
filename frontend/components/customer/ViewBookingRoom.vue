@@ -106,7 +106,7 @@
                 <v-card-text>
                   <div class="blue--text text-lg">{{ formattedDate }}</div>
                   <div class="text-sm">{{ item.day || "---" }}</div>
-                  <div class="py-4 text-sm">{{ item.tariff || "---" }}</div>
+                  <div class="py-7 text-sm">{{ item.tariff || "---" }}</div>
                   <div class="text-sm">Total Rs</div>
                   <div class="blue--text text-lg">
                     {{ totalPrice }}
@@ -135,7 +135,7 @@ export default {
     },
     totalPrice() {
       const keys = [
-        "price",
+        "after_discount",
         "food_plan_price",
         "bed_amount",
         "early_check_in",
@@ -149,7 +149,8 @@ export default {
     },
     breakdownItems() {
       return {
-        price: "Room",
+        price: "Room Price",
+        after_discount: "After Discount",
         food_plan_price: "Meal",
         bed_amount: "Extra Bed",
         early_check_in: "Early Check In",

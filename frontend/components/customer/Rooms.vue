@@ -2,9 +2,17 @@
   <span>
     <AssetsTable height="300" :headers="headers" :items="filteredItems">
       <template #date="{ item }">
-        {{ $dateFormat.dmy(item.date) || "---" }}
+        {{ item.date || "---" }}
         <br />
         {{ item.day || "---" }}
+      </template>
+      <template #tariff="{ item }">
+        {{ item.tariff || "---" }}
+        <br />
+        {{ $utils.currency_format(parseFloat(item.price || 0)) }}
+      </template>
+      <template #discount="{ item }">
+        {{ $utils.currency_format(parseFloat(item.room_discount || 0)) }}
       </template>
       <template #room="{ item }">
         {{ item.room_no || "---" }}
@@ -40,7 +48,7 @@
         }}
       </template>
       <template #total="{ item }">
-        {{ item.price }}
+        {{ item.after_discount }}
       </template>
       <template #action="{ item }">
         <CustomerViewBookingHall
@@ -48,11 +56,7 @@
           :booking="booking"
           :item="item"
         />
-        <CustomerViewBookingRoom
-          v-else
-          :booking="booking"
-          :item="item"
-        />
+        <CustomerViewBookingRoom v-else :booking="booking" :item="item" />
       </template>
     </AssetsTable>
   </span>
@@ -74,6 +78,7 @@ export default {
         },
         { text: `Room`, value: `room`, align: `center` },
         { text: `Tariff`, value: `tariff`, align: `center` },
+        { text: `Discount`, value: `discount`, align: `center` },
         { text: `Adults`, value: `no_of_adult`, align: `center` },
         { text: `Child`, value: `no_of_child`, align: `center` },
         { text: `Meal`, value: `meal`, align: `center` },
@@ -90,6 +95,7 @@ export default {
         },
         { text: `Room`, value: `room`, align: `center` },
         { text: `Tariff`, value: `tariff`, align: `center` },
+        { text: `Discount`, value: `discount`, align: `center` },
         { text: `Adults`, value: `no_of_adult`, align: `center` },
         { text: `Child`, value: `no_of_child`, align: `center` },
         { text: `Meal`, value: `meal`, align: `center` },

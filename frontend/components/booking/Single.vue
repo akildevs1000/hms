@@ -278,7 +278,7 @@
                                   >
                                     {{
                                       $utils.currency_format(
-                                        booking.total_price
+                                        booking.sub_total
                                       )
                                     }}
                                   </td>
@@ -1052,7 +1052,7 @@ export default {
   computed: {
     after_discount() {
       return (
-        parseFloat(this.booking.total_price) - parseFloat(this.booking.discount)
+        parseFloat(this.booking.sub_total) - parseFloat(this.booking.discount)
       );
     },
     total() {
