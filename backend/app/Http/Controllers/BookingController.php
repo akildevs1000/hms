@@ -2822,7 +2822,7 @@ class BookingController extends Controller
 
     public function getTenDaysForecast($id = 0)
     {
-        $today = Carbon::today();
+        $today = Carbon::tomorrow();
 
         $AvailableRooms = Room::with("is_cleaned")
             ->where('company_id', $id)
