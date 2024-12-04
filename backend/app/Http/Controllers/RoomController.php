@@ -548,6 +548,7 @@ class RoomController extends Controller
 
         $model = BookedRoom::query();
         $roomIds = $model
+            ->where('company_id', $company_id)
             ->whereDate('check_in', '<=', $checkIn)
             ->whereDate('check_out', '>=', $checkOut)
             ->where('booking_status', '!=', 0)
