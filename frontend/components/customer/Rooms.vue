@@ -105,12 +105,12 @@ export default {
           align: `center`,
         },
         {
-          text: `Early Checkin`,
+          text: `E.C/In`,
           value: `early_check_in`,
           align: `center`,
         },
         {
-          text: `Late Checkout`,
+          text: `L.C/Out`,
           value: `late_check_out`,
           align: `center`,
         },
