@@ -174,7 +174,7 @@
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn dense text class="ma-0 px-0" small v-bind="attrs" v-on="on">
-              Rooms <v-icon class="ml-2" @click="reload()">mdi-reload</v-icon>
+              Rooms <v-icon class="ml-2" @click="reload">mdi-reload</v-icon>
             </v-btn>
           </template>
           <span>Reload</span>
@@ -225,113 +225,6 @@
             class="elevation-1"
             :server-items-length="totalTableRowsCount"
           >
-            <template v-slot:header="{ props: { headers } }">
-              <tr v-if="isFilter">
-                <td v-for="header in headers" :key="header.text">
-                  <v-text-field
-                    v-if="header.filterable && !header.filterSpecial"
-                    clearable
-                    :hide-details="true"
-                    v-model="filters[header.value]"
-                    no-title
-                    outlined
-                    dense
-                    small
-                    :id="header.value"
-                    autocomplete="off"
-                    @input="applyFilters()"
-                  ></v-text-field>
-                  <v-autocomplete
-                    outlined
-                    dense
-                    v-model="filters[header.value]"
-                    v-if="
-                      header.filterable &&
-                      header.filterSpecial &&
-                      header.key == 'device_latest_status'
-                    "
-                    :items="[
-                      { value: '', title: 'All' },
-                      { value: 1, title: 'Occupied' },
-                      { value: 0, title: 'Not-occupied' },
-                    ]"
-                    item-value="value"
-                    item-text="title"
-                    :hide-details="true"
-                    clearable
-                    @click:clear="
-                      filters[header.key] = '';
-                      applyFilters();
-                    "
-                    @change="applyFilters()"
-                  ></v-autocomplete>
-                  <v-autocomplete
-                    outlined
-                    dense
-                    v-model="filters[header.value]"
-                    v-if="
-                      header.filterable &&
-                      header.filterSpecial &&
-                      header.key == 'status'
-                    "
-                    :items="[
-                      { value: '', title: 'All' },
-                      { value: 0, title: 'Active' },
-                      { value: 1, title: 'In-Active' },
-                    ]"
-                    item-value="value"
-                    item-text="title"
-                    :hide-details="true"
-                    clearable
-                    @click:clear="
-                      filters[header.key] = '';
-                      applyFilters();
-                    "
-                    @change="applyFilters()"
-                  ></v-autocomplete>
-
-                  <v-autocomplete
-                    v-model="filters[header.key]"
-                    v-if="
-                      header.filterable &&
-                      header.filterSpecial &&
-                      header.key == 'room_type'
-                    "
-                    @change="applyFilters()"
-                    clearable
-                    @click:clear="
-                      filters[header.key] = '';
-                      applyFilters();
-                    "
-                    outlined
-                    dense
-                    :hide-details="true"
-                    :items="roomTypesForSelectOptions"
-                    item-text="name"
-                    item-value="id"
-                  >
-                  </v-autocomplete>
-                  <v-autocomplete
-                    v-model="filters[header.key]"
-                    v-if="
-                      header.filterable &&
-                      header.filterSpecial &&
-                      header.key == 'floor_no'
-                    "
-                    :items="floors"
-                    outlined
-                    dense
-                    clearable
-                    @click:clear="
-                      filters[header.kye] = '';
-                      applyFilters();
-                    "
-                    :hide-details="true"
-                    @change="applyFilters()"
-                  ></v-autocomplete>
-                </td>
-              </tr>
-            </template>
             <template v-slot:item.sno="{ item, index }">
               {{
                 currentPage
@@ -570,16 +463,8 @@ export default {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     ],
   }),
-  // watch: {
-  //   options: {
-  //     handler() {
-  //       this.getDataFromApi();
-  //     },
-  //     deep: true,
-  //   },
-  // },
-  created() {
-    this.getDataFromApi();
+  mounted() {
+    this.reload();
     this.getRoomTypesData();
   },
   methods: {
@@ -649,7 +534,6 @@ export default {
     reload() {
       this.isFilter = false;
       this.filters = {};
-      this.$set(this.options, "page", 1);
       this.getDataFromApi(this.endpoint, 1);
     },
     getDataFromApi(url = this.endpoint, customPage = 0) {
@@ -668,10 +552,9 @@ export default {
           sortDesc: sortedDesc,
           per_page: itemsPerPage,
           company_id: this.$auth.user.company.id,
-          ...this.filters,
         },
       };
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+      this.$axios.get(url, options).then(({ data }) => {
         this.data = data.data;
         this.updateQRCode();
         this.totalTableRowsCount = data.total;
