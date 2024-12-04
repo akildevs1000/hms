@@ -458,7 +458,7 @@ class BookingController extends Controller
                     $orderRooms['dinner'] = $bookedRoomId->dinner ?? 0;
 
 
-                    $orderRooms['tariff'] = $list['weekday'] ?? "";
+                    $orderRooms['tariff'] = $list['day_type'] ?? "";
                     $orderRooms['day'] = $list['day']  ?? null;
 
 
