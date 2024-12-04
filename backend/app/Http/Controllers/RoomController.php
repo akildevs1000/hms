@@ -412,6 +412,17 @@ class RoomController extends Controller
             }])
             ->get();
 
+        $checkOutModel = BookedRoom::with('device');
+        $checkOut = $checkOutModel->clone()->whereDate('check_out', $todayDate)
+            ->whereHas('booking', function ($q) use ($company_id) {
+                $q->whereIn('booking_status', [0, 3, 4, 5]);
+                // $q->where('booking_status', '>=', 3);
+                // $q->whereDate('check_in', '<=', $request->check_in);
+                $q->where('company_id', $company_id);
+            })->get();
+
+
+
 
         $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned"])
             ->whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
@@ -420,15 +431,15 @@ class RoomController extends Controller
                         // Check if the check-in is before or equal to today, and check-out is after or equal to today
                         $query->whereDate('check_in', '<=', $todayDate)
                             ->whereDate('check_out', '>=', $todayDate)
-                            ->where('booking_status', BookedRoom::CHECKED_OUT) // Status for dirty rooms
-                            ->where('room_status', BookedRoom::CHECKED_OUT) // Status for dirty rooms
+                            ->where('booking_status', 3) // Status for dirty rooms
+                            ->where('room_status', 3) // Status for dirty rooms
                             ->where('booking_status', '!=', 0); // Exclude non-active bookings
                     });
             })
             ->with(['bookedRoom' => function ($q) use ($company_id) {
                 $q->where("company_id", $company_id)
-                    ->where('booking_status', BookedRoom::CHECKED_OUT) // Only consider dirty rooms
-                    ->where('room_status', BookedRoom::CHECKED_OUT) // Status for dirty rooms
+                    ->where('booking_status', 3) // Only consider dirty rooms
+                    ->where('room_status', 3) // Status for dirty rooms
                     ->with("customer");
             }])->get();
 
@@ -497,7 +508,7 @@ class RoomController extends Controller
             'continueRooms' => $continueRooms,
             'dirtyRoomsList' => $dirtyRooms,
             'blockedRooms' => $BlockedRooms,
-            'checkOut' => null,
+            'checkOut' => $checkOut,
             'members' => $membersCount,
             'foodOrdersCount' => $foodOrdersCount,
             'status' => true,
