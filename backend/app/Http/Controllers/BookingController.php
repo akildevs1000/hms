@@ -2383,22 +2383,24 @@ class BookingController extends Controller
             $booking_reservation_number =  $bookingArray[1];
             $booking  =  $bookingArray[0];
 
+            if ($request->company_id == 1 || $request->company_id == 2) {
+                if ($booking) {
+                    $this->storeBookedRooms($request, $booking);
+                    //recalculating Tax based on discount
+                    // (new ManagementController())->generateOccupancyRateByBooking($request);
 
+                    if ($request->filled("payment_reference_id")) {
+                        $data = [];
+                        $data['payment_reference_id'] = $request->payment_reference_id;
+                        $data['payment_response'] =  json_encode($request->payment_response);
 
-            if ($booking) {
-                $this->storeBookedRooms($request, $booking);
-                //recalculating Tax based on discount
-                (new ManagementController())->generateOccupancyRateByBooking($request);
-
-                if ($request->filled("payment_reference_id")) {
-                    $data = [];
-                    $data['payment_reference_id'] = $request->payment_reference_id;
-                    $data['payment_response'] =  json_encode($request->payment_response);
-
-                    Booking::whereId($booking->id)->update($data);
+                        Booking::whereId($booking->id)->update($data);
+                    }
                 }
             }
+
             DB::commit();
+
             return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
 
             // all good
@@ -2713,10 +2715,10 @@ class BookingController extends Controller
                 }
             }
 
-            if (app()->isProduction()) {
-                $customer = Customer::find($booking->customer_id);
-                (new WhatsappNotificationController())->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
-            }
+            // if (app()->isProduction()) {
+            //     $customer = Customer::find($booking->customer_id);
+            //     (new WhatsappNotificationController())->whatsappNotification($booking, $rooms['selectedRooms'], $customer, 'booking');
+            // }
 
             return $rooms;
             return $this->response('Room Booked Successfully.', $rooms, true);
