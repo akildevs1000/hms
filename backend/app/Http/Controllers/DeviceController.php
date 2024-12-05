@@ -182,8 +182,7 @@ class DeviceController extends Controller
         // } else if ($request->status == 0) {
         //     $status = 1;
         // }
-
-
+        $notificationMessage = "";
         $device = Device::where("serial_number", $device_room_number)->first();
         if ($device) {
             $deviceTimezone = $device->utc_time_zone;
@@ -245,6 +244,11 @@ class DeviceController extends Controller
 
                     Device::where("serial_number", $device_room_number)
                         ->update($row);
+
+
+                    $notificationMessage = "Room Name :" . $device->room_name . "\n";
+                    $notificationMessage .= "Lights ON at :" . $row["latest_status_time"] . "\n";
+                    $this->sendWhatsappNotification($notificationMessage);
                 } else if ($status == 0) {
                     $latestLog = DeviceLogs::where("serial_number", $device_room_number)->orderBy("start_datetime", "desc")->first();
                     if ($latestLog && $latestLog->status == 1) {
@@ -274,6 +278,11 @@ class DeviceController extends Controller
 
                         Device::where("serial_number", $device_room_number)
                             ->update($row);
+
+                        $notificationMessage = "Room Name :" . $device->room_name . "\n";
+                        $notificationMessage .= "Lights OFF at :" . $row["latest_status_time"] . "\n";
+
+                        $this->sendWhatsappNotification($notificationMessage);
                     } else {
                         return $this->response('Room status is already off', $request->all(), true);
                     }
@@ -288,7 +297,52 @@ class DeviceController extends Controller
             return $this->response('Data error', null, false);
         }
     }
+    public function sendWhatsappNotification($message)
+    {
+        // $model = BookedRoom::query();
+        // $roomIds = $model
+        //     ->whereDate('check_in', '<=', $request->check_in)
+        //     ->WhereDate('check_out', '>=', $request->check_out)
+        //     ->whereHas('booking', function ($q) use ($request) {
+        //         $q->where('booking_status', '!=', 0);
+        //         $q->where('company_id', $request->company_id);
+        //     })
+        //     ->pluck('room_id');
+        // return Room::whereNotIn('id', $roomIds)
+        //     ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+        //     ->where('company_id', $request->company_id)
+        //     ->get();
 
+        try {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://backend.mytime2cloud.com/api/whatsapp_message_queue?company_id=13',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+  "company_id": 13,
+  "whatsapp_number": "971552205149",
+  "message": "' . $message . '"
+}
+ ',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+        } catch (\Throwable $e) {
+        }
+    }
     public function getDevicesLogs(Request $request)
     {
 
