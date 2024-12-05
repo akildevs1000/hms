@@ -2386,19 +2386,15 @@ class BookingController extends Controller
 
             if ($booking) {
 
-                if ($request->company_id == 1 || $request->company_id == 2) {
-                    $this->storeBookedRooms($request, $booking);
-                } else {
-                    $data = [
-                        'selectedRooms' => $request->input('selectedRooms'),
-                        'room_discount' => $request->input('room_discount'),
-                        'room_extra_amount' => $request->input('room_extra_amount'),
-                        'booking_id' => $booking->id,
-                        'customer_id' => $request['customer_id'],
-                        'booking_status' => 1,
-                    ];
-                    StoreBookedRoomsJob::dispatch($data);
-                }
+                $data = [
+                    'selectedRooms' => $request->input('selectedRooms'),
+                    'room_discount' => $request->input('room_discount'),
+                    'room_extra_amount' => $request->input('room_extra_amount'),
+                    'booking_id' => $booking->id,
+                    'customer_id' => $request['customer_id'],
+                    'booking_status' => 1,
+                ];
+                StoreBookedRoomsJob::dispatch($data);
 
                 //recalculating Tax based on discount
                 // (new ManagementController())->generateOccupancyRateByBooking($request);
