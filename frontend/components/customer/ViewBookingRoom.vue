@@ -91,6 +91,30 @@
             <v-col cols="7">
               <table class="simple-table">
                 <tbody>
+                  <tr>
+                    <td class="text-left">Room Price</td>
+                    <td class="text-right">
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.price || 0) +
+                            parseFloat(item.room_discount || 0)
+                        )
+                      }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">Discount</td>
+                    <td class="text-right">
+                      <span class="red--text"
+                        >-{{
+                          $utils.currency_format(
+                            parseFloat(item.room_discount || 0)
+                          )
+                        }}</span
+                      >
+                    </td>
+                  </tr>
+
                   <tr v-for="(label, key) in breakdownItems" :key="key">
                     <td class="text-left">{{ label }}</td>
                     <td class="text-right">
@@ -149,8 +173,7 @@ export default {
     },
     breakdownItems() {
       return {
-        total_with_tax: "Room Price",
-        room_discount: "Discount",
+        after_discount: "After Discount",
         food_plan_price: "Meal",
         bed_amount: "Extra Bed",
         early_check_in: "Early Check In",
