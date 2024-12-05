@@ -313,13 +313,13 @@
                   <v-hover v-slot:default="{ hover, props }">
                     <span v-bind="props">
                       <v-btn
+                        :disabled="loading"
                         x-small
                         :outlined="!hover"
                         rounded
                         color="green"
                         class="white--text"
                         @click="store"
-                        :loading="subLoad"
                         >Submit</v-btn
                       >
                     </span>
@@ -348,7 +348,6 @@ export default {
       loading: false,
       activeTab: 0,
       subLoad: false,
-      loading: false,
       selectedRooms: [],
       rooms: [],
       priceListTableView: [],
@@ -486,7 +485,7 @@ export default {
         group_name: "yes",
       };
 
-      this.subLoad = false;
+      this.loading = true;
 
       this.$axios
         .post("/group-booking", payload)
@@ -494,16 +493,20 @@ export default {
           this.loading = false;
           if (!data.status) {
             this.errors = data.errors;
-            this.subLoad = false;
+            this.loading = false;
           } else {
             this.selectedRooms = [];
             this.priceListTableView = [];
             this.$emit(`success`);
             this.close();
             this.groupBookingDialog = false;
+            this.loading = false;
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          console.log(e);
+          this.loading = false;
+        });
     },
   },
 };
