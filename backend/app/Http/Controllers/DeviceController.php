@@ -252,8 +252,8 @@ class DeviceController extends Controller
                     $notificationMessage .= "Company: " . $device->company['name'] . " ";
 
 
-                    // return $notificationMessage;
-                    $this->sendWhatsappNotification($notificationMessage);
+
+                    ///$this->sendWhatsappNotification($notificationMessage);
                 } else if ($status == 0) {
                     $latestLog = DeviceLogs::where("serial_number", $device_room_number)->orderBy("start_datetime", "desc")->first();
                     if ($latestLog && $latestLog->status == 1) {
@@ -290,7 +290,7 @@ class DeviceController extends Controller
                         $notificationMessage .= "Company: " . $device->company['name'] . " ";
 
 
-                        $this->sendWhatsappNotification($notificationMessage);
+                        ////$this->sendWhatsappNotification($notificationMessage);
                     } else {
                         return $this->response('Room status is already off', $request->all(), true);
                     }
