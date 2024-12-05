@@ -246,8 +246,8 @@ class DeviceController extends Controller
                         ->update($row);
 
 
-                    $notificationMessage = "Room Name: *" . $device->room->name . "*\\n";
-                    $notificationMessage .= "Lights 🟢 ON at: " . $row['latest_status_time'] . "\\n";
+                    $notificationMessage = "Room Name: *" . $device->room_name . "*\\n";
+                    $notificationMessage .= "Lights 🟢 ON at: " . $dateTime->format('H:i:s Y-m-d') . "\\n";
                     $notificationMessage .= "Booking Status: " . ($bookingStatusId == 1 ? "*Sold*" : "*Empty*") . "\\n";
                     $notificationMessage .= "Company: " . $device->company['name'] . " ";
 
@@ -284,8 +284,8 @@ class DeviceController extends Controller
                         Device::where("serial_number", $device_room_number)
                             ->update($row);
 
-                        $notificationMessage = "Room Name: *" . $device->room->name . "*\\n";
-                        $notificationMessage .= "Lights 🔴 OFF at: " . $row['latest_status_time'] . "\\n";
+                        $notificationMessage = "Room Name: *" . $device->room_name . "*\\n";
+                        $notificationMessage .= "Lights 🔴 OFF at: " . $dateTime->format('H:i:s Y-m-d') . "\\n";
                         $notificationMessage .= "Booking Status: " . ($bookingStatusId == 1 ? "*Sold*" : "*Empty*") . "\\n";
                         $notificationMessage .= "Company: " . $device->company['name'] . " ";
 
