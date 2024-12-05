@@ -26,7 +26,7 @@ class Device extends Model
     }
     public function bookedRoom()
     {
-        return $this->hasMany(bookedRoom::class, "id", "room_id")->latest("updated_at");;
+        return $this->hasMany(BookedRoom::class, "id", "room_id")->latest("updated_at");;
     }
 
 
