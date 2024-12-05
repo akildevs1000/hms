@@ -42,8 +42,10 @@ class Room extends Model
     }
     public function device()
     {
-        return $this->hasOne(Device::class);
+        return $this->hasOne(Device::class, 'room_id');
     }
+
+
     /**
      * Get the bookedRoom associated with the Room
      *
@@ -51,7 +53,8 @@ class Room extends Model
      */
     public function bookedRoom(): HasOne
     {
-        return $this->hasOne(BookedRoom::class)->orderBy("id", "desc");
+        //return $this->hasOne(BookedRoom::class)->orderBy("id", "desc");
+        return $this->hasOne(BookedRoom::class)->latest('updated_at');
     }
 
     /**

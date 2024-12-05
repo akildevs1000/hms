@@ -165,7 +165,7 @@
             :loading="loading"
             :options.sync="options"
             :footer-props="{
-              itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+              itemsPerPageOptions: [50, 100, 500, 1000],
             }"
             :server-items-length="totalTableRowsCount"
           >
@@ -194,12 +194,18 @@
             <template v-slot:item.latest_status_time="{ item }">
               {{ item.latest_status_time }}
             </template>
+
+            <template v-slot:item.room_status="{ item }">
+              <div style="color: red" v-if="getRoomStatus(item.room_id) == 0">
+                Empty
+              </div>
+              <div style="" v-else>Sold</div>
+            </template>
+
             <template
               v-slot:item.options="{ item }"
               v-if="
-                can('device_view') ||
-                can('device_edit') ||
-                can('device_delete')
+                can('device_view') || can('device_edit') || can('device_delete')
               "
             >
               <v-menu bottom left>
@@ -265,7 +271,7 @@ export default {
     //datatable varables
     page: 1,
     timeZones: timeZones,
-    perPage: 0,
+    perPage: 50,
     currentPage: 1,
     cumulativeIndex: 1,
     totalTableRowsCount: 0,
@@ -308,16 +314,24 @@ export default {
         filterable: true,
         filterSpecial: true,
       },
+      // {
+      //   text: "Timezone",
+      //   value: "utc_time_zone",
+      //   align: "left",
+      //   sortable: true,
+      //   key: "utc_time_zone",
+      //   filterable: true,
+      //   filterSpecial: true,
+      // },
       {
-        text: "Timezone",
-        value: "utc_time_zone",
+        text: "Room",
+        value: "room_status",
         align: "left",
         sortable: true,
-        key: "utc_time_zone",
+        key: "room_status",
         filterable: true,
         filterSpecial: true,
       },
-
       {
         text: "Light Status",
         value: "latest_status",
@@ -358,6 +372,7 @@ export default {
     floors: [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     ],
+    intervalObj: null,
   }),
   watch: {
     options: {
@@ -367,15 +382,49 @@ export default {
       deep: true,
     },
   },
+  beforeDestroy() {
+    if (this.intervalObj) clearInterval(this.intervalObj);
+  },
   created() {
     this.getDataFromApi();
     this.getroomList();
 
-    // setInterval(() => {
-    //   this.getDataFromApi();
-    // }, 1000 * 60 * 2);
+    this.intervalObj = setInterval(() => {
+      this.getDataFromApi();
+    }, 1000 * 60);
   },
   methods: {
+    getRoomStatus(roomId) {
+      let status = 0;
+      try {
+        let roomsListWithStatusJson = localStorage.getItem(
+          "rooms_with_today_status"
+        );
+        let roomsListWithStatus = JSON.parse(roomsListWithStatusJson);
+        /// console.log(roomsListWithStatus.availableRooms);
+
+        if (roomsListWithStatus.availableRooms) {
+          // let find = roomsListWithStatus.availableRooms.find(
+          //   (e) => e.id == roomId
+          // );
+          // if (find) {
+          //   status = 0;
+          // }
+          find = roomsListWithStatus.checkIn.find((e) => e.id == roomId);
+          if (find) {
+            status = 1;
+          }
+          find = roomsListWithStatus.expectCheckOut.find((e) => e.id == roomId);
+          if (find) {
+            status = 1;
+          }
+        }
+      } catch (e) {
+        //console.log(e);
+      }
+
+      return status;
+    },
     getTimezones() {
       return Object.keys(this.timeZones).map((key) => ({
         offset: this.timeZones[key].offset,

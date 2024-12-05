@@ -323,7 +323,7 @@ class RoomController extends Controller
             $todayDate = date('Y-m-d');
         }
 
-        $AvailableRooms = Room::with("is_cleaned")->where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
+        $AvailableRooms = Room::with(["device", "is_cleaned"])->where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
 
         $expectCheckOut = Room::with('device')
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {

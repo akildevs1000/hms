@@ -655,6 +655,7 @@ export default {
   },
   data() {
     return {
+      keyAll: 0,
       isActiveTab: 1,
       BookingQuickCheckInCompKey: 1,
       calenderColorCodes: [],
@@ -841,7 +842,8 @@ export default {
 
     setInterval(() => {
       this.checkRoomCleaningNewEvent();
-    }, 1000 * 10);
+      this.room_list();
+    }, 1000 * 60);
 
     let payload = {
       params: {
@@ -855,7 +857,7 @@ export default {
 
   methods: {
     handleReservationResponse(e) {
-      console.log("🚀 ~ handleReservationResponse ~ e:", e)
+      console.log("🚀 ~ handleReservationResponse ~ e:", e);
       this.reservationId = e.id;
       this.$nextTick(() => {
         const bookingSingleComp = this.$refs["BookingSingleRef"];
@@ -1202,6 +1204,7 @@ export default {
 
         let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
         let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+
         this.availableRooms = data.availableRooms.filter(
           (e) => !uniqueRoomNumbers.includes(e.room_no)
         );
@@ -1221,7 +1224,20 @@ export default {
         this.keyTabcompliment = 37;
         this.keyTabdirty = 38;
         this.keyTabOccupied = 39;
+
+        try {
+          if (localStorage) {
+            localStorage.setItem(
+              "rooms_with_today_status",
+              JSON.stringify(data)
+            );
+          }
+        } catch (e) {
+          console.log(e);
+        }
       });
+
+      this.keyTabAll++;
     },
 
     dblclick() {
