@@ -391,7 +391,7 @@ export default {
 
     this.intervalObj = setInterval(() => {
       this.getDataFromApi();
-    }, 1000 * 60 * 10);
+    }, 1000 * 60);
   },
   methods: {
     getRoomStatus(roomId) {

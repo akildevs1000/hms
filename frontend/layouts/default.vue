@@ -496,7 +496,7 @@ export default {
         },
         {
           topMenu: "dashboard",
-          icon: "mdi-cellphone-lock",
+          icon: "mdi-lightbulb-on",
           module: "devices_permissions_access",
           title: "Rooms",
           to: "/devices",

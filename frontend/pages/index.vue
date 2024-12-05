@@ -655,6 +655,7 @@ export default {
   },
   data() {
     return {
+      keyAll: 0,
       isActiveTab: 1,
       BookingQuickCheckInCompKey: 1,
       calenderColorCodes: [],
@@ -842,7 +843,7 @@ export default {
     setInterval(() => {
       this.checkRoomCleaningNewEvent();
       this.room_list();
-    }, 1000 * 60 * 5);
+    }, 1000 * 60);
 
     let payload = {
       params: {
@@ -1235,6 +1236,8 @@ export default {
           console.log(e);
         }
       });
+
+      this.keyTabAll++;
     },
 
     dblclick() {
