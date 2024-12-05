@@ -420,7 +420,9 @@
               class="green111 p-3 roombox available"
               :style="'padding: 0px;'"
               :title="
-                room.device && room.device.latest_status == 1
+                todayDate == filterDate &&
+                room.device &&
+                room.device.latest_status == 1
                   ? 'Available and Light On'
                   : 'Available'
               "
@@ -428,7 +430,11 @@
               <div class="text-center white--text boxheight">
                 <v-icon
                   :color="
-                    room.device && room.device.latest_status == 1 ? 'red' : ''
+                    todayDate == filterDate &&
+                    room.device &&
+                    room.device.latest_status == 1
+                      ? 'red'
+                      : ''
                   "
                 >
                   {{ room?.room_type?.type == "hall" ? "mdi-sofa" : "mdi-bed" }}
@@ -469,7 +475,11 @@
               <div class="text-center white--text boxheight">
                 <v-icon
                   :color="
-                    room.device && room.device.latest_status == 1 ? 'red' : ''
+                    todayDate == filterDate &&
+                    room.device &&
+                    room.device.latest_status == 1
+                      ? 'red'
+                      : ''
                   "
                 >
                   {{ getRelatedIcon(room.booked_room.booking) }}
@@ -490,7 +500,12 @@
         </div>
       </div>
 
-      <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
+      <div
+        v-if="
+          todayDate == filterDate &&
+          (tabFilter == 'All' || todayDate == filterDate)
+        "
+      >
         <div
           class="roombox1"
           v-for="(occupied, index) in filteredRooms(expectCheckOut)"
@@ -533,7 +548,9 @@
               <div class="text-center white--text boxheight boxheight">
                 <v-icon
                   :color="
-                    occupied.device && occupied.device.latest_status == 1
+                    todayDate == filterDate &&
+                    occupied.device &&
+                    occupied.device.latest_status == 1
                       ? 'red'
                       : ''
                   "
@@ -549,7 +566,12 @@
           </v-card>
         </div>
       </div>
-      <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
+      <div
+        v-if="
+          todayDate == filterDate &&
+          (tabFilter == 'All' || tabFilter == 'occupied')
+        "
+      >
         <div
           class="roombox1"
           v-for="(occupied, index) in filteredRooms(Occupied)"
@@ -592,7 +614,9 @@
               <div class="text-center white--text boxheight boxheight">
                 <v-icon
                   :color="
-                    occupied.device && occupied.device.latest_status == 1
+                    todayDate == filterDate &&
+                    occupied.device &&
+                    occupied.device.latest_status == 1
                       ? 'red'
                       : ''
                   "
@@ -609,7 +633,12 @@
         </div>
       </div>
 
-      <div v-if="tabFilter == 'checkedout' || tabFilter == 'All'">
+      <div
+        v-if="
+          todayDate == filterDate &&
+          (tabFilter == 'checkedout' || tabFilter == 'All')
+        "
+      >
         <div
           class="roombox1"
           v-for="(checkedOutRoom, index) in filteredRooms(dirtyRoomsList)"
@@ -631,6 +660,7 @@
               <div class="text-center white--text boxheight">
                 <v-icon
                   :color="
+                    todayDate == filterDate &&
                     checkedOutRoom.device &&
                     checkedOutRoom.device.latest_status == 1
                       ? 'red'
@@ -668,7 +698,9 @@
             <div class="text-center white--text boxheight">
               <v-icon
                 :color="
-                  blockedRoom.device && blockedRoom.device.latest_status == 1
+                  todayDate == filterDate &&
+                  blockedRoom.device &&
+                  blockedRoom.device.latest_status == 1
                     ? 'red'
                     : ''
                 "
@@ -717,6 +749,7 @@ export default {
     "data",
     "calenderColorCodes",
     "filterDate",
+    "todayDate",
   ],
   layout({ $auth }) {
     if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {

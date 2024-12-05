@@ -363,7 +363,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" class="pt-0">
-            <v-card style="min-height: 410px">
+            <v-card :loading="gridLoading" style="min-height: 410px">
               <v-tabs hide-slider right v-model="tab" color="#0d652d">
                 <v-tab style="font-weight: bold">All</v-tab>
                 <v-tab style="font-weight: bold">Occupied</v-tab>
@@ -386,6 +386,7 @@
                         :filterDate="filterDate"
                         :calenderColorCodes="calenderColorCodes"
                         @call_room_list="refreshRoomList"
+                        :todayDate="todayDate"
                       ></DashboardRoomsList
                     ></v-card-text>
                   </v-card>
@@ -655,6 +656,7 @@ export default {
   },
   data() {
     return {
+      gridLoading: false,
       keyAll: 0,
       isActiveTab: 1,
       BookingQuickCheckInCompKey: 1,
@@ -789,6 +791,7 @@ export default {
       keyTabOccupied: 17,
 
       roomCleaningEventCount: 0,
+      todayDate: "",
     };
   },
   watch: {
@@ -842,6 +845,9 @@ export default {
     )
       .toISOString()
       .substr(0, 10);
+    // this.todayDate =  ...this.filterDate  ; // Shallow clone
+    this.todayDate = this.filterDate;
+
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
 
@@ -861,6 +867,9 @@ export default {
   },
 
   methods: {
+    // todayDate() {
+    //   this.todayDate = this.filterDate;
+    // },
     handleReservationResponse(e) {
       console.log("🚀 ~ handleReservationResponse ~ e:", e);
       this.reservationId = e.id;
@@ -1180,6 +1189,7 @@ export default {
       this.$swal(title, message, type);
     },
     room_list() {
+      this.gridLoading = true;
       let payload = {
         params: {
           company_id: this.$auth.user && this.$auth.user.company.id,
@@ -1190,6 +1200,7 @@ export default {
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
         if (!data.status) {
+          this.gridLoading = false;
           this.alert("Failure!", data.data, "error");
           return false;
         }
@@ -1240,6 +1251,7 @@ export default {
         } catch (e) {
           console.log(e);
         }
+        this.gridLoading = false;
       });
 
       this.keyTabAll++;
