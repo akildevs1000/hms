@@ -404,6 +404,7 @@
                         :filterDate="filterDate"
                         :calenderColorCodes="calenderColorCodes"
                         @call_room_list="refreshRoomList"
+                        :todayDate="todayDate"
                       ></DashboardRoomsList>
                     </v-card-text>
                   </v-card>
@@ -421,6 +422,7 @@
                         :filterDate="filterDate"
                         :calenderColorCodes="calenderColorCodes"
                         @call_room_list="refreshRoomList"
+                        :todayDate="todayDate"
                       ></DashboardRoomsList
                     ></v-card-text>
                   </v-card>
@@ -438,6 +440,7 @@
                         :filterDate="filterDate"
                         :calenderColorCodes="calenderColorCodes"
                         @call_room_list="refreshRoomList"
+                        :todayDate="todayDate"
                       ></DashboardRoomsList>
                     </v-card-text>
                   </v-card>
@@ -455,6 +458,7 @@
                         :filterDate="filterDate"
                         :calenderColorCodes="calenderColorCodes"
                         @call_room_list="refreshRoomList"
+                        :todayDate="todayDate"
                       ></DashboardRoomsList
                     ></v-card-text>
                   </v-card>
@@ -472,6 +476,7 @@
                         :filterDate="filterDate"
                         :calenderColorCodes="calenderColorCodes"
                         @call_room_list="refreshRoomList"
+                        :todayDate="todayDate"
                       ></DashboardRoomsList
                     ></v-card-text>
                   </v-card>

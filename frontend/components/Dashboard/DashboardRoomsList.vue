@@ -499,11 +499,13 @@
           </v-card>
         </div>
       </div>
-
+      <!-- {{ filteredRooms(expectCheckOut).length }}
+      {{ tabFilter }}
+      -{{ todayDate }}- +{{ filterDate }}+ -->
       <div
         v-if="
           todayDate == filterDate &&
-          (tabFilter == 'All' || todayDate == filterDate)
+          (tabFilter == 'All' || tabFilter == 'occupied')
         "
       >
         <div
@@ -566,6 +568,7 @@
           </v-card>
         </div>
       </div>
+      <!-- {{ filteredRooms(Occupied).length }} -->
       <div
         v-if="
           todayDate == filterDate &&
@@ -609,7 +612,7 @@
             <v-card-text
               class="p-3 roombox occupied"
               :style="'padding: 0px;'"
-              title="Occupied"
+              title="Occupied Test"
             >
               <div class="text-center white--text boxheight boxheight">
                 <v-icon
