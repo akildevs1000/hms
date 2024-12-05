@@ -176,7 +176,7 @@
                 </v-row>
                 <v-divider color="#DDD" style="margin-bottom: 10px" />
                 <Donut
-                  :key="keyTabAll"
+                  :key="keyTabAllTop"
                   name="margin"
                   size="100%"
                   :total="'100'"
@@ -224,7 +224,7 @@
                 </v-row>
                 <v-divider color="#DDD" style="margin-bottom: 10px" />
                 <Donut
-                  :key="keyTabAll"
+                  :key="keyTabAllTop"
                   name="reservedWithoutAdvance"
                   :total="reservedWithoutAdvance.length + Occupied.length"
                   size="100%"
@@ -262,6 +262,7 @@
                 </v-row>
                 <v-divider color="#DDD" style="margin-bottom: 10px" />
                 <Donut
+                  :key="keyTabAllTop"
                   name="dirtyRoomsList"
                   :total="dirtyRoomsList.length + expectCheckOut.length"
                   size="100%"
@@ -585,7 +586,7 @@
             <WidgetsChatSummary />
           </v-col>
           <v-col cols="12" class="pt-2">
-            <WidgetsTenDaysForCast :key="keyTabAll" />
+            <WidgetsTenDaysForCast :key="keyTabAllTop" />
           </v-col>
         </v-row>
       </v-col>
@@ -661,6 +662,7 @@ export default {
   },
   data() {
     return {
+      keyTabAllTop: 1,
       gridLoading: false,
       keyAll: 0,
       isActiveTab: 1,
@@ -857,9 +859,19 @@ export default {
     this.first_login_auth = this.$auth.user.first_login;
 
     setInterval(() => {
-      this.checkRoomCleaningNewEvent();
-      this.room_list();
-    }, 1000 * 60);
+      if (
+        this.GRCDialog ||
+        this.ArrivalReportDialog ||
+        this.CheckOutReportDialog ||
+        this.InHouseDialog ||
+        this.FoodDialog
+      ) {
+      } else {
+        this.room_list();
+        this.checkRoomCleaningNewEvent();
+        this.keyTabAllTop++;
+      }
+    }, 1000 * 60 * 5);
 
     let payload = {
       params: {

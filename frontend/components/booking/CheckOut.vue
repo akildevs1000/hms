@@ -328,6 +328,7 @@
                             style="width: 110px"
                           >
                             {{
+                              posting_payment.discount ??
                               $utils.currency_format(posting_payment.discount)
                             }}
                           </td>
@@ -951,7 +952,7 @@ export default {
         })
         .catch((e) => {
           this.loading = false;
-          console.log(e)
+          console.log(e);
         });
     },
 
