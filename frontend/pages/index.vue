@@ -580,10 +580,10 @@
           </v-col>
 
           <v-col cols="12" class="pt-2">
-            <WidgetsOnlineBooking />
+            <WidgetsOnlineBooking :key="keyTabAllTop" />
           </v-col>
           <v-col cols="12" class="pt-2">
-            <WidgetsChatSummary />
+            <WidgetsChatSummary :key="keyTabAllTop" />
           </v-col>
           <v-col cols="12" class="pt-2">
             <WidgetsTenDaysForCast :key="keyTabAllTop" />
@@ -858,19 +858,23 @@ export default {
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
 
+    // setInterval(() => {
+    //   if (
+    //     this.GRCDialog ||
+    //     this.ArrivalReportDialog ||
+    //     this.CheckOutReportDialog ||
+    //     this.InHouseDialog ||
+    //     this.FoodDialog
+    //   ) {
+    //   } else {
+    //     this.room_list();
+    //     this.checkRoomCleaningNewEvent();
+    //     this.keyTabAllTop++;
+    //   }
+    // }, 1000 * 60 * 5);
+
     setInterval(() => {
-      if (
-        this.GRCDialog ||
-        this.ArrivalReportDialog ||
-        this.CheckOutReportDialog ||
-        this.InHouseDialog ||
-        this.FoodDialog
-      ) {
-      } else {
-        this.room_list();
-        this.checkRoomCleaningNewEvent();
-        this.keyTabAllTop++;
-      }
+      this.keyTabAllTop++;
     }, 1000 * 60 * 5);
 
     let payload = {

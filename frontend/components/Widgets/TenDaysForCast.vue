@@ -29,7 +29,9 @@
                   :style="`position: absolute;
                   bottom: 0;
                   width: 100%;
-                  height: ${item.bookedPercent > 100 ? 100 : item.bookedPercent}%;
+                  height: ${
+                    item.bookedPercent > 100 ? 100 : item.bookedPercent
+                  }%;
                   background: #71de36;
                   transition: height 0.5s ease;`"
                 ></div>
