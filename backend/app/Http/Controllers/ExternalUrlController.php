@@ -72,33 +72,77 @@ class ExternalUrlController extends Controller
         }
     }
 
-    public function sandBox($company_id = 0)
+    public function sandBox($company_id = 3)
     {
-        $todayDate = date("Y-m-d");
-        $FoodOrder = BookedRoom::where('company_id', $company_id)
-            ->where(function ($query) use ($todayDate) {
-                $query->whereDate('check_out', $todayDate)
-                    ->orWhereDate('check_in', $todayDate);
+        $id = $company_id;
+        $today = Carbon::tomorrow();
+
+
+
+        $dates = [];
+
+        for ($i = 0; $i < 1; $i++) {
+           
+
+            $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
+
+            return $bookedData = BookedRoom::without("booking", "postings")
+            ->orderBy("check_in")
+            ->where(function ($q) use ($date) {
+                $q->whereDate('check_in', ">=",  $date)
+                    ->orWhereDate('check_out', "<=",  $date);
             })
-            ->whereIn('booking_status', [BookedRoom::CHECKED_IN])
-            ->selectRaw("
-        SUM(CASE WHEN DATE(check_in) = ? THEN breakfast ELSE 0 END) as occupied_breakfast,
-        SUM(CASE WHEN DATE(check_in) = ? THEN lunch ELSE 0 END) as occupied_lunch,
-        SUM(CASE WHEN DATE(check_in) = ? THEN dinner ELSE 0 END) as occupied_dinner
-    ", [$todayDate, $todayDate, $todayDate])
-            ->first();
+            ->where('booking_status', BookedRoom::BOOKED)
+            ->where('company_id', $id)
+            ->get(["check_in", "check_out"]);
 
-        $occupiedBreakfast = $FoodOrder->occupied_breakfast ?? 0;
-        $occupiedLunch = $FoodOrder->occupied_lunch ?? 0;
-        $occupiedDinner = $FoodOrder->occupied_dinner ?? 0;
 
-        $foodOrdersCount = [
-            "breakfast" => $occupiedBreakfast,
-            "lunch" => $occupiedLunch,
-            "dinner" => $occupiedDinner,
-            "total" => $occupiedBreakfast + $occupiedLunch + $occupiedDinner,
-        ];
 
-        return $foodOrdersCount;
+            $AvailableRooms = Room::with("is_cleaned")
+            ->where('company_id', $id)
+            ->whereNot("status", Room::Blocked)
+            ->whereDoesntHave("bookedRoom", function ($query) use ($date, $id) {
+                $query->where(function ($query) use ($date) {
+                    $query->whereDate('check_in', ">=",  $date)
+                        ->orWhereDate('check_in', "<=",  $date);
+                })
+                    ->where('company_id', $id);
+            })
+            ->count();
+
+            $dates[$date] = [
+                "label" => date("D", strtotime($date)),
+                "bookedCount" => 0,
+                "bookedPercent" => 0,
+                "availableCount" => 0,
+                "availablePercent" => 100,
+            ];
+            $bookedData = BookedRoom::without("booking", "postings")
+                ->orderBy("check_in")
+                ->where(function ($q) use ($today) {
+                    $q->whereDate('check_in', ">=",  $today)
+                        ->orWhereDate('check_out', "<=",  $today);
+                })
+                ->where('booking_status', BookedRoom::BOOKED)
+                ->where('company_id', $id)
+                ->get(["check_in", "check_out"]);
+            $counter = 0;
+            foreach ($bookedData as $book) {
+                $check_in = $book->check_in;
+                $check_out = $book->check_out;
+                if ($date >= $check_in && $date <= $check_out) {
+                    ++$counter;
+                    $dates[$date] = [
+                        "label" => date("D", strtotime($date)),
+                        "bookedCount" => $counter,
+                        "bookedPercent" => round(($counter / $AvailableRooms) * 100, 2),
+                        "availableCount" => $AvailableRooms - $counter,
+                        "availablePercent" => round((($AvailableRooms - $counter) / $AvailableRooms) * 100, 2),
+                    ];
+                }
+            }
+        }
+
+        return array_values($dates);
     }
 }
