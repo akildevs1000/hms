@@ -533,7 +533,9 @@
               <div class="text-center white--text boxheight boxheight">
                 <v-icon
                   :color="
-                    occupied.device && occupied.latest_status == 1 ? 'red' : ''
+                    occupied.device && occupied.device.latest_status == 1
+                      ? 'red'
+                      : ''
                   "
                 >
                   {{ getRelatedIcon(occupied.booked_room.booking) }}
@@ -590,7 +592,9 @@
               <div class="text-center white--text boxheight boxheight">
                 <v-icon
                   :color="
-                    occupied.device && occupied.latest_status == 1 ? 'red' : ''
+                    occupied.device && occupied.device.latest_status == 1
+                      ? 'red'
+                      : ''
                   "
                 >
                   {{ getRelatedIcon(occupied.booked_room.booking) }}
