@@ -146,6 +146,12 @@ class OrderRoom extends Model
         return $this->belongsTo(FoodPlan::class, "food_plan_id");
     }
 
+    public function getDayAttribute()
+    {
+        return date('l', strtotime($this->attributes['date']));
+    }
+
+
     public function getDateAttribute()
     {
         return date('d-M-y', strtotime($this->attributes['date']));
