@@ -2763,21 +2763,15 @@ class BookingController extends Controller
     {
         $today = Carbon::tomorrow();
 
+        $AvailableRooms = Room::where('company_id', $id)
+            ->whereNot("status", Room::Blocked)
+            ->count();
+
         $dates = [];
 
         for ($i = 0; $i < 10; $i++) {
             $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
-            $AvailableRooms = Room::with("is_cleaned")
-                ->where('company_id', $id)
-                ->whereNot("status", Room::Blocked)
-                ->whereDoesntHave("bookedRoom", function ($query) use ($date, $id) {
-                    $query->where(function ($query) use ($date) {
-                        $query->whereDate('check_in', ">=",   $date)
-                            ->orWhereDate('check_in', "<=",   $date);
-                    })
-                        ->where('company_id', $id);
-                })
-                ->count();
+
             $dates[$date] = [
                 "label" => date("D", strtotime($date)),
                 "bookedCount" => 0,
@@ -2793,12 +2787,11 @@ class BookingController extends Controller
                 })
                 ->where('booking_status', BookedRoom::BOOKED)
                 ->where('company_id', $id)
-                ->get(["check_in", "check_out"]);
+                ->get(["check_in"]);
             $counter = 0;
             foreach ($bookedData as $book) {
                 $check_in = $book->check_in;
-                $check_out = $book->check_out;
-                if ($date >= $check_in && $date <= $check_out) {
+                if ($date >= $check_in && $date <= $check_in) {
                     ++$counter;
                     $dates[$date] = [
                         "label" => date("D", strtotime($date)),
