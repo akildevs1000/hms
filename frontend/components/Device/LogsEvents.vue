@@ -76,7 +76,7 @@
             :loading="loading"
             :options.sync="options"
             :footer-props="{
-              itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+              itemsPerPageOptions: [50, 100, 500, 1000],
             }"
             :server-items-length="totalTableRowsCount"
           >
@@ -125,9 +125,11 @@
             </template>
             <template v-slot:item.status="{ item }">
               <div style="color: red" v-if="item.booking_status_id == 0">
-                Availalbe
+                Empty
               </div>
-              <div v-else-if="item.booking_status_id >= 1">Booked</div>
+              <div style="color: green" v-else-if="item.booking_status_id >= 1">
+                Sold
+              </div>
 
               <div v-else>---</div>
               <!-- <div style="color: red" v-if="item.booking_status_id == 0">

@@ -495,6 +495,14 @@ export default {
           menu: "lost_and_found_access",
         },
         {
+          topMenu: "dashboard",
+          icon: "mdi-cellphone-lock",
+          module: "devices_permissions_access",
+          title: "Rooms",
+          to: "/devices",
+          menu: "devices_permissions_access",
+        },
+        {
           topMenu: "setting",
           icon: "mdi mdi-account-details",
           module: "company",
@@ -545,7 +553,7 @@ export default {
         },
         {
           topMenu: "setting",
-          icon: "mdi mdi-account-details",
+          icon: "mdi-cellphone-lock",
           module: "device",
           title: "Devices",
           to: "/devices",

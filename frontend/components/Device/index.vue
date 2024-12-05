@@ -165,7 +165,7 @@
             :loading="loading"
             :options.sync="options"
             :footer-props="{
-              itemsPerPageOptions: [50, 10, 20, 100, 500, 1000],
+              itemsPerPageOptions: [50, 100, 500, 1000],
             }"
             :server-items-length="totalTableRowsCount"
           >
@@ -196,16 +196,10 @@
             </template>
 
             <template v-slot:item.room_status="{ item }">
-              <div style="color: red" v-if="item.booked_room?.room_status == 0">
-                Availalbe
+              <div style="color: red" v-if="getRoomStatus(item.room_id) == 0">
+                Empty
               </div>
-              <div v-else-if="item.booked_room?.room_status == 1">Booked</div>
-              <div v-else-if="item.booked_room?.room_status == 2">Check In</div>
-              <div v-else-if="item.booked_room?.room_status == 3">
-                Check Out
-              </div>
-              <div v-else-if="item.booked_room?.room_status == 4">Dirty</div>
-              <div v-else>---</div>
+              <div style="" v-else>Sold</div>
             </template>
 
             <template
@@ -378,6 +372,7 @@ export default {
     floors: [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     ],
+    intervalObj: null,
   }),
   watch: {
     options: {
@@ -387,15 +382,49 @@ export default {
       deep: true,
     },
   },
+  beforeDestroy() {
+    if (this.intervalObj) clearInterval(this.intervalObj);
+  },
   created() {
     this.getDataFromApi();
     this.getroomList();
 
-    // setInterval(() => {
-    //   this.getDataFromApi();
-    // }, 1000 * 60 * 2);
+    this.intervalObj = setInterval(() => {
+      this.getDataFromApi();
+    }, 1000 * 60 * 10);
   },
   methods: {
+    getRoomStatus(roomId) {
+      let status = 0;
+      try {
+        let roomsListWithStatusJson = localStorage.getItem(
+          "rooms_with_today_status"
+        );
+        let roomsListWithStatus = JSON.parse(roomsListWithStatusJson);
+        /// console.log(roomsListWithStatus.availableRooms);
+
+        if (roomsListWithStatus.availableRooms) {
+          // let find = roomsListWithStatus.availableRooms.find(
+          //   (e) => e.id == roomId
+          // );
+          // if (find) {
+          //   status = 0;
+          // }
+          find = roomsListWithStatus.checkIn.find((e) => e.id == roomId);
+          if (find) {
+            status = 1;
+          }
+          find = roomsListWithStatus.expectCheckOut.find((e) => e.id == roomId);
+          if (find) {
+            status = 1;
+          }
+        }
+      } catch (e) {
+        //console.log(e);
+      }
+
+      return status;
+    },
     getTimezones() {
       return Object.keys(this.timeZones).map((key) => ({
         offset: this.timeZones[key].offset,

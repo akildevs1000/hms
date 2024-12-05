@@ -841,7 +841,8 @@ export default {
 
     setInterval(() => {
       this.checkRoomCleaningNewEvent();
-    }, 1000 * 60);
+      this.room_list();
+    }, 1000 * 60 * 5);
 
     let payload = {
       params: {
@@ -1202,6 +1203,7 @@ export default {
 
         let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
         let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+
         this.availableRooms = data.availableRooms.filter(
           (e) => !uniqueRoomNumbers.includes(e.room_no)
         );
@@ -1221,6 +1223,17 @@ export default {
         this.keyTabcompliment = 37;
         this.keyTabdirty = 38;
         this.keyTabOccupied = 39;
+
+        try {
+          if (localStorage) {
+            localStorage.setItem(
+              "rooms_with_today_status",
+              JSON.stringify(data)
+            );
+          }
+        } catch (e) {
+          console.log(e);
+        }
       });
     },
 
