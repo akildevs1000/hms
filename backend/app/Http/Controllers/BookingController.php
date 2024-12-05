@@ -2766,7 +2766,13 @@ class BookingController extends Controller
     {
         $today = Carbon::tomorrow();
 
-        $AvailableRooms = Room::with("is_cleaned")
+      
+
+        $dates = [];
+
+        for ($i = 0; $i < 10; $i++) {
+            $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
+            $AvailableRooms = Room::with("is_cleaned")
             ->where('company_id', $id)
             ->whereNot("status", Room::Blocked)
             ->whereDoesntHave("bookedRoom", function ($query) use ($today, $id) {
@@ -2777,11 +2783,6 @@ class BookingController extends Controller
                     ->where('company_id', $id);
             })
             ->count();
-
-        $dates = [];
-
-        for ($i = 0; $i < 10; $i++) {
-            $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
             $dates[$date] = [
                 "label" => date("D", strtotime($date)),
                 "bookedCount" => 0,
