@@ -831,6 +831,11 @@ export default {
       this.get_data();
     },
   },
+  // mounted() {
+  //   this.intervalObj = setInterval(() => {
+  //     this.getDataFromApi();
+  //   }, 1000 * 60);
+  // },
   created() {
     this.filterDate = new Date(
       Date.now() - new Date().getTimezoneOffset() * 60000
