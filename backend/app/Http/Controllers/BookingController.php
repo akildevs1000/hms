@@ -2383,19 +2383,17 @@ class BookingController extends Controller
             $booking_reservation_number =  $bookingArray[1];
             $booking  =  $bookingArray[0];
 
-            if ($request->company_id == 1 || $request->company_id == 2) {
-                if ($booking) {
-                    $this->storeBookedRooms($request, $booking);
-                    //recalculating Tax based on discount
-                    // (new ManagementController())->generateOccupancyRateByBooking($request);
+            if ($booking) {
+                $this->storeBookedRooms($request, $booking);
+                //recalculating Tax based on discount
+                // (new ManagementController())->generateOccupancyRateByBooking($request);
 
-                    if ($request->filled("payment_reference_id")) {
-                        $data = [];
-                        $data['payment_reference_id'] = $request->payment_reference_id;
-                        $data['payment_response'] =  json_encode($request->payment_response);
+                if ($request->filled("payment_reference_id")) {
+                    $data = [];
+                    $data['payment_reference_id'] = $request->payment_reference_id;
+                    $data['payment_response'] =  json_encode($request->payment_response);
 
-                        Booking::whereId($booking->id)->update($data);
-                    }
+                    Booking::whereId($booking->id)->update($data);
                 }
             }
 
