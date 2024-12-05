@@ -147,7 +147,6 @@ class BookingController extends Controller
 
                 //recalculating Tax based on discount
                 $error = (new ManagementController())->generateOccupancyRateByBooking($request);
-                $error = (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
                 try {
 
@@ -2390,7 +2389,6 @@ class BookingController extends Controller
                 $this->storeBookedRooms($request, $booking);
                 //recalculating Tax based on discount
                 (new ManagementController())->generateOccupancyRateByBooking($request);
-                (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
                 if ($request->filled("payment_reference_id")) {
                     $data = [];
@@ -2608,7 +2606,6 @@ class BookingController extends Controller
                 $this->storeBookedRoomsForHall($request, $booking);
                 //recalculating Tax based on discount
                 (new ManagementController())->generateOccupancyRateByBooking($request);
-                (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
                 if ($request->filled("payment_reference_id")) {
                     $data = [];
@@ -2766,22 +2763,15 @@ class BookingController extends Controller
     {
         $today = Carbon::tomorrow();
 
-        $AvailableRooms = Room::with("is_cleaned")
-            ->where('company_id', $id)
+        $AvailableRooms = Room::where('company_id', $id)
             ->whereNot("status", Room::Blocked)
-            ->whereDoesntHave("bookedRoom", function ($query) use ($today, $id) {
-                $query->where(function ($query) use ($today) {
-                    $query->whereDate('check_in', ">=",  $today)
-                        ->orWhereDate('check_in', "<=",  $today);
-                })
-                    ->where('company_id', $id);
-            })
             ->count();
 
         $dates = [];
 
         for ($i = 0; $i < 10; $i++) {
             $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
+
             $dates[$date] = [
                 "label" => date("D", strtotime($date)),
                 "bookedCount" => 0,
@@ -2791,18 +2781,17 @@ class BookingController extends Controller
             ];
             $bookedData = BookedRoom::without("booking", "postings")
                 ->orderBy("check_in")
-                ->where(function ($q) use ($today) {
-                    $q->whereDate('check_in', ">=",  $today)
-                        ->orWhereDate('check_in', "<=",  $today);
+                ->where(function ($q) use ($date) {
+                    $q->whereDate('check_in', ">=",  $date)
+                        ->orWhereDate('check_in', "<=",  $date);
                 })
                 ->where('booking_status', BookedRoom::BOOKED)
                 ->where('company_id', $id)
-                ->get(["check_in", "check_out"]);
+                ->get(["check_in"]);
             $counter = 0;
             foreach ($bookedData as $book) {
                 $check_in = $book->check_in;
-                $check_out = $book->check_out;
-                if ($date >= $check_in && $date <= $check_out) {
+                if ($date >= $check_in && $date <= $check_in) {
                     ++$counter;
                     $dates[$date] = [
                         "label" => date("D", strtotime($date)),

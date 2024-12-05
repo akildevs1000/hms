@@ -149,8 +149,8 @@ export default {
     },
     breakdownItems() {
       return {
-        price: "Room Price",
-        after_discount: "After Discount",
+        total_with_tax: "Room Price",
+        room_discount: "Discount",
         food_plan_price: "Meal",
         bed_amount: "Extra Bed",
         early_check_in: "Early Check In",

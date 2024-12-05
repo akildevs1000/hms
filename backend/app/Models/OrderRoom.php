@@ -43,21 +43,6 @@ class OrderRoom extends Model
         "booked_room_id",
         "price_adjusted_after_dsicount",
 
-        "inv_room_listing_price",
-        "inv_room_discount",
-        "inv_room_price_after_discount",
-        "inv_room_cgst",
-        "inv_room_sgst",
-        "inv_food_listing_price",
-        "inv_food_sgst",
-        "inv_food_cgst",
-        "inv_room_food_gst_grand_total",
-        "inv_room_price_with_tax",
-        "inv_food_price_with_tax",
-
-        "inv_room_tax_per",
-        "inv_food_tax_per",
-
         "food_plan_id",
         "extra_bed_qty",
         "early_check_in",
@@ -145,6 +130,12 @@ class OrderRoom extends Model
     {
         return $this->belongsTo(FoodPlan::class, "food_plan_id");
     }
+
+    public function getDayAttribute()
+    {
+        return date('l', strtotime($this->attributes['date']));
+    }
+
 
     public function getDateAttribute()
     {
