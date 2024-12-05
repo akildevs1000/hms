@@ -45,7 +45,9 @@
     </v-row>
     <v-card class="mb-5" elevation="0">
       <v-toolbar v-if="viewType == 'page'" class="rounded-md mb-2" dense flat>
-        <v-toolbar-title><span>Lights On and Off Logs</span></v-toolbar-title>
+        <v-toolbar-title
+          ><span>Lights On and Off Logs - History</span></v-toolbar-title
+        >
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
