@@ -2769,16 +2769,8 @@ class BookingController extends Controller
 
         for ($i = 0; $i < 10; $i++) {
             $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
-            $AvailableRooms = Room::with("is_cleaned")
-            ->where('company_id', $id)
+            $AvailableRooms = Room::where('company_id', $id)
             ->whereNot("status", Room::Blocked)
-            ->whereDoesntHave("bookedRoom", function ($query) use ($today, $id) {
-                $query->where(function ($query) use ($today) {
-                    $query->whereDate('check_in', ">=",  $today)
-                        ->orWhereDate('check_in', "<=",  $today);
-                })
-                    ->where('company_id', $id);
-            })
             ->count();
             $dates[$date] = [
                 "label" => date("D", strtotime($date)),
