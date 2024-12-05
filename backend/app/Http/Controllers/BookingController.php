@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Booking\BookingRequest;
 use App\Http\Requests\Booking\DocumentRequest;
+use App\Jobs\StoreBookedRoomsJob;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
@@ -2384,7 +2385,21 @@ class BookingController extends Controller
             $booking  =  $bookingArray[0];
 
             if ($booking) {
-                $this->storeBookedRooms($request, $booking);
+
+                if ($request->company_id == 1 || $request->company_id == 2) {
+                    $this->storeBookedRooms($request, $booking);
+                } else {
+                    $data = [
+                        'selectedRooms' => $request->input('selectedRooms'),
+                        'room_discount' => $request->input('room_discount'),
+                        'room_extra_amount' => $request->input('room_extra_amount'),
+                        'booking_id' => $booking->id,
+                        'customer_id' => $request['customer_id'],
+                        'booking_status' => 1,
+                    ];
+                    StoreBookedRoomsJob::dispatch($data);
+                }
+
                 //recalculating Tax based on discount
                 // (new ManagementController())->generateOccupancyRateByBooking($request);
 
