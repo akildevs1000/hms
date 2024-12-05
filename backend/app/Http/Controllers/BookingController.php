@@ -2763,35 +2763,44 @@ class BookingController extends Controller
     {
         $today = Carbon::tomorrow();
 
-        $AvailableRooms = Room::where('company_id', $id)
-            ->whereNot("status", Room::Blocked)
-            ->count();
+        $AvailableRooms = Room::with("is_cleaned")
+        ->where('company_id', $id)
+        ->whereNot("status", Room::Blocked)
+        ->whereDoesntHave("bookedRoom", function ($query) use ($today, $id) {
+            $query->where(function ($query) use ($today) {
+                $query->whereDate('check_in', ">=",  $today)
+                    ->orWhereDate('check_in', "<=",  $today);
+            })
+                ->where('company_id', $id);
+        })
+        ->count();
 
         $dates = [];
 
         for ($i = 0; $i < 10; $i++) {
             $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
-
+           
             $dates[$date] = [
                 "label" => date("D", strtotime($date)),
                 "bookedCount" => 0,
                 "bookedPercent" => 0,
-                "availableCount" => $AvailableRooms,
+                "availableCount" => 0,
                 "availablePercent" => 100,
             ];
             $bookedData = BookedRoom::without("booking", "postings")
                 ->orderBy("check_in")
-                ->where(function ($q) use ($date) {
-                    $q->whereDate('check_in', ">=",  $date)
-                        ->orWhereDate('check_in', "<=",  $date);
+                ->where(function ($q) use ($today) {
+                    $q->whereDate('check_in', ">=",  $today)
+                        ->orWhereDate('check_in', "<=",  $today);
                 })
                 ->where('booking_status', BookedRoom::BOOKED)
                 ->where('company_id', $id)
-                ->get(["check_in"]);
+                ->get(["check_in", "check_out"]);
             $counter = 0;
             foreach ($bookedData as $book) {
                 $check_in = $book->check_in;
-                if ($date >= $check_in && $date <= $check_in) {
+                $check_out = $book->check_out;
+                if ($date >= $check_in && $date <= $check_out) {
                     ++$counter;
                     $dates[$date] = [
                         "label" => date("D", strtotime($date)),
