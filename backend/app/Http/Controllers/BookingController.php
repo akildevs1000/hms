@@ -2764,53 +2764,36 @@ class BookingController extends Controller
         $today = Carbon::tomorrow();
 
         $AvailableRooms = Room::with("is_cleaned")
-        ->where('company_id', $id)
-        ->whereNot("status", Room::Blocked)
-        ->whereDoesntHave("bookedRoom", function ($query) use ($today, $id) {
-            $query->where(function ($query) use ($today) {
-                $query->whereDate('check_in', ">=",  $today)
-                    ->orWhereDate('check_in', "<=",  $today);
-            })
-                ->where('company_id', $id);
-        })
-        ->count();
+            ->where('company_id', $id)
+            ->whereNot("status", Room::Blocked)
+            ->count();
 
         $dates = [];
 
         for ($i = 0; $i < 10; $i++) {
+
+
             $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
-           
+
+            $bookedData  = Room::whereHas('bookedRoom', function ($q) use ($id, $date) {
+                $q->whereNotNull('room_id');
+                $q->where('company_id', $id);
+                $q->where(function ($query) use ($date) {
+                    // Check if the check-in is before or equal to today, and check-out is after or equal to today
+                    $query->whereDate('check_in', '<=', $date)
+                        ->whereDate('check_out', '>=', $date)
+                        ->where('booking_status', BookedRoom::BOOKED) // Status for dirty rooms
+                        ->where('booking_status', '!=', 0); // Exclude non-active bookings
+                });
+            })->count();
+
             $dates[$date] = [
                 "label" => date("D", strtotime($date)),
-                "bookedCount" => 0,
-                "bookedPercent" => 0,
-                "availableCount" => 0,
-                "availablePercent" => 100,
+                "bookedCount" => $bookedData,
+                "bookedPercent" => round(($bookedData / $AvailableRooms) * 100, 2),
+                "availableCount" => $AvailableRooms - $bookedData,
+                "availablePercent" => round((($AvailableRooms - $bookedData) / $AvailableRooms) * 100, 2),
             ];
-            $bookedData = BookedRoom::without("booking", "postings")
-                ->orderBy("check_in")
-                ->where(function ($q) use ($today) {
-                    $q->whereDate('check_in', ">=",  $today)
-                        ->orWhereDate('check_in', "<=",  $today);
-                })
-                ->where('booking_status', BookedRoom::BOOKED)
-                ->where('company_id', $id)
-                ->get(["check_in", "check_out"]);
-            $counter = 0;
-            foreach ($bookedData as $book) {
-                $check_in = $book->check_in;
-                $check_out = $book->check_out;
-                if ($date >= $check_in && $date <= $check_out) {
-                    ++$counter;
-                    $dates[$date] = [
-                        "label" => date("D", strtotime($date)),
-                        "bookedCount" => $counter,
-                        "bookedPercent" => round(($counter / $AvailableRooms) * 100, 2),
-                        "availableCount" => $AvailableRooms - $counter,
-                        "availablePercent" => round((($AvailableRooms - $counter) / $AvailableRooms) * 100, 2),
-                    ];
-                }
-            }
         }
 
         return array_values($dates);
