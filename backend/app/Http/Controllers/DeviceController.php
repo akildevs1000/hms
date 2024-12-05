@@ -183,7 +183,7 @@ class DeviceController extends Controller
         //     $status = 1;
         // }
         $notificationMessage = "";
-        $device = Device::where("serial_number", $device_room_number)->first();
+        $device = Device::with("company")->where("serial_number", $device_room_number)->first();
         if ($device) {
             $deviceTimezone = $device->utc_time_zone;
 
@@ -246,8 +246,13 @@ class DeviceController extends Controller
                         ->update($row);
 
 
-                    $notificationMessage = "Room Name :" . $device->room_name . "\n";
-                    $notificationMessage .= "Lights ON at :" . $row["latest_status_time"] . "\n";
+                    $notificationMessage = "Room Name: *" . $device->name . "*\\n";
+                    $notificationMessage .= "Lights 🟢 ON at: " . $dateTime->format('H:i:s Y-m-d') . "\\n";
+                    $notificationMessage .= "Booking Status: " . ($bookingStatusId == 1 ? "*Sold*" : "*Empty*") . "\\n";
+                    $notificationMessage .= "Company: " . $device->company['name'] . " ";
+
+
+
                     $this->sendWhatsappNotification($notificationMessage);
                 } else if ($status == 0) {
                     $latestLog = DeviceLogs::where("serial_number", $device_room_number)->orderBy("start_datetime", "desc")->first();
@@ -279,8 +284,11 @@ class DeviceController extends Controller
                         Device::where("serial_number", $device_room_number)
                             ->update($row);
 
-                        $notificationMessage = "Room Name :" . $device->room_name . "\n";
-                        $notificationMessage .= "Lights OFF at :" . $row["latest_status_time"] . "\n";
+                        $notificationMessage = "Room Name: *" . $device->name . "*\\n";
+                        $notificationMessage .= "Lights 🔴 OFF at: " . $dateTime->format('H:i:s Y-m-d') . "\\n";
+                        $notificationMessage .= "Booking Status: " . ($bookingStatusId == 1 ? "*Sold*" : "*Empty*") . "\\n";
+                        $notificationMessage .= "Company: " . $device->company['name'] . " ";
+
 
                         $this->sendWhatsappNotification($notificationMessage);
                     } else {
@@ -299,6 +307,8 @@ class DeviceController extends Controller
     }
     public function sendWhatsappNotification($message)
     {
+        // $message = date("Y-m-d H:i:s");
+
         // $model = BookedRoom::query();
         // $roomIds = $model
         //     ->whereDate('check_in', '<=', $request->check_in)
@@ -328,7 +338,7 @@ class DeviceController extends Controller
                 CURLOPT_POSTFIELDS => '{
   "company_id": 13,
   "whatsapp_number": "971552205149",
-  "message": "' . $message . '"
+  "message": "' . trim($message) . '"
 }
  ',
                 CURLOPT_HTTPHEADER => array(
@@ -340,7 +350,10 @@ class DeviceController extends Controller
             $response = curl_exec($curl);
 
             curl_close($curl);
+
+            return $message;
         } catch (\Throwable $e) {
+            return $e;
         }
     }
     public function getDevicesLogs(Request $request)

@@ -385,6 +385,11 @@ export default {
   beforeDestroy() {
     if (this.intervalObj) clearInterval(this.intervalObj);
   },
+  mounted() {
+    this.intervalObj = setInterval(() => {
+      this.getDataFromApi();
+    }, 1000 * 60);
+  },
   created() {
     this.getDataFromApi();
     this.getroomList();
