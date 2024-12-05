@@ -165,7 +165,7 @@
             :loading="loading"
             :options.sync="options"
             :footer-props="{
-              itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
+              itemsPerPageOptions: [50, 10, 20, 100, 500, 1000],
             }"
             :server-items-length="totalTableRowsCount"
           >
@@ -194,12 +194,24 @@
             <template v-slot:item.latest_status_time="{ item }">
               {{ item.latest_status_time }}
             </template>
+
+            <template v-slot:item.room_status="{ item }">
+              <div style="color: red" v-if="item.booked_room?.room_status == 0">
+                Availalbe
+              </div>
+              <div v-else-if="item.booked_room?.room_status == 1">Booked</div>
+              <div v-else-if="item.booked_room?.room_status == 2">Check In</div>
+              <div v-else-if="item.booked_room?.room_status == 3">
+                Check Out
+              </div>
+              <div v-else-if="item.booked_room?.room_status == 4">Dirty</div>
+              <div v-else>---</div>
+            </template>
+
             <template
               v-slot:item.options="{ item }"
               v-if="
-                can('device_view') ||
-                can('device_edit') ||
-                can('device_delete')
+                can('device_view') || can('device_edit') || can('device_delete')
               "
             >
               <v-menu bottom left>
@@ -265,7 +277,7 @@ export default {
     //datatable varables
     page: 1,
     timeZones: timeZones,
-    perPage: 0,
+    perPage: 50,
     currentPage: 1,
     cumulativeIndex: 1,
     totalTableRowsCount: 0,
@@ -317,7 +329,15 @@ export default {
         filterable: true,
         filterSpecial: true,
       },
-
+      {
+        text: "Room",
+        value: "room_status",
+        align: "left",
+        sortable: true,
+        key: "room_status",
+        filterable: true,
+        filterSpecial: true,
+      },
       {
         text: "Light Status",
         value: "latest_status",

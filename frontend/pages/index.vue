@@ -841,7 +841,7 @@ export default {
 
     setInterval(() => {
       this.checkRoomCleaningNewEvent();
-    }, 1000 * 10);
+    }, 1000 * 60);
 
     let payload = {
       params: {
@@ -855,7 +855,7 @@ export default {
 
   methods: {
     handleReservationResponse(e) {
-      console.log("🚀 ~ handleReservationResponse ~ e:", e)
+      console.log("🚀 ~ handleReservationResponse ~ e:", e);
       this.reservationId = e.id;
       this.$nextTick(() => {
         const bookingSingleComp = this.$refs["BookingSingleRef"];

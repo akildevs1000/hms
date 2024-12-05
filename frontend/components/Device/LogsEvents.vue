@@ -68,6 +68,7 @@
       </v-toolbar>
       <v-row>
         <v-col cols="12">
+          No Data available
           <v-data-table
             dense
             :headers="headers_table"
@@ -90,7 +91,12 @@
             <template v-slot:item.device.name="{ item }">
               {{ item.device.room.room_no }}</template
             >
-
+            <template v-slot:item.light="{ item }">
+              <v-icon v-if="item.end_datetime" color="black"
+                >mdi-lightbulb-outline
+              </v-icon>
+              <v-icon v-else color="green">mdi-lightbulb-on </v-icon>
+            </template>
             <template v-slot:item.device.room.room_type.name="{ item }">
               {{ caps(item.device.room.room_type.name) }}
             </template>
@@ -121,11 +127,17 @@
               <div style="color: red" v-if="item.booking_status_id == 0">
                 Availalbe
               </div>
+              <div v-else-if="item.booking_status_id >= 1">Booked</div>
+
+              <div v-else>---</div>
+              <!-- <div style="color: red" v-if="item.booking_status_id == 0">
+                Availalbe
+              </div>
               <div v-else-if="item.booking_status_id == 1">Booked</div>
               <div v-else-if="item.booking_status_id == 2">Check In</div>
               <div v-else-if="item.booking_status_id == 3">Check Out</div>
               <div v-else-if="item.booking_status_id == 4">Dirty</div>
-              <div v-else>---</div>
+              <div v-else>---</div> -->
             </template>
             <!-- <template v-slot:item.status="{ item }">
               <v-icon v-if="item.status == 0" color="black"
@@ -166,35 +178,47 @@ export default {
       {
         text: "#",
         value: "sno",
+        sortable: false,
         align: "left",
       },
       {
         text: "Room Number",
         value: "device.name",
+        sortable: false,
         align: "left",
       },
       {
         text: "Category",
         value: "device.room.room_type.name",
+        sortable: false,
         align: "left",
       },
-
+      {
+        text: "Light",
+        value: "light",
+        key: "light",
+        sortable: false,
+        align: "left",
+      },
       {
         text: "ON",
         value: "start_datetime",
         key: "start_datetime",
+        sortable: false,
         align: "left",
       },
       {
         text: "OFF",
         value: "end_datetime",
         key: "end_datetime",
+        sortable: false,
         align: "left",
       },
       {
         text: "Hours(HH:MM)",
         value: "duration_minutes",
         key: "duration_minutes",
+        sortable: false,
         align: "left",
       },
       {
@@ -202,6 +226,7 @@ export default {
         value: "status",
         key: "status",
         align: "left",
+        sortable: false,
       },
     ],
     roomList: [],

@@ -21,7 +21,10 @@ class DeviceController extends Controller
 {
     public function index(Device $model, Request $request)
     {
-        return $model->with(['room', 'company'])->where('company_id', $request->company_id)->paginate($request->per_page ?? 1000);
+        return $model->with(['room', 'company', "bookedRoom"])->where('company_id', $request->company_id)
+
+            ->orderBy('latest_status', "DESC")
+            ->paginate($request->per_page ?? 50);
     }
 
     public function getDeviceList(Device $model, Request $request)
@@ -305,6 +308,11 @@ class DeviceController extends Controller
         });
         $model->when($request->filled('to_date'), function ($q) use ($request) {
             $q->where('log_time',  "<=", $request->to_date . ' 23:59:59');
+        });
+
+        $model->where(function ($q) {
+            $q->where("duration_minutes", ">", 0);
+            $q->orWhere("duration_minutes", null);
         });
 
         $model->orderByDesc("log_time", 'DESC');

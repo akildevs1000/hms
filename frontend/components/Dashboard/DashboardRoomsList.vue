@@ -928,6 +928,8 @@ export default {
     },
 
     filteredRooms(rooms) {
+      console.log(rooms);
+
       if (!this.searchQuery) return rooms; // Early return for empty search
 
       // Optimized search function for multiple customer fields
