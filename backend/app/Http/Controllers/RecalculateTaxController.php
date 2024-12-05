@@ -12,7 +12,6 @@ class RecalculateTaxController extends Controller
     {
 
         $id = 2877;
-        // $this->UpdateTaxWithID($id);
 
         // return;
         $bookings = Booking::with(['orderRooms'])->where('tax_recalculated_status', 0)

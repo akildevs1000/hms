@@ -147,7 +147,6 @@ class BookingController extends Controller
 
                 //recalculating Tax based on discount
                 $error = (new ManagementController())->generateOccupancyRateByBooking($request);
-                $error = (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
                 try {
 
@@ -2390,7 +2389,6 @@ class BookingController extends Controller
                 $this->storeBookedRooms($request, $booking);
                 //recalculating Tax based on discount
                 (new ManagementController())->generateOccupancyRateByBooking($request);
-                (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
                 if ($request->filled("payment_reference_id")) {
                     $data = [];
@@ -2608,7 +2606,6 @@ class BookingController extends Controller
                 $this->storeBookedRoomsForHall($request, $booking);
                 //recalculating Tax based on discount
                 (new ManagementController())->generateOccupancyRateByBooking($request);
-                (new RecalculateTaxController())->UpdateTaxWithID($booking->id);
 
                 if ($request->filled("payment_reference_id")) {
                     $data = [];
