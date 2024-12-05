@@ -988,6 +988,7 @@ export default {
 
     getData() {
       let id = this.BookingId;
+      if(!id) return;
       this.$axios.get(`booking_customer/${id}`).then(({ data }) => {
         //assign booking
         this.totalPostingAmount = data.totalPostingAmount;
