@@ -68,7 +68,6 @@
       </v-toolbar>
       <v-row>
         <v-col cols="12">
-          No Data available
           <v-data-table
             dense
             :headers="headers_table"
