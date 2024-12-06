@@ -477,14 +477,14 @@ export default {
           to: "/taxable",
           menu: "accounts_gst_access",
         },
-        {
-          topMenu: "account",
-          icon: "mdi-account",
-          module: "vendors",
-          title: "Vendor",
-          to: "/vendors",
-          menu: "accounts_posting_access",
-        },
+        // {
+        //   topMenu: "account",
+        //   icon: "mdi-account",
+        //   module: "vendors",
+        //   title: "Vendor",
+        //   to: "/vendors",
+        //   menu: "accounts_posting_access",
+        // },
 
         {
           topMenu: "dashboard",
