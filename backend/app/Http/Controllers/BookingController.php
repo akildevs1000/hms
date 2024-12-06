@@ -2393,7 +2393,7 @@ class BookingController extends Controller
                     'booking_id' => $booking->id,
                     'customer_id' => $request['customer_id'],
                     'company_id' => $request->company_id ?? 3,
-                    'booking_status' => 1,
+                    'booking_status' => $booking->booking_status,
                 ];
                 StoreBookedRoomsJob::dispatch($data);
 
