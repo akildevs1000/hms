@@ -41,14 +41,16 @@ class GRCController extends Controller
 
         $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-31'));
 
-        $bladeName = 'invoice.invoice';
+        $bladeName = 'invoice.invoice_updated_with_tax';
 
-        if ($booking->tax_recalculated_status) {
-            $bladeName = 'invoice.invoice_updated_with_tax';
-        } else if ($is_old_bill <= 0) {
+        //$bladeName = 'invoice.invoice';
 
-            $bladeName = 'invoice.invoice_old_bills';
-        }
+        // if ($booking->tax_recalculated_status) {
+        //     $bladeName = 'invoice.invoice_updated_with_tax';
+        // } else if ($is_old_bill <= 0) {
+
+        //     $bladeName = 'invoice.invoice_old_bills';
+        // }
 
         return view($bladeName, compact("first_check_in_time", "first_check_out_time", "invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
 

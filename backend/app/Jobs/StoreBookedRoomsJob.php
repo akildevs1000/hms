@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\BookingController;
 use App\Models\BookedRoom;
 use App\Models\OrderRoom;
 use Illuminate\Bus\Queueable;
@@ -54,10 +55,9 @@ class StoreBookedRoomsJob implements ShouldQueue
                 $singleDayExtraAmount = ($this->data['room_extra_amount'] / count($priceList) / count($rooms));
 
                 foreach ($priceList as $list) {
-                    $singleDayPrice = $list['room_price'];
-                    $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
+                    // $singleDayPrice = $list['room_price'];
+                    // $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
 
-                    $orderRooms['price_adjusted_after_dsicount'] = $taxArray['basePrice'];
                     $orderRooms['date'] = $list['date'];
 
                     $orderRooms['room_discount'] = $singleDayDiscount;
@@ -67,13 +67,21 @@ class StoreBookedRoomsJob implements ShouldQueue
 
                     $orderRooms['total'] = $price + $bookedRoomId->food_plan_price;
                     $orderRooms['grand_total'] = $price + $bookedRoomId->food_plan_price;
-                    $orderRooms['total_with_tax'] = $price;
-                    $orderRooms['price'] =  $list['price'];
 
+                    $orderRooms['total_with_tax'] = $price;
+
+                    $BookingObj = new BookingController();
+                    $room_tax =   $BookingObj->getTaxSlab(($price + 900), $bookedRoomId->company_id);
+                    $roomBasePrice = ($price * 100) / (100 + $room_tax);
+                    $roomGSTAmount = $price - $roomBasePrice;
+
+                    $orderRooms['price'] = $roomBasePrice;
+
+                    $orderRooms['room_tax'] = $roomGSTAmount;
+                    $orderRooms['sgst'] = $roomGSTAmount / 2;
+                    $orderRooms['cgst'] = $roomGSTAmount / 2;
+                    $orderRooms['price_adjusted_after_dsicount'] = $roomBasePrice;
                     $orderRooms['days'] = 1;
-                    $orderRooms['room_tax'] = $list['tax'];
-                    $orderRooms['sgst'] = $list['tax'] / 2;
-                    $orderRooms['cgst'] = $list['tax'] / 2;
                     $orderRooms['booked_room_id'] = $bookedRoomId->id;
                     $orderRooms['customer_id'] = $bookedRoomId->customer_id;
                     $orderRooms['meal'] = $bookedRoomId->meal;
@@ -99,20 +107,5 @@ class StoreBookedRoomsJob implements ShouldQueue
         } catch (\Exception $e) {
             Log::alert(json_encode($e->getMessage()));
         }
-    }
-
-    public function reCalculatePrice($finalAmountWithDiscount)
-    {
-        $tax = 12;
-        if ($finalAmountWithDiscount >= 2800) {
-            $tax = 18;
-        } else if ($finalAmountWithDiscount >= 9600) {
-            $tax = 28;
-        }
-
-        $basePrice = ($finalAmountWithDiscount * 100) / (100 + $tax);
-        $gstAmount = $finalAmountWithDiscount - $basePrice;
-
-        return ["basePrice" => round($basePrice, 2), "gstAmount" => round($gstAmount, 2), "tax" => $tax];
     }
 }
