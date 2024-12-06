@@ -55,7 +55,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $singleDayExtraAmount = ($this->data['room_extra_amount'] / count($priceList) / count($rooms));
 
                     foreach ($priceList as $list) {
-                        $singleDayPrice = $list['room_price'];
+                        $singleDayPrice = $list['price'];
                         $taxArray = $this->reCalculatePrice($list['price'] - $singleDayDiscount + $singleDayExtraAmount);
 
                         $price_adjusted_after_dsicount = $taxArray['basePrice'];
@@ -67,10 +67,9 @@ class StoreBookedRoomsJob implements ShouldQueue
 
                         $orderRooms['room_discount'] = $singleDayDiscount;
                         $orderRooms['after_discount'] = $list['price'] - $orderRooms['room_discount'] + $singleDayExtraAmount;
-
-                        $orderRooms['price'] = $singleDayPrice;
-
-                        $orderRooms['total_with_tax'] = $orderRooms['after_discount'];
+                        $price = $orderRooms['after_discount'];
+                        $orderRooms['total_with_tax'] = $price;
+                        $orderRooms['price'] = $price;
 
                         $orderRooms['days'] = 1;
                         $orderRooms['room_tax'] = $list['tax'];
@@ -128,8 +127,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                         $orderRooms['total'] = $price + $bookedRoomId->food_plan_price;
                         $orderRooms['grand_total'] = $price + $bookedRoomId->food_plan_price;
                         $orderRooms['total_with_tax'] = $price;
-                        $orderRooms['price'] =  $list['price'];
-
+                        $orderRooms['price'] = $price;
                         $orderRooms['days'] = 1;
                         $orderRooms['room_tax'] = $list['tax'];
                         $orderRooms['sgst'] = $list['tax'] / 2;

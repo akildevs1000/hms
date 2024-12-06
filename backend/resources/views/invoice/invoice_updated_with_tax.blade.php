@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
-    <title>Document</title>
+    <title>With Tax</title>
 </head>
 
 <body>
@@ -154,9 +154,9 @@
                                             @foreach ($orderRooms as $room)
 
                                             @php
-                                            $subtotal_price+= $room->inv_room_price_after_discount;
-                                            $subtotal_sgst+=$room->inv_room_cgst;
-                                            $subtotal_cgst+=$room->inv_room_sgst ;
+                                            $subtotal_price+= $room->price;
+                                            $subtotal_sgst+=$room->room_tax / 2;
+                                            $subtotal_cgst+=$room->room_tax / 2 ;
 
                                             $subtotal_total+=$room->inv_room_price_with_tax;
 
@@ -175,21 +175,19 @@
                                                 </td>
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_price_after_discount,2)   }}
-
-
+                                                    {{ number_format($room->price,2)   }}
                                                 </td>
 
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_cgst,2) }}
+                                                    {{ number_format(($room->room_tax / 2),2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_sgst,2) }}
+                                                    {{ number_format(($room->room_tax / 2),2) }}
                                                 </td>
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_price_with_tax  , 2) }}
+                                                    {{ number_format($room->total_with_tax  , 2) }}
                                                 </td>
                                             </tr>
                                             @php
