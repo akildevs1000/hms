@@ -892,7 +892,7 @@ export default {
     //   this.todayDate = this.filterDate;
     // },
     handleReservationResponse(e) {
-      console.log("🚀 ~ handleReservationResponse ~ e:", e);
+      //console.log("🚀 ~ handleReservationResponse ~ e:", e);
       this.reservationId = e.id;
       this.$nextTick(() => {
         const bookingSingleComp = this.$refs["BookingSingleRef"];
@@ -910,7 +910,7 @@ export default {
         this.roomCleaningEventCount = this.$localStorage.get(
           "roomCleaningEventCount"
         );
-        console.log("🚀 ~ checkRoomCleaningNewEvent ~ data:", data);
+        //console.log("🚀 ~ checkRoomCleaningNewEvent ~ data:", data);
         this.refreshRoomList();
         this.$localStorage.set("roomCleaningEventCount", data);
       }
@@ -948,7 +948,7 @@ export default {
       return formattedDate;
     },
     goToBookingPage() {
-      console.log(" this.newBookingRoom", this.newBookingRoom);
+      //console.log(" this.newBookingRoom", this.newBookingRoom);
       let currentDate = new Date(
         Date.now() - new Date().getTimezoneOffset() * 60000
       )
@@ -996,7 +996,7 @@ export default {
           let commitObj = {
             ...this.reservation,
           };
-          //console.log('reservation1', commitObj);
+          ////console.log('reservation1', commitObj);
           this.$store.commit("reservation", commitObj);
           this.$router.push(`/hotel/new2`);
         });
@@ -1022,7 +1022,7 @@ export default {
     },
 
     handleTouchstart(event, room) {
-      console.log(room);
+      //console.log(room);
       this.touchstart(
         event,
         room?.booked_room?.id,
@@ -1090,7 +1090,7 @@ export default {
 
     mouseOverForAvailable(newBookingRoom) {
       // this.newBookingRoom = newBookingRoom;
-      // console.log(newBookingRoom);
+      // //console.log(newBookingRoom);
     },
 
     closeNewCheckin() {
@@ -1217,6 +1217,7 @@ export default {
           // check_in: new Date().toJSON().slice(0, 10),
           check_in: this.filterDate,
           filter_date: this.filterDate,
+          page_name: "index",
         },
       };
       this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
@@ -1240,17 +1241,17 @@ export default {
         let data5 = data.dirtyRoomsList.map((e) => e.room_no);
         let data6 = data.bookedRooms.map((e) => e.room_no);
 
-        console.log("data6 bookedRooms", data6);
+        //console.log("data6 bookedRooms", data6);
 
         let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
 
-        console.log("data6 allRoomNumbers", allRoomNumbers);
+        //console.log("data6 allRoomNumbers", allRoomNumbers);
         let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
 
         this.availableRooms = data.availableRooms.filter(
           (e) => !uniqueRoomNumbers.includes(e.room_no)
         );
-        console.log("data6 availableRooms", this.availableRooms.length);
+        //console.log("data6 availableRooms", this.availableRooms.length);
         this.members = data.members;
         this.foodOrdersCount = data.foodOrdersCount;
 
@@ -1275,7 +1276,7 @@ export default {
             );
           }
         } catch (e) {
-          console.log(e);
+          //console.log(e);
         }
         this.gridLoading = false;
       });

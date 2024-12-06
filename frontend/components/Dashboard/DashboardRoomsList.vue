@@ -948,30 +948,30 @@ export default {
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
 
-    setInterval(() => {
-      console.log(this.$route.name);
+    // setInterval(() => {
+    //   //console.log(this.$route.name);
 
-      if (this.$route.name === "index") {
-        if (this.$route.name == "index") {
-          if (
-            this.GRCDialog ||
-            this.BookedRoomReportDialog ||
-            this.PaidRoomReportDialog ||
-            this.DirtyRoomsReportDialog ||
-            this.AvailableRoomsReportDialog ||
-            this.FoodDialog ||
-            this.cancelCheckInDialog ||
-            this.NewBooking
-          ) {
-            console.log("isAnyDialogOpen", true);
-          } else {
-            console.log("isAnyDialogOpen", false);
-            this.room_list();
-            this.key = this.key + 1;
-          }
-        }
-      }
-    }, 1000 * 60);
+    //   if (this.$route.name === "index") {
+    //     if (this.$route.name == "index") {
+    //       if (
+    //         this.GRCDialog ||
+    //         this.BookedRoomReportDialog ||
+    //         this.PaidRoomReportDialog ||
+    //         this.DirtyRoomsReportDialog ||
+    //         this.AvailableRoomsReportDialog ||
+    //         this.FoodDialog ||
+    //         this.cancelCheckInDialog ||
+    //         this.NewBooking
+    //       ) {
+    //         //console.log("isAnyDialogOpen", true);
+    //       } else {
+    //         //console.log("isAnyDialogOpen", false);
+    //         this.room_list();
+    //         this.key = this.key + 1;
+    //       }
+    //     }
+    //   }
+    // }, 1000 * 60);
 
     this.get_food_plan();
   },
@@ -988,7 +988,7 @@ export default {
     },
 
     filteredRooms(rooms) {
-      console.log(rooms);
+      //console.log(rooms);
 
       if (!this.searchQuery) return rooms; // Early return for empty search
 
@@ -1307,7 +1307,7 @@ export default {
       this.$swal(title, message, type);
     },
     room_list() {
-      console.log("this.data", this.data);
+      //console.log("this.data", this.data);
 
       // if (this.data) {
       //   let data = this.data;
@@ -1352,6 +1352,7 @@ export default {
       {
         let payload = {
           params: {
+            page_name: "dashboardcomponent",
             company_id: this.$auth.user && this.$auth.user.company.id,
             // check_in: new Date().toJSON().slice(0, 10),
             check_in: new Date(
@@ -1399,7 +1400,7 @@ export default {
             ...data5,
           ];
 
-          console.log("data6 allRoomNumbers", allRoomNumbers);
+          //console.log("data6 allRoomNumbers", allRoomNumbers);
           let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
 
           this.availableRooms = data.availableRooms.filter(
@@ -1440,7 +1441,7 @@ export default {
         this.isDbCLick = false;
       });
 
-      // console.log(this.$refs["BookingSingleComp"]);
+      // //console.log(this.$refs["BookingSingleComp"]);
       // this.$router.push(`/customer/details/${this.bookingId}`);
     },
     changeCheckInAdminProcess() {

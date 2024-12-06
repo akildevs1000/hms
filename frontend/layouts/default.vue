@@ -22,6 +22,14 @@
           }}</span>
         </div>
       </v-spacer>
+      <v-avatar
+        style="margin-right: 10px"
+        color="green"
+        size="30"
+        :title="getCOmpanyName"
+      >
+        <img :src="getCompanyLogo || '/no-image.PNG'" />
+      </v-avatar>
       <v-badge
         class="mt-2 mr-1"
         :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
@@ -292,10 +300,10 @@ export default {
           label: "Setting",
           name: "setting",
         },
-        {
-          label: "House Keeping",
-          name: "house_keeping",
-        },
+        // {
+        //   label: "House Keeping",
+        //   name: "house_keeping",
+        // },
       ],
       pendingNotificationsCount: 0,
       menuName: "",
@@ -567,6 +575,14 @@ export default {
           to: "/role",
           menu: "settings_roles_access",
         },
+        {
+          topMenu: "setting",
+          icon: "mdi-vacuum-outline",
+          module: "house_keeping",
+          title: "House Keeping",
+          to: "/house_keeping",
+          menu: "settings_room_price_access",
+        },
       ],
       items: [],
       filteredMenu: [],
@@ -652,6 +668,14 @@ export default {
 
     getLogo() {
       return (this.$auth.user && this.$auth.user.image) || "/no-image.PNG";
+    },
+    getCompanyLogo() {
+      return (
+        (this.$auth.user && this.$auth.user.company.logo) || "/no-image.PNG"
+      );
+    },
+    getCOmpanyName() {
+      return (this.$auth.user && this.$auth.user.company.name) || "---";
     },
   },
   methods: {
