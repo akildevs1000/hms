@@ -154,11 +154,11 @@
                                             @foreach ($orderRooms as $room)
 
                                             @php
-                                            $subtotal_price+= $room->total_with_tax;
-                                            $subtotal_sgst+=$room->room_tax / 2;
-                                            $subtotal_cgst+=$room->room_tax / 2 ;
+                                            $subtotal_price+= $room->price;
+                                            $subtotal_sgst+= $room->sgst;
+                                            $subtotal_cgst+=$room->cgst ;
 
-                                            $subtotal_total+=$room->inv_room_price_with_tax;
+                                            $subtotal_total+=$room->total_with_tax;
 
                                             @endphp
                                             <tr class="inv-tr-txt">
@@ -175,15 +175,15 @@
                                                 </td>
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->total_with_tax - $room->room_tax,2)   }}
+                                                    {{ number_format($room->price,2)   }}
                                                 </td>
 
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format(($room->room_tax / 2),2) }}
+                                                    {{ number_format(($room->sgst),2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                    {{ number_format(($room->room_tax / 2),2) }}
+                                                    {{ number_format(($room->cgst),2) }}
                                                 </td>
 
                                                 <td class="  tm_text_right">
