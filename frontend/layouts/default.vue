@@ -592,7 +592,7 @@ export default {
     }, 1000 * 60);
     setInterval(() => {
       this.loadNotificationMenu();
-    }, 1000 * 60 * 5);
+    }, 1000 * 60);
     let user = this.$auth.user;
     let permissions = user.permissions;
 

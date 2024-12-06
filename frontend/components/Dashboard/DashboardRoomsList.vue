@@ -948,10 +948,30 @@ export default {
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
 
-    // setInterval(() => {
-    //   this.room_list();
-    //   this.key = this.key + 1;
-    // }, 1000 * 60 * 2);
+    setInterval(() => {
+      console.log(this.$route.name);
+
+      if (this.$route.name === "index") {
+        if (this.$route.name == "index") {
+          if (
+            this.GRCDialog ||
+            this.BookedRoomReportDialog ||
+            this.PaidRoomReportDialog ||
+            this.DirtyRoomsReportDialog ||
+            this.AvailableRoomsReportDialog ||
+            this.FoodDialog ||
+            this.cancelCheckInDialog ||
+            this.NewBooking
+          ) {
+            console.log("isAnyDialogOpen", true);
+          } else {
+            console.log("isAnyDialogOpen", false);
+            this.room_list();
+            this.key = this.key + 1;
+          }
+        }
+      }
+    }, 1000 * 60);
 
     this.get_food_plan();
   },
@@ -1287,46 +1307,49 @@ export default {
       this.$swal(title, message, type);
     },
     room_list() {
-      if (this.data) {
-        let data = this.data;
-        this.rooms = data;
+      console.log("this.data", this.data);
 
-        this.dirtyRooms = data.dirtyRooms;
-        this.notAvailableRooms = data.notAvailableRooms;
-        this.blockedRooms = data.blockedRooms;
+      // if (this.data) {
+      //   let data = this.data;
+      //   this.rooms = data;
 
-        this.confirmedBooking = data.confirmedBooking;
-        this.waitingBooking = data.waitingBooking;
-        this.expectCheckIn = data.expectCheckIn;
-        this.expectCheckOut = data.expectCheckOut;
-        this.Occupied = data.checkIn;
-        this.checkOut = data.checkOut;
-        this.confirmedBookingList = data.confirmedBookingList;
-        this.dirtyRoomsList = data.dirtyRoomsList;
-        this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+      //   this.dirtyRooms = data.dirtyRooms;
+      //   this.notAvailableRooms = data.notAvailableRooms;
+      //   this.blockedRooms = data.blockedRooms;
 
-        let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
-        let data2 = data.expectCheckOut.map((e) => e.room_no);
-        let data3 = data.checkIn.map((e) => e.room_no);
-        let data4 = data.blockedRooms.map((e) => e.room_no);
-        let data5 = data.dirtyRoomsList.map((e) => e.room_no);
+      //   this.confirmedBooking = data.confirmedBooking;
+      //   this.waitingBooking = data.waitingBooking;
+      //   this.expectCheckIn = data.expectCheckIn;
+      //   this.expectCheckOut = data.expectCheckOut;
+      //   this.Occupied = data.checkIn;
+      //   this.checkOut = data.checkOut;
+      //   this.confirmedBookingList = data.confirmedBookingList;
+      //   this.dirtyRoomsList = data.dirtyRoomsList;
+      //   this.reservedWithoutAdvance = data.reservedWithoutAdvance;
 
-        let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
-        let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
-        this.availableRooms = data.availableRooms.filter(
-          (e) => !uniqueRoomNumbers.includes(e.room_no)
-        );
+      //   let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
+      //   let data2 = data.expectCheckOut.map((e) => e.room_no);
+      //   let data3 = data.checkIn.map((e) => e.room_no);
+      //   let data4 = data.blockedRooms.map((e) => e.room_no);
+      //   let data5 = data.dirtyRoomsList.map((e) => e.room_no);
 
-        this.members = {
-          ...data.members,
-        };
-        this.isIndex = true;
-        this.isPageLoad = true;
-        // setTimeout(() => {
+      //   let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
+      //   let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+      //   this.availableRooms = data.availableRooms.filter(
+      //     (e) => !uniqueRoomNumbers.includes(e.room_no)
+      //   );
 
-        // }, 100);
-        return false;
-      } else {
+      //   this.members = {
+      //     ...data.members,
+      //   };
+      //   this.isIndex = true;
+      //   this.isPageLoad = true;
+      //   // setTimeout(() => {
+
+      //   // }, 100);
+      //   return false;
+      // } else
+      {
         let payload = {
           params: {
             company_id: this.$auth.user && this.$auth.user.company.id,

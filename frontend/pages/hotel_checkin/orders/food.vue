@@ -789,7 +789,7 @@ export default {
       if (this.$route.name == "hotel_checkin-orders-food") {
         this.getDataFromApi();
       }
-    }, 1000 * 60 * 5);
+    }, 1000 * 60 * 1);
   },
   methods: {
     viewRoomItems(item) {
