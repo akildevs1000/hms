@@ -154,7 +154,7 @@
                                             @foreach ($orderRooms as $room)
 
                                             @php
-                                            $subtotal_price+= $room->price;
+                                            $subtotal_price+= $room->total_with_tax;
                                             $subtotal_sgst+=$room->room_tax / 2;
                                             $subtotal_cgst+=$room->room_tax / 2 ;
 
@@ -175,7 +175,7 @@
                                                 </td>
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->price,2)   }}
+                                                    {{ number_format($room->total_with_tax - $room->room_tax,2)   }}
                                                 </td>
 
 
