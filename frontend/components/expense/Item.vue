@@ -124,14 +124,14 @@ export default {
     return {
       itemDialog: false,
       item: {
-        detail: "test",
+        detail: "",
         rate: 0,
         qty: 0,
         tax: 0,
         amount: 0,
       },
       defaultItem: {
-        detail: "test",
+        detail: "",
         rate: 1,
         qty: 1,
         tax: 0,
