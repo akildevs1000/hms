@@ -357,7 +357,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
-                                                    Paid Advance
+                                                    Paid
                                                 </td>
                                                 <td class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
                                                     {{$company->currency ? $company->currency:''}} {{ number_format($transactions->sum('credit'), 2) ?? 0 }}
