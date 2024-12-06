@@ -1238,14 +1238,19 @@ export default {
         let data3 = data.checkIn.map((e) => e.room_no);
         let data4 = data.blockedRooms.map((e) => e.room_no);
         let data5 = data.dirtyRoomsList.map((e) => e.room_no);
+        let data6 = data.bookedRooms.map((e) => e.room_no);
+
+        console.log("data6 bookedRooms", data6);
 
         let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
+
+        console.log("data6 allRoomNumbers", allRoomNumbers);
         let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
 
         this.availableRooms = data.availableRooms.filter(
           (e) => !uniqueRoomNumbers.includes(e.room_no)
         );
-
+        console.log("data6 availableRooms", this.availableRooms.length);
         this.members = data.members;
         this.foodOrdersCount = data.foodOrdersCount;
 
