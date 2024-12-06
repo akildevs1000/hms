@@ -314,9 +314,9 @@ export default {
       menu2: false,
       payload: {
         vendor_id: 1,
-        notes: "test",
+        notes: "",
         tax: 0,
-        bill_number: "11133334555",
+        bill_number: "",
         bill_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
           .toISOString()
           .substr(0, 10),

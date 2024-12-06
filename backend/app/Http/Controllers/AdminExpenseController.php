@@ -36,8 +36,10 @@ class AdminExpenseController extends Controller
                 "attachments"
             ]
         )
+            ->whereHas("vendor")
             ->where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
             ->where("company_id", request("company_id"))
+            ->orderBy("id", "desc")
             ->paginate(request("per_page", 50));
     }
 

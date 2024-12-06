@@ -2816,7 +2816,7 @@ class BookingController extends Controller
 
         $CustomerCount = Customer::whereCompanyId($company_id)->count();
 
-        $sourceCounts = Source::whereCompanyId($company_id)->get()->groupBy('type');
+        $sourceCounts = Source::whereCompanyId($company_id)->whereHas('bookings')->get()->groupBy('type');
 
         $sourceCountArray = [];
         foreach ($sourceCounts as $key => $sourceCount) {
