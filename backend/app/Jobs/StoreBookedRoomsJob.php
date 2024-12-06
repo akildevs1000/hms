@@ -70,8 +70,6 @@ class StoreBookedRoomsJob implements ShouldQueue
 
                     $orderRooms['total_with_tax'] = $price;
 
-
-
                     $BookingObj = new BookingController();
                     $room_tax =   $BookingObj->getTaxSlab(($price + 900), $bookedRoomId->company_id);
                     $roomBasePrice = ($price * 100) / (100 + $room_tax);
@@ -109,21 +107,5 @@ class StoreBookedRoomsJob implements ShouldQueue
         } catch (\Exception $e) {
             Log::alert(json_encode($e->getMessage()));
         }
-    }
-
-    public function reCalculatePrice($finalAmountWithDiscount)
-    {
-        $tax = 12;
-
-        if ($finalAmountWithDiscount >= 2800) {
-            $tax = 18;
-        } else if ($finalAmountWithDiscount >= 9600) {
-            $tax = 28;
-        }
-
-        $basePrice = ($finalAmountWithDiscount * 100) / (100 + $tax);
-        $gstAmount = $finalAmountWithDiscount - $basePrice;
-
-        return ["basePrice" => round($basePrice, 2), "gstAmount" => round($gstAmount, 2), "tax" => $tax];
     }
 }
