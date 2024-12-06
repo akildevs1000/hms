@@ -60,14 +60,15 @@ class VendorController extends Controller
         $company_id = $request->company_id;
 
         $query = Vendor::query();
-        $query->where("company_id",$company_id);
+        $query->where("company_id", $company_id);
         $query->when($search ?? false, fn($query, $search) =>
         $query->where(
             fn($query) => $query
-                ->orWhere('company_name', $search)
-                ->orWhere('first_name', $search)
-                ->orWhere('last_name', $search)
-                ->orWhere('mobile', $search)
+                ->orWhere('company_name', env("WILD_CARD", 'ILIKE'), "%{$search}%") // ILIKE for case-insensitive match
+                ->orWhere('first_name', env("WILD_CARD", 'ILIKE'), "%{$search}%")
+                ->orWhere('last_name', env("WILD_CARD", 'ILIKE'), "%{$search}%")
+                ->orWhere('mobile', env("WILD_CARD", 'ILIKE'), "%{$search}%") // Assuming mobile needs a case-sensitive match
+
         ));
 
         return $query->with("vendor_category")->first();
