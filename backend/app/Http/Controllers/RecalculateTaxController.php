@@ -11,11 +11,15 @@ class RecalculateTaxController extends Controller
     public function UpdateTax()
     {
 
-        $id = 2877;
+        $id = 337;
 
         // return;
         $bookings = Booking::with(['orderRooms'])->where('tax_recalculated_status', 0)
             ->where('booking_status', '!=', -1)
+            ->where('id', $id)
+
+
+
             ->orderBy('check_in', 'DESC')
             ->limit(500)->get();
 

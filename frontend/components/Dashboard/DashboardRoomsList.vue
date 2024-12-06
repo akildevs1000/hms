@@ -612,7 +612,7 @@
             <v-card-text
               class="p-3 roombox occupied"
               :style="'padding: 0px;'"
-              title="Occupied Test"
+              title="Occupied"
             >
               <div class="text-center white--text boxheight boxheight">
                 <v-icon
