@@ -24,6 +24,31 @@ class ValidationRequest extends FormRequest
     public function rules()
     {
 
+        if ($this->type == 'Personal') {
+
+            return [
+                'title' => 'required|string|max:255',
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'company_name' => 'nullable|string|max:255',
+                'vendor_display_name' => 'required|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'work_phone' => 'nullable|string|max:255',
+                'mobile' => 'required|string|max:255',
+                'tax_number' => 'nullable|string|max:255',
+                'address' => 'nullable|string|max:255',
+                'vendor_category_id' => 'required|exists:vendor_categories,id',
+
+                'country' => 'required|string|max:255',
+                'state' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:255',
+                'zip_code' => 'nullable|string|max:255',
+
+                'type' => 'required',
+                'company_id' => 'nullable',
+            ];
+        }
+
         return [
             'title' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
