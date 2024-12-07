@@ -6,6 +6,7 @@ use App\Http\Requests\AdminExpenseRequest\ValidationRequest;
 use App\Models\AdminExpense;
 use App\Models\AdminExpenseAttachment;
 use App\Models\AdminExpenseItem;
+use App\Models\Company;
 use App\Models\PaymentMode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -29,9 +30,41 @@ class AdminExpenseController extends Controller
 
     public function index()
     {
+        return $this->getData()->paginate(request("per_page", 50));
+    }
+
+    public function print()
+    {
+        $data = $this->getData()->get();
+        $pageTitle = "Expense Report";
+
+        $company = Company::with("user:id,company_id,email")->select("id", "name", "user_id", "location", "logo")->find(request("company_id", 3));
+
+
+        return Pdf::loadView("expense.index", compact("pageTitle", "company", "data"))
+            ->setPaper('a4', 'landscape')
+            ->stream();
+    }
+
+    public function download()
+    {
+        $data = $this->getData()->get();
+        $pageTitle = "Expense Report";
+
+        $company = Company::with("user:id,company_id,email")->select("id", "name", "user_id", "location", "logo")->find(request("company_id", 3));
+
+
+        return Pdf::loadView("expense.index", compact("pageTitle", "company", "data"))
+            ->setPaper('a4', 'landscape')
+            ->download();
+    }
+
+    function getData()
+    {
         $fromDate = request()->input('from', null);
         $toDate = request()->input('to', null);
-        $categoryName = request()->input('category_name', null);
+        $vendor_category_id = request()->input('vendor_category_id', 0);
+        $vendor_id = request()->input('vendor_id', 0);
 
         return AdminExpense::with(
             [
@@ -45,18 +78,20 @@ class AdminExpenseController extends Controller
                 $query->whereBetween('bill_date', [$fromDate, $toDate]);
             })
 
-
-            ->when($categoryName, function ($query) use ($categoryName) {
-                $query->whereHas('vendor.vendor_category', function ($q) use ($categoryName) {
-                    $q->where('name', $categoryName);
+            ->when($vendor_category_id, function ($query) use ($vendor_category_id) {
+                $query->whereHas('vendor', function ($q) use ($vendor_category_id) {
+                    $q->where('vendor_category_id', $vendor_category_id);
                 });
+            })
+
+            ->when($vendor_id, function ($q) use ($vendor_id) {
+                $q->where('vendor_id', $vendor_id);
             })
 
             ->whereHas("vendor")
             ->where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
             ->where("company_id", request("company_id"))
-            ->orderBy("id", "desc")
-            ->paginate(request("per_page", 50));
+            ->orderBy("id", "desc");
     }
 
     /**

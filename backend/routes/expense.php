@@ -18,6 +18,8 @@ Route::post('expenses_document_delete/{key}', [ExpenseController::class, 'expens
 Route::get('expenses_statistics', [ExpenseController::class, 'getStaticstics']);
 
 Route::resource('admin-expense', AdminExpenseController::class);
+Route::get('admin-expense-print', [AdminExpenseController::class, "print"]);
+Route::get('admin-expense-download', [AdminExpenseController::class, "download"]);
 Route::get('payment-voucher/{id}', [AdminExpenseController::class, "voucher"]);
 
 Route::resource('expense-payment', ExpensePaymentController::class);
@@ -29,3 +31,5 @@ Route::get('expense-count', [AdminExpenseController::class, "expenseCount"]);
 Route::get('expense-last-number', [AdminExpenseController::class, "lastAdminExpenseNumber"]);
 
 Route::get('get-last-three-records', [AdminExpenseController::class, "getLastThreeRecords"]);
+
+
