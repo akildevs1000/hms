@@ -87,7 +87,7 @@ class InvoiceRecalWithoutFoodController   extends Controller
             $total_with_tax =   $room->grand_total + $room->early_check_in; //3000
 
             if (count($orderRooms) > 1)
-                $total_with_tax =   $room->total + $room->early_check_in - ($room->food_plan_price / count($orderRooms)); //3000
+                $total_with_tax =   $room->grand_total + $room->early_check_in - ($room->food_plan_price / count($orderRooms)); //3000
 
             $BookingObj = new BookingController();
             $room_tax =   $BookingObj->getTaxSlab(($total_with_tax + 900), $room->company_id);
