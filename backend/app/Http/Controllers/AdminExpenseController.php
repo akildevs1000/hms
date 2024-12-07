@@ -29,6 +29,10 @@ class AdminExpenseController extends Controller
 
     public function index()
     {
+        $fromDate = request()->input('from', null);
+        $toDate = request()->input('to', null);
+        $categoryName = request()->input('category_name', null);
+
         return AdminExpense::with(
             [
                 "vendor",
@@ -36,6 +40,18 @@ class AdminExpenseController extends Controller
                 "attachments"
             ]
         )
+
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('bill_date', [$fromDate, $toDate]);
+            })
+
+
+            ->when($categoryName, function ($query) use ($categoryName) {
+                $query->whereHas('vendor.vendor_category', function ($q) use ($categoryName) {
+                    $q->where('name', $categoryName);
+                });
+            })
+
             ->whereHas("vendor")
             ->where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
             ->where("company_id", request("company_id"))

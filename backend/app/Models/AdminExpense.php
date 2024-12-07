@@ -40,7 +40,7 @@ class AdminExpense extends Model
      */
     public function vendor()
     {
-        return $this->belongsTo(Vendor::class)->where("company_id", ">", 0)->with("vendor_category");
+        return $this->belongsTo(Vendor::class)->with("vendor_category");
     }
 
     /**
