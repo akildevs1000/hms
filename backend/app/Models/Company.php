@@ -17,10 +17,12 @@ class Company extends Model
     protected $guarded = [];
 
     protected $hidden = [
-        'password', 'updated_at',
+        'password',
+        'updated_at',
     ];
     protected $dates = [
-        'member_from', 'expiry',
+        'member_from',
+        'expiry',
     ];
 
     protected $casts = [
@@ -35,7 +37,10 @@ class Company extends Model
     {
         return $this->hasOne(CompanyContact::class);
     }
-
+    public function timezone()
+    {
+        return $this->hasone(Device::class)->where("utc_time_zone", "!=", null);
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

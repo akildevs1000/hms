@@ -62,7 +62,7 @@ class LoginController extends Controller
             $user->permissions = [];
         }
 
-        $model = $model->with('company', 'employee')->first();
+        $model = $model->with('company.timezone', 'employee')->first();
         //$model->permissions = $user->permissions;
         $obj = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
         return response()->json(['user' => $obj], 200);

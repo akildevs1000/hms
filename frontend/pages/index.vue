@@ -669,7 +669,7 @@ export default {
       BookingQuickCheckInCompKey: 1,
       calenderColorCodes: [],
       tab: 0,
-      filterDate: "2024-08-15",
+      filterDate: "",
       menu2: false,
       colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
       reservation: [],

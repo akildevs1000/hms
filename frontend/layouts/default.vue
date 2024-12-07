@@ -636,8 +636,24 @@ export default {
 
   mounted() {
     document.addEventListener("mousemove", this.updateMouseLocation);
+    console.log("company", this.$auth.user.company);
+
+    let timezone = "Asia/Dubai";
+
+    if (this.$auth.user.company.timezone) {
+      timezone = this.$auth.user.company.timezone.utc_time_zone;
+    }
+
     setInterval(() => {
-      this.currentTime = new Date().toLocaleTimeString([], { hour12: false });
+      // this.currentTime = new Date().toLocaleTimeString([], { hour12: false });
+
+      this.currentTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: timezone, // Specify the desired timezone
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false, // 24-hour format
+      }).format(new Date());
     }, 1000);
 
     const now = new Date();

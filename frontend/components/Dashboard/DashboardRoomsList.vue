@@ -470,7 +470,11 @@
             <v-card-text
               class="blue1111 p-3 roombox booked"
               :style="'padding: 0px;'"
-              title="Expected Arrival"
+              :title="
+                todayDate == filterDate
+                  ? 'Expected Arrival'
+                  : 'Future Date: Expected Checkout'
+              "
             >
               <div class="text-center white--text boxheight">
                 <v-icon
@@ -502,12 +506,7 @@
       <!-- {{ filteredRooms(expectCheckOut).length }}
       {{ tabFilter }}
       -{{ todayDate }}- +{{ filterDate }}+ -->
-      <div
-        v-if="
-          todayDate == filterDate &&
-          (tabFilter == 'All' || tabFilter == 'occupied')
-        "
-      >
+      <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
         <div
           class="roombox1"
           v-for="(occupied, index) in filteredRooms(expectCheckOut)"
@@ -545,7 +544,7 @@
             <v-card-text
               class="p-3 roombox occupied"
               :style="'padding: 0px;'"
-              title="Occupied"
+              title="Occupied(Expected Checkout)"
             >
               <div class="text-center white--text boxheight boxheight">
                 <v-icon
@@ -569,12 +568,7 @@
         </div>
       </div>
       <!-- {{ filteredRooms(Occupied).length }} -->
-      <div
-        v-if="
-          todayDate == filterDate &&
-          (tabFilter == 'All' || tabFilter == 'occupied')
-        "
-      >
+      <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
         <div
           class="roombox1"
           v-for="(occupied, index) in filteredRooms(Occupied)"
@@ -636,12 +630,7 @@
         </div>
       </div>
 
-      <div
-        v-if="
-          todayDate == filterDate &&
-          (tabFilter == 'checkedout' || tabFilter == 'All')
-        "
-      >
+      <div v-if="tabFilter == 'checkedout' || tabFilter == 'All'">
         <div
           class="roombox1"
           v-for="(checkedOutRoom, index) in filteredRooms(dirtyRoomsList)"
@@ -1307,49 +1296,48 @@ export default {
       this.$swal(title, message, type);
     },
     room_list() {
-      //console.log("this.data", this.data);
+      // console.log("this.data", this.data);
 
-      // if (this.data) {
-      //   let data = this.data;
-      //   this.rooms = data;
+      if (this.data) {
+        let data = this.data;
+        this.rooms = data;
 
-      //   this.dirtyRooms = data.dirtyRooms;
-      //   this.notAvailableRooms = data.notAvailableRooms;
-      //   this.blockedRooms = data.blockedRooms;
+        this.dirtyRooms = data.dirtyRooms;
+        this.notAvailableRooms = data.notAvailableRooms;
+        this.blockedRooms = data.blockedRooms;
 
-      //   this.confirmedBooking = data.confirmedBooking;
-      //   this.waitingBooking = data.waitingBooking;
-      //   this.expectCheckIn = data.expectCheckIn;
-      //   this.expectCheckOut = data.expectCheckOut;
-      //   this.Occupied = data.checkIn;
-      //   this.checkOut = data.checkOut;
-      //   this.confirmedBookingList = data.confirmedBookingList;
-      //   this.dirtyRoomsList = data.dirtyRoomsList;
-      //   this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+        this.confirmedBooking = data.confirmedBooking;
+        this.waitingBooking = data.waitingBooking;
+        this.expectCheckIn = data.expectCheckIn;
+        this.expectCheckOut = data.expectCheckOut;
+        this.Occupied = data.checkIn;
+        this.checkOut = data.checkOut;
+        this.confirmedBookingList = data.confirmedBookingList;
+        this.dirtyRoomsList = data.dirtyRoomsList;
+        this.reservedWithoutAdvance = data.reservedWithoutAdvance;
 
-      //   let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
-      //   let data2 = data.expectCheckOut.map((e) => e.room_no);
-      //   let data3 = data.checkIn.map((e) => e.room_no);
-      //   let data4 = data.blockedRooms.map((e) => e.room_no);
-      //   let data5 = data.dirtyRoomsList.map((e) => e.room_no);
+        let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
+        let data2 = data.expectCheckOut.map((e) => e.room_no);
+        let data3 = data.checkIn.map((e) => e.room_no);
+        let data4 = data.blockedRooms.map((e) => e.room_no);
+        let data5 = data.dirtyRoomsList.map((e) => e.room_no);
 
-      //   let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
-      //   let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
-      //   this.availableRooms = data.availableRooms.filter(
-      //     (e) => !uniqueRoomNumbers.includes(e.room_no)
-      //   );
+        let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
+        let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+        this.availableRooms = data.availableRooms.filter(
+          (e) => !uniqueRoomNumbers.includes(e.room_no)
+        );
 
-      //   this.members = {
-      //     ...data.members,
-      //   };
-      //   this.isIndex = true;
-      //   this.isPageLoad = true;
-      //   // setTimeout(() => {
+        this.members = {
+          ...data.members,
+        };
+        this.isIndex = true;
+        this.isPageLoad = true;
+        // setTimeout(() => {
 
-      //   // }, 100);
-      //   return false;
-      // } else
-      {
+        // }, 100);
+        return false;
+      } else {
         let payload = {
           params: {
             page_name: "dashboardcomponent",

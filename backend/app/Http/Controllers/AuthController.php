@@ -68,8 +68,8 @@ class AuthController extends Controller
             $user->permissions = [];
         }
 
-        $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company") : ($user->role_id > 0 ? "user" : "master");
-        $model = $model->with('role', 'company', 'employee')->first();
+        $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company.timezone") : ($user->role_id > 0 ? "user" : "master");
+        $model = $model->with('role', 'company.timezone', 'employee')->first();
         $obj = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
         $obj->user_type = $user->user_type;
         $obj->employee_permissions = $user->assigned_employee_permissions->permission_names ?? [];
