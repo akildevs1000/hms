@@ -22,6 +22,9 @@
           }}</span>
         </div>
       </v-spacer>
+      <div style="font-size: 10px">
+        {{ getCOmpanyName }}
+      </div>
       <v-avatar
         style="margin-right: 10px"
         color="green"
