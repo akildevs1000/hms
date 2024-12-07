@@ -5,14 +5,20 @@
       <v-tab v-if="can(`expense_access`)">Expense</v-tab>
       <v-tab v-if="can(`vendors_access`)">Vendor</v-tab>
       <v-tab v-if="can(`expense_category_access`)">Category</v-tab>
-      <v-tab-item>
+
+      <v-tab-item v-if="can(`management_expense_access`)">
         <Expense :is_admin_expense="1" />
       </v-tab-item>
-      <v-tab-item>
+      
+      <v-tab-item v-if="can(`expense_access`)">
         <Expense :is_admin_expense="0" />
       </v-tab-item>
-      <v-tab-item><Vendor /></v-tab-item>
-      <v-tab-item><VendorCategory /></v-tab-item>
+     
+      <v-tab-item v-if="can(`vendors_access`)"><Vendor /></v-tab-item>
+      
+      <v-tab-item v-if="can(`expense_category_access`)"
+        ><VendorCategory
+      /></v-tab-item>
     </v-tabs>
   </div>
 </template>
