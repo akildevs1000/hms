@@ -13,6 +13,6 @@ class AdminExpenseAttachment extends Model
 
     public function getAttachmentAttribute($val)
     {
-        return asset("admin_expense_attachments/" . $this->admin_expense_id . "/" . $val);
+        return asset("expense-uploads/" . $this->admin_expense_id . "/" . $val);
     }
 }

@@ -32,4 +32,4 @@ Route::get('expense-last-number', [AdminExpenseController::class, "lastAdminExpe
 
 Route::get('get-last-three-records', [AdminExpenseController::class, "getLastThreeRecords"]);
 
-
+Route::post('expense-upload-files/{id}', [AdminExpenseController::class, "FileUploads"]);
