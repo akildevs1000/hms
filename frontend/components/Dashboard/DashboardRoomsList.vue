@@ -1296,7 +1296,7 @@ export default {
       this.$swal(title, message, type);
     },
     room_list() {
-      console.log("this.data", this.data);
+      // console.log("this.data", this.data);
 
       if (this.data) {
         let data = this.data;
