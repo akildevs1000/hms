@@ -151,7 +151,7 @@ export default {
           ...this.filter,
           search: this.search,
         };
-      } else if (this.search.length > 2) {
+      } else if (this.search.length > 0) {
         this.filter = {
           ...this.filter,
           search: this.search,
