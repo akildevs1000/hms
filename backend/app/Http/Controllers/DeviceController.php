@@ -187,8 +187,19 @@ class DeviceController extends Controller
         if ($device) {
             $deviceTimezone = $device->utc_time_zone;
 
+
+            $timeZone = 'Asia/Dubai';
+
+            if ($deviceTimezone != '') {
+                $timeZone = $deviceTimezone;
+            }
+
+            $dateTime = new DateTime(date("Y-m-d H:i:s"));
+            $dateTime->setTimezone(new DateTimeZone($timeZone));
+
+
             $company_id = $device->company_id;
-            $todayDate = date("Y-m-d");
+            $todayDate = $dateTime->format('Y-m-d'); //date("Y-m-d");
 
 
 
@@ -220,14 +231,6 @@ class DeviceController extends Controller
                 $logs["status"] = $status;
                 $logs["raw_data"] =  json_encode($request->all());
 
-                $timeZone = 'Asia/Dubai';
-
-                if ($deviceTimezone != '') {
-                    $timeZone = $deviceTimezone;
-                }
-
-                $dateTime = new DateTime(date("Y-m-d H:i:s"));
-                $dateTime->setTimezone(new DateTimeZone($timeZone));
 
                 $logs["log_time"] = $dateTime->format('Y-m-d H:i:s');
 
@@ -248,7 +251,7 @@ class DeviceController extends Controller
 
                     $notificationMessage = "Room Name: *" . $device->name . "*\\n";
                     $notificationMessage .= "Lights 🟢 ON at: *" . $dateTime->format('H:i:s') . "* " . $dateTime->format(' Y-m-d') . "\\n";
-                    $notificationMessage .= "Booking Status: " . ($bookingStatusId == 1 ? "*Sold*" : "*Empty*") . "\\n";
+                    $notificationMessage .= "Booking Status: " . ($bookingStatusId >= 1 ? "*Sold*" : "*Empty*") . "\\n";
                     $notificationMessage .= "Company: " . $device->company['name'] . " ";
 
 
@@ -286,7 +289,7 @@ class DeviceController extends Controller
 
                         $notificationMessage = "Room Name: *" . $device->name . "*\\n";
                         $notificationMessage .= "Lights 🔴 OFF at: *" . $dateTime->format('H:i:s') . "* " . $dateTime->format(' Y-m-d') . "\\n";
-                        $notificationMessage .= "Booking Status: " . ($bookingStatusId == 1 ? "*Sold*" : "*Empty*") . "\\n";
+                        $notificationMessage .= "Booking Status: " . ($bookingStatusId >= 1 ? "*Sold*" : "*Empty*") . "\\n";
                         $notificationMessage .= "Company: " . $device->company['name'] . " ";
 
 
@@ -375,6 +378,18 @@ class DeviceController extends Controller
         });
         $model->when($request->filled('to_date'), function ($q) use ($request) {
             $q->where('log_time',  "<=", $request->to_date . ' 23:59:59');
+        });
+        $model->when($request->filled('light_status'), function ($q) use ($request) {
+
+            $q->where('status',   $request->light_status);
+        });
+
+        $model->when($request->filled('room_status'), function ($q) use ($request) {
+            if ($request->room_status == 0)
+                $q->where('booking_status_id',   $request->room_status);
+
+            else  if ($request->room_status == 1)
+                $q->where('booking_status_id', ">=", $request->room_status);
         });
 
         $model->where(function ($q) {

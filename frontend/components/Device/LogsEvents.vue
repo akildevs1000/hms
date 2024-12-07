@@ -12,9 +12,9 @@
     </div>
 
     <v-row class="pt-2">
-      <v-col cols="7"></v-col>
+      <v-col></v-col>
 
-      <v-col cols="3">
+      <v-col style="max-width: 150px">
         <Calender2
           style="float: right"
           @filter-attr="filterAttr"
@@ -24,7 +24,7 @@
           :height="'30px '"
         />
       </v-col>
-      <v-col cols="2">
+      <v-col style="max-width: 150px">
         <v-autocomplete
           v-model="device_id"
           :items="[
@@ -35,6 +35,41 @@
           item-value="serial_number"
           placeholder="Select Room"
           label="Room"
+          outlined
+          :hide-details="true"
+          dense
+          @change="getDataFromApi()"
+        >
+        </v-autocomplete> </v-col
+      ><v-col style="max-width: 150px">
+        <v-autocomplete
+          v-model="lightStatus"
+          :items="[
+            { name: `All`, value: null },
+            { name: `ON`, value: 1 },
+            { name: `OFF`, value: 0 },
+          ]"
+          item-text="name"
+          item-value="value"
+          label="Light"
+          outlined
+          :hide-details="true"
+          dense
+          @change="getDataFromApi()"
+        >
+        </v-autocomplete>
+      </v-col>
+      <v-col style="max-width: 150px">
+        <v-autocomplete
+          v-model="roomStatus"
+          :items="[
+            { name: `All`, value: null },
+            { name: `Sold`, value: 1 },
+            { name: `Empty`, value: 0 },
+          ]"
+          item-text="name"
+          item-value="value"
+          label="Room Status"
           outlined
           :hide-details="true"
           dense
@@ -165,6 +200,8 @@ export default {
     },
   },
   data: () => ({
+    roomStatus: null,
+    lightStatus: null,
     devices_list: [],
     //datatable varables
     page: 1,
@@ -353,6 +390,9 @@ export default {
           serial_number: this.device_id,
           from_date: this.date_from,
           to_date: this.date_to,
+          light_status: this.lightStatus,
+
+          room_status: this.roomStatus,
         },
       };
       this.$axios.get(`devices_logs?page=${page}`, options).then(({ data }) => {
