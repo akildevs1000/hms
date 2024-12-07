@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\InvoiceRecalWithoutFoodController;
 use App\Http\Controllers\RecalculateTaxController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\WhatsappController;
@@ -30,12 +32,16 @@ use Illuminate\Support\Facades\Storage;
 
 Route::get('/datetest', function (Request $request) {
 
+
+    return (new DeviceController())->sendWhatsappNotification("Hello");
     return date('Y-m-d H:i:s');
 });
 Route::post('booking_validate1', [TestController::class, 'booking_validate']);
 Route::post('store_test', [TestController::class, 'store']);
 Route::get('UpdateTax/{id}', [RecalculateTaxController::class, 'UpdateTax']);
 Route::get('UpdateTax', [RecalculateTaxController::class, 'UpdateTax']);
+Route::get('recalculate', [InvoiceRecalWithoutFoodController::class, 'test']);
+
 Route::get('/test', function (Request $request) {
 
     return;
@@ -182,5 +188,3 @@ Route::post('whatsapp-test', [WhatsappController::class, 'sentNotificationTest']
 
 Route::get('chart-test', [ChartController::class, 'index']);
 Route::get('callView', [ChartController::class, 'callView']);
-
-
