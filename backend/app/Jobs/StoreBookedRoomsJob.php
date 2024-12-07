@@ -89,7 +89,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['no_of_child'] = $bookedRoomId->no_of_child;
                     $orderRooms['no_of_baby'] = $bookedRoomId->no_of_baby;
                     $orderRooms['food_plan_id'] = $bookedRoomId->food_plan_id;
-                    $orderRooms['food_plan_price'] = $bookedRoomId->food_plan_price;
+                    $orderRooms['food_plan_price'] = $bookedRoomId->food_plan_price / count($rooms);
                     $orderRooms['extra_bed_qty'] = $bookedRoomId->extra_bed_qty;
                     $orderRooms['early_check_in'] = $bookedRoomId->early_check_in;
                     $orderRooms['late_check_out'] = $bookedRoomId->late_check_out;
