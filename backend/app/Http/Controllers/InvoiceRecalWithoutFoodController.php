@@ -84,7 +84,7 @@ class InvoiceRecalWithoutFoodController   extends Controller
             $price = '';
             $sgst = '';
             $cgst = '';
-            $total_with_tax =   $room->total; //3000
+            $total_with_tax =   $room->grand_total; //3000
 
             if (count($orderRooms) > 1)
                 $total_with_tax =   $room->total - ($room->food_plan_price / count($orderRooms)); //3000
