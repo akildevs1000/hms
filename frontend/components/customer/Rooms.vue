@@ -9,27 +9,23 @@
       <template #tariff="{ item }">
         {{ item.tariff || "---" }}
       </template>
-      <template #price_before_discount="{ item }">
-        {{
-          $utils.currency_format(
-            parseFloat(item.price || 0) + parseFloat(item.room_discount || 0)
-          )
-        }}
-      </template>
+      <!-- <template #total_with_tax="{ item }">
+        {{ $utils.currency_format(parseFloat(item.price || 0) + parseFloat(item.room_tax || 0)) }}
+      </template> -->
 
-      <template #discount="{ item }">
+      <!-- <template #discount="{ item }">
         <span class="red--text"
           >-{{
             $utils.currency_format(parseFloat(item.room_discount || 0))
           }}</span
         >
-      </template>
-      <template #room_tax="{ item }">
+      </template> -->
+      <!-- <template #room_tax="{ item }">
         {{ $utils.currency_format(parseFloat(item.room_tax || 0)) }}
-      </template>
-      <template #after_discount="{ item }">
+      </template> -->
+      <!-- <template #after_discount="{ item }">
         {{ $utils.currency_format(parseFloat(item.after_discount || 0)) }}
-      </template>
+      </template> -->
       <template #room="{ item }">
         {{ item.room_no || "---" }}
         <br />
@@ -126,10 +122,8 @@ export default {
           value: `late_check_out`,
           align: `center`,
         },
-        { text: `Room Price`, value: `price_before_discount`, align: `center` },
-        { text: `Discount`, value: `discount`, align: `center` },
+        { text: `Room Price`, value: `price`, align: `center` },
         // { text: `Tax`, value: `room_tax`, align: `center` },
-        { text: `Total`, value: `after_discount`, align: `center` },
         { text: ``, value: `action`, align: `center`, width: "30px" },
       ];
     }

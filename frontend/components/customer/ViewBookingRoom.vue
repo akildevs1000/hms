@@ -94,37 +94,42 @@
                   <tr>
                     <td class="text-left">Room Price</td>
                     <td class="text-right">
-                      {{
-                        $utils.currency_format(
-                          parseFloat(item.price || 0) +
-                            parseFloat(item.room_discount || 0)
-                        )
-                      }}
+                      {{ $utils.currency_format(parseFloat(item.price || 0))}}
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left">Discount</td>
+                    <td class="text-left">SGST</td>
                     <td class="text-right">
-                      <span class="red--text"
-                        >-{{
-                          $utils.currency_format(
-                            parseFloat(item.room_discount || 0)
-                          )
-                        }}</span
-                      >
+                      {{ $utils.currency_format(parseFloat(item.sgst || 0))}}
                     </td>
                   </tr>
-
-                  <tr v-for="(label, key) in breakdownItems" :key="key">
-                    <td class="text-left">{{ label }}</td>
+                  <tr>
+                    <td class="text-left">CGST</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item[key] || 0)) }}
+                      {{ $utils.currency_format(parseFloat(item.cgst || 0))}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">Extra Bed</td>
+                    <td class="text-right">
+                      {{ $utils.currency_format(parseFloat(item.bed_amount || 0))}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">Early Check In</td>
+                    <td class="text-right">
+                      {{ $utils.currency_format(parseFloat(item.early_check_in || 0))}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">Late Check Out</td>
+                    <td class="text-right">
+                      {{ $utils.currency_format(parseFloat(item.late_check_out || 0))}}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </v-col>
-
             <v-col cols="5" class="text-center">
               <v-card outlined>
                 <v-card-text>
@@ -160,7 +165,6 @@ export default {
     totalPrice() {
       const keys = [
         "after_discount",
-        "food_plan_price",
         "bed_amount",
         "early_check_in",
         "late_check_out",
@@ -170,15 +174,6 @@ export default {
         0
       );
       return this.$utils.currency_format(total) || "---";
-    },
-    breakdownItems() {
-      return {
-        after_discount: "After Discount",
-        food_plan_price: "Meal",
-        bed_amount: "Extra Bed",
-        early_check_in: "Early Check In",
-        late_check_out: "Late Check Out",
-      };
     },
   },
   methods: {
