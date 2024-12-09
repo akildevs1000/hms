@@ -30,7 +30,9 @@ class GRCController extends Controller
         $paymentMode = $transactions->toArray();
         $paymentMode = end($paymentMode);
 
-        $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
+        // $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
+        $amtLatter = $this->amountToText($booking->total_price ?? 0);
+
         $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
             return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
         });
