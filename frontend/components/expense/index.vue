@@ -12,7 +12,7 @@
       class="elevation-1 pa-3"
     >
       <template v-slot:top>
-        <v-toolbar flat dense class="mb-5">
+        <v-toolbar flat dense class="mb-2">
           {{ Model }}
           <v-icon color="primary" right class="mt-1" @click="getDataFromApi()"
             >mdi-reload</v-icon
@@ -25,6 +25,57 @@
             @response="getDataFromApi"
           />
         </v-toolbar>
+
+        <div class="d-flex pb-2 px-4">
+          <div class="mr-2" style="margin-top: 1px">
+            <v-autocomplete
+              label="Select Category"
+              dense
+              outlined
+              v-model="filters.vendor_category_id"
+              :items="[{ id: 0, name: `Select All` }, ...vendor_categories]"
+              item-value="id"
+              item-text="name"
+              :hide-details="true"
+            ></v-autocomplete>
+          </div>
+          <div class="mr-2" style="margin-top: 1px">
+            <v-autocomplete
+              label="Select Vendor"
+              dense
+              outlined
+              v-model="filters.vendor_id"
+              :items="[{ id: 0, first_name: `Select All` }, ...vendors]"
+              item-value="id"
+              item-text="first_name"
+              :hide-details="true"
+            ></v-autocomplete>
+          </div>
+          <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+
+          <div class="mx-2" style="margin-top: 1px">
+            <v-btn
+              small
+              color="primary"
+              @click="getDataFromApi"
+              :loading="loading"
+              >Submit</v-btn
+            >
+          </div>
+
+          <!-- Buttons aligned to the right -->
+          <div class="d-flex ml-auto" style="margin-top: 1px">
+            <AssetsIcon
+              icon="printer-outline"
+              @click="handleLink(`admin-expense-print`)"
+            />
+            &nbsp;
+            <AssetsIcon
+              icon="download-outline"
+              @click="handleLink(`admin-expense-download`)"
+            />
+          </div>
+        </div>
       </template>
       <template v-slot:item.attachments="{ item }">
         <div v-if="item.attachments.length > 0">
@@ -34,11 +85,21 @@
           />
         </div>
       </template>
-      <template v-slot:item.total="{ item }">
-        {{ $utils.currency_format(item.total) }}
+      <template v-slot:item.category="{ item }">
+        {{ item?.vendor?.vendor_category?.name }}
+      </template>
+      <template v-slot:item.vendor="{ item }">
+        {{ item.vendor.first_name }}
+      </template>
+
+      <template v-slot:item.sub_total="{ item }">
+        {{ $utils.currency_format(item.sub_total) }}
       </template>
       <template v-slot:item.tax="{ item }">
-        {{ $utils.currency_format(item.tax) }}%
+        {{ $utils.currency_format(item.tax) }}
+      </template>
+      <template v-slot:item.total="{ item }">
+        {{ $utils.currency_format(item.total) }}
       </template>
       <template v-slot:item.options="{ item }">
         <v-menu bottom left>
@@ -122,7 +183,6 @@ export default {
     Model: "Expense",
     endpoint: "admin-expense",
     currentDate,
-    filters: {},
     options: {},
     loading: false,
     response: "",
@@ -134,8 +194,12 @@ export default {
         value: "id",
       },
       {
+        text: "Category",
+        value: "category",
+      },
+      {
         text: "Vendor",
-        value: "vendor.first_name",
+        value: "vendor",
       },
       {
         text: "Bill #",
@@ -146,16 +210,8 @@ export default {
         value: "bill_date",
       },
       {
-        text: "Status",
-        value: "status",
-      },
-      {
-        text: "Attachments",
-        value: "attachments",
-      },
-      {
-        text: "notes",
-        value: "notes",
+        text: "Sub Total",
+        value: "sub_total",
       },
       {
         text: "Tax",
@@ -166,8 +222,12 @@ export default {
         value: "total",
       },
       {
-        text: "Created At",
-        value: "created_at",
+        text: "Attachments",
+        value: "attachments",
+      },
+      {
+        text: "Status",
+        value: "status",
       },
       {
         text: "Action",
@@ -177,10 +237,22 @@ export default {
       },
     ],
     componentKey: 1,
+
+    filters: {
+      from: new Date().toJSON().slice(0, 10),
+      to: new Date().toJSON().slice(0, 10),
+      vendor_category_id: 0,
+      vendor_id: 0,
+    },
+
+    vendor_categories: [],
+    vendors: [],
   }),
 
   async created() {
     this.getDataFromApi();
+    this.getVendorCategory();
+    this.getVendors();
   },
   mounted() {},
   watch: {
@@ -192,6 +264,46 @@ export default {
     },
   },
   methods: {
+    handleLink(endpoint) {
+      this.filters = {
+        ...this.filters,
+        is_admin_expense: this.is_admin_expense,
+        company_id: this.$auth.user.company_id,
+      };
+
+      // if (process.env.LOCAL_IP == "localhost") {
+      //   endpoint = `https://hms-backend.test/api/` + endpoint;
+      // }
+
+      this.$utils.open_external_link(
+        `https://backend.myhotel2cloud.com/api/${endpoint}?${this.buildQueryParams(
+          this.filters
+        )}`
+      );
+    },
+    buildQueryParams(params) {
+      return Object.keys(params)
+        .map(
+          (key) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+        )
+        .join("&");
+    },
+    async getVendorCategory() {
+      let { data } = await this.$axios.get(`vendor-category-list`);
+      this.vendor_categories = data;
+    },
+    async getVendors() {
+      let { data } = await this.$axios.get(`vendor-list`);
+      this.vendors = data;
+    },
+    async filterAttr(data) {
+      this.filters = {
+        ...this.filters,
+        from: data.from,
+        to: data.to,
+      };
+    },
     getRandomeId() {
       return Math.random();
     },
@@ -200,6 +312,7 @@ export default {
       let config = {
         params: {
           is_admin_expense: this.is_admin_expense,
+          ...this.filters,
         },
       };
       let { data } = await this.$axios.get(this.endpoint, config);

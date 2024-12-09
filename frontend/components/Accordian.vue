@@ -288,6 +288,14 @@ export default {
         },
         {
           topMenu: "customer",
+          icon: "mdi-ticket-account",
+          module: "customers",
+          title: "Source",
+          to: "/source",
+          menu: "source_access",
+        },
+        {
+          topMenu: "customer",
           icon: "mdi-chat",
           module: "chat",
           title: "Chat",

@@ -152,7 +152,7 @@
       </v-col>
       <v-col class="text-right">
         <v-btn
-          v-if="can('source_create')"
+          v-if="can('customers_create')"
           class="py-3"
           @click="
             () => {
@@ -210,20 +210,20 @@
         <small class="text-color">{{ caps(item.created_at) }}</small></template
       >
       <template v-slot:item.action="{ item }">
-        <v-menu bottom left v-if="can('source_edit') || can('source_delete')">
+        <v-menu bottom left v-if="can('customers_edit') || can('customers_delete')">
           <template v-slot:activator="{ on, attrs }">
             <v-btn dark-2 icon v-bind="attrs" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
           <v-list width="120" dense>
-            <v-list-item v-if="can('source_edit')" @click="editItem(item)">
+            <v-list-item v-if="can('customers_edit')" @click="editItem(item)">
               <v-list-item-title style="cursor: pointer">
                 <v-icon color="secondary" x-small> mdi-pencil </v-icon>
                 <AssetsTextLabel color="text-color" label="Edit" />
               </v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="can('source_edit')" @click="viewItem(item)">
+            <v-list-item v-if="can('customers_edit')" @click="viewItem(item)">
               <v-list-item-title style="cursor: pointer">
                 <v-icon color="primary" x-small> mdi-eye </v-icon>
                 <AssetsTextLabel color="text-color" label="View" />
@@ -246,13 +246,13 @@
                 />
               </v-list-item-title>
             </v-list-item>
-            <!-- <v-list-item v-if="can('source_edit')" @click="editItem(item)">
+            <!-- <v-list-item v-if="can('customers_edit')" @click="editItem(item)">
                 <v-list-item-title style="cursor: pointer">
                   <v-icon color="secondary" small> mdi-eye-outline </v-icon>
                   View Guest
                 </v-list-item-title>
               </v-list-item> -->
-            <v-list-item v-if="can('source_delete')" @click="deleteItem(item)">
+            <v-list-item v-if="can('customers_delete')" @click="deleteItem(item)">
               <v-list-item-title style="cursor: pointer">
                 <v-icon color="error" x-small> mdi-delete </v-icon>
                 <AssetsTextLabel color="text-color" label="Delete" />
@@ -348,6 +348,7 @@ export default {
   methods: {
     can(per) {
       let u = this.$auth.user;
+      console.log(u.permissions);
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );

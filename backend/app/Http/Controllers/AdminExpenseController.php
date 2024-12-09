@@ -117,39 +117,13 @@ class AdminExpenseController extends Controller
                 return $item;
             }, $request->items);
 
-
-            $attachments = [];
-
-            foreach ($request->attachments as $aKey => $attachment) {
-
-                $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $attachment['attachment']));
-                $publicDirectory = public_path("admin_expense_attachments/" . $expense->id);
-
-                if (!file_exists($publicDirectory)) {
-                    mkdir($publicDirectory, 0777, true);
-                }
-
-                file_put_contents($publicDirectory . '/' . $attachment['name'] . ".png", $base64Image);
-
-                $attachments[] = [
-                    "admin_expense_id" => $expense->id,
-                    "attachment" => $attachment['name'] . ".png",
-                    "slug" => $attachment['name'],
-                    "model" => "expense",
-                ];
-            }
-
-
-            AdminExpenseAttachment::insert($attachments);
-
             // Insert the expense items
             AdminExpenseItem::insert($items);
 
             DB::commit();
 
-            return true;
 
-            return response()->json(['success' => true], 201);
+            return response()->json(['success' => true, "record" => $expense], 201);
         } catch (\Exception $e) {
 
 
@@ -345,5 +319,48 @@ class AdminExpenseController extends Controller
 
         // Return formatted ID with leading zeros if necessary
         return sprintf('%04d', $lastId);
+    }
+
+    public function FileUploads(Request $request, $modelId = 0)
+    {
+        // // Validate the files if needed
+        // $request->validate([
+        //     'files.*' => 'required|file|mimes:pdf|max:2048', // Example validation
+        // ]);
+
+        $attachments = [];
+
+        $uploadedFiles = $request->file('files'); // Get all uploaded files
+
+        foreach ($uploadedFiles as $key =>  $file) {
+
+            // Save the file with the original extension
+            $extension = $file->getClientOriginalExtension();
+
+            // Generate a unique file name
+            $uniqueFileName = $key . uniqid();
+
+            $uniqueFileNameWithExt = $uniqueFileName . '.' . $extension;
+
+            $publicDirectory = public_path("expense-uploads/" . $modelId);
+
+            if (!file_exists($publicDirectory)) {
+                mkdir($publicDirectory, 0777, true);
+            }
+
+            // Store the file in the public directory under 'uploads' folder
+            $file->move($publicDirectory, $uniqueFileNameWithExt);
+
+            $attachments[] = [
+                "admin_expense_id" => $modelId,
+                "attachment" => $uniqueFileNameWithExt,
+                "slug" => $uniqueFileName,
+                "model" => "expense",
+            ];
+        }
+
+        AdminExpenseAttachment::insert($attachments);
+
+        return response()->json(['message' => 'Files uploaded successfully']);
     }
 }

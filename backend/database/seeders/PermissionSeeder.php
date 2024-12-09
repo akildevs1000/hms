@@ -37,7 +37,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['module' => 'history', 'title' => 'Create', 'name' => 'history_create']);
         Permission::create(['module' => 'history', 'title' => 'Edit', 'name' => 'history_edit']);
         Permission::create(['module' => 'history', 'title' => 'Delete', 'name' => 'history_delete']);
-       
+
         Permission::create(['module' => 'lost_and_found_items', 'title' => 'Access', 'name' => 'lost_and_found_access']);
         Permission::create(['module' => 'lost_and_found_items', 'title' => 'View', 'name' => 'lost_and_found_view']);
         Permission::create(['module' => 'lost_and_found_items', 'title' => 'Create', 'name' => 'lost_and_found_create']);
@@ -49,6 +49,12 @@ class PermissionSeeder extends Seeder
         Permission::create(['module' => 'customers', 'title' => 'Create', 'name' => 'customers_create']);
         Permission::create(['module' => 'customers', 'title' => 'Edit', 'name' => 'customers_edit']);
         Permission::create(['module' => 'customers', 'title' => 'Delete', 'name' => 'customers_delete']);
+
+        Permission::create(['module' => 'source', 'title' => 'Access', 'name' => 'source_access']);
+        Permission::create(['module' => 'source', 'title' => 'View', 'name' => 'source_view']);
+        Permission::create(['module' => 'source', 'title' => 'Create', 'name' => 'source_create']);
+        Permission::create(['module' => 'source', 'title' => 'Edit', 'name' => 'source_edit']);
+        Permission::create(['module' => 'source', 'title' => 'Delete', 'name' => 'source_delete']);
 
         Permission::create(['module' => 'chat', 'title' => 'Access', 'name' => 'chat_access']);
         Permission::create(['module' => 'chat', 'title' => 'View', 'name' => 'chat_view']);
@@ -97,13 +103,13 @@ class PermissionSeeder extends Seeder
         Permission::create(['module' => 'gst_bills', 'title' => 'Create', 'name' => 'gst_create']);
         Permission::create(['module' => 'gst_bills', 'title' => 'Edit', 'name' => 'gst_edit']);
         Permission::create(['module' => 'gst_bills', 'title' => 'Delete', 'name' => 'gst_delete']);
-        
+
         Permission::create(['module' => 'vendors', 'title' => 'Access', 'name' => 'vendors_access']);
         Permission::create(['module' => 'vendors', 'title' => 'View', 'name' => 'vendors_view']);
         Permission::create(['module' => 'vendors', 'title' => 'Create', 'name' => 'vendors_create']);
         Permission::create(['module' => 'vendors', 'title' => 'Edit', 'name' => 'vendors_edit']);
         Permission::create(['module' => 'vendors', 'title' => 'Delete', 'name' => 'vendors_delete']);
-       
+
         Permission::create(['module' => 'inquiry', 'title' => 'Access', 'name' => 'inquiry_access']);
         Permission::create(['module' => 'inquiry', 'title' => 'View', 'name' => 'inquiry_view']);
         Permission::create(['module' => 'inquiry', 'title' => 'Create', 'name' => 'inquiry_create']);
@@ -184,7 +190,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['module' => 'rooms_category', 'title' => 'Edit', 'name' => 'rooms_category_edit']);
         Permission::create(['module' => 'rooms_category', 'title' => 'Delete', 'name' => 'rooms_category_delete']);
 
-        
+
         Permission::create(['module' => 'hall', 'title' => 'Access', 'name' => 'hall_access']);
         Permission::create(['module' => 'hall', 'title' => 'View', 'name' => 'hall_view']);
         Permission::create(['module' => 'hall', 'title' => 'Create', 'name' => 'hall_create']);

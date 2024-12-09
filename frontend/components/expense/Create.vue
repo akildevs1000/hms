@@ -263,9 +263,31 @@
                   </v-col>
                   <v-col cols="12">
                     <span class="primary--text">
-                      <UploadMultipleAttachments
-                        @files-selected="handleMultipleFileSelection($event)"
-                      />
+                      <v-file-input
+                        hide-details
+                        class=""
+                        prepend-icon=""
+                        append-icon="mdi-upload"
+                        v-model="files"
+                        color="primary"
+                        counter
+                        multiple
+                        placeholder="Select your files"
+                        :show-size="1000"
+                      >
+                        <template v-slot:selection="{ index, text }">
+                          <v-chip v-if="index < 2" label small color="primary">
+                            {{ text }}
+                          </v-chip>
+
+                          <span
+                            v-else-if="index === 2"
+                            class="text-overline grey--text text--darken-3 mx-2"
+                          >
+                            +{{ files.length - 2 }} File(s)
+                          </span>
+                        </template>
+                      </v-file-input>
                     </span>
                   </v-col>
                   <v-col cols="12" v-if="errorResponse">
@@ -328,6 +350,24 @@ export default {
         discount: 0,
         total: 0,
       },
+
+      defaultPayload: {
+        vendor_id: 1,
+        notes: "",
+        tax: 0,
+        bill_number: "",
+        bill_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+          .toISOString()
+          .substr(0, 10),
+
+        items: [],
+        attachments: [],
+
+        sub_total: 0,
+        discount: 0,
+        total: 0,
+      },
+
       dialog: false,
       loading: false,
       successResponse: null,
@@ -351,6 +391,7 @@ export default {
       lastThreeRecords: [],
       emptyRowLength: 3,
       ReceiptNumber: null,
+      files: [], // Holds the uploaded files
     };
   },
   computed: {
@@ -411,19 +452,6 @@ export default {
 
       this.getLastThreeRecords(e.id);
     },
-    handleMultipleFileSelection(e) {
-      e.forEach((v, i) => {
-        const attachmentExists = this.payload.attachments.some(
-          (att) => att.name === v.name
-        );
-        if (!attachmentExists) {
-          this.payload.attachments.push({
-            name: v.name,
-            attachment: v.preview,
-          });
-        }
-      });
-    },
 
     calculateOverAll() {
       this.payload.sub_total = 0;
@@ -440,6 +468,8 @@ export default {
       this.dialog = false;
       this.loading = false;
       this.errorResponse = null;
+      this.payload = this.defaultPayload;
+      this.files = [];
     },
     deleteItem(index) {
       this.payload.items.splice(index, 1);
@@ -454,13 +484,47 @@ export default {
       try {
         this.payload.is_admin_expense = this.is_admin_expense;
         this.payload.company_id = this.$auth.user.company_id;
-        await this.$axios.post(this.endpoint, this.payload);
+        let { data } = await this.$axios.post(`/admin-expense`, this.payload);
+
+        if (this.files.length > 0 && data && data.record) {
+          await this.processAttachments(data.record.id);
+          return;
+        }
+
         this.close();
         this.$emit("response", "Record has been inserted");
       } catch (error) {
         this.errorResponse = error?.response?.data?.message || "Unknown error";
         this.loading = false;
       }
+    },
+    async processAttachments(id) {
+      let files = this.files;
+
+      const formData = new FormData();
+
+      // Append each file to the formData object
+      files.forEach((file) => {
+        formData.append("files[]", file); // 'files[]' is the key expected by Laravel
+      });
+
+      this.$axios
+        .post(`/expense-upload-files/${id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json", // You can adjust this based on your API
+          },
+        })
+        .then(({ data }) => {
+          this.close();
+          this.$emit("response", "Record has been inserted");
+        })
+        .catch((error) => {
+          console.error("Error uploading files:", error);
+          this.errorResponse =
+            error?.response?.data?.message || "Unknown error";
+          this.loading = false;
+        });
     },
   },
 };

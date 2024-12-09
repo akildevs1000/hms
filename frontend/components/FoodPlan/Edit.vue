@@ -84,9 +84,6 @@
             <v-col cols="12" v-if="errorResponse">
               <span class="red--text">{{ errorResponse }}</span>
             </v-col>
-            <v-col>
-              <pre>{{payload}}</pre>
-            </v-col>
             <v-col cols="12" class="text-right">
               <v-btn small color="grey" class="white--text" dark @click="close">
                 Close
