@@ -58,8 +58,6 @@ class StoreBookedRoomsJob implements ShouldQueue
                 $eachRoomLateCheckOut = $bookedRoomId->late_check_out;
                 // $additionalCharges = $eachRoomFoodPlanPrice + $eachRoomBedAmount + $eachRoomEarlyCheckIn + $eachRoomLateCheckOut;
 
-                $additionalCharges = 0;
-
                 $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
 
                 // $singleDayDiscount = ($this->data['room_discount'] / count($priceList) / count($rooms));
@@ -101,7 +99,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                     // "day_type": "weekday",
                     // "day": "Tuesday",
                     // "tax": 570,
-                    // "room_price": "4750.00",
+
                     // "discount": 0,
                     // "meal": "------",
                     // "meal_name": "Break Fast",
@@ -118,7 +116,10 @@ class StoreBookedRoomsJob implements ShouldQueue
                     // "extra_bed_qty": 1,
                     // "total_price": 6295
 
-                    
+
+                    // "room_price": "4750.00",
+
+
                     $orderRooms['food_plan_price'] = $eachRoomFoodPlanPrice;
                     $orderRooms['bed_amount'] = $eachRoomBedAmount;
                     $orderRooms['early_check_in'] = $eachRoomEarlyCheckIn;
@@ -130,6 +131,16 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['total'] = $list['total_price'];
                     $orderRooms['grand_total'] = $list['total_price'];
 
+
+                    // recalculate
+                    $BookingObj = new BookingController();
+                    $room_tax =   $BookingObj->getTaxSlab(($list['total_price'] + 900), $bookedRoomId->company_id);
+                    $roomBasePrice = ($list['total_price'] * 100) / (100 + $room_tax);
+                    $roomGSTAmount = $list['total_price'] - $roomBasePrice;
+                    $orderRooms['price'] = $roomBasePrice;
+                    $orderRooms['cgst'] = $roomGSTAmount / 2;
+                    $orderRooms['sgst'] = $roomGSTAmount / 2;
+                    $orderRooms['room_tax'] = $roomGSTAmount;
 
                     OrderRoom::create($orderRooms);
                 }

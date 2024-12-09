@@ -91,10 +91,26 @@
             <v-col cols="7">
               <table class="simple-table">
                 <tbody>
-                  <tr>
+                  <!-- <tr>
                     <td class="text-left">Room Price</td>
                     <td class="text-right">
                       {{ $utils.currency_format(parseFloat(item.price || 0)) }}
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <td class="text-left">Room Price</td>
+                    <td class="text-right">
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.price) -
+                            parseFloat(item.bed_amount) -
+                            parseFloat(item.food_plan_price) -
+                            parseFloat(item.early_check_in) -
+                            parseFloat(item.late_check_out) -
+                            parseFloat(booking.total_extra) +
+                            parseFloat(booking.discount)
+                        )
+                      }}
                     </td>
                   </tr>
                   <tr>
@@ -182,7 +198,7 @@
                   <div class="py-7 text-sm">{{ item.tariff || "---" }}</div>
                   <div class="text-sm">Total Rs</div>
                   <div class="blue--text text-lg">
-                    {{ this.$utils.currency_format(total) }}
+                    {{ this.$utils.currency_format(parseFloat(item.price) + parseFloat(item.room_tax)) }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -235,7 +251,7 @@ export default {
   },
 };
 </script>
-
+<!-- 
 <style scoped>
 .simple-table {
   width: 100%;
@@ -253,4 +269,4 @@ export default {
 .text-sm {
   font-size: 14px;
 }
-</style>
+</style> -->

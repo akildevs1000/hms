@@ -127,13 +127,14 @@
                                             <tr class="inv-room-th-txt">
                                                 <th class="tm_width_2 tm_semi_bold tm_primary_color">Date</th>
                                                 <th class="  tm_semi_bold tm_primary_color">Room No</th>
-                                                <th class="  tm_semi_bold tm_primary_color">Pax</th>
+                                                <th class="  tm_semi_bold tm_primary_color">Unit</th>
                                                 <th class="  tm_semi_bold tm_primary_color tm_text_right">Price</th>
 
 
 
                                                 <th class="  tm_semi_bold tm_primary_color tm_text_right">SGST</th>
                                                 <th class=" tm_semi_bold tm_primary_color tm_text_right">CGST</th>
+                                                {{-- <th class=" tm_semi_bold tm_primary_color tm_text_right">Extras</th> --}}
 
                                                 <th class="  tm_semi_bold tm_primary_color tm_text_right">Total
                                                 </th>
@@ -158,7 +159,7 @@
                                             $subtotal_sgst+= $room->sgst;
                                             $subtotal_cgst+=$room->cgst ;
 
-                                            $subtotal_total+=$room->total_with_tax;
+                                            $subtotal_total+=$room->price + $room->room_tax;
 
                                             @endphp
                                             <tr class="inv-tr-txt">
@@ -186,8 +187,11 @@
                                                     {{ number_format(($room->cgst),2) }}
                                                 </td>
 
+                                                {{-- <td class="  tm_text_right">
+                                                    {{ number_format(($room->food_plan_price + $room->bed_amount + $room->early_check_in + $room->late_check_out),2) }}
+                                                </td> --}}
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->total_with_tax  , 2) }}
+                                                    {{ number_format($room->price + $room->room_tax  , 2) }}
                                                 </td>
                                             </tr>
                                             @php
