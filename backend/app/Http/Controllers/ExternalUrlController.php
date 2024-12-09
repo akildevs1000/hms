@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ActionMarkdownMail;
 use App\Models\BookedRoom;
+use App\Models\Booking;
 use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -72,77 +73,42 @@ class ExternalUrlController extends Controller
         }
     }
 
-    public function sandBox($company_id = 3)
+    public function sandBox($id, $inv = "")
     {
-        $id = $company_id;
-        $today = Carbon::tomorrow();
+
+        $invNo = $inv == "" ? "0000" . $id : $inv;
+
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
+            ->find($id);
+
+        return $orderRooms = $booking->orderRooms;
+        $company = $booking->company;
+        $transactions = $booking->transactions;
+        $bookedRooms = $booking->bookedRooms;
+
+        $first_check_in_time = $bookedRooms[0]["check_in_time"] ?? "00:00";
+        $first_check_out_time = $bookedRooms[0]["check_out_time"] ?? "00:00";
 
 
+        $roomTypes = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
+        $paymentMode = $transactions->toArray();
+        $paymentMode = end($paymentMode);
 
-        $dates = [];
+        // $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
+        $amtLatter = $this->amountToText($booking->total_price ?? 0);
 
-        for ($i = 0; $i < 1; $i++) {
-           
+        $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
+            return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
+        });
 
-            $date = date("Y-m-d", strtotime("+$i days", strtotime($today)));
+        $roomsDiscount = $booking->bookedRooms->sum(function ($room) {
+            return $room->room_discount;
+        });
 
-            return $bookedData = BookedRoom::without("booking", "postings")
-            ->orderBy("check_in")
-            ->where(function ($q) use ($date) {
-                $q->whereDate('check_in', ">=",  $date)
-                    ->orWhereDate('check_out', "<=",  $date);
-            })
-            ->where('booking_status', BookedRoom::BOOKED)
-            ->where('company_id', $id)
-            ->get(["check_in", "check_out"]);
+        $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-31'));
 
+        $bladeName = 'invoice.invoice_updated_with_tax';
 
-
-            $AvailableRooms = Room::with("is_cleaned")
-            ->where('company_id', $id)
-            ->whereNot("status", Room::Blocked)
-            ->whereDoesntHave("bookedRoom", function ($query) use ($date, $id) {
-                $query->where(function ($query) use ($date) {
-                    $query->whereDate('check_in', ">=",  $date)
-                        ->orWhereDate('check_in', "<=",  $date);
-                })
-                    ->where('company_id', $id);
-            })
-            ->count();
-
-            $dates[$date] = [
-                "label" => date("D", strtotime($date)),
-                "bookedCount" => 0,
-                "bookedPercent" => 0,
-                "availableCount" => 0,
-                "availablePercent" => 100,
-            ];
-            $bookedData = BookedRoom::without("booking", "postings")
-                ->orderBy("check_in")
-                ->where(function ($q) use ($today) {
-                    $q->whereDate('check_in', ">=",  $today)
-                        ->orWhereDate('check_out', "<=",  $today);
-                })
-                ->where('booking_status', BookedRoom::BOOKED)
-                ->where('company_id', $id)
-                ->get(["check_in", "check_out"]);
-            $counter = 0;
-            foreach ($bookedData as $book) {
-                $check_in = $book->check_in;
-                $check_out = $book->check_out;
-                if ($date >= $check_in && $date <= $check_out) {
-                    ++$counter;
-                    $dates[$date] = [
-                        "label" => date("D", strtotime($date)),
-                        "bookedCount" => $counter,
-                        "bookedPercent" => round(($counter / $AvailableRooms) * 100, 2),
-                        "availableCount" => $AvailableRooms - $counter,
-                        "availablePercent" => round((($AvailableRooms - $counter) / $AvailableRooms) * 100, 2),
-                    ];
-                }
-            }
-        }
-
-        return array_values($dates);
+        return view($bladeName, compact("first_check_in_time", "first_check_out_time", "invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
     }
 }
