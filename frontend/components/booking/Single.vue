@@ -288,6 +288,22 @@
                                     class="text-left border-bottom"
                                     style="font-size: 11px"
                                   >
+                                    Add:
+                                  </td>
+                                  <td
+                                    class="text-right border-bottom"
+                                    style="font-size: 11px"
+                                  >
+                                    {{
+                                      $utils.currency_format(booking.total_extra)
+                                    }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    class="text-left border-bottom"
+                                    style="font-size: 11px"
+                                  >
                                     Discount:
                                   </td>
                                   <td
@@ -1052,7 +1068,7 @@ export default {
   computed: {
     after_discount() {
       return (
-        parseFloat(this.booking.sub_total) - parseFloat(this.booking.discount)
+        (parseFloat(this.booking.sub_total) - parseFloat(this.booking.discount)) + parseFloat(this.booking.total_extra)
       );
     },
     total() {

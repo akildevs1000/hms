@@ -94,37 +94,81 @@
                   <tr>
                     <td class="text-left">Room Price</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.price || 0))}}
+                      {{ $utils.currency_format(parseFloat(item.price || 0)) }}
                     </td>
                   </tr>
                   <tr>
                     <td class="text-left">SGST</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.sgst || 0))}}
+                      {{ $utils.currency_format(parseFloat(item.sgst || 0)) }}
                     </td>
                   </tr>
                   <tr>
                     <td class="text-left">CGST</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.cgst || 0))}}
+                      {{ $utils.currency_format(parseFloat(item.cgst || 0)) }}
                     </td>
                   </tr>
                   <tr>
                     <td class="text-left">Extra Bed</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.bed_amount || 0))}}
+                      {{
+                        $utils.currency_format(parseFloat(item.bed_amount || 0))
+                      }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">Food Plan</td>
+                    <td class="text-right">
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.food_plan_price || 0)
+                        )
+                      }}
                     </td>
                   </tr>
                   <tr>
                     <td class="text-left">Early Check In</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.early_check_in || 0))}}
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.early_check_in || 0)
+                        )
+                      }}
                     </td>
                   </tr>
                   <tr>
                     <td class="text-left">Late Check Out</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.late_check_out || 0))}}
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.late_check_out || 0)
+                        )
+                      }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border-top border-bottom py-1 text-left">Add</td>
+                    <td class="border-top border-bottom py-1 text-right">
+                      {{
+                        $utils.currency_format(
+                          booking.total_extra / parseInt(totalRooms)
+                        )
+                      }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border-top border-bottom py-1 text-left">
+                      Discount
+                    </td>
+                    <td
+                      class="border-top border-bottom py-1 text-right red--text"
+                    >
+                      -{{
+                        $utils.currency_format(
+                          parseFloat(booking.discount) / parseInt(totalRooms)
+                        )
+                      }}
                     </td>
                   </tr>
                 </tbody>
@@ -138,7 +182,7 @@
                   <div class="py-7 text-sm">{{ item.tariff || "---" }}</div>
                   <div class="text-sm">Total Rs</div>
                   <div class="blue--text text-lg">
-                    {{ totalPrice }}
+                    {{ this.$utils.currency_format(total) }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -152,7 +196,7 @@
 
 <script>
 export default {
-  props: ["item", "booking"],
+  props: ["item", "booking", "totalRooms"],
   data() {
     return {
       PostingDialog: false,
@@ -162,18 +206,26 @@ export default {
     formattedDate() {
       return this.$dateFormat.dmy(this.item.date) || "---";
     },
-    totalPrice() {
+    subTotal() {
       const keys = [
-        "after_discount",
+        "price",
+        "cgst",
+        "sgst",
         "bed_amount",
+        "food_plan_price",
         "early_check_in",
         "late_check_out",
       ];
-      const total = keys.reduce(
+      return keys.reduce(
         (sum, key) => sum + parseFloat(this.item[key] || 0),
         0
       );
-      return this.$utils.currency_format(total) || "---";
+      // return this.$utils.currency_format(total) || "---";
+    },
+    total() {
+      let add = this.booking.total_extra / parseInt(this.totalRooms);
+      let discount = this.booking.discount / parseInt(this.totalRooms);
+      return this.subTotal + add - discount;
     },
   },
   methods: {
