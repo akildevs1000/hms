@@ -785,6 +785,8 @@ export default {
         this.is_late_check_out = this.late_check_out > 0 ? true : false;
 
         this.payload = {
+          discount: data.booking.discount,
+          total_extra: data.booking.total_extra,
           id: data.id,
           booking_id: data.booking_id,
           room_id: data.room_id,
@@ -879,10 +881,11 @@ export default {
         customer_id: this.bookingResponse?.customer_id,
         room_orders: this.room_orders,
         old: this.old,
-      };
 
+        discount: this.payload.discount,
+        total_extra: this.payload.total_extra,
+      };
       console.log(payload);
-      // return;
 
       this.loading = true;
       this.$axios
