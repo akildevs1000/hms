@@ -1785,7 +1785,11 @@ class BookingController extends Controller
         $food_plan_price = $request->food_plan_price ?? 0;
 
         $extra_bed_qty = $request->extra_bed_qty ?? 0;
-        $bed_amount = $request->bed_amount;
+        $bed_amount = $request->bed_amount ?? 0;
+
+        $early_check_in = $request->early_check_in ?? 0;
+        $late_check_out = $request->late_check_out ?? 0;
+
 
         $total_days = $request->total_days ?? 0;
 
@@ -1794,57 +1798,95 @@ class BookingController extends Controller
 
         $booking_total_price = $request->booking_total_price;
 
+        // Booking::where("id",$booking_id)->delete();
         OrderRoom::where('booking_id', $booking_id)->where("booked_room_id", $id)->delete();
+        // BookedRoom::where('booking_id', $booking_id)->delete();
+
+        $bookingDiscount = $request->discount;
+        $bookingExtra = $request->total_extra;
+
+        $singleDayDiscount = ($bookingDiscount / count($room_orders));
+        $singleDayExtraAmount = ($bookingExtra / count($room_orders));
+
 
         $arr = [];
 
 
         foreach ($room_orders as $room_order) {
 
-            $arr[] = [
+            $orderRooms = [];
 
-                'booked_room_id' => $id,
-                'company_id' => $company_id,
-                'booking_id' => $booking_id,
-                'date' => $room_order['date'],
-                'room_id' => $room_id,
-                'room_no' => $room_no,
-                'room_type' => $room_type,
-                'price' => $room_order['price'],
-                'cgst' => $room_order['tax'] / 2,
-                'sgst' => $room_order['tax'] / 2,
-                'room_tax' => $room_order['tax'],
-                'room_discount' => $room_order['discount'],
-                'after_discount' => $room_order['room_price'] - $room_order['discount'],
-                'total' => $room_order['price'] + $food_plan_price + $bed_amount,
-                'total_with_tax' => $room_order['price'],
-                'grand_total' => $room_order['price'] + $food_plan_price + $bed_amount,
-                'price_adjusted_after_dsicount' => $room_order['room_price'] - $room_order['discount'],
 
-                'check_in' => $check_in,
-                'check_out' => $check_out,
-                'days' => count($room_orders ?? 0) ?? 0,
+            $orderRooms['room_discount'] = $singleDayDiscount;
+            $orderRooms['price'] = $room_order['room_price']; //without tax
+            $orderRooms['total_with_tax'] = $room_order['price']; //with tax
 
-                "food_plan_id" => $food_plan_id,
-                "food_plan_price" => $food_plan_price,
-                "extra_bed_qty" => $extra_bed_qty,
-                "bed_amount" => $bed_amount,
+            $total  =
+                $room_order['price']
+                + $bed_amount
+                +  $food_plan_price
+                + $early_check_in
+                +  $late_check_out
+                + $singleDayExtraAmount
+                - $singleDayDiscount;
 
-                "no_of_adult" => $no_of_adult,
-                "no_of_child" => $no_of_child,
+            $orderRooms['total'] = $total;
+            $orderRooms['grand_total'] = $total;
 
-                "breakfast" => $breakfast,
-                "lunch" => $lunch,
-                "dinner" => $dinner,
 
-                // $early_check_in = $request->early_check_in;
-                // $late_check_out = $request->late_check_out;
-                // $remaining_price = $request->remaining_price;
+            $BookingObj = new BookingController();
+            $room_tax =   $BookingObj->getTaxSlab(($total), $company_id);
+            $roomBasePrice = ($total * 100) / (100 + $room_tax);
+            $roomGSTAmount = $total - $roomBasePrice;
 
-                // "early_check_in" => $early_check_in,
-                // "late_check_out" => $late_check_out,
-            ];
+            $orderRooms['price'] = $roomBasePrice;
+            $orderRooms['cgst'] = $roomGSTAmount / 2;
+            $orderRooms['sgst'] = $roomGSTAmount / 2;
+            $orderRooms['room_tax'] = $roomGSTAmount;
+
+            $room_tax_new =   $BookingObj->getTaxSlab(($roomBasePrice),  $company_id);
+
+            if ($room_tax_new != $room_tax) {
+                $room_tax =   $BookingObj->getTaxSlab(($roomBasePrice), $company_id);
+                $roomBasePrice = ($total * 100) / (100 + $room_tax);
+                $roomGSTAmount = $total - $roomBasePrice;
+                $orderRooms['price'] = $roomBasePrice;
+                $orderRooms['cgst'] = $roomGSTAmount / 2;
+                $orderRooms['sgst'] = $roomGSTAmount / 2;
+                $orderRooms['room_tax'] = $roomGSTAmount;
+            }
+
+
+            $orderRooms['booked_room_id'] = $id;
+            $orderRooms['company_id'] = $company_id;
+            $orderRooms['booking_id'] = $booking_id;
+            $orderRooms['date'] =  $room_order['date'];
+            $orderRooms['room_id'] = $room_id;
+            $orderRooms['room_no'] = $room_no;
+            $orderRooms['room_type'] = $room_type;
+            $orderRooms['check_in'] = $check_in;
+            $orderRooms['check_out'] = $check_out;
+            $orderRooms['days'] =  count($room_orders ?? 0) ?? 0;
+            $orderRooms['food_plan_id'] = $food_plan_id;
+            $orderRooms['breakfast'] = $breakfast;
+            $orderRooms['lunch'] = $lunch;
+            $orderRooms['dinner'] = $dinner;
+            $orderRooms['no_of_adult'] = $no_of_adult;
+            $orderRooms['no_of_child'] = $no_of_child;
+            $orderRooms['extra_bed_qty'] = $extra_bed_qty;
+
+
+            $orderRooms['food_plan_price'] = $food_plan_price;
+            $orderRooms['bed_amount'] = $bed_amount;
+            $orderRooms['early_check_in'] = $early_check_in;
+            $orderRooms['late_check_out'] = $late_check_out;
+
+
+            $arr[] = $orderRooms;
         }
+
+        // return [$food_plan_price, $bed_amount, $early_check_in, $late_check_out, $arr];
+
 
         OrderRoom::insert($arr);
 
