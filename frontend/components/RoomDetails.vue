@@ -93,7 +93,7 @@
               <tbody>
                 <tr>
                   <td class="border-top border-bottom py-1 text-left">
-                    Room with tax (5320)
+                    Room with tax
                   </td>
                   <td class="border-top border-bottom py-1 text-right">
                     {{ $utils.currency_format(item.price) }}
