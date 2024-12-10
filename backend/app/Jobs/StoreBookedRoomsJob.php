@@ -127,8 +127,8 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['late_check_out'] = $eachRoomLateCheckOut;
 
 
-                    $orderRooms['price'] = $list['room_price'];
-                    $orderRooms['total_with_tax'] = $list['price'];
+                    $orderRooms['price'] = $list['room_price']; //without tax
+                    $orderRooms['total_with_tax'] = $list['price']; //with tax
                     $orderRooms['total'] = $list['total_price'];
                     $orderRooms['grand_total'] = $list['total_price'];
 
@@ -136,7 +136,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                     // recalculate
                     $total = ($list['total_price'] - $singleDayDiscount) + $singleDayExtraAmount;
                     $BookingObj = new BookingController();
-                    $room_tax =   $BookingObj->getTaxSlab(($total + 900), $bookedRoomId->company_id);
+                    $room_tax =   $BookingObj->getTaxSlab(($orderRooms['price']), $bookedRoomId->company_id);
                     $roomBasePrice = ($total * 100) / (100 + $room_tax);
                     $roomGSTAmount = $total - $roomBasePrice;
                     $orderRooms['price'] = $roomBasePrice;
@@ -144,6 +144,17 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['sgst'] = $roomGSTAmount / 2;
                     $orderRooms['room_tax'] = $roomGSTAmount;
 
+                    $room_tax_new =   $BookingObj->getTaxSlab(($roomBasePrice), $bookedRoomId->company_id);
+
+                    if ($room_tax_new != $room_tax) {
+                        $room_tax =   $BookingObj->getTaxSlab(($roomBasePrice), $bookedRoomId->company_id);
+                        $roomBasePrice = ($total * 100) / (100 + $room_tax);
+                        $roomGSTAmount = $total - $roomBasePrice;
+                        $orderRooms['price'] = $roomBasePrice;
+                        $orderRooms['cgst'] = $roomGSTAmount / 2;
+                        $orderRooms['sgst'] = $roomGSTAmount / 2;
+                        $orderRooms['room_tax'] = $roomGSTAmount;
+                    }
 
 
                     // parseFloat(item.price) -
