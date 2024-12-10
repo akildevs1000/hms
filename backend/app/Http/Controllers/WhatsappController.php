@@ -69,6 +69,7 @@ class WhatsappController extends Controller
 
     public function sentOTPNew($user)
     {
+        return;
         // return $user->mobile == '918220312148';
 
         if ($user->enable_whatsapp_otp == 1) {
