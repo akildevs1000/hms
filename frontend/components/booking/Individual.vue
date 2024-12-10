@@ -159,7 +159,14 @@
                         <v-list-item>
                           <v-list-item-content>
                             <v-list-item-title>
-                              <RoomDetails :item="item" :booking="room" :totalRooms="priceListTableView && priceListTableView.length" />
+                              <RoomDetails
+                                :item="item"
+                                :booking="room"
+                                :totalRooms="
+                                  priceListTableView &&
+                                  priceListTableView.length
+                                "
+                              />
                             </v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
@@ -480,13 +487,13 @@ export default {
         user_id: this.$auth.user.id,
       };
 
-      console.log("🚀 ~ store ~ payload:", payload)
+      console.log("🚀 ~ store ~ payload:", payload);
       // return;
 
       this.subLoad = false;
 
       this.$axios
-        .post("https://hms-backend.test/api/group-booking", payload)
+        .post("/group-booking", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
