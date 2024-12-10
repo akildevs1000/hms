@@ -486,7 +486,7 @@ export default {
       this.subLoad = false;
 
       this.$axios
-        .post("https://hms-backend.test/api/group-booking", payload)
+        .post("/group-booking", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
