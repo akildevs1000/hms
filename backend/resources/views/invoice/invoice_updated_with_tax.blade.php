@@ -351,7 +351,7 @@
                                 </div>
                             </div>
                             <div class="tm_text_right">
-                                <br>Amount: {{ $amtLatter }} Only
+                                <br>Amount: <?php echo (new App\Http\Controllers\GRCController())->amountToText($subtotal_total); ?> Only
                             </div>
                         </div>
                         <div class="tm_note tm_text_center tm_font_style_normal"><br>
