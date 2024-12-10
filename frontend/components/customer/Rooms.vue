@@ -59,13 +59,25 @@
           )
         }}
       </template>
+      <template #grand_total="{ item }">
+        {{
+          $utils.currency_format(
+            parseFloat(item.price || 0) + parseFloat(item.room_tax || 0)
+          )
+        }}
+      </template>
       <template #action="{ item }">
         <CustomerViewBookingHall
           v-if="booking.booking_type == 'hall'"
           :booking="booking"
           :item="item"
         />
-        <CustomerViewBookingRoom v-else :booking="booking" :item="item" :totalRooms="orderRooms && orderRooms.length" />
+        <CustomerViewBookingRoom
+          v-else
+          :booking="booking"
+          :item="item"
+          :totalRooms="orderRooms && orderRooms.length"
+        />
       </template>
     </AssetsTable>
   </span>
@@ -92,7 +104,7 @@ export default {
         { text: `Child`, value: `no_of_child`, align: `center` },
         { text: `Meal`, value: `meal`, align: `center` },
         { text: `Extras`, value: `extras`, align: `center` },
-        { text: `Total (excl. discount,add)`, value: `total`, align: `right` },
+        { text: `Total`, value: `total`, align: `right` },
         { text: ``, value: `action`, align: `center`, width: "30px" },
       ];
     } else {
@@ -122,8 +134,9 @@ export default {
           value: `late_check_out`,
           align: `center`,
         },
-        { text: `Room Price`, value: `total_with_tax`, align: `center` },
-        { text: `Total`, value: `total`, align: `center` },
+        // { text: `Room Price`, value: `total_with_tax`, align: `center` },
+        // { text: `Total`, value: `total`, align: `center` },
+        { text: `Grand Total`, value: `grand_total`, align: `center` },
         // { text: `Tax`, value: `room_tax`, align: `center` },
         { text: ``, value: `action`, align: `center`, width: "30px" },
       ];

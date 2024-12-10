@@ -100,31 +100,10 @@
                   <tr>
                     <td class="text-left">Room Price</td>
                     <td class="text-right">
-                      {{
-                        $utils.currency_format(
-                          parseFloat(item.price) -
-                            parseFloat(item.bed_amount) -
-                            parseFloat(item.food_plan_price) -
-                            parseFloat(item.early_check_in) -
-                            parseFloat(item.late_check_out) -
-                            parseFloat(booking.total_extra) +
-                            parseFloat(booking.discount)
-                        )
-                      }}
+                      {{ $utils.currency_format(parseFloat(item.base_price)) }}
                     </td>
                   </tr>
-                  <tr>
-                    <td class="text-left">SGST</td>
-                    <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.sgst || 0)) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">CGST</td>
-                    <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.cgst || 0)) }}
-                    </td>
-                  </tr>
+
                   <tr>
                     <td class="text-left">Extra Bed</td>
                     <td class="text-right">
@@ -164,8 +143,8 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="border-top border-bottom py-1 text-left">Add</td>
-                    <td class="border-top border-bottom py-1 text-right">
+                    <td class="text-left">Add</td>
+                    <td class="text-right">
                       {{
                         $utils.currency_format(
                           booking.total_extra / parseInt(totalRooms)
@@ -174,17 +153,37 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="border-top border-bottom py-1 text-left">
-                      Discount
-                    </td>
-                    <td
-                      class="border-top border-bottom py-1 text-right red--text"
-                    >
+                    <td class="text-left">Discount</td>
+                    <td class="text-right red--text">
                       -{{
                         $utils.currency_format(
                           parseFloat(booking.discount) / parseInt(totalRooms)
                         )
                       }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left border-top"><b>Sub Total</b></td>
+                    <td class="text-right border-top">
+                      <b>{{
+                        $utils.currency_format(parseFloat(item.price || 0))
+                      }}</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><b>SGST</b></td>
+                    <td class="text-right">
+                      <b>{{
+                        $utils.currency_format(parseFloat(item.sgst || 0))
+                      }}</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left"><b>CGST</b></td>
+                    <td class="text-right">
+                      <b>{{
+                        $utils.currency_format(parseFloat(item.cgst || 0))
+                      }}</b>
                     </td>
                   </tr>
                 </tbody>
@@ -198,7 +197,11 @@
                   <div class="py-7 text-sm">{{ item.tariff || "---" }}</div>
                   <div class="text-sm">Total Rs</div>
                   <div class="blue--text text-lg">
-                    {{ this.$utils.currency_format(parseFloat(item.price) + parseFloat(item.room_tax)) }}
+                    {{
+                      this.$utils.currency_format(
+                        parseFloat(item.price) + parseFloat(item.room_tax)
+                      )
+                    }}
                   </div>
                 </v-card-text>
               </v-card>

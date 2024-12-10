@@ -69,6 +69,8 @@ class OrderRoom extends Model
         "tarrif",
         "day",
 
+        "base_price",
+
     ];
 
     /**
@@ -113,6 +115,8 @@ class OrderRoom extends Model
             "customer_id",
             "room_extra_amount",
             "extra_amount_reason",
+
+            "base_price",
         ];
     }
 

@@ -60,8 +60,8 @@ class StoreBookedRoomsJob implements ShouldQueue
 
                 $orderRooms = array_intersect_key($room, array_flip(OrderRoom::orderRoomAttributes()));
 
-                // $singleDayDiscount = ($this->data['room_discount'] / count($priceList) / count($rooms));
-                // $singleDayExtraAmount = ($this->data['room_extra_amount'] / count($priceList) / count($rooms));
+                $singleDayDiscount = ($this->data['room_discount'] / count($priceList) / count($rooms));
+                $singleDayExtraAmount = ($this->data['room_extra_amount'] / count($priceList) / count($rooms));
 
                 foreach ($priceList as $list) {
 
@@ -78,8 +78,9 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['no_of_child'] = $room['no_of_child'];
                     $orderRooms['no_of_baby'] = $room['no_of_baby'];
                     $orderRooms['food_plan_id'] = $room['food_plan_id'];
-                    $orderRooms['room_discount'] = 0;
-                    $orderRooms['after_discount'] = 0;
+                    $orderRooms['room_discount'] = $singleDayDiscount;
+
+                    // $orderRooms['after_discount'] = 0;
                     $orderRooms['date'] = $list['date'];
                     $orderRooms['tariff'] = $list['day_type'] ?? "";
                     $orderRooms['day'] = $list['day']  ?? null;
@@ -133,14 +134,36 @@ class StoreBookedRoomsJob implements ShouldQueue
 
 
                     // recalculate
+                    $total = ($list['total_price'] - $singleDayDiscount) + $singleDayExtraAmount;
                     $BookingObj = new BookingController();
-                    $room_tax =   $BookingObj->getTaxSlab(($list['total_price'] + 900), $bookedRoomId->company_id);
-                    $roomBasePrice = ($list['total_price'] * 100) / (100 + $room_tax);
-                    $roomGSTAmount = $list['total_price'] - $roomBasePrice;
+                    $room_tax =   $BookingObj->getTaxSlab(($total + 900), $bookedRoomId->company_id);
+                    $roomBasePrice = ($total * 100) / (100 + $room_tax);
+                    $roomGSTAmount = $total - $roomBasePrice;
                     $orderRooms['price'] = $roomBasePrice;
                     $orderRooms['cgst'] = $roomGSTAmount / 2;
                     $orderRooms['sgst'] = $roomGSTAmount / 2;
                     $orderRooms['room_tax'] = $roomGSTAmount;
+
+
+
+                    // parseFloat(item.price) -
+                    // parseFloat(item.bed_amount) -
+                    // parseFloat(item.food_plan_price) -
+                    // parseFloat(item.early_check_in) -
+                    // parseFloat(item.late_check_out) -
+                    // parseFloat(booking.total_extra) +
+                    // parseFloat(booking.discount)
+
+
+
+                    $orderRooms['base_price'] =
+                        $orderRooms['price']
+                        - $orderRooms['bed_amount']
+                        - $orderRooms['food_plan_price']
+                        - $orderRooms['early_check_in']
+                        - $orderRooms['late_check_out']
+                        - $singleDayExtraAmount
+                        + $singleDayDiscount;
 
                     OrderRoom::create($orderRooms);
                 }
