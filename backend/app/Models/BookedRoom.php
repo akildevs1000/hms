@@ -103,7 +103,7 @@ class BookedRoom extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class)->orderBy("id", "desc");
+        return $this->belongsTo(Booking::class)->with("orderRooms")->orderBy("id", "desc");
     }
 
     public function sub_customer_room_history()
@@ -339,15 +339,5 @@ class BookedRoom extends Model
             "discount_reason",
             "meal",
         ];
-    }
-
-    /**
-     * Get all of the order_rooms for the BookedRoom
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function order_rooms()
-    {
-        return $this->hasMany(OrderRoom::class);
     }
 }

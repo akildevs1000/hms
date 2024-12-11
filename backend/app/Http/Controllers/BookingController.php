@@ -1546,7 +1546,10 @@ class BookingController extends Controller
 
     public function get_booking_for_modify(Request $request)
     {
-        return BookedRoom::with(['booking', 'customer', "room", "order_rooms"])->where('company_id', $request->company_id)->findOrFail($request->id);
+        return BookedRoom::with(['booking', 'customer', "room"])
+            ->where("booking_id", $request->booking_id)
+            ->where('company_id', $request->company_id)
+            ->first();
     }
 
     public function changeCheckIntoBookingAdmin(Request $request, $id)
