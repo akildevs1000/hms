@@ -328,8 +328,8 @@
                             style="width: 110px"
                           >
                             {{
-                              posting_payment.discount ??
-                              $utils.currency_format(posting_payment.discount)
+                              posting_payment?.discount ??
+                              $utils.currency_format(posting_payment?.discount)
                             }}
                           </td>
                           <!-- <td colspan="2" class="text-center">Balance Rs.</td> -->
@@ -345,7 +345,7 @@
                             class="text-right border-bottom"
                             style="width: 110px"
                           >
-                            {{ $utils.currency_format(posting_payment.paid) }}
+                            {{ $utils.currency_format(posting_payment?.paid) }}
                           </td>
                           <!-- <td colspan="2" class="text-center">Balance Rs.</td> -->
                         </tr>

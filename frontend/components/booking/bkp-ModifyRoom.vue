@@ -5,12 +5,16 @@
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs" v-on="on"> Modify Booking </span>
       </template>
+
       <v-card>
         <v-alert class="grey lighten-3 primary--text" flat dense>
           <div style="font-size: 18px">Modify Booking</div>
         </v-alert>
 
-        <v-card-text v-if="json" style="max-height: 600px; overflow: auto">
+        <v-card-text
+          v-if="payload && payload.booking_id"
+          style="max-height: 600px; overflow: auto"
+        >
           <v-row v-if="bookingResponse">
             <!-- Left Column -->
             <v-col cols="12" md="6">
@@ -168,153 +172,6 @@
                       </v-col>
                     </v-row>
                   </v-col>
-                  <v-col cols="12">
-                    <v-textarea
-                      readonly
-                      v-model="bookingResponse.booking.request"
-                      label="Guest Request"
-                      dense
-                      hide-details
-                      outlined
-                      rows="2"
-                    />
-
-                    <br />
-                    <!-- Booking Info -->
-                    <table class="mt-5">
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          Booking Price:
-                        </td>
-                        <td
-                          class="text-right border-bottom"
-                          style="font-size: 11px"
-                        >
-                          {{
-                            $utils.currency_format(
-                              json?.booking?.sub_total || 0
-                            )
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          Add:
-                        </td>
-                        <td
-                          class="text-right border-bottom"
-                          style="font-size: 11px"
-                        >
-                          {{
-                            $utils.currency_format(
-                              json?.booking?.total_extra || 0
-                            )
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          Discount:
-                        </td>
-                        <td
-                          class="text-right border-bottom red--text"
-                          style="font-size: 11px"
-                        >
-                          -
-                          {{
-                            $utils.currency_format(json?.booking?.discount || 0)
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          After Discount:
-                        </td>
-                        <td
-                          class="text-right border-bottom"
-                          style="font-size: 11px"
-                        >
-                          {{ $utils.currency_format(after_discount || 0) }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          Posting:
-                        </td>
-                        <td
-                          class="text-right border-bottom"
-                          style="font-size: 11px"
-                        >
-                          {{
-                            $utils.currency_format(
-                              json?.booking?.total_posting_amount
-                            )
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          Total:
-                        </td>
-                        <td
-                          class="text-right border-bottom"
-                          style="font-size: 11px"
-                        >
-                          {{ $utils.currency_format(total) }}
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          Paid:
-                        </td>
-                        <td
-                          class="text-right border-bottom red--text"
-                          style="font-size: 11px"
-                        >
-                          -{{
-                            $utils.currency_format(json?.booking?.paid_amounts)
-                          }}
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td
-                          class="text-left border-bottom"
-                          style="font-size: 11px"
-                        >
-                          Balance:
-                        </td>
-                        <td
-                          class="text-right border-bottom primary--text"
-                          style="font-size: 11px"
-                        >
-                          {{ $utils.currency_format(balance) }}
-                        </td>
-                      </tr>
-                    </table>
-                  </v-col>
                 </v-row>
               </v-container>
             </v-col>
@@ -349,12 +206,12 @@
                       </template>
                       <v-date-picker
                         :min="new Date().toISOString().substr(0, 10)"
-                        v-model="json.check_in"
+                        v-model="payload.check_in"
                         no-title
                         @input="
                           () => {
                             checkin_menu = false;
-                            getPricesByRoomId(json.room_id);
+                            getPricesByRoomId(payload.room_id);
                           }
                         "
                       ></v-date-picker>
@@ -383,13 +240,13 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        :min="addOneDay(json.check_in)"
-                        v-model="json.check_out"
+                        :min="addOneDay(payload.check_in)"
+                        v-model="payload.check_out"
                         no-title
                         @input="
                           () => {
                             checkout_menu = false;
-                            getPricesByRoomId(json.room_id);
+                            getPricesByRoomId(payload.room_id);
                           }
                         "
                       ></v-date-picker>
@@ -402,10 +259,10 @@
                       :items="[1, 2, 3]"
                       dense
                       outlined
-                      v-model="json.no_of_adult"
+                      v-model="payload.no_of_adult"
                       hide-details
                       required
-                      @change="getPricesByRoomId(json.room_id)"
+                      @change="getPricesByRoomId(payload.room_id)"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="4">
@@ -414,10 +271,10 @@
                       :items="[0, 1, 2, 3]"
                       dense
                       outlined
-                      v-model="json.no_of_child"
+                      v-model="payload.no_of_child"
                       hide-details
                       required
-                      @change="getPricesByRoomId(json.room_id)"
+                      @change="getPricesByRoomId(payload.room_id)"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="4">
@@ -426,15 +283,15 @@
                       :items="[0, 1, 2, 3]"
                       dense
                       outlined
-                      v-model="json.extra_bed_qty"
+                      v-model="payload.extra_bed_qty"
                       hide-details
                       required
-                      @change="getPricesByRoomId(json.room_id)"
+                      @change="getPricesByRoomId(payload.room_id)"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="6">
                     <v-autocomplete
-                      v-model="json.room_type_id"
+                      v-model="payload.room_type_id"
                       @change="getFilteredRooms"
                       label="Room Type"
                       outlined
@@ -448,13 +305,13 @@
                   </v-col>
                   <v-col cols="6">
                     <v-autocomplete
-                      @change="getPricesByRoomId(json.room_id)"
+                      @change="getPricesByRoomId(payload.room_id)"
                       :items="filteredRooms"
                       item-text="room_no"
                       item-value="id"
                       dense
                       outlined
-                      v-model="json.room_id"
+                      v-model="payload.room_id"
                       :hide-details="true"
                     ></v-autocomplete>
                   </v-col>
@@ -467,9 +324,9 @@
                       hide-details
                       item-value="id"
                       item-text="title"
-                      v-model="json.food_plan_id"
+                      v-model="payload.food_plan_id"
                       :items="foodplans"
-                      @change="getPricesByRoomId(json.room_id)"
+                      @change="getPricesByRoomId(payload.room_id)"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="12">
@@ -480,7 +337,7 @@
                           hide-details
                           dense
                           v-model="is_early_check_in"
-                          @change="getPricesByRoomId(json.room_id)"
+                          @change="getPricesByRoomId(payload.room_id)"
                         ></v-checkbox>
                       </v-col>
                       <v-col cols="6" class="d-flex justify-center">
@@ -489,7 +346,7 @@
                           hide-details
                           dense
                           v-model="is_late_check_out"
-                          @change="getPricesByRoomId(json.room_id)"
+                          @change="getPricesByRoomId(payload.room_id)"
                         ></v-checkbox>
                       </v-col>
                     </v-row>
@@ -508,104 +365,7 @@
                   <v-col cols="12" class="my-3">
                     <Heading label="New Price" />
                   </v-col>
-                  <v-col cols="12">
-                    <table
-                      v-if="bookingResponse"
-                      style="width: 100%"
-                      cellspacing="3"
-                    >
-                      <tr>
-                        <td>
-                          <b>Old Room Price</b>
-                        </td>
-                        <td>
-                          {{
-                            $utils.currency_format(
-                              bookingResponse.grand_total || 0
-                            )
-                          }}
-                        </td>
-                      </tr>
-                      <!-- <tr>
-                        <td>room_price</td>
-                        <td>
-                          {{
-                            $utils.currency_format(
-                              json?.booking?.room_price || 0
-                            )
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>room_tax</td>
-                        <td>
-                          {{
-                            $utils.currency_format(json?.booking?.room_tax || 0)
-                          }}
-                        </td>
-                      </tr> -->
-                      <tr>
-                        <td>New Price with tax:</td>
-                        <td>
-                          {{ $utils.currency_format(json?.total_price || 0) }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Bed Amount</td>
-                        <td>
-                          {{ $utils.currency_format(json?.bed_amount || 0) }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Early Check In</td>
-                        <td>
-                          {{
-                            $utils.currency_format(json?.early_check_in || 0)
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Late Check Out</td>
-                        <td>
-                          {{
-                            $utils.currency_format(json?.late_check_out || 0)
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Food Price</td>
-                        <td>
-                          {{
-                            $utils.currency_format(json?.food_plan_price || 0)
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Add</td>
-                        <td>
-                          {{ $utils.currency_format(json?.total_extra || 0) }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Discount</td>
-                        <td>
-                          {{ $utils.currency_format(json?.discount || 0) }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Sub Total</td>
-                        <td>
-                          {{ $utils.currency_format(json?.room_sub_total || 0) }}
-                        </td>
-                      </tr>
-                    </table>
-                  </v-col>
-                  <v-col cols="12" class="text-center mt-5">
-                    <AssetsButtonCancel @close="dialog = false" />
-                    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-                    <AssetsButtonSubmit @click="submit" />
-                  </v-col>
-                  <!-- <v-col>
+                  <v-col>
                     <table style="width: 100%" cellspacing="3">
                       <tr>
                         <td
@@ -623,12 +383,12 @@
                       <tr>
                         <td>Advance Paid</td>
                         <td>
-                          {{ $utils.currency_format(json.advance_price) }}
+                          {{ $utils.currency_format(payload.advance_price) }}
                         </td>
                         <td colspan="2" class="text-center">
                           <span style="font-size: 22px" class="blue--text">{{
                             $utils.currency_format(
-                              old.booking_total_price - json.advance_price
+                              old.booking_total_price - payload.advance_price
                             )
                           }}</span>
                         </td>
@@ -646,7 +406,7 @@
                           style="width: 110px; border-bottom: 1px solid #eeeeee"
                         >
                           {{
-                            $utils.currency_format(json.booking_total_price)
+                            $utils.currency_format(payload.booking_total_price)
                           }}
                         </td>
                         <td colspan="2" class="text-center">New Balance</td>
@@ -654,21 +414,39 @@
                       <tr>
                         <td>Advance Adj</td>
                         <td>
-                          {{ $utils.currency_format(json.advance_price) }}
+                          {{ $utils.currency_format(payload.advance_price) }}
                         </td>
                         <td colspan="2" class="text-center">
                           <span style="font-size: 22px" class="red--text">{{
                             $utils.currency_format(
-                              json.booking_total_price -
-                                json.advance_price
+                              payload.booking_total_price -
+                                payload.advance_price
                             )
                           }}</span>
                         </td>
                       </tr>
                     </table>
-                  </v-col> -->
+                  </v-col>
                 </v-row>
               </v-container>
+            </v-col>
+
+            <v-col cols="6">
+              <v-textarea
+                readonly
+                v-model="bookingResponse.booking.request"
+                label="Guest Request"
+                dense
+                hide-details
+                outlined
+                rows="2"
+              />
+            </v-col>
+            <v-divider vertical></v-divider>
+            <v-col cols="6" class="text-center mt-5">
+              <AssetsButtonCancel @close="dialog = false" />
+              &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+              <AssetsButtonSubmit @click="submit" />
             </v-col>
           </v-row>
           <v-card-text v-else>
@@ -686,12 +464,9 @@
 </template>
 <script>
 export default {
-  props: ["BookedRoomId", "BookingId"],
+  props: ["BookedRoomId"],
   data() {
     return {
-      json: null,
-      selectedNewRoom: null,
-      oldRoomsOrderRooms: [],
       room_orders: [],
 
       is_early_check_in: false,
@@ -758,9 +533,9 @@ export default {
 
     await this.get_food_plans();
 
-    await this.get_additional_charges();
-
     await this.get_booking();
+
+    await this.get_additional_charges();
 
     await this.get_room_types();
   },
@@ -768,22 +543,6 @@ export default {
   mounted() {},
 
   computed: {
-    after_discount() {
-      return (
-        parseFloat(this.json?.booking?.sub_total || 0) -
-        parseFloat(this.json?.booking?.discount || 0) +
-        parseFloat(this.json?.booking?.total_extra || 0)
-      );
-    },
-    total() {
-      return (
-        this.after_discount +
-        parseFloat(this.json?.booking?.total_posting_amount || 0)
-      );
-    },
-    balance() {
-      return this.total - parseFloat(this.booking?.json?.paid_amounts || 0);
-    },
     formattedFoodPlan() {
       return (
         this.foodplans.find((e) => e.id == this.bookingResponse.food_plan_id)
@@ -791,18 +550,18 @@ export default {
       );
     },
     formattedCheckinDate() {
-      if (!this.json.check_in) return "";
+      if (!this.payload.check_in) return "";
 
-      const date = new Date(this.json.check_in);
+      const date = new Date(this.payload.check_in);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day} 12:00`;
     },
     formattedCheckOutDate() {
-      if (!this.json.check_out) return "";
+      if (!this.payload.check_out) return "";
 
-      const date = new Date(this.json.check_out);
+      const date = new Date(this.payload.check_out);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
@@ -851,8 +610,8 @@ export default {
         {
           params: {
             company_id: this.$auth.user.company.id,
-            check_in: this.json.check_in,
-            check_out: this.json.check_out,
+            check_in: this.payload.check_in,
+            check_out: this.payload.check_out,
             room_type_id: item.id,
           },
         }
@@ -870,6 +629,11 @@ export default {
         this.roomTypes = data;
       });
     },
+    getTotalAfterDiscount() {
+      let { room_discount, remaining_price } = this.payload;
+      this.total_price =
+        parseFloat(remaining_price) - parseFloat(room_discount);
+    },
     async getPricesByRoomId(id) {
       this.roomPriceResponse = [];
       let found = this.filteredRooms.find((e) => e.id == id);
@@ -879,8 +643,8 @@ export default {
           company_id: this.$auth.user.company.id,
           roomType: found.room_type.name || "",
           room_no: found.room_no,
-          checkin: this.json.check_in,
-          checkout: this.json.check_out,
+          checkin: this.payload.check_in,
+          checkout: this.payload.check_out,
           BookedRoomId: this.BookedRoomId,
         },
       };
@@ -892,12 +656,10 @@ export default {
             return;
           }
 
-          this.selectedNewRoom = data;
-
           this.room_orders = data.data;
 
-          let unit_price = this.get_food_charges(this.json.food_plan_id);
-          let selected_food_plan = this.getFoodCalculation(this.json);
+          let unit_price = this.get_food_charges(this.payload.food_plan_id);
+          let selected_food_plan = this.getFoodCalculation(this.payload);
 
           let total_days = data.data.length || 0;
           let food_plan_price_for_all_days =
@@ -906,8 +668,9 @@ export default {
           let new_room_price_single_day = data.total_price / total_days;
           let room_price_with_meal = unit_price + new_room_price_single_day;
 
-          let bed_amount = this.json.extra_bed_qty
-            ? this.json.extra_bed_qty * (this.additional_charges.extra_bed || 0)
+          let bed_amount = this.payload.extra_bed_qty
+            ? this.payload.extra_bed_qty *
+              (this.additional_charges.extra_bed || 0)
             : 0;
 
           let early_check_in = this.is_early_check_in
@@ -917,39 +680,23 @@ export default {
             ? this.additional_charges.late_check_out || 0
             : 0;
 
-          this.json = {
-            ...this.json,
+          //this.getPricesByRoomId(this.payload.room_id);
+          console.log("🚀 ~ .then ~ data:", data);
+
+          this.payload = {
+            ...this.payload,
             ...selected_food_plan,
+            room_no: found.room_no,
+            bed_amount: bed_amount,
+
+            early_check_in: early_check_in,
+            late_check_out: late_check_out,
+
             room_type_id: data.room.room_type_id,
             room_id: data.room.id,
             total_days: total_days,
-            room_no: found.room_no,
-
-            total_price: data.total_price,
-            bed_amount,
-            early_check_in,
-            late_check_out,
-            food_plan_price: selected_food_plan.food_plan_price,
-
-            total_extra:
-              this.json.booking.total_extra /
-              this.oldRoomsOrderRooms.length /
-              total_days,
-            discount:
-              this.json.booking.discount /
-              this.oldRoomsOrderRooms.length /
-              total_days,
-
-            room_sub_total:
-              parseFloat(early_check_in) +
-              parseFloat(late_check_out) +
-              parseFloat(bed_amount) +
-              parseFloat(data.total_price) +
-              parseFloat(selected_food_plan.food_plan_price),
-
-            id: this.bookingResponse.booking.id,
             room_price: new_room_price_single_day,
-            // total_price: room_price_with_meal,
+            total_price: room_price_with_meal,
             total_tax: data.total_tax,
             room_tax: data.total_tax / total_days,
             booking_total_price:
@@ -958,21 +705,24 @@ export default {
               parseFloat(bed_amount) +
               parseFloat(data.total_price) +
               parseFloat(food_plan_price_for_all_days),
+            booking_remaining_price:
+              this.payload.booking_remaining_price - this.payload.advance_price,
+            remaining_price: room_price_with_meal - this.payload.advance_price,
+            total_discount: data.total_discount,
+            grand_total: data.grand_total,
           };
 
-          // this.payload = {
-
-          // if (this.bookingResponse.booking.group_name) {
-          //   if (
-          //     this.old.booking_total_price !== this.payload.booking_total_price
-          //   ) {
-          //     let roomPrice = this.old.food_plan_price + this.old.room_price;
-          //     let restOfPrices = this.old.booking_total_price - roomPrice;
-          //     this.payload.booking_total_price = this.$utils.currency_format(
-          //       this.payload.booking_total_price + restOfPrices
-          //     );
-          //   }
-          // }
+          if (this.bookingResponse.booking.group_name) {
+            if (
+              this.old.booking_total_price !== this.payload.booking_total_price
+            ) {
+              let roomPrice = this.old.food_plan_price + this.old.room_price;
+              let restOfPrices = this.old.booking_total_price - roomPrice;
+              this.payload.booking_total_price = this.$utils.currency_format(
+                this.payload.booking_total_price + restOfPrices
+              );
+            }
+          }
         });
     },
     getFoodCalculation({ no_of_adult, no_of_child, food_plan_id }) {
@@ -1009,22 +759,31 @@ export default {
       let payload = {
         params: {
           id: this.BookedRoomId,
-          booking_id: this.BookingId,
           company_id: this.$auth.user.company.id,
         },
       };
-      this.$axios.get(`/get_booking_for_modify`, payload).then(({ data }) => {
+      this.$axios.get(`get_booking_for_modify`, payload).then(({ data }) => {
         this.bookingResponse = data;
 
-        let { booking } = data;
+        this.old = {
+          room_price: data.price,
+          food_plan_price: data.food_plan_price,
+          extra_bed_qty: data.extra_bed_qty,
+          bed_amount: data.bed_amount,
+          booking_total_price: data.booking.total_price,
+          early_check_in: data.early_check_in,
+          late_check_out: data.late_check_out,
+          grand_total: data.grand_total,
+          booking_total_price: data.booking.total_price,
 
-        this.oldRoomsOrderRooms = booking.order_rooms;
-
-        this.old = data;
-        this.old.room_price = data.price;
-        this.old.booking_total_price = booking.total_price;
-        this.old.room_type = data?.room?.room_type?.name;
-        this.old.days = data.days || 0;
+          room_id: data.room_id,
+          room_type_id: data.room_type_id,
+          room_type: data?.room?.room_type?.name,
+          room_no: data.room_no,
+          days: data.days || 0,
+          check_in: data.check_in,
+          check_out: data.check_out,
+        };
 
         this.early_check_in = data.early_check_in;
         this.late_check_out = data.late_check_out;
@@ -1032,59 +791,47 @@ export default {
         this.is_early_check_in = this.early_check_in > 0 ? true : false;
         this.is_late_check_out = this.late_check_out > 0 ? true : false;
 
-        let bed_amount = data.extra_bed_qty
-          ? data.extra_bed_qty * (this.additional_charges.extra_bed || 0)
-          : 0;
-
-        let early_check_in = this.is_early_check_in
-          ? this.additional_charges.early_check_in || 0
-          : 0;
-        let late_check_out = this.is_late_check_out
-          ? this.additional_charges.late_check_out || 0
-          : 0;
-
-        this.json = {
-          total_price: data.grand_total,
-          bed_amount,
-          early_check_in,
-          late_check_out,
-          food_plan_price: data.food_plan_price,
-
-          total_extra:
-            booking.total_extra /
-            this.oldRoomsOrderRooms.length /
-            booking.total_days,
-          discount:
-            booking.discount /
-            this.oldRoomsOrderRooms.length /
-            booking.total_days,
-
-          room_sub_total:
-            parseFloat(early_check_in) +
-            parseFloat(late_check_out) +
-            parseFloat(bed_amount) +
-            parseFloat(data.total_price) +
-            parseFloat(data.food_plan_price),
-
-          booking: booking,
-          booking_remaining_price: booking.remaining_price,
-          booking_total_price: booking.total_price,
-
-          // addtional_cols
-          room_tax: data.room_tax,
-          room_price: data.price,
-
+        this.payload = {
+          discount: data.booking.discount,
+          total_extra: data.booking.total_extra,
           id: data.id,
-          booking_id: booking.id,
+          booking_id: data.booking_id,
           room_id: data.room_id,
-          room_no: data.room_no,
-          room_type_id: data.room.room_type_id,
+
           food_plan_id: parseInt(data.food_plan_id),
+          early_check_in: this.early_check_in,
+          late_check_out: this.late_check_out,
           extra_bed_qty: data.extra_bed_qty,
           no_of_adult: data.no_of_adult,
           no_of_child: data.no_of_child,
+          bed_amount: data.bed_amount,
           check_in: data.checkin_date_only,
           check_out: data.checkout_date_only,
+          total_price: data.grand_total,
+          company_id: this.$auth.user.company_id,
+          user_id: this.$auth.user.id,
+          total_discount: data.booking.total_discount || 0,
+          advance_price: data.booking.advance_price || 0,
+          remaining_price:
+            parseFloat(data.grand_total) -
+            parseFloat(data.booking.advance_price),
+
+          old_remaining_price:
+            parseFloat(data.grand_total) -
+            parseFloat(data.booking.advance_price),
+
+          total_days: data.days || 0,
+          total_tax: data.room_tax * data.days,
+          room_tax: data.room_tax,
+          room_price: data.price,
+          room_no: data.room_no,
+          room_type_id: data.room.room_type_id,
+          room_id: data.room_id,
+          booking_remaining_price: data.booking.remaining_price,
+          booking_total_price: data.booking.total_price,
+          food_plan_price: data.food_plan_price,
+
+          grand_total: data.grand_total,
         };
 
         this.get_rooms(data.room_id);
@@ -1105,47 +852,47 @@ export default {
         this.alert("Warning!", "No changes detected", "error");
         return;
       }
-      let room_id = this.json.room_id;
+      let room_id = this.payload.room_id;
 
       let foundRoom = this.filteredRooms.find((e) => e.id == room_id);
 
       let payload = {
-        id: this.json.id,
-        booking_id: this.json.booking_id,
-        room_id: foundRoom.id ?? 0,
-        check_in: this.json.check_in + " 12:00",
-        check_out: this.json.check_out + " 11:00",
-        total_price: this.json.total_price,
-        company_id: this.json.company_id,
-        user_id: this.json.user_id,
-        remaining_price: this.json.remaining_price,
-        total_days: this.json.total_days,
-        total_tax: this.json.total_tax,
-        room_tax: this.json.room_tax,
-        room_price: this.json.room_price,
-        room_no: foundRoom.room_no ?? "---",
-        room_type: foundRoom.room_type.name ?? "---",
-        extra_bed_qty: this.json.extra_bed_qty,
-        bed_amount: this.json.bed_amount,
-        food_plan_id: this.json.food_plan_id,
-        early_check_in: this.json.early_check_in,
-        late_check_out: this.json.late_check_out,
+        id: this.payload.id,
+        booking_id: this.payload.booking_id,
+        room_id: foundRoom.id,
+        check_in: this.payload.check_in + " 12:00",
+        check_out: this.payload.check_out + " 11:00",
+        total_price: this.payload.total_price,
+        company_id: this.payload.company_id,
+        user_id: this.payload.user_id,
+        remaining_price: this.payload.remaining_price,
+        total_days: this.payload.total_days,
+        total_tax: this.payload.total_tax,
+        room_tax: this.payload.room_tax,
+        room_price: this.payload.room_price,
+        room_no: foundRoom.room_no,
+        room_type: foundRoom.room_type.name,
+        extra_bed_qty: this.payload.extra_bed_qty,
+        bed_amount: this.payload.bed_amount,
+        food_plan_id: this.payload.food_plan_id,
+        early_check_in: this.payload.early_check_in,
+        late_check_out: this.payload.late_check_out,
         booked_room_id: this.BookedRoomId,
-        room_discount: this.json.room_discount || 0,
-        booking_remaining_price: this.json.booking_remaining_price,
-        booking_total_price: this.json.booking_total_price,
-        food_plan_price: this.json.food_plan_price,
-        no_of_adult: this.json.no_of_adult,
-        no_of_child: this.json.no_of_child,
-        breakfast: this.json.breakfast,
-        lunch: this.json.lunch,
-        dinner: this.json.dinner,
+        room_discount: this.payload.room_discount || 0,
+        booking_remaining_price: this.payload.booking_remaining_price,
+        booking_total_price: this.payload.booking_total_price,
+        food_plan_price: this.payload.food_plan_price,
+        no_of_adult: this.payload.no_of_adult,
+        no_of_child: this.payload.no_of_child,
+        breakfast: this.payload.breakfast,
+        lunch: this.payload.lunch,
+        dinner: this.payload.dinner,
         customer_id: this.bookingResponse?.customer_id,
         room_orders: this.room_orders,
         old: this.old,
 
-        discount: this.json.discount,
-        total_extra: this.json.total_extra,
+        discount: this.payload.discount,
+        total_extra: this.payload.total_extra,
       };
       console.log(payload);
 
