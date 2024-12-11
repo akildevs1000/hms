@@ -17,24 +17,6 @@
             <v-row no-gutters>
               <v-col cols="12">
                 <div style="display: flex">
-                  <v-radio dense label="Percentage" value="percent"></v-radio>
-                  <div style="width: 70px" class="ml-5 pa-1">
-                    <input
-                      style="
-                        height: 100px;
-                        border: 1px solid #dddddd;
-                        width: 100%;
-                        border-radius: 5px;
-                      "
-                      v-model="discountValue"
-                      v-if="discountType == 'percent'"
-                    />
-                  </div>
-                  <div class="mt-2" v-if="discountType == 'percent'">%</div>
-                </div>
-              </v-col>
-              <v-col cols="12">
-                <div style="display: flex">
                   <v-radio
                     dense
                     label="Direct Price Reduction"
@@ -52,6 +34,24 @@
                       v-if="discountType == 'direct'"
                     />
                   </div>
+                </div>
+              </v-col>
+              <v-col cols="12">
+                <div style="display: flex">
+                  <v-radio dense label="Percentage" value="percent"></v-radio>
+                  <div style="width: 70px" class="ml-5 pa-1">
+                    <input
+                      style="
+                        height: 100px;
+                        border: 1px solid #dddddd;
+                        width: 100%;
+                        border-radius: 5px;
+                      "
+                      v-model="discountValue"
+                      v-if="discountType == 'percent'"
+                    />
+                  </div>
+                  <div class="mt-2" v-if="discountType == 'percent'">%</div>
                 </div>
               </v-col>
               <v-col>
@@ -75,7 +75,7 @@ export default {
   props: ["sub_total"],
   data() {
     return {
-      discountType: "percent",
+      discountType: "direct",
       discountPopUp: false,
       discountValue: 10,
 
@@ -98,12 +98,8 @@ export default {
         return;
       }
 
-      this.$emit(
-        "discountAbleAmount",
-        Math.abs((this.sub_total * dv) / 100)
-      );
+      this.$emit("discountAbleAmount", Math.abs((this.sub_total * dv) / 100));
       this.discountPopUp = false;
-
     },
   },
 };
