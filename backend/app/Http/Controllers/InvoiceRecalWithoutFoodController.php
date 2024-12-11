@@ -90,7 +90,7 @@ class InvoiceRecalWithoutFoodController   extends Controller
             //     $total_with_tax =   $room->grand_total + $room->early_check_in - ($room->food_plan_price / count($orderRooms)); //3000
             // // return [$total_with_tax, $room->grand_total, $room->early_check_in, ($room->food_plan_price / count($orderRooms))];
 
-            $total_with_tax = $room->price + $room->room_tax;
+            $total_with_tax = $room->grand_total;
             $BookingObj = new BookingController();
             $room_tax =   $BookingObj->getTaxSlab(($total_with_tax + 900), $room->company_id);
 
@@ -102,7 +102,10 @@ class InvoiceRecalWithoutFoodController   extends Controller
                 "price" => round($roomBasePrice, 2),
                 "sgst" => round($roomGSTAmount / 2, 2),
                 "cgst" => round($roomGSTAmount / 2, 2),
-                "total_with_tax" => $total_with_tax
+                "total_with_tax" => $total_with_tax,
+                "room_tax" => $roomGSTAmount,
+
+
             ];
             OrderRoom::where("id", $room->id)->update($data);
         }
