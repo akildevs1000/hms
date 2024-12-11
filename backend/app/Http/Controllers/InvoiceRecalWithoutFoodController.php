@@ -92,7 +92,7 @@ class InvoiceRecalWithoutFoodController   extends Controller
 
             $total_with_tax = $room->grand_total;
             $BookingObj = new BookingController();
-            $room_tax =   $BookingObj->getTaxSlab(($total_with_tax + 900), $room->company_id);
+            $room_tax =   $BookingObj->getTaxSlab(($total_with_tax), $room->company_id);
 
 
             $roomBasePrice = ($total_with_tax * 100) / (100 + $room_tax);
