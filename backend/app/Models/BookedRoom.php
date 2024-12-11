@@ -340,4 +340,14 @@ class BookedRoom extends Model
             "meal",
         ];
     }
+
+    /**
+     * Get all of the order_rooms for the BookedRoom
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function order_rooms()
+    {
+        return $this->hasMany(OrderRoom::class);
+    }
 }
