@@ -17,6 +17,23 @@
             <v-row no-gutters>
               <v-col cols="12">
                 <div style="display: flex">
+                  <v-radio dense label="Direct Price" value="direct"></v-radio>
+                  <div style="width: 70px" class="ml-5 pa-1">
+                    <input
+                      style="
+                        height: 100px;
+                        border: 1px solid #dddddd;
+                        width: 100%;
+                        border-radius: 5px;
+                      "
+                      v-model="discountValue"
+                      v-if="discountType == 'direct'"
+                    />
+                  </div>
+                </div>
+              </v-col>
+              <v-col cols="12">
+                <div style="display: flex">
                   <v-radio dense label="Percentage" value="percent"></v-radio>
                   <div style="width: 70px" class="ml-5 pa-1">
                     <input
@@ -33,23 +50,7 @@
                   <div class="mt-2" v-if="discountType == 'percent'">%</div>
                 </div>
               </v-col>
-              <v-col cols="12">
-                <div style="display: flex">
-                  <v-radio dense label="Direct Price" value="direct"></v-radio>
-                  <div style="width: 70px" class="ml-5 pa-1">
-                    <input
-                      style="
-                        height: 100px;
-                        border: 1px solid #dddddd;
-                        width: 100%;
-                        border-radius: 5px;
-                      "
-                      v-model="discountValue"
-                      v-if="discountType == 'direct'"
-                    />
-                  </div>
-                </div>
-              </v-col>
+
               <v-col>
                 <v-btn
                   :disabled="sub_total == 0"
