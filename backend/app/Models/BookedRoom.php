@@ -103,7 +103,7 @@ class BookedRoom extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class)->orderBy("id", "desc");
+        return $this->belongsTo(Booking::class)->with("orderRooms")->orderBy("id", "desc");
     }
 
     public function sub_customer_room_history()
