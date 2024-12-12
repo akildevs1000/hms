@@ -35,11 +35,7 @@
               </v-col>
               <v-col cols="12">
                 <div style="display: flex">
-                  <v-radio
-                    dense
-                    label="Direct Price"
-                    value="direct"
-                  ></v-radio>
+                  <v-radio dense label="Direct Price" value="direct"></v-radio>
                   <div style="width: 70px" class="ml-5 pa-1">
                     <input
                       style="
@@ -75,7 +71,7 @@ export default {
   props: ["sub_total"],
   data() {
     return {
-      discountType: "percent",
+      discountType: "direct",
       extraAmountPopUp: false,
       discountValue: 10,
 
@@ -94,14 +90,10 @@ export default {
         return;
       }
 
-      this.$emit(
-        "extraAddedAmount",
-        Math.abs((this.sub_total * dv) / 100)
-      );
-      this.result =  Math.abs((this.sub_total * dv) / 100);
+      this.$emit("extraAddedAmount", Math.abs((this.sub_total * dv) / 100));
+      this.result = Math.abs((this.sub_total * dv) / 100);
 
       this.extraAmountPopUp = false;
-
     },
   },
 };
