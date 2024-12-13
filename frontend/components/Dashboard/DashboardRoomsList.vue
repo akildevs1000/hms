@@ -240,12 +240,14 @@
                     v-if="true"
                     :key="`${evenIid}3${checkData.id}`"
                     :BookedRoomId="evenIid"
+                    :BookingId="checkData.id"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                   <BookingModifyHall
                     v-if="false"
                     :key="`${evenIid}3${checkData.id}`"
                     :BookedRoomId="evenIid"
+                    :BookingId="checkData.id"
                     @close-calender-room="closeCheckInAndOpenGRC"
                   />
                 </v-list-item-title>

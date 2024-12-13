@@ -103,7 +103,15 @@ class BookedRoom extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class)->with("orderRooms")->orderBy("id", "desc");
+        return $this->belongsTo(Booking::class)
+            ->withSum('orderRooms', 'base_price')
+            ->withSum('orderRooms', 'grand_total')
+            ->withSum('orderRooms', 'food_plan_price')
+            ->withSum('orderRooms', 'bed_amount')
+            ->withSum('orderRooms', 'early_check_in')
+            ->withSum('orderRooms', 'late_check_out')
+
+            ->with("orderRooms")->orderBy("id", "desc");
     }
 
     public function sub_customer_room_history()
