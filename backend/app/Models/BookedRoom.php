@@ -110,7 +110,6 @@ class BookedRoom extends Model
             ->withSum('orderRooms', 'bed_amount')
             ->withSum('orderRooms', 'early_check_in')
             ->withSum('orderRooms', 'late_check_out')
-
             ->with("orderRooms")->orderBy("id", "desc");
     }
 

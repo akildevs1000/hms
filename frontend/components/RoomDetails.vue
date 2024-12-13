@@ -247,10 +247,5 @@ export default {
       );
     },
   },
-  methods: {
-    // getTotalAmount() {
-    //   return this.items.reduce((total, num) => total + num.amount_with_tax, 0);
-    // },
-  },
 };
 </script>

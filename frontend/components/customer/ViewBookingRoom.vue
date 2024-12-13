@@ -91,12 +91,6 @@
             <v-col cols="7">
               <table class="simple-table">
                 <tbody>
-                  <!-- <tr>
-                    <td class="text-left">Room Price</td>
-                    <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.price || 0)) }}
-                    </td>
-                  </tr> -->
                   <tr>
                     <td class="text-left">Room Price</td>
                     <td class="text-right">
@@ -281,7 +275,7 @@ export default {
   },
 };
 </script>
-<!-- 
+
 <style scoped>
 .simple-table {
   width: 100%;
@@ -299,4 +293,4 @@ export default {
 .text-sm {
   font-size: 14px;
 }
-</style> -->
+</style>

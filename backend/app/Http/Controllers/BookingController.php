@@ -1852,9 +1852,6 @@ class BookingController extends Controller
                 $orderRooms['room_tax'] = round($roomGSTAmount, 2);
             }
 
-
-
-
             $orderRooms['booked_room_id'] = $request->json["id"];
             $orderRooms['company_id'] = $company_id;
             $orderRooms['booking_id'] = $request->old["booking_id"];

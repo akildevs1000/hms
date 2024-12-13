@@ -28,7 +28,7 @@ class CleanRecords extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'app:clean-records';
 
     /**
      * Execute the console command.

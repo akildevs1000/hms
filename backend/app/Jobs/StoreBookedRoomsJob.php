@@ -83,45 +83,13 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['food_plan_id'] = $room['food_plan_id'];
                     $orderRooms['room_discount'] = $singleDayDiscount;
 
-                    // $orderRooms['after_discount'] = 0;
                     $orderRooms['date'] = $list['date'];
                     $orderRooms['tariff'] = $list['day_type'] ?? "";
                     $orderRooms['day'] = $list['day']  ?? null;
 
-
                     $orderRooms['cgst'] = $room['cgst'];
                     $orderRooms['sgst'] = $room['sgst'];
                     $orderRooms['room_tax'] = $room['room_tax'];
-
-
-
-
-                    //  "room_no": "302",
-                    // "room_id": 99,
-                    // "date": "2024-12-10",
-                    // "price": 5320,
-                    // "day_type": "weekday",
-                    // "day": "Tuesday",
-                    // "tax": 570,
-
-                    // "discount": 0,
-                    // "meal": "------",
-                    // "meal_name": "Break Fast",
-                    // "food_plan_price": 275,
-                    // "breakfast": 1,
-                    // "lunch": 0,
-                    // "dinner": 0,
-                    // "room_type": "Grand",
-                    // "no_of_adult": 1,
-                    // "no_of_child": 0,
-                    // "early_check_in": 100,
-                    // "late_check_out": 100,
-                    // "bed_amount": 500,
-                    // "extra_bed_qty": 1,
-                    // "total_price": 6295
-
-
-                    // "room_price": "4750.00",
 
 
                     $orderRooms['food_plan_price'] = $eachRoomFoodPlanPrice;

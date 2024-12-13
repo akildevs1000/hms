@@ -195,7 +195,6 @@
 
     <div>
       <v-row class="flex" justify="center"> </v-row>
-
       <v-menu
         v-model="showMenu"
         :position-x="x"

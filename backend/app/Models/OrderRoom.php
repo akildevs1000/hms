@@ -67,9 +67,7 @@ class OrderRoom extends Model
 
 
         "tariff",
-        
         "day",
-
         "base_price",
 
     ];
