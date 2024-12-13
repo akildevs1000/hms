@@ -1566,8 +1566,8 @@ class BookingController extends Controller
 
 
 
-
-        $payload->booked_room_count = BookedRoom::where("booking_id", $request->booking_id)->count() ?? 0;
+        if ($payload)
+            $payload->booked_room_count = BookedRoom::where("booking_id", $request->booking_id)->count() ?? 0;
 
         return $payload;
     }
@@ -1953,7 +1953,7 @@ class BookingController extends Controller
 
         // return [$food_plan_price, $bed_amount, $early_check_in, $late_check_out, $arr];
 
-
+        $booking_total_price = $request->json["new_total"];
         // return $arr;
         Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
         OrderRoom::insert($arr);
@@ -1993,7 +1993,7 @@ class BookingController extends Controller
 
 
         // $sub_total = ($request->old["booking"]["sub_total"] - $request->json["old_total"]) + $request->json["new_total"] + $request->json["discount"] - $request->json["total_extra"];
-        $difference_amount = abs($request->json["old_total"]  + $request->json["new_total"]);;
+        $difference_amount =  ($request->old["booking"]["total_price"]  - $request->json["new_total"]);;
         $sub_total = abs($request->old["booking"]["sub_total"] - $difference_amount);
         $total_price = abs($request->old["booking"]["total_price"] - $difference_amount);
         $balance =  abs($request->old["booking"]["balance"] -  $difference_amount);
@@ -2020,7 +2020,7 @@ class BookingController extends Controller
 
             'remaining_price' => $remaining_price,
             'grand_remaining_price' => $grand_remaining_price,
-            'after_discount' => $after_discount,
+            // 'after_discount' => $after_discount,
         ];
 
         // booking
